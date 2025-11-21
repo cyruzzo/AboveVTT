@@ -2568,3 +2568,56 @@ function close_and_cleanup_generic_draggable_window(id) {
   container.find('.popout-button').off('click');
   container.remove();
 } 
+
+//extracts token-like stats from DDB character API 
+// todo: still some more logic to implement here...
+// full stats (missing some bonuses to base - prob still need to extract feats)
+//todo: conditions? size?
+function extract_character_data(character) {
+  const level = character.classes.reduce((a,s) => { return (s.level ? a + s.level : a) }, 0);
+  const extraMods = [0,0,0,0,0,0];
+  function checkModifier(mm) {
+      if(mm.type === 'bonus' && mm.isGranted && mm.value && mm.modifierTypeId === 1) {
+        //still don't know how to apply: subType = "choose-an-ability-score"
+        const which = ["strength-score", "dexterity-score", "constitution-score",
+                       "intelligence-score", "wisdom-score", "charisma-score"].indexOf(mm.subType);
+        //console.log("Check modifier", which, mm);
+        if(which >= 0) extraMods[which] += mm.value;
+      }
+  }
+  Object.values(character.modifiers || {}).forEach((m) => m.forEach(checkModifier));
+  (character.inventory || []).forEach((i) => i.grantedModifiers?.forEach(checkModifier));
+  const bonusStats = character.bonusStats.reduce((a,s) => {
+    a[s.id] = s.value || 0;
+    return a;
+  },{});
+  const overrideStats = character.overrideStats?.reduce((a,s) => {
+    a[s.id] = s.value || 0;
+    return a;
+  },{});
+  const chStatBlock = character.stats.reduce((a,s) => {
+    const bonus = (bonusStats?.[s.id] || 0 );
+    //is extras added to override? todo
+    const v = (overrideStats?.[s.id] ? overrideStats[s.id] : ((s.value || 0) + bonus)) + extraMods[s.id-1];
+    const m = Math.floor((v - 10) / 2);
+    const ms = m >= 0 ? "+"+m : ""+m;
+    a[""+(s.id-1)] = { mod: ms, save: ms, base: s.value, bonus: bonus, extras: extraMods[s.id-1] };
+    return a;
+  }, {});
+  const hpFromCon = level * Number(chStatBlock["2"].mod || "+0");
+  return {
+    name: character.name || "",
+    hitPointInfo: {
+      temp: character.temporaryHitPoints || 0,
+      current: character.baseHitPoints + hpFromCon - (character.removedHitPoints || 0),
+      maximum: character.baseHitPoints + hpFromCon + (character.bonusHitPoints || 0) 
+    },
+    armorClass : character.inventory.reduce((ac, item) => {
+      //do we need to check equipable?
+      return Number.isInteger(item.definition.armorClass) ?
+             Math.max(ac, item.definition.armorClass) : ac;
+    }, null),
+    imgsrc : character?.decorations?.avatarUrl,
+    customStat : chStatBlock
+  };
+}

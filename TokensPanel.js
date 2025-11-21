@@ -1613,16 +1613,61 @@ function create_and_place_token(listItem, hidden = undefined, specificImage= und
     delete options.undefined;
     delete options[""];
     console.log("create_and_place_token about to place token with options", options, hidden);
-
-    if (eventPageX === undefined || eventPageY === undefined) {
-        place_token_in_center_of_view(options);
-    } else if(mapPoint==false){
-        let mapPosition = convert_point_from_view_to_map(eventPageX, eventPageY, disableSnap);
-        place_token_at_map_point(options, mapPosition.x, mapPosition.y);
+    function place_it(options) {
+        if (eventPageX === undefined || eventPageY === undefined) {
+            place_token_in_center_of_view(options);
+        } else if(mapPoint==false){
+            let mapPosition = convert_point_from_view_to_map(eventPageX, eventPageY, disableSnap);
+            place_token_at_map_point(options, mapPosition.x, mapPosition.y);
+        }
+        else{
+            place_token_at_map_point(options, eventPageX, eventPageY);
+        }
     }
-    else{
-        place_token_at_map_point(options, eventPageX, eventPageY);
+    // If it's a myToken with character sheet link, the source any missing stats from there
+    if(options.itemType === "myToken" ) {
+        if(options.statBlock && window.JOURNAL.notes[options.statBlock]) { //is there a stat block
+            let customStatBlock = window.JOURNAL.notes[options.statBlock].text;
+	    let pcURL = $(customStatBlock).find('.custom-pc-sheet.custom-stat').text();
+            if(pcURL) { //only if there is a sheet ref
+                const charURLparts = new URL(pcURL).pathname.split("/");
+                if(charURLparts[1] === 'characters') { //it's probably a DDB character
+                    DDBApi.fetchCharacter(charURLparts[2]).then((character) => {
+                        const chOptions = extract_character_data(character);
+                        console.log("Extracting stats from character", chOptions, character);
+                        if(options.hitPointInfo) {
+                            if(chOptions.hitPointInfo) {
+                                if(options.hitPointInfo.temp == undefined) {
+                                    options.hitPointInfo.temp = chOptions.hitPointInfo.temp;
+                                }
+                                if(options.hitPointInfo.current == undefined) {
+                                    options.hitPointInfo.current = chOptions.hitPointInfo.current;
+                                }
+                                if(options.hitPointInfo.maximum == undefined) {
+                                    options.hitPointInfo.temp = chOptions.hitPointInfo.maximum;
+                                }
+                            }
+                        } else {
+                            options.hitPointInfo = chOptions.hitPointInfo;
+                        }
+                        if(options.armorClass == undefined && chOptions.armorClass) {
+                            options.armorClass = chOptions.armorClass;
+                        }
+                        if(!options.imgsrc) {
+                            if(chOptions.imgsrc) {
+                                options.imgsrc = chOptions.imgsrc;
+                            } else {
+                                options.alternativeImages.push(chOptions.imgsrc);
+                            }
+                        }
+                        place_it(options);
+                    });
+                    return; //place_it called during completion
+                }
+            }
+        }
     }
+    place_it(options);
 }
 
 /**
