@@ -1660,6 +1660,11 @@ function create_and_place_token(listItem, hidden = undefined, specificImage= und
                                 options.alternativeImages.push(chOptions.imgsrc);
                             }
                         }
+                        if(chOptions.customStat) {
+                            // apparently this is always present ... so need to figure out when to replace
+                            // TODO... not sure what to do here (usually you want this unless you have overriden in the customStat block)
+                            options.customStat = chOptions.customStat;
+                        }
                         place_it(options);
                     });
                     return; //place_it called during completion
