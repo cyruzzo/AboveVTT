@@ -1656,7 +1656,9 @@ function create_and_place_token(listItem, hidden = undefined, specificImage= und
                         if(!options.imgsrc) {
                             if(chOptions.imgsrc) {
                                 options.imgsrc = chOptions.imgsrc;
-                            } else {
+                            }
+                        } else {
+                            if(chOptions.imgsrc) {                            
                                 options.alternativeImages.push(chOptions.imgsrc);
                             }
                         }
