@@ -1632,8 +1632,23 @@ function create_and_place_token(listItem, hidden = undefined, specificImage= und
             if(pcURL) { //only if there is a sheet ref
                 const charURLparts = new URL(pcURL).pathname.split("/");
                 if(charURLparts[1] === 'characters') { //it's probably a DDB character
-                    DDBApi.fetchCharacter(charURLparts[2]).then((character) => {
-                        const chOptions = extract_character_data(character);
+                    DDBApi.fetchCharacterDetails([charURLparts[2]]).then((dets) => {
+                        function extract_character_details_data(character) {
+                            return {
+                                name: character.name || "",
+                                hitPointInfo: character.hitPointInfo,
+                                armorClass: character.armorClass,
+                                imgsrc : character?.decorations?.avatar?.avatarUrl,
+                                customStat : character.abilities.reduce((a,s) => {
+                                    a[""+["str","dex","con","int","wis","chr",].indexOf(s.name)] = {
+                                        save: s.save,
+                                        mod: s.modifier
+                                    }
+                                    return a},{})
+                            };
+                        }
+                        const character = dets[0];
+                        const chOptions = extract_character_details_data(character);
                         console.log("Extracting stats from character", chOptions, character);
                         if(options.hitPointInfo) {
                             if(chOptions.hitPointInfo) {
