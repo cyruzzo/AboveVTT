@@ -341,11 +341,11 @@ function scan_player_creature_pane(target) {
 	const displayName = `${window.PLAYER_NAME} (${creatureName} ${creatureType})`;
 	
 	const clickHandler = function(clickEvent) {
-		roll_button_clicked(clickEvent, displayName, creatureAvatar, "monster");
+		roll_button_clicked(clickEvent, displayName, creatureAvatar, "monster", 'playerExtra');
 	};
 
 	const rightClickHandler = function(contextmenuEvent) {
-		roll_button_contextmenu_handler(contextmenuEvent, displayName, creatureAvatar, "monster");
+		roll_button_contextmenu_handler(contextmenuEvent, displayName, creatureAvatar, "monster", 'playerExtra');
 	}
 
 	let pastedButtons = container.find('.avtt-roll-button, [data-rolltype="recharge"], .integrated-dice__container, span[data-dicenotation]');
@@ -372,11 +372,11 @@ function scan_player_creature_pane(target) {
     return input;
 	});
 
-  let newHtml = $(lines.join(''));
+  	let newHtml = $(lines.join(''));
 	container.html(newHtml);
 
 
-	add_journal_roll_buttons(target, undefined, creatureAvatar, displayName);
+	add_journal_roll_buttons(target, 'playerExtra', creatureAvatar, displayName);
 
 
 
@@ -387,25 +387,25 @@ function scan_player_creature_pane(target) {
     e.preventDefault();
     if(e.altKey || e.shiftKey || (!isMac() && e.ctrlKey) || e.metaKey)
       return;
-    let outerP = event.target.closest('p, div').outerHTML;
-    const regExFeature = new RegExp(`${event.target.outerHTML.replace(/([\(\)])/g,"\\$1")}[\\s\\S]+?(?=(<\/p>|<\/div>|<strong><em|<em><strong))`, 'gi');
+	let outerP = e.target.closest('p, div').outerHTML;
+	const regExFeature = new RegExp(`${e.target.outerHTML.replace(/([\(\)])/g,"\\$1")}[\\s\\S]+?(?=(<\/p>|<\/div>|<strong><em|<em><strong))`, 'gi');
     let match = outerP.match(regExFeature);
 
 
     if(match){
-      let matched = `<p>${match[0]}</p>`;
+      	let matched = `<p>${match[0]}</p>`;
       
 
-      if($(event.target.closest('p, div')).find('em>strong, strong>em').length == 1){
-        let nextParagraphs = $(event.target.closest('p, div')).nextUntil('p:has(>em>strong), p:has(>strong>em), div:has(>strong>em), div:has(>em>strong)');
-        for(let i=0; i<nextParagraphs.length; i++){   
-          matched = `${matched}${nextParagraphs[i].outerHTML.trim()}`;
-        }
-      }
+		if ($(e.target.closest('p, div')).find('em>strong, strong>em').length == 1){
+			let nextParagraphs = $(e.target.closest('p, div')).nextUntil('p:has(>em>strong), p:has(>strong>em), div:has(>strong>em), div:has(>em>strong)');
+			for(let i=0; i<nextParagraphs.length; i++){   
+			matched = `${matched}${nextParagraphs[i].outerHTML.trim()}`;
+			}
+		}
       
        
-       matched = `<div>${matched}</div>`;
-      send_html_to_gamelog(matched);
+      	matched = `<div>${matched}</div>`;
+      	send_html_to_gamelog(matched);
     }
     
   })
@@ -414,7 +414,7 @@ function scan_player_creature_pane(target) {
     e.preventDefault();
     if($(e.target).text().includes('Recharge'))
       return;
-    let rollButtons = $(event.currentTarget).closest('em:has(strong), strong:has(em)').nextUntil(':has(.avtt-ability-roll-button)').closest('.avtt-roll-button:not([data-rolltype="recharge"])');
+    let rollButtons = $(e.currentTarget).closest('em:has(strong), strong:has(em)').nextUntil(':has(.avtt-ability-roll-button)').closest('.avtt-roll-button:not([data-rolltype="recharge"])');
     
 
     $(e.target.closest('p, div')).find('.avtt-aoe-button')?.click();
