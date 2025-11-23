@@ -7308,6 +7308,7 @@ function redraw_light(darknessMoved = false){
 			window.lineOfSightPolygons[auraId].numberofwalls === allWalls.length &&
 			window.lineOfSightPolygons[auraId].visionType === window.TOKEN_OBJECTS[auraId].options.sight &&
 			window.lineOfSightPolygons[auraId].scaleCreated === window.TOKEN_OBJECTS[auraId].options.scaleCreated &&
+			window.lineOfSightPolygons[auraId].elev === window.TOKEN_OBJECTS[auraId].options.elev &&
 			darknessMoved !== true) {
 			lightPolygon = window.lineOfSightPolygons[auraId].polygon;  // if the token hasn't moved and walls haven't changed don't look for a new poly.
 			movePolygon = window.lineOfSightPolygons[auraId].move;  // if the token hasn't moved and walls haven't changed don't look for a new poly.
@@ -7334,7 +7335,8 @@ function redraw_light(darknessMoved = false){
 				numberofwalls: walls.length + darknessBoundarys.length,
 				clippath: pts,
 				visionType: window.TOKEN_OBJECTS[auraId].options.sight,
-				scaleCreated: window.TOKEN_OBJECTS[auraId].options.scaleCreated
+				scaleCreated: window.TOKEN_OBJECTS[auraId].options.scaleCreated,
+				elev: window.TOKEN_OBJECTS[auraId].options.elev
 			}
 
 
