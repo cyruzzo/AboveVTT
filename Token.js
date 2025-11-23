@@ -2705,7 +2705,7 @@ class Token {
 						const copyImage = oldImage.clone();
 						underDarkToken.append(copyImage);
 						
-						if (this.options.imgsrc.startsWith('above-bucket-not-a-url')) {
+							if (this.options.imgsrc.startsWith('above-bucket-not-a-url')) {
 							const fileSrc = this.options.imgsrc.replace('above-bucket-not-a-url', '');
 							if (!copyImage.attr('src')?.includes(encodeURI(fileSrc))) {
 								updateTokenSrc(this.options.imgsrc, copyImage, this.options.videoToken);

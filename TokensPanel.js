@@ -2547,7 +2547,7 @@ function display_aoe_token_configuration_modal(listItem, placedToken = undefined
         $('#token-configuration-modal .token-image-modal-remove-all-button').show();
         inputWrapper.find(".token-image-modal-url-label-add-wrapper > .token-image-modal-url-label-wrapper > .token-image-modal-footer-title").text(determineLabelText());
     };
-
+    window.currentAddImageUrl = addImageUrl;
     // MyToken name input handler
     const rename = async function(newName) {
         if (newName !== undefined && newName.length > 0) {
@@ -2583,12 +2583,9 @@ function display_aoe_token_configuration_modal(listItem, placedToken = undefined
         dropboxButton.toggleClass('token-row-button', true);
         oneDriveButton.toggleClass('token-row-button', true);
         avttButton.toggleClass('token-row-button', true);
-        if (window.testAvttFilePicker === true) {
-            inputWrapper.append(dropboxButton, avttButton, oneDriveButton);
-        }
-        else{
-            inputWrapper.append(dropboxButton, oneDriveButton);
-        }
+        
+        inputWrapper.append(dropboxButton, avttButton, oneDriveButton);
+
         
     }
 
@@ -4443,12 +4440,9 @@ function display_change_image_modal(placedToken) {
     }, [avttFilePickerTypes.VIDEO, avttFilePickerTypes.IMAGE]);
 
     avttButton.toggleClass('token-row-button', true);
-    if(window.testAvttFilePicker === true){
-        sidebarPanel.inputWrapper.append(dropboxButton, avttButton, oneDriveButton);
-    }
-    else{
-        sidebarPanel.inputWrapper.append(dropboxButton, oneDriveButton);
-    }
+    
+    sidebarPanel.inputWrapper.append(dropboxButton, avttButton, oneDriveButton);
+
    
 
     let inputWrapper = sidebarPanel.inputWrapper;
