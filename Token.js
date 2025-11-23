@@ -897,7 +897,7 @@ class Token {
 	}
 
 	snap_to_closest_square() {
-		if ((!window.DM && this.options.restrictPlayerMove && !this.isCurrentPlayer()) || this.options.locked) return; // don't allow moving if the token is locked
+		if ((!window.DM && this.options.restrictPlayerMove && !this.isCurrentPlayer() && this.options.share_vision != true &&  this.options.share_vision != window.myUser) || this.options.locked) return; // don't allow moving if the token is locked
 		if (window.DM && this.options.locked) return; // don't allow moving if the token is locked
 		// shamelessly copied from the draggable code later in this file
 		// this should be a XOR... (A AND !B) OR (!A AND B)
@@ -2560,13 +2560,13 @@ class Token {
 						color: 'rgba(142, 142, 142, 1)'
 					}
 				}
-				if((!window.DM && this.options.restrictPlayerMove && !this.isCurrentPlayer()) || this.options.locked){
+				if((!window.DM && this.options.restrictPlayerMove && !this.isCurrentPlayer() && this.options.share_vision != true &&  this.options.share_vision != window.myUser) || this.options.locked){
 					if(!window.DM || (window.DM && !$('#select_locked>div.ddbc-tab-options__header-heading').hasClass('ddbc-tab-options__header-heading--is-active'))){
 						old.draggable("disable");
 						old.removeClass("ui-state-disabled"); // removing this manually.. otherwise it stops right click menu
 					}
 				}
-				else if((window.DM && this.options.restrictPlayerMove && !this.isCurrentPlayer()) || !this.options.locked || (window.DM && !$('#select_locked>div.ddbc-tab-options__header-heading').hasClass('ddbc-tab-options__header-heading--is-active'))){
+				else if((window.DM && this.options.restrictPlayerMove && !this.isCurrentPlayer() && this.options.share_vision != true &&  this.options.share_vision != window.myUser) || !this.options.locked || (window.DM && !$('#select_locked>div.ddbc-tab-options__header-heading').hasClass('ddbc-tab-options__header-heading--is-active'))){
 					old.draggable("enable");
 				}	
 				else if(!window.DM && ((!this.options.restrictPlayerMove  && !this.isCurrentPlayer())) || !this.options.locked){
@@ -3576,7 +3576,7 @@ class Token {
 						tok.removeClass("ui-state-disabled");
 					}
 				}
-				if (!window.DM && this.options.restrictPlayerMove && !this.isCurrentPlayer()) {
+				if (!window.DM && this.options.restrictPlayerMove && !this.isCurrentPlayer() && this.options.share_vision != true &&  this.options.share_vision != window.myUser) {
 					tok.draggable("disable");
 					tok.removeClass("ui-state-disabled");
 				}
