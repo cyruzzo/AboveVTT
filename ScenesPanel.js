@@ -1283,12 +1283,10 @@ function edit_scene_dialog(scene_id) {
 	playerMapRow.append(form_toggle("player_map_is_video", "Video map?", false, handle_map_toggle_click))
 	playerMapRow.find('button').append($(`<div class='isvideotogglelabel'>link is video</div>`));
 	
-	if (window.testAvttFilePicker === true) { //console testing
-		playerMapRow.append(dropBoxbutton1, avttButton1, onedriveButton1);
-	}
-	else{
-		playerMapRow.append(dropBoxbutton1, onedriveButton1);
-	}
+
+	playerMapRow.append(dropBoxbutton1, avttButton1, onedriveButton1);
+	
+
 	
 	
 	
@@ -1297,12 +1295,9 @@ function edit_scene_dialog(scene_id) {
 	dmMapRow.append(form_toggle("dm_map_is_video", "Video map?", false, handle_map_toggle_click))
 	dmMapRow.find('button').append($(`<div class='isvideotogglelabel'>link is video</div>`));
 	
-	if (window.testAvttFilePicker === true) { //console testing
-		dmMapRow.append(dropBoxbutton2, avttButton2, onedriveButton2);
-	}
-	else {
-		dmMapRow.append(dropBoxbutton2, onedriveButton2);
-	}
+	
+	dmMapRow.append(dropBoxbutton2, avttButton2, onedriveButton2);
+
 
 	
 	
@@ -3256,14 +3251,14 @@ async function create_scene_root_container(fullPath, parentId) {
 	
 	const avttFileImport = await build_tutorial_import_list_item({
 		"title": "Azmoria's AVTT File Picker Image or Video",
-		"description": "Build a scene using Azmoria's AVTT File Picker image or video file.",
+		"description": "Build a scene using an image/video from Azmoria's AVTT File Picker.",
 		"category": "Scenes",
 		"player_map": "",
 	}, `${window.EXTENSION_PATH}assets/avtt-logo.png`, false);
 	avttFileImport.css("width", "25%");
-	if (window.testAvttFilePicker === true){ //console testing var
-		sectionHtml.find("ul").append(avttFileImport); 
-	}
+	
+	sectionHtml.find("ul").append(avttFileImport); 
+	
 	avttFileImport.find(".listing-card__callout").hide();
 	avttFileImport.find("a.listing-card__link").click(function (e) {
 		e.stopPropagation();
@@ -3377,9 +3372,9 @@ function build_UVTT_import_container(){
 	const avttButton1 = createCustomAvttChooser("Choose UVTT File from Azmoria's AVTT File Picker", function (links) { $('#player_map_row input').val(links[0].link) }, [avttFilePickerTypes.UVTT]);
 
 	form.append(dropBoxbutton1);
-	if(window.testAvttFilePicker === true){ //console testing var
-		form.append(avttButton1);
-	}
+
+	form.append(avttButton1);
+	
 	//form.append(onedriveButton1); if we ever get this working again, or one drive changes things to make them accessible we can reenable it
 
 	const hiddenDoorToggle = form_toggle('hidden_doors_toggle', null, false, function(event) {

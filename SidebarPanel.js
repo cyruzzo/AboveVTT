@@ -1093,6 +1093,7 @@ function avttTokenDeriveName(relativePath) {
 
 async function importAvttTokens(links, baseFolderItem) {
   if (!Array.isArray(links) || links.length === 0) {
+    $('body>.import-loading-indicator').remove();
     return;
   }
   if (
@@ -1102,9 +1103,10 @@ async function importAvttTokens(links, baseFolderItem) {
     baseFolderItem.folderType !== ItemType.MyToken
   ) {
     console.warn("importAvttTokens called with invalid base folder", baseFolderItem);
+    $('body>.import-loading-indicator').remove();
     return;
   }
-  build_import_loading_indicator("Importing Tokens...");
+ 
   const baseFullPath = sanitize_folder_path(baseFolderItem.fullPath());
 
   const folderSet = new Set();
@@ -1617,7 +1619,6 @@ function build_sidebar_list_row(listItem) {
     } else{
         img = $(`<img src="" loading="lazy" alt="${listItem.name} image" class="token-image" />`);
     }
-
     updateImgSrc(listingImage, img, video, false);
     imgHolder.append(img);
   }
@@ -1810,7 +1811,8 @@ function build_sidebar_list_row(listItem) {
         oneDriveButton.attr('title', 'Create token from Onedrive'); 
         
         const avttButton = createCustomAvttChooser('', function (links) { 
-          importAvttTokens(links, listItem);
+          build_import_loading_indicator("Importing Tokens...");
+          setTimeout(function(){importAvttTokens(links, listItem)}, 30);
         }, [avttFilePickerTypes.VIDEO, avttFilePickerTypes.IMAGE, avttFilePickerTypes.FOLDER]);
         avttButton.toggleClass('token-row-button avtt-file-button', true);
         avttButton.attr('title', "Create token from Azmoria's AVTT File Picker"); 
@@ -1820,12 +1822,9 @@ function build_sidebar_list_row(listItem) {
         
        
         let addToken = $(`<button class="token-row-button hover-add-button" title="Create New Token"><span class="material-icons">person_add_alt_1</span></button>`);
-        if (window.testAvttFilePicker === true) { //console testing var
-          addTokenMenu.append(addToken, dropboxButton, avttButton, oneDriveButton);
-        }
-        else{
-          addTokenMenu.append(addToken, dropboxButton, oneDriveButton);
-        }
+
+        addTokenMenu.append(addToken, dropboxButton, avttButton, oneDriveButton);
+
 
        
         rowItem.append(addTokenMenu);
