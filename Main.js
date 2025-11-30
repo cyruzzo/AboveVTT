@@ -2824,11 +2824,9 @@ function init_zoom_buttons() {
 		</div></div>
 		`);
 		avttS3FileShare.click(launchFilePicker);
-		if (window.testAvttFilePicker === true) { //console testing var
-			zoom_section.append(avttS3FileShare, select_locked, ping_center, pause_players);
-		} else {
-			zoom_section.append(select_locked, ping_center, pause_players);
-		}
+
+		zoom_section.append(avttS3FileShare, select_locked, ping_center, pause_players);
+
 	}
 
 

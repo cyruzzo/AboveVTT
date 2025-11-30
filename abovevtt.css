@@ -7714,7 +7714,7 @@ button span.onedrive-btn-status{
 
 .addTokenMenu:hover,
 .hover-add-button:hover~.addTokenMenu {
-    width: 102px;
+    width: 136px;
     flex-shrink: 0;
 }
 
@@ -14135,7 +14135,19 @@ button#displayedDiceFormulaExit:hover {
 
 }
 
-
+.list-item-identifier.folder.avtt-drop-target:after,
+.sidebar-panel-body.avtt-drop-target:after,
+#track-list.avtt-drop-target:after {
+    content: '';
+    position: absolute;
+    top: 0px;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+    box-shadow: inset 0px 0px 4px 1px #aaF;
+    border: 1px #0000ff33 dotted;
+    pointer-events: none;
+}
 
 /***** Icon UI *****/
 
