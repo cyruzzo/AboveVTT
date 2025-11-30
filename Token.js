@@ -4068,6 +4068,8 @@ function place_token_at_map_point(tokenObject, x, y, forcePlaceAndSize = false, 
 		...tokenObject,
 		id: tokenObject.id // pc.id uses the DDB characterId, but we want to use the pc.sheet for player ids. So just use whatever we were given with tokenObject.id
 	};
+	forcePlaceAndSize = forcePlaceAndSize || 
+		options.alternativeImagesCustomizations?.[options.imgsrc]?.tokenSize != undefined;
 	if(window.all_token_objects[options.id] !== undefined && options.alternativeImages){
 		if(!(window.all_token_objects[options.id].options.imgsrc in options.alternativeImages)){
 			window.all_token_objects[options.id].options.imgsrc = options.imgsrc;
@@ -4083,8 +4085,9 @@ function place_token_at_map_point(tokenObject, x, y, forcePlaceAndSize = false, 
 	if (typeof options.imgsrc === "string" && !options.imgsrc.startsWith("class")) {
 		options.imgsrc = parse_img(options.imgsrc);
 	}
-
+	options = { ...options, ...options.alternativeImagesCustomizations[options.imgsrc] };
 	if (options.size == undefined || forcePlaceAndSize) {
+		delete options.gridSquares;
 		if (options.tokenSize != undefined && parseFloat(options.tokenSize) != NaN) {
 			// tokenSize was specified, convert it to size. tokenSize is the number of squares this token fills
 			options.size = Math.round(window.CURRENT_SCENE_DATA.hpps) * parseFloat(options.tokenSize);

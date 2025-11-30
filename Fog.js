@@ -1073,7 +1073,9 @@ function clear_grid(){
 function redraw_hex_grid(hpps=null, vpps=null, offsetX=null, offsetY=null, color=null, lineWidth=null, subdivide=null, dash=[], columns=true, drawGrid = window.CURRENT_SCENE_DATA.grid){
 	
 	window.gridCentersArray = [];
-	
+	if (window.CURRENT_SCENE_DATA.scaleAdjustment == undefined){
+		window.CURRENT_SCENE_DATA.scaleAdjustment = {x:1, y:1};
+	}
 	const gridCanvas = document.getElementById("grid_overlay");
 	gridCanvas.width = $('#scene_map').width() / window.CURRENT_SCENE_DATA.scaleAdjustment.x
 	gridCanvas.height = $('#scene_map').height() / window.CURRENT_SCENE_DATA.scaleAdjustment.y;

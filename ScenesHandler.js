@@ -278,12 +278,7 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 				window.CURRENT_SCENE_DATA.vpps = Math.abs(ppsy);
 				window.CURRENT_SCENE_DATA.offsetx = Math.abs(offsetx);
 				window.CURRENT_SCENE_DATA.offsety = Math.abs(offsety);
-				if(window.CURRENT_SCENE_DATA.gridType && window.CURRENT_SCENE_DATA.gridType != 1){
-					window.CURRENT_SCENE_DATA.scaleAdjustment = {
-						x: 1 + adjustmentSliders.x/10,
-						y: 1 + adjustmentSliders.y/10
-					}
-				}
+				
 				if($("#edit_dialog").length != 0){
 					$('#squaresWide').val(`${$('#scene_map').width()/window.CURRENT_SCENE_DATA.hpps}`)
 					$('#squaresTall').val(`${$('#scene_map').height()/window.CURRENT_SCENE_DATA.vpps}`)					
@@ -292,7 +287,15 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 					$('input[name="offsetx"]').attr('data-prev-value', window.CURRENT_SCENE_DATA.offsetx);
 					$('input[name="offsety"]').attr('data-prev-value', window.CURRENT_SCENE_DATA.offsety);
 				}
-
+				if(window.CURRENT_SCENE_DATA.gridType && window.CURRENT_SCENE_DATA.gridType != 1){
+					window.CURRENT_SCENE_DATA.scaleAdjustment = {
+						x: 1 + (adjustmentSliders.x / 50),
+						y: 1 + (adjustmentSliders.y / 50)
+					}
+				}
+				else {
+					delete window.CURRENT_SCENE_DATA.scaleAdjustment;
+				}
 				let width
 				if (window.ScenesHandler.scene.upscaled == "1")
 					width = 2;
