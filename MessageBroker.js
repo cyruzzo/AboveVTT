@@ -1821,6 +1821,8 @@ class MessageBroker {
 								width: hexWidth,
 								height: hexHeight
 							}
+						}else{
+							delete window.CURRENT_SCENE_DATA.scaleAdjustment;
 						}
 
 						// Scale map according to scaleFactor

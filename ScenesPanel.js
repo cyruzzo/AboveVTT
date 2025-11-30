@@ -486,25 +486,33 @@ function open_grid_wizard_controls(scene_id, aligner1, aligner2, regrid=function
 	);
 
 	gridType.find('input').on('change', function(){
+		$("#horizontalMinorAdjustmentInput").val('50');
+		$("#verticalMinorAdjustmentInput").val('50');
+		delete window.CURRENT_SCENE_DATA.scaleAdjustment;
+		if (window.CURRENT_SCENE_DATA.gridType == 1){
+			window.CURRENT_SCENE_DATA.hpps = $("#scene_map").width()/parseFloat($('#squaresWide').val());
+			window.CURRENT_SCENE_DATA.vpps = $("#scene_map").height()/parseFloat($('#squaresTall').val());
+		}
+		moveAligners(false, true, window.CURRENT_SCENE_DATA.gridType);
+		
 		window.CURRENT_SCENE_DATA.gridType = $(this).val();
-		if($(this).val() == 3){
+		if (window.CURRENT_SCENE_DATA.gridType == 3){
 			
 			$(scene_properties).toggleClass('verticalHex', true);
 			$(scene_properties).toggleClass('horizontalHex', false);
 			$('span.squaresWide').text(' hex columns');
 			$('#additionalGridInfo').toggleClass('closed', false);
 			$('#gridInstructions').text(`Top left draggable will position the hex grid, bottom right will adjust it's size. Use minor adjustment bars to skew the hex if it isn't a 'perfect hex' on the map. These bars will stretch/squash starting in the top left. To use manual options: Count the number of hex columns for sizing. If the hexes on the map are squashed/stretched at all use the minor adjustment sliders.`)
-		} else if($(this).val() == 2){
+		} else if (window.CURRENT_SCENE_DATA.gridType == 2){
 			$(scene_properties).toggleClass('verticalHex', false);
 			$(scene_properties).toggleClass('horizontalHex', true);
 		
 			$('span.squaresTall').text(` hex rows`);
 			$('#additionalGridInfo').toggleClass('closed', false);
 			$('#gridInstructions').text(`Top left draggable will position the hex grid, bottom right will adjust it's size. Use minor adjustment bars to skew the hex if it isn't a 'perfect hex' on the map. These bars will stretch/squash starting in the top left. To use manual options: Count the number of hex rows for sizing. If the hexes on the map are squashed/stretched at all use the minor adjustment sliders.`)
-		} else if($(this).val() == 1){
+		} else if (window.CURRENT_SCENE_DATA.gridType == 1){
 			$(scene_properties).toggleClass('verticalHex', false);
 			$(scene_properties).toggleClass('horizontalHex', false);
-			
 			$('span.squaresTall').text(' squares tall');
 			$('span.squaresWide').text(' squares wide');
 			$('#verticalMinorAdjustment label').text('Minor Vertical Adjustment')
@@ -577,11 +585,11 @@ function open_grid_wizard_controls(scene_id, aligner1, aligner2, regrid=function
 			<div title='The size the ruler will measure a side of a square.'><div style='display:inline-block; width:40%'>Measurement:</div><div style='display:inline-block; width:60'%'><input type='number' name='fpsq' placeholder='5' value='${window.CURRENT_SCENE_DATA.fpsq}'> <input name='upsq' placeholder='ft' value='${window.CURRENT_SCENE_DATA.upsq}'></div></div>
 			<div id='gridSubdividedRow' class='hideHex' style='display: ${(window.CURRENT_SCENE_DATA.fpsq == 10 || window.CURRENT_SCENE_DATA.fpsq == 15 || window.CURRENT_SCENE_DATA.fpsq == 20) ? 'block' : 'none'}' title='Split grid into 5ft sections'><div style='display:inline-block; width:40%'>Split into 5ft squares</div><div style='display:inline-block; width:60'%'><input style='display: none;' type='number' min='0' max='1' step='1' name='grid_subdivided'></div></div>
 			<div id='additionalGridInfo' class='closed'>Additional Grid Info / Manual Settings</div>
-			<div title='Number of grid squares Width x Height.'><div style='display:inline-block; width:30%'>Grid size</div><div style='display:inline-block;width:70%;'><input id='squaresWide' class='hideHorizontalHex' type='number' min='10' value='${$("#scene_map").width()/window.CURRENT_SCENE_DATA.hpps}'><span style='display: inline' class='squaresWide hideHorizontalHex'> squares wide</span><br class='hideHorizontalHex'/><input type='number' id='squaresTall' class='hideVerticalHex' value='${$("#scene_map").height()/window.CURRENT_SCENE_DATA.vpps}' min='10'><span style='display: inline' class='squaresTall hideVerticalHex'> squares tall</span></div></div>
+			<div title='Number of grid squares Width x Height.'><div style='display:inline-block; width:30%'>Grid size</div><div style='display:inline-block;width:70%;'><input id='squaresWide' class='hideHorizontalHex' type='number' min='1' step='any' value='${$("#scene_map").width() / window.CURRENT_SCENE_DATA.hpps}'><span style='display: inline' class='squaresWide hideHorizontalHex'> squares wide</span><br class='hideHorizontalHex'/><input type='number' id='squaresTall' class='hideVerticalHex' value='${$("#scene_map").height() / window.CURRENT_SCENE_DATA.vpps}' min='1' step="any"><span style='display: inline' class='squaresTall hideVerticalHex'> squares tall</span></div></div>
 			<div title='Grid offset from the sides of the map in pixels. From top left corner of square and from middle of hex.'>
 				<div style='display:inline-block; width:30%'>Offset</div><div style='display:inline-block;width:70%;'>
-				<input type='number' name='offsetx'>px from left<br/>
-				<input type='number' name='offsety'>px from top
+				<input type='number' name='offsetx' step='any'>px from left<br/>
+				<input type='number' name='offsety' step='any'>px from top
 				</div>
 			</div>
 			`));
@@ -671,7 +679,7 @@ function open_grid_wizard_controls(scene_id, aligner1, aligner2, regrid=function
         	$(this).select();	
 	})
 	
-	let moveAligners = function(moveAligner1 = false, minorAdjustments = false){
+	let moveAligners = function (moveAligner1 = false, minorAdjustments = false, gridType = $('#gridType input:checked').val()){
 		let width
 		if (window.ScenesHandler.scene.upscaled == "1")
 			width = 2;
@@ -679,7 +687,7 @@ function open_grid_wizard_controls(scene_id, aligner1, aligner2, regrid=function
 			width = 1;
 		const dash = [30, 5]
 		const color = "rgba(255, 0, 0,0.5)";
-		window.CURRENT_SCENE_DATA.gridType = $('#gridType input:checked').val();
+		window.CURRENT_SCENE_DATA.gridType = gridType;
 		if(manual.find('input[name="offsety"]').val()== undefined || manual.find('input[name="offsetx"]').val()==undefined || (manual.find('#squaresTall').val()==undefined || manual.find('#squaresWide').val()==undefined ))
 			return;
 		if(window.CURRENT_SCENE_DATA.gridType == 1){
@@ -755,7 +763,9 @@ function open_grid_wizard_controls(scene_id, aligner1, aligner2, regrid=function
 			remove_zoom_from_storage()
 			$('[id="aligner1"]').remove();
 			$('[id="aligner2"]').remove();
-
+			if(window.CURRENT_SCENE_DATA.gridType == 1){
+				delete window.CURRENT_SCENE_DATA.scaleAdjustment;
+			}
 			let gridMeasurement = $('input[name="fpsq"]').val();
 			if(gridMeasurement == 5){
 				grid_5();
