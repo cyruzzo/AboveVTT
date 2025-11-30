@@ -1217,9 +1217,11 @@ async function create_and_place_token(listItem, hidden = undefined, specificImag
             options.id = listItem.sheet;
             if(window.all_token_objects[options.id] != undefined){           
                 options = {...options, ...window.all_token_objects[options.id].options}
-                if(specificImage)
-                    options.imgsrc = chosenImage;
+                if (specificImage) { 
+                    options = { ...options, ...options.alternativeImagesCustomizations[specificImage], imgsrc: chosenImage };
+                }
             }
+          
             tokenSizeSetting = options.tokenSize;
             tokenSize = parseInt(tokenSizeSetting);
             if (tokenSizeSetting === undefined || typeof tokenSizeSetting !== 'number') {
@@ -1231,12 +1233,10 @@ async function create_and_place_token(listItem, hidden = undefined, specificImag
             } else {
                 options.tokenSize = tokenSize;
             }
-            options.hitPointInfo = pc.hitPointInfo || {
-                current: 0,
-                maximum: 0,
-                temp: 0
-            };
-            options.armorClass = pc.armorClass;
+            if(pc){
+                options.hitPointInfo = pc.hitPointInfo;
+                options.armorClass = pc.armorClass;
+            }
             options = {...options, ...foundOptions, name: listItem.name};
             break;
         case ItemType.Monster:
