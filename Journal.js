@@ -336,13 +336,12 @@ class JournalManager{
 		});
 	}
 	
-	
-	
-	sync(){
-		let self=this;
-		const isAnyParentShared = function(chapter){
+
+	sync = mydebounce(() => {
+		let self = this;
+		const isAnyParentShared = function (chapter) {
 			let parentShared = false;
-			while (parentShared == false && chapter?.parentID != undefined){
+			while (parentShared == false && chapter?.parentID != undefined) {
 				const parentId = chapter.parentID;
 				chapter = self.chapters.find(d => d.id == parentId);
 				if (chapter?.shareWithPlayer)
@@ -350,25 +349,25 @@ class JournalManager{
 			}
 			return parentShared;
 		}
-		if(window.DM){
-			window.MB.sendMessage('custom/myVTT/JournalChapters',{
+		if (window.DM) {
+			window.MB.sendMessage('custom/myVTT/JournalChapters', {
 				chapters: self.chapters
 			});
 			let sendNotes = [];
-			
 
-			for(let i in self.notes){
+
+			for (let i in self.notes) {
 				const parentFolder = self.chapters.find(d => d.notes.includes(i));
-				if (self.notes[i].player || parentFolder?.shareWithPlayer || isAnyParentShared(parentFolder)){
+				if (self.notes[i].player || parentFolder?.shareWithPlayer || isAnyParentShared(parentFolder)) {
 					self.notes[i].id = i;
 					sendNotes.push(self.notes[i])
 				}
 			}
 
 			self.sendNotes(sendNotes)
-			
+
 		}
-	}
+	}, 5000);
 	sendNotes(sendNotes){
 
 		let self=this;
@@ -1812,11 +1811,7 @@ class JournalManager{
 		    $(this).find('p').remove();
 		    $(this).after(input)
 	    })
-		$(note_text).find('img[data-src*="above-bucket-not-a-url"]').each(async (index, image) => {
-			const src = await getAvttStorageUrl(image.getAttribute('data-src'), true);
-			image.src = src;
-			image.href = src;
-		})
+
 		if(!noteAlreadyOpen){
 			note.append(note_text);
 		}
@@ -1838,8 +1833,7 @@ class JournalManager{
 			$("[role='dialog']").draggable({
 				containment: "#windowContainment",
 				start: function () {
-					$("#resizeDragMon").append($('<div class="iframeResizeCover"></div>'));			
-					$("#sheet").append($('<div class="iframeResizeCover"></div>'));
+					$("#resizeDragMon, .note:has(iframe) form .mce-container-body, #sheet").append($('<div class="iframeResizeCover"></div>'));
 				},
 				stop: function () {
 					$('.iframeResizeCover').remove();			
@@ -1847,8 +1841,7 @@ class JournalManager{
 			});
 			$("[role='dialog']").resizable({
 				start: function () {
-					$("#resizeDragMon").append($('<div class="iframeResizeCover"></div>'));			
-					$("#sheet").append($('<div class="iframeResizeCover"></div>'));
+					$("#resizeDragMon, .note:has(iframe) form .mce-container-body, #sheet").append($('<div class="iframeResizeCover"></div>'));
 				},
 				stop: function () {
 					$('.iframeResizeCover').remove();			
@@ -2208,10 +2201,8 @@ class JournalManager{
 		}
 		const embededIframes = target.find('iframe');
 		for(let i=0; i<embededIframes.length; i++){
-			embededIframes[i].setAttribute('allowfullscreen', '');
-			embededIframes[i].setAttribute('webkitallowfullscreen', '');
-			embededIframes[i].setAttribute('mozallowfullscreen', '');
-			embededIframes[i].src = `${window.EXTENSION_PATH}iframe.html?src=${encodeURIComponent(embededIframes[i].src)}`;
+			if(!embededIframes[i].src.startsWith(window.EXTENSION_PATH))
+				embededIframes[i].src = `${window.EXTENSION_PATH}iframe.html?src=${encodeURIComponent(embededIframes[i].src)}`;
 		}
 
 
@@ -2471,20 +2462,29 @@ class JournalManager{
 		let $newHTML = $(newHtml);
 		
 		
-		const aboveSrc = $newHTML.find(`[src*='above-bucket'], [href*='above-bucket']`);
+		const aboveSrc = $newHTML.find(`[src*='above-bucket']:not([src*='?src=above-bucket']), [href*='above-bucket']`);
 		for (let i = 0; i < aboveSrc.length; i++) {
 			const currTarget = aboveSrc[i];
-			const src = currTarget.src;
-			const href = currTarget.href;
+			const src = decodeURI(currTarget.src);
+			const href = decodeURI(currTarget.href);
 
 			if (src?.match(/.*?above-bucket-not-a-url\/(.*?)/gi)) {
 				let url = src.replace(/.*?above-bucket-not-a-url\/(.*?)/gi, '$1')
 				url = await getAvttStorageUrl(url);
-				$(currTarget).attr('src', url);
+				if ($(currTarget).is('source') && $(currTarget).parent().is('video')) {
+					const parentVideo = $(currTarget).parent('video');
+					parentVideo.attr('src', url);
+					$(currTarget).remove();
+				}
+				else{
+					$(currTarget).attr('src', url);
+				}
+				
+				
 			}
 			else if (href?.match(/.*?above-bucket-not-a-url\/(.*?)/gi)) {
 				let url = href.replace(/.*?above-bucket-not-a-url\/(.*?)/gi, '$1')
-				url = await getAvttStorageUrl(url);
+				url = await getAvttStorageUrl(decodeURI(url));
 				$(currTarget).attr('href', url);
 			}
 		}
@@ -2511,6 +2511,19 @@ class JournalManager{
 						mozallowfullscreen></iframe>`)
 			$(iframes[i]).replaceWith(newFrame);
 		}
+		const avttIframes = $newHTML.find('iframe[src*="src=above-bucket-not-a-url"]');
+		for (let i = 0; i < avttIframes.length; i++) {
+			const currSrc = avttIframes[i].src;
+			const urlParams = new URLSearchParams(currSrc.split('?')[1]);
+			const origSrc = urlParams.get('src');
+			const src = await getAvttStorageUrl(origSrc, true);
+			avttIframes[i].src = `${window.EXTENSION_PATH}iframe.html?src=${encodeURIComponent(src)}`;
+		}
+		$newHTML.find('img[data-src*="above-bucket-not-a-url"]').each(async (index, image) => {
+			const src = await getAvttStorageUrl(image.getAttribute('data-src'), true);
+			image.src = src;
+			image.href = src;
+		})
 	    $newHTML.find('.ignore-abovevtt-formating').each(function(index){
 			$(this).empty().append(ignoreFormatting[index].innerHTML);
 	    })
@@ -2588,8 +2601,7 @@ class JournalManager{
 		$("[role='dialog']").draggable({
 			containment: "#windowContainment",
 			start: function () {
-				$("#resizeDragMon").append($('<div class="iframeResizeCover"></div>'));			
-				$("#sheet").append($('<div class="iframeResizeCover"></div>'));
+				$("#resizeDragMon, .note:has(iframe) form .mce-container-body, #sheet").append($('<div class="iframeResizeCover"></div>'));
 			},
 			stop: function () {
 				$('.iframeResizeCover').remove();			
@@ -2597,8 +2609,7 @@ class JournalManager{
 		});
 		$("[role='dialog']").resizable({
 			start: function () {
-				$("#resizeDragMon").append($('<div class="iframeResizeCover"></div>'));			
-				$("#sheet").append($('<div class="iframeResizeCover"></div>'));
+				$("#resizeDragMon, .note:has(iframe) form .mce-container-body, #sheet").append($('<div class="iframeResizeCover"></div>'));
 			},
 			stop: function () {
 				$('.iframeResizeCover').remove();			
@@ -3734,9 +3745,27 @@ class JournalManager{
 				        ],
 				      onclick: (e) => {e.preventDefault(); e.stopPropagation(); editor.insertContent(`<img class="mon-stat-block__separator-img" alt="" src="https://www.dndbeyond.com/file-attachments/0/579/stat-block-header-bar.svg"/>`)},
 				    });
+				editor.addCommand('setAvttImageSrc', function (e) {
+					const body = e.target.contentDocument?.body != undefined ? $(e.target.contentDocument.body) : $(e.target);
+					const avttImages = body.find('img[data-src*="above-bucket-not-a-url"]:not([src^="above-bucket-not-a-url"])');
+					avttImages.each(async (index, image) => {
+						const src = await getAvttStorageUrl(image.getAttribute('data-src'), true);
+						image.src = src;
+					})
+					const avttImages2 = body.find('img[src^="above-bucket-not-a-url"]');
+					avttImages2.each(async (index, image) => {
+						const origSrc = image.getAttribute('src');
+						const src = await getAvttStorageUrl(origSrc, true);
+						image.setAttribute('data-src', origSrc)
+						image.src = src;
+					})
+
+					if (editor.isDirty()) {
+						debounceNoteSave(e, editor);
+					}
+				});
 				editor.on('init', function (e) {
 					const body = $(e.target.contentDocument.body);
-					const avttImages = body.find('img[data-src*="above-bucket-not-a-url"]');
 					const backgroundColor = $(':root').css('--background-color'); // support azmoria's dark mode without requiring inverse filters
 					const fontColor = $(':root').css('--font-color');
 					if(backgroundColor && fontColor){
@@ -3748,10 +3777,7 @@ class JournalManager{
 						});
 					}
 
-					avttImages.each(async (index, image) => {
-						const src = await getAvttStorageUrl(image.getAttribute('data-src'), true);
-						image.src = src;
-					})
+					editor.execCommand('setAvttImageSrc', e);
 				});
 
 				editor.on('NodeChange', async function (e) {
@@ -3778,22 +3804,7 @@ class JournalManager{
 				    return;
 				});
 				editor.on('change keyup', async function(e){
-					const body = $(e.target);
-					const avttImages = body.find('img[data-src*="above-bucket-not-a-url"]:not([src])');
-					avttImages.each(async (index, image) => {
-						const src = await getAvttStorageUrl(image.getAttribute('data-src'), true);
-						image.src = src;
-					})
-					const avttImages2 = body.find('img[src^="above-bucket-not-a-url"]');
-					avttImages2.each(async (index, image) => {
-						const origSrc = image.getAttribute('src');
-						const src = await getAvttStorageUrl(origSrc, true);
-						image.setAttribute('data-src', origSrc)
-						image.src = src;
-					})
-				    if(editor.isDirty()){
-				    	debounceNoteSave(e, editor);
-				    }
+					editor.execCommand('setAvttImageSrc', e);
 				});
 			},
 			relative_urls : false,
