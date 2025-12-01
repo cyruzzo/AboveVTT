@@ -3164,8 +3164,7 @@ class Token {
 				
 						
 						// for dragging behind iframes so tokens don't "jump" when you move past it
-						$("#resizeDragMon").append($('<div class="iframeResizeCover"></div>'));			
-						$("#sheet").append($('<div class="iframeResizeCover"></div>'));
+						$("#resizeDragMon, .note:has(iframe) form .mce-container-body, #sheet").append($('<div class="iframeResizeCover"></div>'));
 
 
 						self.orig_top = self.options.top;

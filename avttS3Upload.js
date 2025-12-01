@@ -7156,6 +7156,8 @@ function refreshFiles(
             appendTo: 'body',
             zIndex: 10000000,
             start: function (event, ui) {
+              $("#resizeDragMon, .note:has(iframe) form .mce-container-body, #sheet").append($('<div class="iframeResizeCover"></div>'));;		
+	
               draggedItems = avttHandleDragStart(event, entry);
               listItemArray = [];
               window.orig_zoom = window.ZOOM;
@@ -7230,6 +7232,7 @@ function refreshFiles(
               }
             },
             stop: function (event, ui) {
+              $(".iframeResizeCover").remove();
               avttHandleDragEnd(event);
               let droppedOn = $(document.elementFromPoint(event.clientX, event.clientY));
               const closestFilePickerFolder = droppedOn.closest('[data-is-folder="true"]');
@@ -7278,6 +7281,31 @@ function refreshFiles(
                 for (let i = 0; i < paths.length; i++) {
                   window.currentAddImageUrl(paths[i].link)
                 } 
+              }
+              else if ((droppedOn.is('.note') && droppedOn.find('.mce-tinymce').length > 0) || droppedOn.closest('.note').find('.mce-tinymce').length > 0) {
+                const paths = window.getAvttFilePickerPaths();
+                for (let i = 0; i < paths.length; i++) {  
+                  const fileType = paths[i].type;
+                  const link = paths[i].link;
+                  if(event.shiftKey){
+                    tinymce.activeEditor.insertContent(`<span class="journal-site-embed">${link}</span>`);
+                  } else{
+                    if (fileType === avttFilePickerTypes.IMAGE) {
+                      tinymce.activeEditor.insertContent(`<img class="magnify" alt="" data-src="${link}" />`);
+                    } else if (fileType === avttFilePickerTypes.VIDEO) {
+                      tinymce.activeEditor.insertContent(`<video controls="controls" width="100%" height="auto"><source src="${link}" /></video>`);
+                    } else if (fileType === avttFilePickerTypes.AUDIO) {
+                      tinymce.activeEditor.insertContent(`<audio controls src="${link}"></audio>`);
+                    } else {
+                      tinymce.activeEditor.insertContent(`<iframe width='100%' height='400' src='${window.EXTENSION_PATH}iframe.html?src=${link}'
+                        allowfullscreen
+                        webkitallowfullscreen
+                        mozallowfullscreen></iframe>`);
+                    } 
+                    
+                  }
+                  
+                }
               }
               const allCheckboxes = avttGetAllCheckboxElements();
               allCheckboxes.forEach((checkbox) => {

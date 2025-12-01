@@ -276,8 +276,7 @@ function create_text_controller(applyFromWindow = false) {
         scroll: false,
         containment: "#windowContainment",
         start: function () {
-            $("#resizeDragMon").append($('<div class="iframeResizeCover"></div>'));
-            $("#sheet").append($('<div class="iframeResizeCover"></div>'));
+            $("#resizeDragMon, .note:has(iframe) form .mce-container-body, #sheet").append($('<div class="iframeResizeCover"></div>'));
         },
         stop: function () {
             $('.iframeResizeCover').remove();
@@ -289,8 +288,7 @@ function create_text_controller(applyFromWindow = false) {
         handles: "all",
         containment: "#windowContainment",
         start: function () {
-            $("#resizeDragMon").append($('<div class="iframeResizeCover"></div>'));
-            $("#sheet").append($('<div class="iframeResizeCover"></div>'));
+            $("#resizeDragMon, .note:has(iframe) form .mce-container-body, #sheet").append($('<div class="iframeResizeCover"></div>'));
         },
         stop: function () {
             $('.iframeResizeCover').remove();
@@ -395,8 +393,7 @@ function create_moveable_text_box(x,y,width, height, text = undefined) {
         scroll: false,
         containment: "#windowContainment",
         start: function () {
-            $("#resizeDragMon").append($('<div class="iframeResizeCover"></div>'));
-            $("#sheet").append($('<div class="iframeResizeCover"></div>'));
+            $("#resizeDragMon, .note:has(iframe) form .mce-container-body, #sheet").append($('<div class="iframeResizeCover"></div>'));
         },
         stop: function () {
             $('.iframeResizeCover').remove();
@@ -408,8 +405,7 @@ function create_moveable_text_box(x,y,width, height, text = undefined) {
         handles: "all",
         containment: "#windowContainment",
         start: function () {
-            $("#resizeDragMon").append($('<div class="iframeResizeCover"></div>'));
-            $("#sheet").append($('<div class="iframeResizeCover"></div>'));
+            $("#resizeDragMon, .note:has(iframe) form .mce-container-body, #sheet").append($('<div class="iframeResizeCover"></div>'));
         },
         stop: function () {
             $('.iframeResizeCover').remove();
@@ -724,8 +720,7 @@ function draw_text(
         textSVG.draggable({
             distance: 5,
             start: function () {
-                $("#resizeDragMon").append($('<div class="iframeResizeCover"></div>'));
-                $("#sheet").append($('<div class="iframeResizeCover"></div>'));
+                $("#resizeDragMon, .note:has(iframe) form .mce-container-body, #sheet").append($('<div class="iframeResizeCover"></div>'));
             },
             drag: function(event,ui)
             {
