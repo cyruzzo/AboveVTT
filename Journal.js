@@ -3796,7 +3796,7 @@ class JournalManager{
 							},
 						},
 						{
-							text: "Dropbox",
+							text: "Dropbox - Insert Image/Video/Audio",
 							onclick: (e) => {
 								e.preventDefault();
 								e.stopPropagation();
@@ -3813,6 +3813,20 @@ class JournalManager{
 										}
 									}
 								}, true, ['images','video','audio'], true);
+								Dropbox.choose(dropboxOptions)
+							},
+						},
+						{
+							text: "Dropbox - Site Embed",
+							onclick: (e) => {
+								e.preventDefault();
+								e.stopPropagation();
+								const dropboxOptions = dropBoxOptions(function (links) {
+									for (let i = 0; i < links.length; i++) {
+										const link = links[i].link;
+										tinymce.activeEditor.insertContent(`<span class="journal-site-embed">${link}</span>`);
+									}
+								}, true, ['images', 'video', 'audio', 'document', 'text'], true);
 								Dropbox.choose(dropboxOptions)
 							},
 						}
