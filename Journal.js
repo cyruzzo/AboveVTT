@@ -2575,7 +2575,7 @@ class JournalManager{
 		$("#site-main").append(note);
 		note.dialog({
 			draggable: true,
-			width: 860,
+			width: 900,
 			height: 600,
 			position: {
 			   my: "center",
@@ -3712,7 +3712,7 @@ class JournalManager{
 			    },
 			],
 		  	table_grid: false,
-			toolbar: 'undo styleselect template | horizontalrules | bold italic underline strikethrough | alignleft aligncenter alignright justify| outdent indent | bullist numlist | forecolor backcolor | fontsizeselect | link unlink | image media table tableCustom | code',
+			toolbar: 'undo styleselect template | horizontalrules | bold italic underline strikethrough | alignleft aligncenter alignright justify| outdent indent | bullist numlist | forecolor backcolor | fontsizeselect | link unlink | image media filePickers table tableCustom | code',
 			image_class_list: [
 				{title: 'Magnify', value: 'magnify'},
 			],
@@ -3745,6 +3745,119 @@ class JournalManager{
 				        ],
 				      onclick: (e) => {e.preventDefault(); e.stopPropagation(); editor.insertContent(`<img class="mon-stat-block__separator-img" alt="" src="https://www.dndbeyond.com/file-attachments/0/579/stat-block-header-bar.svg"/>`)},
 				    });
+
+				editor.addButton('filePickers', {
+					type: 'splitbutton',
+					text: '',
+					icon: 'upload',
+					tooltip: 'Upload/Select File From File Picker',
+					menu: [
+						{
+							text: "Azmoria's AboveVTT File Picker",
+							onclick: (e) => { 
+								e.preventDefault();
+								e.stopPropagation(); 
+								launchFilePicker(async function (files) {
+									try {
+										for (let i = 0; i < files.length; i++) {
+											const fileType = files[i].type;
+											const link = files[i].link;
+
+											if (fileType === avttFilePickerTypes.IMAGE) {
+												tinymce.activeEditor.insertContent(`<img class="magnify" alt="" data-src="${link}" />`);
+											} else if (fileType === avttFilePickerTypes.VIDEO) {
+												tinymce.activeEditor.insertContent(`<video controls="controls" width="100%" height="auto"><source src="${link}" /></video>`);
+											} else if (fileType === avttFilePickerTypes.AUDIO) {
+												tinymce.activeEditor.insertContent(`<audio controls src="${link}"></audio>`);
+											} else {
+												tinymce.activeEditor.insertContent(`<iframe width='100%' height='400' src='${window.EXTENSION_PATH}iframe.html?src=${link}'
+												allowfullscreen
+												webkitallowfullscreen
+												mozallowfullscreen></iframe>`);
+											}
+										}
+									} catch (error) {
+										console.error("Failed to import from AVTT File Picker selection", error);
+										alert(error?.message || "Failed to import selection from AVTT. See console for details.");
+									}
+								}, undefined,
+								async function (files) {
+									try {
+										for (let i = 0; i < files.length; i++) {
+											const link = files[i].link;
+											tinymce.activeEditor.insertContent(`<span class="journal-site-embed">${link}</span>`);
+										}
+									}
+									catch (error) {
+										console.error("Failed to import from AVTT File Picker selection", error);
+										alert(error?.message || "Failed to import selection from AVTT. See console for details.");
+									}
+								});
+							},
+						},
+						{
+							text: "Dropbox",
+							onclick: (e) => {
+								e.preventDefault();
+								e.stopPropagation();
+								const dropboxOptions = dropBoxOptions(function (links) {
+									for (let i = 0; i < links.length; i++) {
+										const link = parse_img(links[i].link);
+										const extension = links[i].link.split('?')[0].match(/.*\.(.*)?$/i)?.[1];
+										if (allowedImageTypes.includes(extension)) {
+											tinymce.activeEditor.insertContent(`<img class="magnify" alt="" src='${link}' />`);
+										} else if (allowedVideoTypes.includes(extension)) {
+											tinymce.activeEditor.insertContent(`<video controls="controls" width="100%" height="auto"><source src="${link}"/></video>`);
+										} else if (allowedAudioTypes.includes(extension)) {
+											tinymce.activeEditor.insertContent(`<audio controls src="${link}"></audio>`);
+										}
+									}
+								}, true, ['images','video','audio'], true);
+								Dropbox.choose(dropboxOptions)
+							},
+						}
+					],
+					onclick: (e) => { 
+						e.preventDefault();
+						e.stopPropagation();
+						launchFilePicker(async function (files) {
+							try {
+								for (let i = 0; i < files.length; i++) {
+									const fileType = files[i].type;
+									const link = files[i].link;
+
+									if (fileType === avttFilePickerTypes.IMAGE) {
+										tinymce.activeEditor.insertContent(`<img class="magnify" alt="" data-src="${link}" />`);
+									} else if (fileType === avttFilePickerTypes.VIDEO) {
+										tinymce.activeEditor.insertContent(`<video controls="controls" width="100%" height="auto"><source src="${link}" /></video>`);
+									} else if (fileType === avttFilePickerTypes.AUDIO) {
+										tinymce.activeEditor.insertContent(`<audio controls src="${link}"></audio>`);
+									} else {
+										tinymce.activeEditor.insertContent(`<iframe width='100%' height='400' src='${window.EXTENSION_PATH}iframe.html?src=${link}'
+												allowfullscreen
+												webkitallowfullscreen
+												mozallowfullscreen></iframe>`);
+									}
+								}
+							} catch (error) {
+								console.error("Failed to import from AVTT File Picker selection", error);
+								alert(error?.message || "Failed to import selection from AVTT. See console for details.");
+							}
+						}, undefined,
+							async function (files) {
+								try {
+									for (let i = 0; i < files.length; i++) {
+										const link = files[i].link;
+										tinymce.activeEditor.insertContent(`<span class="journal-site-embed">${link}</span>`);
+									}
+								}
+								catch (error) {
+									console.error("Failed to import from AVTT File Picker selection", error);
+									alert(error?.message || "Failed to import selection from AVTT. See console for details.");
+								}
+							});
+						},
+				});
 				editor.addCommand('setAvttImageSrc', function (e) {
 					const body = e.target.contentDocument?.body != undefined ? $(e.target.contentDocument.body) : $(e.target);
 					const avttImages = body.find('img[data-src*="above-bucket-not-a-url"]:not([src^="above-bucket-not-a-url"])');

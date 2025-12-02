@@ -4738,7 +4738,7 @@ const debounceSearchFiles = (searchTerm, fileTypes) => {
   avttDebouncedSearchHandler(searchTerm, fileTypes);
 };
 
-async function launchFilePicker(selectFunction = false, fileTypes = []) {
+async function launchFilePicker(selectFunction = false, fileTypes = [], secondarySelectFunction = null) {
   $("#avtt-s3-uploader").remove();
   const draggableWindow = find_or_create_generic_draggable_window(
     "avtt-s3-uploader",
@@ -4784,7 +4784,7 @@ async function launchFilePicker(selectFunction = false, fileTypes = []) {
                 width: calc(100% + 2px);
                 left: -1px;
             }
-            
+
             #file-listing-section {
                 text-align: left;
                 margin: 7px 10px 20px 10px;
@@ -5293,8 +5293,9 @@ async function launchFilePicker(selectFunction = false, fileTypes = []) {
             </div>
             <div id="avtt-select-controls" style="text-align:center; margin-top:10px;">
                 <button id="copy-path-to-clipboard" style="${typeof selectFunction === "function" ? "display: none;" : ""}">Copy Path</button>
+                <button id='embed-file' style='display: ${typeof secondarySelectFunction === "function" ? "" : "none;"}'>Site Embed</button>
                 <button id="select-file" style="${typeof selectFunction === "function" ? "" : "display: none;"}">Select</button>
-            </div>
+              </div>
         </div>
 
     
@@ -5323,6 +5324,7 @@ async function launchFilePicker(selectFunction = false, fileTypes = []) {
   const copyPathButton = document.getElementById("copy-path-to-clipboard"); 
   const searchInput = document.getElementById("search-files");
   const selectFile = document.getElementById("select-file");
+  const embedFile = document.getElementById("embed-file");
   const filePickerElement = document.getElementById("avtt-file-picker");
   const selectFilesToggle = document.getElementById("avtt-select-files");
   const logoutPatreonButton = document.getElementById("logout-patreon-button");
@@ -5830,7 +5832,11 @@ async function launchFilePicker(selectFunction = false, fileTypes = []) {
     selectFunction(paths);
     draggableWindow.find(".title_bar_close_button").click();
   });
-
+  embedFile.addEventListener("click", (event) => {
+    const paths = filePickerGetSelectPath();
+    secondarySelectFunction(paths);
+    draggableWindow.find(".title_bar_close_button").click();
+  });
   $(searchInput)
     .off("input keypress")
     .on("input keypress", async (event) => {

@@ -1335,26 +1335,10 @@ function dropBoxOptions(callback, multiselect = false, fileType=['images', 'vide
       cancel: function() {
 
       },
-
-      // Optional. "preview" (default) is a preview link to the document for sharing,
-      // "direct" is an expiring link to download the contents of the file. For more
-      // information about link types, see Link types below.
-      linkType: "preview", // or "direct"
-
-      // Optional. A value of false (default) limits selection to a single file, while
-      // true enables multiple file selection.
-      multiselect: multiselect, // or true
-
-      // Optional. This is a list of file extensions. If specified, the user will
-      // only be able to select files with these extensions. You may also specify
-      // file types, such as "video" or "images" in the list. For more information,
-      // see File types below. By default, all extensions are allowed.
+      linkType: "preview",
+      multiselect: multiselect,
       extensions: fileType,
-
-      // Optional. A value of false (default) limits selection to files,
-      // while true allows the user to select both folders and files.
-      // You cannot specify `linkType: "direct"` when using `folderselect: true`.
-      folderselect: false, // or true
+      folderselect: false, 
   }
 
   return options
@@ -2405,7 +2389,7 @@ function find_or_create_generic_draggable_window(id, titleBarText, addLoadingInd
     "position": "fixed",
     "height": height,
     "width": width,
-    "z-index": "90000",
+    "z-index": "110000",
     "display": "none"
   });
 

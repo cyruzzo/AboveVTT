@@ -9028,6 +9028,11 @@ div.note[id^="ui-id"] .mce-listbox button{
 div.note[id^="ui-id"] .mce-btn button {
     padding: 1px 4px;
 }
+.note .mce-container .mce-btn i.mce-ico.mce-i-upload:not(.mce-i-resize):before {
+    font-family: "Material Icons", sans-serif !important;
+    content: "\f09b";
+    font-size: 20px;
+}
 body .mce-abs-layout-item,
 .mce-abs-end{
     position: absolute !important;
