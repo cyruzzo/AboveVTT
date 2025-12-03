@@ -3812,7 +3812,7 @@ class JournalManager{
 											tinymce.activeEditor.insertContent(`<audio controls src="${link}"></audio>`);
 										}
 									}
-								}, true, ['images','video','audio'], true);
+								}, true, ['images','video','audio'], false);
 								Dropbox.choose(dropboxOptions)
 							},
 						},
@@ -3826,8 +3826,34 @@ class JournalManager{
 										const link = links[i].link;
 										tinymce.activeEditor.insertContent(`<span class="journal-site-embed">${link}</span>`);
 									}
-								}, true, ['images', 'video', 'audio', 'document', 'text'], true);
+								}, false, ['images', 'video', 'audio', 'document', 'text'], false);
 								Dropbox.choose(dropboxOptions)
+							},
+						},
+						{
+							text: "OneDrive - Insert Image",
+							onclick: (e) => {
+								e.preventDefault();
+								e.stopPropagation();
+								launchPicker(e, function (links) {
+									for (let i = 0; i < links.length; i++) {
+										const link = parse_img(links[i].link);
+										tinymce.activeEditor.insertContent(`<img class="magnify" alt="" src='${link}' />`);
+									}
+								}, 'multiple', ['photo', '.webp']);
+							},
+						},
+						{
+							text: "OneDrive - Site Embed",
+							onclick: (e) => {
+								e.preventDefault();
+								e.stopPropagation();
+								launchPicker(e, function (links) {
+									for (let i = 0; i < links.length; i++) {
+										const link = links[i].link;
+										tinymce.activeEditor.insertContent(`<span class="journal-site-embed">${link}</span>`);
+									}
+								}, 'single', ['files']);
 							},
 						}
 					],
