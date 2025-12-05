@@ -4794,6 +4794,9 @@ div#importer_area>div>div:first-of-type {
     position: relative !important;
     opacity: 1 !important;
 }
+div#token-change-image-modal img.example-token:first-of-type {
+    box-shadow: 0px 0px 2px 2px #1b9af07a;
+}
 #token-change-image-modal .example-token{
     width:90px;
     height:90px;
