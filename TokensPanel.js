@@ -4259,8 +4259,13 @@ function display_change_image_modal(placedToken) {
 
     /// update the modal header
     sidebarPanel.updateHeader(placedToken.options.name, "Token Images", "Click an image below to update your token or enter a new image URL at the bottom.");
-    window.CURRENTLY_SELECTED_TOKENS.push(placedToken.options.id);
-    const allTokenIds = [...new Set(window.CURRENTLY_SELECTED_TOKENS)]
+    let allTokenIds = [placedToken.options.id]
+   
+    if (window.CURRENTLY_SELECTED_TOKENS.includes(placedToken.options.id)){
+        window.CURRENTLY_SELECTED_TOKENS.push(placedToken.options.id);
+        allTokenIds = [...new Set(window.CURRENTLY_SELECTED_TOKENS)]
+    }
+    
     /// draw tokens in the body
     for (id of allTokenIds){
         const token = window.TOKEN_OBJECTS[id];
@@ -4283,6 +4288,8 @@ function display_change_image_modal(placedToken) {
         alternativeImages = [...new Set(alternativeImages)]; // clear out any duplicates
         console.log("display_change_image_modal", alternativeImages);
         alternativeImages.forEach(imgUrl => {
+            if (!imgUrl || sidebarPanel.body.find(`.example-token[data-src='${imgUrl}']`).length>0)
+                return;
             let html;
             let video = false;
             if(token?.options.videoToken == true || (['.mp4', '.webm', '.m4v'].some(d => imgUrl.includes(d)))){
