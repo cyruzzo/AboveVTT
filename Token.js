@@ -4084,7 +4084,11 @@ function place_token_at_map_point(tokenObject, x, y, forcePlaceAndSize = false, 
 	if (typeof options.imgsrc === "string" && !options.imgsrc.startsWith("class")) {
 		options.imgsrc = parse_img(options.imgsrc);
 	}
-	options = { ...options, ...options.alternativeImagesCustomizations[options.imgsrc] };
+
+	if (options.alternativeImagesCustomizations?.[options.imgsrc] != undefined){
+		options = { ...options, ...options.alternativeImagesCustomizations[options.imgsrc]};
+	}
+
 	if (options.size == undefined || forcePlaceAndSize) {
 		delete options.gridSquares;
 		if (options.tokenSize != undefined && parseFloat(options.tokenSize) != NaN) {
