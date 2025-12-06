@@ -630,7 +630,7 @@ class Token {
 				window.TOKEN_OBJECTS[this.options.combatGroup].delete();
 			}
 		}
-		if(this.options.darkness){
+		if (this.options.darkness || this.options.tokenWall){
 			redraw_drawn_light();
 		}
 
@@ -771,8 +771,8 @@ class Token {
 
 			old.animate({left: this.options.left,top: this.options.top,}, { duration: 0, queue: true, 
 				complete: async function() {
-					const darknessMoved = self.options.darkness;
-					if(self.options.darkness)
+					const darknessMoved = self.options.darkness || self.options.tokenWall;
+					if (darknessMoved)
 						redraw_drawn_light();
 					
 					if(window.EXPERIMENTAL_SETTINGS.dragLight == true)
@@ -788,7 +788,7 @@ class Token {
 			}
 			setTokenBase($(`[data-notatoken='notatoken_${this.options.id}']`), this.options);
 			let tokenBorderWidth = (this.options.underDarkness == true) ? (this.sizeWidth() / window.CURRENT_SCENE_DATA.hpps * 2 / window.CURRENT_SCENE_DATA.scale_factor)+"px" : (this.sizeWidth() / window.CURRENT_SCENE_DATA.hpps * 2)+"px";	
-			if(this.options.darkness){
+			if (this.options.darkness){
 				let copyImage = $(`[data-darkness='darkness_${this.options.id}']`);
 				copyImage.css({
 					left: parseInt(parseFloat(this.options.left) / window.CURRENT_SCENE_DATA.scale_factor),
@@ -2175,8 +2175,8 @@ class Token {
 						left: this.options.left,
 						top: this.options.top,
 					}, { duration: animationDuration, queue: true, complete: async function() {
-							const darknessMoved = self.options.darkness;
-							if(self.options.darkness)
+						const darknessMoved = self.options.darkness || self.options.tokenWall;
+							if (darknessMoved)
 								redraw_drawn_light();
 							
 							if(window.EXPERIMENTAL_SETTINGS.dragLight == true)
@@ -2240,8 +2240,8 @@ class Token {
 							width: this.sizeWidth(),
 							height: this.sizeHeight()
 						}, { duration: animationDuration, queue: false, complete: async function() {
-							const darknessMoved = self.options.darkness;
-							if(self.options.darkness)
+							const darknessMoved = self.options.darkness || self.options.tokenWall;
+							if(darknessMoved)
 								redraw_drawn_light();
 							
 							if(window.EXPERIMENTAL_SETTINGS.dragLight == true)
@@ -2605,8 +2605,8 @@ class Token {
 						}, 
 						{ 
 							duration: animationDuration, queue: true, complete: async function() {
-								const darknessMoved = self.options.darkness;
-								if(self.options.darkness)
+								const darknessMoved = self.options.darkness || self.options.tokenWall;
+								if (darknessMoved)
 									redraw_drawn_light();
 								
 								if(window.EXPERIMENTAL_SETTINGS.dragLight == true)
@@ -2688,12 +2688,12 @@ class Token {
 								}, 
 								{ 
 									duration: animationDuration, queue: true, complete: async function() {
-										const darknessMoved = self.options.darkness;
+										const darknessMoved = self.options.darkness || self.options.tokenWall;
 									
 										if(window.EXPERIMENTAL_SETTINGS.dragLight == true)
-											throttleLight();
+											throttleLight(darknessMoved);
 										else
-											debounceLightChecks()
+											debounceLightChecks(darknessMoved)
 									}
 								}
 							);
@@ -3070,7 +3070,7 @@ class Token {
 								self.sync($.extend(true, {}, self.options));
 							}
 							
-							let darknessMoved = self.options.darkness;
+							let darknessMoved = self.options.darkness || self.options.tokenWall;
 							if (self.selected ) {
 								for (let tok of window.dragSelectedTokens){
 									let id = $(tok).attr("data-id");	
