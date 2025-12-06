@@ -289,6 +289,17 @@ function token_setting_options() {
 			],
 			defaultValue: false,
 			hiddenSetting: true
+		},
+		{
+			name: "tokenWall",
+			label: "Block Vision",
+			type: 'dropdown',
+			options: [
+				{ value: "0", label: 'Disabled', description: "Token will not block line of sight." },
+				{ value: "1", label: 'Circle', description: "Token will block line of sight as if an object wall in a cirle." },
+				{ value: "2", label: 'Square', description: "Token will block line of sight as if an object wall in a square." },
+			],
+			defaultValue: "0"
 		}
 		
 	];
