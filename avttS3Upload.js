@@ -1941,7 +1941,10 @@ async function avttPasteFiles(destinationFolder) {
     typeof destinationFolder === "string" ? destinationFolder : currentFolder,
   );
 }
-
+async function setAvttFilePickerCssVar(options = {}) {
+  const url = await getAvttStorageUrl(options.url, true);
+  options.target.css(options.var, `url('${url}')`);
+}
 async function avttImportSelectedFiles(selection) {
   const entries = Array.isArray(selection) ? selection : avttGetSelectedEntries();
   const csvFiles = entries.filter((e) => !e.isFolder && /\.csv$/i.test(e.key));

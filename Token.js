@@ -4519,7 +4519,15 @@ function setTokenAuras (token, options) {
 					currAura.attr('data-animation', '')
 				}
 				currAura.attr('data-custom-animation', 'true')
+
 				currAura.css('--custom-mask-image', `url('${parse_img(options.animation.customAuraMask)}')`)
+				if (options.animation.customAuraMask?.includes('above-bucket-not-a-url')){
+					setAvttFilePickerCssVar({
+						var: '--custom-mask-image', 
+						target: currAura,
+						url: options.animation.customAuraMask
+					})
+				}
 			}
 			else{
 				currAura.attr('data-animation', options.animation.aura)
@@ -4528,8 +4536,6 @@ function setTokenAuras (token, options) {
 		else{
 			currAura.removeAttr('data-animation')
 		}
-
-		
 	} else {
 		const tokenId = token.attr("data-id").replaceAll("/", "");
 		token.parent().parent().find("#aura_" + tokenId).remove();
@@ -4663,6 +4669,12 @@ function setTokenLight (token, options) {
 				}
 				token.parent().parent().find(".aura-element-container-clip[id='" + options.id +"']").attr('data-custom-animation', 'true')
 				token.parent().parent().find(".aura-element-container-clip[id='" + options.id +"']").css('--custom-mask-image', `url('${parse_img(options.animation.customLightMask)}')`)
+				setAvttFilePickerCssVar({
+					var: '--custom-mask-image',
+					target: token.parent().parent().find(".aura-element-container-clip[id='" + options.id + "']"),
+					url: options.animation.customLightMask
+				})
+			
 			}
 			else{
 				token.parent().parent().find(".aura-element-container-clip[id='" + options.id +"']").attr('data-animation', options.animation.light)
