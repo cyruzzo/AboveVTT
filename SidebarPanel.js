@@ -776,6 +776,7 @@ class SidebarListItem {
     let parentId = sceneData.parentId || RootFolder.Scenes.id;
     let item = new SidebarListItem(sceneData.id, name, sceneData.player_map, ItemType.Scene, folderPath, parentId);
     item.isVideo = sceneData.player_map_is_video == "1"; // explicity using `==` instead of `===` in case it's ever `1` or `"1"`
+    item.isUvtt = sceneData.UVTTFile == 1;
     item.noteData = sceneData.noteData || undefined;
     return item;
   }
@@ -2157,9 +2158,10 @@ function did_click_row(clickEvent) {
       else if(clickedItem.type == ItemType.Scene){
         // show the preview
         build_and_display_sidebar_flyout(clickEvent.clientY, async function (flyout) {
-          if (clickedItem.isVideo) {
-            flyout.append(`<div style="background:lightgray;padding:10px;">This map is a video. We don't currently support previewing videos.</div>`);
-          } else {
+          if (clickedItem.isVideo || clickedItem.isUvtt) {
+            flyout.append(`<div style="background:lightgray;padding:10px;">This map is a ${clickedItem.isVideo ? 'video' : 'UVTT scene'}. We don't currently support previewing ${clickedItem.isVideo ? 'videos' : 'UVTT scenes' }.</div>`);
+          } 
+          else {
             const src = clickedItem.image.startsWith('above-bucket-not-a-url') 
               ? await getAvttStorageUrl(clickedItem.image, true) 
               : clickedItem.image;
