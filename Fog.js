@@ -2531,7 +2531,6 @@ function getVisionBlockingTokenWalls(){
 
 			let boundary = new Boundary({ x: cX, y: cY });
 			boundary.radius = radius;
-			boundary.terrainWall = true;
 			visionBlockingTokenWalls.push(boundary);
 			if (currentToken.options.tokenWall.includes('Window')) {
 				boundary.c = 1;
@@ -2539,6 +2538,7 @@ function getVisionBlockingTokenWalls(){
 				boundary.c = 8;
 			}
 			else if (currentToken.options.tokenWall.includes('Object')) {
+				boundary.terrainWall = true;
 				const boundary2 = { ...boundary }
 				boundary2.getOtherPoint = true;
 				visionBlockingTokenWalls.push(boundary2);
