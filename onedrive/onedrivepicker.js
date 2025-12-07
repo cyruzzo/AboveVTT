@@ -58,7 +58,7 @@
 
         return accessToken;
     }
-    const baseUrl = "https://onedrive.live.com/picker";
+    const oneDriveBaseUrl = "https://onedrive.live.com/picker";
 
 
 
@@ -150,7 +150,7 @@
             filePicker: JSON.stringify(params),
         });
 
-        const url = `${baseUrl}?${queryString}`;
+        const url = `${oneDriveBaseUrl}?${queryString}`;
 
         const form = win.document.createElement("form");
         form.setAttribute("action", url);
