@@ -2003,13 +2003,13 @@ class MessageBroker {
 	}
 	
 	convertChat(data,local=false) {
-
+		const allowedTagArray = ['video', 'img', 'div', 'p', 'b', 'button', 'span', 'style', 'path', 'rect', 'svg', 'a', 'hr', 'ul', 'li', 'ol', 'h3', 'h2', 'h4', 'h1', 'table', 'tr', 'td', 'th', 'br', 'input', 'strong', 'em', 'time'];
 		data.text = this.decode_message_text(data.text);
 
 		//Security logic to prevent content being sent which can execute JavaScript.
 		data.player = DOMPurify.sanitize( data.player,{ALLOWED_TAGS: []});
-		data.img = DOMPurify.sanitize( data.img,{ALLOWED_TAGS: []});
-		data.text = DOMPurify.sanitize( data.text,{ALLOWED_TAGS: ['video','img','div','p', 'b', 'button', 'span', 'style', 'path', 'rect', 'svg', 'a', 'hr', 'ul', 'li', 'ol', 'h3', 'h2', 'h4', 'h1', 'table', 'tr', 'td', 'th', 'br', 'input', 'strong', 'em'], ADD_ATTR: ['target']}); //This array needs to include all HTML elements the extension sends via chat.
+		data.img = encodeURI(DOMPurify.sanitize( data.img,{ALLOWED_TAGS: []}));
+		data.text = DOMPurify.sanitize(data.text, { ALLOWED_TAGS: allowedTagArray, ADD_ATTR: ['target']}); //This array needs to include all HTML elements the extension sends via chat.
 
 		if(data.dmonly && !(window.DM) && !local) // /dmroll only for DM of or the user who initiated it
 			return $("<div/>");
@@ -2045,7 +2045,7 @@ class MessageBroker {
 
 
 		if (is_encounters_page() || is_characters_page() || is_campaign_page()) {
-			return $(`
+			let message = `
 				<li class="tss-8-Other-ref tss-17y30t1-GameLogEntry-Other-Flex">
 					<p role="img" class="tss-wyeh8h-Avatar-Flex">
 						<img class="tss-1e4a2a1-AvatarPortrait" src="${data.img}" alt="">
@@ -2058,23 +2058,9 @@ class MessageBroker {
 						<time datetime="${datetime}" title="${datestamp} ${timestamp}" class="tss-1yxh2yy-TimeAgo-TimeAgo">${timestamp}</time>
 					</div>
 				</li>
-			`);
-		} /*else if (is_characters_page()) {
-			return $(`
-				<li class="cwBGi-s80YSXZFf9zFTAGg== wtVS4Bjey6LwdMo1GyKvpQ== QXDbdjnpeXLRB22KlOxDsA== _42x6X+dUmW-21eOxSO1c7Q== _9ORHCNDFVTb1uWMCEaGDYg==">
-					<p role="img" class="TILdlgSwOYvXr2yBdjxU7A== QXDbdjnpeXLRB22KlOxDsA==">
-						<img class="U5icMJo74qXY3K0pjow8zA==" src="${data.img}" alt="">
-					</p>
-					<div class="pw06vls7GmA2pPxoGyDytQ== QXDbdjnpeXLRB22KlOxDsA== VwlMdrxdj-7VFbj4bhgJCg== bDu7knPli3v29ahk5PQFIQ==">
-						<div class="zmFwkmlgaKJ3kVU14zW8Lg== QXDbdjnpeXLRB22KlOxDsA== CoBE7nCohYcFyEBBP3K93A==">
-							<span class="_22SVeI3ayk2KgS4V+GqCCA==">${data.player}</span>
-						</div>
-						<div class="oDA6c7IdLEVJ7uSe5103CQ== iQqUeZkD8989e4pBhSqIrQ== wtVS4Bjey6LwdMo1GyKvpQ== QXDbdjnpeXLRB22KlOxDsA==">${data.text}</div>
-						<time datetime="${datetime}" title="${datestamp} ${timestamp}" class="VL1LOQfDhMHRvAGyWG2vGg== _1-XSkDcxqHW18wFo5qzQzA==">${timestamp}</time>
-					</div>
-				</li>
-			`);
-		}*/
+			`
+			return $(DOMPurify.sanitize(message, { ALLOWED_TAGS: allowedTagArray }));
+		} 
 
 		let newentry = $("<div/>");
 		newentry.attr('class', 'GameLogEntry_GameLogEntry__2EMUj GameLogEntry_Other__1rv5g Flex_Flex__3cwBI Flex_Flex__alignItems-flex-end__bJZS_ Flex_Flex__justifyContent-flex-start__378sw');
@@ -2082,6 +2068,9 @@ class MessageBroker {
 		let container = $("<div class='GameLogEntry_MessageContainer__RhcYB Flex_Flex__3cwBI Flex_Flex__alignItems-flex-start__HK9_w Flex_Flex__flexDirection-column__sAcwk'></div>");
 		container.append($("<div class='GameLogEntry_Line__3fzjk Flex_Flex__3cwBI Flex_Flex__justifyContent-space-between__1FcfJ'><span>" + data.player + "</span></div>"));
 		let entry = $("<div class='GameLogEntry_Message__1J8lC GameLogEntry_Collapsed__1_krc GameLogEntry_Other__1rv5g Flex_Flex__3cwBI'>" + data.text + "</div>");
+		
+		entry = DOMPurify.sanitize(entry, { ALLOWED_TAGS: allowedTagArray }); //This array needs to include all HTML elements the extension sends via chat.
+
 		container.append(entry);
 
 		
