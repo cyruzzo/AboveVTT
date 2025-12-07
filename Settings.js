@@ -295,11 +295,17 @@ function token_setting_options() {
 			label: "Block Vision",
 			type: 'dropdown',
 			options: [
-				{ value: "0", label: 'Disabled', description: "Token will not block line of sight." },
-				{ value: "1", label: 'Circle', description: "Token will block line of sight as if an object wall in a cirle." },
-				{ value: "2", label: 'Square', description: "Token will block line of sight as if an object wall in a square." },
+				{ value: false, label: 'Disabled', description: "Token will not block line of sight." },
+				{ value: "circle", label: 'Circle Wall', description: "Token will block line of sight as if walls in a cirle." },
+				{ value: "circleObject", label: 'Circle Object Wall', description: "Token will block line of sight as if object walls in a cirle." },
+				{ value: "circleWindow", label: 'Circle Window', description: "Token will block line of sight as if windows in a cirle." },
+				{ value: "circleCurtain", label: 'Circle Curtain', description: "Token will block line of sight as if curtains in a cirle." },
+				{ value: "square", label: 'Square Wall', description: "Token will block line of sight as if walls in a square." },
+				{ value: "squareObject", label: 'Square Object Wall', description: "Token will block line of sight as if object walls in a square." },
+				{ value: "squareWindow", label: 'Square Window', description: "Token will block line of sight as if windows in a square." },
+				{ value: "squareCurtain", label: 'Square Curtain', description: "Token will block line of sight as if curtains in a square." },
 			],
-			defaultValue: "0"
+			defaultValue: false
 		}
 		
 	];

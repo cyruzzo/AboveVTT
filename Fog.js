@@ -2526,18 +2526,25 @@ function getVisionBlockingTokenWalls(){
 		const rot = currentToken.options.rotation ? parseFloat(currentToken.options.rotation) * (Math.PI / 180) : 0;
 		
 		
-		if (currentToken.options.tokenWall == '1'){
+		if (currentToken.options.tokenWall && currentToken.options.tokenWall?.includes('circle')){
 			let radius = (width / 2);
 
 			let boundary = new Boundary({ x: cX, y: cY });
 			boundary.radius = radius;
-			boundary.terrainWall = true;
 			visionBlockingTokenWalls.push(boundary);
-			const boundary2 = { ...boundary }
-			boundary2.getOtherPoint = true;
-			visionBlockingTokenWalls.push(boundary2);
+			if (currentToken.options.tokenWall.includes('Window')) {
+				boundary.c = 1;
+			} else if (currentToken.options.tokenWall.includes('Curtain')) {
+				boundary.c = 8;
+			}
+			else if (currentToken.options.tokenWall.includes('Object')) {
+				boundary.terrainWall = true;
+				const boundary2 = { ...boundary }
+				boundary2.getOtherPoint = true;
+				visionBlockingTokenWalls.push(boundary2);
+			}
 		}
-		else if(currentToken.options.tokenWall == '2'){
+		else if (currentToken.options.tokenWall && currentToken.options.tokenWall?.includes('square')){
 			const poly = rotatePoints([
 				{ x: cX - width / 2, y: cY - height / 2 },
 				{ x: cX - width / 2, y: cY + height / 2 },
@@ -2555,7 +2562,15 @@ function getVisionBlockingTokenWalls(){
 					boundary.a = poly[i];
 					boundary.b = poly[parseInt(i) + 1];
 				}
-				boundary.terrainWall = true;
+				if(currentToken.options.tokenWall.includes('Window')){
+					boundary.c = 1;
+				}else if(currentToken.options.tokenWall.includes('Curtain')){
+					boundary.c = 8;
+				}
+				else if(currentToken.options.tokenWall.includes('Object')){
+					boundary.terrainWall = true;
+				}
+
 				visionBlockingTokenWalls.push(boundary);
 			}
 		}
