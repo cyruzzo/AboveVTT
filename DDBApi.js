@@ -56,6 +56,24 @@ class DDBApi {
     return await request.json();
   }
 
+  static async fetchItemsJsonWithToken(itemsArray = [], page = 0, pageSize = 1000) {
+    const url = `https://character-service.dndbeyond.com/character/v5.1/game-data/items?campaignId=${find_game_id()}&sharingSetting=2&page=${page}&pageSize=${pageSize}`;
+    const response = await DDBApi.fetchJsonWithToken(url);
+    if (!response) {
+      console.warn(`DDBApi.fetchItemsJsonWithToken received no response for url: ${url}`);
+      return itemsArray;
+    } 
+    itemsArray.push(...response.data);
+    if (response.pagination.total > response.pagination.skip + response.pagination.take) {
+      return await DDBApi.fetchItemsJsonWithToken(itemsArray, page + 1, pageSize);
+    }
+    window.ITEMS_CACHE = itemsArray
+    return itemsArray;
+  }
+  static async addItemsToPartyInventory(items) {
+    DDBApi.postJsonWithToken("https://character-service.dndbeyond.com/character/v5/inventory/item", items);
+  }
+
   static async fetchHtmlWithToken(url, extraConfig = {}) {
     try{
       const token = await DDBApi.#refreshToken();

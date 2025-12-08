@@ -2322,7 +2322,7 @@ function inject_sidebar_send_to_gamelog_button(sidebarPaneContent) {
         text: html
       };
       window.MB.inject_chat(data);
-      notify_gamelog();
+      notify_gamelog([]);
     }
     else{
       
@@ -2339,6 +2339,64 @@ function inject_sidebar_send_to_gamelog_button(sidebarPaneContent) {
     
     
   });
+}
+
+function find_items_in_cache_by_id(itemIds = []) {
+  const foundItems = [];
+  for (let itemId of itemIds) {
+    const cachedItem = window.ITEMS_CACHE.find(ci => ci.id.toString() === itemId.toString());
+    if (cachedItem) {
+      foundItems.push(cachedItem);
+    }
+  }
+  return foundItems;
+}
+function find_items_in_cache_by_name(names = [], exactMatch = false) {
+  names = names.map(name => name.toLowerCase());
+  
+  if(exactMatch){
+    return window.ITEMS_CACHE.filter(ci => names.includes(ci.name.toString().toLowerCase()));
+  }
+  return window.ITEMS_CACHE.filter(ci => ci.name.toString().toLowerCase().includes(names));
+}
+function add_items_to_party_inventory(items = []) {
+  const itemIds = Object.keys(items);
+  if (itemIds.length === 0) {
+    console.warn('add_items_to_party_inventory called with no items');
+    return;
+  }
+  const characterId = window.DM ? parseInt(window.playerUsers[0]?.id) : parseInt(my_player_id());
+  const data = { characterId, equipment: [] };
+  for (let item of items) {
+    const entityId = parseInt(item.id);
+    const entityTypeId = parseInt(item.entityTypeId);
+    const quantity = parseInt(item.quantity);
+    const containerEntityTypeId = 618115330; // campaign inventory enum. See ContainerTypeEnum[ContainerTypeEnum["CAMPAIGN"] on DDB.
+    const containerEntityId = parseInt(find_game_id());
+    data.equipment.push({
+      entityId,
+      entityTypeId,
+      containerEntityTypeId,
+      containerEntityId,
+      quantity
+    });
+  }
+
+  DDBApi.addItemsToPartyInventory(data).then(response => {
+    console.log('add_items_to_party_inventory response:', response);
+    if(window.MB){
+      window.MB.sendMessage('character-sheet/item-shared/fulfilled', {});
+    }
+    else{
+      tabCommunicationChannel.postMessage({
+        msgType: 'DDBMessage',
+        action: 'character-sheet/item-shared/fulfilled',
+        data: {},
+        sendTo: window.sendToTab
+      });
+    }
+  });
+
 }
 async function fetch_github_issue_comments(issueNumber) {
   const request = await fetch("https://api.github.com/repos/cyruzzo/AboveVTT/issues?labels=bug", { credentials: "omit" });
