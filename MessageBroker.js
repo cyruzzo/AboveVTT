@@ -2005,11 +2005,7 @@ class MessageBroker {
 	convertChat(data,local=false) {
 		const allowedTagArray = ['video', 'img', 'div', 'p', 'b', 'button', 'span', 'style', 'path', 'rect', 'svg', 'a', 'hr', 'ul', 'li', 'ol', 'h3', 'h2', 'h4', 'h1', 'table', 'tr', 'td', 'th', 'br', 'input', 'strong', 'em', 'time'];
 		data.text = this.decode_message_text(data.text);
-
-		//Security logic to prevent content being sent which can execute JavaScript.
-		data.player = DOMPurify.sanitize( data.player,{ALLOWED_TAGS: []});
-		data.img = encodeURI(DOMPurify.sanitize( data.img,{ALLOWED_TAGS: []}));
-		data.text = DOMPurify.sanitize(data.text, { ALLOWED_TAGS: allowedTagArray, ADD_ATTR: ['target']}); //This array needs to include all HTML elements the extension sends via chat.
+		data.img = encodeURI(data.img);
 
 		if(data.dmonly && !(window.DM) && !local) // /dmroll only for DM of or the user who initiated it
 			return $("<div/>");
@@ -2059,7 +2055,7 @@ class MessageBroker {
 					</div>
 				</li>
 			`
-			return $(DOMPurify.sanitize(message, { ALLOWED_TAGS: allowedTagArray }));
+			return $(DOMPurify.sanitize(message, { ALLOWED_TAGS: allowedTagArray, ADD_ATTR: ['target'] }));
 		} 
 
 		let newentry = $("<div/>");
@@ -2069,7 +2065,7 @@ class MessageBroker {
 		container.append($("<div class='GameLogEntry_Line__3fzjk Flex_Flex__3cwBI Flex_Flex__justifyContent-space-between__1FcfJ'><span>" + data.player + "</span></div>"));
 		let entry = $("<div class='GameLogEntry_Message__1J8lC GameLogEntry_Collapsed__1_krc GameLogEntry_Other__1rv5g Flex_Flex__3cwBI'>" + data.text + "</div>");
 		
-		entry = DOMPurify.sanitize(entry, { ALLOWED_TAGS: allowedTagArray }); //This array needs to include all HTML elements the extension sends via chat.
+		entry = DOMPurify.sanitize(entry, { ALLOWED_TAGS: allowedTagArray, ADD_ATTR: ['target'] }); //This array needs to include all HTML elements the extension sends via chat.
 
 		container.append(entry);
 

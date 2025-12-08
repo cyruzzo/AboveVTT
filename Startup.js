@@ -79,7 +79,9 @@ $(function() {
         addExtensionPathStyles();
         $('body').append(`<script type="text/javascript" src="https://www.dropbox.com/static/api/2/dropins.js" id="dropboxjs" data-app-key="h3iaoazdu0wqrfd"></script>`)
       }).then(() => {     
-
+        DDBApi.fetchItemsJsonWithToken().then(data => {
+          window.ITEMS_CACHE = data;
+        })
         const lastSendToDefault = localStorage.getItem(`${gameId}-sendToDefault`, gamelog_send_to_text()); 
 
         if(lastSendToDefault != null){
@@ -262,6 +264,11 @@ $(function() {
           }
           else if(event.data.msgType == 'CharacterData'){
             update_pc_with_data(event.data.characterId, event.data.pcData);
+          }
+          if (event.data.msgType == 'DDBMessage'){
+            if (event.data.sendTo == window.PLAYER_ID || (window.DM && event.data.sendTo == false)) {
+              window.MB.sendMessage(event.data.action, event.data.data);
+            }
           }
         })
         

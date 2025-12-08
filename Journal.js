@@ -2530,6 +2530,38 @@ class JournalManager{
 
 
         $(target).html($newHTML);
+
+		const partyLootTable = $(target).find('.party-item-table');
+		for (let i = 0; i < partyLootTable.length; i++) {
+			const currTable = $(partyLootTable[i]);
+			const rows = currTable.find('tbody tr');
+			rows.each(function () {
+				const itemId = $(this).find('.item-link-cell a')?.attr('href')?.match(/\/(\d*?)\-.*?$/i)?.[1];
+				if (itemId && window.ITEMS_CACHE) {
+					const itemData = window.ITEMS_CACHE.find(d => d.id == itemId);
+					if (itemData) {
+						const descriptionCell = $(this).find('.item-description-cell');
+						descriptionCell.html(itemData.description);
+						const quantity = parseInt($(this).find('.item-quantity-cell').text()) || 1;
+						const itemAddCell = $(this).find('.item-add-cell');
+						const button = $(`<button class="item-add-button" data-quantity="${quantity}" data-id="${itemId}" title="Add ${itemData.name} to Party Loot">+</button>`);
+						itemAddCell.empty().append(button);
+					}
+				}
+			});
+		}
+		if (partyLootTable.length > 0){
+			$(target).off('click.addPartyLootItem').on('click.addPartyLootItem', '.item-add-button', function (e) {
+				e.preventDefault();
+				e.stopPropagation();
+				const itemId = $(this).data('id');
+				const quantity = parseInt($(this).data('quantity')) || 1;
+				const itemData = find_items_in_cache_by_id([itemId]);
+				itemData[0].quantity = quantity;
+				add_items_to_party_inventory(itemData);
+			});
+		}
+
     }
 	
 	note_visibility(id,visibility){
@@ -3710,6 +3742,43 @@ class JournalManager{
 <p>4th level (3 slots): greater invisibility, ice storm</p>
 <p>5th level (1 slot): cone of cold</p>`
 			    },
+				{
+					"title": "Treasure / Loot Table",
+					"description": "Add a treasure table with buttons to add to party inventory.",
+					"content": `<style id='contentStyles'>${contentStyles}</style>
+					
+					<table class="party-item-table" style="width: 100%; border-collapse: collapse;" border="1">
+						<thead>
+							<tr>
+							<th style="padding: 8px; text-align: left;">Quantity</th>
+							<th style="padding: 8px; text-align: left;">Item</th>
+							<th style="padding: 8px; text-align: left;">Description</th>
+							<th style="padding: 8px; text-align: left;">Add to Party Inventory</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td class="item-quantity-cell" style="padding: 8px; text-align: left;">2</td>
+								<td class="item-link-cell" style="padding: 8px; text-align: left;"><a class="tooltip-hover no-border ignore-abovevtt-formating" href="https://www.dndbeyond.com/magic-items/8960641-potion-of-healing">Potion of Healing</a></td>
+								<td class="item-description-cell" style="padding: 8px; text-align: left;">Auto Fills</td>
+								<td class="item-add-cell" style="padding: 8px; text-align: left;">Auto Fills</td>
+							</tr>
+							<tr>
+								<td class="item-quantity-cell" style="padding: 8px; text-align: left;">Insert Quantity</td>
+								<td class="item-link-cell" style="padding: 8px; text-align: left;">Insert Item Link</td>
+								<td class="item-description-cell" style="padding: 8px; text-align: left;">Auto Fills</td>
+								<td class="item-add-cell" style="padding: 8px; text-align: left;">Auto Fills</td>
+							</tr>
+							<tr>
+								<td class="item-quantity-cell" style="padding: 8px; text-align: left;">&nbsp;</td>
+								<td class="item-link-cell" style="padding: 8px; text-align: left;">&nbsp;</td>
+								<td class="item-description-cell" style="padding: 8px; text-align: left;">&nbsp;</td>
+								<td class="item-add-cell" style="padding: 8px; text-align: left;">&nbsp;</td>
+							</tr>
+						</tbody>
+					</table>			
+					`
+				},
 			],
 		  	table_grid: false,
 			toolbar: 'undo styleselect template | horizontalrules | bold italic underline strikethrough | alignleft aligncenter alignright justify| outdent indent | bullist numlist | forecolor backcolor | fontsizeselect | link unlink | image media filePickers table tableCustom | code',
