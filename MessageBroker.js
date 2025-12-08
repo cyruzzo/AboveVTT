@@ -2003,7 +2003,6 @@ class MessageBroker {
 	}
 	
 	convertChat(data,local=false) {
-
 		data.text = this.decode_message_text(data.text);
 
 		const isChatEnabled = is_encounters_page() || is_characters_page() || is_campaign_page();
@@ -2064,35 +2063,17 @@ class MessageBroker {
 					</div>
 				</li>
 			`);
-		} /*else if (is_characters_page()) {
-			return $(`
-				<li class="cwBGi-s80YSXZFf9zFTAGg== wtVS4Bjey6LwdMo1GyKvpQ== QXDbdjnpeXLRB22KlOxDsA== _42x6X+dUmW-21eOxSO1c7Q== _9ORHCNDFVTb1uWMCEaGDYg==">
-					<p role="img" class="TILdlgSwOYvXr2yBdjxU7A== QXDbdjnpeXLRB22KlOxDsA==">
-						<img class="U5icMJo74qXY3K0pjow8zA==" src="${data.img}" alt="">
-					</p>
-					<div class="pw06vls7GmA2pPxoGyDytQ== QXDbdjnpeXLRB22KlOxDsA== VwlMdrxdj-7VFbj4bhgJCg== bDu7knPli3v29ahk5PQFIQ==">
-						<div class="zmFwkmlgaKJ3kVU14zW8Lg== QXDbdjnpeXLRB22KlOxDsA== CoBE7nCohYcFyEBBP3K93A==">
-							<span class="_22SVeI3ayk2KgS4V+GqCCA==">${data.player}</span>
-						</div>
-						<div class="oDA6c7IdLEVJ7uSe5103CQ== iQqUeZkD8989e4pBhSqIrQ== wtVS4Bjey6LwdMo1GyKvpQ== QXDbdjnpeXLRB22KlOxDsA==">${data.text}</div>
-						<time datetime="${datetime}" title="${datestamp} ${timestamp}" class="VL1LOQfDhMHRvAGyWG2vGg== _1-XSkDcxqHW18wFo5qzQzA==">${timestamp}</time>
-					</div>
-				</li>
-			`);
-		}*/
+		} 
 
 		let newentry = $("<div/>");
 		newentry.attr('class', 'GameLogEntry_GameLogEntry__2EMUj GameLogEntry_Other__1rv5g Flex_Flex__3cwBI Flex_Flex__alignItems-flex-end__bJZS_ Flex_Flex__justifyContent-flex-start__378sw');
-		newentry.append($("<p role='img' class='Avatar_Avatar__131Mw Flex_Flex__3cwBI'>${image}</p>"));
+		newentry.append($("<p role='img' class='Avatar_Avatar__131Mw Flex_Flex__3cwBI'>" + image + "</p>"));
 		let container = $("<div class='GameLogEntry_MessageContainer__RhcYB Flex_Flex__3cwBI Flex_Flex__alignItems-flex-start__HK9_w Flex_Flex__flexDirection-column__sAcwk'></div>");
 		container.append($("<div class='GameLogEntry_Line__3fzjk Flex_Flex__3cwBI Flex_Flex__justifyContent-space-between__1FcfJ'><span>" + data.player + "</span></div>"));
 		let entry = $("<div class='GameLogEntry_Message__1J8lC GameLogEntry_Collapsed__1_krc GameLogEntry_Other__1rv5g Flex_Flex__3cwBI'>" + data.text + "</div>");
+
 		container.append(entry);
 
-		
-
-
-		
 		container.append($("<time datetime='" + datetime + "' class='GameLogEntry_TimeAgo__zZTLH TimeAgo_TimeAgo__2M8fr'></time"));
 
 		newentry.append(container);
@@ -2102,7 +2083,6 @@ class MessageBroker {
 		}
 
 		return newentry;
-		
 	}
 
 
