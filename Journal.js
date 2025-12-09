@@ -2536,12 +2536,24 @@ class JournalManager{
 			const currTable = $(partyLootTable[i]);
 			const rows = currTable.find('tbody tr');
 			rows.each(function () {
-				const itemId = $(this).find('.item-link-cell a')?.attr('href')?.match(/\/(\d*?)\-.*?$/i)?.[1];
+				
+				const link = $(this).find('.item-link-cell a');
+				const targetLink = link.length>0 ? link.attr('href') :
+									$(this).find('.item-link-cell')?.text();
+			
+				const itemId = link.length > 0 ? targetLink?.match(/\/(\d*?)\-.*?$/i)?.[1] :
+													targetLink?.match(/https.*\/(\d*?)\-.*?$/i)?.[1];
+				
+				
 				if (itemId && window.ITEMS_CACHE) {
 					const itemData = window.ITEMS_CACHE.find(d => d.id == itemId);
 					if (itemData) {
 						const descriptionCell = $(this).find('.item-description-cell');
 						descriptionCell.html(itemData.description);
+						if(link.length == 0){
+							const itemLink = $(`<a href=${targetLink?.match(/https.*\/\d*?\-.*?$/i)?.[0]}" class='tooltip-hover no-border ignore-abovevtt-formating'>${itemData.name}</a>`);
+							$(this).find('.item-link-cell').empty().append(itemLink);
+						}
 						const quantity = parseInt($(this).find('.item-quantity-cell').text()) || 1;
 						const itemAddCell = $(this).find('.item-add-cell');
 						const button = $(`<button class="item-add-button" data-quantity="${quantity}" data-id="${itemId}" title="Add ${itemData.name} to Party Loot">+</button>`);
