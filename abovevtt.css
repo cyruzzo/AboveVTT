@@ -4557,6 +4557,12 @@ div.ct-sidebar__pane-content > div.selected-tab,
 .ct-sidebar--visible{
    height: calc(-15px + 100vh) !important;
 }
+.ct-sidebar__inner [class*='styles_controls']>span{
+    visibility: hidden; 
+    width: 0px;
+    height: 0px; 
+    position: absolute;
+}
 
 /*this may be a DDB bug - as the `Send to (default)` button scrolls off screen and messess with our layout as at 4/25/2024*/
 .ct-sidebar__pane-content>div:first-of-type,
