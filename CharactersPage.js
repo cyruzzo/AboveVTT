@@ -79,10 +79,12 @@ const sendCharacterUpdateEvent = mydebounce(() => {
   const pcData = {...recentCharacterUpdates};
   recentCharacterUpdates = {};
   if (is_abovevtt_page()) {
-    window.MB.sendMessage("custom/myVTT/character-update", {
-      characterId: window.PLAYER_ID,
-      pcData: pcData
-    });
+    if(window.MB){
+      window.MB.sendMessage("custom/myVTT/character-update", {
+        characterId: window.PLAYER_ID,
+        pcData: pcData
+      });
+    }
     update_pc_with_data(window.PLAYER_ID, pcData);
   } else {
     tabCommunicationChannel.postMessage({

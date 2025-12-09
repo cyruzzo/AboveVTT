@@ -838,7 +838,7 @@ class DiceRoller {
      * clicks the DDB dice and then clicks the roll button
      * @param diceRoll {DiceRoll} the DiceRoll object to roll
      */
-    clickDiceButtons(diceRoll) {
+    async clickDiceButtons(diceRoll) {
 
         if (diceRoll === undefined) {
             console.warn("clickDiceButtons was called without a diceRoll object")
@@ -847,18 +847,18 @@ class DiceRoller {
 
         if ($(".dice-toolbar").hasClass("rollable")) {
             // clear any that are already selected so we don't roll too many dice
-            $(".dice-toolbar__dropdown-die").click();
+            await $(".dice-toolbar__dropdown-die").click();
         }
 
         if ($(".dice-toolbar__dropdown").length > 0) {
             if (!$(".dice-toolbar__dropdown").hasClass("dice-toolbar__dropdown-selected")) {
                 // make sure it's open
-                $(".dice-toolbar__dropdown-die").click();
+                await $(".dice-toolbar__dropdown-die").click();
             }
             for(let diceType in diceRoll.diceToRoll) {
                 let numberOfDice = diceRoll.diceToRoll[diceType];
                 for (let i = 0; i < numberOfDice; i++) {
-                    $(`.dice-die-button[data-dice='${diceType}']`).click();
+                    await $(`.dice-die-button[data-dice='${diceType}']`).click();
                 }
             }
         }
@@ -867,19 +867,19 @@ class DiceRoller {
             console.log("diceRoll.sendToOverride", diceRoll.sendToOverride)
             if (diceRoll.sendToOverride === "Everyone") {
                 // expand the options and click the "Everyone" button
-                $(".dice-toolbar__target-menu-button").click();
-                $("#options-menu ul > li > ul > div").eq(0).click();
+                await $(".dice-toolbar__target-menu-button").click();
+                await $("#options-menu ul > li > ul > div").eq(0).click();
             } else if (diceRoll.sendToOverride === "Self") {
                 // expand the options and click the "Self" button
-                $(".dice-toolbar__target-menu-button").click();
-                $("#options-menu ul > li > ul > div").eq(1).click();
+                await $(".dice-toolbar__target-menu-button").click();
+                await $("#options-menu ul > li > ul > div").eq(1).click();
             } else if (diceRoll.sendToOverride === "DungeonMaster") {
                 // expand the options and click the "Self" button
-                $(".dice-toolbar__target-menu-button").click();
-                $("#options-menu ul > li > ul > div").eq(2).click();
+                await $(".dice-toolbar__target-menu-button").click();
+                await $("#options-menu ul > li > ul > div").eq(2).click();
             } else {
                 // click the roll button which will use whatever the gamelog is set to roll to
-                $(".dice-toolbar__target").children().first().click();
+                await $(".dice-toolbar__target").children().first().click();
             }
         }
     }
