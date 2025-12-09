@@ -521,7 +521,7 @@ async function start_above_vtt_for_spectator() {
 
   window.document.title = `AVTT Spectator ${window.document.title}`
   $('meta[name="viewport"]').attr('content', 'width=device-width, initial-scale=1.0, user-scalable=no')
-  const playerId = `spectator-${window.gameId}`;
+  const playerId = `spectator-${window.gameId}-${uuid()}`;
   window.PLAYER_ID = playerId;
   window.PLAYER_IMG = dmAvatarUrl;
   window.PLAYER_NAME = playerId;

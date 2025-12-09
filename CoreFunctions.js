@@ -2365,7 +2365,7 @@ function add_items_to_party_inventory(items = []) {
     console.warn('add_items_to_party_inventory called with no items');
     return;
   }
-  const characterId = window.DM ? parseInt(window.playerUsers[0]?.id) : parseInt(my_player_id());
+  const characterId = window.DM || is_spectator_page() ? parseInt(window.playerUsers[0]?.id) : parseInt(my_player_id());
   const data = { characterId, equipment: [] };
   for (let item of items) {
     const entityId = parseInt(item.id);
