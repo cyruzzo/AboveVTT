@@ -18,6 +18,7 @@ import { get_scene_data_hbtd } from './hbtd-scene-data.js';
 import { get_scene_data_ottg } from './ottg-scene-data.js';
 import { get_scene_data_wel } from './wel-scene-data.js';
 import { get_scene_data_hotb } from './hotb-scene-data.js';
+import { get_scene_data_tftyp } from './tftyp-scene-data.js';
 
 //TO DO: Split this out so it only loads whats needed based on current chapter loading 
 const get_ddb_extras = {
@@ -132731,7 +132732,8 @@ const get_ddb_extras = {
         ...get_scene_data_hbtd,
         ...get_scene_data_ottg,
         ...get_scene_data_wel,
-        ...get_scene_data_hotb
+        ...get_scene_data_hotb,
+        ...get_scene_data_tftyp
     }
 
 
