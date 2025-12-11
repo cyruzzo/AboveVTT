@@ -73,7 +73,9 @@ class DDBApi {
   static async addItemsToPartyInventory(items) {
     DDBApi.postJsonWithToken("https://character-service.dndbeyond.com/character/v5/inventory/item", items);
   }
-
+  static async addCurrenciesToPartyInventory(currencies) {
+    DDBApi.putJsonWithToken("https://character-service.dndbeyond.com/character/v5/inventory/currency/transaction", currencies);
+  }
   static async fetchHtmlWithToken(url, extraConfig = {}) {
     try{
       const token = await DDBApi.#refreshToken();
@@ -110,7 +112,13 @@ class DDBApi {
     }
     return await DDBApi.fetchJsonWithTokenOmitCred(url, config);
   }
-
+  static async putJsonWithToken(url, body) {
+    const config = {
+      method: 'PUT',
+      body: JSON.stringify(body)
+    }
+    return await DDBApi.fetchJsonWithTokenOmitCred(url, config);
+  }
   static async deleteWithToken(url) {
     const token = await DDBApi.#refreshToken();
     const config = {

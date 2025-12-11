@@ -2398,6 +2398,30 @@ function add_items_to_party_inventory(items = []) {
   });
 
 }
+function add_currency_to_party_inventory(currency = {cp:0,sp:0,gp:0,ep:0,pp:0}) {
+  
+  const characterId = window.DM || is_spectator_page() ? parseInt(window.playerUsers[0]?.id) : parseInt(my_player_id());
+  const destinationEntityTypeId = 618115330; // campaign inventory enum. See ContainerTypeEnum[ContainerTypeEnum["CAMPAIGN"] on DDB.
+  const destinationEntityId = parseInt(find_game_id());
+  const data = { characterId, destinationEntityId, destinationEntityTypeId, ...currency };
+
+
+  DDBApi.addCurrenciesToPartyInventory(data).then(response => {
+    console.log('add_items_to_party_inventory response:', response);
+    if (window.MB) {
+      window.MB.sendMessage('character-sheet/item-shared/fulfilled', {});
+    }
+    else {
+      tabCommunicationChannel.postMessage({
+        msgType: 'DDBMessage',
+        action: 'character-sheet/item-shared/fulfilled',
+        data: {},
+        sendTo: window.sendToTab
+      });
+    }
+  });
+
+}
 async function fetch_github_issue_comments(issueNumber) {
   const request = await fetch("https://api.github.com/repos/cyruzzo/AboveVTT/issues?labels=bug", { credentials: "omit" });
   const response = await request.json();

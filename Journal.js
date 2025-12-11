@@ -2544,6 +2544,32 @@ class JournalManager{
 				const itemId = link.length > 0 ? targetLink?.match(/\/(\d*?)\-.*?$/i)?.[1] :
 													targetLink?.match(/https.*\/(\d*?)\-.*?$/i)?.[1];
 				
+				if(!itemId){
+					$(this).find('.item-link-cell').html(targetLink);
+					const currencies = ['cp','sp','ep','gp','pp'];
+					const data ={
+						cp: 0,
+						sp: 0,
+						ep: 0,
+						gp: 0,
+						pp: 0
+					};
+					
+					for(const currency of currencies){
+						const currencyExists = targetLink?.toLowerCase()?.match(new RegExp(`([+-]?\\d+)([\\s]+)?${currency}([\\s,]?|$)`, 'i'))
+						if(currencyExists){
+							const amount = parseInt(currencyExists[1]);
+							data[currency] = amount;
+						}
+					}
+					const descriptionCell = $(this).find('.item-description-cell');
+					descriptionCell.html('');
+					const quantityCell = $(this).find('.item-quantity-cell');
+					quantityCell.html('');
+					const itemAddCell = $(this).find('.item-add-cell');
+					const button = $(`<button class="item-add-button ignore-abovevtt-formating" data-currency='${JSON.stringify(data)}' title="Add ${targetLink} to Party Loot">+</button>`);
+					itemAddCell.empty().append(button);
+				}
 				
 				if (itemId && window.ITEMS_CACHE) {
 					const itemData = window.ITEMS_CACHE.find(d => d.id == itemId);
@@ -2556,16 +2582,25 @@ class JournalManager{
 						}
 						const quantity = parseInt($(this).find('.item-quantity-cell').text()) || 1;
 						const itemAddCell = $(this).find('.item-add-cell');
-						const button = $(`<button class="item-add-button" data-quantity="${quantity}" data-id="${itemId}" title="Add ${itemData.name} to Party Loot">+</button>`);
+						const button = $(`<button class="item-add-button ignore-abovevtt-formating" data-quantity="${quantity}" data-id="${itemId}" title="Add ${itemData.name} to Party Loot">+</button>`);
 						itemAddCell.empty().append(button);
 					}
 				}
+
+				
 			});
 		}
 		if (partyLootTable.length > 0){
 			$(target).off('click.addPartyLootItem').on('click.addPartyLootItem', '.item-add-button', function (e) {
 				e.preventDefault();
 				e.stopPropagation();
+				const currencyMatch = $(this).data('currency');
+				if(currencyMatch){
+					const currencyData = currencyMatch;	
+					add_currency_to_party_inventory(currencyData);
+					return;
+				}
+
 				const itemId = $(this).data('id');
 				const quantity = parseInt($(this).data('quantity')) || 1;
 				const itemData = find_items_in_cache_by_id([itemId]);
