@@ -39,6 +39,7 @@ $(function() {
         }
       })
       .then(init_splash)              // show the splash screen; it reads from settings. That's why we show it here instead of earlier
+      .then(initDmScreen)           // setup the DM screen container
       .then(harvest_campaign_secret)  // find our join link
       .then(set_campaign_secret)      // set it to window.CAMPAIGN_SECRET
       .then(async () => {

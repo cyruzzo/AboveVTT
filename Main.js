@@ -2571,6 +2571,22 @@ function init_zoom_buttons() {
 
 	// ZOOM BUTTON
 	let zoom_section = $("<div id='zoom_buttons' />");
+	const dm_screen_button = $(`<div id='dm_screen_button' class='ddbc-tab-options--layout-pill hasTooltip button-icon hideable' data-name='Show/Hide DM Screen'> 
+		<div class="ddbc-tab-options__header-heading">
+				<span class="material-icons button-icon">DM Screen</span>
+		</div></div>
+		`);
+	dm_screen_button.click(function (event) {
+		console.log("dm_screen_button", event);
+		const dmScreenContainer = $("#dmScreenContainer");
+		const containerVisibility = dmScreenContainer.css('display');
+		if(containerVisibility === 'none'){
+			dmScreenContainer.show();
+		}else{
+			dmScreenContainer.hide();
+		}
+	});
+	zoom_section.append(dm_screen_button);
 	const youtube_controls_button = $(`<div id='youtube_controls_button' class='ddbc-tab-options--layout-pill hasTooltip button-icon hideable' data-name='Quick toggle youtube controls'></div>`);
 	youtube_controls_button.click(function (event) {
 		console.log("youtube_controls_button", event);

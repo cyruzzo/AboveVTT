@@ -3206,6 +3206,47 @@ body .note-visibility-toggle-container {
     padding: 10px;
     width:80%;
 }
+
+#dmScreenContainer {
+    position: fixed;
+    top: 30px;
+    transform: translateX(-60%);
+    left: 50%;
+    margin: auto;
+    overflow:auto;
+    height: calc(100% - 40px);
+    text-align:center;
+    z-index: 70001;
+    border: 3px solid black;
+    border-radius: 8px;
+    padding: 10px;
+    width:80%;
+    display: none;
+    background-color: #FCFBF9;
+    .dmScreenBlock {
+        h2 {
+            font-size: 20px;
+        }
+        h3 {
+            font-size: 16px;
+            border-bottom: #D6BE8C solid thin;
+        }
+        .dmScreenConditionsColumns {
+            column-count: auto;
+            column-width: 300px; /* adjust as needed */
+            column-gap: 20px;
+            column-rule: 1px solid #ccc;
+        }
+
+        .dmScreenCondition {
+            break-inside: avoid;
+            margin-bottom: 15px;
+            font-size: 12px;
+            text-align: left;
+        }
+    }
+}
+
 #patreons ul li {
     width: 136px;
 }
