@@ -1596,6 +1596,7 @@ class JournalManager{
 								    let numberFound = $(this).attr('data-number');
 								    const spellName = $(this).attr('data-spell');
 								    const remainingText = $(this).hasClass('each') ? '' : `${spellName} slots remaining`
+									
 								    const track_ability = function(key, updatedValue){	    	
 										if (window.JOURNAL.notes[noteId].abilityTracker === undefined) {
 											window.JOURNAL.notes[noteId].abilityTracker = {};
@@ -1613,7 +1614,11 @@ class JournalManager{
 								    }
 
 								    let input = createCountTracker(window.JOURNAL.notes[noteId], spellName, numberFound, remainingText, "", track_ability);
-								    $(this).find('p').remove();
+									const playerDisabled = $(this).hasClass('player-disabled');
+									if (!window.DM && playerDisabled) {
+										input.prop('disabled', true);
+									}
+									$(this).find('p').remove();
 								    $(this).after(input)
 							    })
 					            flyout.append(tooltipHtml);
@@ -1808,6 +1813,10 @@ class JournalManager{
 		    }
 
 		    let input = createCountTracker(self.notes[id], spellName, numberFound, remainingText, "", track_ability);
+			const playerDisabled = $(this).hasClass('player-disabled');
+			if (!window.DM && playerDisabled) {
+				input.prop('disabled', true);
+			}
 		    $(this).find('p').remove();
 		    $(this).after(input)
 	    })
@@ -2446,7 +2455,6 @@ class JournalManager{
             input = input.replace(/\[track\]([a-zA-Z\s]+)([\d]+)\[\/track\]/g, function(m, m1, m2){
                 return `<span>${m1}</span><span class="add-input each" data-number="${m2}" data-spell="${m1}"></span>`
             })		
-			
  
             input = input.replace(/\&nbsp\;/g, ' ');
             // Replace quotes to entity
@@ -2543,7 +2551,8 @@ class JournalManager{
 			
 				const itemId = link.length > 0 ? targetLink?.match(/\/(\d*?)\-.*?$/i)?.[1] :
 													targetLink?.match(/https.*\/(\d*?)\-.*?$/i)?.[1];
-				
+				const quantityCell = $(this).find('.item-quantity-cell');
+				const quantity = parseInt($(this).find('.item-quantity-cell').text());
 				if(!itemId){
 					$(this).find('.item-link-cell').html(targetLink);
 					const currencies = ['cp','sp','ep','gp','pp'];
@@ -2557,8 +2566,10 @@ class JournalManager{
 						}
 					}
 					const descriptionCell = $(this).find('.item-description-cell');
-					const quantityCell = $(this).find('.item-quantity-cell');
+					
 					const itemAddCell = $(this).find('.item-add-cell');
+
+					
 					if(Object.keys(data).length == 0){
 						const descriptionText = descriptionCell.text();
 						const delimiters = /(notes:|cost:|weight:)/gi;
@@ -2576,7 +2587,6 @@ class JournalManager{
 						const customItem = {
 							name: targetLink,
 							description,
-							quantity: parseInt(quantityCell.text()) || 1,
 							cost,
 							weight,
 							notes
@@ -2586,7 +2596,7 @@ class JournalManager{
 					}
 					else {
 						descriptionCell.html('');
-						quantityCell.html('');
+						
 						const button = $(`<button class="item-add-button ignore-abovevtt-formating" data-currency='${JSON.stringify(data)}' title="Add ${targetLink} to Party Loot">+</button>`);
 						itemAddCell.empty().append(button);
 					}
@@ -2602,32 +2612,44 @@ class JournalManager{
 							const itemLink = $(`<a href=${targetLink?.match(/https.*\/\d*?\-.*?$/i)?.[0]}" class='tooltip-hover no-border ignore-abovevtt-formating'>${itemData.name}</a>`);
 							$(this).find('.item-link-cell').empty().append(itemLink);
 						}
-						const quantity = parseInt($(this).find('.item-quantity-cell').text()) || 1;
+						
 						const itemAddCell = $(this).find('.item-add-cell');
 						const button = $(`<button class="item-add-button ignore-abovevtt-formating" data-quantity="${quantity}" data-id="${itemId}" title="Add ${itemData.name} to Party Loot">+</button>`);
 						itemAddCell.empty().append(button);
 					}
 				}
+				quantityCell.html(`<span class="add-input player-disabled each" data-number="${quantity}" data-spell="${targetLink}"></span>`);
 			});
 		}
 		if (partyLootTable.length > 0){
 			$(target).off('click.addPartyLootItem').on('click.addPartyLootItem', '.item-add-button', function (e) {
 				e.preventDefault();
 				e.stopPropagation();
+				const quantityInput = $(this).closest('tr').find('td.item-quantity-cell>input');
+				const quantity = parseInt(quantityInput.val());
+				if (isNaN(quantity) || quantity <= 0) {
+					return;
+				}
+				quantityInput.val('0');
+				quantityInput.trigger('change');
 				const currencyMatch = $(this).data('currency');
 				if(currencyMatch){
 					const currencyData = currencyMatch;	
-					add_currency_to_party_inventory(currencyData);
+					for(let i = 1; i<=quantity; i++){
+						add_currency_to_party_inventory(currencyData);
+					}
 					return;
 				}
 				const customItemMatch = $(this).data('custom-item');
 				if(customItemMatch){
 					const customItemData = customItemMatch;
+					customItemData.quantity = quantity;
 					add_custom_item_to_party_inventory(customItemData);
 					return;
 				}
 				const itemId = $(this).data('id');
-				const quantity = parseInt($(this).data('quantity')) || 1;
+
+				
 				const itemData = find_items_in_cache_by_id([itemId]);
 				itemData[0].quantity = quantity;
 				add_items_to_party_inventory(itemData);
@@ -3818,37 +3840,48 @@ class JournalManager{
 					"title": "Treasure / Loot Table",
 					"description": "Add a treasure table with buttons to add to party inventory.",
 					"content": `<style id='contentStyles'>${contentStyles}</style>
-					
-					<table class="party-item-table" style="width: 100%; border-collapse: collapse;" border="1">
-						<thead>
-							<tr>
-							<th style="padding: 8px; text-align: left;">Quantity</th>
-							<th style="padding: 8px; text-align: left;">Item</th>
-							<th style="padding: 8px; text-align: left;">Description</th>
-							<th style="padding: 8px; text-align: left;">Add to Party Inventory</th>
-							</tr>
-						</thead>
-						<tbody>
-							<tr>
-								<td class="item-quantity-cell" style="padding: 8px; text-align: left;">2</td>
-								<td class="item-link-cell" style="padding: 8px; text-align: left;"><a class="tooltip-hover no-border ignore-abovevtt-formating" href="https://www.dndbeyond.com/magic-items/8960641-potion-of-healing">Potion of Healing</a></td>
-								<td class="item-description-cell" style="padding: 8px; text-align: left;">Auto Fills</td>
-								<td class="item-add-cell" style="padding: 8px; text-align: left;">Auto Fills</td>
-							</tr>
-							<tr>
-								<td class="item-quantity-cell" style="padding: 8px; text-align: left;">Insert Quantity</td>
-								<td class="item-link-cell" style="padding: 8px; text-align: left;">Insert Item Link</td>
-								<td class="item-description-cell" style="padding: 8px; text-align: left;">Auto Fills</td>
-								<td class="item-add-cell" style="padding: 8px; text-align: left;">Auto Fills</td>
-							</tr>
-							<tr>
-								<td class="item-quantity-cell" style="padding: 8px; text-align: left;">&nbsp;</td>
-								<td class="item-link-cell" style="padding: 8px; text-align: left;">&nbsp;</td>
-								<td class="item-description-cell" style="padding: 8px; text-align: left;">&nbsp;</td>
-								<td class="item-add-cell" style="padding: 8px; text-align: left;">&nbsp;</td>
-							</tr>
-						</tbody>
-					</table>			
+						<table class="party-item-table" style="width: 100%; border-collapse: collapse;" border="1">
+							<thead>
+								<tr>
+									<th style="padding: 8px; text-align: left;">Quantity</th>
+									<th style="padding: 8px; text-align: left;">Item</th>
+									<th style="padding: 8px; text-align: left;">Description</th>
+									<th style="padding: 8px; text-align: left;">Add to Party Inventory</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td class="item-quantity-cell" style="padding: 8px; text-align: left;">2</td>
+									<td class="item-link-cell" style="padding: 8px; text-align: left;"><a class="tooltip-hover no-border ignore-abovevtt-formating" href="https://www.dndbeyond.com/magic-items/8960641-potion-of-healing">Potion of Healing</a></td>
+									<td class="item-description-cell" style="padding: 8px; text-align: left;">Auto Fills</td>
+									<td class="item-add-cell" style="padding: 8px; text-align: left;">Auto Fills</td>
+								</tr>
+								<tr>
+									<td class="item-quantity-cell" style="padding: 8px; text-align: left;">1</td>
+									<td class="item-link-cell" style="padding: 8px; text-align: left;">https://www.dndbeyond.com/magic-items/9228343-alchemy-jug</td>
+									<td class="item-description-cell" style="padding: 8px; text-align: left;">Auto Fills</td>
+									<td class="item-add-cell" style="padding: 8px; text-align: left;">Auto Fills</td>
+								</tr>
+								<tr>
+									<td class="item-quantity-cell" style="padding: 8px; text-align: left;">1</td>
+									<td class="item-link-cell" style="padding: 8px; text-align: left;">250gp, 1000sp, 3000cp</td>
+									<td class="item-description-cell" style="padding: 8px; text-align: left;"><strong>&nbsp;Ignored/Emptied for coins</strong></td>
+									<td class="item-add-cell" style="padding: 8px; text-align: left;">Auto Fills</td>
+								</tr>
+								<tr>
+									<td class="item-quantity-cell" style="padding: 8px; text-align: left;">1</td>
+									<td class="item-link-cell" style="padding: 8px; text-align: left;">Fireball Spell Scroll (4th Level)</td>
+									<td class="item-description-cell" style="padding: 8px; text-align: left;">Fireball at 4th level.&nbsp; Cost: 250 Weight: 0.1 Notes: Dex Save DC 15 <span class="ignore-abovevtt-formating">/r 9d6 Fireball:Fire Damage</span></td>
+									<td class="item-add-cell" style="padding: 8px; text-align: left;">Auto Fills</td>
+								</tr>
+								<tr>
+									<td class="item-quantity-cell" style="padding: 8px; text-align: left;">&nbsp;</td>
+									<td class="item-link-cell" style="padding: 8px; text-align: left;">&nbsp;</td>
+									<td class="item-description-cell" style="padding: 8px; text-align: left;">&nbsp;</td>
+									<td class="item-add-cell" style="padding: 8px; text-align: left;">&nbsp;</td>
+								</tr>
+							</tbody>
+						</table>		
 					`
 				},
 			],

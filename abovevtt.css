@@ -197,7 +197,11 @@ body > div {
     padding: 2px 4px;
 }
 
-
+.party-item-table input.injected-input[disabled] {
+    appearance: none !important;
+    background: none !important;
+    border: none !important;
+}
 [class*='GameLogEntries'] [class*='Message-Collapsed-Other-Flex'] {
     padding: 8px 10px;
     color: rgb(92, 112, 128);

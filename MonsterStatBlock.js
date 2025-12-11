@@ -93,6 +93,10 @@ async function display_stat_block_in_container(statBlock, container, tokenId, cu
           token.track_ability(spellName, numberFound)
         }
         let input = createCountTracker(token, spellName, numberFound, remainingText, "");
+        const playerDisabled = $(this).hasClass('player-disabled');
+        if (!window.DM && playerDisabled) {
+          input.prop('disabled', true);
+        }
         $(this).find('p').remove();
         $(this).after(input)
       })
