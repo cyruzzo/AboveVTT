@@ -2010,7 +2010,11 @@ class Token {
 								    }
 
 								    let input = createCountTracker(window.JOURNAL.notes[noteId], spellName, numberFound, remainingText, "", track_ability);
-								    $(this).find('p').remove();
+									const playerDisabled = $(this).hasClass('player-disabled');
+									if (!window.DM && playerDisabled) {
+										input.prop('disabled', true);
+									}
+									$(this).find('p').remove();
 								    $(this).after(input)
 							    })
 					            flyout.append(tooltipHtml);
