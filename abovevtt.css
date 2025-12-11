@@ -33,6 +33,9 @@ body > button,
     border: 1px solid lightgray;
     font-size: 12px;
 }
+.note-text table{
+    width: revert-layer;
+}
 .top_menu input,
 .top_menu select{
     box-sizing: border-box;
@@ -4865,7 +4868,7 @@ td button.block-send-to-game-log {
     display: flex;
     float: unset;
     top:50%;
-    right: -2px;
+    right: 2px;
     transform: translate(0px, -50%);
 }
 td button.block-send-to-game-log span{
