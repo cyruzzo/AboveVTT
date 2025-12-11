@@ -2547,28 +2547,50 @@ class JournalManager{
 				if(!itemId){
 					$(this).find('.item-link-cell').html(targetLink);
 					const currencies = ['cp','sp','ep','gp','pp'];
-					const data ={
-						cp: 0,
-						sp: 0,
-						ep: 0,
-						gp: 0,
-						pp: 0
-					};
+					const data ={};
 					
 					for(const currency of currencies){
 						const currencyExists = targetLink?.toLowerCase()?.match(new RegExp(`([+-]?\\d+)([\\s]+)?${currency}([\\s,]?|$)`, 'i'))
 						if(currencyExists){
-							const amount = parseInt(currencyExists[1]);
+							const amount = parseInt(currencyExists[1]);	
 							data[currency] = amount;
 						}
 					}
 					const descriptionCell = $(this).find('.item-description-cell');
-					descriptionCell.html('');
 					const quantityCell = $(this).find('.item-quantity-cell');
-					quantityCell.html('');
 					const itemAddCell = $(this).find('.item-add-cell');
-					const button = $(`<button class="item-add-button ignore-abovevtt-formating" data-currency='${JSON.stringify(data)}' title="Add ${targetLink} to Party Loot">+</button>`);
-					itemAddCell.empty().append(button);
+					if(Object.keys(data).length == 0){
+						const descriptionText = descriptionCell.text();
+						const delimiters = /(notes:|cost:|weight:)/gi;
+						const splitDescription = descriptionText.split(delimiters).map(s => s.trim()).filter(s => s.length > 0);
+						const costIndex = splitDescription.findIndex(e => e.toLowerCase() == 'cost:');
+						const cost = (costIndex >= 0 && splitDescription.length > costIndex + 1) ? splitDescription[costIndex + 1] : null;
+						const weightIndex = splitDescription.findIndex(e => e.toLowerCase() == 'weight:');
+						const weight = (weightIndex >= 0 && splitDescription.length > weightIndex + 1) ? splitDescription[weightIndex + 1] : null;
+						const notesIndex = splitDescription.findIndex(e => e.toLowerCase() == 'notes:');
+						const notes = (notesIndex >= 0 && splitDescription.length > notesIndex + 1) ? splitDescription[notesIndex + 1] : null;		
+						
+						splitDescription.splice(Math.min(costIndex >= 0 ? costIndex : Infinity, weightIndex >= 0 ? weightIndex : Infinity, notesIndex >= 0 ? notesIndex : Infinity), splitDescription.length);
+						const description = splitDescription.join(' ').trim();
+						
+						const customItem = {
+							name: targetLink,
+							description,
+							quantity: parseInt(quantityCell.text()) || 1,
+							cost,
+							weight,
+							notes
+						};
+						const button = $(`<button class="item-add-button ignore-abovevtt-formating" data-custom-item='${JSON.stringify(customItem)}' title="Add ${targetLink} to Party Loot">+</button>`);
+						itemAddCell.empty().append(button);
+					}
+					else {
+						descriptionCell.html('');
+						quantityCell.html('');
+						const button = $(`<button class="item-add-button ignore-abovevtt-formating" data-currency='${JSON.stringify(data)}' title="Add ${targetLink} to Party Loot">+</button>`);
+						itemAddCell.empty().append(button);
+					}
+			
 				}
 				
 				if (itemId && window.ITEMS_CACHE) {
@@ -2586,8 +2608,6 @@ class JournalManager{
 						itemAddCell.empty().append(button);
 					}
 				}
-
-				
 			});
 		}
 		if (partyLootTable.length > 0){
@@ -2600,7 +2620,12 @@ class JournalManager{
 					add_currency_to_party_inventory(currencyData);
 					return;
 				}
-
+				const customItemMatch = $(this).data('custom-item');
+				if(customItemMatch){
+					const customItemData = customItemMatch;
+					add_custom_item_to_party_inventory(customItemData);
+					return;
+				}
 				const itemId = $(this).data('id');
 				const quantity = parseInt($(this).data('quantity')) || 1;
 				const itemData = find_items_in_cache_by_id([itemId]);

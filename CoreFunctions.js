@@ -2398,6 +2398,53 @@ function add_items_to_party_inventory(items = []) {
   });
 
 }
+function add_custom_item_to_party_inventory(item) {
+
+  if (!item) {
+    console.warn('add_items_to_party_inventory called with no items');
+    return;
+  }
+  const characterId = window.DM || is_spectator_page() ? parseInt(window.playerUsers[0]?.id) : parseInt(my_player_id());
+
+ 
+  const name = item.name ? item.name : 'Custom Item';
+  const weight = item.weight ? parseFloat(item.weight) : null;
+  const cost = item.cost ? parseFloat(item.cost) : null;
+  const notes = item.notes ? item.notes : null;
+  const description = item.description ? item.description : null;
+  const quantity = parseInt(item.quantity);
+  const containerEntityTypeId = 618115330; // campaign inventory enum. See ContainerTypeEnum[ContainerTypeEnum["CAMPAIGN"] on DDB.
+  const containerEntityId = parseInt(find_game_id());
+  const data = {
+    characterId,
+    containerEntityTypeId,
+    containerEntityId,
+    description,
+    notes,
+    cost,
+    weight,
+    name,
+    quantity,
+    partyId: containerEntityId
+  };
+  
+
+  DDBApi.addCustomItemToPartyInventory(data).then(response => {
+    console.log('add_custom_item_to_party_inventory response:', response);
+    if (window.MB) {
+      window.MB.sendMessage('character-sheet/item-shared/fulfilled', {});
+    }
+    else {
+      tabCommunicationChannel.postMessage({
+        msgType: 'DDBMessage',
+        action: 'character-sheet/item-shared/fulfilled',
+        data: {},
+        sendTo: window.sendToTab
+      });
+    }
+  });
+
+}
 function add_currency_to_party_inventory(currency = {cp:0,sp:0,gp:0,ep:0,pp:0}) {
   
   const characterId = window.DM || is_spectator_page() ? parseInt(window.playerUsers[0]?.id) : parseInt(my_player_id());
@@ -2407,7 +2454,7 @@ function add_currency_to_party_inventory(currency = {cp:0,sp:0,gp:0,ep:0,pp:0}) 
 
 
   DDBApi.addCurrenciesToPartyInventory(data).then(response => {
-    console.log('add_items_to_party_inventory response:', response);
+    console.log('add_currency_to_party_inventory response:', response);
     if (window.MB) {
       window.MB.sendMessage('character-sheet/item-shared/fulfilled', {});
     }
