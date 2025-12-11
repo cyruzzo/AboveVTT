@@ -2341,10 +2341,10 @@ function inject_sidebar_send_to_gamelog_button(sidebarPaneContent) {
   });
 }
 
-function find_items_in_cache_by_id(itemIds = []) {
+function find_items_in_cache_by_id_and_name(items = []) {
   const foundItems = [];
-  for (let itemId of itemIds) {
-    const cachedItem = window.ITEMS_CACHE.find(ci => ci.id.toString() === itemId.toString());
+  for (let item of items) {
+    const cachedItem = window.ITEMS_CACHE.find(ci => ci.id.toString() === item.id.toString() && ci.name.toLowerCase().includes(item.name.toLowerCase()));
     if (cachedItem) {
       foundItems.push(cachedItem);
     }

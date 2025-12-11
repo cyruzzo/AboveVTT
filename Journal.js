@@ -2548,13 +2548,21 @@ class JournalManager{
 				const link = $(this).find('.item-link-cell a');
 				const targetLink = link.length>0 ? link.attr('href') :
 									$(this).find('.item-link-cell')?.text();
+
+				const idNameMatch = targetLink?.match(/https.*\/(\d*?)\-(.*)?$/i);
 			
-				const itemId = link.length > 0 ? targetLink?.match(/\/(\d*?)\-.*?$/i)?.[1] :
-													targetLink?.match(/https.*\/(\d*?)\-.*?$/i)?.[1];
+				const itemId = link.length > 0 
+								? targetLink?.match(/\/(\d*?)\-.*?$/i)?.[1] 
+								: idNameMatch?.[1];
+
+				const name = link.length > 0
+								? link.text()
+									: idNameMatch?.[2].replace(/\-/g, ' ').replace(/\d+$/gi, '').trim();
+									
 				const quantityCell = $(this).find('.item-quantity-cell');
 				const quantity = parseInt($(this).find('.item-quantity-cell').text());
 				if(!itemId){
-					$(this).find('.item-link-cell').html(targetLink);
+					$(this).find('.item-link-cell').html(targetLink);	
 					const currencies = ['cp','sp','ep','gp','pp'];
 					const data ={};
 					
@@ -2604,17 +2612,17 @@ class JournalManager{
 				}
 				
 				if (itemId && window.ITEMS_CACHE) {
-					const itemData = window.ITEMS_CACHE.find(d => d.id == itemId);
-					if (itemData) {
+					const itemData = find_items_in_cache_by_id_and_name([{ id:itemId, name }]);
+					if (itemData.length>0) {
 						const descriptionCell = $(this).find('.item-description-cell');
-						descriptionCell.html(itemData.description);
+						descriptionCell.html(itemData[0].description);
 						if(link.length == 0){
-							const itemLink = $(`<a href=${targetLink?.match(/https.*\/\d*?\-.*?$/i)?.[0]}" class='tooltip-hover no-border ignore-abovevtt-formating'>${itemData.name}</a>`);
+							const itemLink = $(`<a href=${targetLink?.match(/https.*\/\d*?\-.*?$/i)?.[0]}" class='tooltip-hover no-border ignore-abovevtt-formating'>${itemData[0].name}</a>`);
 							$(this).find('.item-link-cell').empty().append(itemLink);
 						}
 						
 						const itemAddCell = $(this).find('.item-add-cell');
-						const button = $(`<button class="item-add-button ignore-abovevtt-formating" data-quantity="${quantity}" data-id="${itemId}" title="Add ${itemData.name} to Party Loot">+</button>`);
+						const button = $(`<button class="item-add-button ignore-abovevtt-formating" data-quantity="${quantity}" data-id="${itemId}" title="Add ${itemData[0].name} to Party Loot">+</button>`);
 						itemAddCell.empty().append(button);
 					}
 				}
@@ -2647,10 +2655,10 @@ class JournalManager{
 					add_custom_item_to_party_inventory(customItemData);
 					return;
 				}
-				const itemId = $(this).data('id');
-
+				const id = $(this).data('id');
+				const name = $(this).closest('tr').find('.item-link-cell a').text();
 				
-				const itemData = find_items_in_cache_by_id([itemId]);
+				const itemData = find_items_in_cache_by_id_and_name([{id, name}]);
 				itemData[0].quantity = quantity;
 				add_items_to_party_inventory(itemData);
 			});
