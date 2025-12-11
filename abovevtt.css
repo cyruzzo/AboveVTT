@@ -33,6 +33,9 @@ body > button,
     border: 1px solid lightgray;
     font-size: 12px;
 }
+.note-text table{
+    width: revert;
+}
 .top_menu input,
 .top_menu select{
     box-sizing: border-box;
