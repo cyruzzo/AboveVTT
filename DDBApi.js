@@ -76,6 +76,9 @@ class DDBApi {
   static async addCurrenciesToPartyInventory(currencies) {
     DDBApi.putJsonWithToken("https://character-service.dndbeyond.com/character/v5/inventory/currency/transaction", currencies);
   }
+  static async addCustomItemToPartyInventory(item){
+    DDBApi.postJsonWithToken("https://character-service.dndbeyond.com/character/v5.1/custom/item", item);
+  }
   static async fetchHtmlWithToken(url, extraConfig = {}) {
     try{
       const token = await DDBApi.#refreshToken();
