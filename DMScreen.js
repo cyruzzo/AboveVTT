@@ -77,6 +77,13 @@ function initDmScreen() {
 
     // Load initial block
     dmScreenBlocks.append(buildConditionsBlock());
+
+    // Handle Escape key to hide dmScreenContainer
+    $(document).on('keydown', function(e) {
+        if (e.key === 'Escape' && $('#dmScreenContainer').is(':visible')) {
+            $('#dmScreenContainer').hide();
+        }
+    });
 }
 
 /**
@@ -228,6 +235,9 @@ function buildConditionsBlock() {
         columnsContainer.append(conditionDiv);
     });
 
+    // Add roll buttons to all dice notation in the travel block
+    add_journal_roll_buttons(block, undefined, undefined, "DM");
+
     return block;
 }
 
@@ -325,6 +335,9 @@ function buildSkillsAndMechanicsBlock() {
         columnsContainer.append(mechanicDiv);
     });
 
+    // Add roll buttons to all dice notation in the travel block
+    add_journal_roll_buttons(block, undefined, undefined, "DM");
+
     return block;
 }
 
@@ -369,6 +382,9 @@ function buildActionsBlock() {
         `);
         columnsContainer.append(actionDiv);
     });
+
+    // Add roll buttons to all dice notation in the travel block
+    add_journal_roll_buttons(block, undefined, undefined, "DM");
 
     return block;
 }
@@ -569,6 +585,9 @@ function buildImprovisationBlock() {
 
     columnsContainer.append(damageThresholdSection);
 
+    // Add roll buttons to all dice notation in the travel block
+    add_journal_roll_buttons(block, undefined, undefined, "DM");
+
     return block;
 }
 
@@ -607,9 +626,9 @@ function buildTravelBlock() {
                 <strong>Special Movement.</strong> If a party can travel at a high Speed for an extended time, as with a spell such as Wind Walk or a magic item such as a Carpet of Flying, translate the party's Speed into travel rates using these rules:<br>
                 <ul>
                     <li>Miles per hour = Speed ÷ 10</li>
-                    <li>Miles per day (Normal pace) = Miles per hour × number of hours traveled (typically 8)</li>
-                    <li>Fast pace = Miles per day × 1⅓ (round down)</li>
-                    <li>Slow pace = Miles per day × 2/3 (round down)</li>
+                    <li>Miles per day (Normal pace) = Miles per hour x number of hours traveled (typically 8)</li>
+                    <li>Fast pace = Miles per day x 1⅓ (round down)</li>
+                    <li>Slow pace = Miles per day x 2/3 (round down)</li>
                 </ul>
                 If the characters are flying or their special movement allows them to ignore Difficult Terrain, they can move at a Fast pace regardless of the terrain.<br><br>
                 <strong>Vehicles.</strong> Characters traveling in a vehicle use the vehicle's speed in miles per hour (as shown in chapter 6 of the Player's Handbook) to determine their rate of travel, and they don't choose a travel pace.
@@ -621,17 +640,17 @@ function buildTravelBlock() {
 
     // Travel Terrain Table
     const terrainData = [
-        { terrain: "Arctic", maxPace: "Fast*", encounterDistance: "6d6 × 10 feet", foragingDC: "20", navigationDC: "10", searchDC: "10" },
-        { terrain: "Coastal", maxPace: "Normal", encounterDistance: "2d10 × 10 feet", foragingDC: "10", navigationDC: "5", searchDC: "15" },
-        { terrain: "Desert", maxPace: "Normal", encounterDistance: "6d6 × 10 feet", foragingDC: "20", navigationDC: "10", searchDC: "10" },
-        { terrain: "Forest", maxPace: "Normal", encounterDistance: "2d8 × 10 feet", foragingDC: "10", navigationDC: "15", searchDC: "15" },
-        { terrain: "Grassland", maxPace: "Fast", encounterDistance: "6d6 × 10 feet", foragingDC: "15", navigationDC: "5", searchDC: "15" },
-        { terrain: "Hill", maxPace: "Normal", encounterDistance: "2d10 × 10 feet", foragingDC: "15", navigationDC: "10", searchDC: "15" },
-        { terrain: "Mountain", maxPace: "Slow", encounterDistance: "4d10 × 10 feet", foragingDC: "20", navigationDC: "15", searchDC: "20" },
-        { terrain: "Swamp", maxPace: "Slow", encounterDistance: "2d8 × 10 feet", foragingDC: "10", navigationDC: "15", searchDC: "20" },
-        { terrain: "Underdark", maxPace: "Normal", encounterDistance: "2d6 × 10 feet", foragingDC: "20", navigationDC: "10", searchDC: "20" },
-        { terrain: "Urban", maxPace: "Normal", encounterDistance: "2d6 × 10 feet", foragingDC: "20", navigationDC: "15", searchDC: "15" },
-        { terrain: "Waterborne", maxPace: "Special†", encounterDistance: "6d6 × 10 feet", foragingDC: "15", navigationDC: "10", searchDC: "15" }
+        { terrain: "Arctic", maxPace: "Fast*", encounterDistance: "6d6 x 10 feet", foragingDC: "20", navigationDC: "10", searchDC: "10" },
+        { terrain: "Coastal", maxPace: "Normal", encounterDistance: "2d10 x 10 feet", foragingDC: "10", navigationDC: "5", searchDC: "15" },
+        { terrain: "Desert", maxPace: "Normal", encounterDistance: "6d6 x 10 feet", foragingDC: "20", navigationDC: "10", searchDC: "10" },
+        { terrain: "Forest", maxPace: "Normal", encounterDistance: "2d8 x 10 feet", foragingDC: "10", navigationDC: "15", searchDC: "15" },
+        { terrain: "Grassland", maxPace: "Fast", encounterDistance: "6d6 x 10 feet", foragingDC: "15", navigationDC: "5", searchDC: "15" },
+        { terrain: "Hill", maxPace: "Normal", encounterDistance: "2d10 x 10 feet", foragingDC: "15", navigationDC: "10", searchDC: "15" },
+        { terrain: "Mountain", maxPace: "Slow", encounterDistance: "4d10 x 10 feet", foragingDC: "20", navigationDC: "15", searchDC: "20" },
+        { terrain: "Swamp", maxPace: "Slow", encounterDistance: "2d8 x 10 feet", foragingDC: "10", navigationDC: "15", searchDC: "20" },
+        { terrain: "Underdark", maxPace: "Normal", encounterDistance: "2d6 x 10 feet", foragingDC: "20", navigationDC: "10", searchDC: "20" },
+        { terrain: "Urban", maxPace: "Normal", encounterDistance: "2d6 x 10 feet", foragingDC: "20", navigationDC: "15", searchDC: "15" },
+        { terrain: "Waterborne", maxPace: "Special†", encounterDistance: "6d6 x 10 feet", foragingDC: "15", navigationDC: "10", searchDC: "15" }
     ];
 
     const terrainSection = $(`
@@ -679,9 +698,9 @@ function buildTravelBlock() {
 
     // Weather
     const weatherData = [
-        { range: "1–14", result: "Normal for the season" },
-        { range: "15–17", result: "1d4 × 10 degrees Fahrenheit colder" },
-        { range: "18–20", result: "1d4 × 10 degrees Fahrenheit hotter" }
+        { range: "1-14", result: "Normal for the season" },
+        { range: "15-17", result: "1d4 x 10 degrees Fahrenheit colder" },
+        { range: "18-20", result: "1d4 x 10 degrees Fahrenheit hotter" }
     ];
 
     const weatherSection = $(`
@@ -715,9 +734,9 @@ function buildTravelBlock() {
 
     // Add Wind/Precipitation table
     const windPrecipData = [
-        { range: "1–12", wind: "None", precipitation: "None" },
-        { range: "13–17", wind: "Light", precipitation: "Light rain or light snowfall" },
-        { range: "18–20", wind: "Strong", precipitation: "Heavy rain or heavy snowfall" }
+        { range: "1-12", wind: "None", precipitation: "None" },
+        { range: "13-17", wind: "Light", precipitation: "Light rain or light snowfall" },
+        { range: "18-20", wind: "Strong", precipitation: "Heavy rain or heavy snowfall" }
     ];
 
     const windPrecipTable = $(`
@@ -747,6 +766,9 @@ function buildTravelBlock() {
     weatherSection.append(windPrecipTable);
 
     columnsContainer.append(weatherSection);
+
+    // Add roll buttons to all dice notation in the travel block
+    add_journal_roll_buttons(block, undefined, undefined, "DM");
 
     return block;
 }
