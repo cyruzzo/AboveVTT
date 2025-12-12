@@ -2410,7 +2410,7 @@ class PartyInventoryQueue {
     } catch (error) {
       this.isProcessing = false;
       if (this.queue.length > 0) {
-        setTimeout(() => this.processQueue(), 100);
+        setTimeout(() => this.processQueue(), 100); 
       }
     }
   }
@@ -2428,6 +2428,8 @@ class PartyInventoryQueue {
     } else {
       if (window.MB) {
         window.MB.sendMessage('character-sheet/item-shared/fulfilled', {});
+        if(DDBApi)
+          DDBApi.debounceGetPartyInventory();
       }
       else {
         tabCommunicationChannel.postMessage({
@@ -2440,8 +2442,6 @@ class PartyInventoryQueue {
     }
   }
 }
-
-
 
 window.partyInventoryQueue = new PartyInventoryQueue();
 

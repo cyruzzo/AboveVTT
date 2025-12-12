@@ -611,7 +611,10 @@ class MessageBroker {
 				console.log("skipping msg from a different scene");
 				return;
 			}
-
+			if (msg.eventType == "character-sheet/item-shared/fulfilled"){
+				DDBApi.debounceGetPartyInventory();
+				return;
+			}
 			if (msg.eventType == "custom/myVTT/token" && (msg.sceneId == window.CURRENT_SCENE_DATA.id || msg.data.id in window.TOKEN_OBJECTS)) {
 				self.handleToken(msg);
 			}

@@ -205,6 +205,17 @@ body > div {
 .party-item-table td.item-add-cell{
     min-width: 90px;
 }
+.note-text .ct-currency-button__currency-item-preview{
+    width:16px;
+    height:16px;
+    position:relative;
+    display:inline-block;
+}
+.note-text .party-currency {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
 [class*='GameLogEntries'] [class*='Message-Collapsed-Other-Flex'] {
     padding: 8px 10px;
     color: rgb(92, 112, 128);

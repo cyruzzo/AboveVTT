@@ -70,6 +70,12 @@ class DDBApi {
     window.ITEMS_CACHE = itemsArray
     return itemsArray;
   }
+  static debounceGetPartyInventory = mydebounce(async() => {
+    const partyInventory = await DDBApi.fetchJsonWithToken(`https://character-service.dndbeyond.com/character/v5/party/inventory/${find_game_id()}`);
+    window.PARTY_INVENTORY_DATA = partyInventory.data;
+    if(window.JOURNAL)
+      window.JOURNAL.update_party_available_currency();
+  }, 500);
   static async addItemsToPartyInventory(items) {
     DDBApi.postJsonWithToken("https://character-service.dndbeyond.com/character/v5/inventory/item", items);
   }

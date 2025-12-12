@@ -2015,7 +2015,10 @@ class Token {
 										input.prop('disabled', true);
 									}
 									const partyLootTable = $(this).closest('.party-item-table');
-									if (partyLootTable.length > 0) {
+									if (partyLootTable.hasClass('shop') && numberFound > 0) {
+										$(this).closest('tr').find('td>.item-quantity-take-input').val(1);
+									}
+									else {
 										$(this).closest('tr').find('td>.item-quantity-take-input').val(numberFound);
 									}
 									$(this).find('p').remove();
