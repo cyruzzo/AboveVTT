@@ -202,6 +202,9 @@ body > div {
     background: none !important;
     border: none !important;
 }
+.party-item-table td.item-add-cell{
+    min-width: 90px;
+}
 [class*='GameLogEntries'] [class*='Message-Collapsed-Other-Flex'] {
     padding: 8px 10px;
     color: rgb(92, 112, 128);

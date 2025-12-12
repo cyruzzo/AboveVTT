@@ -1618,6 +1618,10 @@ class JournalManager{
 									if (!window.DM && playerDisabled) {
 										input.prop('disabled', true);
 									}
+									const partyLootTable = $(this).closest('.party-item-table');
+									if(partyLootTable.length > 0){
+										$(this).closest('tr').find('td>.item-quantity-take-input').val(numberFound);
+									}
 									$(this).find('p').remove();
 								    $(this).after(input)
 							    })
@@ -1816,6 +1820,10 @@ class JournalManager{
 			const playerDisabled = $(this).hasClass('player-disabled');
 			if (!window.DM && playerDisabled) {
 				input.prop('disabled', true);
+			}
+			const partyLootTable = $(this).closest('.party-item-table');
+			if (partyLootTable.length > 0) {
+				$(this).closest('tr').find('td>.item-quantity-take-input').val(numberFound);
 			}
 		    $(this).find('p').remove();
 		    $(this).after(input)
@@ -2561,6 +2569,7 @@ class JournalManager{
 									
 				const quantityCell = $(this).find('.item-quantity-cell');
 				const quantity = parseInt($(this).find('.item-quantity-cell').text());
+				const itemAddCell = $(this).find('.item-add-cell');
 				if(!itemId){
 					$(this).find('.item-link-cell').html(targetLink);	
 					const currencies = ['cp','sp','ep','gp','pp'];
@@ -2575,7 +2584,7 @@ class JournalManager{
 					}
 					const descriptionCell = $(this).find('.item-description-cell');
 					
-					const itemAddCell = $(this).find('.item-add-cell');
+					
 
 					
 					if(Object.keys(data).length == 0){
@@ -2621,30 +2630,44 @@ class JournalManager{
 							$(this).find('.item-link-cell').empty().append(itemLink);
 						}
 						
-						const itemAddCell = $(this).find('.item-add-cell');
+						
 						const button = $(`<button class="item-add-button ignore-abovevtt-formating" data-quantity="${quantity}" data-id="${itemId}" title="Add ${itemData[0].name} to Party Loot">+</button>`);
 						itemAddCell.empty().append(button);
 					}
 				}
 				quantityCell.html(`<span class="add-input player-disabled each" data-number="${quantity}" data-spell="${targetLink}"></span>`);
+				itemAddCell.append(`<input type="number" class="item-quantity-take-input" min="0" max="${quantity}" value="${quantity}" style="width: 50px; margin-left: 5px;" />`);
 			});
 		}
 		if (partyLootTable.length > 0){
+			const addAllButton = $(`<button class="item-add-all-button ignore-abovevtt-formating" title="Add All Items to Party Loot">Add All</button>`);
+			partyLootTable.find('thead>tr>th:last-of-type').append(addAllButton);
+
 			$(target).off('click.addPartyLootItem').on('click.addPartyLootItem', '.item-add-button', function (e) {
 				e.preventDefault();
 				e.stopPropagation();
 				const quantityInput = $(this).closest('tr').find('td.item-quantity-cell>input');
-				const quantity = parseInt(quantityInput.val());
+				const takeInput = $(this).closest('tr').find('td>input.item-quantity-take-input');
+				const currQuantity = parseInt(quantityInput.val());
+				const quantity = parseInt(takeInput.val());
 				if (isNaN(quantity) || quantity <= 0) {
 					return;
 				}
-				quantityInput.val('0');
+				const newQuantity = currQuantity - quantity;
+				quantityInput.val(newQuantity);
 				quantityInput.trigger('change');
+				if (quantity > newQuantity){
+					takeInput.val(newQuantity);
+				}
+				takeInput.attr('max', Math.max(0, newQuantity));
 				const currencyMatch = $(this).data('currency');
 				if(currencyMatch){
 					const currencyData = currencyMatch;	
 					for(let i = 1; i<=quantity; i++){
-						add_currency_to_party_inventory(currencyData);
+						window.partyInventoryQueue.addToQueue({
+							type: 'currency',
+							data: currencyData
+						});
 					}
 					return;
 				}
@@ -2652,15 +2675,50 @@ class JournalManager{
 				if(customItemMatch){
 					const customItemData = customItemMatch;
 					customItemData.quantity = quantity;
-					add_custom_item_to_party_inventory(customItemData);
+					window.partyInventoryQueue.addToQueue({
+						type: 'customItem',
+						data: customItemData
+					});
 					return;
 				}
 				const id = $(this).data('id');
 				const name = $(this).closest('tr').find('.item-link-cell a').text();
 				
 				const itemData = find_items_in_cache_by_id_and_name([{id, name}]);
-				itemData[0].quantity = quantity;
-				add_items_to_party_inventory(itemData);
+				
+				console.log(`[PartyLoot] Adding ${quantity} of item ${name} to queue`);
+				
+				if (quantity > 10){
+	
+					let remaining = quantity;
+					while(remaining > 0) {
+						const batchSize = Math.min(10, remaining);
+						window.partyInventoryQueue.addToQueue({
+							type: 'items',
+							data: [{
+								...itemData[0],
+								quantity: batchSize
+							}]
+						});
+						console.log(`[PartyLoot] Queued batch of ${batchSize} items`);
+						remaining -= batchSize;
+					}
+				} else {
+					itemData[0].quantity = quantity;
+					window.partyInventoryQueue.addToQueue({
+						type: 'items',
+						data: itemData
+					});
+					console.log(`[PartyLoot] Queued single batch of ${quantity} items`);
+				}
+			});
+			$(target).off('click.addAllPartyLootItem').on('click.addAllPartyLootItem', '.item-add-all-button', function (e) {
+				e.preventDefault();
+				e.stopPropagation();
+				const table = $(this).closest('table');
+				table.find('.item-add-button').each(function(index){
+					$(this).click();					
+				});
 			});
 		}
 

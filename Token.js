@@ -2014,6 +2014,10 @@ class Token {
 									if (!window.DM && playerDisabled) {
 										input.prop('disabled', true);
 									}
+									const partyLootTable = $(this).closest('.party-item-table');
+									if (partyLootTable.length > 0) {
+										$(this).closest('tr').find('td>.item-quantity-take-input').val(numberFound);
+									}
 									$(this).find('p').remove();
 								    $(this).after(input)
 							    })
