@@ -9,6 +9,18 @@ function initDmScreen() {
     console.log("initDmScreen called");
 
     let cont = $(`<div id='dmScreenContainer'>
+            <div class='dmScreenheader'>
+                <h2 class='dmScreenTitle'>
+                    Conditions <span>▼</span>
+                </h2>
+                <div class='dmScreenDropdown' style='display: none;'>
+                    <div class='dmScreenDropdownItem' data-block='conditions'>Conditions</div>
+                    <div class='dmScreenDropdownItem' data-block='damage'>Improvising Objects and Damage</div>
+                    <div class='dmScreenDropdownItem' data-block='actions'>Actions</div>
+                    <div class='dmScreenDropdownItem' data-block='skills'>Skills and Mechanics</div>
+                    <div class='dmScreenDropdownItem' data-block='travel'>Travel</div>
+                </div>
+            </div>
 			<div id='dmScreenBlocks'>
 				
 			</div>
@@ -18,11 +30,53 @@ function initDmScreen() {
 
     const dmScreenBlocks = $("#dmScreenBlocks");
 
-    // Load each block
+    // Set up dropdown functionality
+    $('.dmScreenTitle').click(function (e) {
+        e.stopPropagation();
+        $('.dmScreenDropdown').toggle();
+    });
+
+    // Close dropdown when clicking outside
+    $(document).click(function () {
+        $('.dmScreenDropdown').hide();
+    });
+
+    // Prevent dropdown from closing when clicking inside it
+    $('.dmScreenDropdown').click(function (e) {
+        e.stopPropagation();
+    });
+
+    // Handle dropdown item selection
+    $('.dmScreenDropdownItem').click(function () {
+        const blockType = $(this).attr('data-block');
+        const blockTitle = $(this).text();
+
+        $('.dmScreenTitle').html(`${blockTitle} <span>▼</span>`);
+        $('.dmScreenDropdown').hide();
+
+        // Clear current blocks and load the selected one
+        dmScreenBlocks.empty();
+        switch (blockType) {
+            case 'conditions':
+                dmScreenBlocks.append(buildConditionsBlock());
+                break;
+            case 'damage':
+                dmScreenBlocks.append(buildImprovisationBlock());
+                break;
+            case 'actions':
+                dmScreenBlocks.append(buildActionsBlock());
+                break;
+            case 'skills':
+                dmScreenBlocks.append(buildSkillsAndMechanicsBlock());
+                break;
+            case 'travel':
+                dmScreenBlocks.append(buildTravelBlock());
+                break;
+        }
+    });
+
+    // Load initial block
     dmScreenBlocks.append(buildConditionsBlock());
-    // Add more blocks here as you create them
-    // dmScreenBlocks.append(buildSkillsBlock());
-    // dmScreenBlocks.append(buildCombatActionsBlock());
 }
 
 /**
@@ -157,12 +211,11 @@ function buildConditionsBlock() {
     ];
 
     const block = $(`<div class='dmScreenBlock' id='dmScreenConditions'>
-        <h2>Conditions</h2>
         <div class='dmScreenConditionsColumns'></div>
     </div>`);
 
     const columnsContainer = block.find('.dmScreenConditionsColumns');
-    
+
     conditions.forEach(condition => {
         const conditionDiv = $(`
             <div class='dmScreenCondition'>
@@ -179,31 +232,238 @@ function buildConditionsBlock() {
 }
 
 /**
- * Build the Skills reference block (example)
- * @returns {jQuery} The skills block element
+ * Build the Skills and Mechanics reference block
+ * @returns {jQuery} The skills and mechanics block element
  */
-function buildSkillsBlock() {
-    const block = $(`<div class='dmScreenBlock' id='dmScreenSkills'>
-        <h2>Skills</h2>
+function buildSkillsAndMechanicsBlock() {
+    const block = $(`<div class='dmScreenBlock' id='dmScreenSkillsAndMechanics'>
+        <div class='dmScreenConditionsColumns'></div>
     </div>`);
 
-    // Add your skills content here
-    block.append(`<p>Skills content goes here...</p>`);
+    const columnsContainer = block.find('.dmScreenConditionsColumns');
+
+    // Skills
+    const skills = [
+        { name: "Acrobatics (Dex)", description: "Stay on your feet in a tricky situation, or perform an acrobatic stunt." },
+        { name: "Animal Handling (Wis)", description: "Calm or train an animal, or get an animal to behave in a certain way." },
+        { name: "Arcana (Int)", description: "Recall lore about spells, magic items, and the planes of existence." },
+        { name: "Athletics (Str)", description: "Jump farther than normal, stay afloat in rough water, or break something." },
+        { name: "Deception (Cha)", description: "Tell a convincing lie, or wear a disguise convincingly." },
+        { name: "History (Int)", description: "Recall lore about historical events, people, nations, and cultures." },
+        { name: "Insight (Wis)", description: "Discern a person's mood and intentions." },
+        { name: "Intimidation (Cha)", description: "Awe or threaten someone into doing what you want." },
+        { name: "Investigation (Int)", description: "Find obscure information in books, or deduce how something works." },
+        { name: "Medicine (Wis)", description: "Diagnose an illness, or determine what killed the recently slain." },
+        { name: "Nature (Int)", description: "Recall lore about terrain, plants, animals, and weather." },
+        { name: "Perception (Wis)", description: "Using a combination of senses, notice something that's easy to miss." },
+        { name: "Performance (Cha)", description: "Act, tell a story, perform music, or dance." },
+        { name: "Persuasion (Cha)", description: "Honestly and graciously convince someone of something." },
+        { name: "Religion (Int)", description: "Recall lore about gods, religious rituals, and holy symbols." },
+        { name: "Sleight of Hand (Dex)", description: "Pick a pocket, conceal a handheld object, or perform legerdemain." },
+        { name: "Stealth (Dex)", description: "Escape notice by moving quietly and hiding behind things." },
+        { name: "Survival (Wis)", description: "Follow tracks, forage, find a trail, or avoid natural hazards." }
+    ];
+
+    const actions = [
+        { name: "Attack", description: "When you take the Attack action, you can make one attack roll with a weapon or an Unarmed Strike.<br><strong>Equipping and Unequipping Weapons.</strong> You can either equip or unequip one weapon when you make an attack as part of this action. You do so either before or after the attack. If you equip a weapon before an attack, you don't need to use it for that attack. Equipping a weapon includes drawing it from a sheath or picking it up. Unequipping a weapon includes sheathing, stowing, or dropping it.<br><strong>Moving between Attacks.</strong> If you move on your turn and have a feature, such as Extra Attack, that gives you more than one attack as part of the Attack action, you can use some or all of that movement to move between those attacks." },
+        { name: "Dash", description: "When you take the Dash action, you gain extra movement for the current turn. The increase equals your Speed after applying any modifiers. With a Speed of 30 feet, for example, you can move up to 60 feet on your turn if you Dash. If your Speed of 30 feet is reduced to 15 feet, you can move up to 30 feet this turn if you Dash.<br>If you have a special speed, such as a Fly Speed or Swim Speed, you can use that speed instead of your Speed when you take this action. You choose which speed to use each time you take it." },
+        { name: "Disengage", description: "If you take the Disengage action, your movement doesn't provoke Opportunity Attacks for the rest of the current turn." },
+        { name: "Dodge", description: "If you take the Dodge action, you gain the following benefits: until the start of your next turn, any attack roll made against you has Disadvantage if you can see the attacker, and you make Dexterity saving throws with Advantage.<br>You lose these benefits if you have the Incapacitated condition or if your Speed is 0." },
+        { name: "Grapple", description:  `A creature can grapple another creature. Characters typically grapple by using an Unarmed Strike. Many monsters have special attacks that allow them to quickly grapple prey. However a grapple is initiated, it follows these rules.<br><strong>Grapple.</strong> The target must succeed on a Strength or Dexterity saving throw (it chooses which), or it has the Grappled condition. The DC for the saving throw and any escape attempts equals 8 plus your Strength modifier and Proficiency Bonus. This grapple is possible only if the target is no more than one size larger than you and if you have a hand free to grab it.<br><strong>Grappled Condition.</strong> Successfully grappling a creature gives it the Grappled condition.<br><strong>One Grapple per Hand.</strong> A creature must have a hand free to grapple another creature. Some stat blocks and game effects allow a creature to grapple using a tentacle, a maw, or another body part. Whatever part a grappler uses, it can grapple only one creature at a time with that part, and the grappler can't use that part to target another creature unless it ends the grapple.<br><strong>Escaping a Grapple.</strong> A Grappled creature can use its action to make a Strength (Athletics) or Dexterity (Acrobatics) check against the grapple's escape DC, ending the condition on itself on a success. The condition also ends if the grappler has the Incapacitated condition or if the distance between the Grappled target and the grappler exceeds the grapple's range.` },
+        { name: "Help", description: "When you take the Help action, you do one of the following.<br><strong>Assist an Ability Check.</strong> Choose one of your skill or tool proficiencies and one ally who is near enough for you to assist verbally or physically when they make an ability check. That ally has Advantage on the next ability check they make with the chosen skill or tool. This benefit expires if the ally doesn't use it before the start of your next turn. The DM has final say on whether your assistance is possible.<br><strong>Assist an Attack Roll.</strong> You momentarily distract an enemy within 5 feet of you, giving Advantage to the next attack roll by one of your allies against that enemy. This benefit expires at the start of your next turn." },
+        { name: "Hide", description: "With the Hide action, you try to conceal yourself. To do so, you must succeed on a DC 15 Dexterity (Stealth) check while you're Heavily Obscured or behind Three-Quarters Cover or Total Cover, and you must be out of any enemy's line of sight; if you can see a creature, you can discern whether it can see you.<br>On a successful check, you have the Invisible condition. Make note of your check's total, which is the DC for a creature to find you with a Wisdom (Perception) check.<br>The condition ends on you immediately after any of the following occurs: you make a sound louder than a whisper, an enemy finds you, you make an attack roll, or you cast a spell with a Verbal component." },
+        { name: "Improvise", description: "Player characters and monsters can also do things not covered by these actions. Many class features and other abilities provide additional action options, and you can improvise other actions. When you describe an action not detailed elsewhere in the rules, the Dungeon Master tells you whether that action is possible and what kind of D20 Test you need to make, if any." },
+        { name: "Influence", description: "With the Influence action, you urge a monster to do something. Describe or roleplay how you're communicating with the monster. Are you trying to deceive, intimidate, amuse, or gently persuade? The DM then determines whether the monster feels willing, unwilling, or hesitant due to your interaction; this determination establishes whether an ability check is necessary." },
+        { name: "Magic", description: "When you take the Magic action, you cast a spell that has a casting time of an action or use a feature or magic item that requires a Magic action to be activated.<br>If you cast a spell that has a casting time of 1 minute or longer, you must take the Magic action on each turn of that casting, and you must maintain Concentration while you do so. If your Concentration is broken, the spell fails, but you don't expend a spell slot." },
+        { name: "Ready", description: "You take the Ready action to wait for a particular circumstance before you act. To do so, you take this action on your turn, which lets you act by taking a Reaction before the start of your next turn.<br>First, you decide what perceivable circumstance will trigger your Reaction. Then, you choose the action you will take in response to that trigger, or you choose to move up to your Speed in response to it. Examples include \"If the cultist steps on the trapdoor, I'll pull the lever that opens it,\" and \"If the zombie steps next to me, I move away.\"<br>When the trigger occurs, you can either take your Reaction right after the trigger finishes or ignore the trigger.<br>When you Ready a spell, you cast it as normal (expending any resources used to cast it) but hold its energy, which you release with your Reaction when the trigger occurs. To be readied, a spell must have a casting time of an action, and holding on to the spell's magic requires Concentration, which you can maintain up to the start of your next turn. If your Concentration is broken, the spell dissipates without taking effect." },
+        { name: "Search", description: "When you take the Search action, you make a Wisdom check to discern something that isn't obvious. The Search table suggests which skills are applicable when you take this action, depending on what you're trying to detect." },
+        { name: "Shove", description: "The target must succeed on a Strength or Dexterity saving throw (it chooses which), or you either push it 5 feet away or cause it to have the Prone condition. The DC for the saving throw equals 8 plus your Strength modifier and Proficiency Bonus. This shove is possible only if the target is no more than one size larger than you." },
+        { name: "Study", description: "When you take the Study action, you make an Intelligence check to study your memory, a book, a clue, or another source of knowledge and call to mind an important piece of information about it." },
+        { name: "Utilize", description: "You normally interact with an object while doing something else, such as when you draw a sword as part of the Attack action. When an object requires an action for its use, you take the Utilize action." }
+    ];
+
+    const mechanics = [
+        {
+            name: "Long Jump", description: `
+            <strong><em>With Movement.</em></strong> You leap a number of feet up to your Strength score if you move at least 10 feet immediately before the jump. When you make a standing Long Jump, you can leap only half that distance.<br>
+            <strong><em>Landing.</em></strong> Either way, each foot you clear costs a foot of movement. You land Prone if you don't clear the distance.
+            `
+        },
+        {
+            name: "High Jump", description: `
+            <strong><em>With Movement.</em></strong> You leap into the air a number of feet equal to 3 + your Strength modifier if you move at least 10 feet immediately before the jump. When you make a standing High Jump, you can jump only half that distance.<br>
+            <strong><em>Reach.</em></strong> You can extend your arms half your height above yourself during the jump. Thus, you can reach a distance equal to the height of the jump plus 1½ times your height.<br>
+            <strong><em>Landing.</em></strong> Each foot you clear costs a foot of movement.
+            `
+        },
+        {
+            name: "Concentration", description: `
+            Some spells require Concentration to maintain. If you lose Concentration, the spell ends.<br>
+            <strong><em>Breaking Concentration.</em></strong> You lose Concentration on a spell if you cast another spell that requires Concentration, you take damage (DC 10 or half the damage taken, whichever is higher), you have the Incapacitated condition, or you die.<br>
+            <strong><em>Environmental Phenomena.</em></strong> The DM might rule that other phenomena can break Concentration, such as a wave crashing over you.
+            `
+        },
+    ];
+
+    // Add Skills section
+    const skillsSection = $(`<div class='dmScreenCondition'><h3>Skills</h3></div>`);
+    skills.forEach(skill => {
+        skillsSection.append(`<div><strong>${skill.name}:</strong> ${skill.description}</div>`);
+    });
+    columnsContainer.append(skillsSection);
+
+    // Add Mechanics section
+    mechanics.forEach(mechanic => {
+        const mechanicDiv = $(`
+            <div class='dmScreenCondition'>
+                <h3>${mechanic.name}</h3>
+                <div class='dmScreenConditionDefinition'>
+                    ${mechanic.description}
+                </div>
+            </div>
+        `);
+        columnsContainer.append(mechanicDiv);
+    });
 
     return block;
 }
 
 /**
- * Build the Combat Actions reference block (example)
- * @returns {jQuery} The combat actions block element
+ * Build the Actions reference block
+ * @returns {jQuery} The actions block element
  */
-function buildCombatActionsBlock() {
-    const block = $(`<div class='dmScreenBlock' id='dmScreenCombat'>
-        <h2>Combat Actions</h2>
+function buildActionsBlock() {
+    const block = $(`<div class='dmScreenBlock' id='dmScreenActions'>
+        <div class='dmScreenConditionsColumns'></div>
     </div>`);
 
-    // Add your combat actions content here
-    block.append(`<p>Combat actions content goes here...</p>`);
+    const columnsContainer = block.find('.dmScreenConditionsColumns');
+
+    const actions = [
+        { name: "Attack", description: "When you take the Attack action, you can make one attack roll with a weapon or an Unarmed Strike.<br><strong>Equipping and Unequipping Weapons.</strong> You can either equip or unequip one weapon when you make an attack as part of this action. You do so either before or after the attack. If you equip a weapon before an attack, you don't need to use it for that attack. Equipping a weapon includes drawing it from a sheath or picking it up. Unequipping a weapon includes sheathing, stowing, or dropping it.<br><strong>Moving between Attacks.</strong> If you move on your turn and have a feature, such as Extra Attack, that gives you more than one attack as part of the Attack action, you can use some or all of that movement to move between those attacks." },
+        { name: "Dash", description: "When you take the Dash action, you gain extra movement for the current turn. The increase equals your Speed after applying any modifiers. With a Speed of 30 feet, for example, you can move up to 60 feet on your turn if you Dash. If your Speed of 30 feet is reduced to 15 feet, you can move up to 30 feet this turn if you Dash.<br>If you have a special speed, such as a Fly Speed or Swim Speed, you can use that speed instead of your Speed when you take this action. You choose which speed to use each time you take it." },
+        { name: "Disengage", description: "If you take the Disengage action, your movement doesn't provoke Opportunity Attacks for the rest of the current turn." },
+        { name: "Dodge", description: "If you take the Dodge action, you gain the following benefits: until the start of your next turn, any attack roll made against you has Disadvantage if you can see the attacker, and you make Dexterity saving throws with Advantage.<br>You lose these benefits if you have the Incapacitated condition or if your Speed is 0." },
+        { name: "Grapple", description:  `A creature can grapple another creature. Characters typically grapple by using an Unarmed Strike. Many monsters have special attacks that allow them to quickly grapple prey. However a grapple is initiated, it follows these rules.<br><strong>Grapple.</strong> The target must succeed on a Strength or Dexterity saving throw (it chooses which), or it has the Grappled condition. The DC for the saving throw and any escape attempts equals 8 plus your Strength modifier and Proficiency Bonus. This grapple is possible only if the target is no more than one size larger than you and if you have a hand free to grab it.<br><strong>Grappled Condition.</strong> Successfully grappling a creature gives it the Grappled condition.<br><strong>One Grapple per Hand.</strong> A creature must have a hand free to grapple another creature. Some stat blocks and game effects allow a creature to grapple using a tentacle, a maw, or another body part. Whatever part a grappler uses, it can grapple only one creature at a time with that part, and the grappler can't use that part to target another creature unless it ends the grapple.<br><strong>Escaping a Grapple.</strong> A Grappled creature can use its action to make a Strength (Athletics) or Dexterity (Acrobatics) check against the grapple's escape DC, ending the condition on itself on a success. The condition also ends if the grappler has the Incapacitated condition or if the distance between the Grappled target and the grappler exceeds the grapple's range.` },
+        { name: "Help", description: "When you take the Help action, you do one of the following.<br><strong>Assist an Ability Check.</strong> Choose one of your skill or tool proficiencies and one ally who is near enough for you to assist verbally or physically when they make an ability check. That ally has Advantage on the next ability check they make with the chosen skill or tool. This benefit expires if the ally doesn't use it before the start of your next turn. The DM has final say on whether your assistance is possible.<br><strong>Assist an Attack Roll.</strong> You momentarily distract an enemy within 5 feet of you, giving Advantage to the next attack roll by one of your allies against that enemy. This benefit expires at the start of your next turn." },
+        { name: "Hide", description: "With the Hide action, you try to conceal yourself. To do so, you must succeed on a DC 15 Dexterity (Stealth) check while you're Heavily Obscured or behind Three-Quarters Cover or Total Cover, and you must be out of any enemy's line of sight; if you can see a creature, you can discern whether it can see you.<br>On a successful check, you have the Invisible condition. Make note of your check's total, which is the DC for a creature to find you with a Wisdom (Perception) check.<br>The condition ends on you immediately after any of the following occurs: you make a sound louder than a whisper, an enemy finds you, you make an attack roll, or you cast a spell with a Verbal component." },
+        { name: "Improvise", description: "Player characters and monsters can also do things not covered by these actions. Many class features and other abilities provide additional action options, and you can improvise other actions. When you describe an action not detailed elsewhere in the rules, the Dungeon Master tells you whether that action is possible and what kind of D20 Test you need to make, if any." },
+        { name: "Influence", description: "With the Influence action, you urge a monster to do something. Describe or roleplay how you're communicating with the monster. Are you trying to deceive, intimidate, amuse, or gently persuade? The DM then determines whether the monster feels willing, unwilling, or hesitant due to your interaction; this determination establishes whether an ability check is necessary." },
+        { name: "Magic", description: "When you take the Magic action, you cast a spell that has a casting time of an action or use a feature or magic item that requires a Magic action to be activated.<br>If you cast a spell that has a casting time of 1 minute or longer, you must take the Magic action on each turn of that casting, and you must maintain Concentration while you do so. If your Concentration is broken, the spell fails, but you don't expend a spell slot." },
+        { name: "Ready", description: "You take the Ready action to wait for a particular circumstance before you act. To do so, you take this action on your turn, which lets you act by taking a Reaction before the start of your next turn.<br>First, you decide what perceivable circumstance will trigger your Reaction. Then, you choose the action you will take in response to that trigger, or you choose to move up to your Speed in response to it. Examples include \"If the cultist steps on the trapdoor, I'll pull the lever that opens it,\" and \"If the zombie steps next to me, I move away.\"<br>When the trigger occurs, you can either take your Reaction right after the trigger finishes or ignore the trigger.<br>When you Ready a spell, you cast it as normal (expending any resources used to cast it) but hold its energy, which you release with your Reaction when the trigger occurs. To be readied, a spell must have a casting time of an action, and holding on to the spell's magic requires Concentration, which you can maintain up to the start of your next turn. If your Concentration is broken, the spell dissipates without taking effect." },
+        { name: "Search", description: "When you take the Search action, you make a Wisdom check to discern something that isn't obvious. The Search table suggests which skills are applicable when you take this action, depending on what you're trying to detect." },
+        { name: "Shove", description: "The target must succeed on a Strength or Dexterity saving throw (it chooses which), or you either push it 5 feet away or cause it to have the Prone condition. The DC for the saving throw equals 8 plus your Strength modifier and Proficiency Bonus. This shove is possible only if the target is no more than one size larger than you." },
+        { name: "Study", description: "When you take the Study action, you make an Intelligence check to study your memory, a book, a clue, or another source of knowledge and call to mind an important piece of information about it." },
+        { name: "Utilize", description: "You normally interact with an object while doing something else, such as when you draw a sword as part of the Attack action. When an object requires an action for its use, you take the Utilize action." }
+    ];
+
+    // Add Actions section
+    actions.forEach(action => {
+        const actionDiv = $(`
+            <div class='dmScreenCondition'>
+                <h3>${action.name}</h3>
+                <div class='dmScreenConditionDefinition'>
+                    ${action.description}
+                </div>
+            </div>
+        `);
+        columnsContainer.append(actionDiv);
+    });
+
+    return block;
+}
+
+/**
+ * Build the Improvising Objects and Damage reference block
+ * @returns {jQuery} The damage block element
+ */
+function buildImprovisationBlock() {
+    const block = $(`<div class='dmScreenBlock' id='dmScreenImprovisation'>
+        <div class='dmScreenConditionsColumns'></div>
+    </div>`);
+
+    const columnsContainer = block.find('.dmScreenConditionsColumns');
+
+    const damageData = [
+        { dice: "1d10", examples: "Burned by coals, hit by a falling bookcase, pricked by a poison needle" },
+        { dice: "2d10", examples: "Struck by lightning, stumbling into a firepit" },
+        { dice: "4d10", examples: "Hit by falling rubble in a collapsing tunnel, tumbling into a vat of acid" },
+        { dice: "10d10", examples: "Crushed by compacting walls, hit by whirling steel blades, wading through lava" },
+        { dice: "18d10", examples: "Submerged in lava, hit by a crashing flying fortress" },
+        { dice: "24d10", examples: "Tumbling into a vortex of fire on the Elemental Plane of Fire, crushed in the jaws of a godlike creature or a moon-size monster" }
+    ];
+
+    // Add Damage Severity and Level table
+    const severityData = [
+        { levels: "1-4", nuisance: "5 (1d10)", deadly: "11 (2d10)" },
+        { levels: "5-10", nuisance: "11 (2d10)", deadly: "22 (4d10)" },
+        { levels: "11-16", nuisance: "22 (4d10)", deadly: "55 (10d10)" },
+        { levels: "17-20", nuisance: "55 (10d10)", deadly: "99 (18d10)" }
+    ];
+
+    const damageSection = $(`
+        <div class='dmScreenCondition'>
+            <h3>Improvising Damage</h3>
+            <table style='width: 100%; border-collapse: collapse; margin-bottom: 20px;'>
+                <thead>
+                    <tr>
+                        <th style='text-align: left; padding: 8px; border-bottom: 2px solid #ccc;'>Dice</th>
+                        <th style='text-align: left; padding: 8px; border-bottom: 2px solid #ccc;'>Examples</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+            
+            <h3>Damage Severity and Level</h3>
+            <table style='width: 100%; border-collapse: collapse;'>
+                <thead>
+                    <tr>
+                        <th style='text-align: left; padding: 8px; border-bottom: 2px solid #ccc;'>Character Levels</th>
+                        <th style='text-align: left; padding: 8px; border-bottom: 2px solid #ccc;'>Nuisance</th>
+                        <th style='text-align: left; padding: 8px; border-bottom: 2px solid #ccc;'>Deadly</th>
+                    </tr>
+                </thead>
+                <tbody id='severityTableBody'></tbody>
+            </table>
+        </div>
+    `);
+
+    const tbody = damageSection.find('tbody').first();
+    damageData.forEach(row => {
+        tbody.append(`
+            <tr>
+                <td style='padding: 8px; border-bottom: 1px solid #eee;'><strong>${row.dice}</strong></td>
+                <td style='padding: 8px; border-bottom: 1px solid #eee;'>${row.examples}</td>
+            </tr>
+        `);
+    });
+
+    const severityTbody = damageSection.find('#severityTableBody');
+    severityData.forEach(row => {
+        severityTbody.append(`
+            <tr>
+                <td style='padding: 8px; border-bottom: 1px solid #eee;'><strong>${row.levels}</strong></td>
+                <td style='padding: 8px; border-bottom: 1px solid #eee;'>${row.nuisance}</td>
+                <td style='padding: 8px; border-bottom: 1px solid #eee;'>${row.deadly}</td>
+            </tr>
+        `);
+    });
+
+    columnsContainer.append(damageSection);
+
+    return block;
+}
+
+/**
+ * Build the Travel reference block
+ * @returns {jQuery} The travel block element
+ */
+function buildTravelBlock() {
+    const block = $(`<div class='dmScreenBlock' id='dmScreenTravel'>
+    </div>`);
+
+    // Add your travel content here
+    block.append(`<p>Travel content goes here...</p>`);
 
     return block;
 }

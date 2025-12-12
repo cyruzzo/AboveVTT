@@ -3210,8 +3210,7 @@ body .note-visibility-toggle-container {
 #dmScreenContainer {
     position: fixed;
     top: 30px;
-    transform: translateX(-60%);
-    left: 50%;
+    left: 30px;
     margin: auto;
     overflow:auto;
     height: calc(100% - 40px);
@@ -3220,9 +3219,35 @@ body .note-visibility-toggle-container {
     border: 3px solid black;
     border-radius: 8px;
     padding: 10px;
-    width:80%;
+    width: calc(100% - 400px);
     display: none;
     background-color: #FCFBF9;
+    .dmScreenheader{
+        position: relative;
+        .dmScreenTitle {
+            cursor: pointer;
+            user-select: none;
+            span {
+                font-size: 0.8em;
+            }
+        }
+    }
+    .dmScreenDropdown {
+        position: absolute;
+        top: 100%;
+        left: calc(50% - 125px);
+        background: white;
+        border: 2px solid rgb(51, 51, 51);
+        box-shadow: rgba(0, 0, 0, 0.3) 0px 4px 8px;
+        z-index: 1000;
+        min-width: 250px;
+        .dmScreenDropdownItem {
+            padding: 10px 15px;
+            cursor: pointer;
+            border-bottom: 1px solid rgb(221, 221, 221);
+            background-color: rgb(255, 255, 255);
+        }
+    }
     .dmScreenBlock {
         h2 {
             font-size: 20px;
