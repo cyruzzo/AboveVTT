@@ -82,6 +82,9 @@ $(function() {
         DDBApi.fetchItemsJsonWithToken().then(data => {
           window.ITEMS_CACHE = data;
         })
+       DDBApi.debounceGetPartyInventory()
+
+       
         const lastSendToDefault = localStorage.getItem(`${gameId}-sendToDefault`, gamelog_send_to_text()); 
 
         if(lastSendToDefault != null){

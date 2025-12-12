@@ -2371,18 +2371,14 @@ class PartyInventoryQueue {
 
   addToQueue(item) {
     this.queue.push(item);
-    console.log(`[PartyInventoryQueue] Item added. Queue length: ${this.queue.length}, isProcessing: ${this.isProcessing}`);
     
-    // Always reschedule the batch timer to wait for all synchronous additions
     if (this.batchTimer) {
       clearTimeout(this.batchTimer);
     }
     
-    // Start batching timer only if not currently processing
     if (!this.isProcessing) {
       this.batchTimer = setTimeout(() => {
         this.batchTimer = null;
-        console.log(`[PartyInventoryQueue] Batch window closed, starting to process`);
         this.processQueue();
       }, 10);
     }
@@ -2390,16 +2386,13 @@ class PartyInventoryQueue {
 
   processQueue() {
     if (this.isProcessing || this.queue.length === 0) {
-      console.log(`[PartyInventoryQueue] processQueue blocked - isProcessing: ${this.isProcessing}, queueLength: ${this.queue.length}`);
-      return;
+       return;
     }
 
     this.isProcessing = true;
     const item = this.queue.shift();
-    console.log(`[PartyInventoryQueue] Processing item type: ${item.type}, remaining in queue: ${this.queue.length}`);
 
     this.requestTimeout = setTimeout(() => {
-      console.warn(`[PartyInventoryQueue] Request timeout - no response after 15s, forcing next item`);
       this.isProcessing = false;
       if (this.queue.length > 0) {
         setTimeout(() => this.processQueue(), 100);
@@ -2415,18 +2408,14 @@ class PartyInventoryQueue {
         add_custom_item_to_party_inventory(item.data);
       }
     } catch (error) {
-      console.error(`[PartyInventoryQueue] Error processing queue item:`, error);
       this.isProcessing = false;
       if (this.queue.length > 0) {
-        setTimeout(() => this.processQueue(), 100);
+        setTimeout(() => this.processQueue(), 100); 
       }
     }
   }
 
-  onResponseReceived() {
-    console.log(`[PartyInventoryQueue] Response received, remaining in queue: ${this.queue.length}`);
-    
-    // Clear the request timeout since we got a response
+  onResponseReceived() {    
     if (this.requestTimeout) {
       clearTimeout(this.requestTimeout);
       this.requestTimeout = null;
@@ -2435,14 +2424,12 @@ class PartyInventoryQueue {
     this.isProcessing = false;
     
     if (this.queue.length > 0) {
-      // Add small delay before processing next item
-      console.log(`[PartyInventoryQueue] Scheduling next item`);
       setTimeout(() => this.processQueue(), 100);
     } else {
-      // Queue is empty, send completion message
-      console.log(`[PartyInventoryQueue] Queue completed`);
       if (window.MB) {
         window.MB.sendMessage('character-sheet/item-shared/fulfilled', {});
+        if(DDBApi)
+          DDBApi.debounceGetPartyInventory();
       }
       else {
         tabCommunicationChannel.postMessage({
@@ -2455,8 +2442,6 @@ class PartyInventoryQueue {
     }
   }
 }
-
-
 
 window.partyInventoryQueue = new PartyInventoryQueue();
 
