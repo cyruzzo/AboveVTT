@@ -3222,14 +3222,24 @@ body .note-visibility-toggle-container {
     width: calc(100% - 400px);
     display: none;
     background-color: #FCFBF9;
+    -webkit-user-select: text;
+    -ms-user-select: text;
+    user-select: text;
     .dmScreenheader{
         position: relative;
         .dmScreenTitle {
             cursor: pointer;
-            user-select: none;
             span {
                 font-size: 0.8em;
             }
+        }
+    }
+    table {
+        tr:nth-child(odd) {
+            background-color: #F1EBDD;
+        }
+        tr:nth-child(even) {
+            background-color: #F9F8F3;
         }
     }
     .dmScreenDropdown {

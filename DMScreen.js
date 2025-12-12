@@ -401,6 +401,23 @@ function buildImprovisationBlock() {
         { levels: "17-20", nuisance: "55 (10d10)", deadly: "99 (18d10)" }
     ];
 
+    const objectArmorClassData = [
+        { substance: "Cloth, paper, rope", ac: "11" },
+        { substance: "Crystal, ice, glass", ac: "13" },
+        { substance: "Wood, bone", ac: "15" },
+        { substance: "Stone", ac: "17" },
+        { substance: "Iron, steel", ac: "19" },
+        { substance: "Mithral", ac: "21" },
+        { substance: "Adamantine", ac: "23" }
+    ];
+
+    const objectHitPointsData = [
+        { size: "Tiny", fragile: "2 (1d4)",resilient: "5 (2d4)" },
+        { size: "Small", fragile: "3 (1d6)",resilient: "10 (3d6)" },
+        { size: "Medium", fragile: "4 (1d8)",resilient: "15 (4d8)" },
+        { size: "Large", fragile: "6 (1d10)",resilient: "20 (5d10)" },
+    ]
+
     const damageSection = $(`
         <div class='dmScreenCondition'>
             <h3>Improvising Damage</h3>
@@ -450,6 +467,107 @@ function buildImprovisationBlock() {
     });
 
     columnsContainer.append(damageSection);
+
+    // Add Object AC and HP tables in same section
+    const objectACData = [
+        { material: "Cloth, paper, rope", ac: "11" },
+        { material: "Crystal, glass, ice", ac: "13" },
+        { material: "Wood, bone", ac: "15" },
+        { material: "Stone", ac: "17" },
+        { material: "Iron, steel", ac: "19" },
+        { material: "Mithral", ac: "21" },
+        { material: "Adamantine", ac: "23" }
+    ];
+
+    const objectHPData = [
+        { size: "Tiny", hp: "2 (1d4)" },
+        { size: "Small", hp: "3 (1d6)" },
+        { size: "Medium", hp: "4 (1d8)" },
+        { size: "Large", hp: "5 (1d10)" },
+        { size: "Huge", hp: "6 (1d12)" },
+        { size: "Gargantuan", hp: "7 (2d6)" }
+    ];
+
+    const objectStatsSection = $(`
+        <div class='dmScreenCondition'>
+            <h3>Object Armor Class</h3>
+            <table style='width: 100%; border-collapse: collapse; margin-bottom: 20px;'>
+                <thead>
+                    <tr>
+                        <th style='text-align: left; padding: 8px; border-bottom: 2px solid #ccc;'>Material</th>
+                        <th style='text-align: left; padding: 8px; border-bottom: 2px solid #ccc;'>AC</th>
+                    </tr>
+                </thead>
+                <tbody id='objectACTableBody'></tbody>
+            </table>
+            
+            <h3>Object Hit Points</h3>
+            <table style='width: 100%; border-collapse: collapse;'>
+                <thead>
+                    <tr>
+                        <th style='text-align: left; padding: 8px; border-bottom: 2px solid #ccc;'>Size</th>
+                        <th style='text-align: left; padding: 8px; border-bottom: 2px solid #ccc;'>Hit Points</th>
+                    </tr>
+                </thead>
+                <tbody id='objectHPTableBody'></tbody>
+            </table>
+        </div>
+    `);
+
+    const acTbody = objectStatsSection.find('#objectACTableBody');
+    objectACData.forEach(row => {
+        acTbody.append(`
+            <tr>
+                <td style='padding: 8px; border-bottom: 1px solid #eee;'>${row.material}</td>
+                <td style='padding: 8px; border-bottom: 1px solid #eee;'><strong>${row.ac}</strong></td>
+            </tr>
+        `);
+    });
+
+    const hpTbody = objectStatsSection.find('#objectHPTableBody');
+    objectHPData.forEach(row => {
+        hpTbody.append(`
+            <tr>
+                <td style='padding: 8px; border-bottom: 1px solid #eee;'><strong>${row.size}</strong></td>
+                <td style='padding: 8px; border-bottom: 1px solid #eee;'>${row.hp}</td>
+            </tr>
+        `);
+    });
+
+    columnsContainer.append(objectStatsSection);
+
+    const additionalObjectSection = $(`
+        <div class='dmScreenCondition'>
+            <h3>Huge and Gargantuan Objects</h3>
+            <div class='dmScreenConditionDefinition'>
+                Normal weapons are of little use against many Huge and Gargantuan objects, such as a colossal statue, towering column of stone, or massive boulder. That said, one torch can burn a Huge tapestry, and an earthquake spell can reduce a colossus to rubble. You can track a Huge or Gargantuan object's hit points if you like, or you can simply decide how long the object can withstand whatever weapon or force is acting against it. If you track hit points for the object, divide it into Large or smaller sections, and track each section's hit points separately. Destroying one of those sections could ruin the entire object. For example, a Gargantuan statue of a human might topple over when one of its Large legs is reduced to 0 hit points.
+            </div>
+        </div>
+    `);
+
+    columnsContainer.append(additionalObjectSection);
+
+    const objectDamageTypesSection = $(`
+        <div class='dmScreenCondition'>
+            <h3>Objects and Damage Types</h3>
+            <div class='dmScreenConditionDefinition'>
+                Objects are immune to poison and psychic damage. You might decide that some damage types are more effective against a particular object or substance than others. For example, bludgeoning damage works well for smashing things but not for cutting through rope or leather. Paper or cloth objects might be vulnerable to fire and lightning damage. A pick can chip away stone but can't effectively cut down a tree. As always, use your best judgment.
+            </div>
+        </div>
+    `);
+
+    columnsContainer.append(objectDamageTypesSection);
+
+    const damageThresholdSection = $(`
+        <div class='dmScreenCondition'>
+            <h3>Damage Threshold</h3>
+            <div class='dmScreenConditionDefinition'>
+                Big objects such as castle walls often have extra resilience represented by a damage threshold. An object with a damage threshold has immunity to all damage unless it takes an amount of damage from a single attack or effect equal to or greater than its damage threshold, in which case it takes damage as normal. Any damage that fails to meet or exceed the object's damage threshold is considered superficial and doesn't reduce the object's hit points.
+            </div>
+        </div>
+    `);
+
+    columnsContainer.append(damageThresholdSection);
 
     return block;
 }
