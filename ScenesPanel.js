@@ -2325,8 +2325,12 @@ async function redraw_scene_list(searchTerm) {
 
 										let input = createCountTracker(window.JOURNAL.notes[noteId], spellName, numberFound, remainingText, "", track_ability);
 										const playerDisabled = $(this).hasClass('player-disabled');
-										if (playerDisabled) {
+										if (!window.DM && playerDisabled) {
 											input.prop('disabled', true);
+										}
+										const partyLootTable = $(this).closest('.party-item-table');
+										if (partyLootTable.length > 0) {
+											$(this).closest('tr').find('td>.item-quantity-take-input').val(numberFound);
 										}
 										$(this).find('p').remove();
 										$(this).after(input)

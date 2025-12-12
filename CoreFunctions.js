@@ -2359,6 +2359,107 @@ function find_items_in_cache_by_name(names = [], exactMatch = false) {
   }
   return window.ITEMS_CACHE.filter(ci => ci.name.toString().toLowerCase().includes(names));
 }
+
+
+class PartyInventoryQueue {
+  constructor() {
+    this.queue = [];
+    this.isProcessing = false;
+    this.batchTimer = null;
+    this.requestTimeout = null;
+  }
+
+  addToQueue(item) {
+    this.queue.push(item);
+    console.log(`[PartyInventoryQueue] Item added. Queue length: ${this.queue.length}, isProcessing: ${this.isProcessing}`);
+    
+    // Always reschedule the batch timer to wait for all synchronous additions
+    if (this.batchTimer) {
+      clearTimeout(this.batchTimer);
+    }
+    
+    // Start batching timer only if not currently processing
+    if (!this.isProcessing) {
+      this.batchTimer = setTimeout(() => {
+        this.batchTimer = null;
+        console.log(`[PartyInventoryQueue] Batch window closed, starting to process`);
+        this.processQueue();
+      }, 10);
+    }
+  }
+
+  processQueue() {
+    if (this.isProcessing || this.queue.length === 0) {
+      console.log(`[PartyInventoryQueue] processQueue blocked - isProcessing: ${this.isProcessing}, queueLength: ${this.queue.length}`);
+      return;
+    }
+
+    this.isProcessing = true;
+    const item = this.queue.shift();
+    console.log(`[PartyInventoryQueue] Processing item type: ${item.type}, remaining in queue: ${this.queue.length}`);
+
+    this.requestTimeout = setTimeout(() => {
+      console.warn(`[PartyInventoryQueue] Request timeout - no response after 15s, forcing next item`);
+      this.isProcessing = false;
+      if (this.queue.length > 0) {
+        setTimeout(() => this.processQueue(), 100);
+      }
+    }, 15000);
+
+    try {
+      if (item.type === 'items') {
+        add_items_to_party_inventory(item.data);
+      } else if (item.type === 'currency') {
+        add_currency_to_party_inventory(item.data);
+      } else if (item.type === 'customItem') {
+        add_custom_item_to_party_inventory(item.data);
+      }
+    } catch (error) {
+      console.error(`[PartyInventoryQueue] Error processing queue item:`, error);
+      this.isProcessing = false;
+      if (this.queue.length > 0) {
+        setTimeout(() => this.processQueue(), 100);
+      }
+    }
+  }
+
+  onResponseReceived() {
+    console.log(`[PartyInventoryQueue] Response received, remaining in queue: ${this.queue.length}`);
+    
+    // Clear the request timeout since we got a response
+    if (this.requestTimeout) {
+      clearTimeout(this.requestTimeout);
+      this.requestTimeout = null;
+    }
+
+    this.isProcessing = false;
+    
+    if (this.queue.length > 0) {
+      // Add small delay before processing next item
+      console.log(`[PartyInventoryQueue] Scheduling next item`);
+      setTimeout(() => this.processQueue(), 100);
+    } else {
+      // Queue is empty, send completion message
+      console.log(`[PartyInventoryQueue] Queue completed`);
+      if (window.MB) {
+        window.MB.sendMessage('character-sheet/item-shared/fulfilled', {});
+      }
+      else {
+        tabCommunicationChannel.postMessage({
+          msgType: 'DDBMessage',
+          action: 'character-sheet/item-shared/fulfilled',
+          data: {},
+          sendTo: window.sendToTab
+        });
+      }
+    }
+  }
+}
+
+
+
+window.partyInventoryQueue = new PartyInventoryQueue();
+
 function add_items_to_party_inventory(items = []) {
   const itemIds = Object.keys(items);
   if (itemIds.length === 0) {
@@ -2384,17 +2485,10 @@ function add_items_to_party_inventory(items = []) {
 
   DDBApi.addItemsToPartyInventory(data).then(response => {
     console.log('add_items_to_party_inventory response:', response);
-    if(window.MB){
-      window.MB.sendMessage('character-sheet/item-shared/fulfilled', {});
-    }
-    else{
-      tabCommunicationChannel.postMessage({
-        msgType: 'DDBMessage',
-        action: 'character-sheet/item-shared/fulfilled',
-        data: {},
-        sendTo: window.sendToTab
-      });
-    }
+    window.partyInventoryQueue.onResponseReceived();
+  }).catch(error => {
+    console.error('add_items_to_party_inventory error:', error);
+    window.partyInventoryQueue.onResponseReceived();
   });
 
 }
@@ -2431,17 +2525,10 @@ function add_custom_item_to_party_inventory(item) {
 
   DDBApi.addCustomItemToPartyInventory(data).then(response => {
     console.log('add_custom_item_to_party_inventory response:', response);
-    if (window.MB) {
-      window.MB.sendMessage('character-sheet/item-shared/fulfilled', {});
-    }
-    else {
-      tabCommunicationChannel.postMessage({
-        msgType: 'DDBMessage',
-        action: 'character-sheet/item-shared/fulfilled',
-        data: {},
-        sendTo: window.sendToTab
-      });
-    }
+    window.partyInventoryQueue.onResponseReceived();
+  }).catch(error => {
+    console.error('add_custom_item_to_party_inventory error:', error);
+    window.partyInventoryQueue.onResponseReceived();
   });
 
 }
@@ -2455,17 +2542,10 @@ function add_currency_to_party_inventory(currency = {cp:0,sp:0,gp:0,ep:0,pp:0}) 
 
   DDBApi.addCurrenciesToPartyInventory(data).then(response => {
     console.log('add_currency_to_party_inventory response:', response);
-    if (window.MB) {
-      window.MB.sendMessage('character-sheet/item-shared/fulfilled', {});
-    }
-    else {
-      tabCommunicationChannel.postMessage({
-        msgType: 'DDBMessage',
-        action: 'character-sheet/item-shared/fulfilled',
-        data: {},
-        sendTo: window.sendToTab
-      });
-    }
+    window.partyInventoryQueue.onResponseReceived();
+  }).catch(error => {
+    console.error('add_currency_to_party_inventory error:', error);
+    window.partyInventoryQueue.onResponseReceived();
   });
 
 }

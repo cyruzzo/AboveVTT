@@ -97,6 +97,10 @@ async function display_stat_block_in_container(statBlock, container, tokenId, cu
         if (!window.DM && playerDisabled) {
           input.prop('disabled', true);
         }
+        const partyLootTable = $(this).closest('.party-item-table');
+        if (partyLootTable.length > 0) {
+          $(this).closest('tr').find('td>.item-quantity-take-input').val(numberFound);
+        }
         $(this).find('p').remove();
         $(this).after(input)
       })
