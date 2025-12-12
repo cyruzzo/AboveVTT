@@ -3285,6 +3285,9 @@ body .note-visibility-toggle-container {
             font-size: 12px;
             text-align: left;
         }
+        .dmScreenChunkDefinition {
+            margin: 5px 0px;
+        }
     }
 }
 

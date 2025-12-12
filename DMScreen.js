@@ -94,27 +94,27 @@ function buildConditionsBlock() {
     const conditions = [
         {
             name: "Blinded", definition: `
-            While you have the Blinded condition, you experience the following effects.<br><br>
+            While you have the Blinded condition, you experience the following effects.<br>
             <strong><em>Can't See. </em></strong>You can't see and automatically fail any ability check that requires sight.<br>
             <strong><em>Attacks Affected. </em></strong>Attack rolls against you have Advantage and your attack rolls have Disadvantage.<br>
             `
         },
         {
             name: "Charmed", definition: `
-            While you have the Charmed condition, you experience the following effects.<br><br>
-            <strong><em>Can't Harm the Charmer. </em></strong>You can't attack the charmer or target the charmer with damaging abilities or magical effects.<br><br>
+            While you have the Charmed condition, you experience the following effects.<br>
+            <strong><em>Can't Harm the Charmer. </em></strong>You can't attack the charmer or target the charmer with damaging abilities or magical effects.<br>
             <strong><em>Social Advantage. </em></strong>The charmer has Advantage on any ability check to interact with you socially.<br>
             `
         },
         {
             name: "Deafened", definition: `
-            While you have the Deafened condition, you experience the following effect.<br><br>
+            While you have the Deafened condition, you experience the following effect.<br>
             <strong><em>Can't Hear. </em></strong>You can't hear and automatically fail any ability check that requires hearing.<br>
             `
         },
         {
             name: "Exhaustion", definition: `
-            While you have the Exhaustion condition, you experience the following effects.<br><br>
+            While you have the Exhaustion condition, you experience the following effects.<br>
             <strong><em>Exhaustion Levels. </em></strong> This condition is cumulative. Each time you receive it, you gain 1 Exhaustion level. You die if your Exhaustion level is 6.<br>
             <strong><em>D20 Tests Affected. </em></strong> When you make a D20 Test, the roll is reduced by 2 times your Exhaustion level.<br>
             <strong><em>Speed Reduced. </em></strong> Your Speed is reduced by a number of feet equal to 5 times your Exhaustion level.<br>
@@ -123,14 +123,14 @@ function buildConditionsBlock() {
         },
         {
             name: "Frightened", definition: `
-            While you have the Frightened condition, you experience the following effects.<br><br>
+            While you have the Frightened condition, you experience the following effects.<br>
             <strong><em>Ability Checks and Attacks Affected. </em></strong> You have Disadvantage on ability checks and attack rolls while the source of fear is within line of sight.<br>
             <strong><em>Can't Approach. </em></strong> You can't willingly move closer to the source of fear.<br>
             `
         },
         {
             name: "Grappled", definition: `
-            While you have the Grappled condition, you experience the following effects.<br><br>
+            While you have the Grappled condition, you experience the following effects.<br>
             <strong><em>Speed 0. </em></strong> Your Speed is 0 and can't increase.<br>
             <strong><em>Attacks Affected. </em></strong> You have Disadvantage on attack rolls against any target other than the grappler.<br>
             <strong><em>Movable. </em></strong> The grappler can drag or carry you when it moves, but every foot of movement costs it 1 extra foot unless you are Tiny or two or more sizes smaller than it.<br>
@@ -138,7 +138,7 @@ function buildConditionsBlock() {
         },
         {
             name: "Incapacitated", definition: `
-            While you have the Incapacitated condition, you experience the following effects.<br><br>
+            While you have the Incapacitated condition, you experience the following effects.<br>
             <strong><em>Inactive. </em></strong> You can't take any action, Bonus Action, or Reaction.<br>
             <strong><em>No Concentration. </em></strong> Your Concentration is broken.<br>
             <strong><em>Speechless. </em></strong> You can't speak.<br>
@@ -147,7 +147,7 @@ function buildConditionsBlock() {
         },
         {
             name: "Invisible", definition: `
-            While you have the Invisible condition, you experience the following effects.<br><br>
+            While you have the Invisible condition, you experience the following effects.<br>
             <strong><em>Surprise. </em></strong> If you're Invisible when you roll Initiative, you have Advantage on the roll.<br>
             <strong><em>Concealed. </em></strong> You aren't affected by any effect that requires its target to be seen unless the effect's creator can somehow see you. Any equipment you are wearing or carrying is also concealed.<br>
             <strong><em>Attacks Affected. </em></strong> Attack rolls against you have Disadvantage, and your attack rolls have Advantage. If a creature can somehow see you, you don't gain this benefit against that creature.<br>
@@ -155,7 +155,7 @@ function buildConditionsBlock() {
         },
         {
             name: "Paralyzed", definition: `
-            While you have the Paralyzed condition, you experience the following effects.<br><br>
+            While you have the Paralyzed condition, you experience the following effects.<br>
             <strong><em>Incapacitated. </em></strong> You have the Incapacitated condition.<br>
             <strong><em>Speed 0. </em></strong> Your Speed is 0 and can't increase.<br>
             <strong><em>Saving Throws Affected. </em></strong> You automatically fail Strength and Dexterity saving throws.<br>
@@ -165,7 +165,7 @@ function buildConditionsBlock() {
         },
         {
             name: "Petrified", definition: `
-            While you have the Petrified condition, you experience the following effects.<br><br>
+            While you have the Petrified condition, you experience the following effects.<br>
             <strong><em>Turned to Inanimate Substance. </em></strong> You are transformed, along with any nonmagical objects you are wearing and carrying, into a solid inanimate substance (usually stone). Your weight increases by a factor of ten, and you cease aging.<br>
             <strong><em>Incapacitated. </em></strong> You have the Incapacitated condition.<br>
             <strong><em>Speed 0. </em></strong> Your Speed is 0 and can't increase.<br>
@@ -177,20 +177,20 @@ function buildConditionsBlock() {
         },
         {
             name: "Poisoned", definition: `
-            While you have the Poisoned condition, you experience the following effect.<br><br>
+            While you have the Poisoned condition, you experience the following effect.<br>
             <strong><em>Ability Checks and Attacks Affected. </em></strong> You have Disadvantage on attack rolls and ability checks.<br>
             `
         },
         {
             name: "Prone", definition: `
-            While you have the Prone condition, you experience the following effects.<br><br>
+            While you have the Prone condition, you experience the following effects.<br>
             <strong><em>Restricted Movement. </em></strong> Your only movement options are to crawl or to spend an amount of movement equal to half your Speed (round down) to right yourself and thereby end the condition. If your Speed is 0, you can't right yourself.<br>
             <strong><em>Attacks Affected. </em></strong> You have Disadvantage on attack rolls. An attack roll against you has Advantage if the attacker is within 5 feet of you. Otherwise, that attack roll has Disadvantage.<br>
             `
         },
         {
             name: "Restrained", definition: `
-            While you have the Restrained condition, you experience the following effects.<br><br>
+            While you have the Restrained condition, you experience the following effects.<br>
             <strong><em>Speed 0. </em></strong> Your Speed is 0 and can't increase.<br>
             <strong><em>Attacks Affected. </em></strong> Attack rolls against you have Advantage, and your attack rolls have Disadvantage.<br>
             <strong><em>Saving Throws Affected. </em></strong> You have Disadvantage on Dexterity saving throws.<br>
@@ -198,7 +198,7 @@ function buildConditionsBlock() {
         },
         {
             name: "Stunned", definition: `
-            While you have the Stunned condition, you experience the following effects.<br><br>
+            While you have the Stunned condition, you experience the following effects.<br>
             <strong><em>Incapacitated. </em></strong> You have the Incapacitated condition.<br>
             <strong><em>Saving Throws Affected. </em></strong> You automatically fail Strength and Dexterity saving throws.<br>
             <strong><em>Attacks Affected. </em></strong> Attack rolls against you have Advantage.<br>
@@ -206,7 +206,7 @@ function buildConditionsBlock() {
         },
         {
             name: "Unconscious", definition: `
-            While you have the Unconscious condition, you experience the following effects.<br><br>
+            While you have the Unconscious condition, you experience the following effects.<br>
             <strong><em>Inert. </em></strong> You have the Incapacitated and Prone conditions, and you drop whatever you're holding. When this condition ends, you remain Prone.<br>
             <strong><em>Speed 0. </em></strong> Your Speed is 0 and can't increase.<br>
             <strong><em>Attacks Affected. </em></strong> Attack rolls against you have Advantage.<br>
@@ -322,6 +322,34 @@ function buildSkillsAndMechanicsBlock() {
     });
     columnsContainer.append(skillsSection);
 
+    // Add Vision section
+    const visionSection = $(`
+        <div class='dmScreenChunk'>
+            <h3>Light</h3>
+            <div class='dmScreenChunkDefinition'>
+                The presence or absence of light determines the category of illumination in an area, as defined below.<br>
+                <strong>Bright Light.</strong> Bright Light lets most creatures see normally. Even gloomy days provide Bright Light, as do torches, lanterns, fires, and other sources of illumination within a specific radius.<br>
+                <strong>Dim Light.</strong> Dim Light, also called shadows, creates a Lightly Obscured area. An area of Dim Light is usually a boundary between Bright Light and surrounding Darkness. The soft light of twilight and dawn also counts as Dim Light. A full moon might bathe the land in Dim Light.<br>
+                <strong>Darkness.</strong> Darkness creates a Heavily Obscured area. Characters face Darkness outdoors at night (even most moonlit nights), within the confines of an unlit dungeon, or in an area of magical Darkness.<br>
+            </div>
+            <div class='dmScreenChunkDefinition'>
+            <h3>Visibility</h3>
+                <strong>Lightly Obscured</strong><br>
+                You have Disadvantage on Wisdom (Perception) checks to see something in a Lightly Obscured space.<br>
+                <strong>Heavily Obscured</strong><br>
+                You have the Blinded condition while trying to see something in a Heavily Obscured space.
+            </div>
+            <div class='dmScreenChunkDefinition'>
+            <h3>Cover</h3>
+                Cover provides a degree of protection to a target behind it. There are three degrees of cover, each of which provides a different benefit to a target. If behind more than one degree of cover, a target benefits only from the most protective degree.<br>
+                <strong>Half Cover:</strong> +2 bonus to AC and Dexterity saving throws<br>
+                <strong>Three-Quarters Cover:</strong> +5 bonus to AC and Dexterity saving throws<br>
+                <strong>Total Cover:</strong> can't be targeted directly.
+            </div>
+        </div>
+    `);
+    columnsContainer.append(visionSection);
+
     // Add Mechanics section
     mechanics.forEach(mechanic => {
         const mechanicDiv = $(`
@@ -334,6 +362,47 @@ function buildSkillsAndMechanicsBlock() {
         `);
         columnsContainer.append(mechanicDiv);
     });
+
+    // Add Mob Attacks table
+    const mobAttacksData = [
+        { roll: "1-5", attackers: "1" },
+        { roll: "6-12", attackers: "2" },
+        { roll: "13-14", attackers: "3" },
+        { roll: "15-16", attackers: "4" },
+        { roll: "17-18", attackers: "5" },
+        { roll: "19", attackers: "10" },
+        { roll: "20", attackers: "20" }
+    ];
+
+    const mobAttacksSection = $(`
+        <div class='dmScreenChunk'>
+            <h3>Mob Attacks</h3>
+            <div class='dmScreenChunkDefinition'>
+                Speed up combat with large groups by skipping attack rolls. Calculate the minimum d20 roll needed (target AC minus attack bonus), then use the table below to determine how many attackers are needed for one hit. Assume the highest damage dealer hits. Switch back to individual rolls when numbers dwindle.
+            </div>
+            <table style='width: 100%; border-collapse: collapse; margin-top: 10px;'>
+                <thead>
+                    <tr>
+                        <th style='text-align: left; padding: 8px; border-bottom: 2px solid #ccc;'>d20 Roll Needed</th>
+                        <th style='text-align: left; padding: 8px; border-bottom: 2px solid #ccc;'>Attackers Needed for One to Hit</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    `);
+
+    const mobAttacksTbody = mobAttacksSection.find('tbody');
+    mobAttacksData.forEach(row => {
+        mobAttacksTbody.append(`
+            <tr>
+                <td style='padding: 8px; border-bottom: 1px solid #eee;'><strong>${row.roll}</strong></td>
+                <td style='padding: 8px; border-bottom: 1px solid #eee;'>${row.attackers}</td>
+            </tr>
+        `);
+    });
+
+    columnsContainer.append(mobAttacksSection);
 
     // Add roll buttons to all dice notation in the travel block
     add_journal_roll_buttons(block, undefined, undefined, "DM");
