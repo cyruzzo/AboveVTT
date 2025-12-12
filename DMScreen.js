@@ -210,17 +210,17 @@ function buildConditionsBlock() {
         },
     ];
 
-    const block = $(`<div class='dmScreenBlock' id='dmScreenConditions'>
-        <div class='dmScreenConditionsColumns'></div>
+    const block = $(`<div class='dmScreenBlock' id='dmScreenChunks'>
+        <div class='dmScreenColumns'></div>
     </div>`);
 
-    const columnsContainer = block.find('.dmScreenConditionsColumns');
+    const columnsContainer = block.find('.dmScreenColumns');
 
     conditions.forEach(condition => {
         const conditionDiv = $(`
-            <div class='dmScreenCondition'>
+            <div class='dmScreenChunk'>
                 <h3>${condition.name}</h3>
-                <div class='dmScreenConditionDefinition'>
+                <div class='dmScreenChunkDefinition'>
                     ${condition.definition}
                 </div>
             </div>
@@ -237,10 +237,10 @@ function buildConditionsBlock() {
  */
 function buildSkillsAndMechanicsBlock() {
     const block = $(`<div class='dmScreenBlock' id='dmScreenSkillsAndMechanics'>
-        <div class='dmScreenConditionsColumns'></div>
+        <div class='dmScreenColumns'></div>
     </div>`);
 
-    const columnsContainer = block.find('.dmScreenConditionsColumns');
+    const columnsContainer = block.find('.dmScreenColumns');
 
     // Skills
     const skills = [
@@ -306,7 +306,7 @@ function buildSkillsAndMechanicsBlock() {
     ];
 
     // Add Skills section
-    const skillsSection = $(`<div class='dmScreenCondition'><h3>Skills</h3></div>`);
+    const skillsSection = $(`<div class='dmScreenChunk'><h3>Skills</h3></div>`);
     skills.forEach(skill => {
         skillsSection.append(`<div><strong>${skill.name}:</strong> ${skill.description}</div>`);
     });
@@ -315,9 +315,9 @@ function buildSkillsAndMechanicsBlock() {
     // Add Mechanics section
     mechanics.forEach(mechanic => {
         const mechanicDiv = $(`
-            <div class='dmScreenCondition'>
+            <div class='dmScreenChunk'>
                 <h3>${mechanic.name}</h3>
-                <div class='dmScreenConditionDefinition'>
+                <div class='dmScreenChunkDefinition'>
                     ${mechanic.description}
                 </div>
             </div>
@@ -334,10 +334,10 @@ function buildSkillsAndMechanicsBlock() {
  */
 function buildActionsBlock() {
     const block = $(`<div class='dmScreenBlock' id='dmScreenActions'>
-        <div class='dmScreenConditionsColumns'></div>
+        <div class='dmScreenColumns'></div>
     </div>`);
 
-    const columnsContainer = block.find('.dmScreenConditionsColumns');
+    const columnsContainer = block.find('.dmScreenColumns');
 
     const actions = [
         { name: "Attack", description: "When you take the Attack action, you can make one attack roll with a weapon or an Unarmed Strike.<br><strong>Equipping and Unequipping Weapons.</strong> You can either equip or unequip one weapon when you make an attack as part of this action. You do so either before or after the attack. If you equip a weapon before an attack, you don't need to use it for that attack. Equipping a weapon includes drawing it from a sheath or picking it up. Unequipping a weapon includes sheathing, stowing, or dropping it.<br><strong>Moving between Attacks.</strong> If you move on your turn and have a feature, such as Extra Attack, that gives you more than one attack as part of the Attack action, you can use some or all of that movement to move between those attacks." },
@@ -360,9 +360,9 @@ function buildActionsBlock() {
     // Add Actions section
     actions.forEach(action => {
         const actionDiv = $(`
-            <div class='dmScreenCondition'>
+            <div class='dmScreenChunk'>
                 <h3>${action.name}</h3>
-                <div class='dmScreenConditionDefinition'>
+                <div class='dmScreenChunkDefinition'>
                     ${action.description}
                 </div>
             </div>
@@ -379,10 +379,10 @@ function buildActionsBlock() {
  */
 function buildImprovisationBlock() {
     const block = $(`<div class='dmScreenBlock' id='dmScreenImprovisation'>
-        <div class='dmScreenConditionsColumns'></div>
+        <div class='dmScreenColumns'></div>
     </div>`);
 
-    const columnsContainer = block.find('.dmScreenConditionsColumns');
+    const columnsContainer = block.find('.dmScreenColumns');
 
     const damageData = [
         { dice: "1d10", examples: "Burned by coals, hit by a falling bookcase, pricked by a poison needle" },
@@ -419,7 +419,7 @@ function buildImprovisationBlock() {
     ]
 
     const damageSection = $(`
-        <div class='dmScreenCondition'>
+        <div class='dmScreenChunk'>
             <h3>Improvising Damage</h3>
             <table style='width: 100%; border-collapse: collapse; margin-bottom: 20px;'>
                 <thead>
@@ -489,7 +489,7 @@ function buildImprovisationBlock() {
     ];
 
     const objectStatsSection = $(`
-        <div class='dmScreenCondition'>
+        <div class='dmScreenChunk'>
             <h3>Object Armor Class</h3>
             <table style='width: 100%; border-collapse: collapse; margin-bottom: 20px;'>
                 <thead>
@@ -537,9 +537,9 @@ function buildImprovisationBlock() {
     columnsContainer.append(objectStatsSection);
 
     const additionalObjectSection = $(`
-        <div class='dmScreenCondition'>
+        <div class='dmScreenChunk'>
             <h3>Huge and Gargantuan Objects</h3>
-            <div class='dmScreenConditionDefinition'>
+            <div class='dmScreenChunkDefinition'>
                 Normal weapons are of little use against many Huge and Gargantuan objects, such as a colossal statue, towering column of stone, or massive boulder. That said, one torch can burn a Huge tapestry, and an earthquake spell can reduce a colossus to rubble. You can track a Huge or Gargantuan object's hit points if you like, or you can simply decide how long the object can withstand whatever weapon or force is acting against it. If you track hit points for the object, divide it into Large or smaller sections, and track each section's hit points separately. Destroying one of those sections could ruin the entire object. For example, a Gargantuan statue of a human might topple over when one of its Large legs is reduced to 0 hit points.
             </div>
         </div>
@@ -548,9 +548,9 @@ function buildImprovisationBlock() {
     columnsContainer.append(additionalObjectSection);
 
     const objectDamageTypesSection = $(`
-        <div class='dmScreenCondition'>
+        <div class='dmScreenChunk'>
             <h3>Objects and Damage Types</h3>
-            <div class='dmScreenConditionDefinition'>
+            <div class='dmScreenChunkDefinition'>
                 Objects are immune to poison and psychic damage. You might decide that some damage types are more effective against a particular object or substance than others. For example, bludgeoning damage works well for smashing things but not for cutting through rope or leather. Paper or cloth objects might be vulnerable to fire and lightning damage. A pick can chip away stone but can't effectively cut down a tree. As always, use your best judgment.
             </div>
         </div>
@@ -559,9 +559,9 @@ function buildImprovisationBlock() {
     columnsContainer.append(objectDamageTypesSection);
 
     const damageThresholdSection = $(`
-        <div class='dmScreenCondition'>
+        <div class='dmScreenChunk'>
             <h3>Damage Threshold</h3>
-            <div class='dmScreenConditionDefinition'>
+            <div class='dmScreenChunkDefinition'>
                 Big objects such as castle walls often have extra resilience represented by a damage threshold. An object with a damage threshold has immunity to all damage unless it takes an amount of damage from a single attack or effect equal to or greater than its damage threshold, in which case it takes damage as normal. Any damage that fails to meet or exceed the object's damage threshold is considered superficial and doesn't reduce the object's hit points.
             </div>
         </div>
@@ -578,10 +578,175 @@ function buildImprovisationBlock() {
  */
 function buildTravelBlock() {
     const block = $(`<div class='dmScreenBlock' id='dmScreenTravel'>
+        <div class='dmScreenColumns'></div>
     </div>`);
 
-    // Add your travel content here
-    block.append(`<p>Travel content goes here...</p>`);
+    const columnsContainer = block.find('.dmScreenColumns');
+
+    // Journey Stages
+    const journeyStagesSection = $(`
+        <div class='dmScreenChunk'>
+            <h3>Journey Stages</h3>
+            <div class='dmScreenChunkDefinition'>
+                It can be helpful to break up a journey into stages, with each stage representing anything from a few hours' journey to ten days or so of travel. A journey might have only a single stage if the trip is a matter of following a clear path to a well-known destination. A journey consisting of three stages makes for a satisfying trek. For example, the characters might travel along a river to the forest's edge (stage 1), follow a trail into the heart of the woods (stage 2), and then search the woods for an ancient ruin (stage 3). A long journey might involve even more stages and occupy several game sessions.
+            </div>
+        </div>
+    `);
+
+    columnsContainer.append(journeyStagesSection);
+
+    // Travel Pace
+    const travelPaceSection = $(`
+        <div class='dmScreenChunk'>
+            <h3>Travel Pace</h3>
+            <div class='dmScreenChunkDefinition'>
+                A group of characters can travel overland at a Normal, Fast, or Slow pace, as described in the Player's Handbook. During any journey stage, the predominant terrain determines the characters' maximum travel pace, as shown in the Maximum Pace column of the Travel Terrain table. Certain factors can affect a group's travel pace.<br><br>
+                <strong>Good Roads.</strong> The presence of a good road increases the group's maximum pace by one step (from Slow to Normal or from Normal to Fast).<br><br>
+                <strong>Slower Travelers.</strong> The group must move at a Slow pace if any group member's Speed is reduced to half or less of normal.<br><br>
+                <strong>Extended Travel.</strong> Characters can push themselves to travel for more than 8 hours per day, at the risk of tiring. At the end of each additional hour of travel beyond 8 hours, each character must succeed on a Constitution saving throw or gain 1 Exhaustion level. The DC is 10 plus 1 for each hour past 8 hours.<br><br>
+                <strong>Special Movement.</strong> If a party can travel at a high Speed for an extended time, as with a spell such as Wind Walk or a magic item such as a Carpet of Flying, translate the party's Speed into travel rates using these rules:<br>
+                <ul>
+                    <li>Miles per hour = Speed ÷ 10</li>
+                    <li>Miles per day (Normal pace) = Miles per hour × number of hours traveled (typically 8)</li>
+                    <li>Fast pace = Miles per day × 1⅓ (round down)</li>
+                    <li>Slow pace = Miles per day × 2/3 (round down)</li>
+                </ul>
+                If the characters are flying or their special movement allows them to ignore Difficult Terrain, they can move at a Fast pace regardless of the terrain.<br><br>
+                <strong>Vehicles.</strong> Characters traveling in a vehicle use the vehicle's speed in miles per hour (as shown in chapter 6 of the Player's Handbook) to determine their rate of travel, and they don't choose a travel pace.
+            </div>
+        </div>
+    `);
+
+    columnsContainer.append(travelPaceSection);
+
+    // Travel Terrain Table
+    const terrainData = [
+        { terrain: "Arctic", maxPace: "Fast*", encounterDistance: "6d6 × 10 feet", foragingDC: "20", navigationDC: "10", searchDC: "10" },
+        { terrain: "Coastal", maxPace: "Normal", encounterDistance: "2d10 × 10 feet", foragingDC: "10", navigationDC: "5", searchDC: "15" },
+        { terrain: "Desert", maxPace: "Normal", encounterDistance: "6d6 × 10 feet", foragingDC: "20", navigationDC: "10", searchDC: "10" },
+        { terrain: "Forest", maxPace: "Normal", encounterDistance: "2d8 × 10 feet", foragingDC: "10", navigationDC: "15", searchDC: "15" },
+        { terrain: "Grassland", maxPace: "Fast", encounterDistance: "6d6 × 10 feet", foragingDC: "15", navigationDC: "5", searchDC: "15" },
+        { terrain: "Hill", maxPace: "Normal", encounterDistance: "2d10 × 10 feet", foragingDC: "15", navigationDC: "10", searchDC: "15" },
+        { terrain: "Mountain", maxPace: "Slow", encounterDistance: "4d10 × 10 feet", foragingDC: "20", navigationDC: "15", searchDC: "20" },
+        { terrain: "Swamp", maxPace: "Slow", encounterDistance: "2d8 × 10 feet", foragingDC: "10", navigationDC: "15", searchDC: "20" },
+        { terrain: "Underdark", maxPace: "Normal", encounterDistance: "2d6 × 10 feet", foragingDC: "20", navigationDC: "10", searchDC: "20" },
+        { terrain: "Urban", maxPace: "Normal", encounterDistance: "2d6 × 10 feet", foragingDC: "20", navigationDC: "15", searchDC: "15" },
+        { terrain: "Waterborne", maxPace: "Special†", encounterDistance: "6d6 × 10 feet", foragingDC: "15", navigationDC: "10", searchDC: "15" }
+    ];
+
+    const terrainSection = $(`
+        <div class='dmScreenChunk'>
+            <h3>Travel Terrain</h3>
+            <table style='width: 100%; border-collapse: collapse;'>
+                <thead>
+                    <tr>
+                        <th style='text-align: left; padding: 8px; border-bottom: 2px solid #ccc;'>Terrain</th>
+                        <th style='text-align: left; padding: 8px; border-bottom: 2px solid #ccc;'>Max Pace</th>
+                        <th style='text-align: left; padding: 8px; border-bottom: 2px solid #ccc;'>Encounter Distance</th>
+                        <th style='text-align: left; padding: 8px; border-bottom: 2px solid #ccc;'>Foraging DC</th>
+                        <th style='text-align: left; padding: 8px; border-bottom: 2px solid #ccc;'>Navigation DC</th>
+                        <th style='text-align: left; padding: 8px; border-bottom: 2px solid #ccc;'>Search DC</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    `);
+
+    const terrainTbody = terrainSection.find('tbody');
+    terrainData.forEach(row => {
+        terrainTbody.append(`
+            <tr>
+                <td style='padding: 8px; border-bottom: 1px solid #eee;'><strong>${row.terrain}</strong></td>
+                <td style='padding: 8px; border-bottom: 1px solid #eee;'>${row.maxPace}</td>
+                <td style='padding: 8px; border-bottom: 1px solid #eee;'>${row.encounterDistance}</td>
+                <td style='padding: 8px; border-bottom: 1px solid #eee;'>${row.foragingDC}</td>
+                <td style='padding: 8px; border-bottom: 1px solid #eee;'>${row.navigationDC}</td>
+                <td style='padding: 8px; border-bottom: 1px solid #eee;'>${row.searchDC}</td>
+            </tr>
+        `);
+    });
+
+    // Add footnotes
+    terrainSection.append(`
+        <div style='margin-top: 10px; font-size: 0.9em;'>
+            <p style='margin: 5px 0;'>*Appropriate equipment (such as skis) is necessary to keep up a Fast pace in Arctic terrain.</p>
+            <p style='margin: 5px 0;'>†Characters' rate of travel while waterborne depends on the vehicle carrying them; see "Vehicles."</p>
+        </div>
+    `);
+
+    columnsContainer.append(terrainSection);
+
+    // Weather
+    const weatherData = [
+        { range: "1–14", result: "Normal for the season" },
+        { range: "15–17", result: "1d4 × 10 degrees Fahrenheit colder" },
+        { range: "18–20", result: "1d4 × 10 degrees Fahrenheit hotter" }
+    ];
+
+    const weatherSection = $(`
+        <div class='dmScreenChunk'>
+            <h3>Weather</h3>
+            <div class='dmScreenChunkDefinition'>
+                During each stage of the characters' journey, you can determine what the weather is like by rolling on the Weather table, adjusting for the terrain and season as appropriate. Roll 1d20 three times to determine the temperature, the wind, and the precipitation.<br><br>
+                Weather has no significant game effect most of the time, but see "Environmental Effects" in chapter 3 for the effects of extreme weather. Adding weather details to your descriptions of the characters' journey can make it more memorable.
+            </div>
+            <table style='width: 100%; border-collapse: collapse; margin-top: 10px;'>
+                <thead>
+                    <tr>
+                        <th style='text-align: left; padding: 8px; border-bottom: 2px solid #ccc;'>1d20</th>
+                        <th style='text-align: left; padding: 8px; border-bottom: 2px solid #ccc;'>Temperature</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    `);
+
+    const weatherTbody = weatherSection.find('tbody');
+    weatherData.forEach(row => {
+        weatherTbody.append(`
+            <tr>
+                <td style='padding: 8px; border-bottom: 1px solid #eee;'><strong>${row.range}</strong></td>
+                <td style='padding: 8px; border-bottom: 1px solid #eee;'>${row.result}</td>
+            </tr>
+        `);
+    });
+
+    // Add Wind/Precipitation table
+    const windPrecipData = [
+        { range: "1–12", wind: "None", precipitation: "None" },
+        { range: "13–17", wind: "Light", precipitation: "Light rain or light snowfall" },
+        { range: "18–20", wind: "Strong", precipitation: "Heavy rain or heavy snowfall" }
+    ];
+
+    const windPrecipTable = $(`
+        <table style='width: 100%; border-collapse: collapse; margin-top: 20px;'>
+            <thead>
+                <tr>
+                    <th style='text-align: left; padding: 8px; border-bottom: 2px solid #ccc;'>1d20</th>
+                    <th style='text-align: left; padding: 8px; border-bottom: 2px solid #ccc;'>Wind</th>
+                    <th style='text-align: left; padding: 8px; border-bottom: 2px solid #ccc;'>Precipitation</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    `);
+
+    const windPrecipTbody = windPrecipTable.find('tbody');
+    windPrecipData.forEach(row => {
+        windPrecipTbody.append(`
+            <tr>
+                <td style='padding: 8px; border-bottom: 1px solid #eee;'><strong>${row.range}</strong></td>
+                <td style='padding: 8px; border-bottom: 1px solid #eee;'>${row.wind}</td>
+                <td style='padding: 8px; border-bottom: 1px solid #eee;'>${row.precipitation}</td>
+            </tr>
+        `);
+    });
+
+    weatherSection.append(windPrecipTable);
+
+    columnsContainer.append(weatherSection);
 
     return block;
 }
