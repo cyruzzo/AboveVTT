@@ -3234,6 +3234,9 @@ body .note-visibility-toggle-container {
             }
         }
     }
+    h1{
+        font-size: 24px;
+    }
     table {
         tr:nth-child(odd) {
             background-color: #F1EBDD;
@@ -3259,10 +3262,10 @@ body .note-visibility-toggle-container {
         }
     }
     .dmScreenBlock {
-        h2 {
+        h1 {
             font-size: 20px;
         }
-        h3 {
+        h2 {
             font-size: 16px;
             border-bottom: #D6BE8C solid thin;
         }
@@ -3287,6 +3290,13 @@ body .note-visibility-toggle-container {
         }
         .dmScreenChunkDefinition {
             margin: 5px 0px;
+            h3 {
+                font-size: 15px;
+                border: none;
+            }
+            hr {
+                display: none;
+            }
         }
     }
 }

@@ -39,7 +39,6 @@ $(function() {
         }
       })
       .then(init_splash)              // show the splash screen; it reads from settings. That's why we show it here instead of earlier
-      .then(initDmScreen)           // setup the DM screen container
       .then(harvest_campaign_secret)  // find our join link
       .then(set_campaign_secret)      // set it to window.CAMPAIGN_SECRET
       .then(async () => {
@@ -383,6 +382,9 @@ async function start_above_vtt_common() {
   //ddb data doesn't include the below as tooltip data, add the data manually
   CONDITIONS['Bloodied'] = "<p>A creature is Bloodied while it has half its Hit Points or fewer remaining.</p>"
   CONDITIONS['Burning'] = '<p>A burning creature or object takes 1d4 Fire damage at the start of each of its turns. As an action, you can extinguish fire on yourself by giving yourself the Prone condition and rolling on the ground. The fire also goes out if it is doused, submerged, or suffocated.</p>'
+  
+  startup_step("Initializing DM Screen");
+  initDmScreen(); // Initialize DM screen after ddbConfigJson is loaded
   
   startup_step("Fetching token customizations");
   fetch_token_customizations();

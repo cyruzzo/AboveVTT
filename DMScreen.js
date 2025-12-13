@@ -7,12 +7,13 @@ console.log("DMScreen.js is loading");
 
 function initDmScreen() {
     console.log("initDmScreen called");
+    console.log(window.ddbConfigJson);
 
     let cont = $(`<div id='dmScreenContainer'>
             <div class='dmScreenheader'>
-                <h2 class='dmScreenTitle'>
+                <h1 class='dmScreenTitle'>
                     Conditions <span>▼</span>
-                </h2>
+                </h1>
                 <div class='dmScreenDropdown' style='display: none;'>
                     <div class='dmScreenDropdownItem' data-block='conditions'>Conditions</div>
                     <div class='dmScreenDropdownItem' data-block='damage'>Improvising Objects and Damage</div>
@@ -91,131 +92,7 @@ function initDmScreen() {
  * @returns {jQuery} The conditions block element
  */
 function buildConditionsBlock() {
-    const conditions = [
-        {
-            name: "Blinded", definition: `
-            While you have the Blinded condition, you experience the following effects.<br>
-            <strong><em>Can't See. </em></strong>You can't see and automatically fail any ability check that requires sight.<br>
-            <strong><em>Attacks Affected. </em></strong>Attack rolls against you have Advantage and your attack rolls have Disadvantage.<br>
-            `
-        },
-        {
-            name: "Charmed", definition: `
-            While you have the Charmed condition, you experience the following effects.<br>
-            <strong><em>Can't Harm the Charmer. </em></strong>You can't attack the charmer or target the charmer with damaging abilities or magical effects.<br>
-            <strong><em>Social Advantage. </em></strong>The charmer has Advantage on any ability check to interact with you socially.<br>
-            `
-        },
-        {
-            name: "Deafened", definition: `
-            While you have the Deafened condition, you experience the following effect.<br>
-            <strong><em>Can't Hear. </em></strong>You can't hear and automatically fail any ability check that requires hearing.<br>
-            `
-        },
-        {
-            name: "Exhaustion", definition: `
-            While you have the Exhaustion condition, you experience the following effects.<br>
-            <strong><em>Exhaustion Levels. </em></strong> This condition is cumulative. Each time you receive it, you gain 1 Exhaustion level. You die if your Exhaustion level is 6.<br>
-            <strong><em>D20 Tests Affected. </em></strong> When you make a D20 Test, the roll is reduced by 2 times your Exhaustion level.<br>
-            <strong><em>Speed Reduced. </em></strong> Your Speed is reduced by a number of feet equal to 5 times your Exhaustion level.<br>
-            <strong><em>Removing Exhaustion Levels. </em></strong> Finishing a Long Rest removes 1 of your Exhaustion levels. When your Exhaustion level reaches 0, the condition ends.<br>
-            `
-        },
-        {
-            name: "Frightened", definition: `
-            While you have the Frightened condition, you experience the following effects.<br>
-            <strong><em>Ability Checks and Attacks Affected. </em></strong> You have Disadvantage on ability checks and attack rolls while the source of fear is within line of sight.<br>
-            <strong><em>Can't Approach. </em></strong> You can't willingly move closer to the source of fear.<br>
-            `
-        },
-        {
-            name: "Grappled", definition: `
-            While you have the Grappled condition, you experience the following effects.<br>
-            <strong><em>Speed 0. </em></strong> Your Speed is 0 and can't increase.<br>
-            <strong><em>Attacks Affected. </em></strong> You have Disadvantage on attack rolls against any target other than the grappler.<br>
-            <strong><em>Movable. </em></strong> The grappler can drag or carry you when it moves, but every foot of movement costs it 1 extra foot unless you are Tiny or two or more sizes smaller than it.<br>
-            `
-        },
-        {
-            name: "Incapacitated", definition: `
-            While you have the Incapacitated condition, you experience the following effects.<br>
-            <strong><em>Inactive. </em></strong> You can't take any action, Bonus Action, or Reaction.<br>
-            <strong><em>No Concentration. </em></strong> Your Concentration is broken.<br>
-            <strong><em>Speechless. </em></strong> You can't speak.<br>
-            <strong><em>Surprised. </em></strong> If you're Incapacitated when you roll Initiative, you have Disadvantage on the roll.<br>
-            `
-        },
-        {
-            name: "Invisible", definition: `
-            While you have the Invisible condition, you experience the following effects.<br>
-            <strong><em>Surprise. </em></strong> If you're Invisible when you roll Initiative, you have Advantage on the roll.<br>
-            <strong><em>Concealed. </em></strong> You aren't affected by any effect that requires its target to be seen unless the effect's creator can somehow see you. Any equipment you are wearing or carrying is also concealed.<br>
-            <strong><em>Attacks Affected. </em></strong> Attack rolls against you have Disadvantage, and your attack rolls have Advantage. If a creature can somehow see you, you don't gain this benefit against that creature.<br>
-            `
-        },
-        {
-            name: "Paralyzed", definition: `
-            While you have the Paralyzed condition, you experience the following effects.<br>
-            <strong><em>Incapacitated. </em></strong> You have the Incapacitated condition.<br>
-            <strong><em>Speed 0. </em></strong> Your Speed is 0 and can't increase.<br>
-            <strong><em>Saving Throws Affected. </em></strong> You automatically fail Strength and Dexterity saving throws.<br>
-            <strong><em>Attacks Affected. </em></strong> Attack rolls against you have Advantage.<br>
-            <strong><em>Automatic Critical Hits. </em></strong> Any attack roll that hits you is a Critical Hit if the attacker is within 5 feet of you.<br>
-            `
-        },
-        {
-            name: "Petrified", definition: `
-            While you have the Petrified condition, you experience the following effects.<br>
-            <strong><em>Turned to Inanimate Substance. </em></strong> You are transformed, along with any nonmagical objects you are wearing and carrying, into a solid inanimate substance (usually stone). Your weight increases by a factor of ten, and you cease aging.<br>
-            <strong><em>Incapacitated. </em></strong> You have the Incapacitated condition.<br>
-            <strong><em>Speed 0. </em></strong> Your Speed is 0 and can't increase.<br>
-            <strong><em>Attacks Affected. </em></strong> Attack rolls against you have Advantage.<br>
-            <strong><em>Saving Throws Affected. </em></strong> You automatically fail Strength and Dexterity saving throws.<br>
-            <strong><em>Resist Damage. </em></strong> You have Resistance to all damage.<br>
-            <strong><em>Poison Immunity. </em></strong> You have Immunity to the Poisoned condition.<br>
-            `
-        },
-        {
-            name: "Poisoned", definition: `
-            While you have the Poisoned condition, you experience the following effect.<br>
-            <strong><em>Ability Checks and Attacks Affected. </em></strong> You have Disadvantage on attack rolls and ability checks.<br>
-            `
-        },
-        {
-            name: "Prone", definition: `
-            While you have the Prone condition, you experience the following effects.<br>
-            <strong><em>Restricted Movement. </em></strong> Your only movement options are to crawl or to spend an amount of movement equal to half your Speed (round down) to right yourself and thereby end the condition. If your Speed is 0, you can't right yourself.<br>
-            <strong><em>Attacks Affected. </em></strong> You have Disadvantage on attack rolls. An attack roll against you has Advantage if the attacker is within 5 feet of you. Otherwise, that attack roll has Disadvantage.<br>
-            `
-        },
-        {
-            name: "Restrained", definition: `
-            While you have the Restrained condition, you experience the following effects.<br>
-            <strong><em>Speed 0. </em></strong> Your Speed is 0 and can't increase.<br>
-            <strong><em>Attacks Affected. </em></strong> Attack rolls against you have Advantage, and your attack rolls have Disadvantage.<br>
-            <strong><em>Saving Throws Affected. </em></strong> You have Disadvantage on Dexterity saving throws.<br>
-            `
-        },
-        {
-            name: "Stunned", definition: `
-            While you have the Stunned condition, you experience the following effects.<br>
-            <strong><em>Incapacitated. </em></strong> You have the Incapacitated condition.<br>
-            <strong><em>Saving Throws Affected. </em></strong> You automatically fail Strength and Dexterity saving throws.<br>
-            <strong><em>Attacks Affected. </em></strong> Attack rolls against you have Advantage.<br>
-            `
-        },
-        {
-            name: "Unconscious", definition: `
-            While you have the Unconscious condition, you experience the following effects.<br>
-            <strong><em>Inert. </em></strong> You have the Incapacitated and Prone conditions, and you drop whatever you're holding. When this condition ends, you remain Prone.<br>
-            <strong><em>Speed 0. </em></strong> Your Speed is 0 and can't increase.<br>
-            <strong><em>Attacks Affected. </em></strong> Attack rolls against you have Advantage.<br>
-            <strong><em>Saving Throws Affected. </em></strong> You automatically fail Strength and Dexterity saving throws.<br>
-            <strong><em>Automatic Critical Hits. </em></strong> Any attack roll that hits you is a Critical Hit if the attacker is within 5 feet of you.<br>
-            <strong><em>Unaware. </em></strong> You're unaware of your surroundings.<br>
-            `
-        },
-    ];
+    const conditions = window.ddbConfigJson.conditions;
 
     const block = $(`<div class='dmScreenBlock' id='dmScreenChunks'>
         <div class='dmScreenColumns'></div>
@@ -226,9 +103,9 @@ function buildConditionsBlock() {
     conditions.forEach(condition => {
         const conditionDiv = $(`
             <div class='dmScreenChunk'>
-                <h3>${condition.name}</h3>
+                <h2>${condition.definition.name}</h2>
                 <div class='dmScreenChunkDefinition'>
-                    ${condition.definition}
+                    ${condition.definition.description}
                 </div>
             </div>
         `);
@@ -253,44 +130,8 @@ function buildSkillsAndMechanicsBlock() {
     const columnsContainer = block.find('.dmScreenColumns');
 
     // Skills
-    const skills = [
-        { name: "Acrobatics (Dex)", description: "Stay on your feet in a tricky situation, or perform an acrobatic stunt." },
-        { name: "Animal Handling (Wis)", description: "Calm or train an animal, or get an animal to behave in a certain way." },
-        { name: "Arcana (Int)", description: "Recall lore about spells, magic items, and the planes of existence." },
-        { name: "Athletics (Str)", description: "Jump farther than normal, stay afloat in rough water, or break something." },
-        { name: "Deception (Cha)", description: "Tell a convincing lie, or wear a disguise convincingly." },
-        { name: "History (Int)", description: "Recall lore about historical events, people, nations, and cultures." },
-        { name: "Insight (Wis)", description: "Discern a person's mood and intentions." },
-        { name: "Intimidation (Cha)", description: "Awe or threaten someone into doing what you want." },
-        { name: "Investigation (Int)", description: "Find obscure information in books, or deduce how something works." },
-        { name: "Medicine (Wis)", description: "Diagnose an illness, or determine what killed the recently slain." },
-        { name: "Nature (Int)", description: "Recall lore about terrain, plants, animals, and weather." },
-        { name: "Perception (Wis)", description: "Using a combination of senses, notice something that's easy to miss." },
-        { name: "Performance (Cha)", description: "Act, tell a story, perform music, or dance." },
-        { name: "Persuasion (Cha)", description: "Honestly and graciously convince someone of something." },
-        { name: "Religion (Int)", description: "Recall lore about gods, religious rituals, and holy symbols." },
-        { name: "Sleight of Hand (Dex)", description: "Pick a pocket, conceal a handheld object, or perform legerdemain." },
-        { name: "Stealth (Dex)", description: "Escape notice by moving quietly and hiding behind things." },
-        { name: "Survival (Wis)", description: "Follow tracks, forage, find a trail, or avoid natural hazards." }
-    ];
-
-    const actions = [
-        { name: "Attack", description: "When you take the Attack action, you can make one attack roll with a weapon or an Unarmed Strike.<br><strong>Equipping and Unequipping Weapons.</strong> You can either equip or unequip one weapon when you make an attack as part of this action. You do so either before or after the attack. If you equip a weapon before an attack, you don't need to use it for that attack. Equipping a weapon includes drawing it from a sheath or picking it up. Unequipping a weapon includes sheathing, stowing, or dropping it.<br><strong>Moving between Attacks.</strong> If you move on your turn and have a feature, such as Extra Attack, that gives you more than one attack as part of the Attack action, you can use some or all of that movement to move between those attacks." },
-        { name: "Dash", description: "When you take the Dash action, you gain extra movement for the current turn. The increase equals your Speed after applying any modifiers. With a Speed of 30 feet, for example, you can move up to 60 feet on your turn if you Dash. If your Speed of 30 feet is reduced to 15 feet, you can move up to 30 feet this turn if you Dash.<br>If you have a special speed, such as a Fly Speed or Swim Speed, you can use that speed instead of your Speed when you take this action. You choose which speed to use each time you take it." },
-        { name: "Disengage", description: "If you take the Disengage action, your movement doesn't provoke Opportunity Attacks for the rest of the current turn." },
-        { name: "Dodge", description: "If you take the Dodge action, you gain the following benefits: until the start of your next turn, any attack roll made against you has Disadvantage if you can see the attacker, and you make Dexterity saving throws with Advantage.<br>You lose these benefits if you have the Incapacitated condition or if your Speed is 0." },
-        { name: "Grapple", description:  `A creature can grapple another creature. Characters typically grapple by using an Unarmed Strike. Many monsters have special attacks that allow them to quickly grapple prey. However a grapple is initiated, it follows these rules.<br><strong>Grapple.</strong> The target must succeed on a Strength or Dexterity saving throw (it chooses which), or it has the Grappled condition. The DC for the saving throw and any escape attempts equals 8 plus your Strength modifier and Proficiency Bonus. This grapple is possible only if the target is no more than one size larger than you and if you have a hand free to grab it.<br><strong>Grappled Condition.</strong> Successfully grappling a creature gives it the Grappled condition.<br><strong>One Grapple per Hand.</strong> A creature must have a hand free to grapple another creature. Some stat blocks and game effects allow a creature to grapple using a tentacle, a maw, or another body part. Whatever part a grappler uses, it can grapple only one creature at a time with that part, and the grappler can't use that part to target another creature unless it ends the grapple.<br><strong>Escaping a Grapple.</strong> A Grappled creature can use its action to make a Strength (Athletics) or Dexterity (Acrobatics) check against the grapple's escape DC, ending the condition on itself on a success. The condition also ends if the grappler has the Incapacitated condition or if the distance between the Grappled target and the grappler exceeds the grapple's range.` },
-        { name: "Help", description: "When you take the Help action, you do one of the following.<br><strong>Assist an Ability Check.</strong> Choose one of your skill or tool proficiencies and one ally who is near enough for you to assist verbally or physically when they make an ability check. That ally has Advantage on the next ability check they make with the chosen skill or tool. This benefit expires if the ally doesn't use it before the start of your next turn. The DM has final say on whether your assistance is possible.<br><strong>Assist an Attack Roll.</strong> You momentarily distract an enemy within 5 feet of you, giving Advantage to the next attack roll by one of your allies against that enemy. This benefit expires at the start of your next turn." },
-        { name: "Hide", description: "With the Hide action, you try to conceal yourself. To do so, you must succeed on a DC 15 Dexterity (Stealth) check while you're Heavily Obscured or behind Three-Quarters Cover or Total Cover, and you must be out of any enemy's line of sight; if you can see a creature, you can discern whether it can see you.<br>On a successful check, you have the Invisible condition. Make note of your check's total, which is the DC for a creature to find you with a Wisdom (Perception) check.<br>The condition ends on you immediately after any of the following occurs: you make a sound louder than a whisper, an enemy finds you, you make an attack roll, or you cast a spell with a Verbal component." },
-        { name: "Improvise", description: "Player characters and monsters can also do things not covered by these actions. Many class features and other abilities provide additional action options, and you can improvise other actions. When you describe an action not detailed elsewhere in the rules, the Dungeon Master tells you whether that action is possible and what kind of D20 Test you need to make, if any." },
-        { name: "Influence", description: "With the Influence action, you urge a monster to do something. Describe or roleplay how you're communicating with the monster. Are you trying to deceive, intimidate, amuse, or gently persuade? The DM then determines whether the monster feels willing, unwilling, or hesitant due to your interaction; this determination establishes whether an ability check is necessary." },
-        { name: "Magic", description: "When you take the Magic action, you cast a spell that has a casting time of an action or use a feature or magic item that requires a Magic action to be activated.<br>If you cast a spell that has a casting time of 1 minute or longer, you must take the Magic action on each turn of that casting, and you must maintain Concentration while you do so. If your Concentration is broken, the spell fails, but you don't expend a spell slot." },
-        { name: "Ready", description: "You take the Ready action to wait for a particular circumstance before you act. To do so, you take this action on your turn, which lets you act by taking a Reaction before the start of your next turn.<br>First, you decide what perceivable circumstance will trigger your Reaction. Then, you choose the action you will take in response to that trigger, or you choose to move up to your Speed in response to it. Examples include \"If the cultist steps on the trapdoor, I'll pull the lever that opens it,\" and \"If the zombie steps next to me, I move away.\"<br>When the trigger occurs, you can either take your Reaction right after the trigger finishes or ignore the trigger.<br>When you Ready a spell, you cast it as normal (expending any resources used to cast it) but hold its energy, which you release with your Reaction when the trigger occurs. To be readied, a spell must have a casting time of an action, and holding on to the spell's magic requires Concentration, which you can maintain up to the start of your next turn. If your Concentration is broken, the spell dissipates without taking effect." },
-        { name: "Search", description: "When you take the Search action, you make a Wisdom check to discern something that isn't obvious. The Search table suggests which skills are applicable when you take this action, depending on what you're trying to detect." },
-        { name: "Shove", description: "The target must succeed on a Strength or Dexterity saving throw (it chooses which), or you either push it 5 feet away or cause it to have the Prone condition. The DC for the saving throw equals 8 plus your Strength modifier and Proficiency Bonus. This shove is possible only if the target is no more than one size larger than you." },
-        { name: "Study", description: "When you take the Study action, you make an Intelligence check to study your memory, a book, a clue, or another source of knowledge and call to mind an important piece of information about it." },
-        { name: "Utilize", description: "You normally interact with an object while doing something else, such as when you draw a sword as part of the Attack action. When an object requires an action for its use, you take the Utilize action." }
-    ];
+    const skills = window.ddbConfigJson.abilitySkills.sort((a, b) => a.name.localeCompare(b.name));
+    const rules = window.ddbConfigJson.rules;
 
     const mechanics = [
         {
@@ -308,15 +149,13 @@ function buildSkillsAndMechanicsBlock() {
         },
         {
             name: "Concentration", description: `
-            Some spells require Concentration to maintain. If you lose Concentration, the spell ends.<br>
-            <strong><em>Breaking Concentration.</em></strong> You lose Concentration on a spell if you cast another spell that requires Concentration, you take damage (DC 10 or half the damage taken, whichever is higher), you have the Incapacitated condition, or you die.<br>
-            <strong><em>Environmental Phenomena.</em></strong> The DM might rule that other phenomena can break Concentration, such as a wave crashing over you.
+            ${rules.find(rule => rule.name === "Concentration").description}
             `
         },
     ];
 
     // Add Skills section
-    const skillsSection = $(`<div class='dmScreenChunk'><h3>Skills</h3></div>`);
+    const skillsSection = $(`<div class='dmScreenChunk'><h2>Skills</h2></div>`);
     skills.forEach(skill => {
         skillsSection.append(`<div><strong>${skill.name}:</strong> ${skill.description}</div>`);
     });
@@ -325,7 +164,7 @@ function buildSkillsAndMechanicsBlock() {
     // Add Vision section
     const visionSection = $(`
         <div class='dmScreenChunk'>
-            <h3>Light</h3>
+            <h2>Light</h2>
             <div class='dmScreenChunkDefinition'>
                 The presence or absence of light determines the category of illumination in an area, as defined below.<br>
                 <strong>Bright Light.</strong> Bright Light lets most creatures see normally. Even gloomy days provide Bright Light, as do torches, lanterns, fires, and other sources of illumination within a specific radius.<br>
@@ -333,35 +172,35 @@ function buildSkillsAndMechanicsBlock() {
                 <strong>Darkness.</strong> Darkness creates a Heavily Obscured area. Characters face Darkness outdoors at night (even most moonlit nights), within the confines of an unlit dungeon, or in an area of magical Darkness.<br>
             </div>
             <div class='dmScreenChunkDefinition'>
-            <h3>Visibility</h3>
+            <h2>Visibility</h2>
                 <strong>Lightly Obscured</strong><br>
-                You have Disadvantage on Wisdom (Perception) checks to see something in a Lightly Obscured space.<br>
+                ${rules.find(rule => rule.name === "Lightly Obscured").description}<br>
                 <strong>Heavily Obscured</strong><br>
-                You have the Blinded condition while trying to see something in a Heavily Obscured space.
+                ${rules.find(rule => rule.name === "Heavily Obscured").description}
             </div>
             <div class='dmScreenChunkDefinition'>
-            <h3>Cover</h3>
+            <h2>Cover</h2>
                 Cover provides a degree of protection to a target behind it. There are three degrees of cover, each of which provides a different benefit to a target. If behind more than one degree of cover, a target benefits only from the most protective degree.<br>
-                <strong>Half Cover:</strong> +2 bonus to AC and Dexterity saving throws<br>
-                <strong>Three-Quarters Cover:</strong> +5 bonus to AC and Dexterity saving throws<br>
-                <strong>Total Cover:</strong> can't be targeted directly.
+                <strong>Half Cover:</strong> ${rules.find(rule => rule.name === "Half Cover").description}<br>
+                <strong>Three-Quarters Cover:</strong> ${rules.find(rule => rule.name === "Three-Quarters Cover").description}<br>
+                <strong>Total Cover:</strong> ${rules.find(rule => rule.name === "Total Cover").description}
             </div>
         </div>
     `);
     columnsContainer.append(visionSection);
 
     // Add Mechanics section
+    const mechanicsChunk = $(`<div class='dmScreenChunk'></div>`);
     mechanics.forEach(mechanic => {
         const mechanicDiv = $(`
-            <div class='dmScreenChunk'>
-                <h3>${mechanic.name}</h3>
-                <div class='dmScreenChunkDefinition'>
-                    ${mechanic.description}
-                </div>
+            <h2>${mechanic.name}</h2>
+            <div class='dmScreenChunkDefinition'>
+                ${mechanic.description}
             </div>
         `);
-        columnsContainer.append(mechanicDiv);
+        mechanicsChunk.append(mechanicDiv);
     });
+    columnsContainer.append(mechanicsChunk);
 
     // Add Mob Attacks table
     const mobAttacksData = [
@@ -376,7 +215,7 @@ function buildSkillsAndMechanicsBlock() {
 
     const mobAttacksSection = $(`
         <div class='dmScreenChunk'>
-            <h3>Mob Attacks</h3>
+            <h2>Mob Attacks</h2>
             <div class='dmScreenChunkDefinition'>
                 Speed up combat with large groups by skipping attack rolls. Calculate the minimum d20 roll needed (target AC minus attack bonus), then use the table below to determine how many attackers are needed for one hit. Assume the highest damage dealer hits. Switch back to individual rolls when numbers dwindle.
             </div>
@@ -420,30 +259,13 @@ function buildActionsBlock() {
     </div>`);
 
     const columnsContainer = block.find('.dmScreenColumns');
-
-    const actions = [
-        { name: "Attack", description: "When you take the Attack action, you can make one attack roll with a weapon or an Unarmed Strike.<br><strong>Equipping and Unequipping Weapons.</strong> You can either equip or unequip one weapon when you make an attack as part of this action. You do so either before or after the attack. If you equip a weapon before an attack, you don't need to use it for that attack. Equipping a weapon includes drawing it from a sheath or picking it up. Unequipping a weapon includes sheathing, stowing, or dropping it.<br><strong>Moving between Attacks.</strong> If you move on your turn and have a feature, such as Extra Attack, that gives you more than one attack as part of the Attack action, you can use some or all of that movement to move between those attacks." },
-        { name: "Dash", description: "When you take the Dash action, you gain extra movement for the current turn. The increase equals your Speed after applying any modifiers. With a Speed of 30 feet, for example, you can move up to 60 feet on your turn if you Dash. If your Speed of 30 feet is reduced to 15 feet, you can move up to 30 feet this turn if you Dash.<br>If you have a special speed, such as a Fly Speed or Swim Speed, you can use that speed instead of your Speed when you take this action. You choose which speed to use each time you take it." },
-        { name: "Disengage", description: "If you take the Disengage action, your movement doesn't provoke Opportunity Attacks for the rest of the current turn." },
-        { name: "Dodge", description: "If you take the Dodge action, you gain the following benefits: until the start of your next turn, any attack roll made against you has Disadvantage if you can see the attacker, and you make Dexterity saving throws with Advantage.<br>You lose these benefits if you have the Incapacitated condition or if your Speed is 0." },
-        { name: "Grapple", description:  `A creature can grapple another creature. Characters typically grapple by using an Unarmed Strike. Many monsters have special attacks that allow them to quickly grapple prey. However a grapple is initiated, it follows these rules.<br><strong>Grapple.</strong> The target must succeed on a Strength or Dexterity saving throw (it chooses which), or it has the Grappled condition. The DC for the saving throw and any escape attempts equals 8 plus your Strength modifier and Proficiency Bonus. This grapple is possible only if the target is no more than one size larger than you and if you have a hand free to grab it.<br><strong>Grappled Condition.</strong> Successfully grappling a creature gives it the Grappled condition.<br><strong>One Grapple per Hand.</strong> A creature must have a hand free to grapple another creature. Some stat blocks and game effects allow a creature to grapple using a tentacle, a maw, or another body part. Whatever part a grappler uses, it can grapple only one creature at a time with that part, and the grappler can't use that part to target another creature unless it ends the grapple.<br><strong>Escaping a Grapple.</strong> A Grappled creature can use its action to make a Strength (Athletics) or Dexterity (Acrobatics) check against the grapple's escape DC, ending the condition on itself on a success. The condition also ends if the grappler has the Incapacitated condition or if the distance between the Grappled target and the grappler exceeds the grapple's range.` },
-        { name: "Help", description: "When you take the Help action, you do one of the following.<br><strong>Assist an Ability Check.</strong> Choose one of your skill or tool proficiencies and one ally who is near enough for you to assist verbally or physically when they make an ability check. That ally has Advantage on the next ability check they make with the chosen skill or tool. This benefit expires if the ally doesn't use it before the start of your next turn. The DM has final say on whether your assistance is possible.<br><strong>Assist an Attack Roll.</strong> You momentarily distract an enemy within 5 feet of you, giving Advantage to the next attack roll by one of your allies against that enemy. This benefit expires at the start of your next turn." },
-        { name: "Hide", description: "With the Hide action, you try to conceal yourself. To do so, you must succeed on a DC 15 Dexterity (Stealth) check while you're Heavily Obscured or behind Three-Quarters Cover or Total Cover, and you must be out of any enemy's line of sight; if you can see a creature, you can discern whether it can see you.<br>On a successful check, you have the Invisible condition. Make note of your check's total, which is the DC for a creature to find you with a Wisdom (Perception) check.<br>The condition ends on you immediately after any of the following occurs: you make a sound louder than a whisper, an enemy finds you, you make an attack roll, or you cast a spell with a Verbal component." },
-        { name: "Improvise", description: "Player characters and monsters can also do things not covered by these actions. Many class features and other abilities provide additional action options, and you can improvise other actions. When you describe an action not detailed elsewhere in the rules, the Dungeon Master tells you whether that action is possible and what kind of D20 Test you need to make, if any." },
-        { name: "Influence", description: "With the Influence action, you urge a monster to do something. Describe or roleplay how you're communicating with the monster. Are you trying to deceive, intimidate, amuse, or gently persuade? The DM then determines whether the monster feels willing, unwilling, or hesitant due to your interaction; this determination establishes whether an ability check is necessary." },
-        { name: "Magic", description: "When you take the Magic action, you cast a spell that has a casting time of an action or use a feature or magic item that requires a Magic action to be activated.<br>If you cast a spell that has a casting time of 1 minute or longer, you must take the Magic action on each turn of that casting, and you must maintain Concentration while you do so. If your Concentration is broken, the spell fails, but you don't expend a spell slot." },
-        { name: "Ready", description: "You take the Ready action to wait for a particular circumstance before you act. To do so, you take this action on your turn, which lets you act by taking a Reaction before the start of your next turn.<br>First, you decide what perceivable circumstance will trigger your Reaction. Then, you choose the action you will take in response to that trigger, or you choose to move up to your Speed in response to it. Examples include \"If the cultist steps on the trapdoor, I'll pull the lever that opens it,\" and \"If the zombie steps next to me, I move away.\"<br>When the trigger occurs, you can either take your Reaction right after the trigger finishes or ignore the trigger.<br>When you Ready a spell, you cast it as normal (expending any resources used to cast it) but hold its energy, which you release with your Reaction when the trigger occurs. To be readied, a spell must have a casting time of an action, and holding on to the spell's magic requires Concentration, which you can maintain up to the start of your next turn. If your Concentration is broken, the spell dissipates without taking effect." },
-        { name: "Search", description: "When you take the Search action, you make a Wisdom check to discern something that isn't obvious. The Search table suggests which skills are applicable when you take this action, depending on what you're trying to detect." },
-        { name: "Shove", description: "The target must succeed on a Strength or Dexterity saving throw (it chooses which), or you either push it 5 feet away or cause it to have the Prone condition. The DC for the saving throw equals 8 plus your Strength modifier and Proficiency Bonus. This shove is possible only if the target is no more than one size larger than you." },
-        { name: "Study", description: "When you take the Study action, you make an Intelligence check to study your memory, a book, a clue, or another source of knowledge and call to mind an important piece of information about it." },
-        { name: "Utilize", description: "You normally interact with an object while doing something else, such as when you draw a sword as part of the Attack action. When an object requires an action for its use, you take the Utilize action." }
-    ];
+    const actions = window.ddbConfigJson.basicActions.sort((a, b) => a.name.localeCompare(b.name));
 
     // Add Actions section
     actions.forEach(action => {
         const actionDiv = $(`
             <div class='dmScreenChunk'>
-                <h3>${action.name}</h3>
+                <h2>${action.name}</h2>
                 <div class='dmScreenChunkDefinition'>
                     ${action.description}
                 </div>
@@ -505,7 +327,7 @@ function buildImprovisationBlock() {
 
     const damageSection = $(`
         <div class='dmScreenChunk'>
-            <h3>Improvising Damage</h3>
+            <h2>Improvising Damage</h2>
             <table style='width: 100%; border-collapse: collapse; margin-bottom: 20px;'>
                 <thead>
                     <tr>
@@ -516,7 +338,7 @@ function buildImprovisationBlock() {
                 <tbody></tbody>
             </table>
             
-            <h3>Damage Severity and Level</h3>
+            <h2>Damage Severity and Level</h2>
             <table style='width: 100%; border-collapse: collapse;'>
                 <thead>
                     <tr>
@@ -575,7 +397,7 @@ function buildImprovisationBlock() {
 
     const objectStatsSection = $(`
         <div class='dmScreenChunk'>
-            <h3>Object Armor Class</h3>
+            <h2>Object Armor Class</h2>
             <table style='width: 100%; border-collapse: collapse; margin-bottom: 20px;'>
                 <thead>
                     <tr>
@@ -586,7 +408,7 @@ function buildImprovisationBlock() {
                 <tbody id='objectACTableBody'></tbody>
             </table>
             
-            <h3>Object Hit Points</h3>
+            <h2>Object Hit Points</h2>
             <table style='width: 100%; border-collapse: collapse;'>
                 <thead>
                     <tr>
@@ -623,7 +445,7 @@ function buildImprovisationBlock() {
 
     const additionalObjectSection = $(`
         <div class='dmScreenChunk'>
-            <h3>Huge and Gargantuan Objects</h3>
+            <h2>Huge and Gargantuan Objects</h2>
             <div class='dmScreenChunkDefinition'>
                 Normal weapons are of little use against many Huge and Gargantuan objects, such as a colossal statue, towering column of stone, or massive boulder. That said, one torch can burn a Huge tapestry, and an earthquake spell can reduce a colossus to rubble. You can track a Huge or Gargantuan object's hit points if you like, or you can simply decide how long the object can withstand whatever weapon or force is acting against it. If you track hit points for the object, divide it into Large or smaller sections, and track each section's hit points separately. Destroying one of those sections could ruin the entire object. For example, a Gargantuan statue of a human might topple over when one of its Large legs is reduced to 0 hit points.
             </div>
@@ -634,7 +456,7 @@ function buildImprovisationBlock() {
 
     const objectDamageTypesSection = $(`
         <div class='dmScreenChunk'>
-            <h3>Objects and Damage Types</h3>
+            <h2>Objects and Damage Types</h2>
             <div class='dmScreenChunkDefinition'>
                 Objects are immune to poison and psychic damage. You might decide that some damage types are more effective against a particular object or substance than others. For example, bludgeoning damage works well for smashing things but not for cutting through rope or leather. Paper or cloth objects might be vulnerable to fire and lightning damage. A pick can chip away stone but can't effectively cut down a tree. As always, use your best judgment.
             </div>
@@ -645,7 +467,7 @@ function buildImprovisationBlock() {
 
     const damageThresholdSection = $(`
         <div class='dmScreenChunk'>
-            <h3>Damage Threshold</h3>
+            <h2>Damage Threshold</h2>
             <div class='dmScreenChunkDefinition'>
                 Big objects such as castle walls often have extra resilience represented by a damage threshold. An object with a damage threshold has immunity to all damage unless it takes an amount of damage from a single attack or effect equal to or greater than its damage threshold, in which case it takes damage as normal. Any damage that fails to meet or exceed the object's damage threshold is considered superficial and doesn't reduce the object's hit points.
             </div>
@@ -674,7 +496,7 @@ function buildTravelBlock() {
     // Journey Stages
     const journeyStagesSection = $(`
         <div class='dmScreenChunk'>
-            <h3>Journey Stages</h3>
+            <h2>Journey Stages</h2>
             <div class='dmScreenChunkDefinition'>
                 It can be helpful to break up a journey into stages, with each stage representing anything from a few hours' journey to ten days or so of travel. A journey might have only a single stage if the trip is a matter of following a clear path to a well-known destination. A journey consisting of three stages makes for a satisfying trek. For example, the characters might travel along a river to the forest's edge (stage 1), follow a trail into the heart of the woods (stage 2), and then search the woods for an ancient ruin (stage 3). A long journey might involve even more stages and occupy several game sessions.
             </div>
@@ -686,7 +508,7 @@ function buildTravelBlock() {
     // Travel Pace
     const travelPaceSection = $(`
         <div class='dmScreenChunk'>
-            <h3>Travel Pace</h3>
+            <h2>Travel Pace</h2>
             <div class='dmScreenChunkDefinition'>
                 A group of characters can travel overland at a Normal, Fast, or Slow pace, as described in the Player's Handbook. During any journey stage, the predominant terrain determines the characters' maximum travel pace, as shown in the Maximum Pace column of the Travel Terrain table. Certain factors can affect a group's travel pace.<br><br>
                 <strong>Good Roads.</strong> The presence of a good road increases the group's maximum pace by one step (from Slow to Normal or from Normal to Fast).<br><br>
@@ -724,7 +546,7 @@ function buildTravelBlock() {
 
     const terrainSection = $(`
         <div class='dmScreenChunk'>
-            <h3>Travel Terrain</h3>
+            <h2>Travel Terrain</h2>
             <table style='width: 100%; border-collapse: collapse;'>
                 <thead>
                     <tr>
@@ -774,7 +596,7 @@ function buildTravelBlock() {
 
     const weatherSection = $(`
         <div class='dmScreenChunk'>
-            <h3>Weather</h3>
+            <h2>Weather</h2>
             <div class='dmScreenChunkDefinition'>
                 During each stage of the characters' journey, you can determine what the weather is like by rolling on the Weather table, adjusting for the terrain and season as appropriate. Roll 1d20 three times to determine the temperature, the wind, and the precipitation.<br><br>
                 Weather has no significant game effect most of the time, but see "Environmental Effects" in chapter 3 for the effects of extreme weather. Adding weather details to your descriptions of the characters' journey can make it more memorable.
