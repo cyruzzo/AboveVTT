@@ -228,6 +228,9 @@ function buildSkillsAndMechanicsBlock() {
                 </thead>
                 <tbody></tbody>
             </table>
+            <div class='dmScreenChunkDefinition'>
+                As an example, say 10 bandits (+3 to hit) are attacking a player character with 18 AC. The bandits need to roll a 15 or higher to hit. According to the table, 4 attackers are needed for one hit. Since there are 10 bandits, you can expect two hits on average. From there, roll damage as normal.
+            </div>
         </div>
     `);
 
@@ -522,7 +525,7 @@ function buildTravelBlock() {
                     <li>Slow pace = Miles per day x 2/3 (round down)</li>
                 </ul>
                 If the characters are flying or their special movement allows them to ignore Difficult Terrain, they can move at a Fast pace regardless of the terrain.<br><br>
-                <strong>Vehicles.</strong> Characters traveling in a vehicle use the vehicle's speed in miles per hour (as shown in chapter 6 of the Player's Handbook) to determine their rate of travel, and they don't choose a travel pace.
+                <strong>Vehicles.</strong> Characters traveling in a vehicle use the vehicle's speed in miles per hour (as shown in <a href="https://www.dndbeyond.com/sources/dnd/phb-2024/equipment#MountsandVehicles" target="_blank">chapter 6 of the Player's Handbook</a>) to determine their rate of travel, and they don't choose a travel pace.
             </div>
         </div>
     `);
@@ -599,7 +602,7 @@ function buildTravelBlock() {
             <h2>Weather</h2>
             <div class='dmScreenChunkDefinition'>
                 During each stage of the characters' journey, you can determine what the weather is like by rolling on the Weather table, adjusting for the terrain and season as appropriate. Roll 1d20 three times to determine the temperature, the wind, and the precipitation.<br><br>
-                Weather has no significant game effect most of the time, but see "Environmental Effects" in chapter 3 for the effects of extreme weather. Adding weather details to your descriptions of the characters' journey can make it more memorable.
+                Weather has no significant game effect most of the time, but see <a href="https://www.dndbeyond.com/sources/dnd/dmg-2024/dms-toolbox#EnvironmentalEffects" target="_blank">"Environmental Effects"</a> in chapter 3 for the effects of extreme weather. Adding weather details to your descriptions of the characters' journey can make it more memorable.
             </div>
             <table style='width: 100%; border-collapse: collapse; margin-top: 10px;'>
                 <thead>
