@@ -133,6 +133,7 @@ if (isPlainCharacterPage) {
 		{ src: "peerDice.js"},		
 		{ src: "ajaxQueue/ajaxQueueIndex.js", type: "module" },
 		{ src: "DiceRoller.js" },
+		{ src: "DMScreen.js" },
 		{ src: "Main.js" },
 		{ src: "MonsterStatBlock.js" },
 		// AboveVTT files that execute when loaded	

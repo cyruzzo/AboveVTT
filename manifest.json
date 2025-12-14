@@ -92,6 +92,7 @@
 			"KeypressHandler.js",
 			"DiceContextMenu/*",
 			"DiceRoller.js",
+			"DMScreen.js",
 			"ChatObserver.js",
 			"Main.js",
 			"MonsterStatBlock.js",

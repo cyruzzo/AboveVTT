@@ -3220,6 +3220,101 @@ body .note-visibility-toggle-container {
     padding: 10px;
     width:80%;
 }
+
+#dmScreenContainer {
+    position: fixed;
+    top: 30px;
+    left: 30px;
+    margin: auto;
+    overflow:auto;
+    height: calc(100% - 40px);
+    text-align:center;
+    z-index: 70001;
+    border: 3px solid black;
+    border-radius: 8px;
+    padding: 10px;
+    width: calc(100% - 400px);
+    display: none;
+    background-color: #FCFBF9;
+    -webkit-user-select: text;
+    -ms-user-select: text;
+    user-select: text;
+    .dmScreenheader{
+        position: relative;
+        .dmScreenTitle {
+            cursor: pointer;
+            span {
+                font-size: 0.8em;
+            }
+        }
+    }
+    h1{
+        font-size: 24px;
+    }
+    table {
+        tr:nth-child(odd) {
+            background-color: #F1EBDD;
+        }
+        tr:nth-child(even) {
+            background-color: #F9F8F3;
+        }
+    }
+    .dmScreenDropdown {
+        position: absolute;
+        top: 100%;
+        left: calc(50% - 125px);
+        background: white;
+        border: 2px solid rgb(51, 51, 51);
+        box-shadow: rgba(0, 0, 0, 0.3) 0px 4px 8px;
+        z-index: 1000;
+        min-width: 250px;
+        .dmScreenDropdownItem {
+            padding: 10px 15px;
+            cursor: pointer;
+            border-bottom: 1px solid rgb(221, 221, 221);
+            background-color: rgb(255, 255, 255);
+        }
+    }
+    .dmScreenBlock {
+        h1 {
+            font-size: 20px;
+        }
+        h2 {
+            font-size: 16px;
+            border-bottom: #D6BE8C solid thin;
+        }
+        
+        &#dmScreenTravel {
+            .dmScreenColumns{
+                column-width: 400px;
+            }
+        }
+        .dmScreenColumns {
+            column-count: auto;
+            column-width: 300px;
+            column-gap: 20px;
+            column-rule: 1px solid #ccc;
+        }
+
+        .dmScreenChunk {
+            break-inside: avoid;
+            margin-bottom: 15px;
+            font-size: 12px;
+            text-align: left;
+        }
+        .dmScreenChunkDefinition {
+            margin: 5px 0px;
+            h3 {
+                font-size: 15px;
+                border: none;
+            }
+            hr {
+                display: none;
+            }
+        }
+    }
+}
+
 #patreons ul li {
     width: 136px;
 }
