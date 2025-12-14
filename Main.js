@@ -2589,6 +2589,25 @@ function init_zoom_buttons() {
 	
 	zoom_section.append(youtube_controls_button);
 	if(window.DM) {
+		
+		const dm_screen_button = $(`<div id='dm_screen_button' class='ddbc-tab-options--layout-pill hasTooltip button-icon hideable' data-name='Show/Hide DM Screen'> 
+			<div class="ddbc-tab-options__header-heading">
+					<span class="material-symbols-outlined" style="font-size: 20px;">
+						scrollable_header
+					</span>
+			</div></div>
+			`);
+		dm_screen_button.click(function (event) {
+			console.log("dm_screen_button", event);
+			const dmScreenContainer = $("#dmScreenContainer");
+			const containerVisibility = dmScreenContainer.css('display');
+			if(containerVisibility === 'none'){
+				dmScreenContainer.show();
+			}else{
+				dmScreenContainer.hide();
+			}
+		});
+		zoom_section.append(dm_screen_button);
 
 		const projector_toggle = $(`<div id='projector_toggle' class='ddbc-tab-options--layout-pill hasTooltip button-icon hideable' data-name='Quick toggle projector mode'></div>`);
 
