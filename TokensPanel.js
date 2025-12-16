@@ -1218,7 +1218,7 @@ async function create_and_place_token(listItem, hidden = undefined, specificImag
             if(window.all_token_objects[options.id] != undefined){           
                 options = {...options, ...window.all_token_objects[options.id].options}
                 if (specificImage) { 
-                    options = { ...options, ...options.alternativeImagesCustomizations[specificImage], imgsrc: chosenImage };
+                    options = { ...options, ...options.alternativeImagesCustomizations?.[specificImage], imgsrc: chosenImage };
                 }
             }
           
