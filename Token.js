@@ -4680,12 +4680,13 @@ function setTokenLight (token, options) {
 				}
 				token.parent().parent().find(".aura-element-container-clip[id='" + options.id +"']").attr('data-custom-animation', 'true')
 				token.parent().parent().find(".aura-element-container-clip[id='" + options.id +"']").css('--custom-mask-image', `url('${parse_img(options.animation.customLightMask)}')`)
-				setAvttFilePickerCssVar({
-					var: '--custom-mask-image',
-					target: token.parent().parent().find(".aura-element-container-clip[id='" + options.id + "']"),
-					url: options.animation.customLightMask
-				})
-			
+				if(options.animation.customLightMask?.includes('above-bucket-not-a-url')){
+					setAvttFilePickerCssVar({
+						var: '--custom-mask-image',
+						target: token.parent().parent().find(".aura-element-container-clip[id='" + options.id + "']"),
+						url: options.animation.customLightMask
+					})
+				}
 			}
 			else{
 				token.parent().parent().find(".aura-element-container-clip[id='" + options.id +"']").attr('data-animation', options.animation.light)
