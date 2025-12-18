@@ -577,7 +577,7 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 			return;
 		}
 		
-		let f = $("<iframe src='/sources'></iframe");
+		let f = $("<iframe src='/en/library?ownership=owned-shared'></iframe");
 		f.hide();
 		$("#site").append(f);
 		
@@ -587,11 +587,11 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 		f.on("load", function(event) {
 			console.log('iframe pronto..');
 			let iframe = $(event.target);
-			iframe.contents().find(".sources-listing--item--title").each(function(idx) {
+			iframe.contents().find("[class*='SourceCard_sourceTitle']").each(function(idx) {
 				let ddbtype=$(this).closest(".sources-listing").attr('id'); // get Sourcebooks of Adventures
 				let title = $(this).html();
-				let url = $(this).parent().attr("href");
-				let keyword = url.replace('https://www.dndbeyond.com', '').replace('sources/', '');
+				let url = $(this).attr("href");
+				let keyword = url.replaceAll(/https:\/\/www\.dndbeyond\.com|^\/?sources\/|/gi, '');
 
 				if (keyword in self.sources){ // OBJECT ALREADY EXISTS... evito di riscrivere per non perdere i dati
 					scraped_sources[keyword]=self.sources.keyword;

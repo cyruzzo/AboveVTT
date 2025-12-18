@@ -3076,16 +3076,20 @@ function load_sources_iframe_for_map_import(hidden = false) {
 		const sourcesBody = $(event.target).contents();
 		sourcesBody.find('head').append(`<style id='dndbeyondSourcesiFrameStyles' type="text/css">
 			#site-main,
-			.single-column #content{
+			.single-column #content,
+			main[class*='page_root']{
 				padding: 0px !important;
 			} 
 			header[role='banner'],
+			header.navigationContainer,
 			#site-main > .site-bar,
 			#site-main > header.page-header,
 			#mega-menu-target,
 			footer,
 			.ad-container,
-			.ddb-site-banner{
+			.ddb-site-banner,
+			[href*='marketplace.dndbeyond.com'],
+			[src*='marketplace.dndbeyond.com']{
 				display:none !important;
 			}
 			.ddb-collapsible-filter{
@@ -3101,24 +3105,28 @@ function load_sources_iframe_for_map_import(hidden = false) {
 		$('#sources-import-content-container').find(".sidebar-panel-loading-indicator").remove();
 
 		// give the search bar focus, so we can just start typing to filter sources without having to click into it
-		sourcesBody.find(".ddb-collapsible-filter__input").focus();
+		sourcesBody.find("[class*='SearchInput_searchInput']").focus();
+
 
 		// hijack the links and open our importer instead
-		sourcesBody.find("a.sources-listing--item").click(function (event) {
+		sourcesBody.find("a[class*='SourceCard_imageLink']").click(function (event) {
 			event.stopPropagation();
 			event.preventDefault();
 			const sourceAbbreviation = event.currentTarget.href.split("sources/").pop();
-			const image = $(event.currentTarget).find(".sources-listing--item--avatar").css("background-image").slice(4, -1).replace(/"/g, "");
-			const title = $(event.currentTarget).find(".sources-listing--item--title").text();
+			const image = $(event.currentTarget).find("[class*='SourceCard_image']").attr('src');
+			const title = $(event.currentTarget).closest("[class*='SourcesList_sourceWrapper']").find("a[class*='SourceCard_sourceTitle']").text().trim();
 			scene_importer_clicked_source(sourceAbbreviation, undefined, image, title);
 			mega_importer(true, sourceAbbreviation);
 			iframe.hide();
 		});
-
+		sourcesBody.find("a[class*='SourceCard_sourceTitle']").click(function (event) {
+			event.stopPropagation();
+			event.preventDefault();
+		})
 		add_scene_importer_back_button(sourcesBody);
 	});
 
-	iframe.attr("src", `/sources`);
+	iframe.attr("src", `/en/library?ownership=owned-shared`);
 }
 
 function adjust_create_import_edit_container(content='', empty=true, title='', width100Minus=500, minWidth=850){
