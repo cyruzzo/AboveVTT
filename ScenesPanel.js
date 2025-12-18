@@ -3581,7 +3581,7 @@ async function build_source_book_chapter_import_section(sceneSet) {
 function add_scene_importer_back_button(container) {
 	const backButton = $(`<a class="quick-menu-item-link importer-back-button" href="#">Back</a>`);
 
-	const searchContainer = container.find(".ddb-collapsible-filter").first();
+	const searchContainer = container.find(".ddb-collapsible-filter, [class*='SourcesContents_contents']").first();
 	searchContainer.prepend(backButton);
 	searchContainer.css({ "display": "flex" });
 	backButton.click(function (e) {
