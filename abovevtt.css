@@ -1428,7 +1428,7 @@ input {
     border-radius: 0px 0px 5px 5px !important;
 }
 #sources-import-iframe {
-    top: 0;
+    top: 8px;
     left: 0;
     height: 100%;
     width: 100%;

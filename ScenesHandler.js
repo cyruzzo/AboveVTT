@@ -629,6 +629,7 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 	}
 
 	build_chapters(keyword, callback) {
+		$('#sources-import-content-container').append(build_combat_tracker_loading_indicator('One moment while we load sourcebook'));
 		let self = this;
 		console.log('scansiono ' + keyword);
 		//let target_list = $("#" + $(event.target).attr('data-target'));
@@ -652,8 +653,7 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 		f.hide();
 		$("#site").append(f);
 
-		$('#sources-import-content-container').append(build_combat_tracker_loading_indicator('One moment while we load sourcebook'));
-	
+
 		f.on("load", function(event) {
 			let iframe = $(event.target);
 			console.log('caricato ' + window.frames['scraper'].location.href);
