@@ -1814,6 +1814,7 @@ function init_ddb_importer(target, selectedSource, selectedChapter) {
 
 
 	source_select.change(function() {
+		$('#sources-import-content-container').append(build_combat_tracker_loading_indicator('One moment while we load sourcebook'));
 		$("#chapter_select").empty();
 		$("#scenes_select").empty();
 		$("#import_button").attr('disabled', 'disabled');
@@ -3109,7 +3110,7 @@ function load_sources_iframe_for_map_import(hidden = false) {
 
 
 		// hijack the links and open our importer instead
-		sourcesBody.find("a[class*='SourceCard_imageLink']").click(function (event) {
+		sourcesBody.off('click.importer').on('click.importer', "a[class*='SourceCard_imageLink']", function (event) {
 			event.stopPropagation();
 			event.preventDefault();
 			const sourceAbbreviation = event.currentTarget.href.split("sources/").pop();
