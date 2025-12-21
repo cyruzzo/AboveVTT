@@ -20,6 +20,7 @@ function initDmScreen() {
                     <div class='dmScreenDropdownItem' data-block='actions'>Actions</div>
                     <div class='dmScreenDropdownItem' data-block='skills'>Skills and Mechanics</div>
                     <div class='dmScreenDropdownItem' data-block='travel'>Travel</div>
+                    <div class='dmScreenDropdownItem' data-block='names'>Name Improvisation</div>
                 </div>
             </div>
 			<div id='dmScreenBlocks'>
@@ -62,7 +63,7 @@ function initDmScreen() {
                 dmScreenBlocks.append(buildConditionsBlock());
                 break;
             case 'damage':
-                dmScreenBlocks.append(buildImprovisationBlock());
+                dmScreenBlocks.append(buildDamageImprovisationBlock());
                 break;
             case 'actions':
                 dmScreenBlocks.append(buildActionsBlock());
@@ -73,6 +74,9 @@ function initDmScreen() {
             case 'travel':
                 dmScreenBlocks.append(buildTravelBlock());
                 break;
+            case 'names':
+                dmScreenBlocks.append(buildNameImprovisationBlock());
+                break;
         }
     });
 
@@ -80,7 +84,7 @@ function initDmScreen() {
     dmScreenBlocks.append(buildConditionsBlock());
 
     // Handle Escape key to hide dmScreenContainer
-    $(document).on('keydown', function(e) {
+    $(document).on('keydown', function (e) {
         if (e.key === 'Escape' && $('#dmScreenContainer').is(':visible')) {
             $('#dmScreenContainer').hide();
         }
@@ -287,8 +291,8 @@ function buildActionsBlock() {
  * Build the Improvising Objects and Damage reference block
  * @returns {jQuery} The damage block element
  */
-function buildImprovisationBlock() {
-    const block = $(`<div class='dmScreenBlock' id='dmScreenImprovisation'>
+function buildDamageImprovisationBlock() {
+    const block = $(`<div class='dmScreenBlock' id='dmScreenDamageImprovisation'>
         <div class='dmScreenColumns'></div>
     </div>`);
 
@@ -310,23 +314,6 @@ function buildImprovisationBlock() {
         { levels: "11-16", nuisance: "22 (4d10)", deadly: "55 (10d10)" },
         { levels: "17-20", nuisance: "55 (10d10)", deadly: "99 (18d10)" }
     ];
-
-    const objectArmorClassData = [
-        { substance: "Cloth, paper, rope", ac: "11" },
-        { substance: "Crystal, ice, glass", ac: "13" },
-        { substance: "Wood, bone", ac: "15" },
-        { substance: "Stone", ac: "17" },
-        { substance: "Iron, steel", ac: "19" },
-        { substance: "Mithral", ac: "21" },
-        { substance: "Adamantine", ac: "23" }
-    ];
-
-    const objectHitPointsData = [
-        { size: "Tiny", fragile: "2 (1d4)",resilient: "5 (2d4)" },
-        { size: "Small", fragile: "3 (1d6)",resilient: "10 (3d6)" },
-        { size: "Medium", fragile: "4 (1d8)",resilient: "15 (4d8)" },
-        { size: "Large", fragile: "6 (1d10)",resilient: "20 (5d10)" },
-    ]
 
     const damageSection = $(`
         <div class='dmScreenChunk'>
@@ -390,12 +377,10 @@ function buildImprovisationBlock() {
     ];
 
     const objectHPData = [
-        { size: "Tiny", hp: "2 (1d4)" },
-        { size: "Small", hp: "3 (1d6)" },
-        { size: "Medium", hp: "4 (1d8)" },
-        { size: "Large", hp: "5 (1d10)" },
-        { size: "Huge", hp: "6 (1d12)" },
-        { size: "Gargantuan", hp: "7 (2d6)" }
+        { size: "Tiny", fragilehp: "2 (1d4)", resilienthp: "5 (2d4)" },
+        { size: "Small", fragilehp: "3 (1d6)", resilienthp: "10 (3d6)" },
+        { size: "Medium", fragilehp: "4 (1d8)", resilienthp: "18 (4d8)" },
+        { size: "Large", fragilehp: "5 (1d10)", resilienthp: "27 (5d10)" },
     ];
 
     const objectStatsSection = $(`
@@ -416,7 +401,8 @@ function buildImprovisationBlock() {
                 <thead>
                     <tr>
                         <th style='text-align: left; padding: 8px; border-bottom: 2px solid #ccc;'>Size</th>
-                        <th style='text-align: left; padding: 8px; border-bottom: 2px solid #ccc;'>Hit Points</th>
+                        <th style='text-align: left; padding: 8px; border-bottom: 2px solid #ccc;'>Hit Points (Fragile)</th>
+                        <th style='text-align: left; padding: 8px; border-bottom: 2px solid #ccc;'>Hit Points (Resilient)</th>
                     </tr>
                 </thead>
                 <tbody id='objectHPTableBody'></tbody>
@@ -439,7 +425,8 @@ function buildImprovisationBlock() {
         hpTbody.append(`
             <tr>
                 <td style='padding: 8px; border-bottom: 1px solid #eee;'><strong>${row.size}</strong></td>
-                <td style='padding: 8px; border-bottom: 1px solid #eee;'>${row.hp}</td>
+                <td style='padding: 8px; border-bottom: 1px solid #eee;'>${row.fragilehp}</td>
+                <td style='padding: 8px; border-bottom: 1px solid #eee;'>${row.resilienthp}</td>
             </tr>
         `);
     });
@@ -666,3 +653,211 @@ function buildTravelBlock() {
 
     return block;
 }
+
+/**
+ * Build the Name Improvisation reference block
+ * @returns {jQuery} The name improvisation block element
+ */
+function buildNameImprovisationBlock() {
+    const block = $(`<div class='dmScreenBlock' id='dmScreenNameImprovisation'>
+        <div class='dmScreenColumns'></div>
+    </div>`);
+
+    const columnsContainer = block.find('.dmScreenColumns');
+
+    // Common Names
+    const commonNamesData = [
+        { roll: 1, givenName: "Adrik", surname: "Brightsun" },
+        { roll: 2, givenName: "Alvyn", surname: "Dundragon" },
+        { roll: 3, givenName: "Aurora", surname: "Frostbeard" },
+        { roll: 4, givenName: "Eldeth", surname: "Garrick" },
+        { roll: 5, givenName: "Eldon", surname: "Goodbarrel" },
+        { roll: 6, givenName: "Farris", surname: "Greycastle" },
+        { roll: 7, givenName: "Kathra", surname: "Ironfist" },
+        { roll: 8, givenName: "Kellen", surname: "Jaerin" },
+        { roll: 9, givenName: "Lily", surname: "Merryweather" },
+        { roll: 10, givenName: "Nissa", surname: "Redthorn" },
+        { roll: 11, givenName: "Xinli", surname: "Stormriver" },
+        { roll: 12, givenName: "Zorra", surname: "Wren" }
+    ];
+
+    // Guttural Names
+    const gutturalNamesData = [
+        { roll: 1, givenName: "Abzug", surname: "Burska" },
+        { roll: 2, givenName: "Bajok", surname: "Gruuthok" },
+        { roll: 3, givenName: "Bharash", surname: "Hrondl" },
+        { roll: 4, givenName: "Grovis", surname: "Jarzzok" },
+        { roll: 5, givenName: "Gruuna", surname: "Kraltus" },
+        { roll: 6, givenName: "Hokrun", surname: "Shamog" },
+        { roll: 7, givenName: "Mardred", surname: "Skrangval" },
+        { roll: 8, givenName: "Rhogar", surname: "Ungart" },
+        { roll: 9, givenName: "Skuldark", surname: "Uuthrakt" },
+        { roll: 10, givenName: "Thokk", surname: "Vrakir" },
+        { roll: 11, givenName: "Urzul", surname: "Yuldra" },
+        { roll: 12, givenName: "Varka", surname: "Zulrax" }
+    ];
+
+    // Lyrical Names
+    const lyricalNamesData = [
+        { roll: 1, givenName: "Arannis", surname: "Arvannis" },
+        { roll: 2, givenName: "Damaia", surname: "Brawnanvil" },
+        { roll: 3, givenName: "Darsis", surname: "Daardendrian" },
+        { roll: 4, givenName: "Dweomer", surname: "Drachedandion" },
+        { roll: 5, givenName: "Evabeth", surname: "Endryss" },
+        { roll: 6, givenName: "Jhessail", surname: "Meliamne" },
+        { roll: 7, givenName: "Keyleth", surname: "Mishann" },
+        { roll: 8, givenName: "Netheria", surname: "Silverfrond" },
+        { roll: 9, givenName: "Orianna", surname: "Snowmantle" },
+        { roll: 10, givenName: "Sorcyl", surname: "Summerbreeze" },
+        { roll: 11, givenName: "Umarion", surname: "Thunderfoot" },
+        { roll: 12, givenName: "Velissa", surname: "Zashir" }
+    ];
+
+    // Monosyllabic Names
+    const monosyllabicNamesData = [
+        { roll: 1, givenName: "Chen", surname: "Dench" },
+        { roll: 2, givenName: "Creel", surname: "Drog" },
+        { roll: 3, givenName: "Dain", surname: "Dusk" },
+        { roll: 4, givenName: "Dorn", surname: "Holg" },
+        { roll: 5, givenName: "Flint", surname: "Horn" },
+        { roll: 6, givenName: "Glim", surname: "Imsh" },
+        { roll: 7, givenName: "Henk", surname: "Jask" },
+        { roll: 8, givenName: "Krusk", surname: "Keth" },
+        { roll: 9, givenName: "Nox", surname: "Ku" },
+        { roll: 10, givenName: "Nyx", surname: "Kung" },
+        { roll: 11, givenName: "Rukh", surname: "Mott" },
+        { roll: 12, givenName: "Shan", surname: "Quaal" }
+    ];
+
+    // Sinister Names
+    const sinisterNamesData = [
+        { roll: 1, givenName: "Arachne", surname: "Doomwhisper" },
+        { roll: 2, givenName: "Axyss", surname: "Dreadfield" },
+        { roll: 3, givenName: "Carrion", surname: "Gallows" },
+        { roll: 4, givenName: "Grinnus", surname: "Hellstryke" },
+        { roll: 5, givenName: "Melkhis", surname: "Killraven" },
+        { roll: 6, givenName: "Morthos", surname: "Nightblade" },
+        { roll: 7, givenName: "Nadir", surname: "Norixius" },
+        { roll: 8, givenName: "Scandal", surname: "Shadowfang" },
+        { roll: 9, givenName: "Skellendyre", surname: "Valtar" },
+        { roll: 10, givenName: "Thaltus", surname: "Winterspell" },
+        { roll: 11, givenName: "Valkora", surname: "Xandros" },
+        { roll: 12, givenName: "Vexander", surname: "Zarkynzorn" }
+    ];
+
+    // Whimsical Names
+    const whimsicalNamesData = [
+        { roll: 1, givenName: "Cricket", surname: "Borogove" },
+        { roll: 2, givenName: "Daisy", surname: "Goldjoy" },
+        { roll: 3, givenName: "Dimble", surname: "Hoddypeak" },
+        { roll: 4, givenName: "Ellywick", surname: "Huddle" },
+        { roll: 5, givenName: "Erky", surname: "Jollywind" },
+        { roll: 6, givenName: "Fiddlestyx", surname: "Oneshoe" },
+        { roll: 7, givenName: "Fonkin", surname: "Scramblewise" },
+        { roll: 8, givenName: "Golly", surname: "Sunnyhill" },
+        { roll: 9, givenName: "Mimsy", surname: "Tallgrass" },
+        { roll: 10, givenName: "Pumpkin", surname: "Timbers" },
+        { roll: 11, givenName: "Quarrel", surname: "Underbough" },
+        { roll: 12, givenName: "Sybilwick", surname: "Wimbly" }
+    ];
+
+    // Tavern Names
+    const tavernNamesData = [
+        { roll: 1, first: "The Golden", second: "Lyre" },
+        { roll: 2, first: "The Silver", second: "Dolphin" },
+        { roll: 3, first: "The Beardless", second: "Dwarf" },
+        { roll: 4, first: "The Laughing", second: "Pegasus" },
+        { roll: 5, first: "The Dancing", second: "Hut" },
+        { roll: 6, first: "The Gilded", second: "Rose" },
+        { roll: 7, first: "The Stumbling", second: "Stag" },
+        { roll: 8, first: "The Wolf and", second: "Duck" },
+        { roll: 9, first: "The Fallen", second: "Lamb" },
+        { roll: 10, first: "The Leering", second: "Demon" },
+        { roll: 11, first: "The Drunken", second: "Goat" },
+        { roll: 12, first: "The Wine and", second: "Spirit" },
+        { roll: 13, first: "The Roaring", second: "Horde" },
+        { roll: 14, first: "The Frowning", second: "Jester" },
+        { roll: 15, first: "The Barrel and", second: "Bucket" },
+        { roll: 16, first: "The Thirsty", second: "Crow" },
+        { roll: 17, first: "The Wandering", second: "Satyr" },
+        { roll: 18, first: "The Barking", second: "Dog" },
+        { roll: 19, first: "The Happy", second: "Spider" },
+        { roll: 20, first: "The Witch and", second: "Dragon" }
+    ];
+
+    // Helper function to create name table
+    function createNameTable(title, data) {
+        const section = $(`
+            <div class='dmScreenChunk'>
+                <h2>${title}</h2>
+                <table style='width: 100%; border-collapse: collapse;'>
+                    <thead>
+                        <tr>
+                            <th style='text-align: left; padding: 8px; border-bottom: 2px solid #ccc;'>1d12</th>
+                            <th style='text-align: left; padding: 8px; border-bottom: 2px solid #ccc;'>Given Name</th>
+                            <th style='text-align: left; padding: 8px; border-bottom: 2px solid #ccc;'>Surname</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        `);
+
+        const tbody = section.find('tbody');
+        data.forEach(row => {
+            tbody.append(`
+                <tr>
+                    <td style='padding: 8px; border-bottom: 1px solid #eee;'><strong>${row.roll}</strong></td>
+                    <td style='padding: 8px; border-bottom: 1px solid #eee;'>${row.givenName}</td>
+                    <td style='padding: 8px; border-bottom: 1px solid #eee;'>${row.surname}</td>
+                </tr>
+            `);
+        });
+
+        return section;
+    }
+
+    // Add all name tables
+    columnsContainer.append(createNameTable("Common Names", commonNamesData));
+    columnsContainer.append(createNameTable("Guttural Names", gutturalNamesData));
+    columnsContainer.append(createNameTable("Lyrical Names", lyricalNamesData));
+    columnsContainer.append(createNameTable("Monosyllabic Names", monosyllabicNamesData));
+    columnsContainer.append(createNameTable("Sinister Names", sinisterNamesData));
+    columnsContainer.append(createNameTable("Whimsical Names", whimsicalNamesData));
+
+    // Add Tavern Names table
+    const tavernSection = $(`
+        <div class='dmScreenChunk'>
+            <h2>Tavern Names</h2>
+            <table style='width: 100%; border-collapse: collapse; margin-top: 10px;'>
+                <thead>
+                    <tr>
+                        <th style='text-align: left; padding: 8px; border-bottom: 2px solid #ccc;'>1d20</th>
+                        <th style='text-align: left; padding: 8px; border-bottom: 2px solid #ccc;'>First Part</th>
+                        <th style='text-align: left; padding: 8px; border-bottom: 2px solid #ccc;'>Second Part</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    `);
+
+    const tavernTbody = tavernSection.find('tbody');
+    tavernNamesData.forEach(row => {
+        tavernTbody.append(`
+            <tr>
+                <td style='padding: 8px; border-bottom: 1px solid #eee;'><strong>${row.roll}</strong></td>
+                <td style='padding: 8px; border-bottom: 1px solid #eee;'>${row.first}</td>
+                <td style='padding: 8px; border-bottom: 1px solid #eee;'>${row.second}</td>
+            </tr>
+        `);
+    });
+
+    columnsContainer.append(tavernSection);
+
+    // Add roll buttons to all dice notation
+    add_journal_roll_buttons(block, undefined, undefined, "DM");
+
+    return block;
+}
+
