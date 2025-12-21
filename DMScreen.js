@@ -21,6 +21,7 @@ function initDmScreen() {
                     <div class='dmScreenDropdownItem' data-block='skills'>Skills and Mechanics</div>
                     <div class='dmScreenDropdownItem' data-block='travel'>Travel</div>
                     <div class='dmScreenDropdownItem' data-block='names'>Name Improvisation</div>
+                    <div class='dmScreenDropdownItem' data-block='spellcasting'>Spellcasting</div>
                 </div>
             </div>
 			<div id='dmScreenBlocks'>
@@ -76,6 +77,9 @@ function initDmScreen() {
                 break;
             case 'names':
                 dmScreenBlocks.append(buildNameImprovisationBlock());
+                break;
+            case 'spellcasting':
+                dmScreenBlocks.append(buildSpellcastingBlock());
                 break;
         }
     });
@@ -854,6 +858,110 @@ function buildNameImprovisationBlock() {
     });
 
     columnsContainer.append(tavernSection);
+
+    // Add roll buttons to all dice notation
+    add_journal_roll_buttons(block, undefined, undefined, "DM");
+
+    return block;
+}
+
+/**
+ * Build the Spellcasting reference block
+ * @returns {jQuery} The spellcasting block element
+ */
+function buildSpellcastingBlock() {
+    const spellComponents = window.ddbConfigJson.spellComponents;
+    const block = $(`<div class='dmScreenBlock' id='dmScreenSpellcasting'>
+        <div class='dmScreenColumns'></div>
+    </div>`);
+
+    const columnsContainer = block.find('.dmScreenColumns');
+
+    // One Spell with a Spell Slot per Turn
+    const oneSpellSection = $(`
+        <div class='dmScreenChunk'>
+            <h2>One Spell with a Spell Slot per Turn</h2>
+            <div class='dmScreenChunkDefinition'>
+                On a turn, you can expend only one spell slot to cast a spell. This rule means you can't, for example, cast a spell with a spell slot using the Magic action and another one using a Bonus Action on the same turn.
+            </div>
+        </div>
+    `);
+    columnsContainer.append(oneSpellSection);
+
+    // Longer Casting Times
+    const longerCastingSection = $(`
+        <div class='dmScreenChunk'>
+            <h2>Longer Casting Times</h2>
+            <div class='dmScreenChunkDefinition'>
+                Certain spells—including a spell cast as a Ritual—require more time to cast: minutes or even hours. While you cast a spell with a casting time of 1 minute or more, you must take the Magic action on each of your turns, and you must maintain Concentration (see the rules glossary) while you do so. If your Concentration is broken, the spell fails, but you don't expend a spell slot. To cast the spell again, you must start over.
+            </div>
+        </div>
+    `);
+    columnsContainer.append(longerCastingSection);
+
+    // Components
+    const componentsSection = $(`
+        <div class='dmScreenChunk'>
+            <h2>Components</h2>
+            <div class='dmScreenChunkDefinition'>
+                A spell's components are physical requirements the spellcaster must meet to cast the spell. Each spell's description indicates whether it requires Verbal (V), Somatic (S), or Material (M) components. If the spellcaster can't provide one or more of a spell's components, the spellcaster can't cast the spell.<br><br>
+                <strong>Verbal (V):</strong> ${spellComponents.find((component)=>component.name === "Verbal").description}<br><br>
+                <strong>Somatic (S):</strong> ${spellComponents.find((component)=>component.name === "Somatic").description}<br><br>
+                <strong>Material (M):</strong> ${spellComponents.find((component)=>component.name === "Material").description}<br><br>
+                If a spell doesn't consume its materials and doesn't specify a cost for them, a spellcaster can use a Component Pouch (see chapter 6) instead of providing the materials specified in the spell, or the spellcaster can substitute a Spellcasting Focus if the caster has a feature that allows that substitution. To use a Component Pouch, you must have a hand free to reach into it, and to use a Spellcasting Focus, you must hold it unless its description says otherwise (see chapter 6 for descriptions).
+            </div>
+        </div>
+    `);
+    columnsContainer.append(componentsSection);
+
+    // Duration
+    const durationSection = $(`
+        <div class='dmScreenChunk'>
+            <h2>Duration</h2>
+            <div class='dmScreenChunkDefinition'>
+                A spell's duration is the length of time the spell persists after it is cast. A duration typically takes one of the following forms:<br><br>
+                <strong>Concentration:</strong> A duration that requires Concentration follows the Concentration rules (see the rules glossary).<br><br>
+                <strong>Instantaneous:</strong> An instantaneous duration means the spell's magic appears only for a moment and then disappears.<br><br>
+                <strong>Time Span:</strong> A duration that provides a time span specifies how long the spell lasts in rounds, minutes, hours, or the like. For example, a Duration entry might say "1 minute," meaning the spell ends after 1 minute has passed. While a time-span spell that you cast is ongoing, you can dismiss it (no action required) if you don't have the Incapacitated condition.
+            </div>
+        </div>
+    `);
+    columnsContainer.append(durationSection);
+
+    // Targets
+    const targetsSection = $(`
+        <div class='dmScreenChunk'>
+            <h2>Targets</h2>
+            <div class='dmScreenChunkDefinition'>
+                A typical spell requires the caster to pick one or more targets to be affected by the spell's magic. A spell's description says whether the spell targets creatures, objects, or something else.<br><br>
+                <strong>A Clear Path to the Target:</strong> To target something with a spell, a caster must have a clear path to it, so it can't be behind Total Cover.<br><br>
+                <strong>Targeting Yourself:</strong> If a spell targets a creature of your choice, you can choose yourself unless the creature must be Hostile or specifically a creature other than you.<br><br>
+                <strong>Areas of Effect:</strong> Some spells, such as Thunderwave, cover an area called an area of effect, which is defined in the rules glossary. The area determines what the spell targets. The description of a spell specifies whether it has an area of effect, which is typically one of these shapes: Cone, Cube, Cylinder, Emanation, Line, or Sphere.<br><br>
+                <strong>Awareness of Being Targeted:</strong> Unless a spell has a perceptible effect, a creature doesn't know it was targeted by the spell. An effect like lightning is obvious, but a more subtle effect, such as an attempt to read thoughts, goes unnoticed unless a spell's description says otherwise.<br><br>
+                <strong>Invalid Targets:</strong> If you cast a spell on someone or something that can't be affected by it, nothing happens to that target, but if you used a spell slot to cast the spell, the slot is still expended.<br><br>
+                If the spell normally has no effect on a target that succeeds on a saving throw, the invalid target appears to have succeeded on its saving throw, even though it didn't attempt one (giving no hint that the creature is an invalid target). Otherwise, you perceive that the spell did nothing to the target.
+            </div>
+        </div>
+    `);
+    columnsContainer.append(targetsSection);
+    
+    // Areas of Effect
+    const aoeTypes = window.ddbConfigJson.aoeTypes.filter(aoe => aoe.description && aoe.description.trim() !== '');
+    const aoeSection = $(`
+        <div class='dmScreenChunk'>
+            <h2>Areas of Effect</h2>
+        </div>
+    `);
+
+    aoeTypes.forEach(aoe => {
+        aoeSection.append(`
+            <div class='dmScreenChunkDefinition'>
+                <strong>${aoe.name}:</strong> ${aoe.description}
+            </div>
+        `);
+    });
+
+    columnsContainer.append(aoeSection);
 
     // Add roll buttons to all dice notation
     add_journal_roll_buttons(block, undefined, undefined, "DM");
