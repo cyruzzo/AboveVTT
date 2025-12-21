@@ -23,6 +23,7 @@ function initDmScreen() {
                     <div class='dmScreenDropdownItem' data-block='names'>Name Improvisation</div>
                     <div class='dmScreenDropdownItem' data-block='spellcasting'>Spellcasting</div>
                     <div class='dmScreenDropdownItem' data-block='weapons'>Weapons</div>
+                    <div class='dmScreenDropdownItem' data-block='services'>Services</div>
                 </div>
             </div>
 			<div id='dmScreenBlocks'>
@@ -84,6 +85,9 @@ function initDmScreen() {
                 break;
             case 'weapons':
                 dmScreenBlocks.append(buildWeaponsBlock());
+                break;
+            case 'services':
+                dmScreenBlocks.append(buildServicesBlock());
                 break;
         }
     });
@@ -897,7 +901,7 @@ function buildSpellcastingBlock() {
         <div class='dmScreenChunk'>
             <h2>Longer Casting Times</h2>
             <div class='dmScreenChunkDefinition'>
-                Certain spells—including a spell cast as a Ritual—require more time to cast: minutes or even hours. While you cast a spell with a casting time of 1 minute or more, you must take the Magic action on each of your turns, and you must maintain Concentration (see the rules glossary) while you do so. If your Concentration is broken, the spell fails, but you don't expend a spell slot. To cast the spell again, you must start over.
+                Certain spells - including a spell cast as a Ritual - require more time to cast: minutes or even hours. While you cast a spell with a casting time of 1 minute or more, you must take the Magic action on each of your turns, and you must maintain Concentration (see the rules glossary) while you do so. If your Concentration is broken, the spell fails, but you don't expend a spell slot. To cast the spell again, you must start over.
             </div>
         </div>
     `);
@@ -1041,7 +1045,7 @@ function buildWeaponsBlock() {
         { name: "Handaxe", damage: "1d6 Slashing", properties: "Light, Thrown (Range 20/60)", mastery: "Vex", cost: "5 GP" },
         { name: "Javelin", damage: "1d6 Piercing", properties: "Thrown (Range 30/120)", mastery: "Slow", cost: "5 SP" },
         { name: "Light Hammer", damage: "1d4 Bludgeoning", properties: "Light, Thrown (Range 20/60)", mastery: "Nick", cost: "2 GP" },
-        { name: "Mace", damage: "1d6 Bludgeoning", properties: "—", mastery: "Sap", cost: "5 GP" },
+        { name: "Mace", damage: "1d6 Bludgeoning", properties: " - ", mastery: "Sap", cost: "5 GP" },
         { name: "Quarterstaff", damage: "1d6 Bludgeoning", properties: "Versatile (1d8)", mastery: "Topple", cost: "2 SP" },
         { name: "Sickle", damage: "1d4 Slashing", properties: "Light", mastery: "Nick", cost: "1 GP" },
         { name: "Spear", damage: "1d6 Piercing", properties: "Thrown (Range 20/60), Versatile (1d8)", mastery: "Sap", cost: "1 GP" }
@@ -1058,7 +1062,7 @@ function buildWeaponsBlock() {
     // Martial Melee Weapons
     const martialMeleeData = [
         { name: "Battleaxe", damage: "1d8 Slashing", properties: "Versatile (1d10)", mastery: "Topple", cost: "10 GP" },
-        { name: "Flail", damage: "1d8 Bludgeoning", properties: "—", mastery: "Sap", cost: "10 GP" },
+        { name: "Flail", damage: "1d8 Bludgeoning", properties: " - ", mastery: "Sap", cost: "10 GP" },
         { name: "Glaive", damage: "1d10 Slashing", properties: "Heavy, Reach, Two-Handed", mastery: "Graze", cost: "20 GP" },
         { name: "Greataxe", damage: "1d12 Slashing", properties: "Heavy, Two-Handed", mastery: "Cleave", cost: "30 GP" },
         { name: "Greatsword", damage: "2d6 Slashing", properties: "Heavy, Two-Handed", mastery: "Graze", cost: "50 GP" },
@@ -1066,7 +1070,7 @@ function buildWeaponsBlock() {
         { name: "Lance", damage: "1d10 Piercing", properties: "Heavy, Reach, Two-Handed (unless mounted)", mastery: "Topple", cost: "10 GP" },
         { name: "Longsword", damage: "1d8 Slashing", properties: "Versatile (1d10)", mastery: "Sap", cost: "15 GP" },
         { name: "Maul", damage: "2d6 Bludgeoning", properties: "Heavy, Two-Handed", mastery: "Topple", cost: "10 GP" },
-        { name: "Morningstar", damage: "1d8 Piercing", properties: "—", mastery: "Sap", cost: "15 GP" },
+        { name: "Morningstar", damage: "1d8 Piercing", properties: " - ", mastery: "Sap", cost: "15 GP" },
         { name: "Pike", damage: "1d10 Piercing", properties: "Heavy, Reach, Two-Handed", mastery: "Push", cost: "5 GP" },
         { name: "Rapier", damage: "1d8 Piercing", properties: "Finesse", mastery: "Vex", cost: "25 GP" },
         { name: "Scimitar", damage: "1d6 Slashing", properties: "Finesse, Light", mastery: "Nick", cost: "25 GP" },
@@ -1128,6 +1132,218 @@ function buildWeaponsBlock() {
     columnsContainer.append(createWeaponTable("Simple Ranged Weapons", simpleRangedData));
     columnsContainer.append(createWeaponTable("Martial Melee Weapons", martialMeleeData));
     columnsContainer.append(createWeaponTable("Martial Ranged Weapons", martialRangedData));
+
+    // Add roll buttons to all dice notation
+    add_journal_roll_buttons(block, undefined, undefined, "DM");
+
+    return block;
+}
+
+/**
+ * Build the Services reference block
+ * @returns {jQuery} The services block element
+ */
+function buildServicesBlock() {
+    const block = $(`<div class='dmScreenBlock' id='dmScreenServices'>
+        <div class='dmScreenColumns'></div>
+    </div>`);
+
+    const columnsContainer = block.find('.dmScreenColumns');
+
+    // Introduction
+    const introSection = $(`
+        <div class='dmScreenChunk'>
+        </div>
+    `);
+    columnsContainer.append(introSection);
+
+    // Lifestyle Expenses
+    const lifestyleSection = $(`
+        <div class='dmScreenChunk'>
+            <h2>Lifestyle Expenses</h2>
+            <div class='dmScreenChunkDefinition'>
+                Lifestyle expenses summarize the cost of living in a fantasy world. They cover lodging, food, equipment maintenance, and other necessities.<br><br>
+                At the start of each week or month, players can choose a lifestyle below - Wretched, Squalid, Poor, Modest, Comfortable, Wealthy, or Aristocratic - and pay the price to sustain that lifestyle.<br><br>
+                Lifestyles have no inherent consequences, but the DM might take them into account when determining risks or how others perceive your character.<br><br>
+                <strong>Wretched (Free):</strong> You survive via chance and charity. You're often exposed to natural dangers as a result of sleeping outside.<br><br>
+                <strong>Squalid (1 SP per Day):</strong> You spend the bare minimum for your necessities. You might be exposed to unhealthy conditions and opportunistic criminals.<br><br>
+                <strong>Poor (2 SP per Day):</strong> You spend frugally for your necessities.<br><br>
+                <strong>Modest (1 GP per Day):</strong> You support yourself at an average level.<br><br>
+                <strong>Comfortable (2 GP per Day):</strong> You spend modestly for your necessities and enjoy a few luxuries.<br><br>
+                <strong>Wealthy (4 GP per Day):</strong> You're accustomed to the finer things in life and might have servants.<br><br>
+                <strong>Aristocratic (10 GP per Day):</strong> You pay for the best and might have a staff that supports your lifestyle. Others notice your wealth and might encourage you to share it, either legally or otherwise.
+            </div>
+        </div>
+    `);
+    columnsContainer.append(lifestyleSection);
+
+    // Food, Drink, and Lodging
+    const foodLodgingData = [
+        { item: "Ale (mug)", cost: "4 CP" },
+        { item: "Bread (loaf)", cost: "2 CP" },
+        { item: "Cheese (wedge)", cost: "1 SP" },
+        { item: "<strong>Inn Stay per Day</strong>", cost: "" },
+        { item: "&nbsp;&nbsp;Squalid", cost: "7 CP" },
+        { item: "&nbsp;&nbsp;Poor", cost: "1 SP" },
+        { item: "&nbsp;&nbsp;Modest", cost: "5 SP" },
+        { item: "&nbsp;&nbsp;Comfortable", cost: "8 SP" },
+        { item: "&nbsp;&nbsp;Wealthy", cost: "2 GP" },
+        { item: "&nbsp;&nbsp;Aristocratic", cost: "4 GP" },
+        { item: "<strong>Meal</strong>", cost: "" },
+        { item: "&nbsp;&nbsp;Squalid", cost: "1 CP" },
+        { item: "&nbsp;&nbsp;Poor", cost: "2 CP" },
+        { item: "&nbsp;&nbsp;Modest", cost: "1 SP" },
+        { item: "&nbsp;&nbsp;Comfortable", cost: "2 SP" },
+        { item: "&nbsp;&nbsp;Wealthy", cost: "3 SP" },
+        { item: "&nbsp;&nbsp;Aristocratic", cost: "6 SP" },
+        { item: "<strong>Wine (bottle)</strong>", cost: "" },
+        { item: "&nbsp;&nbsp;Common", cost: "2 SP" },
+        { item: "&nbsp;&nbsp;Fine", cost: "10 GP" }
+    ];
+
+    const foodLodgingSection = $(`
+        <div class='dmScreenChunk'>
+            <h2>Food, Drink, and Lodging</h2>
+            <div class='dmScreenChunkDefinition'>
+                The Food, Drink, and Lodging table gives prices for food and a single night's lodging. Prices for daily lodging and meals are included in lifestyle's expenses.
+            </div>
+            <table style='width: 100%; border-collapse: collapse; margin-top: 10px;'>
+                <thead>
+                    <tr>
+                        <th style='text-align: left; padding: 8px; border-bottom: 2px solid #ccc;'>Item</th>
+                        <th style='text-align: left; padding: 8px; border-bottom: 2px solid #ccc;'>Cost</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    `);
+
+    const foodLodgingTbody = foodLodgingSection.find('tbody');
+    foodLodgingData.forEach(row => {
+        foodLodgingTbody.append(`
+            <tr>
+                <td style='padding: 8px; border-bottom: 1px solid #eee;'>${row.item}</td>
+                <td style='padding: 8px; border-bottom: 1px solid #eee;'>${row.cost}</td>
+            </tr>
+        `);
+    });
+    columnsContainer.append(foodLodgingSection);
+
+    // Travel
+    const travelData = [
+        { service: "Coach ride between towns", cost: "3 CP per mile" },
+        { service: "Coach ride within a city", cost: "1 CP per mile" },
+        { service: "Road or gate toll", cost: "1 CP" },
+        { service: "Ship's passage", cost: "1 SP per mile" }
+    ];
+
+    const travelSection = $(`
+        <div class='dmScreenChunk'>
+            <h2>Travel</h2>
+            <div class='dmScreenChunkDefinition'>
+                Drivers or crew hired to conduct passengers to their destinations charge the rates on the Travel table, plus any tolls or additional expenses.
+            </div>
+            <table style='width: 100%; border-collapse: collapse; margin-top: 10px;'>
+                <thead>
+                    <tr>
+                        <th style='text-align: left; padding: 8px; border-bottom: 2px solid #ccc;'>Service</th>
+                        <th style='text-align: left; padding: 8px; border-bottom: 2px solid #ccc;'>Cost</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    `);
+
+    const travelTbody = travelSection.find('tbody');
+    travelData.forEach(row => {
+        travelTbody.append(`
+            <tr>
+                <td style='padding: 8px; border-bottom: 1px solid #eee;'>${row.service}</td>
+                <td style='padding: 8px; border-bottom: 1px solid #eee;'>${row.cost}</td>
+            </tr>
+        `);
+    });
+    columnsContainer.append(travelSection);
+
+    // Hirelings
+    const hirelingsData = [
+        { service: "Skilled hireling", cost: "2 GP per day" },
+        { service: "Untrained hireling", cost: "2 SP per day" },
+        { service: "Messenger", cost: "2 CP per mile" }
+    ];
+
+    const hirelingsSection = $(`
+        <div class='dmScreenChunk'>
+            <h2>Hirelings</h2>
+            <div class='dmScreenChunkDefinition'>
+                Skilled hirelings include anyone hired to perform a service that involves a proficiency (including weapon, tool, or skill): a mercenary, an artisan, a scribe, or the like. The pay shown on the Hirelings table is a minimum; some expert hirelings require more pay. Untrained hirelings are hired for work that requires no particular proficiencies; they include laborers and porters.
+            </div>
+            <table style='width: 100%; border-collapse: collapse; margin-top: 10px;'>
+                <thead>
+                    <tr>
+                        <th style='text-align: left; padding: 8px; border-bottom: 2px solid #ccc;'>Service</th>
+                        <th style='text-align: left; padding: 8px; border-bottom: 2px solid #ccc;'>Cost</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    `);
+
+    const hirelignsTbody = hirelingsSection.find('tbody');
+    hirelingsData.forEach(row => {
+        hirelignsTbody.append(`
+            <tr>
+                <td style='padding: 8px; border-bottom: 1px solid #eee;'>${row.service}</td>
+                <td style='padding: 8px; border-bottom: 1px solid #eee;'>${row.cost}</td>
+            </tr>
+        `);
+    });
+    columnsContainer.append(hirelingsSection);
+
+    // Spellcasting Services
+    const spellcastingData = [
+        { level: "Cantrip", availability: "Village, town, or city", cost: "30 GP" },
+        { level: "1", availability: "Village, town, or city", cost: "50 GP" },
+        { level: "2", availability: "Village, town, or city", cost: "200 GP" },
+        { level: "3", availability: "Town or city only", cost: "300 GP" },
+        { level: "4–5", availability: "Town or city only", cost: "2,000 GP" },
+        { level: "6–8", availability: "City only", cost: "20,000 GP" },
+        { level: "9", availability: "City only", cost: "100,000 GP" }
+    ];
+
+    const spellcastingSection = $(`
+        <div class='dmScreenChunk'>
+            <h2>Spellcasting</h2>
+            <div class='dmScreenChunkDefinition'>
+                Most settlements contain individuals who are willing to cast spells in exchange for payment. If a spell has expensive components, add the cost of those components to the cost listed in the Spellcasting Services table. The higher the level of a desired spell, the harder it is to find someone to cast it.
+            </div>
+            <table style='width: 100%; border-collapse: collapse; margin-top: 10px;'>
+                <thead>
+                    <tr>
+                        <th style='text-align: left; padding: 8px; border-bottom: 2px solid #ccc;'>Spell Level</th>
+                        <th style='text-align: left; padding: 8px; border-bottom: 2px solid #ccc;'>Availability</th>
+                        <th style='text-align: left; padding: 8px; border-bottom: 2px solid #ccc;'>Cost</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    `);
+
+    const spellcastingTbody = spellcastingSection.find('tbody');
+    spellcastingData.forEach(row => {
+        spellcastingTbody.append(`
+            <tr>
+                <td style='padding: 8px; border-bottom: 1px solid #eee;'><strong>${row.level}</strong></td>
+                <td style='padding: 8px; border-bottom: 1px solid #eee;'>${row.availability}</td>
+                <td style='padding: 8px; border-bottom: 1px solid #eee;'>${row.cost}</td>
+            </tr>
+        `);
+    });
+    columnsContainer.append(spellcastingSection);
 
     // Add roll buttons to all dice notation
     add_journal_roll_buttons(block, undefined, undefined, "DM");
