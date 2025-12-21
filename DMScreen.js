@@ -12,19 +12,19 @@ function initDmScreen() {
     let cont = $(`<div id='dmScreenContainer'>
             <div class='dmScreenheader'>
                 <h1 class='dmScreenTitle'>
-                    Conditions <span>▼</span>
+                    Actions <span>▼</span>
                 </h1>
                 <div class='dmScreenDropdown' style='display: none;'>
+                    <div class='dmScreenDropdownItem' data-block='actions'>Actions</div>
+                    <div class='dmScreenDropdownItem' data-block='bastion'>Bastions</div>
                     <div class='dmScreenDropdownItem' data-block='conditions'>Conditions</div>
                     <div class='dmScreenDropdownItem' data-block='damage'>Improvising Objects and Damage</div>
-                    <div class='dmScreenDropdownItem' data-block='actions'>Actions</div>
-                    <div class='dmScreenDropdownItem' data-block='skills'>Skills and Mechanics</div>
-                    <div class='dmScreenDropdownItem' data-block='travel'>Travel</div>
                     <div class='dmScreenDropdownItem' data-block='names'>Name Improvisation</div>
-                    <div class='dmScreenDropdownItem' data-block='spellcasting'>Spellcasting</div>
-                    <div class='dmScreenDropdownItem' data-block='weapons'>Weapons</div>
                     <div class='dmScreenDropdownItem' data-block='services'>Services</div>
-                    <div class='dmScreenDropdownItem' data-block='bastion'>Bastions</div>
+                    <div class='dmScreenDropdownItem' data-block='skills'>Skills and Mechanics</div>
+                    <div class='dmScreenDropdownItem' data-block='spellcasting'>Spellcasting</div>
+                    <div class='dmScreenDropdownItem' data-block='travel'>Travel</div>
+                    <div class='dmScreenDropdownItem' data-block='weapons'>Weapons</div>
                 </div>
             </div>
 			<div id='dmScreenBlocks'>
@@ -97,7 +97,7 @@ function initDmScreen() {
     });
 
     // Load initial block
-    dmScreenBlocks.append(buildConditionsBlock());
+    dmScreenBlocks.append(buildActionsBlock());
 
     // Handle Escape key to hide dmScreenContainer
     $(document).on('keydown', function (e) {
