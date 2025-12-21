@@ -24,6 +24,7 @@ function initDmScreen() {
                     <div class='dmScreenDropdownItem' data-block='spellcasting'>Spellcasting</div>
                     <div class='dmScreenDropdownItem' data-block='weapons'>Weapons</div>
                     <div class='dmScreenDropdownItem' data-block='services'>Services</div>
+                    <div class='dmScreenDropdownItem' data-block='bastion'>Bastions</div>
                 </div>
             </div>
 			<div id='dmScreenBlocks'>
@@ -88,6 +89,9 @@ function initDmScreen() {
                 break;
             case 'services':
                 dmScreenBlocks.append(buildServicesBlock());
+                break;
+            case 'bastion':
+                dmScreenBlocks.append(buildBastionBlock());
                 break;
         }
     });
@@ -901,7 +905,7 @@ function buildSpellcastingBlock() {
         <div class='dmScreenChunk'>
             <h2>Longer Casting Times</h2>
             <div class='dmScreenChunkDefinition'>
-                Certain spells - including a spell cast as a Ritual - require more time to cast: minutes or even hours. While you cast a spell with a casting time of 1 minute or more, you must take the Magic action on each of your turns, and you must maintain Concentration (see the rules glossary) while you do so. If your Concentration is broken, the spell fails, but you don't expend a spell slot. To cast the spell again, you must start over.
+                Certain spells - including a spell cast as a Ritual - require more time to cast: minutes or even hours. While you cast a spell with a casting time of 1 minute or more, you must take the Magic action on each of your turns, and you must maintain Concentration while you do so. If your Concentration is broken, the spell fails, but you don't expend a spell slot. To cast the spell again, you must start over.
             </div>
         </div>
     `);
@@ -916,7 +920,7 @@ function buildSpellcastingBlock() {
                 <strong>Verbal (V):</strong> ${spellComponents.find((component) => component.name === "Verbal").description}<br><br>
                 <strong>Somatic (S):</strong> ${spellComponents.find((component) => component.name === "Somatic").description}<br><br>
                 <strong>Material (M):</strong> ${spellComponents.find((component) => component.name === "Material").description}<br><br>
-                If a spell doesn't consume its materials and doesn't specify a cost for them, a spellcaster can use a Component Pouch (see chapter 6) instead of providing the materials specified in the spell, or the spellcaster can substitute a Spellcasting Focus if the caster has a feature that allows that substitution. To use a Component Pouch, you must have a hand free to reach into it, and to use a Spellcasting Focus, you must hold it unless its description says otherwise (see chapter 6 for descriptions).
+                If a spell doesn't consume its materials and doesn't specify a cost for them, a spellcaster can use a Component Pouch instead of providing the materials specified in the spell, or the spellcaster can substitute a Spellcasting Focus if the caster has a feature that allows that substitution. To use a Component Pouch, you must have a hand free to reach into it, and to use a Spellcasting Focus, you must hold it unless its description says otherwise.
             </div>
         </div>
     `);
@@ -928,7 +932,7 @@ function buildSpellcastingBlock() {
             <h2>Duration</h2>
             <div class='dmScreenChunkDefinition'>
                 A spell's duration is the length of time the spell persists after it is cast. A duration typically takes one of the following forms:<br><br>
-                <strong>Concentration:</strong> A duration that requires Concentration follows the Concentration rules (see the rules glossary).<br><br>
+                <strong>Concentration:</strong> A duration that requires Concentration follows the Concentration rules.<br><br>
                 <strong>Instantaneous:</strong> An instantaneous duration means the spell's magic appears only for a moment and then disappears.<br><br>
                 <strong>Time Span:</strong> A duration that provides a time span specifies how long the spell lasts in rounds, minutes, hours, or the like. For example, a Duration entry might say "1 minute," meaning the spell ends after 1 minute has passed. While a time-span spell that you cast is ongoing, you can dismiss it (no action required) if you don't have the Incapacitated condition.
             </div>
@@ -1309,8 +1313,8 @@ function buildServicesBlock() {
         { level: "1", availability: "Village, town, or city", cost: "50 GP" },
         { level: "2", availability: "Village, town, or city", cost: "200 GP" },
         { level: "3", availability: "Town or city only", cost: "300 GP" },
-        { level: "4–5", availability: "Town or city only", cost: "2,000 GP" },
-        { level: "6–8", availability: "City only", cost: "20,000 GP" },
+        { level: "4-5", availability: "Town or city only", cost: "2,000 GP" },
+        { level: "6-8", availability: "City only", cost: "20,000 GP" },
         { level: "9", availability: "City only", cost: "100,000 GP" }
     ];
 
@@ -1344,6 +1348,323 @@ function buildServicesBlock() {
         `);
     });
     columnsContainer.append(spellcastingSection);
+
+    // Add roll buttons to all dice notation
+    add_journal_roll_buttons(block, undefined, undefined, "DM");
+
+    return block;
+}
+
+/**
+ * Build the Bastion reference block
+ * @returns {jQuery} The bastion block element
+ */
+function buildBastionBlock() {
+    const block = $(`<div class='dmScreenBlock' id='dmScreenBastion'>
+        <div class='dmScreenColumns'></div>
+    </div>`);
+
+    const columnsContainer = block.find('.dmScreenColumns');
+
+    // Gaining a Bastion
+    const gainingSection = $(`
+        <div class='dmScreenChunk'>
+            <h2>Gaining a Bastion</h2>
+            <div class='dmScreenChunkDefinition'>
+                If you allow Bastions in your campaign, characters acquire their Bastions when they reach level 5. You and the players can decide together how these Bastions come into being. A character might inherit or receive a parcel of land on which to build their Bastion, or they might take a preexisting structure and refurbish it. It's fair to assume that work has been going on behind the scenes of the campaign during a character's early adventuring career, so the Bastion is ready when the character reaches level 5.
+            </div>
+        </div>
+    `);
+    columnsContainer.append(gainingSection);
+
+    // Bastion Turns
+    const turnsSection = $(`
+        <div class='dmScreenChunk'>
+            <h2>Bastion Turns</h2>
+            <div class='dmScreenChunkDefinition'>
+                As time passes in the campaign, players take Bastion turns to reflect the activity occurring in their Bastions, whether or not the characters are present. On a Bastion turn, a character can issue orders to the special facilities in their Bastion or issue the Maintain order to the entire Bastion. By default, a Bastion turn occurs every 7 days of in-game time.
+            </div>
+        </div>
+    `);
+    columnsContainer.append(turnsSection);
+
+    // Combining Bastions
+    const combiningSection = $(`
+        <div class='dmScreenChunk'>
+            <h2>Combining Bastions</h2>
+            <div class='dmScreenChunkDefinition'>
+                Two or more players can combine their characters' Bastions into a single structure. Doing so doesn't change the number of special facilities each Bastion can have, how those special facilities work, or who issues orders to each Bastion. Each Bastion retains its own hirelings, which can't be sent to or shared with another Bastion. Bastion Defenders are handled differently: if some event deprives one character's Bastion of defenders, another character can apply all or some of those losses to their Bastion instead, provided the two Bastions are combined.
+            </div>
+        </div>
+    `);
+    columnsContainer.append(combiningSection);
+
+    // Facility Space
+    const facilitySpaceData = [
+        { space: "Cramped", area: "4 squares" },
+        { space: "Roomy", area: "16 squares" },
+        { space: "Vast", area: "36 squares" }
+    ];
+
+    const facilitySpaceSection = $(`
+        <div class='dmScreenChunk'>
+            <h2>Facility Space</h2>
+            <div class='dmScreenChunkDefinition'>
+                The amount of space in a basic or special facility determines its maximum area in 5-foot squares, as shown in the Facility Space table. A player can configure the squares of a facility as they please on their Bastion's map. The squares can be stacked so that a facility's area is distributed over multiple levels or stories.
+            </div>
+            <table style='width: 100%; border-collapse: collapse; margin-top: 10px;'>
+                <thead>
+                    <tr>
+                        <th style='text-align: left; padding: 8px; border-bottom: 2px solid #ccc;'>Space</th>
+                        <th style='text-align: left; padding: 8px; border-bottom: 2px solid #ccc;'>Maximum Area</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    `);
+
+    const facilitySpaceTbody = facilitySpaceSection.find('tbody');
+    facilitySpaceData.forEach(row => {
+        facilitySpaceTbody.append(`
+            <tr>
+                <td style='padding: 8px; border-bottom: 1px solid #eee;'><strong>${row.space}</strong></td>
+                <td style='padding: 8px; border-bottom: 1px solid #eee;'>${row.area}</td>
+            </tr>
+        `);
+    });
+    columnsContainer.append(facilitySpaceSection);
+
+    // Basic Facilities
+    const basicFacilitiesSection = $(`
+        <div class='dmScreenChunk'>
+            <h2>Basic Facilities</h2>
+            <div class='dmScreenChunkDefinition'>
+                A character's Bastion starts with two free basic facilities, which the character's player chooses from the Basic Facilities list below. One of the chosen facilities is Cramped, and the other is Roomy. A Bastion can have more than one of each basic facility. A basic facility comes with nonmagical furnishings and decor appropriate for that facility.<br><br>
+                Basic facilities don't have any game effects, but they can inspire roleplaying opportunities and enhance a Bastion's verisimilitude.<br><br>
+                <strong>Basic Facilities:</strong> Bedroom, Dining Room, Parlor, Courtyard, Kitchen, Storage
+            </div>
+        </div>
+    `);
+    columnsContainer.append(basicFacilitiesSection);
+
+    // Adding Basic Facilities
+    const addingFacilitiesData = [
+        { space: "Cramped", cost: "500 GP", time: "20 days" },
+        { space: "Roomy", cost: "1,000 GP", time: "45 days" },
+        { space: "Vast", cost: "3,000 GP", time: "125 days" }
+    ];
+
+    const addingFacilitiesSection = $(`
+        <div class='dmScreenChunk'>
+            <h2>Adding Basic Facilities</h2>
+            <div class='dmScreenChunkDefinition'>
+                A character can add a basic facility to their Bastion by spending money and time. The cost of adding a basic facility and the time required depend on the facility's space, as shown on the table below.
+            </div>
+            <table style='width: 100%; border-collapse: collapse; margin-top: 10px;'>
+                <thead>
+                    <tr>
+                        <th style='text-align: left; padding: 8px; border-bottom: 2px solid #ccc;'>Facility Space</th>
+                        <th style='text-align: left; padding: 8px; border-bottom: 2px solid #ccc;'>Cost</th>
+                        <th style='text-align: left; padding: 8px; border-bottom: 2px solid #ccc;'>Time Required</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    `);
+
+    const addingFacilitiesTbody = addingFacilitiesSection.find('tbody');
+    addingFacilitiesData.forEach(row => {
+        addingFacilitiesTbody.append(`
+            <tr>
+                <td style='padding: 8px; border-bottom: 1px solid #eee;'><strong>${row.space}</strong></td>
+                <td style='padding: 8px; border-bottom: 1px solid #eee;'>${row.cost}</td>
+                <td style='padding: 8px; border-bottom: 1px solid #eee;'>${row.time}</td>
+            </tr>
+        `);
+    });
+    columnsContainer.append(addingFacilitiesSection);
+
+    // Enlarging Basic Facilities
+    const enlargingFacilitiesData = [
+        { increase: "Cramped to Roomy", cost: "500 GP", time: "25 days" },
+        { increase: "Roomy to Vast", cost: "2,000 GP", time: "80 days" }
+    ];
+
+    const enlargingFacilitiesSection = $(`
+        <div class='dmScreenChunk'>
+            <h2>Enlarging Basic Facilities</h2>
+            <div class='dmScreenChunkDefinition'>
+                There is no in-game benefit to enlarging a basic facility, but a character might enlarge a facility for cosmetic reasons or to increase the Bastion's size.<br><br>
+                A character can spend money and time to increase the space of a basic facility in their Bastion by one category, as shown on the table below.
+            </div>
+            <table style='width: 100%; border-collapse: collapse; margin-top: 10px;'>
+                <thead>
+                    <tr>
+                        <th style='text-align: left; padding: 8px; border-bottom: 2px solid #ccc;'>Space Increase</th>
+                        <th style='text-align: left; padding: 8px; border-bottom: 2px solid #ccc;'>Cost</th>
+                        <th style='text-align: left; padding: 8px; border-bottom: 2px solid #ccc;'>Time Required</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    `);
+
+    const enlargingFacilitiesTbody = enlargingFacilitiesSection.find('tbody');
+    enlargingFacilitiesData.forEach(row => {
+        enlargingFacilitiesTbody.append(`
+            <tr>
+                <td style='padding: 8px; border-bottom: 1px solid #eee;'><strong>${row.increase}</strong></td>
+                <td style='padding: 8px; border-bottom: 1px solid #eee;'>${row.cost}</td>
+                <td style='padding: 8px; border-bottom: 1px solid #eee;'>${row.time}</td>
+            </tr>
+        `);
+    });
+    columnsContainer.append(enlargingFacilitiesSection);
+
+    // Special Facilities
+    const specialFacilitiesSection = $(`
+        <div class='dmScreenChunk'>
+            <h2>Special Facilities</h2>
+            <div class='dmScreenChunkDefinition'>
+                Special facilities are Bastion locations where certain activities yield game benefits. A character's Bastion initially has two special facilities of the character's choice for which they qualify. Each special facility can be chosen only once unless its description says otherwise.<br><br>
+                Unlike basic facilities, special facilities can't be bought; a character gains them through level advancement. At level 9, a character gains two additional special facilities of their choice for which they qualify; they gain one additional facility at level 13 and another at level 17. The Special Facility Acquisition table shows the total number of special facilities in a character's Bastion. Each new special facility immediately becomes part of the character's Bastion when the character reaches the level.<br><br>
+                Each time a character gains a level, that character can replace one of their Bastion's special facilities with another for which the character qualifies.<br><br>
+                <strong>Special Facilities:</strong><br>
+                <em>Level 5:</em> Arcane Study, Armory, Barrack, Garden, Library, Sanctuary, Smithy, Storehouse, Workshop<br>
+                <em>Level 9:</em> Gaming Hall, Greenhouse, Laboratory, Sacristy, Scriptorium, Stable, Teleportation Circle, Theater, Training Area, Trophy Room<br>
+                <em>Level 13:</em> Archive, Meditation Chamber, Menagerie, Observatory, Pub, Reliquary<br>
+                <em>Level 17:</em> Demiplane, Guildhall, Sanctum, War Room
+
+            </div>
+        </div>
+    `);
+    columnsContainer.append(specialFacilitiesSection);
+
+    // Special Facility Acquisition Table
+    const specialFacilityAcquisitionData = [
+        { level: "5", facilities: "2" },
+        { level: "9", facilities: "4" },
+        { level: "13", facilities: "5" },
+        { level: "17", facilities: "6" }
+    ];
+
+    const specialFacilityAcquisitionSection = $(`
+        <div class='dmScreenChunk'>
+            <h2>Special Facility Acquisition</h2>
+            <table style='width: 100%; border-collapse: collapse;'>
+                <thead>
+                    <tr>
+                        <th style='text-align: left; padding: 8px; border-bottom: 2px solid #ccc;'>Level</th>
+                        <th style='text-align: left; padding: 8px; border-bottom: 2px solid #ccc;'>Special Facilities</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    `);
+
+    const specialFacilityAcquisitionTbody = specialFacilityAcquisitionSection.find('tbody');
+    specialFacilityAcquisitionData.forEach(row => {
+        specialFacilityAcquisitionTbody.append(`
+            <tr>
+                <td style='padding: 8px; border-bottom: 1px solid #eee;'><strong>${row.level}</strong></td>
+                <td style='padding: 8px; border-bottom: 1px solid #eee;'>${row.facilities}</td>
+            </tr>
+        `);
+    });
+    columnsContainer.append(specialFacilityAcquisitionSection);
+
+    // Special Facility Details
+    const specialFacilityDetailsSection = $(`
+        <div class='dmScreenChunk'>
+            <h2>Special Facility Details</h2>
+            <div class='dmScreenChunkDefinition'>
+                <strong>Requirements:</strong> Each special facility has a level. A character must be that level or higher to gain that facility. A special facility might also have a prerequisite the character must meet to gain that facility. For example, only a character who can use an Arcane Focus or a tool as a Spellcasting Focus can have an Arcane Study.<br><br>
+                <strong>Space:</strong> A special facility occupies a certain amount of space. A player can configure the squares of a special facility as desired on the Bastion's map. A special facility can be enlarged to grant additional benefits if its description says so.<br><br>
+                <strong>Hirelings:</strong> A special facility comes with one or more hirelings who work in the facility, maintain it, and execute Bastion orders there, as described in the next section. A player can assign names and personalities to hirelings in their character's Bastion using the same tools DMs use to create NPCs.<br><br>
+                Each special facility in a Bastion generates enough income to pay the salary of its hirelings. Hirelings follow the orders they're given and are loyal to the Bastion's owner.
+            </div>
+        </div>
+    `);
+    columnsContainer.append(specialFacilityDetailsSection);
+
+    // Orders
+    const ordersSection = $(`
+        <div class='dmScreenChunk'>
+            <h2>Orders</h2>
+            <div class='dmScreenChunkDefinition'>
+                On a Bastion turn, a character in their Bastion can issue special orders - called Bastion orders - to one or more of their Bastion's special facilities. A character needn't issue orders to all the special facilities in their Bastion on a given Bastion turn.<br><br>
+                The Maintain order is unusual; it is issued to the whole Bastion rather than to one or more special facilities. If a character isn't in their Bastion on a given Bastion turn, the Bastion acts as though it were issued the Maintain order on that turn unless the owner can communicate with the Bastion hirelings using the Sending spell or similar magic.<br><br>
+                <strong>Craft:</strong> Hirelings in the special facility craft an item that can be made in that facility. During the time required to craft an item, the facility can't be used to craft anything else, even if a special ability allows the facility to carry out two orders at once. The hirelings have proficiencies with Artisan's Tools as specified in the facility's description.<br><br>
+                <strong>Empower:</strong> The special facility confers a temporary empowerment to you or someone else.<br><br>
+                <strong>Harvest:</strong> Hirelings gather a resource produced in the special facility. During the time required to harvest a resource, the facility can't be used to harvest anything else, even if a special ability allows the facility to carry out two orders at once.<br><br>
+                <strong>Maintain:</strong> All the Bastion's hirelings focus on maintaining the Bastion rather than executing orders in special facilities. Issuing this order prohibits other orders from being issued to the Bastion on the current Bastion turn. Each time the Maintain order is issued, the DM rolls once on the Bastion Events table at the end of this chapter. Bastion events are resolved before the next Bastion turn.<br><br>
+                <strong>Recruit:</strong> Hirelings recruit creatures to the Bastion. These creatures might include one or more Bastion Defenders, whose main purpose is to defend the Bastion if it is attacked. The Bastion generates enough income to provide for the needs of its Bastion Defenders.<br><br>
+                <strong>Research:</strong> Hirelings in the special facility gather information.<br><br>
+                <strong>Trade:</strong> Hirelings buy and sell goods or services stored or produced in this special facility.
+            </div>
+        </div>
+    `);
+    columnsContainer.append(ordersSection);
+
+    // Bastion Events
+    const bastionEventsData = [
+        { roll: "01-50", event: "All Is Well" },
+        { roll: "51-55", event: "Attack" },
+        { roll: "56-58", event: "Criminal Hireling" },
+        { roll: "59-63", event: "Extraordinary Opportunity" },
+        { roll: "64-72", event: "Friendly Visitors" },
+        { roll: "73-76", event: "Guest" },
+        { roll: "77-79", event: "Lost Hirelings" },
+        { roll: "80-83", event: "Magical Discovery" },
+        { roll: "84-91", event: "Refugees" },
+        { roll: "92-98", event: "Request for Aid" },
+        { roll: "99-00", event: "Treasure" }
+    ];
+
+    const bastionEventsSection = $(`
+        <div class='dmScreenChunk'>
+            <h2>Bastion Events</h2>
+            <div class='dmScreenChunkDefinition'>
+                Immediately after a character issues the Maintain order to their Bastion, the DM rolls once on the Bastion Events table to determine what event, if any, befalls the Bastion before the next Bastion Turn. If an event occurs, the DM reads the event aloud to the player whose character controls that Bastion. (All the events are described in the sections following the table.) The event is resolved immediately, with the player and DM working together to expand story details as needed. If multiple characters issue the Maintain order on the same Bastion turn, roll once on the table for each of them, resolving each event separately even if the Bastions are combined.<br><br>
+                Bastion events occur only when a Bastion is operating under the Maintain order, which often means that the Bastion's owner isn't present in the Bastion at the time. That means these events can be opportunities for the player to take on the role of the Bastion's hirelings and roleplay their reactions to these events. The DM can even turn a Bastion event into a cutscene where each player takes on the role of one of the Bastion's hirelings (under the guidance of the player whose character owns the Bastion).
+            </div>
+            <table style='width: 100%; border-collapse: collapse; margin-top: 10px;'>
+                <thead>
+                    <tr>
+                        <th style='text-align: left; padding: 8px; border-bottom: 2px solid #ccc;'>1d100</th>
+                        <th style='text-align: left; padding: 8px; border-bottom: 2px solid #ccc;'>Event</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    `);
+
+    const bastionEventsTbody = bastionEventsSection.find('tbody');
+    bastionEventsData.forEach(row => {
+        bastionEventsTbody.append(`
+            <tr>
+                <td style='padding: 8px; border-bottom: 1px solid #eee;'><strong>${row.roll}</strong></td>
+                <td style='padding: 8px; border-bottom: 1px solid #eee;'>${row.event}</td>
+            </tr>
+        `);
+    });
+    columnsContainer.append(bastionEventsSection);
+
+    // Fall of a Bastion
+    const fallSection = $(`
+        <div class='dmScreenChunk'>
+            <h2>Fall of a Bastion</h2>
+            <div class='dmScreenChunkDefinition'>
+                If a bastion falls, the player can work with the DM to establish a new Bastion and determine how it comes into being. Use the Special Facility Acquisition table to determine how many special facilities come with it. The new Bastion also starts with two basic facilities (one Cramped and one Roomy) of the player's choice.
+            </div>
+        </div>
+    `);
+    columnsContainer.append(fallSection);
 
     // Add roll buttons to all dice notation
     add_journal_roll_buttons(block, undefined, undefined, "DM");
