@@ -22,6 +22,7 @@ function initDmScreen() {
                     <div class='dmScreenDropdownItem' data-block='travel'>Travel</div>
                     <div class='dmScreenDropdownItem' data-block='names'>Name Improvisation</div>
                     <div class='dmScreenDropdownItem' data-block='spellcasting'>Spellcasting</div>
+                    <div class='dmScreenDropdownItem' data-block='weapons'>Weapons</div>
                 </div>
             </div>
 			<div id='dmScreenBlocks'>
@@ -80,6 +81,9 @@ function initDmScreen() {
                 break;
             case 'spellcasting':
                 dmScreenBlocks.append(buildSpellcastingBlock());
+                break;
+            case 'weapons':
+                dmScreenBlocks.append(buildWeaponsBlock());
                 break;
         }
     });
@@ -905,9 +909,9 @@ function buildSpellcastingBlock() {
             <h2>Components</h2>
             <div class='dmScreenChunkDefinition'>
                 A spell's components are physical requirements the spellcaster must meet to cast the spell. Each spell's description indicates whether it requires Verbal (V), Somatic (S), or Material (M) components. If the spellcaster can't provide one or more of a spell's components, the spellcaster can't cast the spell.<br><br>
-                <strong>Verbal (V):</strong> ${spellComponents.find((component)=>component.name === "Verbal").description}<br><br>
-                <strong>Somatic (S):</strong> ${spellComponents.find((component)=>component.name === "Somatic").description}<br><br>
-                <strong>Material (M):</strong> ${spellComponents.find((component)=>component.name === "Material").description}<br><br>
+                <strong>Verbal (V):</strong> ${spellComponents.find((component) => component.name === "Verbal").description}<br><br>
+                <strong>Somatic (S):</strong> ${spellComponents.find((component) => component.name === "Somatic").description}<br><br>
+                <strong>Material (M):</strong> ${spellComponents.find((component) => component.name === "Material").description}<br><br>
                 If a spell doesn't consume its materials and doesn't specify a cost for them, a spellcaster can use a Component Pouch (see chapter 6) instead of providing the materials specified in the spell, or the spellcaster can substitute a Spellcasting Focus if the caster has a feature that allows that substitution. To use a Component Pouch, you must have a hand free to reach into it, and to use a Spellcasting Focus, you must hold it unless its description says otherwise (see chapter 6 for descriptions).
             </div>
         </div>
@@ -944,7 +948,7 @@ function buildSpellcastingBlock() {
         </div>
     `);
     columnsContainer.append(targetsSection);
-    
+
     // Areas of Effect
     const aoeTypes = window.ddbConfigJson.aoeTypes.filter(aoe => aoe.description && aoe.description.trim() !== '');
     const aoeSection = $(`
@@ -962,6 +966,168 @@ function buildSpellcastingBlock() {
     });
 
     columnsContainer.append(aoeSection);
+
+    // Add roll buttons to all dice notation
+    add_journal_roll_buttons(block, undefined, undefined, "DM");
+
+    return block;
+}
+
+/**
+ * Build the Weapons reference block
+ * @returns {jQuery} The weapons block element
+ */
+function buildWeaponsBlock() {
+    const block = $(`<div class='dmScreenBlock' id='dmScreenWeapons'>
+        <div class='dmScreenColumns'></div>
+    </div>`);
+
+    const columnsContainer = block.find('.dmScreenColumns');
+
+    const proficiencySection = $(`
+        <div class='dmScreenChunk'>
+            <h2>Weapon Proficiencies</h2>
+            <div class='dmScreenChunkDefinition'>
+                Anyone can wield a weapon, but you must have proficiency with it to add your Proficiency Bonus to an attack roll you make with it. A player character's features can provide weapon proficiencies. A monster is proficient with any weapon in its stat block.
+            </div>
+        </div>
+    `);
+    columnsContainer.append(proficiencySection);
+
+    const weaponMasteries = window.ddbConfigJson.weaponProperties.filter(property => property.name === "Cleave" || property.name === "Graze" || property.name === "Nick" || property.name === "Push" || property.name === "Sap" || property.name === "Slow" || property.name === "Topple" || property.name === "Vex");
+
+    // Weapon Masteries
+    const masteriesSection = $(`
+        <div class='dmScreenChunk'>
+            <h2>Weapon Masteries</h2>
+        </div>
+    `);
+
+    weaponMasteries.forEach(prop => {
+        masteriesSection.append(`
+            <div class='dmScreenChunkDefinition'>
+                <strong>${prop.name}:</strong> ${prop.description}
+            </div>
+        `);
+    });
+
+    columnsContainer.append(masteriesSection);
+
+    const weaponProperties = window.ddbConfigJson.weaponProperties.filter(property => property.name === "Ammunition" || property.name === "Finesse" || property.name === "Heavy" || property.name === "Light" || property.name === "Loading" || property.name === "Range" || property.name === "Reach" || property.name === "Special" || property.name === "Thrown" || property.name === "Two-Handed" || property.name === "Versatile");
+
+    // Weapon Properties
+    const propertiesSection = $(`
+        <div class='dmScreenChunk'>
+            <h2>Weapon Properties</h2>
+        </div>
+    `);
+    weaponProperties.forEach(prop => {
+        propertiesSection.append(`
+            <div class='dmScreenChunkDefinition'>
+                <strong>${prop.name}:</strong> ${prop.description}
+            </div>
+        `);
+    });
+
+    columnsContainer.append(propertiesSection);
+
+    // Building out the weapons tables manually because the ddbConfigJSON data is incomplete - it lacks damage, weight, and cost info
+
+    // Simple Melee Weapons
+    const simpleMeleeData = [
+        { name: "Club", damage: "1d4 Bludgeoning", properties: "Light", mastery: "Slow", cost: "1 SP" },
+        { name: "Dagger", damage: "1d4 Piercing", properties: "Finesse, Light, Thrown (Range 20/60)", mastery: "Nick", cost: "2 GP" },
+        { name: "Greatclub", damage: "1d8 Bludgeoning", properties: "Two-Handed", mastery: "Push", cost: "2 SP" },
+        { name: "Handaxe", damage: "1d6 Slashing", properties: "Light, Thrown (Range 20/60)", mastery: "Vex", cost: "5 GP" },
+        { name: "Javelin", damage: "1d6 Piercing", properties: "Thrown (Range 30/120)", mastery: "Slow", cost: "5 SP" },
+        { name: "Light Hammer", damage: "1d4 Bludgeoning", properties: "Light, Thrown (Range 20/60)", mastery: "Nick", cost: "2 GP" },
+        { name: "Mace", damage: "1d6 Bludgeoning", properties: "—", mastery: "Sap", cost: "5 GP" },
+        { name: "Quarterstaff", damage: "1d6 Bludgeoning", properties: "Versatile (1d8)", mastery: "Topple", cost: "2 SP" },
+        { name: "Sickle", damage: "1d4 Slashing", properties: "Light", mastery: "Nick", cost: "1 GP" },
+        { name: "Spear", damage: "1d6 Piercing", properties: "Thrown (Range 20/60), Versatile (1d8)", mastery: "Sap", cost: "1 GP" }
+    ];
+
+    // Simple Ranged Weapons
+    const simpleRangedData = [
+        { name: "Dart", damage: "1d4 Piercing", properties: "Finesse, Thrown (Range 20/60)", mastery: "Vex", cost: "5 CP" },
+        { name: "Light Crossbow", damage: "1d8 Piercing", properties: "Ammunition (Range 80/320; Bolt), Loading, Two-Handed", mastery: "Slow", cost: "25 GP" },
+        { name: "Shortbow", damage: "1d6 Piercing", properties: "Ammunition (Range 80/320; Arrow), Two-Handed", mastery: "Vex", cost: "25 GP" },
+        { name: "Sling", damage: "1d4 Bludgeoning", properties: "Ammunition (Range 30/120; Bullet)", mastery: "Slow", cost: "1 SP" }
+    ];
+
+    // Martial Melee Weapons
+    const martialMeleeData = [
+        { name: "Battleaxe", damage: "1d8 Slashing", properties: "Versatile (1d10)", mastery: "Topple", cost: "10 GP" },
+        { name: "Flail", damage: "1d8 Bludgeoning", properties: "—", mastery: "Sap", cost: "10 GP" },
+        { name: "Glaive", damage: "1d10 Slashing", properties: "Heavy, Reach, Two-Handed", mastery: "Graze", cost: "20 GP" },
+        { name: "Greataxe", damage: "1d12 Slashing", properties: "Heavy, Two-Handed", mastery: "Cleave", cost: "30 GP" },
+        { name: "Greatsword", damage: "2d6 Slashing", properties: "Heavy, Two-Handed", mastery: "Graze", cost: "50 GP" },
+        { name: "Halberd", damage: "1d10 Slashing", properties: "Heavy, Reach, Two-Handed", mastery: "Cleave", cost: "20 GP" },
+        { name: "Lance", damage: "1d10 Piercing", properties: "Heavy, Reach, Two-Handed (unless mounted)", mastery: "Topple", cost: "10 GP" },
+        { name: "Longsword", damage: "1d8 Slashing", properties: "Versatile (1d10)", mastery: "Sap", cost: "15 GP" },
+        { name: "Maul", damage: "2d6 Bludgeoning", properties: "Heavy, Two-Handed", mastery: "Topple", cost: "10 GP" },
+        { name: "Morningstar", damage: "1d8 Piercing", properties: "—", mastery: "Sap", cost: "15 GP" },
+        { name: "Pike", damage: "1d10 Piercing", properties: "Heavy, Reach, Two-Handed", mastery: "Push", cost: "5 GP" },
+        { name: "Rapier", damage: "1d8 Piercing", properties: "Finesse", mastery: "Vex", cost: "25 GP" },
+        { name: "Scimitar", damage: "1d6 Slashing", properties: "Finesse, Light", mastery: "Nick", cost: "25 GP" },
+        { name: "Shortsword", damage: "1d6 Piercing", properties: "Finesse, Light", mastery: "Vex", cost: "10 GP" },
+        { name: "Trident", damage: "1d8 Piercing", properties: "Thrown (Range 20/60), Versatile (1d10)", mastery: "Topple", cost: "5 GP" },
+        { name: "Warhammer", damage: "1d8 Bludgeoning", properties: "Versatile (1d10)", mastery: "Push", cost: "15 GP" },
+        { name: "War Pick", damage: "1d8 Piercing", properties: "Versatile (1d10)", mastery: "Sap", cost: "5 GP" },
+        { name: "Whip", damage: "1d4 Slashing", properties: "Finesse, Reach", mastery: "Slow", cost: "2 GP" }
+    ];
+
+    // Martial Ranged Weapons
+    const martialRangedData = [
+        { name: "Blowgun", damage: "1 Piercing", properties: "Ammunition (Range 25/100; Needle), Loading", mastery: "Vex", cost: "10 GP" },
+        { name: "Hand Crossbow", damage: "1d6 Piercing", properties: "Ammunition (Range 30/120; Bolt), Light, Loading", mastery: "Vex", cost: "75 GP" },
+        { name: "Heavy Crossbow", damage: "1d10 Piercing", properties: "Ammunition (Range 100/400; Bolt), Heavy, Loading, Two-Handed", mastery: "Push", cost: "50 GP" },
+        { name: "Longbow", damage: "1d8 Piercing", properties: "Ammunition (Range 150/600; Arrow), Heavy, Two-Handed", mastery: "Slow", cost: "50 GP" },
+        { name: "Musket", damage: "1d12 Piercing", properties: "Ammunition (Range 40/120; Bullet), Loading, Two-Handed", mastery: "Slow", cost: "500 GP" },
+        { name: "Pistol", damage: "1d10 Piercing", properties: "Ammunition (Range 30/90; Bullet), Loading", mastery: "Vex", cost: "250 GP" }
+    ];
+
+    // Helper function to create weapon table
+    function createWeaponTable(title, weaponData) {
+        const section = $(`
+            <div class='dmScreenChunk'>
+                <h2>${title}</h2>
+                <table style='width: 100%; border-collapse: collapse;'>
+                    <thead>
+                        <tr>
+                            <th style='text-align: left; padding: 8px; border-bottom: 2px solid #ccc;'>Name</th>
+                            <th style='text-align: left; padding: 8px; border-bottom: 2px solid #ccc;'>Damage</th>
+                            <th style='text-align: left; padding: 8px; border-bottom: 2px solid #ccc;'>Properties</th>
+                            <th style='text-align: left; padding: 8px; border-bottom: 2px solid #ccc;'>Mastery</th>
+                            <th style='text-align: left; padding: 8px; border-bottom: 2px solid #ccc;'>Cost</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        `);
+
+        const tbody = section.find('tbody');
+        weaponData.forEach(weapon => {
+            tbody.append(`
+                <tr>
+                    <td style='padding: 8px; border-bottom: 1px solid #eee;'><strong>${weapon.name}</strong></td>
+                    <td style='padding: 8px; border-bottom: 1px solid #eee;'>${weapon.damage}</td>
+                    <td style='padding: 8px; border-bottom: 1px solid #eee;'>${weapon.properties}</td>
+                    <td style='padding: 8px; border-bottom: 1px solid #eee;'>${weapon.mastery}</td>
+                    <td style='padding: 8px; border-bottom: 1px solid #eee;'>${weapon.cost}</td>
+                </tr>
+            `);
+        });
+
+        return section;
+    }
+
+    // Add all weapon tables
+    columnsContainer.append(createWeaponTable("Simple Melee Weapons", simpleMeleeData));
+    columnsContainer.append(createWeaponTable("Simple Ranged Weapons", simpleRangedData));
+    columnsContainer.append(createWeaponTable("Martial Melee Weapons", martialMeleeData));
+    columnsContainer.append(createWeaponTable("Martial Ranged Weapons", martialRangedData));
 
     // Add roll buttons to all dice notation
     add_journal_roll_buttons(block, undefined, undefined, "DM");
