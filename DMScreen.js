@@ -1,13 +1,23 @@
-console.log("DMScreen.js is loading");
-
 /**
- * Initialize the DM_SCREEN array for the current campaign
+ * Gets all owned sourcebooks then builds the DM Screen
  * Should be called on startup
  */
 
 function initDmScreen() {
+    window.ScenesHandler.build_adventures(function () {
+        buildDMScreen();
+    });
+}
+
+/**
+ * Builds the DM Screen UI
+ */
+
+function buildDMScreen() {
     console.log("initDmScreen called");
-    console.log(window.ddbConfigJson);
+    console.log(window.ScenesHandler.sources);
+    // Check if the DnD 2024 DMG is owned
+    const dmg2024Owned = window.ScenesHandler.sources["dnd/dmg-2024"] !== undefined;
 
     let cont = $(`<div id='dmScreenContainer'>
             <div class='dmScreenheader'>
@@ -16,7 +26,7 @@ function initDmScreen() {
                 </h1>
                 <div class='dmScreenDropdown' style='display: none;'>
                     <div class='dmScreenDropdownItem' data-block='actions'>Actions</div>
-                    <div class='dmScreenDropdownItem' data-block='bastion'>Bastions</div>
+                    ${dmg2024Owned ? `<div class='dmScreenDropdownItem' data-block='bastion'>Bastions</div>` : ""}
                     <div class='dmScreenDropdownItem' data-block='conditions'>Conditions</div>
                     <div class='dmScreenDropdownItem' data-block='damage'>Improvising Objects and Damage</div>
                     <div class='dmScreenDropdownItem' data-block='names'>Name Improvisation</div>
@@ -73,7 +83,7 @@ function initDmScreen() {
                 dmScreenBlocks.append(buildActionsBlock());
                 break;
             case 'skills':
-                dmScreenBlocks.append(buildSkillsAndMechanicsBlock());
+                dmScreenBlocks.append(buildSkillsAndMechanicsBlock(dmg2024Owned));
                 break;
             case 'travel':
                 dmScreenBlocks.append(buildTravelBlock());
@@ -142,7 +152,7 @@ function buildConditionsBlock() {
  * Build the Skills and Mechanics reference block
  * @returns {jQuery} The skills and mechanics block element
  */
-function buildSkillsAndMechanicsBlock() {
+function buildSkillsAndMechanicsBlock(dmg2024Owned) {
     const block = $(`<div class='dmScreenBlock' id='dmScreenSkillsAndMechanics'>
         <div class='dmScreenColumns'></div>
     </div>`);
@@ -222,18 +232,21 @@ function buildSkillsAndMechanicsBlock() {
     });
     columnsContainer.append(mechanicsChunk);
 
-    // Add Mob Attacks table
-    const mobAttacksData = [
-        { roll: "1-5", attackers: "1" },
-        { roll: "6-12", attackers: "2" },
-        { roll: "13-14", attackers: "3" },
-        { roll: "15-16", attackers: "4" },
-        { roll: "17-18", attackers: "5" },
-        { roll: "19", attackers: "10" },
-        { roll: "20", attackers: "20" }
-    ];
+    // Exclude if DMG 2024 is not owned
+    if (dmg2024Owned) {
 
-    const mobAttacksSection = $(`
+        // Add Mob Attacks table
+        const mobAttacksData = [
+            { roll: "1-5", attackers: "1" },
+            { roll: "6-12", attackers: "2" },
+            { roll: "13-14", attackers: "3" },
+            { roll: "15-16", attackers: "4" },
+            { roll: "17-18", attackers: "5" },
+            { roll: "19", attackers: "10" },
+            { roll: "20", attackers: "20" }
+        ];
+
+        const mobAttacksSection = $(`
         <div class='dmScreenChunk'>
             <h2>Mob Attacks</h2>
             <div class='dmScreenChunkDefinition'>
@@ -254,17 +267,18 @@ function buildSkillsAndMechanicsBlock() {
         </div>
     `);
 
-    const mobAttacksTbody = mobAttacksSection.find('tbody');
-    mobAttacksData.forEach(row => {
-        mobAttacksTbody.append(`
+        const mobAttacksTbody = mobAttacksSection.find('tbody');
+        mobAttacksData.forEach(row => {
+            mobAttacksTbody.append(`
             <tr>
                 <td style='padding: 8px; border-bottom: 1px solid #eee;'><strong>${row.roll}</strong></td>
                 <td style='padding: 8px; border-bottom: 1px solid #eee;'>${row.attackers}</td>
             </tr>
         `);
-    });
+        });
 
-    columnsContainer.append(mobAttacksSection);
+        columnsContainer.append(mobAttacksSection);
+    }
 
     // Add roll buttons to all dice notation in the travel block
     add_journal_roll_buttons(block, undefined, undefined, "DM");
