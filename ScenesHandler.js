@@ -629,7 +629,6 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 	}
 
 	build_chapters(keyword, callback) {
-		$('#sources-import-content-container').append(build_combat_tracker_loading_indicator('One moment while we load sourcebook'));
 		let self = this;
 		console.log('scansiono ' + keyword);
 		//let target_list = $("#" + $(event.target).attr('data-target'));
