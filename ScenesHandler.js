@@ -577,7 +577,7 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 			return;
 		}
 		
-		let f = $("<iframe src='/en/library?ownership=owned-shared'></iframe");
+		let f = $("<iframe src='/en/library'></iframe");
 		f.hide();
 		$("#site").append(f);
 		
