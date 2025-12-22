@@ -1814,7 +1814,6 @@ function init_ddb_importer(target, selectedSource, selectedChapter) {
 
 
 	source_select.change(function() {
-		$('#sources-import-content-container').append(build_combat_tracker_loading_indicator('One moment while we load sourcebook'));
 		$("#chapter_select").empty();
 		$("#scenes_select").empty();
 		$("#import_button").attr('disabled', 'disabled');
@@ -3117,6 +3116,7 @@ function load_sources_iframe_for_map_import(hidden = false) {
 			const image = $(event.currentTarget).find("[class*='SourceCard_image']").attr('src');
 			const title = $(event.currentTarget).closest("[class*='SourcesList_sourceWrapper']").find("a[class*='SourceCard_sourceTitle']").text().trim();
 			scene_importer_clicked_source(sourceAbbreviation, undefined, image, title);
+			$('#sources-import-content-container').append(build_combat_tracker_loading_indicator('One moment while we load sourcebook'));
 			mega_importer(true, sourceAbbreviation);
 			iframe.hide();
 		});
