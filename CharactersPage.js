@@ -1431,7 +1431,147 @@ function observe_character_sheet_changes(documentToObserve) {
     if(window.DRAGGING || (typeof arrowKeysHeld !== 'undefined' && (arrowKeysHeld[0] || arrowKeysHeld[1] || arrowKeysHeld[2] || arrowKeysHeld[3])))
       return;
 
-   
+      //support DDB character sheet overhaul
+
+    const overhaul_iframe = $("#ddbfix-vtt-iframe[src*='abovevtt=true']:not(.abovevtt-visited)")
+    overhaul_iframe.each(function(){
+      const iframe = $(this);
+      const contents = iframe.contents();
+      if(contents.find('.ct-character-sheet__inner').length==0)
+        return;
+      const iframeDoc = contents?.[0];
+
+
+        
+      let loadingOverlay = iframeDoc.createElement('div');
+      loadingOverlay.setAttribute("id", "loading_overlay");
+      (iframeDoc.body || iframeDoc.documentElement).appendChild(loadingOverlay);
+
+      let loadingBg = iframeDoc.createElement('div');
+      loadingBg.setAttribute("id", "loading_overlay_bg");
+      loadingOverlay.appendChild(loadingBg);
+      loadingBg.setAttribute("class", "player");
+        
+
+      let l = iframeDoc.createElement('div');
+      l.setAttribute("style", "display:none;");
+      l.setAttribute("id", "extensionpath");
+      l.setAttribute("data-path", window.EXTENSION_PATH);
+      (iframeDoc.body || iframeDoc.documentElement).appendChild(l);
+
+      console.log("avtt: create version div....");  
+      let avttVersion = iframeDoc.createElement('div');
+      avttVersion.setAttribute("style", "display:none;");
+      avttVersion.setAttribute("id", "avttversion");
+      avttVersion.setAttribute("data-version", $('div#avttversion').attr('data-version'));
+      (iframeDoc.body || iframeDoc.documentElement).appendChild(avttVersion);
+
+      // load stylesheets
+      let loadStyle = [
+        "abovevtt.css",
+        "jquery-ui.min.css",
+        "jquery.ui.theme.min.css",
+        "jquery.contextMenu.css",
+        "color-picker.min.css",
+        "spectrum-2.0.8.min.css",
+        "magnific-popup.css",
+        "DiceContextMenu/DiceContextMenu.css"
+      ]
+      let scripts = [
+        // External Dependencies
+        { src: "jquery-3.6.0.min.js" },
+        { src: "jquery-ui.min.js" },
+        { src: "jquery.csv.js" },
+        //{ src: "jquery.ui.widget.min.js" },
+        //{ src: "jquery.ui.mouse.min.js" },
+        { src: "jquery.ui.touch-punch.js" },
+        { src: "jquery.contextMenu.js" },
+        { src: "jquery.magnific-popup.min.js" },
+        { src: "spectrum-2.0.8.min.js" },
+        // { src: "jquery.ajax.queue.js" },
+        { src: "purify.min.js" },
+        { src: "rpg-dice-roller.bundle.min.js" },
+        { src: "color-picker.js" },
+        { src: "mousetrap.1.6.5.min.js" },
+        { src: "peerjs.min.js" },
+        { src: "fuse.min.js" },
+        // AboveVTT Files
+        { src: "environment.js" },
+        { src: "CoreFunctions.js" }, // Make sure CoreFunctions executes before anything else
+        { src: "avttS3Upload.js" },
+        { src: "AboveApi.js" },
+        { src: "DDBApi.js" },
+        { src: "AOETemplates.js" },
+        { src: "Text.js" },
+        { src: "CombatTracker.js" },
+        { src: "EncounterHandler.js" },
+        { src: "Fog.js" },
+        { src: "Journal.js" },
+        { src: "KeypressHandler.js" },
+        { src: "MessageBroker.js" },
+        { src: "MonsterDice.js" },
+        { src: "PlayerPanel.js" },
+        { src: "ScenesHandler.js" },
+        { src: "ScenesPanel.js" },
+        { src: "Settings.js" },
+        { src: "SidebarPanel.js" },
+        { src: "StatHandler.js" },
+        { src: "Token.js" },
+        { src: "TokenMenu.js" },
+        { src: "ChatObserver.js" },
+        { src: "DiceContextMenu/DiceContextMenu.js" },
+        { src: "TokensPanel.js" },
+        { src: "TokenCustomization.js" },
+        { src: "built-in-tokens.js" },
+        { src: "PeerManager.js" },
+        { src: "PeerCommunication.js" },
+        { src: "peerVideo.js"},
+        { src: "peerDice.js"},    
+        { src: "ajaxQueue/ajaxQueueIndex.js", type: "module" },
+        { src: "DiceRoller.js" },
+        { src: "DMScreen.js" },
+        { src: "Main.js" },
+        { src: "MonsterStatBlock.js" },
+        // AboveVTT files that execute when loaded  
+        { src: "onedrive/onedrivemsal.js" },
+        { src: "onedrive/onedrivepicker.js" },
+        { src: "audio/index.js", type: "module" },
+        { src: "WeatherOverlay.js" },
+        { src: "CharactersPage.js" },
+        { src: "Startup.js", type: "module" }
+      ]
+
+      loadStyle.forEach(function(value, index, array) {
+        let l = iframeDoc.createElement('link');
+        l.href = `${window.EXTENSION_PATH}${value}`;
+        l.rel = "stylesheet";
+        console.log(`attempting to append ${value}`);
+        (iframeDoc.head || iframeDoc.documentElement).appendChild(l);
+      });
+      
+      let injectScript = function () {
+        if (scripts.length === 0) {
+            return;
+        }
+        let nextScript = scripts.shift();
+        let s = iframeDoc.createElement('script');
+        s.src = `${window.EXTENSION_PATH}${nextScript.src}`;
+        if (nextScript.type !== undefined) {
+            s.setAttribute('type', nextScript.type);
+        }
+        console.log(`attempting to append ${nextScript.src}`);
+        s.onload = function() {
+            console.log(`finished injecting ${nextScript.src}`);
+            injectScript();
+
+        };
+        (iframeDoc.head || iframeDoc.documentElement).appendChild(s);
+      }
+      injectScript();   
+      iframe.toggleClass('abovevtt-visited', true)
+     
+     
+    })
     // console.log("character_sheet_observer", mutationList);
 
     // initial injection of our buttons
