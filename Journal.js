@@ -2543,11 +2543,13 @@ class JournalManager{
 			const src = await getAvttStorageUrl(origSrc, true);
 			avttIframes[i].src = `${window.EXTENSION_PATH}iframe.html?src=${encodeURIComponent(src)}`;
 		}
-		$newHTML.find('img[data-src*="above-bucket-not-a-url"]').each(async (index, image) => {
-			const src = await getAvttStorageUrl(image.getAttribute('data-src'), true);
-			image.src = src;
-			image.href = src;
-		})
+		const avttImages = $newHTML.find('img[data-src*="above-bucket-not-a-url"]')
+
+		for(let i = 0; i < avttImages.length; i++){
+			const src = await getAvttStorageUrl(avttImages[i].getAttribute('data-src'), true);
+			avttImages[i].src = src;
+			avttImages[i].href = src;
+		}
 	    $newHTML.find('.ignore-abovevtt-formating').each(function(index){
 			$(this).empty().append(ignoreFormatting[index].innerHTML);
 	    })
