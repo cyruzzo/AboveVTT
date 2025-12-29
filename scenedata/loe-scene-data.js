@@ -13901,7 +13901,7 @@ export const get_scene_data_loe = {
 						"feet": "0"
 					},
 					"id": "d4ca8079-00b7-486d-adea-755d688458d0",
-					"imgsrc": "https://dl.dropboxusercontent.com/scl/fi/takui6mqe8oe59za6e3y5/natemoonlife_lesser_gluttony_seraph_dungeons__dragons_monster_a_07cf6e42-2971-4c99-98b6-2b5f0f052c3e-1.png?rlkey=m0a2k7vrdc94ubro55wmdhltp&dl=0",
+					"imgsrc": "",
 					"locked": false,
 					"light2": {
 						"color": "rgba(141.933, 141.933, 141.933, 1)",
@@ -13954,7 +13954,7 @@ export const get_scene_data_loe = {
 					"hidehpbar": false,
 					"stat": 4037122,
 					"alternativeImages": [
-						"https://dl.dropboxusercontent.com/scl/fi/takui6mqe8oe59za6e3y5/natemoonlife_lesser_gluttony_seraph_dungeons__dragons_monster_a_07cf6e42-2971-4c99-98b6-2b5f0f052c3e-1.png?rlkey=m0a2k7vrdc94ubro55wmdhltp&dl=0"
+						""
 					],
 					"hitPointInfo": {
 						"maximum": 113,
@@ -14140,7 +14140,7 @@ export const get_scene_data_loe = {
 						"feet": "0"
 					},
 					"id": "d9309bc1-4c19-49c2-ab43-a3466a5c2ec8",
-					"imgsrc": "https://dl.dropboxusercontent.com/scl/fi/takui6mqe8oe59za6e3y5/natemoonlife_lesser_gluttony_seraph_dungeons__dragons_monster_a_07cf6e42-2971-4c99-98b6-2b5f0f052c3e-1.png?rlkey=m0a2k7vrdc94ubro55wmdhltp&dl=0",
+					"imgsrc": "",
 					"locked": false,
 					"light2": {
 						"color": "rgba(141.933, 141.933, 141.933, 1)",
@@ -14193,7 +14193,7 @@ export const get_scene_data_loe = {
 					"hidehpbar": false,
 					"stat": 4037122,
 					"alternativeImages": [
-						"https://dl.dropboxusercontent.com/scl/fi/takui6mqe8oe59za6e3y5/natemoonlife_lesser_gluttony_seraph_dungeons__dragons_monster_a_07cf6e42-2971-4c99-98b6-2b5f0f052c3e-1.png?rlkey=m0a2k7vrdc94ubro55wmdhltp&dl=0"
+						""
 					],
 					"hitPointInfo": {
 						"maximum": 124,
@@ -14221,7 +14221,7 @@ export const get_scene_data_loe = {
 						"feet": "0"
 					},
 					"id": "e3445695-ba11-4e92-b7c5-b2920d747a99",
-					"imgsrc": "https://dl.dropboxusercontent.com/scl/fi/takui6mqe8oe59za6e3y5/natemoonlife_lesser_gluttony_seraph_dungeons__dragons_monster_a_07cf6e42-2971-4c99-98b6-2b5f0f052c3e-1.png?rlkey=m0a2k7vrdc94ubro55wmdhltp&dl=0",
+					"imgsrc": "",
 					"locked": false,
 					"light2": {
 						"color": "rgba(141.933, 141.933, 141.933, 1)",
@@ -14274,7 +14274,7 @@ export const get_scene_data_loe = {
 					"hidehpbar": false,
 					"stat": 4037122,
 					"alternativeImages": [
-						"https://dl.dropboxusercontent.com/scl/fi/takui6mqe8oe59za6e3y5/natemoonlife_lesser_gluttony_seraph_dungeons__dragons_monster_a_07cf6e42-2971-4c99-98b6-2b5f0f052c3e-1.png?rlkey=m0a2k7vrdc94ubro55wmdhltp&dl=0"
+						""
 					],
 					"hitPointInfo": {
 						"maximum": 113,
@@ -14302,7 +14302,7 @@ export const get_scene_data_loe = {
 						"feet": "0"
 					},
 					"id": "e43dc5ba-30fc-4cfa-9117-e9fae1af71cd",
-					"imgsrc": "https://dl.dropboxusercontent.com/scl/fi/takui6mqe8oe59za6e3y5/natemoonlife_lesser_gluttony_seraph_dungeons__dragons_monster_a_07cf6e42-2971-4c99-98b6-2b5f0f052c3e-1.png?rlkey=m0a2k7vrdc94ubro55wmdhltp&dl=0",
+					"imgsrc": "",
 					"locked": false,
 					"abilityTracker": {
 						"createfoodandwater": 1,
@@ -14359,7 +14359,7 @@ export const get_scene_data_loe = {
 					"hidehpbar": false,
 					"stat": 4037122,
 					"alternativeImages": [
-						"https://dl.dropboxusercontent.com/scl/fi/takui6mqe8oe59za6e3y5/natemoonlife_lesser_gluttony_seraph_dungeons__dragons_monster_a_07cf6e42-2971-4c99-98b6-2b5f0f052c3e-1.png?rlkey=m0a2k7vrdc94ubro55wmdhltp&dl=0"
+						""
 					],
 					"hitPointInfo": {
 						"maximum": 106,
@@ -14622,7 +14622,7 @@ export const get_scene_data_loe = {
 						"feet": "0"
 					},
 					"id": "f232b581-d943-4378-8f00-b1305e65ac42",
-					"imgsrc": "https://dl.dropboxusercontent.com/scl/fi/takui6mqe8oe59za6e3y5/natemoonlife_lesser_gluttony_seraph_dungeons__dragons_monster_a_07cf6e42-2971-4c99-98b6-2b5f0f052c3e-1.png?rlkey=m0a2k7vrdc94ubro55wmdhltp&dl=0",
+					"imgsrc": "",
 					"locked": false,
 					"light2": {
 						"color": "rgba(141.933, 141.933, 141.933, 1)",
@@ -14675,7 +14675,7 @@ export const get_scene_data_loe = {
 					"hidehpbar": false,
 					"stat": 4037122,
 					"alternativeImages": [
-						"https://dl.dropboxusercontent.com/scl/fi/takui6mqe8oe59za6e3y5/natemoonlife_lesser_gluttony_seraph_dungeons__dragons_monster_a_07cf6e42-2971-4c99-98b6-2b5f0f052c3e-1.png?rlkey=m0a2k7vrdc94ubro55wmdhltp&dl=0"
+						""
 					],
 					"hitPointInfo": {
 						"maximum": 120,
