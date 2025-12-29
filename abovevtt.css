@@ -1797,7 +1797,12 @@ div#combat-tracker-settings form > div {
 [class*='styles_mobileNav'].visibleMobileNav>div>button[class*='styles_navToggle']{
     display: flex;
 }
-
+#adjustments-flyout>div>button.token-wall-poly-button{
+    display:none;
+}
+#adjustments-flyout>div>button.token-wall-poly-button.visible{
+    display:block;
+}
 .hasTooltip::after {
     content: attr(data-name);
     -webkit-font-smoothing: antialiased;
