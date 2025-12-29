@@ -304,6 +304,10 @@ function token_setting_options() {
 				{ value: "squareObject", label: 'Square Object Wall', description: "Token will block line of sight as if object walls in a square." },
 				{ value: "squareWindow", label: 'Square Window', description: "Token will block line of sight as if windows in a square." },
 				{ value: "squareCurtain", label: 'Square Curtain', description: "Token will block line of sight as if curtains in a square." },
+				{ value: "poly", label: 'Polygon Wall', description: "Token will block line of sight as if walls in a square." },
+				{ value: "polyObject", label: 'Polygon Object Wall', description: "Token will block line of sight as if object walls in a square." },
+				{ value: "polyWindow", label: 'Polygon Window', description: "Token will block line of sight as if windows in a square." },
+				{ value: "polyCurtain", label: 'Polygon Curtain', description: "Token will block line of sight as if curtains in a square." },
 			],
 			defaultValue: false
 		}
