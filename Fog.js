@@ -2583,7 +2583,11 @@ function getVisionBlockingTokenWalls(){
 				const wallScale = currentToken.options.tokenWallPolyOrigScale / sceneScale;
 				const x = pt.x / sceneScale / wallScale;
 				const y = pt.y / sceneScale / wallScale;
-				const rotatedPoint = rotatePoint(parseFloat(currentToken.options.left) / sceneScale + x, parseFloat(currentToken.options.top) / sceneScale + y, cX, cY, rot);
+				let rotatedPoint = rotatePoint(parseFloat(currentToken.options.left) / sceneScale + x, parseFloat(currentToken.options.top) / sceneScale + y, cX, cY, rot);
+				const origRot = currentToken.options.tokenWallPolyOrigRot;
+				if (origRot != undefined){
+					rotatedPoint = rotatePoint(rotatedPoint.x, rotatedPoint.y, cX, cY, -1 * (parseFloat(origRot) * (Math.PI / 180)));
+				}
 				return { x: rotatedPoint.x, y: rotatedPoint.y };
 			});
 			for (let i in rotatedPoints) {
@@ -5419,6 +5423,7 @@ function savePolygon(e) {
 				y: point.y - parseFloat(top)
 			};
 		});
+		token.options.tokenWallPolyOrigRot = token.options.rotation;
 		token.options.tokenWallPoly = relativePoints;
 		token.options.tokenWallPolyOrigScale = window.CURRENT_SCENE_DATA.scale_factor;
 		token.place_sync_persist();
