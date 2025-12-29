@@ -1436,8 +1436,9 @@ function observe_character_sheet_changes(documentToObserve) {
     const overhaul_iframe = $("#ddbfix-vtt-iframe[src*='abovevtt=true']:not(.abovevtt-visited)")
     overhaul_iframe.each(function(){
       const iframe = $(this);
+      const dm = iframe.is('[src*="dm=true"]');
       const contents = iframe.contents();
-      if(contents.find('.ct-character-sheet__inner').length==0)
+      if ((!dm && contents.find('.ct-character-sheet__inner').length == 0) || (dm && contents.find('.ddb-campaigns-invite-primary').length == 0))
         return;
       const iframeDoc = contents?.[0];
 
@@ -1538,9 +1539,12 @@ function observe_character_sheet_changes(documentToObserve) {
         { src: "audio/index.js", type: "module" },
         { src: "WeatherOverlay.js" },
         { src: "CharactersPage.js" },
-        { src: "Startup.js", type: "module" }
+        
       ]
-
+      if(dm){
+        scripts.push({ src: "SceneData.js" });
+      }
+      scripts.push({ src: "Startup.js", type: "module" })
       loadStyle.forEach(function(value, index, array) {
         let l = iframeDoc.createElement('link');
         l.href = `${window.EXTENSION_PATH}${value}`;
