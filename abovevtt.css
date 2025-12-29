@@ -8274,7 +8274,7 @@ button#changeTokenImage:before{
 }
 #tokenOptionsPopup>#tokenOptionsContainer>div[data-option-name='lockRestrictDrop'] .door-lock {
     position:absolute;
-    left:-1px;
+    left:-6px;
     padding:3px 0px;
     font-size:16px;  
 }
