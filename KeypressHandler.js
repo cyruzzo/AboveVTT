@@ -29,9 +29,7 @@ function avttShouldBypassFilePickerHotkey(targetElement) {
     if (!element) {
         return false;
     }
-    if (!element) {
-        return false;
-    }
+
     const tagName = String(element.tagName || "").toLowerCase();
     if (tagName === "input" || tagName === "textarea") {
         return true;
@@ -464,7 +462,7 @@ Mousetrap.bind('space', function (e) {     //collapse/show character sheet
         $('#pause_players').click()
     }
 });
-Mousetrap.bind('shift+space', function (e) {     //collapse/show character sheet
+Mousetrap.bind('shift+space', function (e) {     
     e.preventDefault();
     if(!window.DM) {
         let tokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr('data-id');

@@ -15500,7 +15500,7 @@ export const get_scene_data_hcs = {
 						"feet": 0
 					},
 					"id": "9bca8bd4-342c-4110-acc4-70c1babaa9c9",
-					"imgsrc": "https://dl.dropboxusercontent.com/scl/fi/ez3n3fpp7l7pehdurgt1c/paul-canavan-corvumassassin.png?rlkey=fnhr87vb51zmso8hg0qwtefox&dl=0",
+					"imgsrc": "",
 					"locked": false,
 					"light2": {
 						"color": "rgba(141.933, 141.933, 141.933, 1)",
@@ -15549,7 +15549,7 @@ export const get_scene_data_hcs = {
 					"stat": 16829,
 					"alternativeImages": [
 						"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-						"https://dl.dropboxusercontent.com/scl/fi/ez3n3fpp7l7pehdurgt1c/paul-canavan-corvumassassin.png?rlkey=fnhr87vb51zmso8hg0qwtefox&dl=0"
+						""
 					],
 					"hitPointInfo": {
 						"maximum": 4,
@@ -28149,7 +28149,7 @@ export const get_scene_data_hcs = {
 						"feet": 0
 					},
 					"id": "6dc3040d-ba70-4cf8-9609-9578acab39e4",
-					"imgsrc": "https://dl.dropboxusercontent.com/scl/fi/iekvafu43vfqyjqjq0zpp/hedge3.png?rlkey=rr1kmu661avdc41loo7kuh944&dl=0",
+					"imgsrc": "",
 					"locked": false,
 					"light2": {
 						"color": "rgba(141.933, 141.933, 141.933, 1)",
@@ -28197,7 +28197,7 @@ export const get_scene_data_hcs = {
 					"hidehpbar": false,
 					"stat": 4237039,
 					"alternativeImages": [
-						"https://dl.dropboxusercontent.com/scl/fi/iekvafu43vfqyjqjq0zpp/hedge3.png?rlkey=rr1kmu661avdc41loo7kuh944&dl=0"
+						""
 					],
 					"hitPointInfo": {
 						"maximum": 9,
@@ -29552,7 +29552,7 @@ export const get_scene_data_hcs = {
 						"feet": 0
 					},
 					"id": "fd7c8c0b-be1e-4a6c-84d8-b300e68f2512",
-					"imgsrc": "https://dl.dropboxusercontent.com/scl/fi/iekvafu43vfqyjqjq0zpp/hedge3.png?rlkey=rr1kmu661avdc41loo7kuh944&dl=0",
+					"imgsrc": "",
 					"locked": false,
 					"light2": {
 						"color": "rgba(141.933, 141.933, 141.933, 1)",
@@ -29600,7 +29600,7 @@ export const get_scene_data_hcs = {
 					"hidehpbar": false,
 					"stat": 4237039,
 					"alternativeImages": [
-						"https://dl.dropboxusercontent.com/scl/fi/iekvafu43vfqyjqjq0zpp/hedge3.png?rlkey=rr1kmu661avdc41loo7kuh944&dl=0"
+						""
 					],
 					"hitPointInfo": {
 						"maximum": 9,
@@ -33650,7 +33650,7 @@ export const get_scene_data_hcs = {
 						"feet": "10"
 					},
 					"id": "44f0fc1f-ae42-44b1-ba5f-e0cd8d4593c5",
-					"imgsrc": "https://dl.dropboxusercontent.com/scl/fi/guilbsx477cbx2rgh7c5l/Screenshot-2024-11-01-190548.png?rlkey=oeh5bftczggay7t5uvpbfh3d1&dl=0",
+					"imgsrc": "",
 					"locked": false,
 					"light2": {
 						"color": "rgba(141.933, 141.933, 141.933, 1)",

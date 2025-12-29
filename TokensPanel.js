@@ -3226,6 +3226,37 @@ function build_override_token_options_button(sidebarPanel, listItem, placedToken
                 : (listItem.type === ItemType.PC || listItem.folderType === ItemType.PC)
                 ? token_setting_options().filter(option => !['player_owned'].includes(option.name)).map(option => convert_option_to_override_dropdown(option))
                 : token_setting_options().map(option => convert_option_to_override_dropdown(option));
+
+                if(listItem.type ==  ItemType.Folder){
+
+                    overrideOptions.push({
+                        name: 'tokenSize',
+                        label: 'Token Size',
+                        type: 'dropdown',
+                        options: [
+                            { value: 0.5, label: "Tiny" },
+                            { value: 1, label: "Small/Medium" },
+                            { value: 2, label: "Large" },
+                            { value: 3, label: "Huge" },
+                            { value: 4, label: "Gargantuan" }
+                        ],
+                        defaultValue: 1
+                    })
+                    overrideOptions.push({
+                        name: 'imageSize',
+                        label: 'Image Scale',
+                        type: 'rangeInput',
+                        options: [
+                            {
+                                min: 0.1,
+                                max: 6,
+                                step: 0.1
+                            }
+                        ],
+                        defaultValue: 1
+                    })
+                }
+
             let optionsContainer = build_sidebar_token_options_flyout(overrideOptions, options, function(name, value) {
                 updateValue(name, value);
             }, didChange);

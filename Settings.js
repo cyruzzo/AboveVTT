@@ -332,7 +332,7 @@ function avtt_settings() {
 				{ value: true, label: "Enable", description: `` },
 				{ value: false, label: "Disable", description: `` }
 			],
-			defaultValue: false,
+			defaultValue: true,
 			class: 'ui'
 		},
 		{

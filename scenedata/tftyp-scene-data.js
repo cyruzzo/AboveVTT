@@ -8858,7 +8858,7 @@ export const get_scene_data_tftyp = {
 					"feet": 0
 				},
 				"id": "04211722-2b0f-4a8c-b6f6-b54b4ccb73a7",
-				"imgsrc": "https://dl.dropboxusercontent.com/scl/fi/1snm6iuvryce5qih700dv/Sharwyn-Hucrele.jpg?rlkey=lbmb3ewu6rz2vopwoowl7hryj&dl=0",
+				"imgsrc": "",
 				"locked": false,
 				"light2": {
 					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
@@ -8911,8 +8911,8 @@ export const get_scene_data_tftyp = {
 				"stat": 23114,
 				"alternativeImages": [
 					"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-					"https://dl.dropboxusercontent.com/scl/fi/1snm6iuvryce5qih700dv/Sharwyn-Hucrele.jpg?rlkey=lbmb3ewu6rz2vopwoowl7hryj&dl=0",
-					"https://dl.dropboxusercontent.com/scl/fi/nkzdzxnbabcpny3hmcnvl/Sir-Bradford.PNG?rlkey=3llws7s1mf58lmpi5se0nt1uh&dl=0"
+					"",
+					""
 				],
 				"hitPointInfo": {
 					"maximum": 13,
@@ -13155,7 +13155,7 @@ export const get_scene_data_tftyp = {
 					"feet": 0
 				},
 				"id": "860eb509-00fb-48bd-8ddf-4053b59a14d0",
-				"imgsrc": "https://dl.dropboxusercontent.com/scl/fi/nkzdzxnbabcpny3hmcnvl/Sir-Bradford.PNG?rlkey=3llws7s1mf58lmpi5se0nt1uh&dl=0",
+				"imgsrc": "",
 				"locked": false,
 				"light2": {
 					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
@@ -13208,7 +13208,7 @@ export const get_scene_data_tftyp = {
 				"stat": 23115,
 				"alternativeImages": [
 					"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-					"https://dl.dropboxusercontent.com/scl/fi/nkzdzxnbabcpny3hmcnvl/Sir-Bradford.PNG?rlkey=3llws7s1mf58lmpi5se0nt1uh&dl=0"
+					""
 				],
 				"hitPointInfo": {
 					"maximum": 19,
@@ -23856,7 +23856,7 @@ export const get_scene_data_tftyp = {
 					"feet": "7"
 				},
 				"id": "08f0373a-5012-4dbb-9641-a174fa83e290",
-				"imgsrc": "https://dl.dropboxusercontent.com/scl/fi/xzqdyek19o2pc7gk532p1/orb.png?rlkey=5v6puhjsbsppwhlbfq05x53v1&dl=0",
+				"imgsrc": "",
 				"locked": false,
 				"selected": true,
 				"light2": {
@@ -23934,7 +23934,7 @@ export const get_scene_data_tftyp = {
 					}
 				},
 				"alternativeImages": [
-					"https://dl.dropboxusercontent.com/scl/fi/xzqdyek19o2pc7gk532p1/orb.png?rlkey=5v6puhjsbsppwhlbfq05x53v1&dl=0"
+					""
 				],
 				"hitPointInfo": {
 					"maximum": "10",

@@ -4819,6 +4819,7 @@ h5.token-image-modal-footer-title:after {
     display: flex;
     flex-direction: row;
     width: 100%;
+    position:relative;
 }
 .sidebar-panel-footer-horizontal-wrapper .sidebar-panel-footer-button {
     margin: 0px 4px 0px 4px;

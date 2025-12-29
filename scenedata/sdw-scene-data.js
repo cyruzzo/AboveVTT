@@ -48217,7 +48217,7 @@ export const get_scene_data_sdw = {
 						"feet": "0"
 					},
 					"id": "aba0028e-fa02-4495-84b8-a7ba4a5008f6",
-					"imgsrc": "https://dl.dropboxusercontent.com/scl/fi/htmkhy89pn3n941y94jzj/Swarmof-Poisonous-Snakes.jpg?rlkey=jxqp7bqxsmpwqcenfmyql7c96&dl=0",
+					"imgsrc": "",
 					"locked": false,
 					"light2": {
 						"color": "rgba(142, 142, 142, 1)",
@@ -48266,7 +48266,7 @@ export const get_scene_data_sdw = {
 					"hidehpbar": false,
 					"stat": 17030,
 					"alternativeImages": [
-						"https://dl.dropboxusercontent.com/scl/fi/htmkhy89pn3n941y94jzj/Swarmof-Poisonous-Snakes.jpg?rlkey=jxqp7bqxsmpwqcenfmyql7c96&dl=0"
+						""
 					],
 					"hitPointInfo": {
 						"maximum": 36,
@@ -60735,7 +60735,7 @@ export const get_scene_data_sdw = {
 						"feet": "0"
 					},
 					"id": "15a79a1a-3989-46f7-9fe9-dca107a6aae0",
-					"imgsrc": "https://dl.dropboxusercontent.com/scl/fi/srjoedsj22oqwgoy86l05/Sahuagin.jpg?rlkey=oofynnqw231s0qi18guddfcd9&dl=0",
+					"imgsrc": "",
 					"locked": false,
 					"light2": {
 						"color": "rgba(142, 142, 142, 1)",
@@ -60784,7 +60784,7 @@ export const get_scene_data_sdw = {
 					"hidehpbar": false,
 					"stat": 316516,
 					"alternativeImages": [
-						"https://dl.dropboxusercontent.com/scl/fi/srjoedsj22oqwgoy86l05/Sahuagin.jpg?rlkey=oofynnqw231s0qi18guddfcd9&dl=0"
+						""
 					],
 					"hitPointInfo": {
 						"maximum": 71,
@@ -60861,7 +60861,7 @@ export const get_scene_data_sdw = {
 					"stat": 316104,
 					"alternativeImages": [
 						"https://www.dndbeyond.com/avatars/0/176/636252761683277871.jpeg",
-						"https://dl.dropboxusercontent.com/scl/fi/2cr7d50vh65tcyl6ep0qr/Sahuagin-Blademaster.jpg?rlkey=t264rbn6cc2fekdy400ombvj2&dl=0"
+						""
 					],
 					"hitPointInfo": {
 						"maximum": 97,
@@ -60962,7 +60962,7 @@ export const get_scene_data_sdw = {
 						"feet": "0"
 					},
 					"id": "1c9587be-4560-4cff-9fe3-721e16e99fc3",
-					"imgsrc": "https://dl.dropboxusercontent.com/scl/fi/2cr7d50vh65tcyl6ep0qr/Sahuagin-Blademaster.jpg?rlkey=t264rbn6cc2fekdy400ombvj2&dl=0",
+					"imgsrc": "",
 					"locked": false,
 					"light2": {
 						"color": "rgba(142, 142, 142, 1)",
@@ -61011,7 +61011,7 @@ export const get_scene_data_sdw = {
 					"stat": 316104,
 					"alternativeImages": [
 						"https://www.dndbeyond.com/avatars/0/176/636252761683277871.jpeg",
-						"https://dl.dropboxusercontent.com/scl/fi/2cr7d50vh65tcyl6ep0qr/Sahuagin-Blademaster.jpg?rlkey=t264rbn6cc2fekdy400ombvj2&dl=0"
+						""
 					],
 					"hitPointInfo": {
 						"maximum": 97,
@@ -61336,7 +61336,7 @@ export const get_scene_data_sdw = {
 						"feet": "0"
 					},
 					"id": "62201a20-a104-42a7-b57d-f92f55bea4a3",
-					"imgsrc": "https://dl.dropboxusercontent.com/scl/fi/2cr7d50vh65tcyl6ep0qr/Sahuagin-Blademaster.jpg?rlkey=t264rbn6cc2fekdy400ombvj2&dl=0",
+					"imgsrc": "",
 					"locked": false,
 					"light2": {
 						"color": "rgba(142, 142, 142, 1)",
@@ -61386,7 +61386,7 @@ export const get_scene_data_sdw = {
 					"stat": 316104,
 					"alternativeImages": [
 						"https://www.dndbeyond.com/avatars/0/176/636252761683277871.jpeg",
-						"https://dl.dropboxusercontent.com/scl/fi/2cr7d50vh65tcyl6ep0qr/Sahuagin-Blademaster.jpg?rlkey=t264rbn6cc2fekdy400ombvj2&dl=0"
+						""
 					],
 					"hitPointInfo": {
 						"maximum": 97,
@@ -61414,7 +61414,7 @@ export const get_scene_data_sdw = {
 						"feet": "0"
 					},
 					"id": "6a2e3748-3f74-4a5f-8b80-ecbaf6e99e1a",
-					"imgsrc": "https://dl.dropboxusercontent.com/scl/fi/srjoedsj22oqwgoy86l05/Sahuagin.jpg?rlkey=oofynnqw231s0qi18guddfcd9&dl=0",
+					"imgsrc": "",
 					"locked": false,
 					"light2": {
 						"color": "rgba(142, 142, 142, 1)",
@@ -61463,7 +61463,7 @@ export const get_scene_data_sdw = {
 					"hidehpbar": false,
 					"stat": 316516,
 					"alternativeImages": [
-						"https://dl.dropboxusercontent.com/scl/fi/srjoedsj22oqwgoy86l05/Sahuagin.jpg?rlkey=oofynnqw231s0qi18guddfcd9&dl=0"
+						""
 					],
 					"hitPointInfo": {
 						"maximum": 71,
@@ -61491,7 +61491,7 @@ export const get_scene_data_sdw = {
 						"feet": "0"
 					},
 					"id": "77731acc-7109-4c8f-b4a3-558b6ab5bb04",
-					"imgsrc": "https://dl.dropboxusercontent.com/scl/fi/srjoedsj22oqwgoy86l05/Sahuagin.jpg?rlkey=oofynnqw231s0qi18guddfcd9&dl=0",
+					"imgsrc": "",
 					"locked": false,
 					"light2": {
 						"color": "rgba(142, 142, 142, 1)",
@@ -61540,7 +61540,7 @@ export const get_scene_data_sdw = {
 					"hidehpbar": false,
 					"stat": 316516,
 					"alternativeImages": [
-						"https://dl.dropboxusercontent.com/scl/fi/srjoedsj22oqwgoy86l05/Sahuagin.jpg?rlkey=oofynnqw231s0qi18guddfcd9&dl=0"
+						""
 					],
 					"hitPointInfo": {
 						"maximum": 71,
@@ -61568,7 +61568,7 @@ export const get_scene_data_sdw = {
 						"feet": "0"
 					},
 					"id": "83f07252-9579-4da7-88d3-2e53daa7b1cf",
-					"imgsrc": "https://dl.dropboxusercontent.com/scl/fi/srjoedsj22oqwgoy86l05/Sahuagin.jpg?rlkey=oofynnqw231s0qi18guddfcd9&dl=0",
+					"imgsrc": "",
 					"locked": false,
 					"light2": {
 						"color": "rgba(142, 142, 142, 1)",
@@ -61617,7 +61617,7 @@ export const get_scene_data_sdw = {
 					"hidehpbar": false,
 					"stat": 316516,
 					"alternativeImages": [
-						"https://dl.dropboxusercontent.com/scl/fi/srjoedsj22oqwgoy86l05/Sahuagin.jpg?rlkey=oofynnqw231s0qi18guddfcd9&dl=0"
+						""
 					],
 					"hitPointInfo": {
 						"maximum": 71,
@@ -61645,7 +61645,7 @@ export const get_scene_data_sdw = {
 						"feet": "0"
 					},
 					"id": "897c0ab2-605c-423f-90b6-db3695359d72",
-					"imgsrc": "https://dl.dropboxusercontent.com/scl/fi/2cr7d50vh65tcyl6ep0qr/Sahuagin-Blademaster.jpg?rlkey=t264rbn6cc2fekdy400ombvj2&dl=0",
+					"imgsrc": "",
 					"locked": false,
 					"light2": {
 						"color": "rgba(142, 142, 142, 1)",
@@ -61694,7 +61694,7 @@ export const get_scene_data_sdw = {
 					"stat": 316104,
 					"alternativeImages": [
 						"https://www.dndbeyond.com/avatars/0/176/636252761683277871.jpeg",
-						"https://dl.dropboxusercontent.com/scl/fi/2cr7d50vh65tcyl6ep0qr/Sahuagin-Blademaster.jpg?rlkey=t264rbn6cc2fekdy400ombvj2&dl=0"
+						""
 					],
 					"hitPointInfo": {
 						"maximum": 97,
@@ -61722,7 +61722,7 @@ export const get_scene_data_sdw = {
 						"feet": "0"
 					},
 					"id": "8a9544b9-46e4-4a9c-a715-4746b8ff2773",
-					"imgsrc": "https://dl.dropboxusercontent.com/scl/fi/srjoedsj22oqwgoy86l05/Sahuagin.jpg?rlkey=oofynnqw231s0qi18guddfcd9&dl=0",
+					"imgsrc": "",
 					"locked": false,
 					"light2": {
 						"color": "rgba(142, 142, 142, 1)",
@@ -61771,7 +61771,7 @@ export const get_scene_data_sdw = {
 					"hidehpbar": false,
 					"stat": 316516,
 					"alternativeImages": [
-						"https://dl.dropboxusercontent.com/scl/fi/srjoedsj22oqwgoy86l05/Sahuagin.jpg?rlkey=oofynnqw231s0qi18guddfcd9&dl=0"
+						""
 					],
 					"hitPointInfo": {
 						"maximum": 71,
@@ -62170,7 +62170,7 @@ export const get_scene_data_sdw = {
 						"feet": "0"
 					},
 					"id": "b54c5449-328b-49fb-8493-557e1ac1ee79",
-					"imgsrc": "https://dl.dropboxusercontent.com/scl/fi/srjoedsj22oqwgoy86l05/Sahuagin.jpg?rlkey=oofynnqw231s0qi18guddfcd9&dl=0",
+					"imgsrc": "",
 					"locked": false,
 					"light2": {
 						"color": "rgba(142, 142, 142, 1)",
@@ -62219,7 +62219,7 @@ export const get_scene_data_sdw = {
 					"hidehpbar": false,
 					"stat": 316516,
 					"alternativeImages": [
-						"https://dl.dropboxusercontent.com/scl/fi/srjoedsj22oqwgoy86l05/Sahuagin.jpg?rlkey=oofynnqw231s0qi18guddfcd9&dl=0"
+						""
 					],
 					"hitPointInfo": {
 						"maximum": 71,
@@ -62247,7 +62247,7 @@ export const get_scene_data_sdw = {
 						"feet": "0"
 					},
 					"id": "b85d9a07-c17e-4ffb-8362-732ba74684f7",
-					"imgsrc": "https://dl.dropboxusercontent.com/scl/fi/2cr7d50vh65tcyl6ep0qr/Sahuagin-Blademaster.jpg?rlkey=t264rbn6cc2fekdy400ombvj2&dl=0",
+					"imgsrc": "",
 					"locked": false,
 					"light2": {
 						"color": "rgba(142, 142, 142, 1)",
@@ -62296,7 +62296,7 @@ export const get_scene_data_sdw = {
 					"stat": 316104,
 					"alternativeImages": [
 						"https://www.dndbeyond.com/avatars/0/176/636252761683277871.jpeg",
-						"https://dl.dropboxusercontent.com/scl/fi/2cr7d50vh65tcyl6ep0qr/Sahuagin-Blademaster.jpg?rlkey=t264rbn6cc2fekdy400ombvj2&dl=0"
+						""
 					],
 					"hitPointInfo": {
 						"maximum": 97,
@@ -62773,7 +62773,7 @@ export const get_scene_data_sdw = {
 						"feet": "0"
 					},
 					"id": "c575469c-b9e9-486f-99fe-ef43a207fcbb",
-					"imgsrc": "https://dl.dropboxusercontent.com/scl/fi/srjoedsj22oqwgoy86l05/Sahuagin.jpg?rlkey=oofynnqw231s0qi18guddfcd9&dl=0",
+					"imgsrc": "",
 					"locked": false,
 					"light2": {
 						"color": "rgba(142, 142, 142, 1)",
@@ -62822,7 +62822,7 @@ export const get_scene_data_sdw = {
 					"hidehpbar": false,
 					"stat": 316516,
 					"alternativeImages": [
-						"https://dl.dropboxusercontent.com/scl/fi/srjoedsj22oqwgoy86l05/Sahuagin.jpg?rlkey=oofynnqw231s0qi18guddfcd9&dl=0"
+						""
 					],
 					"hitPointInfo": {
 						"maximum": 71,

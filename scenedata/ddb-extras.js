@@ -17716,7 +17716,7 @@ const get_ddb_extras = {
                         "feet": "0"
                     },
                     "id": "0825fe26-3df0-4213-9185-6d28fedd8eda",
-                    "imgsrc": "https://dl.dropboxusercontent.com/scl/fi/ay2up8p6dokyyc8fsyqlr/Screenshot-2025-10-24-230642.png?rlkey=9fk146v35nkqjyfvo0d7w29jq&dl=0",
+                    "imgsrc": "",
                     "locked": false,
                     "selected": true,
                     "light2": {
@@ -17769,7 +17769,7 @@ const get_ddb_extras = {
                     "stat": 5838431,
                     "alternativeImages": [
                         "https://www.dndbeyond.com/avatars/51925/764/638951219341185668.jpeg",
-                        "https://dl.dropboxusercontent.com/scl/fi/ay2up8p6dokyyc8fsyqlr/Screenshot-2025-10-24-230642.png?rlkey=9fk146v35nkqjyfvo0d7w29jq&dl=0"
+                        ""
                     ],
                     "hitPointInfo": {
                         "maximum": 4,
@@ -17952,7 +17952,7 @@ const get_ddb_extras = {
                         "feet": "0"
                     },
                     "id": "142d54ea-4a14-498d-a82c-542bfa3ac7ca",
-                    "imgsrc": "https://dl.dropboxusercontent.com/scl/fi/ojpn337zgtac1s40vr7r2/Screenshot-2025-10-24-230653.png?rlkey=e56kk4lydvast41ac42exsob1&dl=0",
+                    "imgsrc": "",
                     "locked": false,
                     "light2": {
                         "color": "rgba(142, 142, 142, 1)",
@@ -18004,7 +18004,7 @@ const get_ddb_extras = {
                     "stat": 5838433,
                     "alternativeImages": [
                         "https://www.dndbeyond.com/avatars/51925/769/638951219345551152.jpeg",
-                        "https://dl.dropboxusercontent.com/scl/fi/ojpn337zgtac1s40vr7r2/Screenshot-2025-10-24-230653.png?rlkey=e56kk4lydvast41ac42exsob1&dl=0"
+                        ""
                     ],
                     "hitPointInfo": {
                         "maximum": 9,
@@ -18343,7 +18343,7 @@ const get_ddb_extras = {
                         "feet": "0"
                     },
                     "id": "9c82ab5e-861e-4f4c-89ca-57cd318dd48e",
-                    "imgsrc": "https://dl.dropboxusercontent.com/scl/fi/3njl03rusn7y2lan3o0l5/Screenshot-2025-10-24-230635.png?rlkey=aex3pe6nfeek37av5q9tlvkbm&dl=0",
+                    "imgsrc": "",
                     "locked": false,
                     "light2": {
                         "color": "rgba(142, 142, 142, 1)",
@@ -18395,7 +18395,7 @@ const get_ddb_extras = {
                     "stat": 5838431,
                     "alternativeImages": [
                         "https://www.dndbeyond.com/avatars/51925/764/638951219341185668.jpeg",
-                        "https://dl.dropboxusercontent.com/scl/fi/3njl03rusn7y2lan3o0l5/Screenshot-2025-10-24-230635.png?rlkey=aex3pe6nfeek37av5q9tlvkbm&dl=0"
+                        ""
                     ],
                     "hitPointInfo": {
                         "maximum": 4,
@@ -18422,7 +18422,7 @@ const get_ddb_extras = {
                         "feet": "0"
                     },
                     "id": "a22250cc-2732-4ef2-b05b-d4cd0abcf5ea",
-                    "imgsrc": "https://dl.dropboxusercontent.com/scl/fi/f4a8u51p774dqt5iuqq76/Screenshot-2025-10-24-230659.png?rlkey=w5l2zej3ary2l98m5xgefuf5n&dl=0",
+                    "imgsrc": "",
                     "locked": false,
                     "light2": {
                         "color": "rgba(142, 142, 142, 1)",
@@ -18474,7 +18474,7 @@ const get_ddb_extras = {
                     "stat": 5838431,
                     "alternativeImages": [
                         "https://www.dndbeyond.com/avatars/51925/764/638951219341185668.jpeg",
-                        "https://dl.dropboxusercontent.com/scl/fi/f4a8u51p774dqt5iuqq76/Screenshot-2025-10-24-230659.png?rlkey=w5l2zej3ary2l98m5xgefuf5n&dl=0"
+                        ""
                     ],
                     "hitPointInfo": {
                         "maximum": 4,
@@ -18501,7 +18501,7 @@ const get_ddb_extras = {
                         "feet": "0"
                     },
                     "id": "bdfc075a-e16a-4099-b091-b91586f4b1d9",
-                    "imgsrc": "https://dl.dropboxusercontent.com/scl/fi/6waw17ssexe85anuznowu/Screenshot-2025-10-24-230648.png?rlkey=unet3z5zk4wfeg6j9j2d783r9&dl=0",
+                    "imgsrc": "",
                     "locked": false,
                     "light2": {
                         "color": "rgba(142, 142, 142, 1)",
@@ -18553,7 +18553,7 @@ const get_ddb_extras = {
                     "stat": 5838431,
                     "alternativeImages": [
                         "https://www.dndbeyond.com/avatars/51925/764/638951219341185668.jpeg",
-                        "https://dl.dropboxusercontent.com/scl/fi/6waw17ssexe85anuznowu/Screenshot-2025-10-24-230648.png?rlkey=unet3z5zk4wfeg6j9j2d783r9&dl=0"
+                        ""
                     ],
                     "hitPointInfo": {
                         "maximum": 4,
@@ -18892,7 +18892,7 @@ const get_ddb_extras = {
                         "feet": "0"
                     },
                     "id": "ffe475a9-c127-4923-9aca-3cac94f0f3ec",
-                    "imgsrc": "https://dl.dropboxusercontent.com/scl/fi/z9o45i1i593fz0ys31e5r/Screenshot-2025-10-24-230625.png?rlkey=6n96u39m12or287zdv20qlwt3&dl=0",
+                    "imgsrc": "",
                     "locked": false,
                     "light2": {
                         "color": "rgba(142, 142, 142, 1)",
@@ -18944,7 +18944,7 @@ const get_ddb_extras = {
                     "stat": 5838431,
                     "alternativeImages": [
                         "https://www.dndbeyond.com/avatars/51925/764/638951219341185668.jpeg",
-                        "https://dl.dropboxusercontent.com/scl/fi/z9o45i1i593fz0ys31e5r/Screenshot-2025-10-24-230625.png?rlkey=6n96u39m12or287zdv20qlwt3&dl=0"
+                        ""
                     ],
                     "hitPointInfo": {
                         "maximum": 4,

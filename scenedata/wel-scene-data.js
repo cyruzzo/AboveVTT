@@ -32709,7 +32709,7 @@ export const get_scene_data_wel = {
 					"feet": "0"
 				},
 				"alternativeImagesCustomizations": {
-					"https://dl.dropboxusercontent.com/scl/fi/nozw1da296tmfxy96k1kz/Blood-Borne-Ooze.webp?rlkey=cpl8vj2mrv4kspnqsfnczgtu2&st=cwggfl85&dl=0": {
+					"": {
 						"offset": {
 							"y": 18
 						},
@@ -32717,7 +32717,7 @@ export const get_scene_data_wel = {
 					}
 				},
 				"id": "0d737271-5e63-456f-9c0d-2eeee850fa90",
-				"imgsrc": "https://dl.dropboxusercontent.com/scl/fi/nozw1da296tmfxy96k1kz/Blood-Borne-Ooze.webp?rlkey=cpl8vj2mrv4kspnqsfnczgtu2&st=cwggfl85&dl=0",
+				"imgsrc": "",
 				"locked": false,
 				"light2": {
 					"color": "rgba(141.933, 141.933, 141.933, 1)",
@@ -32769,7 +32769,7 @@ export const get_scene_data_wel = {
 				"hidehpbar": true,
 				"stat": 4485789,
 				"alternativeImages": [
-					"https://dl.dropboxusercontent.com/scl/fi/nozw1da296tmfxy96k1kz/Blood-Borne-Ooze.webp?rlkey=cpl8vj2mrv4kspnqsfnczgtu2&st=cwggfl85&dl=0"
+					""
 				],
 				"imageZoom": 50,
 				"hitPointInfo": {
@@ -33283,7 +33283,7 @@ export const get_scene_data_wel = {
 					"feet": "0"
 				},
 				"alternativeImagesCustomizations": {
-					"https://dl.dropboxusercontent.com/scl/fi/nozw1da296tmfxy96k1kz/Blood-Borne-Ooze.webp?rlkey=cpl8vj2mrv4kspnqsfnczgtu2&st=cwggfl85&dl=0": {
+					"": {
 						"offset": {
 							"y": 18
 						},
@@ -33291,7 +33291,7 @@ export const get_scene_data_wel = {
 					}
 				},
 				"id": "22a0e8b6-5ace-4ac6-a994-d81031ff9667",
-				"imgsrc": "https://dl.dropboxusercontent.com/scl/fi/nozw1da296tmfxy96k1kz/Blood-Borne-Ooze.webp?rlkey=cpl8vj2mrv4kspnqsfnczgtu2&st=cwggfl85&dl=0",
+				"imgsrc": "",
 				"locked": false,
 				"light2": {
 					"color": "rgba(141.933, 141.933, 141.933, 1)",
@@ -33343,7 +33343,7 @@ export const get_scene_data_wel = {
 				"hidehpbar": true,
 				"stat": 4485789,
 				"alternativeImages": [
-					"https://dl.dropboxusercontent.com/scl/fi/nozw1da296tmfxy96k1kz/Blood-Borne-Ooze.webp?rlkey=cpl8vj2mrv4kspnqsfnczgtu2&st=cwggfl85&dl=0"
+					""
 				],
 				"imageZoom": 50,
 				"hitPointInfo": {
@@ -35626,7 +35626,7 @@ export const get_scene_data_wel = {
 					"feet": "0"
 				},
 				"alternativeImagesCustomizations": {
-					"https://dl.dropboxusercontent.com/scl/fi/nozw1da296tmfxy96k1kz/Blood-Borne-Ooze.webp?rlkey=cpl8vj2mrv4kspnqsfnczgtu2&st=cwggfl85&dl=0": {
+					"": {
 						"offset": {
 							"y": 18
 						},
@@ -35634,7 +35634,7 @@ export const get_scene_data_wel = {
 					}
 				},
 				"id": "bf530f63-61f7-4fe1-8e81-ce8012345ab8",
-				"imgsrc": "https://dl.dropboxusercontent.com/scl/fi/nozw1da296tmfxy96k1kz/Blood-Borne-Ooze.webp?rlkey=cpl8vj2mrv4kspnqsfnczgtu2&st=cwggfl85&dl=0",
+				"imgsrc": "",
 				"locked": false,
 				"light2": {
 					"color": "rgba(141.933, 141.933, 141.933, 1)",
@@ -35686,7 +35686,7 @@ export const get_scene_data_wel = {
 				"hidehpbar": true,
 				"stat": 4485789,
 				"alternativeImages": [
-					"https://dl.dropboxusercontent.com/scl/fi/nozw1da296tmfxy96k1kz/Blood-Borne-Ooze.webp?rlkey=cpl8vj2mrv4kspnqsfnczgtu2&st=cwggfl85&dl=0"
+					""
 				],
 				"imageZoom": 50,
 				"hitPointInfo": {
@@ -36181,7 +36181,7 @@ export const get_scene_data_wel = {
 					"feet": "0"
 				},
 				"alternativeImagesCustomizations": {
-					"https://dl.dropboxusercontent.com/scl/fi/nozw1da296tmfxy96k1kz/Blood-Borne-Ooze.webp?rlkey=cpl8vj2mrv4kspnqsfnczgtu2&st=cwggfl85&dl=0": {
+					"": {
 						"offset": {
 							"y": 18
 						},
@@ -36189,7 +36189,7 @@ export const get_scene_data_wel = {
 					}
 				},
 				"id": "e70b5143-5062-4675-9da8-73de84801acf",
-				"imgsrc": "https://dl.dropboxusercontent.com/scl/fi/nozw1da296tmfxy96k1kz/Blood-Borne-Ooze.webp?rlkey=cpl8vj2mrv4kspnqsfnczgtu2&st=cwggfl85&dl=0",
+				"imgsrc": "",
 				"locked": false,
 				"light2": {
 					"color": "rgba(141.933, 141.933, 141.933, 1)",
@@ -36241,7 +36241,7 @@ export const get_scene_data_wel = {
 				"hidehpbar": true,
 				"stat": 4485789,
 				"alternativeImages": [
-					"https://dl.dropboxusercontent.com/scl/fi/nozw1da296tmfxy96k1kz/Blood-Borne-Ooze.webp?rlkey=cpl8vj2mrv4kspnqsfnczgtu2&st=cwggfl85&dl=0"
+					""
 				],
 				"imageZoom": 50,
 				"hitPointInfo": {
@@ -36270,7 +36270,7 @@ export const get_scene_data_wel = {
 					"feet": "0"
 				},
 				"alternativeImagesCustomizations": {
-					"https://dl.dropboxusercontent.com/scl/fi/nozw1da296tmfxy96k1kz/Blood-Borne-Ooze.webp?rlkey=cpl8vj2mrv4kspnqsfnczgtu2&st=cwggfl85&dl=0": {
+					"": {
 						"offset": {
 							"y": 18
 						},
@@ -36278,7 +36278,7 @@ export const get_scene_data_wel = {
 					}
 				},
 				"id": "f37f1ca8-e0da-496e-93f5-e60fa3ded9a2",
-				"imgsrc": "https://dl.dropboxusercontent.com/scl/fi/nozw1da296tmfxy96k1kz/Blood-Borne-Ooze.webp?rlkey=cpl8vj2mrv4kspnqsfnczgtu2&st=cwggfl85&dl=0",
+				"imgsrc": "",
 				"locked": false,
 				"light2": {
 					"color": "rgba(141.933, 141.933, 141.933, 1)",
@@ -36330,7 +36330,7 @@ export const get_scene_data_wel = {
 				"hidehpbar": true,
 				"stat": 4485789,
 				"alternativeImages": [
-					"https://dl.dropboxusercontent.com/scl/fi/nozw1da296tmfxy96k1kz/Blood-Borne-Ooze.webp?rlkey=cpl8vj2mrv4kspnqsfnczgtu2&st=cwggfl85&dl=0"
+					""
 				],
 				"imageZoom": 50,
 				"hitPointInfo": {
@@ -38782,7 +38782,7 @@ export const get_scene_data_wel = {
 					"feet": "0"
 				},
 				"alternativeImagesCustomizations": {
-					"https://dl.dropboxusercontent.com/scl/fi/nozw1da296tmfxy96k1kz/Blood-Borne-Ooze.webp?rlkey=cpl8vj2mrv4kspnqsfnczgtu2&st=cwggfl85&dl=0": {
+					"": {
 						"offset": {
 							"y": 18
 						},
@@ -38790,7 +38790,7 @@ export const get_scene_data_wel = {
 					}
 				},
 				"id": "48c5a8e1-8e28-4e40-aec0-7ed899131221",
-				"imgsrc": "https://dl.dropboxusercontent.com/scl/fi/nozw1da296tmfxy96k1kz/Blood-Borne-Ooze.webp?rlkey=cpl8vj2mrv4kspnqsfnczgtu2&st=cwggfl85&dl=0",
+				"imgsrc": "",
 				"locked": false,
 				"light2": {
 					"color": "rgba(141.933, 141.933, 141.933, 1)",
@@ -38842,7 +38842,7 @@ export const get_scene_data_wel = {
 				"hidehpbar": true,
 				"stat": 4485789,
 				"alternativeImages": [
-					"https://dl.dropboxusercontent.com/scl/fi/nozw1da296tmfxy96k1kz/Blood-Borne-Ooze.webp?rlkey=cpl8vj2mrv4kspnqsfnczgtu2&st=cwggfl85&dl=0"
+					""
 				],
 				"imageZoom": 50,
 				"hitPointInfo": {
@@ -38948,7 +38948,7 @@ export const get_scene_data_wel = {
 					"feet": "0"
 				},
 				"alternativeImagesCustomizations": {
-					"https://dl.dropboxusercontent.com/scl/fi/nozw1da296tmfxy96k1kz/Blood-Borne-Ooze.webp?rlkey=cpl8vj2mrv4kspnqsfnczgtu2&st=cwggfl85&dl=0": {
+					"": {
 						"offset": {
 							"y": 18
 						},
@@ -38956,7 +38956,7 @@ export const get_scene_data_wel = {
 					}
 				},
 				"id": "6ad89bb1-6709-4f9b-bd4e-210618b66706",
-				"imgsrc": "https://dl.dropboxusercontent.com/scl/fi/nozw1da296tmfxy96k1kz/Blood-Borne-Ooze.webp?rlkey=cpl8vj2mrv4kspnqsfnczgtu2&st=cwggfl85&dl=0",
+				"imgsrc": "",
 				"locked": false,
 				"light2": {
 					"color": "rgba(141.933, 141.933, 141.933, 1)",
@@ -39008,7 +39008,7 @@ export const get_scene_data_wel = {
 				"hidehpbar": true,
 				"stat": 4485789,
 				"alternativeImages": [
-					"https://dl.dropboxusercontent.com/scl/fi/nozw1da296tmfxy96k1kz/Blood-Borne-Ooze.webp?rlkey=cpl8vj2mrv4kspnqsfnczgtu2&st=cwggfl85&dl=0"
+					""
 				],
 				"imageZoom": 50,
 				"hitPointInfo": {
@@ -39288,7 +39288,7 @@ export const get_scene_data_wel = {
 					"feet": "0"
 				},
 				"alternativeImagesCustomizations": {
-					"https://dl.dropboxusercontent.com/scl/fi/nozw1da296tmfxy96k1kz/Blood-Borne-Ooze.webp?rlkey=cpl8vj2mrv4kspnqsfnczgtu2&st=cwggfl85&dl=0": {
+					"": {
 						"offset": {
 							"y": 18
 						},
@@ -39296,7 +39296,7 @@ export const get_scene_data_wel = {
 					}
 				},
 				"id": "9588fa8a-ee37-42fc-8531-a71714b0fb3b",
-				"imgsrc": "https://dl.dropboxusercontent.com/scl/fi/nozw1da296tmfxy96k1kz/Blood-Borne-Ooze.webp?rlkey=cpl8vj2mrv4kspnqsfnczgtu2&st=cwggfl85&dl=0",
+				"imgsrc": "",
 				"locked": false,
 				"light2": {
 					"color": "rgba(141.933, 141.933, 141.933, 1)",
@@ -39348,7 +39348,7 @@ export const get_scene_data_wel = {
 				"hidehpbar": true,
 				"stat": 4485789,
 				"alternativeImages": [
-					"https://dl.dropboxusercontent.com/scl/fi/nozw1da296tmfxy96k1kz/Blood-Borne-Ooze.webp?rlkey=cpl8vj2mrv4kspnqsfnczgtu2&st=cwggfl85&dl=0"
+					""
 				],
 				"imageZoom": 50,
 				"hitPointInfo": {
