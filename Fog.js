@@ -2582,13 +2582,10 @@ function getVisionBlockingTokenWalls(){
 			const rotatedPoints = points.map(pt => {
 				const imageScale = currentToken.options.tokenWallPoly?.origImageSize != undefined && currentToken.options.imageSize != undefined ? currentToken.options.imageSize / currentToken.options.tokenWallPoly.origImageSize : 1;
 				const tokenSizeScale = currentToken.options.tokenWallPoly?.origSize != undefined ? currentToken.options.size / currentToken.options.tokenWallPoly.origSize : 1;
-				const wallScale = currentToken.options.tokenWallPoly?.origScale != undefined ? (sceneScale / currentToken.options.tokenWallPoly.origScale - 1) / sceneScale / currentToken.options.tokenWallPoly.origScale /2 : 1;
-	
 				
 				let x = (pt.x * tokenSizeScale) / sceneScale;
 				let y = (pt.y * tokenSizeScale) / sceneScale;
-				x += x * wallScale;
-				y += y * wallScale;
+
 				x = cX + (parseFloat(currentToken.options.left) / sceneScale + x - cX) * imageScale;
 				y = cY + (parseFloat(currentToken.options.top) / sceneScale + y - cY) * imageScale;
 				
