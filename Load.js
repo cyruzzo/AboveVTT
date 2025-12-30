@@ -16,9 +16,12 @@ if (isPlainCharacterPage) {
 	l.setAttribute("style", "display:none;");
 	l.setAttribute("id", "extensionpath");
 	l.setAttribute("data-path", getExtURL("/"));
-	
-
 	(document.body || document.documentElement).appendChild(l);
+	let avttVersion = document.createElement('div');
+	avttVersion.setAttribute("style", "display:none;");
+	avttVersion.setAttribute("id", "avttversion");
+	avttVersion.setAttribute("data-version", (chrome || browser).runtime.getManifest().version);
+	(document.body || document.documentElement).appendChild(avttVersion);
 	loadStyle = [
 		"DiceContextMenu/DiceContextMenu.css",
 		"jquery.contextMenu.css"
