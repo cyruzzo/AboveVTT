@@ -2579,15 +2579,17 @@ function getVisionBlockingTokenWalls(){
 				continue;
 	
 			let points = currentToken.options.tokenWallPoly.relativePoints;
+			const imageScale = currentToken.options.tokenWallPoly?.origImageSize != undefined && currentToken.options.imageSize != undefined ? currentToken.options.imageSize / currentToken.options.tokenWallPoly.origImageSize : 1;
+			const tokenSizeScale = currentToken.options.tokenWallPoly?.origSize != undefined ? currentToken.options.size / currentToken.options.tokenWallPoly.origSize : 1;
+			const tokenLeft = parseFloat(currentToken.options.left) / sceneScale;
+			const tokenTop = parseFloat(currentToken.options.top) / sceneScale;
 			const rotatedPoints = points.map(pt => {
-				const imageScale = currentToken.options.tokenWallPoly?.origImageSize != undefined && currentToken.options.imageSize != undefined ? currentToken.options.imageSize / currentToken.options.tokenWallPoly.origImageSize : 1;
-				const tokenSizeScale = currentToken.options.tokenWallPoly?.origSize != undefined ? currentToken.options.size / currentToken.options.tokenWallPoly.origSize : 1;
-				
+
 				let x = (pt.x * tokenSizeScale) / sceneScale;
 				let y = (pt.y * tokenSizeScale) / sceneScale;
 
-				x = cX + (parseFloat(currentToken.options.left) / sceneScale + x - cX) * imageScale;
-				y = cY + (parseFloat(currentToken.options.top) / sceneScale + y - cY) * imageScale;
+				x = cX + (tokenLeft + x - cX) * imageScale;
+				y = cY + (tokenTop + y - cY) * imageScale;
 				
 				let rotatedPoint = rotatePoint(x, y, cX, cY, rot);
 				const origRot = currentToken.options.tokenWallPoly.origRot;
