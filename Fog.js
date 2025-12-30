@@ -2575,16 +2575,22 @@ function getVisionBlockingTokenWalls(){
 			}
 		}
 		else if (currentToken.options.tokenWall && currentToken.options.tokenWall?.includes('poly')) {
-			if(currentToken.options.tokenWallPoly == undefined || currentToken.options.tokenWallPoly.length < 2)
+			if(currentToken.options.tokenWallPoly == undefined || currentToken.options.tokenWallPoly.relativePoints?.length < 2)
 				continue;
-
-			let points = currentToken.options.tokenWallPoly;
+	
+			let points = currentToken.options.tokenWallPoly.relativePoints;
 			const rotatedPoints = points.map(pt => {
-				const wallScale = currentToken.options.tokenWallPolyOrigScale / sceneScale;
-				const x = pt.x / sceneScale / wallScale;
-				const y = pt.y / sceneScale / wallScale;
-				let rotatedPoint = rotatePoint(parseFloat(currentToken.options.left) / sceneScale + x, parseFloat(currentToken.options.top) / sceneScale + y, cX, cY, rot);
-				const origRot = currentToken.options.tokenWallPolyOrigRot;
+				const imageScale = currentToken.options.tokenWallPoly?.origImageSize != undefined && currentToken.options.imageSize != undefined ? 1 + (currentToken.options.imageSize / currentToken.options.tokenWallPoly.origImageSize - 1) : 1;
+				const tokenSizeScale = currentToken.options.tokenWallPoly?.origSize != undefined ? currentToken.options.size / currentToken.options.tokenWallPoly.origSize : 1;
+				const wallScale = currentToken.options.tokenWallPoly?.origScale != undefined ? sceneScale / currentToken.options.tokenWallPoly.origScale : 1;
+	
+				
+				let x = pt.x / sceneScale * wallScale * tokenSizeScale;
+				let y = pt.y / sceneScale * wallScale * tokenSizeScale;
+				x = cX + (parseFloat(currentToken.options.left) / sceneScale + x - cX) * imageScale;
+				y = cY + (parseFloat(currentToken.options.top) / sceneScale + y - cY) * imageScale;
+				let rotatedPoint = rotatePoint(x, y, cX, cY, rot);
+				const origRot = currentToken.options.tokenWallPoly.origRot;
 				if (origRot != undefined){
 					rotatedPoint = rotatePoint(rotatedPoint.x, rotatedPoint.y, cX, cY, -1 * (parseFloat(origRot) * (Math.PI / 180)));
 				}
@@ -5423,9 +5429,14 @@ function savePolygon(e) {
 				y: point.y - parseFloat(top)
 			};
 		});
-		token.options.tokenWallPolyOrigRot = token.options.rotation;
-		token.options.tokenWallPoly = relativePoints;
-		token.options.tokenWallPolyOrigScale = window.CURRENT_SCENE_DATA.scale_factor;
+		token.options.tokenWallPoly = {
+			origImageSize: token.options.imageSize,
+			origRot: token.options.rotation,
+			origScale: window.CURRENT_SCENE_DATA.scale_factor,
+			origSize: token.options.size,
+			relativePoints
+		}
+
 		token.place_sync_persist();
 		delete window.drawingTokenWallTokenId
 		delete window.drawTokenWallPolygon
