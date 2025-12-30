@@ -179,7 +179,8 @@ function change_zoom(newZoom, x, y, reset = false) {
 		$("#scene_map")[0].scrollIntoView({
 			behavior: 'auto',
 			block: 'center',
-			inline: 'center'
+			inline: 'center',
+			container: 'nearest'
 		});		
 		if($('#hide_rightpanel').hasClass('point-right') && $('.ct-sidebar.ct-sidebar--hidden').length == 0)
 			$(window).scrollLeft(window.scrollX + 170); // 170 half of game log			
