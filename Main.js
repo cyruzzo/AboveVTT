@@ -176,13 +176,17 @@ function change_zoom(newZoom, x, y, reset = false) {
 	debounce_font_change();	
 	set_default_vttwrapper_size();
 	if(reset == true){
-		$("#scene_map")[0].scrollIntoView({
-			behavior: 'auto',
-			block: 'center',
-			inline: 'center'
-		});		
-		if($('#hide_rightpanel').hasClass('point-right') && $('.ct-sidebar.ct-sidebar--hidden').length == 0)
-			$(window).scrollLeft(window.scrollX + 170); // 170 half of game log			
+		//this was changed from scrollIntoView to calculate the center and scrollTo as if loaded in an iframe it would scroll the parent window in firefox
+		const sceneMap = $("#scene_map")[0];
+
+		const rect = sceneMap.getBoundingClientRect();
+		const sceneMapCenterX = Math.round(rect.left + rect.width / 2 + window.scrollX);
+		const sceneMapCenterY = Math.round(rect.top + rect.height / 2 + window.scrollY);
+		let scrollX = Math.max(0, sceneMapCenterX - Math.round(window.innerWidth / 2));
+		const scrollY = Math.max(0, sceneMapCenterY - Math.round(window.innerHeight / 2));
+		if ($('#hide_rightpanel').hasClass('point-right') && $('.ct-sidebar.ct-sidebar--hidden').length == 0)
+			scrollX += 170 // 170 half of game log		
+		window.scrollTo({ left: scrollX, top: scrollY, behavior: 'auto' });			
 	}
 
 
