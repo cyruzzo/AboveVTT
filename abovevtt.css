@@ -404,7 +404,7 @@ button .ddbc-tab-options__header-heading .menu-option{
     justify-content: center;
     width: 75px;
     top: 2px;
-    z-index: 57000;
+    z-index: 125000;
 }
 
 #scene_selector_toggle > span {
@@ -969,7 +969,7 @@ select#doorTypeSelectUVTT{
 }
 
 div#combat_button {
-    z-index: 57000;
+    z-index: 125000;
     position: fixed;
 }
 .ui-resizable-s{
@@ -1015,7 +1015,7 @@ ul.context-menu-list.context-menu-root{
 
 div.top_menu.visible,
 .ddbc-tab-options--layout-pill{
-    z-index: 57000;
+    z-index: 125000;
 }
 
 #scene_selector{
@@ -1646,7 +1646,7 @@ div#combat-tracker-settings form > div {
 #zoom_buttons {
     position: absolute;
     top: -3px;
-    z-index: 57000;
+    z-index: 125000;
     display: flex;
     flex-direction: row;
 }
@@ -2096,7 +2096,13 @@ input.menu-input.hpMenuInput[readonly]:focus  {
     height: 450px;
     left: 5px;
     top: 67px;
-    z-index: 56000;
+    z-index: 125000;
+}
+#noty_layout__bottomRight {
+    z-index: 128000 !important;
+}
+.dice-rolling-panel{
+    z-index: 130000 !important;
 }
 div#combat_button{
     top: 40px;
@@ -6172,6 +6178,7 @@ button.avtt-roll-button:has(button.avtt-roll-button) {
     font-size:unset;
     font-weight:unset;
 }
+
 .ct-sidebar__portal{
     overflow: unset !important;
     z-index: 57000 !important;
@@ -6423,7 +6430,7 @@ div#selectedTokensBorderRotationGrabberConnector,
 }
 .top_menu.visible,
 .ddbc-tab-options--layout-pill{
-    z-index: 57000;
+    z-index: 125000;
 }
 
 /*combat tracker face lift*/
