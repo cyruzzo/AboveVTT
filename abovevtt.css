@@ -361,8 +361,10 @@ button .ddbc-tab-options__header-heading .menu-option{
 
 .top_menu.visible {
     max-height: 100%;
-    overflow-y: auto;
     border: solid black 1px;
+    overflow: hidden auto;
+    height: calc(100% - 100px);
+    max-height: fit-content;
 }
 
 .body-rpgcharacter-sheet div.avtt-sidebar-controls {
