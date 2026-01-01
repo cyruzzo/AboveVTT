@@ -1807,7 +1807,7 @@ function build_sidebar_list_row(listItem) {
               create_token_inside(listItem, links[i].name, links[i].link, links[i].type, undefined, undefined, undefined, true);
             }   
             did_change_mytokens_items();       
-        }, 'multiple')
+        }, 'multiple', ['photo', '.webp'])
         oneDriveButton.toggleClass('token-row-button one-drive-button', true);
         oneDriveButton.attr('title', 'Create token from Onedrive'); 
         

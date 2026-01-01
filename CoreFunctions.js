@@ -1056,7 +1056,8 @@ function inject_dice(){
   const initialSetupTime = Date.now();
 
 
-  $('body .container').append(`
+  $('body #site').append(`
+    <div class='container'>
         <div id="encounter-builder-root" data-config="{&quot;assetBasePath&quot;:&quot;https://media.dndbeyond.com/encounter-builder&quot;,&quot;authUrl&quot;:&quot;https://auth-service.dndbeyond.com/v1/cobalt-token&quot;,&quot;campaignDetailsPageBaseUrl&quot;:&quot;https://www.dndbeyond.com/campaigns&quot;,&quot;campaignServiceUrlBase&quot;:&quot;https://www.dndbeyond.com/api/campaign&quot;,&quot;characterServiceUrlBase&quot;:&quot;https://character-service-scds.dndbeyond.com/v2/characters&quot;,&quot;diceApi&quot;:&quot;https://dice-service.dndbeyond.com&quot;,&quot;gameLogBaseUrl&quot;:&quot;https://www.dndbeyond.com&quot;,&quot;ddbApiUrl&quot;:&quot;https://api.dndbeyond.com&quot;,&quot;ddbBaseUrl&quot;:&quot;https://www.dndbeyond.com&quot;,&quot;ddbConfigUrl&quot;:&quot;https://www.dndbeyond.com/api/config/json&quot;,&quot;debug&quot;:false,&quot;encounterServiceUrl&quot;:&quot;https://encounter-service.dndbeyond.com/v1&quot;,&quot;featureFlagsDomain&quot;:&quot;https://api.dndbeyond.com&quot;,&quot;mediaBucket&quot;:&quot;https://media.dndbeyond.com&quot;,&quot;monsterServiceUrl&quot;:&quot;https://monster-service.dndbeyond.com/v1/Monster&quot;,&quot;sourceUrlBase&quot;:&quot;https://www.dndbeyond.com/sources/&quot;,&quot;subscriptionUrl&quot;:&quot;https://www.dndbeyond.com/subscribe&quot;,&quot;toastAutoDeleteInterval&quot;:3000000}" >
            <div class="dice-rolling-panel">
               <div class="dice-toolbar  ">
@@ -1124,7 +1125,7 @@ function inject_dice(){
               </div>
               <canvas class="dice-rolling-panel__container" width="1917" height="908" data-engine="Babylon.js v6.3.0" touch-action="none" tabindex="1" style="touch-action: none; -webkit-tap-highlight-color: transparent;"></canvas>
            </div>
-        </div>
+        </div> 
         <script src="https://media.dndbeyond.com/encounter-builder/static/js/main.221d749b.js"></script>
 
         <style>
@@ -1146,7 +1147,7 @@ function inject_dice(){
               pointer-events: all
           }
         </style>
-
+    </div>
   `);
  window.encounterObserver = new MutationObserver(function(mutationList, observer) {
 
@@ -1292,7 +1293,7 @@ function removeError() {
   delete window.logSnapshot;
 }
 
-function createCustomOnedriveChooser(text, callback = function(){}, selectionMode = 'single', selectionType = ['photo', 'video', '.webp']){
+function createCustomOnedriveChooser(text, callback = function(){}, selectionMode = 'single', selectionType = ['photo', '.webp']){
   let button = $(`<button class="launchPicker"><span class='onedrive-btn-status'></span>${text}</button>`);
   button.off('click.onedrive').on('click.onedrive', function(e){
     e.stopPropagation();
