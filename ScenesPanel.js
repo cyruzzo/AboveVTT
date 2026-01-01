@@ -3304,8 +3304,8 @@ async function create_scene_root_container(fullPath, parentId) {
 
 
 	const onedriveImport = await build_tutorial_import_list_item({
-		"title": "Onedrive Image or Video",
-		"description": "Build a scene using a Onedrive image or video file.",
+		"title": "Onedrive Image",
+		"description": "Build a scene using a Onedrive image file.",
 		"category": "Scenes",
 		"player_map": "",
 	}, `${window.EXTENSION_PATH}images/Onedrive_icon.svg`, false);
@@ -3319,7 +3319,7 @@ async function create_scene_root_container(fullPath, parentId) {
 		e.preventDefault();
     	launchPicker(e, function(files){
 			create_scene_inside(parentId, fullPath, files[0].name, files[0].link);
-		});
+		}, 'single', ['photo', '.webp']);
 	});
 
 

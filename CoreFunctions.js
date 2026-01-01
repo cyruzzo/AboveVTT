@@ -1292,7 +1292,7 @@ function removeError() {
   delete window.logSnapshot;
 }
 
-function createCustomOnedriveChooser(text, callback = function(){}, selectionMode = 'single', selectionType = ['photo', 'video', '.webp']){
+function createCustomOnedriveChooser(text, callback = function(){}, selectionMode = 'single', selectionType = ['photo', '.webp']){
   let button = $(`<button class="launchPicker"><span class='onedrive-btn-status'></span>${text}</button>`);
   button.off('click.onedrive').on('click.onedrive', function(e){
     e.stopPropagation();
