@@ -4,117 +4,127 @@
  */
 
 function initDmScreen() {
-    window.ScenesHandler.build_adventures(function () {
+   /* 
+   we can switch back to this when DDB fixes the owned content library filter
+   window.ScenesHandler.build_adventures(function () {
         buildDMScreen();
     });
+    */
+    buildDMScreen();
 }
 
 /**
  * Builds the DM Screen UI
  */
 
-function buildDMScreen() {
+async function buildDMScreen(container) {
     console.log("initDmScreen called");
-    console.log(window.ScenesHandler.sources);
     // Check if the DnD 2024 DMG is owned
-    const dmg2024Owned = window.ScenesHandler.sources["dnd/dmg-2024"] !== undefined;
-
-    let cont = $(`<div id='dmScreenContainer'>
-            <div class='dmScreenheader'>
-                <h1 class='dmScreenTitle'>
-                    Actions <span>▼</span>
-                </h1>
-                <div class='dmScreenDropdown' style='display: none;'>
-                    <div class='dmScreenDropdownItem' data-block='actions'>Actions</div>
-                    ${dmg2024Owned ? `<div class='dmScreenDropdownItem' data-block='bastion'>Bastions</div>` : ""}
-                    <div class='dmScreenDropdownItem' data-block='conditions'>Conditions</div>
-                    <div class='dmScreenDropdownItem' data-block='damage'>Improvising Objects and Damage</div>
-                    <div class='dmScreenDropdownItem' data-block='names'>Name Improvisation</div>
-                    <div class='dmScreenDropdownItem' data-block='services'>Services</div>
-                    <div class='dmScreenDropdownItem' data-block='skills'>Skills and Mechanics</div>
-                    <div class='dmScreenDropdownItem' data-block='spellcasting'>Spellcasting</div>
-                    <div class='dmScreenDropdownItem' data-block='travel'>Travel</div>
-                    <div class='dmScreenDropdownItem' data-block='weapons'>Weapons</div>
+    let dmg2024Owned = false;
+    await fetch_tooltip([undefined, "https://www.dndbeyond.com/sources/dnd/dmg-2024/the-basics#WhatDoesaDMDo"], 'DMG_OWNED', function(data){
+        dmg2024Owned = data.Tooltip.length>0;
+        if (container){
+            let cont = $(`
+            <div id='dmScreenContainer'>
+                <div class='dmScreenheader'>
+                    <h1 class='dmScreenTitle'>
+                        Actions <span>▼</span>
+                    </h1>
+                    <div class='dmScreenDropdown' style='display: none;'>
+                        <div class='dmScreenDropdownItem' data-block='actions'>Actions</div>
+                        ${dmg2024Owned ? `<div class='dmScreenDropdownItem' data-block='bastion'>Bastions</div>` : ""}
+                        <div class='dmScreenDropdownItem' data-block='conditions'>Conditions</div>
+                        <div class='dmScreenDropdownItem' data-block='damage'>Improvising Objects and Damage</div>
+                        <div class='dmScreenDropdownItem' data-block='names'>Name Improvisation</div>
+                        <div class='dmScreenDropdownItem' data-block='services'>Services</div>
+                        <div class='dmScreenDropdownItem' data-block='skills'>Skills and Mechanics</div>
+                        <div class='dmScreenDropdownItem' data-block='spellcasting'>Spellcasting</div>
+                        <div class='dmScreenDropdownItem' data-block='travel'>Travel</div>
+                        <div class='dmScreenDropdownItem' data-block='weapons'>Weapons</div>
+                    </div>
+                </div>
+                <div id='dmScreenBlocks'>
+                    
                 </div>
             </div>
-			<div id='dmScreenBlocks'>
-				
-			</div>
-		</div>`);
+		    `);
+            container.append(cont);
+            const dmScreenBlocks = $("#dmScreenBlocks");
 
-    $(window.document.body).append(cont);
+            // Set up dropdown functionality
+            $('.dmScreenTitle').click(function (e) {
+                e.stopPropagation();
+                $('.dmScreenDropdown').toggle();
+                updatePopoutWindow("DM Screen", $("#dmScreenContainer"));
+            });
 
-    const dmScreenBlocks = $("#dmScreenBlocks");
+            // Close dropdown when clicking outside
+            $(document).click(function () {
+                $('.dmScreenDropdown').hide();
+                updatePopoutWindow("DM Screen", $("#dmScreenContainer"));
+            });
 
-    // Set up dropdown functionality
-    $('.dmScreenTitle').click(function (e) {
-        e.stopPropagation();
-        $('.dmScreenDropdown').toggle();
-    });
+            // Prevent dropdown from closing when clicking inside it
+            $('.dmScreenDropdown').click(function (e) {
+                e.stopPropagation();
+            });
 
-    // Close dropdown when clicking outside
-    $(document).click(function () {
-        $('.dmScreenDropdown').hide();
-    });
+            // Handle dropdown item selection
+            $('.dmScreenDropdownItem').click(function () {
+                const blockType = $(this).attr('data-block');
+                const blockTitle = $(this).text();
 
-    // Prevent dropdown from closing when clicking inside it
-    $('.dmScreenDropdown').click(function (e) {
-        e.stopPropagation();
-    });
+                $('.dmScreenTitle').html(`${blockTitle} <span>▼</span>`);
+                $('.dmScreenDropdown').hide();
 
-    // Handle dropdown item selection
-    $('.dmScreenDropdownItem').click(function () {
-        const blockType = $(this).attr('data-block');
-        const blockTitle = $(this).text();
+                // Clear current blocks and load the selected one
+                dmScreenBlocks.empty();
+                switch (blockType) {
+                    case 'conditions':
+                        dmScreenBlocks.append(buildConditionsBlock());
+                        break;
+                    case 'damage':
+                        dmScreenBlocks.append(buildDamageImprovisationBlock());
+                        break;
+                    case 'actions':
+                        dmScreenBlocks.append(buildActionsBlock());
+                        break;
+                    case 'skills':
+                        dmScreenBlocks.append(buildSkillsAndMechanicsBlock(dmg2024Owned));
+                        break;
+                    case 'travel':
+                        dmScreenBlocks.append(buildTravelBlock());
+                        break;
+                    case 'names':
+                        dmScreenBlocks.append(buildNameImprovisationBlock());
+                        break;
+                    case 'spellcasting':
+                        dmScreenBlocks.append(buildSpellcastingBlock());
+                        break;
+                    case 'weapons':
+                        dmScreenBlocks.append(buildWeaponsBlock());
+                        break;
+                    case 'services':
+                        dmScreenBlocks.append(buildServicesBlock());
+                        break;
+                    case 'bastion':
+                        dmScreenBlocks.append(buildBastionBlock());
+                        break;
+                }
+                updatePopoutWindow("DM Screen", $("#dmScreenContainer"));
+            });
 
-        $('.dmScreenTitle').html(`${blockTitle} <span>▼</span>`);
-        $('.dmScreenDropdown').hide();
+            // Load initial block
+            dmScreenBlocks.append(buildActionsBlock());
+            container.show();
 
-        // Clear current blocks and load the selected one
-        dmScreenBlocks.empty();
-        switch (blockType) {
-            case 'conditions':
-                dmScreenBlocks.append(buildConditionsBlock());
-                break;
-            case 'damage':
-                dmScreenBlocks.append(buildDamageImprovisationBlock());
-                break;
-            case 'actions':
-                dmScreenBlocks.append(buildActionsBlock());
-                break;
-            case 'skills':
-                dmScreenBlocks.append(buildSkillsAndMechanicsBlock(dmg2024Owned));
-                break;
-            case 'travel':
-                dmScreenBlocks.append(buildTravelBlock());
-                break;
-            case 'names':
-                dmScreenBlocks.append(buildNameImprovisationBlock());
-                break;
-            case 'spellcasting':
-                dmScreenBlocks.append(buildSpellcastingBlock());
-                break;
-            case 'weapons':
-                dmScreenBlocks.append(buildWeaponsBlock());
-                break;
-            case 'services':
-                dmScreenBlocks.append(buildServicesBlock());
-                break;
-            case 'bastion':
-                dmScreenBlocks.append(buildBastionBlock());
-                break;
         }
-    });
 
-    // Load initial block
-    dmScreenBlocks.append(buildActionsBlock());
+       
+     
+    })
+    
 
-    // Handle Escape key to hide dmScreenContainer
-    $(document).on('keydown', function (e) {
-        if (e.key === 'Escape' && $('#dmScreenContainer').is(':visible')) {
-            $('#dmScreenContainer').hide();
-        }
-    });
 }
 
 /**
@@ -407,7 +417,7 @@ function buildDamageImprovisationBlock() {
     ];
 
     const objectHPData = [
-        { size: "Tiny", fragilehp: "2 (1d4)", resilienthp: "5 (2d4)" },
+        { size: "Tiny", fragilehp: "2 (1d4)",   lienthp: "5 (2d4)" },
         { size: "Small", fragilehp: "3 (1d6)", resilienthp: "10 (3d6)" },
         { size: "Medium", fragilehp: "4 (1d8)", resilienthp: "18 (4d8)" },
         { size: "Large", fragilehp: "5 (1d10)", resilienthp: "27 (5d10)" },
