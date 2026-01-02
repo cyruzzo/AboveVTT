@@ -382,7 +382,27 @@ function handle_menu_number_press(e) {
 Mousetrap.bind(["1","2","3","4","5","6","7","8","9"], function (e) {
     handle_menu_number_press(e)
 });*/
-
+Mousetrap.bind('b', function () {       //zoom plus
+    if(shiftHeld)
+        return;
+    open_selected_token_stat();
+});
+Mousetrap.bind('shift+b', function () {       //zoom plus
+    popout_all_selected_token_stat();
+});
+Mousetrap.bind('h', function () {       //zoom plus
+    const selectedTokens = window.CURRENTLY_SELECTED_TOKENS;
+    const className = determine_hidden_classname(selectedTokens);
+    const hideAll = className.includes('some-active');
+    for(let id of selectedTokens){
+        const token = window.TOKEN_OBJECTS[id];
+        if (hideAll || token.options.hidden !== true) {
+            token.hide();
+        } else {
+            token.show();
+        }
+    }
+}); 
 Mousetrap.bind('+', function () {       //zoom plus
     if($('.roll-mod-container').hasClass('show')){
         $('.roll-button-mod.plus').click();
