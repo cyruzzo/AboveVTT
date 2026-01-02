@@ -4,22 +4,27 @@
  */
 
 function initDmScreen() {
-    window.ScenesHandler.build_adventures(function () {
+   /* 
+   we can switch back to this when DDB fixes the owned content library filter
+   window.ScenesHandler.build_adventures(function () {
         buildDMScreen();
     });
+    */
+    buildDMScreen();
 }
 
 /**
  * Builds the DM Screen UI
  */
 
-function buildDMScreen() {
+async function buildDMScreen() {
     console.log("initDmScreen called");
-    console.log(window.ScenesHandler.sources);
     // Check if the DnD 2024 DMG is owned
-    const dmg2024Owned = window.ScenesHandler.sources["dnd/dmg-2024"] !== undefined;
+    let dmg2024Owned = false;
+    await fetch_tooltip([undefined, "https://www.dndbeyond.com/sources/dnd/dmg-2024/the-basics#WhatDoesaDMDo"], 'DMG_OWNED', function(data){
+        dmg2024Owned = data.Tooltip && data.Tooltip.length>0;
 
-    let cont = $(`<div id='dmScreenContainer'>
+        let cont = $(`<div id='dmScreenContainer'>
             <div class='dmScreenheader'>
                 <h1 class='dmScreenTitle'>
                     Actions <span>▼</span>
@@ -42,79 +47,82 @@ function buildDMScreen() {
 			</div>
 		</div>`);
 
-    $(window.document.body).append(cont);
+        $(window.document.body).append(cont);
 
-    const dmScreenBlocks = $("#dmScreenBlocks");
+        const dmScreenBlocks = $("#dmScreenBlocks");
 
-    // Set up dropdown functionality
-    $('.dmScreenTitle').click(function (e) {
-        e.stopPropagation();
-        $('.dmScreenDropdown').toggle();
-    });
+        // Set up dropdown functionality
+        $('.dmScreenTitle').click(function (e) {
+            e.stopPropagation();
+            $('.dmScreenDropdown').toggle();
+        });
 
-    // Close dropdown when clicking outside
-    $(document).click(function () {
-        $('.dmScreenDropdown').hide();
-    });
+        // Close dropdown when clicking outside
+        $(document).click(function () {
+            $('.dmScreenDropdown').hide();
+        });
 
-    // Prevent dropdown from closing when clicking inside it
-    $('.dmScreenDropdown').click(function (e) {
-        e.stopPropagation();
-    });
+        // Prevent dropdown from closing when clicking inside it
+        $('.dmScreenDropdown').click(function (e) {
+            e.stopPropagation();
+        });
 
-    // Handle dropdown item selection
-    $('.dmScreenDropdownItem').click(function () {
-        const blockType = $(this).attr('data-block');
-        const blockTitle = $(this).text();
+        // Handle dropdown item selection
+        $('.dmScreenDropdownItem').click(function () {
+            const blockType = $(this).attr('data-block');
+            const blockTitle = $(this).text();
 
-        $('.dmScreenTitle').html(`${blockTitle} <span>▼</span>`);
-        $('.dmScreenDropdown').hide();
+            $('.dmScreenTitle').html(`${blockTitle} <span>▼</span>`);
+            $('.dmScreenDropdown').hide();
 
-        // Clear current blocks and load the selected one
-        dmScreenBlocks.empty();
-        switch (blockType) {
-            case 'conditions':
-                dmScreenBlocks.append(buildConditionsBlock());
-                break;
-            case 'damage':
-                dmScreenBlocks.append(buildDamageImprovisationBlock());
-                break;
-            case 'actions':
-                dmScreenBlocks.append(buildActionsBlock());
-                break;
-            case 'skills':
-                dmScreenBlocks.append(buildSkillsAndMechanicsBlock(dmg2024Owned));
-                break;
-            case 'travel':
-                dmScreenBlocks.append(buildTravelBlock());
-                break;
-            case 'names':
-                dmScreenBlocks.append(buildNameImprovisationBlock());
-                break;
-            case 'spellcasting':
-                dmScreenBlocks.append(buildSpellcastingBlock());
-                break;
-            case 'weapons':
-                dmScreenBlocks.append(buildWeaponsBlock());
-                break;
-            case 'services':
-                dmScreenBlocks.append(buildServicesBlock());
-                break;
-            case 'bastion':
-                dmScreenBlocks.append(buildBastionBlock());
-                break;
-        }
-    });
+            // Clear current blocks and load the selected one
+            dmScreenBlocks.empty();
+            switch (blockType) {
+                case 'conditions':
+                    dmScreenBlocks.append(buildConditionsBlock());
+                    break;
+                case 'damage':
+                    dmScreenBlocks.append(buildDamageImprovisationBlock());
+                    break;
+                case 'actions':
+                    dmScreenBlocks.append(buildActionsBlock());
+                    break;
+                case 'skills':
+                    dmScreenBlocks.append(buildSkillsAndMechanicsBlock(dmg2024Owned));
+                    break;
+                case 'travel':
+                    dmScreenBlocks.append(buildTravelBlock());
+                    break;
+                case 'names':
+                    dmScreenBlocks.append(buildNameImprovisationBlock());
+                    break;
+                case 'spellcasting':
+                    dmScreenBlocks.append(buildSpellcastingBlock());
+                    break;
+                case 'weapons':
+                    dmScreenBlocks.append(buildWeaponsBlock());
+                    break;
+                case 'services':
+                    dmScreenBlocks.append(buildServicesBlock());
+                    break;
+                case 'bastion':
+                    dmScreenBlocks.append(buildBastionBlock());
+                    break;
+            }
+        });
 
-    // Load initial block
-    dmScreenBlocks.append(buildActionsBlock());
+        // Load initial block
+        dmScreenBlocks.append(buildActionsBlock());
 
-    // Handle Escape key to hide dmScreenContainer
-    $(document).on('keydown', function (e) {
-        if (e.key === 'Escape' && $('#dmScreenContainer').is(':visible')) {
-            $('#dmScreenContainer').hide();
-        }
-    });
+        // Handle Escape key to hide dmScreenContainer
+        $(document).on('keydown', function (e) {
+            if (e.key === 'Escape' && $('#dmScreenContainer').is(':visible')) {
+                $('#dmScreenContainer').hide();
+            }
+        });
+    })
+    
+
 }
 
 /**
