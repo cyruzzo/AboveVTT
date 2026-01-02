@@ -784,6 +784,72 @@ function should_use_iframes_for_monsters() {
 	return window.fetchMonsterStatBlocks;
 }
 
+async function popout_all_selected_token_stat(){
+	const selectedTokens = window.CURRENTLY_SELECTED_TOKENS;
+	if(!selectedTokens || selectedTokens.length < 1)
+		return;
+	for(let id of selectedTokens){
+		let container;
+		const token = window.TOKEN_OBJECTS[id];
+		if(token.isPlayer()){
+			continue;
+		}
+		if (token.options.statBlock) {
+			let customStatBlock = window.JOURNAL.notes[token.options.statBlock].text;
+			let pcURL = $(customStatBlock).find('.custom-pc-sheet.custom-stat').text();
+			if (pcURL) {
+				continue;
+			} 
+			container = await load_monster_stat(undefined, token.options.id, customStatBlock);
+		}
+		else if(token.options.monster){
+			container = await load_monster_stat(token.options.monster, token.options.id);
+		}
+		const windowName = `${token.options.name}_${token.options.id}`.replaceAll(/(\r\n|\n|\r)/gi, "").trim();
+		popoutWindow(windowName, container.find(".avtt-stat-block-container"));
+		$(window.childWindows[windowName].document).find(".avtt-roll-button").on("contextmenu", function (contextmenuEvent) {
+			$(window.childWindows[windowName].document).find("body").append($("div[role='presentation']").clone(true, true));
+			let popoutContext = $(window.childWindows[windowName].document).find(".dcm-container");
+			let maxLeft = window.childWindows[windowName].innerWidth - popoutContext.width();
+			let maxTop = window.childWindows[windowName].innerHeight - popoutContext.height();
+			if (parseInt(popoutContext.css("left")) > maxLeft) {
+				popoutContext.css("left", maxLeft)
+			}
+			if (parseInt(popoutContext.css("top")) > maxTop) {
+				popoutContext.css("top", maxTop)
+			}
+			$(window.childWindows[windowName].document).find("div[role='presentation']").on("click", function (clickEvent) {
+				$(window.childWindows[windowName].document).find("div[role='presentation']").remove();
+			});
+			$(".dcm-backdrop").remove();
+		});
+		close_player_monster_stat_block();
+	}
+}
+function open_selected_token_stat() {
+	const selectedTokens = window.CURRENTLY_SELECTED_TOKENS;
+	if (!selectedTokens || selectedTokens.length < 1)
+		return;
+
+	const token = window.TOKEN_OBJECTS[selectedTokens[0]];
+	if (token.isPlayer()) {
+		open_player_sheet(token.options.sheet, undefined, token.options.name);
+	}
+	else if (token.options.statBlock) {
+		let customStatBlock = window.JOURNAL.notes[token.options.statBlock].text;
+		let pcURL = $(customStatBlock).find('.custom-pc-sheet.custom-stat').text();
+		if (pcURL) {
+			open_player_sheet(pcURL, undefined, token.options.name);
+		}
+		else{
+			load_monster_stat(undefined, token.options.id, customStatBlock);
+		}
+	}
+	else if (token.options.monster) {
+		load_monster_stat(token.options.monster, token.options.id);
+	}
+}
+
 /**
  * Loads and displays a monster stats block
  * @param {Number} monsterId given monster ID
@@ -791,30 +857,31 @@ function should_use_iframes_for_monsters() {
  */
 function load_monster_stat(monsterId, tokenId, customStatBlock=undefined) {
 	if(customStatBlock){
-		let container = build_draggable_monster_window();
+		let container = build_draggable_monster_window(tokenId);
 		display_stat_block_in_container(customStatBlock, container, tokenId, customStatBlock);
 		$(".sidebar-panel-loading-indicator").remove();
 		container.attr('data-name', window.all_token_objects[tokenId].options.name);
-		return;
+		return container;
 	}
 	if(window.all_token_objects[tokenId].options.monster == 'open5e'){
-		let container = build_draggable_monster_window();
+		let container = build_draggable_monster_window(tokenId);
 		build_and_display_stat_block_with_id(window.all_token_objects[tokenId].options.stat, container, tokenId, function () {
 			$(".sidebar-panel-loading-indicator").remove();
 			container.attr('data-name', window.all_token_objects[tokenId].options.name);
 		}, true);
 
-		return;
+		return container;
 	}
 	if (should_use_iframes_for_monsters()) {
 		load_monster_stat_iframe(monsterId, tokenId);
-		return;
+		return container;
 	}
-	let container = build_draggable_monster_window();
+	let container = build_draggable_monster_window(tokenId);
 	build_and_display_stat_block_with_id(monsterId, container, tokenId, function () {
 		$(".sidebar-panel-loading-indicator").remove();
 		container.attr('data-name', window.all_token_objects[tokenId].options.name);
 	});
+	return container;
 }
 
 function load_monster_stat_iframe(monsterId, tokenId) {
@@ -1023,7 +1090,7 @@ function load_monster_stat_iframe(monsterId, tokenId) {
 	minimize_player_monster_window_double_click($("#resizeDragMon"));
 }
 
-function build_draggable_monster_window() {
+function build_draggable_monster_window(tokenId) {
 
 	$("#resizeDragMon").append(build_combat_tracker_loading_indicator())
 	let container = $("<div id='resizeDragMon'/>");
@@ -1036,7 +1103,7 @@ function build_draggable_monster_window() {
 	container.resize(function(e) {
 		e.stopPropagation();
 	});
-
+	const token = window.TOKEN_OBJECTS[tokenId];
 	if(!$("#site #resizeDragMon").length>0){
 		$("#site").prepend(container);
 	}
@@ -1054,21 +1121,21 @@ function build_draggable_monster_window() {
 		$("#resizeDragMon").append(monster_popout_button);
 		monster_popout_button.click(function() {
 			let name = $("#resizeDragMon .avtt-stat-block-container .mon-stat-block__name-link").text();
-			popoutWindow(name, $("#resizeDragMon .avtt-stat-block-container"));
-			name = name.replace(/(\r\n|\n|\r)/gm, "").trim();
-			$(window.childWindows[name].document).find(".avtt-roll-button").on("contextmenu", function (contextmenuEvent) {
-				$(window.childWindows[name].document).find("body").append($("div[role='presentation']").clone(true, true));
-				let popoutContext = $(window.childWindows[name].document).find(".dcm-container");
-				let maxLeft = window.childWindows[name].innerWidth - popoutContext.width();
-				let maxTop =  window.childWindows[name].innerHeight - popoutContext.height();
+			const windowName = `${token?.options?.name ? token.options.name : name}_${tokenId ? tokenId : ''}`.replaceAll(/(\r\n|\n|\r)/gi, "").trim();
+			popoutWindow(windowName, $("#resizeDragMon .avtt-stat-block-container"));
+			$(window.childWindows[windowName].document).find(".avtt-roll-button").on("contextmenu", function (contextmenuEvent) {
+				$(window.childWindows[windowName].document).find("body").append($("div[role='presentation']").clone(true, true));
+				let popoutContext = $(window.childWindows[windowName].document).find(".dcm-container");
+				let maxLeft = window.childWindows[windowName].innerWidth - popoutContext.width();
+				let maxTop = window.childWindows[windowName].innerHeight - popoutContext.height();
 				if(parseInt(popoutContext.css("left")) > maxLeft){
 					popoutContext.css("left", maxLeft)
 				}
 				if(parseInt(popoutContext.css("top")) > maxTop){
 					popoutContext.css("top", maxTop)
 				}
-				$(window.childWindows[name].document).find("div[role='presentation']").on("click", function (clickEvent) {
-           			 $(window.childWindows[name].document).find("div[role='presentation']").remove();
+				$(window.childWindows[windowName].document).find("div[role='presentation']").on("click", function (clickEvent) {
+					$(window.childWindows[windowName].document).find("div[role='presentation']").remove();
         		});
 				$(".dcm-backdrop").remove();
 			});
@@ -1726,6 +1793,7 @@ function open_player_sheet(sheet_url, closeIfOpen = true, playerName = '') {
 	}
 	console.log("open_player_sheet"+sheet_url);
 
+	
 	close_player_sheet(); // always close before opening
 
 	let container = $("#sheet");
@@ -1886,6 +1954,7 @@ function open_player_sheet(sheet_url, closeIfOpen = true, playerName = '') {
 		iframe.attr('data-changed','false');
 		iframe.attr('src', function(i, val) { return val; });
 	}
+	return container;
 }
 
 /**
@@ -3155,6 +3224,18 @@ function init_help_menu() {
 						<dl>
 							<dt>Hold ${getModKeyName()} while using most tools</dt>
 							<dd>Temporary toggle snap tools to grid on/off (opposite of the toggle set). This includes drawings from most menus - fog, draw, light, walls etc.</dd>
+						</dl>
+						<dl>
+							<dt>B</dt>
+							<dd>Open selected token statblock</dd>
+						</dl>
+						<dl>
+							<dt>${getShiftKeyName()}+B</dt>
+							<dd>Popout selected token(s) statblocks. (Only works for statblocks that allow popout)</dd>
+						</dl>
+						<dl>
+							<dt>H</dt>
+							<dd>Hide/unhide selected tokens.</dd>
 						</dl>
 						<dl>
 							<dt>${getShiftKeyName()}+Click Token</dt>
