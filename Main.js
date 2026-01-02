@@ -2672,12 +2672,13 @@ function init_zoom_buttons() {
 			`);
 		dm_screen_button.click(function (event) {
 			console.log("dm_screen_button", event);
-			const dmScreenContainer = $("#dmScreenContainer");
-			const containerVisibility = dmScreenContainer.css('display');
-			if(containerVisibility === 'none'){
-				dmScreenContainer.show();
-			}else{
-				dmScreenContainer.hide();
+			const dmScreen = $(`#dmScreenDragContainer`);
+			if (dmScreen.length > 0){
+				dmScreen.show();
+			}
+			else{
+				const dmScreenContainer = find_or_create_generic_draggable_window("dmScreenDragContainer", "DM Screen", false, true, '#dmScreenContainer', '90%', '90%', '5%', '5%', false)
+				buildDMScreen(dmScreenContainer);
 			}
 		});
 		zoom_section.append(dm_screen_button);

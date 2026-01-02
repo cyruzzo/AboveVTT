@@ -143,7 +143,7 @@ button.daylight span.material-symbols-outlined {
     left: -2%;
     width: 104%;
     height: 104%;
-    z-index: 70000;
+    z-index: 170000;
     background-color: #26282a;
 }
 #loading_overlay_bg {
@@ -3238,25 +3238,22 @@ body .note-visibility-toggle-container {
 }
 
 #dmScreenContainer {
-    position: fixed;
-    top: 30px;
-    left: 30px;
-    margin: auto;
-    overflow:auto;
-    height: calc(100% - 40px);
-    text-align:center;
-    z-index: 70001;
-    border: 3px solid black;
-    border-radius: 8px;
+    overflow: hidden;
+    height: calc(100% - 35px);
+    width: calc(100% + 2px);
+    left: -1px;
+    border: 1px solid #ddd;
+    text-align: center;
+    border: 1px solid #ddd;
+    border-radius: 0px 0px 10px 10px;
     padding: 10px;
-    width: calc(100% - 400px);
-    display: none;
-    background-color: #FCFBF9;
-    -webkit-user-select: text;
-    -ms-user-select: text;
-    user-select: text;
+    position: relative;
+    top: -5px;
+    background: var(--background-color, #F9F8F3);
     .dmScreenheader{
-        position: relative;
+        position: sticky;
+        top: 0px;
+        background: var(--background-color, #F9F8F3);
         .dmScreenTitle {
             cursor: pointer;
             span {
@@ -3268,6 +3265,7 @@ body .note-visibility-toggle-container {
         font-size: 24px;
     }
     table {
+        font-size: 12px;
         tr:nth-child(odd) {
             background-color: #F1EBDD;
         }
@@ -3291,7 +3289,11 @@ body .note-visibility-toggle-container {
             background-color: rgb(255, 255, 255);
         }
     }
-    .dmScreenBlock {
+    #dmScreenBlocks {
+        overflow: auto;
+        height: calc(100% - 26px);
+    }
+    .dmScreenBlock { 
         h1 {
             font-size: 20px;
         }
