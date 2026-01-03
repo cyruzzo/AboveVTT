@@ -1116,32 +1116,33 @@ function build_draggable_monster_window(tokenId) {
 			close_player_monster_stat_block();
 		});
 	}
-	if($("#resizeDragMon .popout-button").length==0){
-		const monster_popout_button=$('<div class="popout-button"><svg xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 0 24 24" width="18px" fill="#000000"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M18 19H6c-.55 0-1-.45-1-1V6c0-.55.45-1 1-1h5c.55 0 1-.45 1-1s-.45-1-1-1H5c-1.11 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-6c0-.55-.45-1-1-1s-1 .45-1 1v5c0 .55-.45 1-1 1zM14 4c0 .55.45 1 1 1h2.59l-9.13 9.13c-.39.39-.39 1.02 0 1.41.39.39 1.02.39 1.41 0L19 6.41V9c0 .55.45 1 1 1s1-.45 1-1V4c0-.55-.45-1-1-1h-5c-.55 0-1 .45-1 1z"/></svg></div>')
-		$("#resizeDragMon").append(monster_popout_button);
-		monster_popout_button.click(function() {
-			let name = $("#resizeDragMon .avtt-stat-block-container .mon-stat-block__name-link").text();
-			const windowName = `${token?.options?.name ? token.options.name : name}_${tokenId ? tokenId : ''}`.replaceAll(/(\r\n|\n|\r)/gi, "").trim();
-			popoutWindow(windowName, $("#resizeDragMon .avtt-stat-block-container"));
-			$(window.childWindows[windowName].document).find(".avtt-roll-button").on("contextmenu", function (contextmenuEvent) {
-				$(window.childWindows[windowName].document).find("body").append($("div[role='presentation']").clone(true, true));
-				let popoutContext = $(window.childWindows[windowName].document).find(".dcm-container");
-				let maxLeft = window.childWindows[windowName].innerWidth - popoutContext.width();
-				let maxTop = window.childWindows[windowName].innerHeight - popoutContext.height();
-				if(parseInt(popoutContext.css("left")) > maxLeft){
-					popoutContext.css("left", maxLeft)
-				}
-				if(parseInt(popoutContext.css("top")) > maxTop){
-					popoutContext.css("top", maxTop)
-				}
-				$(window.childWindows[windowName].document).find("div[role='presentation']").on("click", function (clickEvent) {
-					$(window.childWindows[windowName].document).find("div[role='presentation']").remove();
-        		});
-				$(".dcm-backdrop").remove();
-			});
-			monster_close_title_button.click();
-		});
+	let popoutButton = $("#resizeDragMon .popout-button");
+	if (popoutButton.length==0){
+		popoutButton =$('<div class="popout-button"><svg xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 0 24 24" width="18px" fill="#000000"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M18 19H6c-.55 0-1-.45-1-1V6c0-.55.45-1 1-1h5c.55 0 1-.45 1-1s-.45-1-1-1H5c-1.11 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-6c0-.55-.45-1-1-1s-1 .45-1 1v5c0 .55-.45 1-1 1zM14 4c0 .55.45 1 1 1h2.59l-9.13 9.13c-.39.39-.39 1.02 0 1.41.39.39 1.02.39 1.41 0L19 6.41V9c0 .55.45 1 1 1s1-.45 1-1V4c0-.55-.45-1-1-1h-5c-.55 0-1 .45-1 1z"/></svg></div>')
+		$("#resizeDragMon").append(popoutButton);
 	}
+	popoutButton.off('click.popout').on('click.popout', function() {
+		let name = $("#resizeDragMon .avtt-stat-block-container .mon-stat-block__name-link").text();
+		const windowName = `${token?.options?.name ? token.options.name : name}_${tokenId ? tokenId : ''}`.replaceAll(/(\r\n|\n|\r)/gi, "").trim();
+		popoutWindow(windowName, $("#resizeDragMon .avtt-stat-block-container"));
+		$(window.childWindows[windowName].document).find(".avtt-roll-button").on("contextmenu", function (contextmenuEvent) {
+			$(window.childWindows[windowName].document).find("body").append($("div[role='presentation']").clone(true, true));
+			let popoutContext = $(window.childWindows[windowName].document).find(".dcm-container");
+			let maxLeft = window.childWindows[windowName].innerWidth - popoutContext.width();
+			let maxTop = window.childWindows[windowName].innerHeight - popoutContext.height();
+			if(parseInt(popoutContext.css("left")) > maxLeft){
+				popoutContext.css("left", maxLeft)
+			}
+			if(parseInt(popoutContext.css("top")) > maxTop){
+				popoutContext.css("top", maxTop)
+			}
+			$(window.childWindows[windowName].document).find("div[role='presentation']").on("click", function (clickEvent) {
+				$(window.childWindows[windowName].document).find("div[role='presentation']").remove();
+			});
+			$(".dcm-backdrop").remove();
+		});
+		monster_close_title_button.click();
+	});
 	$("#resizeDragMon").addClass("moveableWindow");
 	if(!$("#resizeDragMon").hasClass("minimized")) {
 		$("#resizeDragMon").addClass("restored");
