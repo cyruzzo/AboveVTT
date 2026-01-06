@@ -1672,6 +1672,7 @@ class MessageBroker {
 			else{
 				window.DRAWINGS = [];
 				window.wallUndo = [];
+				window.visionBlockingTokenCache = {};
 				$('#exploredCanvas').remove();
 				window.sceneRequestTime = Date.now();
 		    	let lastSceneRequestTime = window.sceneRequestTime;   
@@ -2135,7 +2136,20 @@ class MessageBroker {
 			
 		if (data.id in window.TOKEN_OBJECTS) {
 
+			if(window.visionBlockingTokenCache?.[data.id] != undefined){
+				
+				const wallType = window.TOKEN_OBJECTS[data.id]?.options?.tokenWall;
+				const dataWall = data.tokenWall;
 
+				const wallOptions = window.TOKEN_OBJECTS[data.id]?.options?.tokenWallPoly;
+				const relativePoints = wallOptions?.relativePoints;
+
+				const dataWallPoints = data.tokenWallPoly?.relativePoints;
+
+				if(window.TOKEN_OBJECTS[data.id] == undefined || dataWall == undefined || dataWall == false || (wallType != dataWall) || relativePoints?.[0] != dataWallPoints?.[0]){
+					delete window.visionBlockingTokenCache[data.id];
+				}
+			}
 			for (let property in data) {
 				if(msg.sceneId != window.CURRENT_SCENE_DATA.id && (property == "left" || property == "top" || property == "hidden" || property == "scaleCreated"))
 					continue;	
@@ -2160,6 +2174,24 @@ class MessageBroker {
 			if(data.groupId == undefined){
 				delete window.TOKEN_OBJECTS[data.id].options.groupId;
 				delete window.all_token_objects[data.id].options.groupId;
+			}
+			if(data.tokenWallPoly == undefined){
+				delete window.TOKEN_OBJECTS[data.id].options.tokenWallPoly;
+				delete window.all_token_objects[data.id].options.tokenWallPoly;
+			}
+			if(window.visionBlockingTokenCache?.[data.id] != undefined){
+				
+				const wallType = window.TOKEN_OBJECTS[data.id]?.options?.tokenWall;
+				const dataWall = data.tokenWall;
+
+				const wallOptions = window.TOKEN_OBJECTS[data.id]?.options?.tokenWallPoly;
+				const relativePoints = wallOptions?.relativePoints;
+
+				const dataWallPoints = data.tokenWallPoly?.relativePoints;
+
+				if(window.TOKEN_OBJECTS[data.id] == undefined || dataWall == undefined || dataWall == false || (wallType != dataWall) || relativePoints?.[0] != dataWallPoints?.[0]){
+					delete window.visionBlockingTokenCache[data.id];
+				}
 			}
 			let selector = "div[data-id='" + data.id + "']";
 			let token = $("#tokens").find(selector);

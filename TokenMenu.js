@@ -3624,6 +3624,9 @@ function build_adjustments_flyout_menu(tokenIds) {
 			let inputWrapper = build_dropdown_input(setting, currentValue, function(name, newValue) {
 				tokens.forEach(token => {
 					token.options[name] = newValue;
+					if (name == 'tokenWall' && window.visionBlockingTokenCache?.[token.options.id] != undefined){
+						delete window.visionBlockingTokenCache[token.options.id];
+					}
 					token.place_sync_persist();
 				});
 				if(setting.name =='tokenStyleSelect'){		
@@ -3664,16 +3667,19 @@ function build_adjustments_flyout_menu(tokenIds) {
 				const polyButton = $(`<button class="token-wall-poly-button material-icons ${typeof currentValue === 'string' && currentValue.includes('poly') ? 'visible' : ''}" title="Edit Token Wall Polygon">${!window.TOKEN_OBJECTS[tokenIds].options.tokenWallPoly ? "Draw" : "Delete"} Token Wall Polygon</button>`);
 				polyButton.off('click').on('click', function(){
 					let clickedItem = $(this);
-					if (window.TOKEN_OBJECTS[tokenIds].options.tokenWallPoly == undefined) {
-						window.drawingTokenWallTokenId = tokenIds[0];
+					const tokenId = tokenIds[0];
+					if (window.visionBlockingTokenCache?.[tokenId] != undefined)
+						delete window.visionBlockingTokenCache[tokenId];
+					if (window.TOKEN_OBJECTS[tokenId].options.tokenWallPoly == undefined) {
+						window.drawingTokenWallTokenId = tokenId;
 						window.drawTokenWallPolygon = true;
 						$("#temp_overlay").css("z-index", "50");
 						close_token_context_menu();
 					}
 					else {
 						$(this).text('Draw Token Wall Polygon')
-						delete window.TOKEN_OBJECTS[tokenIds].options.tokenWallPoly;
-						window.TOKEN_OBJECTS[tokenIds].place_sync_persist();
+						delete window.TOKEN_OBJECTS[tokenId].options.tokenWallPoly;
+						window.TOKEN_OBJECTS[tokenId].place_sync_persist();
 						clear_temp_canvas();
 					}
 				});
