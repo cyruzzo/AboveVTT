@@ -2499,6 +2499,8 @@ function getVisionBlockingTokenWalls(){
 	let visionTokens = Object.values(window.TOKEN_OBJECTS).filter(d => d.options.tokenWall);
 	let visionBlockingTokenWalls = [];
 	let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
+	if (window.visionBlockingTokenCache == undefined)
+		window.visionBlockingTokenCache ={};
 	for (let currentToken of visionTokens) {
 		const tokenId = currentToken.options.id;
 		const sharedVision = window.DM || 
@@ -2512,7 +2514,7 @@ function getVisionBlockingTokenWalls(){
 			continue;
 		}
 		
-			
+	
 
 		const tokenScale = currentToken.options.imageSize ? parseFloat(currentToken.options.imageSize) : 1;
 		const sceneScale = window.CURRENT_SCENE_DATA.scale_factor ? window.CURRENT_SCENE_DATA.scale_factor : 1
@@ -2524,8 +2526,31 @@ function getVisionBlockingTokenWalls(){
 		const cX = (left + width / 2);
 		const cY = (top + height / 2);
 		const rot = currentToken.options.rotation ? parseFloat(currentToken.options.rotation) * (Math.PI / 180) : 0;
-		
-		
+		const cachedData = window.visionBlockingTokenCache[currentToken.options.id];
+
+		if (cachedData != undefined &&
+			cachedData.left == left &&
+			cachedData.top == top &&
+			cachedData.width == width &&
+			cachedData.height == height &&
+			cachedData.sceneScale == sceneScale &&
+			cachedData.tokenScale == tokenScale &&
+			cachedData.rot == rot &&
+			cachedData.boundaries != undefined
+		){
+			visionBlockingTokenWalls = [...visionBlockingTokenWalls, ...cachedData.boundaries];
+			continue;
+		}
+		window.visionBlockingTokenCache[currentToken.options.id] = {
+			left,
+			top,
+			width,
+			height,
+			sceneScale,
+			tokenScale,
+			rot,
+			boundaries: []
+		}
 		if (currentToken.options.tokenWall && currentToken.options.tokenWall?.includes('circle')){
 			let radius = (width / 2);
 
@@ -2543,6 +2568,7 @@ function getVisionBlockingTokenWalls(){
 				boundary2.getOtherPoint = true;
 				visionBlockingTokenWalls.push(boundary2);
 			}
+			window.visionBlockingTokenCache[currentToken.options.id].boundaries = [boundary, boundary2]
 		}
 		else if (currentToken.options.tokenWall && currentToken.options.tokenWall?.includes('square')){
 			const poly = rotatePoints([
@@ -2551,7 +2577,7 @@ function getVisionBlockingTokenWalls(){
 				{ x: cX + width / 2, y: cY + height / 2 },
 				{ x: cX + width / 2, y: cY - height / 2 }
 			], cX, cY, rot);
-
+			window.visionBlockingTokenCache[currentToken.options.id].boundaries = [];
 			for (let i in poly) {
 				let boundary = new Boundary()
 				if (i == poly.length - 1) {
@@ -2572,6 +2598,7 @@ function getVisionBlockingTokenWalls(){
 				}
 
 				visionBlockingTokenWalls.push(boundary);
+				window.visionBlockingTokenCache[currentToken.options.id].boundaries.push(boundary);
 			}
 		}
 		else if (currentToken.options.tokenWall && currentToken.options.tokenWall?.includes('poly')) {
@@ -2617,8 +2644,10 @@ function getVisionBlockingTokenWalls(){
 					boundary.terrainWall = true;
 				}
 				visionBlockingTokenWalls.push(boundary);
+				window.visionBlockingTokenCache[currentToken.options.id].boundaries.push(boundary);
 			}
 		}
+
 	}
 	return visionBlockingTokenWalls;
 }
