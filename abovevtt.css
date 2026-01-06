@@ -3250,6 +3250,14 @@ body .note-visibility-toggle-container {
     position: relative;
     top: -5px;
     background: var(--background-color, #F9F8F3);
+
+    .tooltip-hover:not('[class$="-tooltip"]'),
+    .tooltip-hover:not('[class$="-tooltip"]'):hover, 
+    .tooltip-hover:not('[class$="-tooltip"]'):focus, 
+    .tooltip-hover:not('[class$="-tooltip"]'):active, 
+    .tooltip-hover:not('[class$="-tooltip"]'):visited{
+        color: #18623d !important;
+    }
     .dmScreenheader{
         position: sticky;
         top: 0px;

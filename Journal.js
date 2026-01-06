@@ -2206,7 +2206,7 @@ class JournalManager{
 
 
 
-    async translateHtmlAndBlocks(target, displayNoteId) {
+	async translateHtmlAndBlocks(target, displayNoteId, isStatBlock=true) {
     	let pastedButtons = target.find('.avtt-roll-button, [data-rolltype="recharge"], .integrated-dice__container, span[data-dicenotation]');
     	target.find('>style:first-of-type, >style#contentStyles').remove();
 		
@@ -2232,13 +2232,13 @@ class JournalManager{
 
 
 
-
-
 		
 
     	let data = $(target).clone().html();
 
-
+		//remove DDB tags if loading from DDB data eg. on the DM Screen
+		data = data.replace(/\[rule\]|\[\/rule\]/gi, '');
+		data = data.replace(/\[condition\]|\[\/condition\]/gi, '');
 
 
         data = data.replace(/\[pin(.*?)\]([\s\S]+?)\[\/pin\]/gi, function(m, m1, m2){
@@ -2270,7 +2270,8 @@ class JournalManager{
         lines = lines.map((line, li) => {
             let input = line;
 
-            input = general_statblock_formating(input);
+			if(isStatBlock == true)
+            	input = general_statblock_formating(input);
         
             // Find cover rules
             input = input.replace(
