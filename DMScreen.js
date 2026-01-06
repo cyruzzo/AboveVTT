@@ -20,10 +20,16 @@ function initDmScreen() {
 async function buildDMScreen(container) {
     console.log("initDmScreen called");
     // Check if the DnD 2024 DMG is owned
-    let dmg2024Owned = false;
-    await fetch_tooltip([undefined, "https://www.dndbeyond.com/sources/dnd/dmg-2024/the-basics#WhatDoesaDMDo"], 'DMG_OWNED', function(data){
-        dmg2024Owned = data.Tooltip.length>0;
-        if (container){
+    window.ownedBooks = {
+        dmg2024Owned: false,
+        dmg2014Owned: false
+    }
+    await fetch_tooltip([undefined, "https://www.dndbeyond.com/sources/dnd/dmg-2014/running-the-game#ImprovisingDamage"], '2014_DMG_OWNED', function(data){
+        window.ownedBooks.dmg2014Owned = data.Tooltip.length > 0; 
+    });
+    await fetch_tooltip([undefined, "https://www.dndbeyond.com/sources/dnd/dmg-2024/the-basics#WhatDoesaDMDo"], 'DMG_OWNED', function (data) {
+        window.ownedBooks.dmg2024Owned = data.Tooltip.length > 0;
+        if (container) {
             let cont = $(`
             <div id='dmScreenContainer'>
                 <div class='dmScreenheader'>
@@ -32,10 +38,10 @@ async function buildDMScreen(container) {
                     </h1>
                     <div class='dmScreenDropdown' style='display: none;'>
                         <div class='dmScreenDropdownItem' data-block='actions'>Actions</div>
-                        ${dmg2024Owned ? `<div class='dmScreenDropdownItem' data-block='bastion'>Bastions</div>` : ""}
+                        ${window.ownedBooks.dmg2024Owned ? `<div class='dmScreenDropdownItem' data-block='bastion'>Bastions</div>` : ""}
                         <div class='dmScreenDropdownItem' data-block='conditions'>Conditions</div>
                         <div class='dmScreenDropdownItem' data-block='damage'>Improvising Objects and Damage</div>
-                        <div class='dmScreenDropdownItem' data-block='names'>Name Improvisation</div>
+                        ${window.ownedBooks.dmg2024Owned ? `<div class='dmScreenDropdownItem' data-block='names'>Name Improvisation</div>` : ""}
                         <div class='dmScreenDropdownItem' data-block='services'>Services</div>
                         <div class='dmScreenDropdownItem' data-block='skills'>Skills and Mechanics</div>
                         <div class='dmScreenDropdownItem' data-block='spellcasting'>Spellcasting</div>
@@ -68,7 +74,7 @@ async function buildDMScreen(container) {
             $('.dmScreenDropdown').click(function (e) {
                 e.stopPropagation();
             });
-            const addTooltipAndRoll = function($element){
+            const addTooltipAndRoll = function ($element) {
                 $element.find('h2, strong>em, caption, em>strong').toggleClass(`ignore-abovevtt-formating`, true)
                 window.JOURNAL.translateHtmlAndBlocks($element, undefined, false);
                 add_journal_roll_buttons($element);
@@ -96,7 +102,7 @@ async function buildDMScreen(container) {
                         dmScreenBlocks.append(buildActionsBlock());
                         break;
                     case 'skills':
-                        dmScreenBlocks.append(buildSkillsAndMechanicsBlock(dmg2024Owned));
+                        dmScreenBlocks.append(buildSkillsAndMechanicsBlock());
                         break;
                     case 'travel':
                         dmScreenBlocks.append(buildTravelBlock());
@@ -127,9 +133,6 @@ async function buildDMScreen(container) {
             container.show();
 
         }
-
-       
-     
     })
     
 
@@ -168,7 +171,7 @@ function buildConditionsBlock() {
  * Build the Skills and Mechanics reference block
  * @returns {jQuery} The skills and mechanics block element
  */
-function buildSkillsAndMechanicsBlock(dmg2024Owned) {
+function buildSkillsAndMechanicsBlock() {
     const block = $(`<div class='dmScreenBlock' id='dmScreenSkillsAndMechanics'>
         <div class='dmScreenColumns'></div>
     </div>`);
@@ -249,7 +252,7 @@ function buildSkillsAndMechanicsBlock(dmg2024Owned) {
     columnsContainer.append(mechanicsChunk);
 
     // Exclude if DMG 2024 is not owned
-    if (dmg2024Owned) {
+    if (window.ownedBooks.dmg2024Owned) {
 
         // Add Mob Attacks table
         const mobAttacksData = [
@@ -404,8 +407,8 @@ function buildDamageImprovisationBlock() {
             </tr>
         `);
     });
-
-    columnsContainer.append(damageSection);
+    if (window.ownedBooks.dmg2014Owned == true || window.ownedBooks.dmg2024Owned == true)
+     columnsContainer.append(damageSection);
 
     // Add Object AC and HP tables in same section
     const objectACData = [
@@ -684,10 +687,10 @@ function buildTravelBlock() {
             </tr>
         `);
     });
-
+    
     weatherSection.append(windPrecipTable);
-
-    columnsContainer.append(weatherSection);
+    if (window.ownedBooks.dmg2024Owned || window.ownedBooks.dmg2014Owned)
+        columnsContainer.append(weatherSection);
 
 
 
