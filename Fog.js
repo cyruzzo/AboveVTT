@@ -2536,7 +2536,8 @@ function getVisionBlockingTokenWalls(){
 			cachedData.sceneScale == sceneScale &&
 			cachedData.tokenScale == tokenScale &&
 			cachedData.rot == rot &&
-			cachedData.boundaries != undefined
+			cachedData.boundaries != undefined &&
+			cachedData.tokenWallPoly?.relativePoints?.[0] == currentToken.options.tokenWallPoly?.relativePoints?.[0]
 		){
 			visionBlockingTokenWalls = [...visionBlockingTokenWalls, ...cachedData.boundaries];
 			continue;
@@ -2549,7 +2550,8 @@ function getVisionBlockingTokenWalls(){
 			sceneScale,
 			tokenScale,
 			rot,
-			boundaries: []
+			boundaries: [],
+			tokenWallPoly: currentToken.options.tokenWallPoly
 		}
 		if (currentToken.options.tokenWall && currentToken.options.tokenWall?.includes('circle')){
 			let radius = (width / 2);
@@ -2557,6 +2559,7 @@ function getVisionBlockingTokenWalls(){
 			let boundary = new Boundary({ x: cX, y: cY });
 			boundary.radius = radius;
 			visionBlockingTokenWalls.push(boundary);
+			window.visionBlockingTokenCache[currentToken.options.id].boundaries.push(boundary);
 			if (currentToken.options.tokenWall.includes('Window')) {
 				boundary.c = 1;
 			} else if (currentToken.options.tokenWall.includes('Curtain')) {
@@ -2567,8 +2570,9 @@ function getVisionBlockingTokenWalls(){
 				const boundary2 = { ...boundary }
 				boundary2.getOtherPoint = true;
 				visionBlockingTokenWalls.push(boundary2);
+				window.visionBlockingTokenCache[currentToken.options.id].boundaries.push(boundary2);
 			}
-			window.visionBlockingTokenCache[currentToken.options.id].boundaries = [boundary, boundary2]
+			
 		}
 		else if (currentToken.options.tokenWall && currentToken.options.tokenWall?.includes('square')){
 			const poly = rotatePoints([
