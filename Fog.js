@@ -2555,11 +2555,9 @@ function getVisionBlockingTokenWalls(){
 		}
 		if (currentToken.options.tokenWall && currentToken.options.tokenWall?.includes('circle')){
 			let radius = (width / 2);
-
 			let boundary = new Boundary({ x: cX, y: cY });
 			boundary.radius = radius;
-			visionBlockingTokenWalls.push(boundary);
-			window.visionBlockingTokenCache[currentToken.options.id].boundaries.push(boundary);
+			boundary.tokenId = currentToken.options.id;
 			if (currentToken.options.tokenWall.includes('Window')) {
 				boundary.c = 1;
 			} else if (currentToken.options.tokenWall.includes('Curtain')) {
@@ -2572,7 +2570,8 @@ function getVisionBlockingTokenWalls(){
 				visionBlockingTokenWalls.push(boundary2);
 				window.visionBlockingTokenCache[currentToken.options.id].boundaries.push(boundary2);
 			}
-			
+			visionBlockingTokenWalls.push(boundary);
+			window.visionBlockingTokenCache[currentToken.options.id].boundaries.push(boundary);
 		}
 		else if (currentToken.options.tokenWall && currentToken.options.tokenWall?.includes('square')){
 			const poly = rotatePoints([
@@ -2584,6 +2583,7 @@ function getVisionBlockingTokenWalls(){
 			window.visionBlockingTokenCache[currentToken.options.id].boundaries = [];
 			for (let i in poly) {
 				let boundary = new Boundary()
+				boundary.tokenId = currentToken.options.id;
 				if (i == poly.length - 1) {
 					boundary.a = poly[i];
 					boundary.b = poly[0];
@@ -2631,6 +2631,7 @@ function getVisionBlockingTokenWalls(){
 			});
 			for (let i in rotatedPoints) {
 				let boundary = new Boundary()
+				boundary.tokenId = currentToken.options.id;
 				if (i == rotatedPoints.length - 1) {
 					boundary.a = rotatedPoints[i];
 					boundary.b = rotatedPoints[0];
@@ -6920,6 +6921,8 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
 
 
 	    for (let j = 0; j < walls.length; j++) {
+			if (walls[j].tokenId != undefined && auraId != undefined && auraId == walls[j].tokenId)
+				continue;
 
 	      	let wallTop = Infinity;
 			if(walls[j].wallTop !== undefined && walls[j].wallTop !== '')

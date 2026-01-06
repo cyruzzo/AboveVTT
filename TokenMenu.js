@@ -3664,10 +3664,10 @@ function build_adjustments_flyout_menu(tokenIds) {
 				body.append(inputWrapper);
 			}
 			if(setting.name =='tokenWall'){
-				const polyButton = $(`<button class="token-wall-poly-button material-icons ${typeof currentValue === 'string' && currentValue.includes('poly') ? 'visible' : ''}" title="Edit Token Wall Polygon">${!window.TOKEN_OBJECTS[tokenIds].options.tokenWallPoly ? "Draw" : "Delete"} Token Wall Polygon</button>`);
+				const tokenId = tokenIds[0];
+				const polyButton = $(`<button class="token-wall-poly-button material-icons ${typeof currentValue === 'string' && currentValue.includes('poly') ? 'visible' : ''}" title="Edit Token Wall Polygon">${!window.TOKEN_OBJECTS[tokenId].options.tokenWallPoly ? "Draw" : "Delete"} Token Wall Polygon</button>`);
 				polyButton.off('click').on('click', function(){
 					let clickedItem = $(this);
-					const tokenId = tokenIds[0];
 					if (window.visionBlockingTokenCache?.[tokenId] != undefined)
 						delete window.visionBlockingTokenCache[tokenId];
 					if (window.TOKEN_OBJECTS[tokenId].options.tokenWallPoly == undefined) {
