@@ -2678,7 +2678,7 @@ function init_zoom_buttons() {
 				dmScreen.show();
 			}
 			else{
-				const dmScreenContainer = find_or_create_generic_draggable_window("dmScreenDragContainer", "DM Screen", false, true, '#dmScreenContainer', '90%', '90%', '5%', '5%', false)
+				const dmScreenContainer = find_or_create_generic_draggable_window("dmScreenDragContainer", "DM Screen", false, true, '#dmScreenContainer', '90%', '90%', '5%', '5%', false, '', true)
 				buildDMScreen(dmScreenContainer);
 			}
 		});
