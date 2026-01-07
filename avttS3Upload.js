@@ -8209,7 +8209,7 @@ async function fetchFileFromS3WithRetry(originalName, cacheKey, sanitizedKey) {
   while (attempt < GET_FILE_FROM_S3_MAX_RETRIES) {
     attempt += 1;
     try {
-      const response = await fetch(`${AVTT_S3}?user=${patreonId}&filename=${fileNameOnly}`);
+      const response = await fetch(`${AVTT_S3}?user=${patreonId}&filename=${encodeURIComponent(fileNameOnly)}`);
       const json = await response.json();
       if (!response.ok) {
         throw new Error(json?.message || `Failed to fetch file from S3 (${response.status})`);
