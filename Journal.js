@@ -2087,7 +2087,7 @@ class JournalManager{
 	    }
 	}
 	block_send_to_buttons(target){
-		const blocks = target.find('img:not(.mon-stat-block__separator-img), .text--quote-box, .rules-text, .block-torn-paper, .read-aloud-text')
+		const blocks = target.find('img:not(.mon-stat-block__separator-img), .text--quote-box, .rules-text, .block-torn-paper, .read-aloud-text, .dmScreenChunk')
 
 		const sendToGamelogButton = $('<button class="block-send-to-game-log"><span class="material-symbols-outlined">login</span></button>')
 		const container = $(`<div class='note-text' style='position:relative; width:'></div>`)
@@ -2096,7 +2096,7 @@ class JournalManager{
 
 	    const whisper_container=$("<div class='whisper-container'/>");
 
-        for(let i=0; i<window.playerUsers; i++){
+        for(let i=0; i<window.playerUsers.length; i++){
 			if(whisper_container.find(`input[name='${window.playerUsers[i].userId}']`).length == 0){
 				const randomId = uuid();
 				let whisper_toggle=$(`<input type='checkbox' name='${window.playerUsers[i].userId}'/>`);

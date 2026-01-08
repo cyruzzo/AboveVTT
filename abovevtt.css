@@ -3265,6 +3265,7 @@ body .note-visibility-toggle-container {
         position: sticky;
         top: 0px;
         background: var(--background-color, #F9F8F3);
+        z-index: 10;
         .dmScreenTitle {
             cursor: pointer;
             span {
@@ -3343,7 +3344,10 @@ body .note-visibility-toggle-container {
         }
     }
 }
-
+#dmScreenContainer .dmScreenColumns>.note-text>.block-send-to-game-log {
+    right: -6px;
+    top: 10px;
+}
 #patreons ul li {
     width: 136px;
 }
