@@ -79,6 +79,7 @@ async function buildDMScreen(container) {
                 window.JOURNAL.translateHtmlAndBlocks($element, undefined, false);
                 add_journal_roll_buttons($element);
                 window.JOURNAL.add_journal_tooltip_targets($element);
+                window.JOURNAL.block_send_to_buttons($element);
                 add_stat_block_hover($element);
             }
             // Handle dropdown item selection
@@ -220,36 +221,43 @@ function buildSkillsAndMechanicsBlock() {
                 <strong class='ignore-abovevtt-formating'>Dim Light.</strong> Dim Light, also called shadows, creates a Lightly Obscured area. An area of Dim Light is usually a boundary between Bright Light and surrounding Darkness. The soft light of twilight and dawn also counts as Dim Light. A full moon might bathe the land in Dim Light.<br>
                 <strong class='ignore-abovevtt-formating'>Darkness.</strong> Darkness creates a Heavily Obscured area. Characters face Darkness outdoors at night (even most moonlit nights), within the confines of an unlit dungeon, or in an area of magical Darkness.<br>
             </div>
-            <div class='dmScreenChunkDefinition'>
+        </div>
+        <div class='dmScreenChunk'>
             <h2>Visibility</h2>
+            <div class='dmScreenChunkDefinition'>
                 <strong class='ignore-abovevtt-formating'>Lightly Obscured</strong><br>
                 ${rules.find(rule => rule.name === "Lightly Obscured").description}<br>
                 <strong class='ignore-abovevtt-formating'>Heavily Obscured</strong><br>
                 ${rules.find(rule => rule.name === "Heavily Obscured").description}
             </div>
-            <div class='dmScreenChunkDefinition'>
+        </div>
+        <div class='dmScreenChunk'>
             <h2>Cover</h2>
+            <div class='dmScreenChunkDefinition'>
                 Cover provides a degree of protection to a target behind it. There are three degrees of cover, each of which provides a different benefit to a target. If behind more than one degree of cover, a target benefits only from the most protective degree.<br>
                 <strong class='ignore-abovevtt-formating'>Half Cover:</strong> ${rules.find(rule => rule.name === "Half Cover").description}<br>
                 <strong class='ignore-abovevtt-formating'>Three-Quarters Cover:</strong> ${rules.find(rule => rule.name === "Three-Quarters Cover").description}<br>
                 <strong class='ignore-abovevtt-formating'>Total Cover:</strong> ${rules.find(rule => rule.name === "Total Cover").description}
             </div>
         </div>
+       
     `);
     columnsContainer.append(visionSection);
 
-    // Add Mechanics section
-    const mechanicsChunk = $(`<div class='dmScreenChunk'></div>`);
+
+
     mechanics.forEach(mechanic => {
         const mechanicDiv = $(`
-            <h2>${mechanic.name}</h2>
-            <div class='dmScreenChunkDefinition'>
-                ${mechanic.description}
+            <div class='dmScreenChunk'>
+                <h2>${mechanic.name}</h2>
+                <div class='dmScreenChunkDefinition'>
+                    ${mechanic.description}
+                </div>
             </div>
         `);
-        mechanicsChunk.append(mechanicDiv);
+        columnsContainer.append(mechanicDiv);
     });
-    columnsContainer.append(mechanicsChunk);
+    
 
     // Exclude if DMG 2024 is not owned
     if (window.ownedBooks.dmg2024Owned) {
