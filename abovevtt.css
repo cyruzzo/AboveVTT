@@ -5605,6 +5605,15 @@ button.token-row-button.token-row-edit-encounter{
     background-color: rgb(235, 241, 245);
     height: 100%;
 }
+.sidebar__pane-content>div.sidebar-panel-content {
+    display: none;
+    pointer-events: none;
+}
+
+.sidebar__pane-content>div.sidebar-panel-content.selected-tab {
+    display: flex;
+    pointer-events: auto;
+}
 .sidebar-panel-content .sidebar-panel-body {
     height: 100%;
     padding: 8px;
