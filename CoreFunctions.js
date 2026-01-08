@@ -1143,6 +1143,7 @@ function inject_dice(){
               left: 10px;
               pointer-events: all
           }
+
         </style>
     </div>
   `);

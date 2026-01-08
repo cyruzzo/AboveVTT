@@ -5281,7 +5281,7 @@ function bucketFill(ctx, mouseX, mouseY, fogStyle = 'rgba(0,0,0,0)', fogType = 0
 	let tokenWalls = getVisionBlockingTokenWalls();
 	const allWalls = [...window.walls, ...darknessBoundarys, ...tokenWalls];
   	if(distance1 != 0){
-			particleLook(ctx, allWalls, distance1, fog, fogStyle, fogType, true, islight, undefined, blur); 
+			particleLook(ctx, allWalls, distance1, fog, fogStyle, fogType, true, islight, undefined, blur, 0); 
   	}
 
 	if(distance2 != undefined){
@@ -5301,7 +5301,7 @@ function bucketFill(ctx, mouseX, mouseY, fogStyle = 'rgba(0,0,0,0)', fogType = 0
 			return `rgba(${r}, ${g}, ${b}, ${a})` 
 		}
 		distance2+=distance1;
-		particleLook(ctx, allWalls, distance2, fog, halfLuminosity(fogStyle), fogType, true, islight, undefined, blur); 
+		particleLook(ctx, allWalls, distance2, fog, halfLuminosity(fogStyle), fogType, true, islight, undefined, blur, 0); 
 	}
 
 }
@@ -6760,7 +6760,7 @@ function particleUpdate(x, y) {
 	window.PARTICLE.pos.y = y;
 };
 
-const FEATURE_RAY_LIMIT = 100;
+const FEATURE_RAY_LIMIT = 1000;
 const FEATURE_RAY_ANGLE_OFFSET = 0.1; // degrees to sample just off wall edges
 const FEATURE_RAY_ANGLE_PERCISION = 100; // precision factor for deduplicating angles, multiplying offset by this should >= 10 otherwise it will deduplicate it
 
@@ -6841,7 +6841,7 @@ function collectFeatureAnglesForWalls(origin, walls, limit) {
 	return angles;
 }
 
-function buildActiveRays(particle, walls) {
+function buildActiveRays(particle, walls, limit = FEATURE_RAY_LIMIT) {
 	if(!particle)
 		return [];
 	const combined = [];
@@ -6854,7 +6854,7 @@ function buildActiveRays(particle, walls) {
 		combined.push({ angle: normAngle, ray: baseRays[i] });
 		used.add(featureAngleRounded(normAngle));
 	}
-	const limit = FEATURE_RAY_LIMIT;
+
 	const featureAngles = collectFeatureAnglesForWalls(particle.pos, walls, limit);
 	if(featureAngles.length > 0){
 		if(particle.featureRayCache === undefined)
@@ -6877,8 +6877,9 @@ function buildActiveRays(particle, walls) {
 	return combined.map(function(entry){ return entry.ray; });
 }
 
-function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogType=0, draw=true, islight=false, auraId=undefined, blur=0) {
+function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogType=0, draw=true, islight=false, auraId=undefined, blur=0, activeRayLimit = FEATURE_RAY_LIMIT) {
 
+	activeRayLimit = window.TOKEN_OBJECTS[auraId] !== undefined ? activeRayLimit : 0;
 	lightPolygon = [];
 	movePolygon = [];
 	noDarknessPolygon = [];
@@ -6911,7 +6912,7 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
     
     let notBlockVision = [1, 3, 6, 7, 12, 13, '1', '3', '6', '7', '12', '13'];
     let notBlockMove = [8, 9, 10, 11, 12, 13, '8', '9', '10', '11', '12', '13'];
-	const activeRays = buildActiveRays(window.PARTICLE, walls);
+	const activeRays = buildActiveRays(window.PARTICLE, walls, activeRayLimit);
 	const lastRayIndex = activeRays.length - 1;
 	const squaredRadius = lightRadius ** 2;
 	
