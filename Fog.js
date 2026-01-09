@@ -6653,88 +6653,76 @@ Ray.prototype.draw = function(ctx) {
 }; */
 
 Ray.prototype.cast = function(boundary) {
-  	if(boundary.radius !== undefined){
-		let u = {
-			x: boundary.a.x - this.pos.x,
-			y: boundary.a.y - this.pos.y
+	if (boundary.radius !== undefined) {
+		const ux = boundary.a.x - this.pos.x;
+		const uy = boundary.a.y - this.pos.y;
+
+		const scalar = (ux * this.dir.x) + (this.dir.y * uy);
+		const u1x = scalar * this.dir.x;
+		const u1y = scalar * this.dir.y;
+
+		const u2x = ux - u1x;
+		const u2y = uy - u1y;
+		const d = Math.hypot(u2x, u2y);
+
+		if (d > boundary.radius) {
+			return; 
 		}
 
-		let scalar = (u.x * this.dir.x) + (this.dir.y * u.y);
-		let u1 = {
-			x:scalar*this.dir.x,
-			y:scalar*this.dir.y
-		};
+		const radiusSq = boundary.radius * boundary.radius;
+		const m = Math.sqrt(radiusSq - d * d);
 
-		let u2 = new Vector(u.x - u1.x, u.y - u1.y);
-		let d = Math.hypot(u2.x,  u2.y);
-	
-		let m = Math.sqrt(boundary.radius**2 - d**2);
+		const p1x = this.pos.x + u1x + m * this.dir.x;
+		const p1y = this.pos.y + u1y + m * this.dir.y;
 
-		if(d>boundary.radius){
-			return;
-		}
-		else{
-			let p1 = new Vector(this.pos.x + u1.x + m * this.dir.x, this.pos.y + u1.y + m * this.dir.y);
-					  
-		  	if(d < boundary.radius && Vector.sqDist(this.pos, boundary.a) > boundary.radius**2){
-		  		
-				let p2 = new Vector(this.pos.x + u1.x - m * this.dir.x, this.pos.y + u1.y - m * this.dir.y);
-				 
-					
-				let distance1 = Vector.sqDist(this.pos, p1);
-				let distance2 = Vector.sqDist(this.pos, p2);
-				if(distance1 >= distance2){
-					if (!boundary.getOtherPoint)
-			  			return p2;
-					else
-						return p1;
-			  	} 
-	            
-			}
-			else{
-				return p1
+		if (d < boundary.radius && Vector.sqDist(this.pos, boundary.a) > radiusSq) {
+			const p2x = this.pos.x + u1x - m * this.dir.x;
+			const p2y = this.pos.y + u1y - m * this.dir.y;
+
+			
+			const dist1 = (p1x - this.pos.x) ** 2 + (p1y - this.pos.y) ** 2;
+			const dist2 = (p2x - this.pos.x) ** 2 + (p2y - this.pos.y) ** 2;
+
+			if (dist1 >= dist2) {
+				return boundary.getOtherPoint ? { x: p1x, y: p1y } : { x: p2x, y: p2y };
 			}
 		}
-	}			
-	else{
-		let x1 = boundary.a.x;
-		let y1 = boundary.a.y;
-		let x2 = boundary.b.x;
-		let y2 = boundary.b.y;
-		
+
+		return { x: p1x, y: p1y };
+	}
+	else {
+		const x1 = boundary.a.x;
+		const y1 = boundary.a.y;
+		const x2 = boundary.b.x;
+		const y2 = boundary.b.y;
+
 		const x3 = this.pos.x;
 		const y3 = this.pos.y;
 		const x4 = this.pos.x + this.dir.x;
 		const y4 = this.pos.y + this.dir.y;
 
-		const r = {
-			x: (x2 - x1),
-			y: (y2 - y1)
-		}
-		const s = {
-			x: (x4 - x3),
-			y: (y4 - y3)
-		}
-		const den = (r.x * s.y) - (s.x * r.y);
-		// if denominator is zero then the ray and boundary are parallel
+		const rx = x2 - x1;
+		const ry = y2 - y1;
+		const sx = x4 - x3;
+		const sy = y4 - y3;
+
+		const den = (rx * sy) - (sx * ry);
+
 		if (den === 0) {
-		  return;
+			return; // Parallel
 		}
-		
-		const ca = {
-			x: (x3 - x1),
-			y: (y3 - y1)
-		}
-		// numerator divided by denominator
-		let t = ((ca.x * s.y) - (ca.y * s.x)) / den;
-		let u = ((ca.x * r.y) - (ca.y * r.x)) / den;
-		
+
+		const cax = x3 - x1;
+		const cay = y3 - y1;
+
+		const t = ((cax * sy) - (cay * sx)) / den;
+		const u = ((cax * ry) - (cay * rx)) / den;
+
 		if (t >= 0 && t <= 1 && u >= 0) {
-			let pt = new Vector(x1 + t * r.x, y1 + t * r.y)
-			return pt;
-		} else {
-		  return;
+			return { x: x1 + t * rx, y: y1 + t * ry };
 		}
+
+		return;
 	}
  
 };
@@ -6760,9 +6748,6 @@ function particleUpdate(x, y) {
 	window.PARTICLE.pos.y = y;
 };
 
-const FEATURE_RAY_LIMIT = 1000;
-const FEATURE_RAY_ANGLE_OFFSET = 0.1; // degrees to sample just off wall edges
-const FEATURE_RAY_ANGLE_PERCISION = 100; // precision factor for deduplicating angles, multiplying offset by this should >= 10 otherwise it will deduplicate it
 
 function radianToDegree(radian) {
 	return radian * (180 / Math.PI);
@@ -6776,7 +6761,7 @@ function normalizeAngleDegrees(angle) {
 }
 
 function featureAngleRounded(angle) {
-	return Math.round(normalizeAngleDegrees(angle) * FEATURE_RAY_ANGLE_PERCISION) / FEATURE_RAY_ANGLE_PERCISION;
+	return Math.round(normalizeAngleDegrees(angle) * 100) / 100; // precision factor for deduplicating angles, multiplying offset by this should >= 10 otherwise it will deduplicate it
 }
 
 function distanceSquared(pointA, pointB) {
@@ -6818,9 +6803,11 @@ function collectFeatureAnglesForWalls(origin, walls, limit) {
 		return distanceSquared(a, origin) - distanceSquared(b, origin);
 	});
 
+
+
 	const angles = [];
 	const seen = new Set();
-	const offsetValues = FEATURE_RAY_ANGLE_OFFSET > 0 ? [0, -FEATURE_RAY_ANGLE_OFFSET, FEATURE_RAY_ANGLE_OFFSET] : [0];
+	const offsetValues = [-0.1, 0, 0.1];
 	let added = 0;
 	for(let i = 0; i < endpoints.length && added < limit; i++){
 		const endpoint = endpoints[i];
@@ -6841,7 +6828,7 @@ function collectFeatureAnglesForWalls(origin, walls, limit) {
 	return angles;
 }
 
-function buildActiveRays(particle, walls, limit = FEATURE_RAY_LIMIT) {
+function buildActiveRays(particle, walls, limit) {
 	if(!particle)
 		return [];
 	const combined = [];
@@ -6877,9 +6864,9 @@ function buildActiveRays(particle, walls, limit = FEATURE_RAY_LIMIT) {
 	return combined.map(function(entry){ return entry.ray; });
 }
 
-function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogType=0, draw=true, islight=false, auraId=undefined, blur=0, activeRayLimit = FEATURE_RAY_LIMIT) {
+function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogType=0, draw=true, islight=false, auraId=undefined, blur=0, activeRayLimit = 0) {
 
-	activeRayLimit = window.TOKEN_OBJECTS[auraId] !== undefined ? activeRayLimit : 0;
+	activeRayLimit = activeRayLimit;
 	lightPolygon = [];
 	movePolygon = [];
 	noDarknessPolygon = [];
@@ -6915,6 +6902,35 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
 	const activeRays = buildActiveRays(window.PARTICLE, walls, activeRayLimit);
 	const lastRayIndex = activeRays.length - 1;
 	const squaredRadius = lightRadius ** 2;
+
+	const sceneId = window.CURRENT_SCENE_DATA.id;
+	const scaleFactor = window.CURRENT_SCENE_DATA.scale_factor;
+	const particlePosX = window.PARTICLE.pos.x;
+	const particlePosY = window.PARTICLE.pos.y;
+
+	const wallCache = [];
+	for (let j = 0; j < walls.length; j++) {
+		const currWall = walls[j];
+		let wallTop = currWall.wallTop !== undefined && currWall.wallTop !== '' ? parseInt(currWall.wallTop) : Infinity;
+		let wallBottom = currWall.wallBottom !== undefined && currWall.wallBottom !== '' ? parseInt(currWall.wallBottom) : -Infinity;
+		const blocksVision = !notBlockVision.includes(currWall.c);
+		const blocksMove = !notBlockMove.includes(currWall.c);
+		const isTerrainWall = currWall.terrainWall === true;
+		const isDarkness = currWall.darkness === true;
+		const doorId = tokenIsDoor ? `${currWall.a.x}${currWall.a.y}${currWall.b.x}${currWall.b.y}${sceneId}`.replaceAll('.', '') : '';
+		
+		wallCache.push({
+			wall: currWall,
+			wallTop: wallTop,
+			wallBottom: wallBottom,
+			blocksVision: blocksVision,
+			blocksMove: blocksMove,
+			isTerrainWall: isTerrainWall,
+			isDarkness: isDarkness,
+			doorId: doorId,
+			tokenId: currWall.tokenId
+		});
+	}
 	
 
 	for (let i = 0; i < activeRays.length; i++) {
@@ -6935,26 +6951,26 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
 	    let secondRecordNoDarkness = Infinity;
 
 
-	    for (let j = 0; j < walls.length; j++) {
-			const currWall = walls[j];
-			if (auraId !== undefined && auraId === currWall.tokenId)
+	    for (let j = 0; j < wallCache.length; j++) {
+			const wallData = wallCache[j];
+			const currWall = wallData.wall;
+			
+			if (auraId !== undefined && auraId === wallData.tokenId)
 				continue;
-
-			let wallTop = currWall.wallTop !== undefined && currWall.wallTop !== '' ? currWall.wallTop : Infinity;
-
-			let wallBottom = currWall.wallBottom !== undefined && currWall.wallBottom !== '' ? currWall.wallBottom : -Infinity;
 	    	
-			if(auraId !== undefined && (tokenElev < wallBottom || tokenElev >= wallTop))
+			if(auraId !== undefined && (tokenElev < wallData.wallBottom || tokenElev >= wallData.wallTop))
 				continue;
 
 			pt = ray.cast(currWall);
 			
 			if (pt !== undefined) {
-				if (currWall.terrainWall && closestLight && Vector.sqDist(pt, closestLight) < diffNeedForTerrainWalls) {
+				if (wallData.isTerrainWall && closestLight && Vector.sqDist(pt, closestLight) < diffNeedForTerrainWalls) {
 					continue;
 				}
 				let dist = squaredRadius;
-				let pointDistance = Vector.sqDist(window.PARTICLE.pos, pt);
+				const ptx = pt.x - particlePosX;
+				const pty = pt.y - particlePosY;
+				const pointDistance = ptx * ptx + pty * pty;
 				if (pointDistance < squaredRadius)
 					dist = pointDistance;
 				
@@ -6964,8 +6980,8 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
 
 				
 
-				if (dist < recordLight && !notBlockVision.includes(currWall.c)) {
-				  	if(!tokenIsDoor || auraId != `${currWall.a.x}${currWall.a.y}${currWall.b.x}${currWall.b.y}${window.CURRENT_SCENE_DATA.id}`.replaceAll('.', ''))
+				if (dist < recordLight && wallData.blocksVision) {
+				  	if(!tokenIsDoor || auraId != wallData.doorId)
 						{
 						
 						if(recordLightFurtherThanNeed)
@@ -6974,8 +6990,8 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
 				      	
 						if (dist == squaredRadius){
 				          	pt = {
-					          	x: window.PARTICLE.pos.x+ray.dir.x * lightRadius,
-					          	y: window.PARTICLE.pos.y+ray.dir.y * lightRadius
+					          	x: particlePosX + ray.dir.x * lightRadius,
+					          	y: particlePosY + ray.dir.y * lightRadius
 					          }
 				   		}	       
 				   		if(recordLightFurtherThanNeed) 
@@ -6990,13 +7006,13 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
 				        }      
 			       }
 				}
-				else if(dist < secondRecordLight && !notBlockVision.includes(currWall.c) && recordLightFurtherThanNeed){
+				else if(dist < secondRecordLight && wallData.blocksVision && recordLightFurtherThanNeed){
 					secondRecordLight = dist;       
 			     	
 					if (dist == squaredRadius){
 			          	pt = {
-				          	x: window.PARTICLE.pos.x+ray.dir.x * lightRadius,
-				          	y: window.PARTICLE.pos.y+ray.dir.y * lightRadius
+				          	x: particlePosX + ray.dir.x * lightRadius,
+				          	y: particlePosY + ray.dir.y * lightRadius
 				          }
 			   		}	           	
 			   		
@@ -7008,9 +7024,9 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
 			        
 				}
 
-				if(canSeeDarkness === true && currWall.darkness !== true){
-					if (dist < recordNoDarkness && !notBlockVision.includes(currWall.c)) {
-				      	if(!tokenIsDoor || auraId != `${currWall.a.x}${currWall.a.y}${currWall.b.x}${currWall.b.y}${window.CURRENT_SCENE_DATA.id}`.replaceAll('.', ''))
+				if(canSeeDarkness === true && !wallData.isDarkness){
+					if (dist < recordNoDarkness && wallData.blocksVision) {
+				      	if(!tokenIsDoor || auraId != wallData.doorId)
 						{
 							if(recordNoDarknessFurtherThanNeed)
 								secondRecordNoDarkness = recordNoDarkness;
@@ -7018,8 +7034,8 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
 				          	
 							if (dist == squaredRadius){
 					          	pt = {
-						          	x: window.PARTICLE.pos.x+ray.dir.x * lightRadius,
-						          	y: window.PARTICLE.pos.y+ray.dir.y * lightRadius
+						          	x: particlePosX + ray.dir.x * lightRadius,
+						          	y: particlePosY + ray.dir.y * lightRadius
 						          }
 				       		}	 
 				       		if(recordNoDarknessFurtherThanNeed)
@@ -7033,15 +7049,15 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
 				       	 	}      
 			       		}
 			   	 	}
-					else if (dist < secondRecordNoDarkness && !notBlockVision.includes(currWall.c) && recordNoDarknessFurtherThanNeed) {
-	   	 		      	if(!tokenIsDoor || auraId != `${currWall.a.x}${currWall.a.y}${currWall.b.x}${currWall.b.y}${window.CURRENT_SCENE_DATA.id}`.replaceAll('.', ''))
+					else if (dist < secondRecordNoDarkness && wallData.blocksVision && recordNoDarknessFurtherThanNeed) {
+	   	 		      	if(!tokenIsDoor || auraId != wallData.doorId)
 	   	 				{
 	   	 					secondRecordNoDarkness = dist;       
 	   	 		          	
 							if (dist == squaredRadius){
 	   	 			          	pt = {
-	   	 				          	x: window.PARTICLE.pos.x+ray.dir.x * lightRadius,
-	   	 				          	y: window.PARTICLE.pos.y+ray.dir.y * lightRadius
+	   	 				          	x: particlePosX + ray.dir.x * lightRadius,
+	   	 				          	y: particlePosY + ray.dir.y * lightRadius
 	   	 				          }
 	   	 		       		}	 
 	   	 		       		secondClosestNoDarkness = pt;          	
@@ -7053,19 +7069,19 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
 	   	 	       		}
 	   	 	   	 	}
 				}
-				if(currWall.darkness !== true && !notBlockMove.includes(currWall.c)){
+				if(!wallData.isDarkness && wallData.blocksMove){
 
 
 				    if(dist < recordMove){
 				    	if(recordMoveFurtherThanNeed)
 				    		secondRecordMove = recordMove;
 				    	recordMove = dist;
-			    		if(!tokenIsDoor || auraId != `${currWall.a.x}${currWall.a.y}${currWall.b.x}${currWall.b.y}${window.CURRENT_SCENE_DATA.id}`.replaceAll('.', ''))
+			    		if(!tokenIsDoor || auraId != wallData.doorId)
 						{
 							if (dist == squaredRadius){
 					          	pt = {
-						          	x: window.PARTICLE.pos.x+ray.dir.x * lightRadius,
-						          	y: window.PARTICLE.pos.y+ray.dir.y * lightRadius
+						          	x: particlePosX + ray.dir.x * lightRadius,
+						          	y: particlePosY + ray.dir.y * lightRadius
 						          }
 					   		}
 					   		if(recordMoveFurtherThanNeed)
@@ -7080,12 +7096,12 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
 				    }
 				    else if(dist < secondRecordMove && recordMoveFurtherThanNeed){
 				    	secondRecordMove = dist;
-			    		if(!tokenIsDoor || auraId != `${currWall.a.x}${currWall.a.y}${currWall.b.x}${currWall.b.y}${window.CURRENT_SCENE_DATA.id}`.replaceAll('.', ''))
+			    		if(!tokenIsDoor || auraId != wallData.doorId)
 						{
 							if (dist == squaredRadius){
 					          	pt = {
-						          	x: window.PARTICLE.pos.x+ray.dir.x * lightRadius,
-						          	y: window.PARTICLE.pos.y+ray.dir.y * lightRadius
+						          	x: particlePosX + ray.dir.x * lightRadius,
+						          	y: particlePosY + ray.dir.y * lightRadius
 						          }
 					   		}
 					   		secondClosestMove = pt;
@@ -7115,42 +7131,42 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
 		
 		if (closestLight !== null && ((closestWall?.terrainWall && (secondClosestWall != null || secondRecordLight == squaredRadius)) || closestWall != prevClosestWall || i === lastRayIndex || closestWall?.radius !== undefined)) {
 			if (closestWall !== prevClosestWall && prevClosestWall !== null && prevClosestPoint !== null) {
-				lightPolygon.push({ x: prevClosestPoint.x * window.CURRENT_SCENE_DATA.scale_factor, y: prevClosestPoint.y * window.CURRENT_SCENE_DATA.scale_factor })
+				lightPolygon.push({ x: prevClosestPoint.x * scaleFactor, y: prevClosestPoint.y * scaleFactor })
 			}
-			lightPolygon.push({ x: closestLight.x * window.CURRENT_SCENE_DATA.scale_factor, y: closestLight.y * window.CURRENT_SCENE_DATA.scale_factor })
+			lightPolygon.push({ x: closestLight.x * scaleFactor, y: closestLight.y * scaleFactor })
 		}
 		if (closestMove !== null && ((closestBarrier?.terrainWall && (secondClosestBarrier != null || secondRecordMove == squaredRadius)) || (closestBarrier !== prevClosestBarrier || i === lastRayIndex))) {
 			if (closestBarrier != prevClosestBarrier && prevClosestBarrierPoint) {
-				movePolygon.push({ x: prevClosestBarrierPoint.x * window.CURRENT_SCENE_DATA.scale_factor, y: prevClosestBarrierPoint.y * window.CURRENT_SCENE_DATA.scale_factor })
+				movePolygon.push({ x: prevClosestBarrierPoint.x * scaleFactor, y: prevClosestBarrierPoint.y * scaleFactor })
 			}
-			movePolygon.push({ x: closestMove.x * window.CURRENT_SCENE_DATA.scale_factor, y: closestMove.y * window.CURRENT_SCENE_DATA.scale_factor })
+			movePolygon.push({ x: closestMove.x * scaleFactor, y: closestMove.y * scaleFactor })
 		}
 		if (closestLight !== null && recordLight === squaredRadius) {
 			if ( prevClosestWall !== null && prevClosestPoint !== null) {
-				lightPolygon.push({ x: prevClosestPoint.x * window.CURRENT_SCENE_DATA.scale_factor, y: prevClosestPoint.y * window.CURRENT_SCENE_DATA.scale_factor })
+				lightPolygon.push({ x: prevClosestPoint.x * scaleFactor, y: prevClosestPoint.y * scaleFactor })
 			}
-			lightPolygon.push({ x: closestLight.x * window.CURRENT_SCENE_DATA.scale_factor, y: closestLight.y * window.CURRENT_SCENE_DATA.scale_factor })
+			lightPolygon.push({ x: closestLight.x * scaleFactor, y: closestLight.y * scaleFactor })
 		}
 		if (closestMove !== null && recordMove === squaredRadius) {
 			if (prevClosestBarrier !== null && prevClosestBarrierPoint !== null) {
-				movePolygon.push({ x: prevClosestBarrierPoint.x * window.CURRENT_SCENE_DATA.scale_factor, y: prevClosestBarrierPoint.y * window.CURRENT_SCENE_DATA.scale_factor })
+				movePolygon.push({ x: prevClosestBarrierPoint.x * scaleFactor, y: prevClosestBarrierPoint.y * scaleFactor })
 			}
-			movePolygon.push({ x: closestMove.x * window.CURRENT_SCENE_DATA.scale_factor, y: closestMove.y * window.CURRENT_SCENE_DATA.scale_factor })
+			movePolygon.push({ x: closestMove.x * scaleFactor, y: closestMove.y * scaleFactor })
 		}
 
 		if (canSeeDarkness) {
 			if (closestNoDarkness !== null && ((closestNoDarknessWall?.terrainWall && (secondClosestNoDarkness != null || secondRecordNoDarkness == squaredRadius)) || (closestNoDarknessWall !== prevClosestNoDarkness || i === lastRayIndex || closestNoDarknessWall?.radius !== undefined))) {
 				if (closestNoDarknessWall !== prevClosestNoDarkness && prevClosestNoDarkness !== null && prevClosestNoDarknessPoint !== null) {
-					noDarknessPolygon.push({ x: prevClosestNoDarknessPoint.x * window.CURRENT_SCENE_DATA.scale_factor, y: prevClosestNoDarknessPoint.y * window.CURRENT_SCENE_DATA.scale_factor })
+					noDarknessPolygon.push({ x: prevClosestNoDarknessPoint.x * scaleFactor, y: prevClosestNoDarknessPoint.y * scaleFactor })
 				}
-				noDarknessPolygon.push({ x: closestNoDarkness.x * window.CURRENT_SCENE_DATA.scale_factor, y: closestNoDarkness.y * window.CURRENT_SCENE_DATA.scale_factor })
+				noDarknessPolygon.push({ x: closestNoDarkness.x * scaleFactor, y: closestNoDarkness.y * scaleFactor })
 			}
 
 			if (closestNoDarkness !== null && recordNoDarkness === squaredRadius) {
 				if (prevClosestNoDarkness !== null && prevClosestNoDarknessPoint !== null) {
-					noDarknessPolygon.push({ x: prevClosestNoDarknessPoint.x * window.CURRENT_SCENE_DATA.scale_factor, y: prevClosestNoDarknessPoint.y * window.CURRENT_SCENE_DATA.scale_factor })
+					noDarknessPolygon.push({ x: prevClosestNoDarknessPoint.x * scaleFactor, y: prevClosestNoDarknessPoint.y * scaleFactor })
 				}
-				noDarknessPolygon.push({ x: closestNoDarkness.x * window.CURRENT_SCENE_DATA.scale_factor, y: closestNoDarkness.y * window.CURRENT_SCENE_DATA.scale_factor })
+				noDarknessPolygon.push({ x: closestNoDarkness.x * scaleFactor, y: closestNoDarkness.y * scaleFactor })
 			}
 
 			prevClosestNoDarknessPoint = closestNoDarkness;
@@ -7282,7 +7298,7 @@ function detectInLos(x, y) {
 	
 
 
-function redraw_light(darknessMoved = false){
+function redraw_light(darknessMoved = false, limitActiveRays = 0) {
 	const canvasWidth = getSceneMapSize().sceneWidth;
 	const canvasHeight = getSceneMapSize().sceneHeight;
     if(window.rayContext == undefined){
@@ -7513,7 +7529,10 @@ function redraw_light(darknessMoved = false){
 
 			check_token_elev(auraId);
 			particleUpdate(tokenPos.x, tokenPos.y); // moves particle
-			particleLook(context, allWalls, 100000, undefined, undefined, undefined, false, false, auraId);  // if the token has moved or walls have changed look for a new vision poly. This function takes a lot of processing time - so keeping this limited is prefered.
+			if (!found){
+				limitActiveRays = 0;
+			}
+			particleLook(context, allWalls, 100000, undefined, undefined, undefined, false, false, auraId, undefined, limitActiveRays);  // if the token has moved or walls have changed look for a new vision poly. This function takes a lot of processing time - so keeping this limited is prefered.
 
 			let pts = lightPolygon
 				.map(p => `${p.x / adjustScale}px ${p.y / adjustScale}px`)
