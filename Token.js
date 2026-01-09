@@ -47,7 +47,7 @@ const throttleLight = throttle((darknessMoved = false) => {
 	if (!window.walls || window.walls?.length < 5) {
 		redraw_light_walls();
 	} 
-	requestAnimationFrame(()=>{redraw_light(darknessMoved)})
+	requestAnimationFrame(()=>{redraw_light(darknessMoved, 1000)})
 }, 1000/30);
 const throttleTokenCheck = mydebounce(throttle(do_check_token_visibility, 1000/4), 20);
 const debounceStoreExplored = mydebounce((exploredCanvas, sceneId) => {		
