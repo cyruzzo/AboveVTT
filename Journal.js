@@ -4040,6 +4040,27 @@ class JournalManager{
 									<td class="item-cost-cell" style="padding: 8px; text-align: left;"></td>
 									<td class="item-add-cell" style="padding: 8px; text-align: left;">&nbsp;</td>
 								</tr>
+								<tr>
+									<td class="item-quantity-cell" style="padding: 8px; text-align: left;">&nbsp;</td>
+									<td class="item-link-cell" style="padding: 8px; text-align: left;">&nbsp;</td>
+									<td class="item-description-cell" style="padding: 8px; text-align: left;">&nbsp;</td>
+									<td class="item-cost-cell" style="padding: 8px; text-align: left;"></td>
+									<td class="item-add-cell" style="padding: 8px; text-align: left;">&nbsp;</td>
+								</tr>
+								<tr>
+									<td class="item-quantity-cell" style="padding: 8px; text-align: left;">&nbsp;</td>
+									<td class="item-link-cell" style="padding: 8px; text-align: left;">&nbsp;</td>
+									<td class="item-description-cell" style="padding: 8px; text-align: left;">&nbsp;</td>
+									<td class="item-cost-cell" style="padding: 8px; text-align: left;"></td>
+									<td class="item-add-cell" style="padding: 8px; text-align: left;">&nbsp;</td>
+								</tr>
+								<tr>
+									<td class="item-quantity-cell" style="padding: 8px; text-align: left;">&nbsp;</td>
+									<td class="item-link-cell" style="padding: 8px; text-align: left;">&nbsp;</td>
+									<td class="item-description-cell" style="padding: 8px; text-align: left;">&nbsp;</td>
+									<td class="item-cost-cell" style="padding: 8px; text-align: left;"></td>
+									<td class="item-add-cell" style="padding: 8px; text-align: left;">&nbsp;</td>
+								</tr>
 							</tbody>
 						</table>		
 					`
