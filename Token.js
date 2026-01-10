@@ -66,13 +66,13 @@ const debounceStoreExplored = mydebounce((exploredCanvas, sceneId) => {
 var debounceLightChecks = mydebounce((darknessMoved = false) => {		
 		if(window.DRAGGING)
 			return;
-	if (!window.walls || window.walls?.length < 5){
+		if (!window.walls || window.walls?.length < 5){
 			redraw_light_walls();	
 		}
 		
 		requestAnimationFrame(()=>{
 			if(darknessMoved === true)
-				redraw_drawn_light();
+				redraw_drawn_light(darknessMoved);
 			redraw_light(darknessMoved)
 		});
 		
@@ -93,7 +93,7 @@ var longDebounceLightChecks = mydebounce((darknessMoved = false) => {
 		//let promise = [new Promise (_ => setTimeout(redraw_light(), 1000))];
 		requestAnimationFrame(()=>{
 			if(darknessMoved === true)
-				redraw_drawn_light();
+				redraw_drawn_light(darknessMoved);
 			redraw_light(darknessMoved)
 		});
 		debounceAudioChecks();
@@ -773,7 +773,7 @@ class Token {
 				complete: async function() {
 					const darknessMoved = self.options.darkness || self.options.tokenWall;
 					if (darknessMoved)
-						redraw_drawn_light();
+						redraw_drawn_light(darknessMoved);
 					
 					if(window.EXPERIMENTAL_SETTINGS.dragLight == true)
 						throttleLight(darknessMoved);
@@ -2188,7 +2188,7 @@ class Token {
 					}, { duration: animationDuration, queue: true, complete: async function() {
 						const darknessMoved = self.options.darkness || self.options.tokenWall;
 							if (darknessMoved)
-								redraw_drawn_light();
+								redraw_drawn_light(darknessMoved);
 							
 							if(window.EXPERIMENTAL_SETTINGS.dragLight == true)
 								throttleLight(darknessMoved);
@@ -2253,7 +2253,7 @@ class Token {
 						}, { duration: animationDuration, queue: false, complete: async function() {
 							const darknessMoved = self.options.darkness || self.options.tokenWall;
 							if(darknessMoved)
-								redraw_drawn_light();
+								redraw_drawn_light(darknessMoved);
 							
 							if(window.EXPERIMENTAL_SETTINGS.dragLight == true)
 								throttleLight(darknessMoved);
@@ -2618,7 +2618,7 @@ class Token {
 							duration: animationDuration, queue: true, complete: async function() {
 								const darknessMoved = self.options.darkness || self.options.tokenWall;
 								if (darknessMoved)
-									redraw_drawn_light();
+									redraw_drawn_light(darknessMoved);
 								
 								if(window.EXPERIMENTAL_SETTINGS.dragLight == true)
 									throttleLight(darknessMoved);
@@ -3098,7 +3098,7 @@ class Token {
 							}
 							if(darknessMoved){
 								redraw_light(darknessMoved);
-								redraw_drawn_light();
+								redraw_drawn_light(darknessMoved);
 								if(window.EXPERIMENTAL_SETTINGS.dragLight == true)
 									throttleLight();
 								else

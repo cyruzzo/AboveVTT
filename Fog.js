@@ -1929,16 +1929,15 @@ function redraw_elev(openLegened = false) {
 		
 		window.elevHeights[color] = mapElev;
 
-		let targetCtx = offscreenContext;
 
 		if(fill == 'dot'){
-			targetCtx.setLineDash([lineWidth, 3*lineWidth])
+			offscreenContext.setLineDash([lineWidth, 3*lineWidth])
 		}
 		else if(fill == 'dash'){
-			targetCtx.setLineDash([5*lineWidth, 5*lineWidth])
+			offscreenContext.setLineDash([5*lineWidth, 5*lineWidth])
 		}
 		else{
-			targetCtx.setLineDash([])
+			offscreenContext.setLineDash([])
 		}
 
 		scale = (scale == undefined) ? window.CURRENT_SCENE_DATA.scale_factor/window.CURRENT_SCENE_DATA.conversion : scale/window.CURRENT_SCENE_DATA.conversion;
@@ -1951,25 +1950,25 @@ function redraw_elev(openLegened = false) {
 			width = width / adjustedScale;
 		}
 		if (shape == "rect") {
-			targetCtx.clearRect(x, y, width, height);
-			drawRect(targetCtx,x, y, width, height, color, isFilled, lineWidth);
+			offscreenContext.clearRect(x, y, width, height);
+			drawRect(offscreenContext,x, y, width, height, color, isFilled, lineWidth);
 		}
 		if (shape == "arc") {
 			const radius = width
-			clearCircle(targetCtx, x, y, radius);
-			drawCircle(targetCtx,x, y, radius, color, isFilled, lineWidth);
+			clearCircle(offscreenContext, x, y, radius);
+			drawCircle(offscreenContext,x, y, radius, color, isFilled, lineWidth);
 		}
 		if (shape == "polygon") {
-			clearPolygon(targetCtx, x, scale,true);
-			drawPolygon(targetCtx, x, color, isFilled, lineWidth, undefined, undefined, scale);
+			clearPolygon(offscreenContext, x, scale,true);
+			drawPolygon(offscreenContext, x, color, isFilled, lineWidth, undefined, undefined, scale);
 			// ctx.stroke();
 		}
 		if(shape == "3pointRect"){
-			clear3PointRect(targetCtx, x, scale,true);	
-		 	draw3PointRect(targetCtx, x, color, isFilled, lineWidth, undefined, undefined, scale);	
+			clear3PointRect(offscreenContext, x, scale,true);	
+		 	draw3PointRect(offscreenContext, x, color, isFilled, lineWidth, undefined, undefined, scale);	
 		}
 		if(shape == "paint-bucket"){
-			bucketFill(targetCtx, x/window.CURRENT_SCENE_DATA.scale_factor, y/window.CURRENT_SCENE_DATA.scale_factor, color, 1, false);
+			bucketFill(offscreenContext, x/window.CURRENT_SCENE_DATA.scale_factor, y/window.CURRENT_SCENE_DATA.scale_factor, color, 1, false);
 		}
 					
 	}
@@ -2024,7 +2023,7 @@ function check_token_elev(tokenid, elevContext=undefined){
 	}
 }
 
-function redraw_drawn_light(){
+function redraw_drawn_light(darknessMoved = false){
 	let lightCanvas = document.getElementById("light_overlay");
 	let lightCtx = lightCanvas.getContext("2d");
 	lightCtx.clearRect(0, 0, lightCanvas.width, lightCanvas.height);
@@ -2039,7 +2038,6 @@ function redraw_drawn_light(){
 		let [shape, fill, color, x, y, width, height, lineWidth, scale, bucketRaidus, lineBlur] = drawing_clone;
 		let isFilled = true;
 		
-		let targetCtx = offscreenContext;
 	
 		if(color == true){
 			color = window.CURRENT_SCENE_DATA.daylight;
@@ -2062,47 +2060,47 @@ function redraw_drawn_light(){
 		
 
 		if (lineBlur != undefined && shape != "paint-bucket") {
-			targetCtx.save();
-			targetCtx.filter = `blur(${lineBlur}px)`;
+			offscreenContext.save();
+			offscreenContext.filter = `blur(${lineBlur}px)`;
 		}
 
 		if (shape == "eraser") {
 			if (lineBlur != undefined) {
-				targetCtx.globalCompositeOperation = 'destination-out';
-				drawRect(targetCtx, x, y, width, height, '#000', true, 0);
+				offscreenContext.globalCompositeOperation = 'destination-out';
+				drawRect(offscreenContext, x, y, width, height, '#000', true, 0);
 			}
 			else {
-				targetCtx.clearRect(x / window.CURRENT_SCENE_DATA.scale_factor, y / window.CURRENT_SCENE_DATA.scale_factor, width / window.CURRENT_SCENE_DATA.scale_factor, height / window.CURRENT_SCENE_DATA.scale_factor);
+				offscreenContext.clearRect(x / window.CURRENT_SCENE_DATA.scale_factor, y / window.CURRENT_SCENE_DATA.scale_factor, width / window.CURRENT_SCENE_DATA.scale_factor, height / window.CURRENT_SCENE_DATA.scale_factor);
 			}	
 		}
 		if (shape == "rect") {
-			drawRect(targetCtx,x, y, width, height, color, isFilled, lineWidth);
+			drawRect(offscreenContext,x, y, width, height, color, isFilled, lineWidth);
 		}
 		if (shape == "arc") {
 			const radius = width
-			drawCircle(targetCtx,x, y, radius, color, isFilled, lineWidth);
+			drawCircle(offscreenContext,x, y, radius, color, isFilled, lineWidth);
 		}
 		if (shape == "cone") {
-			drawCone(targetCtx, x, y, width, height, color, isFilled, lineWidth);
+			drawCone(offscreenContext, x, y, width, height, color, isFilled, lineWidth);
 		}
 		if (shape == "line") {
-			drawLine(targetCtx,x, y, width, height, color, lineWidth, scale);		
+			drawLine(offscreenContext,x, y, width, height, color, lineWidth, scale);		
 		}
 		if (shape == "polygon") {
-			drawPolygon(targetCtx,x, color, isFilled, lineWidth, undefined, undefined, scale);
+			drawPolygon(offscreenContext,x, color, isFilled, lineWidth, undefined, undefined, scale);
 			// ctx.stroke();
 		}
 		if (shape == "brush") {
-			drawBrushstroke(targetCtx, x, color, lineWidth, scale);
+			drawBrushstroke(offscreenContext, x, color, lineWidth, scale);
 		}
 		if(shape == "paint-bucket"){
-			bucketFill(targetCtx, x/window.CURRENT_SCENE_DATA.scale_factor, y/window.CURRENT_SCENE_DATA.scale_factor, color, 1, true, width, height, lineBlur);
+			bucketFill(offscreenContext, x / window.CURRENT_SCENE_DATA.scale_factor, y / window.CURRENT_SCENE_DATA.scale_factor, color, 1, true, width, height, lineBlur, darknessMoved);
 		}
 		if(shape == "3pointRect"){
-		 	draw3PointRect(targetCtx, x, color, isFilled, lineWidth, undefined, undefined, scale);	
+		 	draw3PointRect(offscreenContext, x, color, isFilled, lineWidth, undefined, undefined, scale);	
 		}
 		if (lineBlur != undefined) {
-			targetCtx.restore();
+			offscreenContext.restore();
 		}
 	}
 
@@ -5271,39 +5269,88 @@ function clear_temp_canvas(playerId=window.PLAYER_ID){
 	window.temp_context.clearRect(0, 0, window.temp_canvas.width, window.temp_canvas.height); 
 }
 
-function bucketFill(ctx, mouseX, mouseY, fogStyle = 'rgba(0,0,0,0)', fogType = 0, islight = false, distance1 = 10000, distance2, blur = 0){
+function bucketFill(ctx, mouseX, mouseY, fogStyle = 'rgba(0,0,0,0)', fogType = 0, islight = false, distance1 = 10000, distance2, blur = 0, darknessMoved = false){
 	if(window.PARTICLE == undefined){
 		initParticle(new Vector(200, 200), 1);
 	}
+
 	let fog = true;
   	particleUpdate(mouseX, mouseY); // moves particle
   	let darknessBoundarys = getDarknessBoundarys();
 	let tokenWalls = getVisionBlockingTokenWalls();
 	const allWalls = [...window.walls, ...darknessBoundarys, ...tokenWalls];
-  	if(distance1 != 0){
-			particleLook(ctx, allWalls, distance1, fog, fogStyle, fogType, true, islight, undefined, blur, 0); 
-  	}
 
-	if(distance2 != undefined){
-		function halfLuminosity(rgbaStr) {
-			const m = rgbaStr
-				.replace(/\s+/g, '')
-				.match(/^rgba?\((\d{1,3}\.?\d*),(\d{1,3}\.?\d*),(\d{1,3}\.?\d*)(?:,([01]?\.?\d*))?\)$/i);
-			if (!m) 
-				return rgbaStr;
-
-			let r = m[1] * 0.5;
-			let g = m[2] * 0.5;
-			let b = m[3] * 0.5;
-			const a = m[4] !== undefined ? parseFloat(m[4]) : 1;
-
-
-			return `rgba(${r}, ${g}, ${b}, ${a})` 
-		}
-		distance2+=distance1;
-		particleLook(ctx, allWalls, distance2, fog, halfLuminosity(fogStyle), fogType, true, islight, undefined, blur, 0); 
+	if(!islight){
+		particleLook(ctx, allWalls, undefined, fog, fogStyle, fogType, true, islight, undefined, blur, 0); 
+		return;
 	}
+	
 
+	if (window.lightDrawingLosCache == undefined) {
+		window.lightDrawingLosCache = {};
+	}
+	const cacheKey = `${mouseX},${mouseY},${distance1 ?? 0},${distance2 ?? 0}`;
+	const cachedData = window.lightDrawingLosCache[cacheKey];
+	
+		const isBlur = parseInt(blur) > 0;
+		if (window.bucketFillCanvas == undefined) {
+			window.bucketFillCanvas = new OffscreenCanvas(ctx.canvas.width, ctx.canvas.height);
+			window.bucketFillCtx = window.bucketFillCanvas.getContext('2d');
+		}
+		const bucketFillCtx = window.bucketFillCtx;
+		bucketFillCtx.clearRect(0, 0, bucketFillCtx.canvas.width, bucketFillCtx.canvas.height);
+		bucketFillCtx.globalCompositeOperation = "lighten";
+		bucketFillCtx.filter = isBlur ? `blur(${parseInt(blur)}px)` : `none`;
+		const scaleFactor = window.CURRENT_SCENE_DATA.scale_factor ?? 1;
+		const scaledMouseX = mouseX * scaleFactor;
+		const scaledMouseY = mouseY * scaleFactor;
+		if (distance1 != 0) {
+			drawCircle(bucketFillCtx, scaledMouseX, scaledMouseY, distance1 * scaleFactor, fogStyle, true, 0);
+		}
+		if (distance2 != undefined) {
+			function halfLuminosity(rgbaStr) {
+				const m = rgbaStr
+					.replace(/\s+/g, '')
+					.match(/^rgba?\((\d{1,3}\.?\d*),(\d{1,3}\.?\d*),(\d{1,3}\.?\d*)(?:,([01]?\.?\d*))?\)$/i);
+				if (!m)
+					return rgbaStr;
+
+				let r = m[1] * 0.5;
+				let g = m[2] * 0.5;
+				let b = m[3] * 0.5;
+				const a = m[4] !== undefined ? parseFloat(m[4]) : 1;
+
+
+				return `rgba(${r}, ${g}, ${b}, ${a})`
+			}
+			distance2 += distance1;
+			drawCircle(bucketFillCtx, scaledMouseX, scaledMouseY, distance2 * scaleFactor, halfLuminosity(fogStyle), true, 0);
+		}
+		if (cachedData !== undefined &&
+			!darknessMoved &&
+			cachedData.wallLength == allWalls.length &&
+			cachedData.sceneId == window.CURRENT_SCENE_DATA.id &&
+			cachedData.scaleChecked == window.CURRENT_SCENE_DATA.scale_factor) {
+			bucketFillCtx.filter = `none`;
+			bucketFillCtx.globalCompositeOperation = "destination-in";
+			drawPolygon(bucketFillCtx, cachedData.lightPolygon, "#000", true);
+		}
+		else {
+			particleLook(bucketFillCtx, allWalls, undefined, fog, undefined, fogType, true, islight, undefined, blur, 0);
+			window.lightDrawingLosCache[cacheKey] = {
+				lightPolygon: [...window.lightPolygon],
+				wallLength: allWalls.length,
+				sceneId: window.CURRENT_SCENE_DATA.id,
+				scaleChecked: window.CURRENT_SCENE_DATA.scale_factor
+			}
+		}
+
+	ctx.globalCompositeOperation = 'lighten';
+	ctx.drawImage(window.bucketFillCanvas, 0, 0);
+	
+
+
+	
 }
 
 function save3PointRect(e){
@@ -6864,9 +6911,8 @@ function buildActiveRays(particle, walls, limit) {
 	return combined.map(function(entry){ return entry.ray; });
 }
 
-function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogType=0, draw=true, islight=false, auraId=undefined, blur=0, activeRayLimit = 0) {
+function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogType=0, draw=true, islight=false, auraId=undefined, blur=0, activeRayLimit=0) {
 
-	activeRayLimit = activeRayLimit;
 	lightPolygon = [];
 	movePolygon = [];
 	noDarknessPolygon = [];
@@ -6918,7 +6964,7 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
 		const isTerrainWall = currWall.terrainWall === true;
 		const isDarkness = currWall.darkness === true;
 		const doorId = tokenIsDoor ? `${currWall.a.x}${currWall.a.y}${currWall.b.x}${currWall.b.y}${sceneId}`.replaceAll('.', '') : '';
-		
+
 		wallCache.push({
 			wall: currWall,
 			wallTop: wallTop,
@@ -7201,33 +7247,40 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
 					drawPolygon(ctx, lightPolygon, fogStyle, undefined, undefined, undefined, undefined, undefined, true);
 				}
 				else {
-					const canvasWidth = getSceneMapSize().sceneWidth;
-					const canvasHeight = getSceneMapSize().sceneHeight;
 					
-					if(window.offScreenCombine == undefined){
-						window.offScreenCombine = new OffscreenCanvas(canvasWidth, canvasHeight);
+					if(auraId !== undefined){
+						const canvasWidth = getSceneMapSize().sceneWidth;
+						const canvasHeight = getSceneMapSize().sceneHeight;
+
+						if (window.offScreenCombine == undefined) {
+							window.offScreenCombine = new OffscreenCanvas(canvasWidth, canvasHeight);
+						}
+						const isBlur = parseInt(blur) > 0;
+						combineCtx = window.offScreenCombine.getContext('2d');
+						combineCtx.clearRect(0, 0, canvasWidth, canvasHeight);
+						combineCtx.globalCompositeOperation = "source-over";
+
+
+						combineCtx.filter = isBlur ? `blur(${parseInt(blur)}px)` : `none`;
+						drawPolygon(combineCtx, lightPolygon, fogStyle, true);
+
+						if (isBlur) {
+							combineCtx.filter = `none`;
+							combineCtx.globalCompositeOperation = "destination-in";
+							drawPolygon(combineCtx, window.lightPolygon, "#000", true);
+						}
+
+						combineCtx.globalCompositeOperation = "destination-out";
+						drawPolygon(combineCtx, lightPolygon, "#000", false, 10);
+						ctx.save();
+						ctx.globalCompositeOperation = 'lighten';
+						ctx.drawImage(window.offScreenCombine, 0, 0);
+						ctx.restore();
+						return;
 					}
-					const isBlur = parseInt(blur) > 0;
-					combineCtx = window.offScreenCombine.getContext('2d');
-					combineCtx.clearRect(0, 0, canvasWidth, canvasHeight);
-					combineCtx.globalCompositeOperation = "source-over";
-
-
-					combineCtx.filter = isBlur ? `blur(${parseInt(blur)}px)` : `none`;
-					drawPolygon(combineCtx, lightPolygon, fogStyle, true);
-
-					if (isBlur) {
-						combineCtx.filter = `none`;
-						combineCtx.globalCompositeOperation = "destination-in";
-						drawPolygon(combineCtx, window.lightPolygon, "#000", true);
-					}
-					
-					combineCtx.globalCompositeOperation = "destination-out";
-					drawPolygon(combineCtx, lightPolygon, "#000", false, 10);
-					ctx.save();
-					ctx.globalCompositeOperation = 'lighten';
-					ctx.drawImage(window.offScreenCombine, 0, 0);
-					ctx.restore();
+					ctx.filter = `none`;
+					ctx.globalCompositeOperation = "destination-in";
+					drawPolygon(ctx, window.lightPolygon, "#000", true);
 				}	
 			}
 		}
