@@ -5467,9 +5467,9 @@ function savePolygon(e) {
 			};
 		});
 		token.options.tokenWallPoly = {
-			origImageSize: token.options.imageSize,
-			origRot: token.options.rotation,
-			origScale: window.CURRENT_SCENE_DATA.scale_factor,
+			origImageSize: token.options.imageSize ?? 1,
+			origRot: token.options.rotation ?? 0,
+			origScale: window.CURRENT_SCENE_DATA.scale_factor ?? 1,
 			origSize: token.options.size,
 			relativePoints
 		}
