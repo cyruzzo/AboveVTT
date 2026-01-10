@@ -7546,7 +7546,7 @@ function redraw_light(darknessMoved = false, limitActiveRays = 0) {
 				noDarkness: noDarknessPolygon,
 				x: tokenPos.x,
 				y: tokenPos.y,
-				numberofwalls: walls.length + darknessBoundarys.length,
+				numberofwalls: allWalls.length,
 				clippath: pts,
 				visionType: window.TOKEN_OBJECTS[auraId].options.sight,
 				scaleCreated: window.TOKEN_OBJECTS[auraId].options.scaleCreated,
