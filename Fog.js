@@ -5286,64 +5286,65 @@ function bucketFill(ctx, mouseX, mouseY, fogStyle = 'rgba(0,0,0,0)', fogType = 0
 	}
 	
 
+
+	
+	const isBlur = parseInt(blur) > 0;
+	if (window.bucketFillCanvas == undefined) {
+		window.bucketFillCanvas = new OffscreenCanvas(ctx.canvas.width, ctx.canvas.height);
+		window.bucketFillCtx = window.bucketFillCanvas.getContext('2d');
+	}
+	const bucketFillCtx = window.bucketFillCtx;
+	bucketFillCtx.clearRect(0, 0, bucketFillCtx.canvas.width, bucketFillCtx.canvas.height);
+	bucketFillCtx.globalCompositeOperation = "lighten";
+	bucketFillCtx.filter = isBlur ? `blur(${parseInt(blur)}px)` : `none`;
+	const scaleFactor = window.CURRENT_SCENE_DATA.scale_factor ?? 1;
+	const scaledMouseX = mouseX * scaleFactor;
+	const scaledMouseY = mouseY * scaleFactor;
+	if (distance1 != 0) {
+		drawCircle(bucketFillCtx, scaledMouseX, scaledMouseY, distance1 * scaleFactor, fogStyle, true, 0);
+	}
+	if (distance2 != undefined) {
+		function halfLuminosity(rgbaStr) {
+			const m = rgbaStr
+				.replace(/\s+/g, '')
+				.match(/^rgba?\((\d{1,3}\.?\d*),(\d{1,3}\.?\d*),(\d{1,3}\.?\d*)(?:,([01]?\.?\d*))?\)$/i);
+			if (!m)
+				return rgbaStr;
+
+			let r = m[1] * 0.5;
+			let g = m[2] * 0.5;
+			let b = m[3] * 0.5;
+			const a = m[4] !== undefined ? parseFloat(m[4]) : 1;
+
+
+			return `rgba(${r}, ${g}, ${b}, ${a})`
+		}
+		distance2 += distance1;
+		drawCircle(bucketFillCtx, scaledMouseX, scaledMouseY, distance2 * scaleFactor, halfLuminosity(fogStyle), true, 0);
+	}
 	if (window.lightDrawingLosCache == undefined) {
 		window.lightDrawingLosCache = {};
 	}
 	const cacheKey = `${mouseX},${mouseY},${distance1 ?? 0},${distance2 ?? 0}`;
 	const cachedData = window.lightDrawingLosCache[cacheKey];
-	
-		const isBlur = parseInt(blur) > 0;
-		if (window.bucketFillCanvas == undefined) {
-			window.bucketFillCanvas = new OffscreenCanvas(ctx.canvas.width, ctx.canvas.height);
-			window.bucketFillCtx = window.bucketFillCanvas.getContext('2d');
+	if (cachedData !== undefined &&
+		!darknessMoved &&
+		cachedData.wallLength == allWalls.length &&
+		cachedData.sceneId == window.CURRENT_SCENE_DATA.id &&
+		cachedData.scaleChecked == window.CURRENT_SCENE_DATA.scale_factor) {
+		bucketFillCtx.filter = `none`;
+		bucketFillCtx.globalCompositeOperation = "destination-in";
+		drawPolygon(bucketFillCtx, cachedData.lightPolygon, "#000", true);
+	}
+	else {
+		particleLook(bucketFillCtx, allWalls, undefined, fog, undefined, fogType, true, islight, undefined, blur, 0);
+		window.lightDrawingLosCache[cacheKey] = {
+			lightPolygon: [...window.lightPolygon],
+			wallLength: allWalls.length,
+			sceneId: window.CURRENT_SCENE_DATA.id,
+			scaleChecked: window.CURRENT_SCENE_DATA.scale_factor
 		}
-		const bucketFillCtx = window.bucketFillCtx;
-		bucketFillCtx.clearRect(0, 0, bucketFillCtx.canvas.width, bucketFillCtx.canvas.height);
-		bucketFillCtx.globalCompositeOperation = "lighten";
-		bucketFillCtx.filter = isBlur ? `blur(${parseInt(blur)}px)` : `none`;
-		const scaleFactor = window.CURRENT_SCENE_DATA.scale_factor ?? 1;
-		const scaledMouseX = mouseX * scaleFactor;
-		const scaledMouseY = mouseY * scaleFactor;
-		if (distance1 != 0) {
-			drawCircle(bucketFillCtx, scaledMouseX, scaledMouseY, distance1 * scaleFactor, fogStyle, true, 0);
-		}
-		if (distance2 != undefined) {
-			function halfLuminosity(rgbaStr) {
-				const m = rgbaStr
-					.replace(/\s+/g, '')
-					.match(/^rgba?\((\d{1,3}\.?\d*),(\d{1,3}\.?\d*),(\d{1,3}\.?\d*)(?:,([01]?\.?\d*))?\)$/i);
-				if (!m)
-					return rgbaStr;
-
-				let r = m[1] * 0.5;
-				let g = m[2] * 0.5;
-				let b = m[3] * 0.5;
-				const a = m[4] !== undefined ? parseFloat(m[4]) : 1;
-
-
-				return `rgba(${r}, ${g}, ${b}, ${a})`
-			}
-			distance2 += distance1;
-			drawCircle(bucketFillCtx, scaledMouseX, scaledMouseY, distance2 * scaleFactor, halfLuminosity(fogStyle), true, 0);
-		}
-		if (cachedData !== undefined &&
-			!darknessMoved &&
-			cachedData.wallLength == allWalls.length &&
-			cachedData.sceneId == window.CURRENT_SCENE_DATA.id &&
-			cachedData.scaleChecked == window.CURRENT_SCENE_DATA.scale_factor) {
-			bucketFillCtx.filter = `none`;
-			bucketFillCtx.globalCompositeOperation = "destination-in";
-			drawPolygon(bucketFillCtx, cachedData.lightPolygon, "#000", true);
-		}
-		else {
-			particleLook(bucketFillCtx, allWalls, undefined, fog, undefined, fogType, true, islight, undefined, blur, 0);
-			window.lightDrawingLosCache[cacheKey] = {
-				lightPolygon: [...window.lightPolygon],
-				wallLength: allWalls.length,
-				sceneId: window.CURRENT_SCENE_DATA.id,
-				scaleChecked: window.CURRENT_SCENE_DATA.scale_factor
-			}
-		}
+	}
 
 	ctx.globalCompositeOperation = 'lighten';
 	ctx.drawImage(window.bucketFillCanvas, 0, 0);
