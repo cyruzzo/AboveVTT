@@ -76,6 +76,12 @@ async function fetch_monsters(monsterIds, callback, open5e=false) {
 		console.warn("fetch_monsters was called without a callback.");
 		return;
 	}
+	if( !Array.isArray(monsterIds) ){
+		console.warn("fetch_monsters was called without a valid array of monster IDs.");
+		callback([]);
+		return;
+	}
+	monsterIds = monsterIds.filter(id => id !== null);
 	if (typeof monsterIds === undefined || monsterIds.length === 0) {
 		callback([]);
 		return;
