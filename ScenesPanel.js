@@ -2916,7 +2916,7 @@ function register_scene_row_context_menu() {
 							};
 							did_update_scenes();
 						}
-						self.edit_note(item.id, false);
+						self.edit_note(item.id);
 						
 					}
 				}
