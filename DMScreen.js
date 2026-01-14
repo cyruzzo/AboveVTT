@@ -96,10 +96,13 @@ async function buildDMScreen(container) {
             $('#removeDmScreenPageButton').off('click.removeDmPage').on('click.removeDmPage', function () { 
                 const customBlock = dmScreenBlocks.find('.dmScreenCustomBlock');
                 const noteId = customBlock.attr('data-note-id');
-                delete window.JOURNAL.notes[note_id];
-                window.JOURNAL.persist();
-                $(`.dmScreenDropdownItem:first-of-type`).click();
-                refreshCustomDmPages();
+                if(confirm(`Are you sure you want to delete the DM Screen page "${window.JOURNAL.notes[noteId].title}"? This action cannot be undone.`)){
+                    delete window.JOURNAL.notes[noteId];
+                    window.JOURNAL.persist();
+                    $(`.dmScreenDropdownItem:first-of-type`).click();
+                    refreshCustomDmPages();
+                }
+
             });
             // Set up dropdown functionality
             $('.dmScreenTitle').click(function (e) {
