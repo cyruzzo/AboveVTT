@@ -2902,7 +2902,7 @@ class JournalManager{
 				 background: url('https://media-waterdeep.cursecdn.com/file-attachments/0/579/stat-block-header-bar.svg') center center no-repeat 
 			}
 			.dm-eyes-only{
-				 border: 1px solid #000;
+				 border: 1px solid var(--border-color, #000);
 				 border-radius: 5px;
 				 background: var(--background-color, #f5f5f5);
 				 padding: 0px 5px;
@@ -2917,7 +2917,7 @@ class JournalManager{
 				 top: -10px;
 				 right: 2px;
 				 float:right;
-				 border:1px #000 solid;
+				 border:1px var(--border-color, #000); solid;
 				 border-radius:5px;
 				 background: var(--background-color, #f5f5f5);
 				 font-weight: bold;
@@ -2947,6 +2947,9 @@ class JournalManager{
 			}
 			.ignore-abovevtt-formating{
 				 border: 2px dotted #b100ff;
+			}
+			.dmScreenChunk{
+				border: 2px dotted #880000;	
 			}
 			.ignore-abovevtt-formating.no-border{
 				border: none;
@@ -3800,7 +3803,8 @@ class JournalManager{
 			      { title: 'Stat Block Paper (1 Column)', block: 'div', wrapper: true, classes: 'Basic-Text-Frame stat-block-background one-column-stat' },
 			      { title: 'Stat Block Paper (2 Column)', block: 'div', wrapper: true, classes: 'Basic-Text-Frame stat-block-background' },
 			      { title: 'For DM Eyes Online', block: 'div', wrapper: true, classes: 'dm-eyes-only' },
-			      { title: 'Add Ability Tracker; Format: "Wild Shape 2"', inline: 'span', wrapper:true, classes: 'note-tracker'},
+				  { title: 'DM Screen Chunk - won\'t be auto split into columns when used with the DM Screen', block: 'div', wrapper: true, classes: 'dmScreenChunk' },
+				  { title: 'Add Ability Tracker; Format: "Wild Shape 2"', inline: 'span', wrapper:true, classes: 'note-tracker'},
 			      { title: 'Ignore AboveVTT auto formating', inline: 'span', wrapper: true, classes: 'ignore-abovevtt-formating' },
 			      { title: 'Embed Site in Journal', inline: 'span', wrapper: true, classes: 'journal-site-embed'}
 			    ] },
@@ -4335,6 +4339,13 @@ class JournalManager{
 				self.notes[note_id].plain = tinymce.activeEditor.getContent({ format: 'text' });
 				self.notes[note_id].statBlock = statBlock;
 				self.persist();
+				const dmScreenPageOpen = $('#dmScreenCustomBlock');
+				if(dmScreenPageOpen.length > 0){
+					const openNoteId = dmScreenPageOpen.attr('data-note-id');
+					if(openNoteId == note_id){
+						$(`.dmScreenCustomDropdownItem[data-id='${note_id}']`).trigger('click');
+					}
+				}
 				if(note_id in window.TOKEN_OBJECTS){
 					window.TOKEN_OBJECTS[note_id].place(); // trigger display of the "note" condition
 				}

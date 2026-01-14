@@ -48,15 +48,59 @@ async function buildDMScreen(container) {
                         <div class='dmScreenDropdownItem' data-block='travel'>Travel</div>
                         <div class='dmScreenDropdownItem' data-block='weapons'>Weapons</div>
                     </div>
+                    <div class='dmScreenPageButtons'>
+                        <button id="addDmScreenPageButton" title="Add DM Screen Page">+</button>
+                        <button id="editDmScreenPageButton" style='display:none' title="Edit DM Screen Page">✎</button>
+                        <button id="removeDmScreenPageButton" style='display:none' title="Remove DM Screen Page"><svg class="delSVG" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M16 9v10H8V9h8m-1.5-6h-5l-1 1H5v2h14V4h-3.5l-1-1zM18 7H6v12c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7z"/></svg></button>
+                    </div>
                 </div>
                 <div id='dmScreenBlocks'>
                     
                 </div>
             </div>
 		    `);
+            const refreshCustomDmPages = function() {     
+                const dropdown = cont.find('.dmScreenDropdown');
+                dropdown.find('.dmScreenCustomDropdownItem').remove();
+                const customDmPages = Object.values(window.JOURNAL.notes).filter(n => n.dmScreen==1);
+                if (customDmPages.length > 0) {
+                    for(let i=0; i<customDmPages.length; i++){
+                        const dmScreenDropdownItem = $(`<div class='dmScreenDropdownItem dmScreenCustomDropdownItem' data-block='custom' data-id='${customDmPages[i].id}'>${customDmPages[i].title}</div>`);
+                        dropdown.append(dmScreenDropdownItem);
+                    }
+                }
+            }
+            refreshCustomDmPages();
+
             container.append(cont);
             const dmScreenBlocks = $("#dmScreenBlocks");
-
+            $('#addDmScreenPageButton').off('click.addDmPage').on('click.addDmPage', function () {
+                const newId = uuid();
+                const name = prompt("Enter the title for the new DM Screen page:");
+                window.JOURNAL.notes[newId] = {
+                    title: name,
+                    text: "",
+                    player: false,
+                    plain: "",
+                    dmScreen: 1,
+                    id: newId
+                };
+                window.JOURNAL.edit_note(newId);
+                refreshCustomDmPages();
+            });
+            $('#editDmScreenPageButton').off('click.editDmPage').on('click.editDmPage', function () { 
+                const customBlock = dmScreenBlocks.find('.dmScreenCustomBlock');
+                const noteId = customBlock.attr('data-note-id');     
+                window.JOURNAL.edit_note(noteId);
+            });
+            $('#removeDmScreenPageButton').off('click.removeDmPage').on('click.removeDmPage', function () { 
+                const customBlock = dmScreenBlocks.find('.dmScreenCustomBlock');
+                const noteId = customBlock.attr('data-note-id');
+                delete window.JOURNAL.notes[note_id];
+                window.JOURNAL.persist();
+                $(`.dmScreenDropdownItem:first-of-type`).click();
+                refreshCustomDmPages();
+            });
             // Set up dropdown functionality
             $('.dmScreenTitle').click(function (e) {
                 e.stopPropagation();
@@ -83,13 +127,14 @@ async function buildDMScreen(container) {
                 add_stat_block_hover($element);
             }
             // Handle dropdown item selection
-            $('.dmScreenDropdownItem').click(function () {
-                const blockType = $(this).attr('data-block');
-                const blockTitle = $(this).text();
+            $('.dmScreenDropdown').off('click.buildBlock').on('click.buildBlock', '.dmScreenDropdownItem',function (e) {
+                const blockType = $(e.target).attr('data-block');
+                const blockTitle = $(e.target).text();
 
                 $('.dmScreenTitle').html(`${blockTitle} <span>▼</span>`);
                 $('.dmScreenDropdown').hide();
-
+                $('#editDmScreenPageButton').hide();
+                $('#removeDmScreenPageButton').hide();
                 // Clear current blocks and load the selected one
                 dmScreenBlocks.empty();
                 switch (blockType) {
@@ -122,6 +167,21 @@ async function buildDMScreen(container) {
                         break;
                     case 'bastion':
                         dmScreenBlocks.append(buildBastionBlock());
+                        break;
+                    case 'custom':
+                        const pageId = $(e.target).attr('data-id'); 
+                        const journalPage = window.JOURNAL.notes[pageId];
+                        $('#editDmScreenPageButton').show();
+                        $('#removeDmScreenPageButton').show();
+                        if (journalPage) {
+                            const pageContent = journalPage.text || "";
+                            const customBlock = $(`
+                                <div class='dmScreenBlock dmScreenCustomBlock' id='dmScreenCustomBlock' data-note-id='${journalPage.id}'>
+                                    <div class='dmScreenColumns note-text'>${pageContent}</div>
+                                </div>
+                            `);
+                            dmScreenBlocks.append(customBlock);
+                        }
                         break;
                 }
                 addTooltipAndRoll(dmScreenBlocks);
