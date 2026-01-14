@@ -2343,7 +2343,7 @@ function inject_sidebar_send_to_gamelog_button(sidebarPaneContent) {
 function find_items_in_cache_by_id_and_name(items = []) {
   const foundItems = [];
   for (let item of items) {
-    const cachedItem = window.ITEMS_CACHE.find(ci => ci.id.toString() === item.id.toString() && ci.name.toLowerCase().replace(/[^a-z0-9]/g, '').includes(item.name.toLowerCase().replace(/[^a-z0-9]/g, '')));
+    const cachedItem = window.ITEMS_CACHE.find(ci => ci.id.toString() === item.id.toString() && ci.name.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]/g, '').includes(item.name.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]/g, '')));
     if (cachedItem) {
       foundItems.push(cachedItem);
     }
