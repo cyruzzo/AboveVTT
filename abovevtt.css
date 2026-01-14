@@ -3272,6 +3272,26 @@ body .note-visibility-toggle-container {
                 font-size: 0.8em;
             }
         }
+        .dmScreenPageButtons{
+            position: absolute;
+            right: 10px;
+            top: 5px;
+            display:flex;
+            align-items: center;
+            align-content: center;
+            button {
+                width: 20px;
+                height: 20px;
+                background: var(--background-color, #F9F8F3);
+                border: 1px solid #ddd;
+                border-radius: 3px;
+                padding: 0px;
+                margin-left: 5px;
+                font-size: 14px;
+                color: var(--font-color, #000);
+            }
+        }
+
     }
     h1{
         font-size: 24px;
@@ -3639,7 +3659,7 @@ div#selectedTokensBorder {
     z-index: 10;
 }
 .mce-floatpanel{
-    z-index: 91000 !important;
+    z-index: 191000 !important;
 }
 .icon-condition,
 .context-menu-icon-condition {
@@ -8766,7 +8786,9 @@ body.color-blind-avtt {
     right: 0;
     bottom: 0;
 }
-
+.ui-front{
+    z-index: 100000 !important;
+}
 #combat_area tr.CTToken:before{
     content:  '???';
     font-size: 12px;
