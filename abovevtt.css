@@ -4874,6 +4874,10 @@ h5.token-image-modal-footer-title:after {
     background-color: #979AA4;
     display: block;
 }
+.avtt-settings-section h4~div>h5.token-image-modal-footer-title:after {
+    margin: 0px;
+}
+
 .sidebar-panel-footer input,
 .token-image-modal-footer input {
     margin-bottom: 6px;
@@ -4899,6 +4903,19 @@ h5.token-image-modal-footer-title:after {
 }
 .avtt-settings-section h4.token-image-modal-footer-title {
     font-size: 15px;
+}
+
+.avtt-settings-section h4~div>h5.token-image-modal-footer-title {
+    margin-top: 20px;
+    font-size: 12px;
+    text-align: center;
+    width: 100px;
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+}
+.avtt-settings-section h4~div:first-of-type>h5.token-image-modal-footer-title {
+    margin-top: 0px;
 }
 h3.no-bottom-margin-setting:after {
     margin-bottom:0px;
