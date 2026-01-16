@@ -799,7 +799,7 @@ function draw_text(
  */
 function init_text_button(buttons) {
     textButton = $(
-        "<button style='display:inline;width:75px' id='text_button' class='drawbutton menu-button hideable ddbc-tab-options__header-heading'><u>T</u>ext</button>"
+        "<button style='display:inline;width:75px' id='text_button' data-name='Text (T)' class='drawbutton hasTooltip menu-button hideable ddbc-tab-options__header-heading'><span class='button-text'><u>T</u>ext</span></button>"
     );
 
     textMenu = $(

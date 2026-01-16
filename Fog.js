@@ -5668,7 +5668,7 @@ function init_ruler_menu(buttons){
 	$("body").append(ruler_menu);
 
 
-	let ruler_button = $("<button style='display:inline;width:75px;' id='ruler_button' class='drawbutton menu-button hideable ddbc-tab-options__header-heading'><u>R</u>ULER</button>");
+	let ruler_button = $("<button style='display:inline;width:75px;' id='ruler_button' data-name='Ruler (R)' class='drawbutton hasTooltip menu-button hideable ddbc-tab-options__header-heading'><span class='button-text'><u>R</u>ULER</span></button>");
 
 
 	ruler_button.off('click.update').on('click.update', function(){
@@ -5845,7 +5845,7 @@ function init_fog_menu(buttons){
 		sync_fog();
 	});
 
-	let fog_button = $("<button style='display:inline;width:75px;' id='fog_button' class='drawbutton menu-button hideable ddbc-tab-options__header-heading'><u>F</u>OG</button>");
+	let fog_button = $("<button style='display:inline;width:75px;' id='fog_button' data-name='Fog (F)' class='drawbutton hasTooltip menu-button hideable ddbc-tab-options__header-heading'><span class='button-text'><u>F</u>OG</span></button>");
 
 	buttons.append(fog_button);
 	fog_menu.css("left", fog_button.position().left);
@@ -6097,7 +6097,7 @@ function init_draw_menu(buttons){
 
 	$("body").append(draw_menu);
 
-	let draw_button = $("<button style='display:inline;width:75px' id='draw_button' class='drawbutton menu-button hideable ddbc-tab-options__header-heading'><u>D</u>RAW</button>");
+	let draw_button = $("<button style='display:inline;width:75px' id='draw_button' data-name='Draw (D)' class='drawbutton hasTooltip menu-button hideable ddbc-tab-options__header-heading'><span class='button-text'><u>D</u>RAW</span></button>");
 
 	buttons.append(draw_button);
 	draw_menu.css("left",draw_button.position().left);
@@ -6292,7 +6292,7 @@ function init_walls_menu(buttons){
 
 	$("body").append(wall_menu);
 
-	let wall_button = $("<button style='display:inline;width:75px' id='wall_button' class='drawbutton menu-button hideable ddbc-tab-options__header-heading'><u>W</u>alls</button>");
+	let wall_button = $("<button style='display:inline;width:75px' id='wall_button' data-name='Walls (W)' class='drawbutton hasTooltip menu-button hideable ddbc-tab-options__header-heading'><span class='button-text'><u>W</u>alls</span></button>");
 	buttons.append(wall_button);
 	wall_menu.css("left",wall_button.position().left);
 }
@@ -6407,7 +6407,7 @@ function init_elev_menu(buttons){
 
 	$("body").append(elev_menu);
 
-	let elev_button = $("<button style='display:inline;width:75px' id='elev_button' class='drawbutton menu-button hideable ddbc-tab-options__header-heading'><u>E</u>levation</button>");
+	let elev_button = $("<button style='display:inline;width:75px' id='elev_button' data-name='Elevation (E)' class='drawbutton hasTooltip menu-button hideable ddbc-tab-options__header-heading'><span class='button-text'><u>E</u>levation</span></button>");
 	elev_button.on('click', function(){
 		redraw_elev();
 	});
@@ -6609,7 +6609,7 @@ function init_vision_menu(buttons){
 
 	$("body").append(vision_menu);
 
-	let vision_button = $("<button style='display:inline;width:75px' id='vision_button' class='drawbutton menu-button hideable ddbc-tab-options__header-heading'><u>L</u>IGHT/VISION</button>");
+	let vision_button = $("<button style='display:inline;width:75px' id='vision_button' data-name='Light/Vision (L)' class='drawbutton hasTooltip menu-button hideable ddbc-tab-options__header-heading'><span class='button-text'><u>L</u>IGHT/VISION</span></button>");
 
 	buttons.append(vision_button);
 	vision_menu.css("left",vision_button.position().left);
