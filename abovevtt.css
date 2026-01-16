@@ -366,7 +366,13 @@ button .ddbc-tab-options__header-heading .menu-option{
     height: calc(100% - 100px);
     max-height: fit-content;
 }
-
+span.button-text{
+    width:fit-content;
+    display:block;
+    position:relative;
+    margin:0;
+    padding:0;
+}
 .body-rpgcharacter-sheet div.avtt-sidebar-controls {
     margin: 4px 0px 0px 0px !important;
 }
@@ -1887,12 +1893,22 @@ div#combat-tracker-settings form > div {
     display:none;
 }
 
-.hasTooltip:hover:after {
+.hasTooltip:not(.drawbutton):hover:after,
+.mobileAVTTUI .drawbutton.hasTooltip:hover:after {
     opacity: 1;
     visibility: visible;
-    transition: 0.05s ease-in-out 0.3s;
+    transition: 0.05s ease-in-out 0.4s;
 }
-
+.drawbutton.hasTooltip{
+    position: relative;
+}
+.drawbutton.hasTooltip:after{
+    position:absolute;
+    font-size: 12px;
+    top: 9px;
+    left: 35px;
+    transition: none;
+}
 .hasTooltip.CTToken:hover:after {
     transition: visibility 0s ease-in-out 0s;
 }
@@ -8869,7 +8885,6 @@ body.avtt-spectator-sheet #combat_area tr.CTToken:before{
 
 div.ddbc-tab-options--layout-pill button{
     background-image: none;
-    height: auto;
     box-shadow: none;
     transition: none;
     border: 0px;
@@ -14360,11 +14375,12 @@ button#displayedDiceFormulaExit:hover {
 .mobileAVTTUI #combat_tracker div.ddbc-tab-options--layout-pill>button{
     width: 30px !important;
     height: 30px !important;
-    text-indent: 40px;
-    overflow: hidden;
     padding: 0px;
     margin: 0px 0px 3px 0px;
     font-size: 20px;
+}
+.mobileAVTTUI .drawbutton .button-text{
+    display:none;
 }
 .mobileAVTTUI>div.ddbc-tab-options--layout-pill{
     display: flex;
@@ -14429,6 +14445,7 @@ button#displayedDiceFormulaExit:hover {
     height: 30px;
     width: 30px;
     text-indent: 0px;
+    position:relative;
 }
 .mobileAVTTUI #select-button:before{
     content:"\f82f";        

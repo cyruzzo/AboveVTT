@@ -2596,7 +2596,7 @@ function init_buttons() {
 	let buttons = $(`<div class="ddbc-tab-options--layout-pill"></div>`);
 	$("body").append(buttons);
 
-	buttons.append($("<button style='display:inline; width:75px;' id='select-button' class='drawbutton hideable ddbc-tab-options__header-heading' data-shape='rect' data-function='select'><u>S</u>ELECT</button>"));
+	buttons.append($("<button style='display:inline; width:75px;' id='select-button' data-name='Select (S)' class='drawbutton hasTooltip hideable ddbc-tab-options__header-heading' data-shape='rect' data-function='select'><spam class='button-text'><u>S</u>ELECT</span></button>"));
 
 	init_ruler_menu(buttons);
 	
@@ -2615,7 +2615,7 @@ function init_buttons() {
 	setup_aoe_button(buttons);
 	handle_drawing_button_click();
 
-	buttons.append("<button style='display:inline;width:75px' id='help_button' class='hideable ddbc-tab-options__header-heading'>HELP</button>");
+	buttons.append("<button style='display:inline;width:75px' id='help_button' data-name='Help' class='drawbutton hideable hasTooltip ddbc-tab-options__header-heading'>HELP</button>");
 
 	buttons.css("position", "fixed");
 	buttons.css("top", '5px');
