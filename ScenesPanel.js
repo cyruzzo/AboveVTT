@@ -11,8 +11,6 @@ function consider_upscaling(target){
 		}
 }
 
-
-
 function handle_basic_form_toggle_click(event){
 	if ($(event.currentTarget).hasClass("rc-switch-checked")) {
 		// it was checked. now it is no longer checked
@@ -374,8 +372,8 @@ function create_full_scene_from_uvtt(data, url, doorType, doorHidden){ //this se
 		'tokens': sceneTokens,
 		'UVTTFile': 1 
 	};
-
 	return sceneData;
+
 }
 
 function open_grid_wizard_controls(scene_id, aligner1, aligner2, regrid=function(){}, copiedSceneData = window.CURRENT_SCENE_DATA) {
@@ -1943,7 +1941,7 @@ function default_scene_data() {
 	return defaultData;
 }
 
-function build_scene_data_payload(parentId, fullPath, sceneName = "New Scene", mapUrl = "", existingNameSet = new Set()) {
+async function build_scene_data_payload(parentId, fullPath, sceneName = "New Scene", mapUrl = "", existingNameSet = new Set()) {
 	const sanitizedFullPath = sanitize_folder_path(fullPath || RootFolder.Scenes.path);
 	const baseName = avttScenesSafeDecode(sceneName || "New Scene") || "New Scene";
 	let candidate = baseName;
@@ -1970,6 +1968,17 @@ function build_scene_data_payload(parentId, fullPath, sceneName = "New Scene", m
 	const lowerMap = typeof sceneData.player_map === "string" ? sceneData.player_map.toLowerCase() : "";
 	if ([".mp4", ".webm", ".m4v", ".mov", ".avi", ".mkv", ".wmv", ".flv"].some((ext) => lowerMap.includes(ext))) {
 		sceneData.player_map_is_video = "1";
+	}
+	else if (["uvtt", "dd2vtt", "df2vtt"].some((ext) => lowerMap.includes(ext))) {
+		let uvttSceneData = await getUvttData(sceneData.player_map);
+		const newSceneData = await create_full_scene_from_uvtt(uvttSceneData, sceneData.player_map, 0, false);
+		uvttSceneData = {
+			...newSceneData,
+			title: candidate,
+			parentId,
+			folderPath: relativeFolderPath
+		} 
+		return uvttSceneData;
 	}
 
 	return sceneData;
@@ -2481,15 +2490,7 @@ function avttScenesSafeDecode(value) {
 	}
 }
 
-const AVTT_SCENE_ALLOWED_EXTENSIONS = (() => {
-	const imageTypes = (typeof allowedImageTypes !== "undefined" && Array.isArray(allowedImageTypes))
-		? allowedImageTypes
-		: ["jpeg", "jpg", "png", "gif", "bmp", "webp"];
-	const videoTypes = (typeof allowedVideoTypes !== "undefined" && Array.isArray(allowedVideoTypes))
-		? allowedVideoTypes
-		: ["mp4", "mov", "avi", "mkv", "wmv", "flv", "webm"];
-	return new Set([...imageTypes, ...videoTypes].map((ext) => String(ext).toLowerCase()));
-})();
+
 
 function avttScenesNormalizeRelativePath(path) {
 	if (typeof path !== "string") {
@@ -2536,6 +2537,7 @@ async function avttScenesFetchFolderListing(relativePath) {
 }
 
 async function avttScenesCollectAssets(folderRelativePath) {
+	const AVTT_SCENE_ALLOWED_EXTENSIONS = new Set([...allowedImageTypes, ...allowedVideoTypes, "uvtt", "dd2vtt", "df2vtt"].map((ext) => String(ext).toLowerCase()));
 	const normalizedBase = avttScenesNormalizeRelativePath(folderRelativePath);
 	if (!normalizedBase) {
 		return { files: [], folders: [] };
@@ -2697,9 +2699,9 @@ async function importAvttSelections(selectedItems, baseParentId, baseFullPath) {
 		};
 	};
 
-	const addSceneForFile = (item, targetContext, sceneNameSource) => {
+	const addSceneForFile = async (item, targetContext, sceneNameSource) => {
 		const nameSet = getSceneNameSet(targetContext.parentId);
-		const sceneData = build_scene_data_payload(
+		const sceneData = await build_scene_data_payload(
 			targetContext.parentId,
 			targetContext.fullPath,
 			sceneNameSource,
@@ -2709,15 +2711,15 @@ async function importAvttSelections(selectedItems, baseParentId, baseFullPath) {
 		pendingScenes.push(sceneData);
 	};
 
-	const processStandaloneFile = (item) => {
+	const processStandaloneFile = async (item) => {
 		if (!item || !item.link) {
 			return;
 		}
 		const relativePath = item.path || avttScenesRelativePathFromLink(item.link);
 		const sceneName = relativePath ? avttScenesDeriveSceneName(relativePath) : avttScenesSafeDecode(item.name || "New Scene");
 		const targetContext = ensureFolderSegments([]);
-		addSceneForFile(item, targetContext, sceneName);
-	};
+		await addSceneForFile(item, targetContext, sceneName);
+	};	
 
 	const processFolderSelection = async (folderItem) => {
 		const folderPathRaw = (folderItem && folderItem.path) || avttScenesRelativePathFromLink(folderItem?.link);
@@ -2766,7 +2768,7 @@ async function importAvttSelections(selectedItems, baseParentId, baseFullPath) {
 			const targetContext = segments.length > 0 ? ensureFolderSegments(segments) : rootContext;
 			const sceneName = avttScenesDeriveSceneName(relativePath);
 			const sceneLink = `above-bucket-not-a-url/${window.PATREON_ID}/${relativePath}`;
-			addSceneForFile({ link: sceneLink }, targetContext, sceneName);
+			await addSceneForFile({ link: sceneLink }, targetContext, sceneName);
 		}
 	};
 
@@ -2777,7 +2779,7 @@ async function importAvttSelections(selectedItems, baseParentId, baseFullPath) {
 		if (item.isFolder || item.type === avttFilePickerTypes.FOLDER) {
 			await processFolderSelection(item);
 		} else {
-			processStandaloneFile(item);
+			await processStandaloneFile(item);
 		}
 	}
 
@@ -3412,8 +3414,8 @@ function build_UVTT_import_container(){
 	
 
 
-	const doorTypeSelect = $(`<select id='doorTypeSelectUVTT'></select>`);
 	const availableDoors = get_available_doors();
+	const doorTypeSelect = $(`<select id='doorTypeSelectUVTT'></select>`);
 	for(let i in availableDoors){
 		doorTypeSelect.append(`<option value='${i}'>${availableDoors[i]}</option>`)
 	}
