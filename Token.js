@@ -3075,8 +3075,10 @@ class Token {
 
 				tok.draggable({
 					stop: function (event) {
-							event.stopPropagation();
+							event.stopPropagation();						
+							window.DRAGGING = false;
 							window.enable_window_mouse_handlers();
+		
 							if(window.TOKEN_OBJECTS[self.options.id] != undefined){
 								self.sync($.extend(true, {}, self.options));
 							}
@@ -3118,9 +3120,7 @@ class Token {
 							if (get_avtt_setting_value("allowTokenMeasurement")){
 								WaypointManager.fadeoutMeasuring(window.PLAYER_ID)
 							}	
-							
-
-							window.DRAGGING = false;
+														
 							draw_selected_token_bounding_box();
 							window.toggleSnap=false;
 
@@ -4253,11 +4253,13 @@ function token_menu() {
 		$("#tokens").on("touchstart", ".VTTToken, .door-button", function(event) {
 			event.stopPropagation();
 			event.preventDefault();
-			initialX = event.touches[0].clientX;
-			initialY = event.touches[0].clientY;
+			initialX = event.touches[0].pageX;
+			initialY = event.touches[0].pageY;
 		    LongPressTimer = setTimeout(function() {
 			    console.log("context_menu_flyout contextmenu event", event);
-				
+				if (window.DRAGGING || $(".pause_click").length > 0) {
+					return;
+				}
 				if ($(event.currentTarget).hasClass("tokenselected") && window.CURRENTLY_SELECTED_TOKENS.length > 0) {
 					token_context_menu_expanded(window.CURRENTLY_SELECTED_TOKENS, event);
 				} else {
@@ -4273,9 +4275,9 @@ function token_menu() {
 		  .on('touchmove', function(e) {
 		  	e.stopPropagation();
 			e.preventDefault();
-		  	let currentY = e.touches[0].clientY;
-		  	let currentX = e.touches[0].clientX;
-		  	if(Math.abs(initialX-currentX) > 15 || Math.abs(initialY-currentY) > 15 ){
+			let currentY = e.touches[0].pageY;
+			let currentX = e.touches[0].pageX;
+		  	if(Math.abs(initialX-currentX) >= 5 || Math.abs(initialY-currentY) >= 5 ){
 		  		clearTimeout(LongPressTimer)
 		  	}
 		    
@@ -4284,7 +4286,9 @@ function token_menu() {
 			console.log("context_menu_flyout contextmenu event", event);
 			event.preventDefault();
 			event.stopPropagation();
-		
+			if (window.DRAGGING || $(".pause_click").length > 0) {
+				return;
+			}
 			if ($(event.currentTarget).hasClass("tokenselected") && window.CURRENTLY_SELECTED_TOKENS.length > 0) {
 				token_context_menu_expanded(window.CURRENTLY_SELECTED_TOKENS, event);
 			} else {
