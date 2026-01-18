@@ -771,7 +771,7 @@ class Token {
 
 			old.animate({left: this.options.left,top: this.options.top,}, { duration: 0, queue: true, 
 				complete: async function() {
-					const darknessMoved = self.options.darkness || self.options.tokenWall;
+					const darknessMoved = (self.options.darkness || self.options.tokenWall) ? true : false;
 					if (darknessMoved)
 						redraw_drawn_light(darknessMoved);
 					
@@ -2186,9 +2186,12 @@ class Token {
 						left: this.options.left,
 						top: this.options.top,
 					}, { duration: animationDuration, queue: true, complete: async function() {
-						const darknessMoved = self.options.darkness || self.options.tokenWall;
-							if (darknessMoved)
+							const darknessMoved = (self.options.darkness || self.options.tokenWall) ? true : false;
+							if (darknessMoved){
 								redraw_drawn_light(darknessMoved);
+							}
+								
+
 							
 							if(window.EXPERIMENTAL_SETTINGS.dragLight == true)
 								throttleLight(darknessMoved);
@@ -2251,7 +2254,7 @@ class Token {
 							width: this.sizeWidth(),
 							height: this.sizeHeight()
 						}, { duration: animationDuration, queue: false, complete: async function() {
-							const darknessMoved = self.options.darkness || self.options.tokenWall;
+							const darknessMoved = (self.options.darkness || self.options.tokenWall) ? true : false;
 							if(darknessMoved)
 								redraw_drawn_light(darknessMoved);
 							
@@ -2616,7 +2619,7 @@ class Token {
 						}, 
 						{ 
 							duration: animationDuration, queue: true, complete: async function() {
-								const darknessMoved = self.options.darkness || self.options.tokenWall;
+								const darknessMoved = (self.options.darkness || self.options.tokenWall) ? true : false;
 								if (darknessMoved)
 									redraw_drawn_light(darknessMoved);
 								
@@ -2699,7 +2702,7 @@ class Token {
 								}, 
 								{ 
 									duration: animationDuration, queue: true, complete: async function() {
-										const darknessMoved = self.options.darkness || self.options.tokenWall;
+										const darknessMoved = (self.options.darkness || self.options.tokenWall) ? true : false;
 									
 										if(window.EXPERIMENTAL_SETTINGS.dragLight == true)
 											throttleLight(darknessMoved);
@@ -3083,7 +3086,7 @@ class Token {
 								self.sync($.extend(true, {}, self.options));
 							}
 							
-							let darknessMoved = self.options.darkness || self.options.tokenWall;
+						let darknessMoved = (self.options.darkness || self.options.tokenWall) ? true : false;
 							if (self.selected ) {
 								for (let tok of window.dragSelectedTokens){
 									let id = $(tok).attr("data-id");	

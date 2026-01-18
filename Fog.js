@@ -6702,42 +6702,47 @@ Ray.prototype.draw = function(ctx) {
 
 Ray.prototype.cast = function(boundary) {
 	if (boundary.radius !== undefined) {
-		const ux = boundary.a.x - this.pos.x;
-		const uy = boundary.a.y - this.pos.y;
+		let u = {
+			x: boundary.a.x - this.pos.x,
+			y: boundary.a.y - this.pos.y
+		}
 
-		const scalar = (ux * this.dir.x) + (this.dir.y * uy);
-		const u1x = scalar * this.dir.x;
-		const u1y = scalar * this.dir.y;
+		let scalar = (u.x * this.dir.x) + (this.dir.y * u.y);
+		let u1 = {
+			x: scalar * this.dir.x,
+			y: scalar * this.dir.y
+		};
 
-		const u2x = ux - u1x;
-		const u2y = uy - u1y;
-		const d = Math.hypot(u2x, u2y);
+		let u2 = new Vector(u.x - u1.x, u.y - u1.y);
+		let d = Math.hypot(u2.x, u2.y);
 
 		if (d > boundary.radius) {
-			return; 
+			return;
 		}
+		else {
+			let m = Math.sqrt(boundary.radius ** 2 - d ** 2);
+			let p1 = new Vector(this.pos.x + u1.x + m * this.dir.x, this.pos.y + u1.y + m * this.dir.y);
 
-		const radiusSq = boundary.radius * boundary.radius;
-		const m = Math.sqrt(radiusSq - d * d);
+			if (d < boundary.radius && Vector.sqDist(this.pos, boundary.a) > boundary.radius ** 2) {
 
-		const p1x = this.pos.x + u1x + m * this.dir.x;
-		const p1y = this.pos.y + u1y + m * this.dir.y;
+				let p2 = new Vector(this.pos.x + u1.x - m * this.dir.x, this.pos.y + u1.y - m * this.dir.y);
 
-		if (d < boundary.radius && Vector.sqDist(this.pos, boundary.a) > radiusSq) {
-			const p2x = this.pos.x + u1x - m * this.dir.x;
-			const p2y = this.pos.y + u1y - m * this.dir.y;
 
-			
-			const dist1 = (p1x - this.pos.x) ** 2 + (p1y - this.pos.y) ** 2;
-			const dist2 = (p2x - this.pos.x) ** 2 + (p2y - this.pos.y) ** 2;
+				let distance1 = Vector.sqDist(this.pos, p1);
+				let distance2 = Vector.sqDist(this.pos, p2);
+				if (distance1 >= distance2) {
+					if (!boundary.getOtherPoint)
+						return p2;
+					else
+						return p1;
+				}
 
-			if (dist1 >= dist2) {
-				return boundary.getOtherPoint ? { x: p1x, y: p1y } : { x: p2x, y: p2y };
+			}
+			else {
+				return p1
 			}
 		}
-
-		return { x: p1x, y: p1y };
-	}
+	}			
 	else {
 		const x1 = boundary.a.x;
 		const y1 = boundary.a.y;
@@ -6932,13 +6937,7 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
     let prevClosestBarrierPoint = null;
     let prevClosestNoDarkness = null;
     let prevClosestNoDarknessPoint = null;
-    let closestWall = null;
-    let closestBarrier = null;
-    let closestNoDarknessWall = null;
 
-    let secondClosestWall = null;
-    let secondClosestBarrier = null;
-    let secondClosestNoDarknessWall = null;
 
     const tokenIsDoor = window.TOKEN_OBJECTS[auraId]?.options?.type =='door';
 
@@ -6996,7 +6995,13 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
 	    let secondRecordLight = Infinity;
 	    let secondRecordMove = Infinity;
 	    let secondRecordNoDarkness = Infinity;
+		let closestWall = null;
+		let closestBarrier = null;
+		let closestNoDarknessWall = null;
 
+		let secondClosestWall = null;
+		let secondClosestBarrier = null;
+		let secondClosestNoDarknessWall = null;
 
 	    for (let j = 0; j < wallCache.length; j++) {
 			const wallData = wallCache[j];
@@ -7176,7 +7181,7 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
 	 	}
 
 		
-		if (closestLight !== null && ((closestWall?.terrainWall && (secondClosestWall != null || secondRecordLight == squaredRadius)) || closestWall != prevClosestWall || i === lastRayIndex || closestWall?.radius !== undefined)) {
+		if (closestLight !== null && ((closestWall?.terrainWall && (secondClosestWall != null || secondRecordLight == squaredRadius)) || closestWall != prevClosestWall || i === lastRayIndex )) {
 			if (closestWall !== prevClosestWall && prevClosestWall !== null && prevClosestPoint !== null) {
 				lightPolygon.push({ x: prevClosestPoint.x * scaleFactor, y: prevClosestPoint.y * scaleFactor })
 			}
