@@ -14372,7 +14372,7 @@ button#displayedDiceFormulaExit:hover {
 }
 
 .list-item-identifier.folder.avtt-drop-target:after,
-.sidebar-panel-body.avtt-drop-target:after,
+.sidebar-panel-content.avtt-drop-target:after,
 #track-list.avtt-drop-target:after {
     content: '';
     position: absolute;
@@ -14384,7 +14384,9 @@ button#displayedDiceFormulaExit:hover {
     border: 1px #0000ff33 dotted;
     pointer-events: none;
 }
-
+.sidebar-panel-content.avtt-drop-target::after {
+    top: 89px;
+}
 /***** Icon UI *****/
 
 .mobileAVTTUI #VTTWRAPPER ~ div.ddbc-tab-options--layout-pill>button, 

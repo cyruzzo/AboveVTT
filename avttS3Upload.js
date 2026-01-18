@@ -7211,7 +7211,7 @@ function refreshFiles(
                 const closestFolder = droppedOn.closest('.folder.list-item-identifier')
                 $('.avtt-drop-target').toggleClass('avtt-drop-target', false);
                 if (closestFolder.is('#scenesFolder') || droppedOn.is('.sidebar-panel-body'))
-                  droppedOn.closest('.sidebar-panel-body').toggleClass('avtt-drop-target', true);
+                  droppedOn.closest('.sidebar-panel-content').toggleClass('avtt-drop-target', true);
                 else
                   closestFolder.toggleClass('avtt-drop-target', true);
               }
