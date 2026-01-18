@@ -4265,7 +4265,7 @@ function token_menu() {
 				} else {
 					token_context_menu_expanded([$(event.currentTarget).attr("data-id")], event);
 				}
-		    }, 600)
+		    }, 1100)
 		  })
 		  .on('touchend', function(e) {
 		  	e.stopPropagation();
