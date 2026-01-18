@@ -306,11 +306,21 @@ const buffsDebuffs = {
     "type": "spell"
   },
   "Hunter's Mark": {
-      "tohit": "0",
-      "dmg": "+d6",
-      "save": "0",
-      "check": "0",
-      "type": "spell"
+    "multiOptions": {
+	  "+6": {
+        "tohit": "0",
+        "dmg": "+d6",
+        "save": "0",
+        "check": "0"
+	  },
+	  "+10": {
+        "tohit": "0",
+        "dmg": "+d10",
+        "save": "0",
+        "check": "0"
+	  },
+	},
+    "type": "spell"
   },
   "Hex": {
       "tohit": "0",
@@ -441,6 +451,76 @@ const buffsDebuffs = {
       "dmg": "+2d6",
       "save": "0",
       "check": "0",
+      "type": "spell"
+  },
+  "Spirit Shroud": {
+      "multiOptions": {
+		  "1d8": {
+			"tohit": "0",
+			"dmg": "+1d8",
+			"save": "0",
+			"check": "0",
+		  },
+		  "2d8": {
+			"tohit": "0",
+			"dmg": "+2d8",
+			"save": "0",
+			"check": "0",
+		  },
+		  "3d8": {
+			"tohit": "0",
+			"dmg": "+3d8",
+			"save": "0",
+			"check": "0",
+		  },
+		  "4d8": {
+			"tohit": "0",
+			"dmg": "+4d8",
+			"save": "0",
+			"check": "0",
+		  },
+  	  },
+      "type": "spell"
+  },
+  "Conjure Minor Elementals": {
+      "multiOptions": {
+		  "2d8": {
+			"tohit": "0",
+			"dmg": "+2d8",
+			"save": "0",
+			"check": "0",
+		  },
+		  "3d8": {
+			"tohit": "0",
+			"dmg": "+3d8",
+			"save": "0",
+			"check": "0",
+		  },
+		  "4d8": {
+			"tohit": "0",
+			"dmg": "+4d8",
+			"save": "0",
+			"check": "0",
+		  },
+		  "5d8": {
+			"tohit": "0",
+			"dmg": "+5d8",
+			"save": "0",
+			"check": "0",
+		  },
+		  "6d8": {
+			"tohit": "0",
+			"dmg": "+6d8",
+			"save": "0",
+			"check": "0",
+		  },
+		  "7d8": {
+			"tohit": "0",
+			"dmg": "+7d8",
+			"save": "0",
+			"check": "0",
+		  },
+  	  },
       "type": "spell"
   },
   "Synaptic Static": {
