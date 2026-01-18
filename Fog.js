@@ -6937,7 +6937,13 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
     let prevClosestBarrierPoint = null;
     let prevClosestNoDarkness = null;
     let prevClosestNoDarknessPoint = null;
+	let closestWall = null;
+	let closestBarrier = null;
+	let closestNoDarknessWall = null;
 
+	let secondClosestWall = null;
+	let secondClosestBarrier = null;
+	let secondClosestNoDarknessWall = null;
 
     const tokenIsDoor = window.TOKEN_OBJECTS[auraId]?.options?.type =='door';
 
@@ -6995,13 +7001,7 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
 	    let secondRecordLight = Infinity;
 	    let secondRecordMove = Infinity;
 	    let secondRecordNoDarkness = Infinity;
-		let closestWall = null;
-		let closestBarrier = null;
-		let closestNoDarknessWall = null;
 
-		let secondClosestWall = null;
-		let secondClosestBarrier = null;
-		let secondClosestNoDarknessWall = null;
 
 	    for (let j = 0; j < wallCache.length; j++) {
 			const wallData = wallCache[j];
@@ -7181,7 +7181,7 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
 	 	}
 
 		
-		if (closestLight !== null && ((closestWall?.terrainWall && (secondClosestWall != null || secondRecordLight == squaredRadius)) || closestWall != prevClosestWall || i === lastRayIndex )) {
+		if (closestLight !== null && ((closestWall?.terrainWall && (secondClosestWall != null || secondRecordLight == squaredRadius)) || closestWall != prevClosestWall || i === lastRayIndex || closestWall?.radius !== undefined)) {
 			if (closestWall !== prevClosestWall && prevClosestWall !== null && prevClosestPoint !== null) {
 				lightPolygon.push({ x: prevClosestPoint.x * scaleFactor, y: prevClosestPoint.y * scaleFactor })
 			}
