@@ -192,6 +192,18 @@ const buffsDebuffs = {
     "check": "0",
     "type": "feat",
   },
+  "Reroll damage 1's": {
+    "tohit": "0",
+    "dmg": "0",
+    "save": "0",
+    "check": "0",
+    "replace": /(\d+d\d+)/gi,
+    "replaceType": {
+      "damage": 'button' 
+    },
+    "newRoll": '$1ro<2',//reroll 1 & 2
+    "type": "feat",
+  },
   "Call the Hunt": {
     "tohit": "0",
     "dmg": "+d6",
