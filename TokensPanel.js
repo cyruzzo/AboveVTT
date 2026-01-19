@@ -734,7 +734,11 @@ async function enable_draggable_token_creation(html, specificImage = undefined) 
     if(specificImage && specificImage.startsWith('above-bucket-not-a-url')){
         specificImage = await getAvttStorageUrl(avttTokensApplyThumbnailPrefix(specificImage))
     }
-
+    $(document).off('click.clearSelect').on('click.clearSelect', function(e) {
+        if(!$(e.target).closest('#tokens-panel').length){
+            $('#tokens-panel .selected').toggleClass('selected', false);
+        }
+    })
     html.draggable({
         appendTo: "body",
         zIndex: 100000,
@@ -831,10 +835,14 @@ async function enable_draggable_token_creation(html, specificImage = undefined) 
 
         },
         start: function (event, ui) {
+            
             console.log("enable_draggable_token_creation start");
             let draggedRow = $(event.target).closest(".list-item-identifier");
             if ($(event.target).hasClass("list-item-identifier")) {
                 draggedRow = $(event.target);
+            }
+            if(!draggedRow.hasClass('selected')){
+                $('#tokens-panel .selected').toggleClass('selected', false);
             }
             let draggedItem = find_sidebar_list_item(draggedRow);
             if (!draggedItem.isTypeAoe()) {
@@ -868,35 +876,56 @@ async function enable_draggable_token_creation(html, specificImage = undefined) 
                 console.log("enable_draggable_token_creation cancelled");
                 return;
             }
-
-            let droppedOn = document.elementFromPoint(event.clientX, event.clientY);
-            console.log("droppedOn", droppedOn);
-            if (droppedOn?.closest("#VTT")) {
-                // place a token where this was dropped
-                console.log("enable_draggable_token_creation stop");
+            const getRowItem = (event) => {
                 let draggedRow = $(event.target).closest(".list-item-identifier");
                 if ($(event.target).hasClass("list-item-identifier")) {
                     draggedRow = $(event.target);
                 }
                 let draggedItem = find_sidebar_list_item(draggedRow);
-                let hidden = event.shiftKey ? true : undefined; // we only want to force hidden if the shift key is help. otherwise let the global and override settings handle it
-                let src = $(ui.helper).attr("data-src");
-                if (ui.helper.attr("data-shape") && ui.helper.attr("data-style")) {
-                    src = build_aoe_img_name(ui.helper.attr("data-style"), ui.helper.attr("data-shape"));
+                return draggedItem;
+            }
+            let droppedOn = document.elementFromPoint(event.clientX, event.clientY);
+            console.log("droppedOn", droppedOn);
+            if (droppedOn?.closest("#VTT")) {
+                // place a token where this was dropped
+                const numSelected = $('#tokens-panel .selected').length;
+                if(numSelected == 0){
+                    let draggedItem = getRowItem(event);
+                    let hidden = event.shiftKey ? true : undefined; // we only want to force hidden if the shift key is help. otherwise let the global and override settings handle it
+                    let src = $(ui.helper).attr("data-src");
+                    if (ui.helper.attr("data-shape") && ui.helper.attr("data-style")) {
+                        src = build_aoe_img_name(ui.helper.attr("data-style"), ui.helper.attr("data-shape"));
+                    }
+                    create_and_place_token(draggedItem, hidden, src, event.pageX, event.pageY, false);
                 }
-                create_and_place_token(draggedItem, hidden, src, event.pageX, event.pageY, false);
-                // create_and_place_token(draggedItem, hidden, src, event.pageX - ui.helper.width() / 2, event.pageY - ui.helper.height() / 2, false, ui.helper.attr("data-name-override"));
-                
+                else{
+                    const listItemArray = [];
+                    const selectedItems = $('#tokens-panel .selected');
+                    for(let i = 0; i<selectedItems.length; i++){
+                        let selectedRow = $(selectedItems[i]);
+                        let selectedItem = find_sidebar_list_item(selectedRow);
+                        listItemArray.push(selectedItem);
+                        listItemArray.push({ listItem: selectedItem, url: random_image_for_item(selectedItem) });
+                    }
+                    if (listItemArray.length < 10 || confirm(`This will add ${listItemArray.length} tokens which could lead to unexpected results. Are you sure you want to add all of these tokens?`)) {
+                        let distanceFromCenter = window.CURRENT_SCENE_DATA.hpps * window.ZOOM * (listItemArray.length / 8);
+                        for (let index = 0; index < listItemArray.length; index++) {
+                            let item = listItemArray[index];
+                            let radius = index / listItemArray.length;
+                            let left = event.pageX + (distanceFromCenter * Math.cos(2 * Math.PI * radius));
+                            let top = event.pageY + (distanceFromCenter * Math.sin(2 * Math.PI * radius));
+                            create_and_place_token(item.listItem, event.shiftKey, item.url, left, top, false, undefined, undefined, { tokenStyleSelect: "definitelyNotAToken" });
+                        }
+                    }
+                }
+               
+
             } 
             else if(droppedOn?.closest("#encounterWindow")){
                 const droppedOnWindow = $(droppedOn?.closest("#encounterWindow"));
                 const encounterId = droppedOnWindow.attr('data-encounter-id');
                 console.log("enable_draggable_token_creation stop");
-                let draggedRow = $(event.target).closest(".list-item-identifier");
-                if ($(event.target).hasClass("list-item-identifier")) {
-                    draggedRow = $(event.target);
-                }
-                let draggedItem = find_sidebar_list_item(draggedRow);
+                let draggedItem = getRowItem(event);
 
                 const customization = find_or_create_token_customization(ItemType.Folder, encounterId);
                 if(customization.encounterData == undefined)
@@ -1875,25 +1904,78 @@ function register_token_row_context_menu() {
                 };
                 return { items: menuItems };
             }
-
+            const selectedClicked = rowHtml.closest('.sidebar-list-item-row').hasClass('selected')
+            if (!selectedClicked) {
+                $('#tokens-panel .selected').removeClass('selected');
+            }
             menuItems["place"] = {
                 name: (rowItem.isTypeFolder() || rowItem.isTypeEncounter()) ? "Place Tokens" : "Place Token",
                 callback: function(itemKey, opt, originalEvent) {
-                    let itemToPlace = find_sidebar_list_item(opt.$trigger);
-                    create_and_place_token(itemToPlace);
+                    const listItemArray = [];
+                    const selectedItems = $('#tokens-panel .selected');
+
+                    if (!selectedItems.length){
+                        let itemToPlace = find_sidebar_list_item(opt.$trigger);
+                        create_and_place_token(itemToPlace);
+                    }else{
+                        const listItemArray = [];
+                        for (let i = 0; i < selectedItems.length; i++) {
+                            let selectedRow = $(selectedItems[i]);
+                            let selectedItem = find_sidebar_list_item(selectedRow);
+                            listItemArray.push({ listItem: selectedItem, url: random_image_for_item(selectedItem) });
+                        }
+                        if (listItemArray.length < 10 || confirm(`This will add ${listItemArray.length} tokens which could lead to unexpected results. Are you sure you want to add all of these tokens?`)) {
+                            let distanceFromCenter = window.CURRENT_SCENE_DATA.hpps * window.ZOOM * (listItemArray.length / 8);
+                            for (let index = 0; index < listItemArray.length; index++) {
+                                let item = listItemArray[index];
+                                let radius = index / listItemArray.length;
+                                const centerView = center_of_view();
+                                let left = centerView.x + (distanceFromCenter * Math.cos(2 * Math.PI * radius));
+                                let top = centerView.y + (distanceFromCenter * Math.sin(2 * Math.PI * radius));
+                                create_and_place_token(item.listItem, false, item.url, left, top, false, undefined, undefined, { tokenStyleSelect: "definitelyNotAToken" });
+                            }
+                        }
+                    }
+                   
+                    
                 }
             };
 
             menuItems["placeHidden"] = {
                 name: (rowItem.isTypeFolder() || rowItem.isTypeEncounter()) ? "Place Hidden Tokens" : "Place Hidden Token",
-                callback: function(itemKey, opt, originalEvent) {
-                    let itemToPlace = find_sidebar_list_item(opt.$trigger);
-                    create_and_place_token(itemToPlace, true);
+                callback: function (itemKey, opt, originalEvent) {
+                    const listItemArray = [];
+                    const selectedItems = $('#tokens-panel .selected');
+         
+                    if (!selectedItems.length) {
+                        let itemToPlace = find_sidebar_list_item(opt.$trigger);
+                        create_and_place_token(itemToPlace, true);
+                    } else {
+                        const listItemArray = [];
+                        for (let i = 0; i < selectedItems.length; i++) {
+                            let selectedRow = $(selectedItems[i]);
+                            let selectedItem = find_sidebar_list_item(selectedRow);
+                            listItemArray.push({ listItem: selectedItem, url: random_image_for_item(selectedItem) });
+                        }
+                        if (listItemArray.length < 10 || confirm(`This will add ${listItemArray.length} tokens which could lead to unexpected results. Are you sure you want to add all of these tokens?`)) {
+                            let distanceFromCenter = window.CURRENT_SCENE_DATA.hpps * window.ZOOM * (listItemArray.length / 8);
+                            for (let index = 0; index < listItemArray.length; index++) {
+                                let item = listItemArray[index];
+                                let radius = index / listItemArray.length;
+                                const centerView = center_of_view();
+                                let left = centerView.x + (distanceFromCenter * Math.cos(2 * Math.PI * radius));
+                                let top = centerView.y + (distanceFromCenter * Math.sin(2 * Math.PI * radius));
+                                create_and_place_token(item.listItem, true, item.url, left, top, false, undefined, undefined, { tokenStyleSelect: "definitelyNotAToken" });
+                            }
+                        }
+                    }
+
+
                 }
             };
 
 
-            if (!rowItem.isTypeFolder() && !rowItem.isTypeEncounter()) {
+            if (!selectedClicked && !rowItem.isTypeFolder() && !rowItem.isTypeEncounter()) {
                 // copy url doesn't make sense for folders
                 menuItems["copyUrl"] = {
                     name: "Copy Url",
@@ -1921,7 +2003,7 @@ function register_token_row_context_menu() {
                     }
                 };
             }
-            if(rowItem.isTypePC()){
+            if (!selectedClicked && rowItem.isTypePC()){
                 menuItems["pullToScene"] = {
                     name: "Pull to Current Scene",
                     callback: async function(itemKey, opt, originalEvent){
@@ -1947,7 +2029,7 @@ function register_token_row_context_menu() {
                     }
                 }
             }
-            if (rowItem.canEdit() ) {
+            if (!selectedClicked && rowItem.canEdit() ) {
                 menuItems["edit"] = {
                     name: "Edit",
                     callback: function(itemKey, opt, originalEvent) {
@@ -1957,7 +2039,7 @@ function register_token_row_context_menu() {
                 };
             }
 
-            if (rowItem.isTypeEncounter()) {
+            if (!selectedClicked && rowItem.isTypeEncounter()) {
                 menuItems["refresh"] = {
                     name: "Refresh",
                     callback: function(itemKey, opt, originalEvent) {
@@ -1965,7 +2047,7 @@ function register_token_row_context_menu() {
                     }
                 };
             }
-            if((find_token_customization(rowItem.type, rowItem.id) != undefined || rowItem.isTypeFolder()) && !rowItem.isTypeEncounter() && rowItem.folderType != 'encounter'){
+            if (!selectedClicked && (find_token_customization(rowItem.type, rowItem.id) != undefined || rowItem.isTypeFolder()) && !rowItem.isTypeEncounter() && rowItem.folderType != 'encounter'){
                 menuItems['export'] = {
                     name: rowItem.isTypeFolder() ? "Export Folder" : "Export Token",
                     callback: function (itemKey, opt, e) {
@@ -2038,7 +2120,7 @@ function register_token_row_context_menu() {
                     }
                 };
             }
-            if(rowItem.isTypeMonster() || rowItem.isTypeOpen5eMonster()){
+            if (!selectedClicked && (rowItem.isTypeMonster() || rowItem.isTypeOpen5eMonster())){
                 menuItems["copyDDBToken"] = {
                     name: 'Copy to My Tokens',
                     callback: function(itemKey, opt, originalEvent) {
@@ -2047,7 +2129,7 @@ function register_token_row_context_menu() {
                     }
                 }
             }
-            if(rowItem.isTypeMyToken() || rowItem.isTypeBuiltinToken() || rowItem.isTypeDDBToken()){
+            if (!selectedClicked && (rowItem.isTypeMyToken() || rowItem.isTypeBuiltinToken() || rowItem.isTypeDDBToken())){
                 menuItems["duplicateMyToken"] = {
                     name: rowItem.isTypeMyToken()  ? 'Duplicate' : 'Copy to My Tokens',
                     callback: function(itemKey, opt, originalEvent) {
@@ -2056,7 +2138,7 @@ function register_token_row_context_menu() {
                     }
                 }
             }
-            if(rowItem.isTypeFolder() || rowItem.isTypePC() || rowItem.isTypeEncounter()){
+            if (!selectedClicked && (rowItem.isTypeFolder() || rowItem.isTypePC() || rowItem.isTypeEncounter())){
                 menuItems["border"] = "---";
 
                 menuItems['Hide/Reveal'] = {
@@ -2091,8 +2173,29 @@ function register_token_row_context_menu() {
                 menuItems["delete"] = {
                     name: "Delete",
                     callback: function(itemKey, opt, originalEvent) {
-                        let itemToDelete = find_sidebar_list_item(opt.$trigger);
-                        delete_item(itemToDelete);
+                        const listItemArray = [];
+                        const selectedItems = $('#tokens-panel .selected');
+
+                        if (!selectedItems.length) {
+                            let itemToDelete = find_sidebar_list_item(opt.$trigger);
+                            delete_item(itemToDelete);
+                        } else {
+                            const listItemArray = [];
+                            for (let i = 0; i < selectedItems.length; i++) {
+                                let selectedRow = $(selectedItems[i]);
+                                let selectedItem = find_sidebar_list_item(selectedRow);
+                                if(selectedItem.canDelete())
+                                    listItemArray.push(selectedItem);
+                                
+                            }
+                            if (confirm(`This will delete ${listItemArray.length} tokens. Are you sure you want to delete all of these tokens?`)) {
+                               
+                                for (let index = 0; index < listItemArray.length; index++) {
+                                    delete_item(listItemArray[index], false);
+                                }
+                                did_change_mytokens_items();
+                            }
+                        } 
                     }
                 };
             }

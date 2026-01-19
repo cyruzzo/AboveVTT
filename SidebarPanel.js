@@ -2132,25 +2132,23 @@ function did_click_row(clickEvent) {
     case ItemType.Scene:
     case ItemType.MyToken:
     case ItemType.PC:
-      if(window.reorderState == clickedItem.type){
-        if(ctrlHeld && rowId != undefined){
-          clickedRow.toggleClass('selected');
-        }
-        else if(shiftHeld && rowId != undefined){
-          if($('.list-item-identifier.selected.selected').length>0){
-            if(clickedRow.nextAll('.selected').length>0){
-              const nextRows = clickedRow.nextUntil('.selected').addBack();
-              nextRows.toggleClass('selected', true);
-            }else if(clickedRow.prevAll('.selected').length>0){
-              const nextRows = clickedRow.prevUntil('.selected').addBack();
-              nextRows.toggleClass('selected', true);
-            }
+      if (ctrlHeld && rowId != undefined) {
+        clickedRow.toggleClass('selected');
+      }
+      else if (shiftHeld && rowId != undefined) {
+        if ($('.list-item-identifier.selected.selected').length > 0) {
+          if (clickedRow.nextAll('.selected').length > 0) {
+            const nextRows = clickedRow.nextUntil('.selected').addBack();
+            nextRows.toggleClass('selected', true);
+          } else if (clickedRow.prevAll('.selected').length > 0) {
+            const nextRows = clickedRow.prevUntil('.selected').addBack();
+            nextRows.toggleClass('selected', true);
           }
         }
-        else{
+      }
+      else if(window.reorderState == clickedItem.type){
           $('.list-item-identifier.selected').toggleClass('selected', false);
           clickedRow.toggleClass('selected', true);
-        }  
       }
       else if(clickedItem.type == ItemType.PC){
         open_player_sheet(clickedItem.sheet, undefined, clickedItem.name);
@@ -2194,7 +2192,21 @@ function did_click_row(clickEvent) {
       // display_sidebar_list_item_configuration_modal(clickedItem);
       break;
     case ItemType.Monster:
-      if (clickedItem.monsterData.isReleased === true || clickedItem.monsterData.isHomebrew === true) {
+      if (ctrlHeld && rowId != undefined) {
+        clickedRow.toggleClass('selected');
+      }
+      else if (shiftHeld && rowId != undefined) {
+        if ($('.list-item-identifier.selected.selected').length > 0) {
+          if (clickedRow.nextAll('.selected').length > 0) {
+            const nextRows = clickedRow.nextUntil('.selected').addBack();
+            nextRows.toggleClass('selected', true);
+          } else if (clickedRow.prevAll('.selected').length > 0) {
+            const nextRows = clickedRow.prevUntil('.selected').addBack();
+            nextRows.toggleClass('selected', true);
+          }
+        }
+      }
+      else if (clickedItem.monsterData.isReleased === true || clickedItem.monsterData.isHomebrew === true) {
         console.log(`Opening monster with id ${clickedItem.monsterData.id}, url ${clickedItem.monsterData.url}`);
         open_monster_item(clickedItem);
       } else {
@@ -2203,10 +2215,40 @@ function did_click_row(clickEvent) {
       }
       break;
     case ItemType.Open5e: 
+      if (ctrlHeld && rowId != undefined) {
+        clickedRow.toggleClass('selected');
+      }
+      else if (shiftHeld && rowId != undefined) {
+        if ($('.list-item-identifier.selected.selected').length > 0) {
+          if (clickedRow.nextAll('.selected').length > 0) {
+            const nextRows = clickedRow.nextUntil('.selected').addBack();
+            nextRows.toggleClass('selected', true);
+          } else if (clickedRow.prevAll('.selected').length > 0) {
+            const nextRows = clickedRow.prevUntil('.selected').addBack();
+            nextRows.toggleClass('selected', true);
+          }
+        }
+      }
+      else {
         console.log(`Opening open5e monster with id ${clickedItem.monsterData.slug}`);
-        open_monster_item(clickedItem, true);
+        open_monster_item(clickedItem, false);
+      }
       break;
     case ItemType.BuiltinToken:
+      if (ctrlHeld && rowId != undefined) {
+        clickedRow.toggleClass('selected');
+      }
+      else if (shiftHeld && rowId != undefined) {
+        if ($('.list-item-identifier.selected.selected').length > 0) {
+          if (clickedRow.nextAll('.selected').length > 0) {
+            const nextRows = clickedRow.nextUntil('.selected').addBack();
+            nextRows.toggleClass('selected', true);
+          } else if (clickedRow.prevAll('.selected').length > 0) {
+            const nextRows = clickedRow.prevUntil('.selected').addBack();
+            nextRows.toggleClass('selected', true);
+          }
+        }
+      }
       // display_builtin_token_details_modal(clickedItem);
       break;
     case ItemType.Aoe:
@@ -3050,7 +3092,7 @@ function rename_folder(item, newName, alertUser = true) {
  * deletes the object represented by the given item if that object can be deleted. (pretty much only My Tokens)
  * @param listItem {SidebarListItem} the item to delete
  */
-function delete_item(listItem) {
+function delete_item(listItem, refresh = true, skipConfirmation = false) {
   if (!listItem.canDelete()) {
     console.warn("Not allowed to delete item", listItem);
     return;
@@ -3069,11 +3111,12 @@ function delete_item(listItem) {
       break;
     case ItemType.MyToken:
       delete_token_customization_by_type_and_id(listItem.type, listItem.id);
-      did_change_mytokens_items();
+      if (refresh)
+        did_change_mytokens_items();
       break;
     case ItemType.Scene:
-      if (confirm(`Are you sure that you want to delete the scene named "${listItem.name}"?`)) {
-        window.ScenesHandler.delete_scene(listItem.id);
+      if (skipConfirmation || confirm(`Are you sure that you want to delete the scene named "${listItem.name}"?`)) {
+        window.ScenesHandler.delete_scene(listItem.id, refresh);
       }
       break;
     case ItemType.PC:
@@ -3258,7 +3301,12 @@ async function list_item_image_flyout(hoverEvent) {
 
 function  disable_draggable_change_folder() {
 
-
+  $(document).off("click.clearMultiSelect").on('click.clearMultiSelect', function(e) { 
+    const target = $(e.target);
+    if(!target.closest('#scenes-panel').length){
+      $('#scenes-panel .selected').toggleClass('selected', false);
+    }
+  });
     
   if(window.reorderState != undefined){
     window.reorderState = undefined;
