@@ -2866,8 +2866,11 @@ function register_scene_row_context_menu() {
 				};
 				return { items: menuItems };
 			}
-
-			if (rowItem.canEdit() ) {
+			const selectedClicked = rowHtml.closest('.sidebar-list-item-row').hasClass('selected')
+			if (!selectedClicked) {
+				$('#scenes-panel .selected').removeClass('selected');
+			}
+			if (!selectedClicked && rowItem.canEdit() ) {
 				menuItems["edit"] = {
 					name: "Edit",
 					callback: function(itemKey, opt, originalEvent) {
@@ -2876,7 +2879,7 @@ function register_scene_row_context_menu() {
 					}
 				};
 			}
-			if(rowItem.isTypeScene()){
+			if (!selectedClicked && rowItem.isTypeScene()){
 				menuItems["duplicate"] = {
 					name: "Duplicate",
 					callback: function(itemKey, opt, originalEvent) {
@@ -2935,7 +2938,7 @@ function register_scene_row_context_menu() {
 					}
 				}
 			}
-			if(rowItem.isTypeFolder()){
+			if (!selectedClicked && rowItem.isTypeFolder()){
 				menuItems["export"] = {
 					name: "Export",
 					callback: function(itemKey, opt, originalEvent) {
@@ -2953,8 +2956,29 @@ function register_scene_row_context_menu() {
 				menuItems["delete"] = {
 					name: "Delete",
 					callback: function(itemKey, opt, originalEvent) {
-						let itemToDelete = find_sidebar_list_item(opt.$trigger);
-						delete_item(itemToDelete);
+						const listItemArray = [];
+						const selectedItems = $('#scenes-panel .selected');
+
+						if (!selectedItems.length) {
+							let itemToDelete = find_sidebar_list_item(opt.$trigger);
+							delete_item(itemToDelete);
+						} else {
+							const listItemArray = [];
+							for (let i = 0; i < selectedItems.length; i++) {
+								let selectedRow = $(selectedItems[i]);
+								let selectedItem = find_sidebar_list_item(selectedRow);
+								if (selectedItem.canDelete())
+									listItemArray.push(selectedItem);
+
+							}
+							if (confirm(`This will delete ${listItemArray.length} scenes. Are you sure you want to delete all of these scenes?`)) {
+
+								for (let index = 0; index < listItemArray.length; index++) {
+									delete_item(listItemArray[index], false, true);
+								}
+								did_update_scenes();
+							}
+						} 
 					}
 				};
 			}
