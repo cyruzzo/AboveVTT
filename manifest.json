@@ -74,6 +74,7 @@
 			"AOETemplates.js",
 			"SceneData.js",
 			"scenedata/*",
+			"constants/*",
 			"CombatTracker.js",
 			"StatHandler.js",
 			"rpg-dice-roller.bundle.min.js",
