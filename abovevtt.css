@@ -8165,6 +8165,7 @@ button span.onedrive-btn-status{
 }
 .flyout-from-menu-item,
 #tokenOptionsContainer>button,
+#tokenOptionsContainer>div>button,
 #notes-flyout button,
 #adjustments-flyout>div>button {
     line-height: 24px;
@@ -8296,6 +8297,31 @@ button#changeTokenImage:before{
 .flyout-from-menu-item:hover:after {
     border-left: 5px solid #ddd;
 }
+
+.button-right-arrow:hover {
+    background-color: rgba(41, 128, 185);
+}
+
+.button-right-arrow:hover > .token-image-modal-footer-title {
+    color: #ddd;
+}
+
+.button-right-arrow:after {
+    position: absolute;
+    content: '';
+    right: 5px;
+    top: 9px;
+    width: 0;
+    height: 0;
+    border-top: 5px solid transparent;
+    border-bottom: 5px solid transparent;
+    border-left: 5px solid #738694;
+    font-size: 5px;
+}
+.button-right-arrow:hover:after {
+    border-left: 5px solid #ddd;
+}
+
 
 .context-menu-flyout{
     visibility: hidden;

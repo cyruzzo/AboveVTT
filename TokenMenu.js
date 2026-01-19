@@ -1516,6 +1516,42 @@ function token_context_menu_expanded(tokenIds, e) {
 		let tokenNames = tokens.map(t => t.options.name);
 		let uniqueNames = [...new Set(tokenNames)];
 		let nameInput = $(`<input title="Token Name" placeholder="Token Name" name="name" type="text" />`);
+		let nameGeneratorButton = $(`<button title="Generate Random Name" type="button" class="button-right-arrow"></button>`);
+		nameGeneratorButton.on('click', function() {
+			if (tokens.length > 1) {
+				tokens.forEach(token => {
+					const gender = Math.random() < 0.5 ? 'male' : 'female';
+					const firstNames = gender === 'male' ? MaleFirstNames : FemaleFirstNames;
+					const firstName = firstNames[Math.floor(Math.random() * firstNames.length)];
+					const surname = Surnames[Math.floor(Math.random() * Surnames.length)];
+					const generatedName = `${firstName} ${surname}`;
+					
+					if(window.JOURNAL.notes[token.options.id]){
+						window.JOURNAL.notes[token.options.id].title = generatedName;
+						window.JOURNAL.persist();
+					}
+					token.options.name = generatedName;
+					token.place_sync_persist();
+				});
+				nameInput.val("Individual names generated");
+			} else {
+				const gender = Math.random() < 0.5 ? 'male' : 'female';
+				const firstNames = gender === 'male' ? MaleFirstNames : FemaleFirstNames;
+				const firstName = firstNames[Math.floor(Math.random() * firstNames.length)];
+				const surname = Surnames[Math.floor(Math.random() * Surnames.length)];
+				const generatedName = `${firstName} ${surname}`;
+				
+				nameInput.val(generatedName);
+				tokens.forEach(token => {
+					if(window.JOURNAL.notes[token.options.id]){
+						window.JOURNAL.notes[token.options.id].title = generatedName;
+						window.JOURNAL.persist();
+					}
+					token.options.name = generatedName;
+					token.place_sync_persist();
+				});
+			}
+		});
 		if (uniqueNames.length === 1) {
 			nameInput.val(tokenNames[0]);
 		} else {
@@ -1556,6 +1592,7 @@ function token_context_menu_expanded(tokenIds, e) {
 			</div>
 		`);
 		nameWrapper.append(nameInput); // input below label
+		nameWrapper.append(nameGeneratorButton);
 
 
 		
