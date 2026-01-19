@@ -3301,7 +3301,7 @@ async function list_item_image_flyout(hoverEvent) {
 
 function  disable_draggable_change_folder() {
 
-  $(document).off("click.clearMultiSelect").on('click.clearMultiSelect', function(e) { 
+  $(document).off("click.clearSelectScenes").on('click.clearSelectScenes', function(e) { 
     const target = $(e.target);
     if(!target.closest('#scenes-panel').length){
       $('#scenes-panel .selected').toggleClass('selected', false);

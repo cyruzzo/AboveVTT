@@ -734,7 +734,7 @@ async function enable_draggable_token_creation(html, specificImage = undefined) 
     if(specificImage && specificImage.startsWith('above-bucket-not-a-url')){
         specificImage = await getAvttStorageUrl(avttTokensApplyThumbnailPrefix(specificImage))
     }
-    $(document).off('click.clearSelect').on('click.clearSelect', function(e) {
+    $(document).off('click.clearSelectTokens').on('click.clearSelectTokens', function(e) {
         if(!$(e.target).closest('#tokens-panel').length){
             $('#tokens-panel .selected').toggleClass('selected', false);
         }
@@ -896,7 +896,7 @@ async function enable_draggable_token_creation(html, specificImage = undefined) 
                     if (ui.helper.attr("data-shape") && ui.helper.attr("data-style")) {
                         src = build_aoe_img_name(ui.helper.attr("data-style"), ui.helper.attr("data-shape"));
                     }
-                    create_and_place_token(draggedItem, hidden, src, event.pageX, event.pageY, false);
+                    create_and_place_token(draggedItem, hidden, src, event.pageX, event.pageY, true);
                 }
                 else{
                     const listItemArray = [];
@@ -905,7 +905,6 @@ async function enable_draggable_token_creation(html, specificImage = undefined) 
                         let selectedRow = $(selectedItems[i]);
                         let selectedItem = find_sidebar_list_item(selectedRow);
                         listItemArray.push(selectedItem);
-                        listItemArray.push({ listItem: selectedItem, url: random_image_for_item(selectedItem) });
                     }
                     if (listItemArray.length < 10 || confirm(`This will add ${listItemArray.length} tokens which could lead to unexpected results. Are you sure you want to add all of these tokens?`)) {
                         let distanceFromCenter = window.CURRENT_SCENE_DATA.hpps * window.ZOOM * (listItemArray.length / 8);
@@ -914,7 +913,7 @@ async function enable_draggable_token_creation(html, specificImage = undefined) 
                             let radius = index / listItemArray.length;
                             let left = event.pageX + (distanceFromCenter * Math.cos(2 * Math.PI * radius));
                             let top = event.pageY + (distanceFromCenter * Math.sin(2 * Math.PI * radius));
-                            create_and_place_token(item.listItem, event.shiftKey, item.url, left, top, false, undefined, undefined, { tokenStyleSelect: "definitelyNotAToken" });
+                            create_and_place_token(item, event.shiftKey, undefined, left, top, true);
                         }
                     }
                 }
@@ -1922,7 +1921,6 @@ function register_token_row_context_menu() {
                         for (let i = 0; i < selectedItems.length; i++) {
                             let selectedRow = $(selectedItems[i]);
                             let selectedItem = find_sidebar_list_item(selectedRow);
-                            listItemArray.push({ listItem: selectedItem, url: random_image_for_item(selectedItem) });
                         }
                         if (listItemArray.length < 10 || confirm(`This will add ${listItemArray.length} tokens which could lead to unexpected results. Are you sure you want to add all of these tokens?`)) {
                             let distanceFromCenter = window.CURRENT_SCENE_DATA.hpps * window.ZOOM * (listItemArray.length / 8);
@@ -1932,7 +1930,7 @@ function register_token_row_context_menu() {
                                 const centerView = center_of_view();
                                 let left = centerView.x + (distanceFromCenter * Math.cos(2 * Math.PI * radius));
                                 let top = centerView.y + (distanceFromCenter * Math.sin(2 * Math.PI * radius));
-                                create_and_place_token(item.listItem, false, item.url, left, top, false, undefined, undefined, { tokenStyleSelect: "definitelyNotAToken" });
+                                create_and_place_token(item, true, undefined, left, top, true);
                             }
                         }
                     }
@@ -1955,7 +1953,7 @@ function register_token_row_context_menu() {
                         for (let i = 0; i < selectedItems.length; i++) {
                             let selectedRow = $(selectedItems[i]);
                             let selectedItem = find_sidebar_list_item(selectedRow);
-                            listItemArray.push({ listItem: selectedItem, url: random_image_for_item(selectedItem) });
+                            listItemArray.push(selectedItem);
                         }
                         if (listItemArray.length < 10 || confirm(`This will add ${listItemArray.length} tokens which could lead to unexpected results. Are you sure you want to add all of these tokens?`)) {
                             let distanceFromCenter = window.CURRENT_SCENE_DATA.hpps * window.ZOOM * (listItemArray.length / 8);
@@ -1965,7 +1963,7 @@ function register_token_row_context_menu() {
                                 const centerView = center_of_view();
                                 let left = centerView.x + (distanceFromCenter * Math.cos(2 * Math.PI * radius));
                                 let top = centerView.y + (distanceFromCenter * Math.sin(2 * Math.PI * radius));
-                                create_and_place_token(item.listItem, true, item.url, left, top, false, undefined, undefined, { tokenStyleSelect: "definitelyNotAToken" });
+                                create_and_place_token(item, true, undefined, left, top, true);
                             }
                         }
                     }
