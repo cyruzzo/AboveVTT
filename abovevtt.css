@@ -8377,8 +8377,10 @@ button#changeTokenImage:before{
 .ct-character-sheet__inner,
 .ct-sidebar__inner *,
 .moveableWindow *,
-.sidebar *,
+.sidebar .sidebar-panel-body,
+.sidepanel-content [class*='-GameLog'],
 .sidebar-flyout,
+#mixer-channels,
 .note,
 .sources-import-main-container *,
 .sidebar-modal{
