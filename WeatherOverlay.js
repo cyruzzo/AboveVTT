@@ -163,13 +163,19 @@ class WeatherOverlay {
                 });
             }
         } else if (this.type === 'embers') {
+            const weatherTypes = getWeatherTypes();
+            const data = weatherTypes[this.type];
+            const defaultIntensity = data.default;
+            const intensityMultiplier = this.intensity > defaultIntensity 
+                ? 1 + Math.pow((this.intensity - defaultIntensity) / defaultIntensity, 1.5) * 3
+                : 1;
             for (let i = 0; i < count; i++) {
                 let baseX = Math.random() * (this.width + 40) - 20;
                 let baseY = Math.random() * (this.height + 40) - 20;
                 this.particles.push({
                     x: baseX,
                     y: baseY,
-                    r: 1 + Math.random() * 1,
+                    r: 1 + Math.random() * 1 * intensityMultiplier,
                     alpha: 0.7 + Math.random() * 0.3,
                     speed: 0.3 + Math.random() * 0.3,
                     drift: -0.2 + Math.random() * 0.4,
