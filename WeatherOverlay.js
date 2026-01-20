@@ -52,12 +52,21 @@ class WeatherOverlay {
         const fadeInFrames = 60;
 
         if (this.type === 'rain' || this.type === 'lightning') {
+            const weatherTypes = getWeatherTypes();
+            const data = weatherTypes['rain'];
+            const defaultIntensity = data.default;
+            const maxIntensity = data.max;
+            const angleMultiplier = Math.max(0, Math.min(1, (this.intensity - defaultIntensity) / (maxIntensity - defaultIntensity)));
+            const maxAngleDegrees = 25;
+            const angleRadians = (angleMultiplier * maxAngleDegrees) * (Math.PI / 180);
+            const horizontalOffset = Math.tan(angleRadians) * this.height;
+            
             for (let i = 0; i < count; i++) {
                 const id = i + '_' + Math.floor(Math.random() * 1000000);
-                const startX = this.width / 2;
-                const startY = 0;
                 const endX = Math.random() * this.width;
                 const endY = Math.random() * this.height;
+                const startX = endX - horizontalOffset;
+                const startY = endY - this.height * (0.5 + Math.random() * 0.5);
                 const wind = -0.7 + Math.random() * 1.4;
                 const randomFadeIn = Math.floor(Math.random() * fadeInFrames);
                 this.particles.push({
@@ -108,6 +117,13 @@ class WeatherOverlay {
                 });
             }
         } else if (this.type === 'snow') {
+            const weatherTypes = getWeatherTypes();
+            const snowData = weatherTypes['snow'];
+            const defaultIntensity = snowData ? snowData.default : 320;
+            const speedMultiplier = this.intensity > defaultIntensity 
+                ? 1 + Math.pow((this.intensity - defaultIntensity) / defaultIntensity, 1.5) * 3
+                : 1;
+            
             for (let i = 0; i < count; i++) {
                 const groundX = Math.random() * this.width;
                 const groundY = (1 + Math.random() * 0.25) * this.height;
@@ -122,7 +138,7 @@ class WeatherOverlay {
                     r: 2 + Math.random() * 4,
                     alpha: 0.8 + Math.random() * 0.2,
                     drift: 1 + Math.random() * 100, 
-                    speed: 0.0001 + Math.random() * 0.0002, 
+                    speed: (0.0001 + Math.random() * 0.0002) * speedMultiplier, 
                     phase: Math.random() * Math.PI * 2,
                     angle: Math.random() * Math.PI * 2,
                     spin: -0.01 + Math.random() * 0.02,
@@ -211,12 +227,19 @@ class WeatherOverlay {
                 });
             }
         } else if (this.type === 'faerieLight' ||  this.type === 'fireflies') {
+            const weatherTypes = getWeatherTypes();
+            const data = weatherTypes[this.type];
+            const defaultIntensity = data.default;
+            const intensityMultiplier = this.intensity > defaultIntensity 
+                ? 1 + Math.pow((this.intensity - defaultIntensity) / defaultIntensity, 1.5) * 3
+                : 1;
+
             for (let i = 0; i < count; i++) {
                 const r = 1 + Math.random() * 2;
                 this.particles.push({
                     x: Math.random() * this.width,
                     y: Math.random() * this.height,
-                    r,
+                    r: r * intensityMultiplier,
                     baseR: r,
                     alpha: 0.7 + Math.random() * 0.3,
                     hue: Math.random() * 360,
@@ -471,7 +494,7 @@ class WeatherOverlay {
             this.particles.push({
                 x: Math.random() * this.width,
                 y: Math.random() * this.height,
-                r: 1 + Math.random() * 2,
+                r: 1 + Math.random() * 2 * intensityMultiplier,
                 alpha: 0.7 + Math.random() * 0.3,
                 hue: Math.random() * 360,
                 drift: -0.5 + Math.random(),
@@ -481,6 +504,13 @@ class WeatherOverlay {
     }
 
     _drawFireflies() {
+        const weatherTypes = getWeatherTypes();
+        const data = weatherTypes[this.type];
+        const defaultIntensity = data.default;
+        const intensityMultiplier = this.intensity > defaultIntensity 
+            ? 1 + Math.pow((this.intensity - defaultIntensity) / defaultIntensity, 1.5) * 3
+            : 1;
+
         const t = Date.now() * 0.001;
         for (let p of this.particles) {
             const blink = 0.5 + 0.5 * Math.sin(t * p.blinkSpeed + p.blinkPhase);
@@ -509,7 +539,7 @@ class WeatherOverlay {
             this.particles.push({
                 x: Math.random() * this.width,
                 y: Math.random() * this.height,
-                r: 1 + Math.random() * 2,
+                r: 1 + Math.random() * 2 * intensityMultiplier,
                 alpha: 0.7 + Math.random() * 0.3,
                 blinkPhase: Math.random() * Math.PI * 2,
                 blinkSpeed: 1.2 + Math.random() * 0.8,
@@ -521,6 +551,12 @@ class WeatherOverlay {
     }
 
     _drawEmbers() {
+        const weatherTypes = getWeatherTypes();
+        const data = weatherTypes[this.type];
+        const defaultIntensity = data.default;
+        const intensityMultiplier = this.intensity > defaultIntensity 
+            ? 1 + Math.pow((this.intensity - defaultIntensity) / defaultIntensity, 1.5) * 3
+            : 1;
         for (let p of this.particles) {
             this.offscreenCtx.save();
             this.offscreenCtx.globalAlpha = p.alpha * (1 - p.life / p.maxLife);
@@ -550,7 +586,7 @@ class WeatherOverlay {
             this.particles.push({
                 x: baseX,
                 y: baseY,
-                r: 0.5 + Math.random() * 1,
+                r: 0.5 + Math.random() * 1 * intensityMultiplier,
                 alpha: 0.7 + Math.random() * 0.3,
                 speed: 0.3 + Math.random() * 0.3,
                 drift: -0.2 + Math.random() * 0.4,
@@ -767,6 +803,14 @@ class WeatherOverlay {
 
     _drawRain() {
         const t = Date.now() * 0.001;
+        const weatherTypes = getWeatherTypes();
+        const data = weatherTypes[this.type];
+        const defaultIntensity = data.default;
+        const maxIntensity = data.max;
+        const angleMultiplier = Math.max(0, Math.min(1, (this.intensity - defaultIntensity) / (maxIntensity - defaultIntensity)));
+        const maxAngleDegrees = 25;
+        const angleRadians = (angleMultiplier * maxAngleDegrees) * (Math.PI / 180);
+
         for (let p of this.particles) {
             if (p.splash && p.start == true) {
                 this.offscreenCtx.save();
@@ -809,13 +853,15 @@ class WeatherOverlay {
                 p.x = (1 - p.z) * p.startX + p.z * p.groundX + windOffset;
                 p.y = (1 - p.z) * p.startY + p.z * p.groundY;
                 const streakLen = 18 + 22 * (1 - p.z);
+                const endX = p.x + Math.sin(angleRadians) * streakLen;
+                const endY = p.y + Math.cos(angleRadians) * streakLen;
                 this.offscreenCtx.save();
                 this.offscreenCtx.globalAlpha = 0.2 + (2 * (1 - p.z) * fade*.8);
                 this.offscreenCtx.strokeStyle = 'rgba(255, 255, 255, 0.85)';
                 this.offscreenCtx.lineWidth = 1.4 + 1.7 * (1 - p.z);
                 this.offscreenCtx.beginPath();
                 this.offscreenCtx.moveTo(p.x, p.y);
-                this.offscreenCtx.lineTo(p.x, p.y + streakLen);
+                this.offscreenCtx.lineTo(endX, endY);
                 this.offscreenCtx.shadowColor = '#00aeff80';
                 this.offscreenCtx.shadowBlur = 10 * (1 - p.z);
                 this.offscreenCtx.stroke();
@@ -830,10 +876,11 @@ class WeatherOverlay {
                         splash.fadeIn = 0;
                         splash.start = true;
                     }
+                    const horizontalOffset = Math.tan(angleRadians) * this.height;
                     const groundX = Math.random() * this.width;
                     const groundY = Math.random() * this.height;
-                    p.startX = groundX;
-                    p.startY = groundY - this.height * 0.5 - Math.random() * this.height * 0.5;
+                    p.startX = groundX - horizontalOffset;
+                    p.startY = groundY - this.height * (0.5 + Math.random() * 0.5);
                     p.groundX = groundX;
                     p.groundY = groundY;
                     p.z = 0;
@@ -880,6 +927,13 @@ class WeatherOverlay {
             this.offscreenCtx.stroke();
             this.offscreenCtx.restore();
             if (p.y >= p.groundY) {
+                const weatherTypes = getWeatherTypes();
+                const snowData = weatherTypes['snow'];
+                const defaultIntensity = snowData ? snowData.default : 320;
+                const intensityMultiplier = this.intensity > defaultIntensity 
+                    ? 1 + Math.pow((this.intensity - defaultIntensity) / defaultIntensity, 1.5) * 7
+                    : 1;
+                
                 const groundX = Math.random() * this.width;
                 const groundY = (1 + Math.random() * 0.25) * this.height;
                 const startY = groundY - (1.25 * this.height);
@@ -892,11 +946,11 @@ class WeatherOverlay {
                 p.r = 2 + Math.random() * 4;
                 p.alpha = 0.8 + Math.random() * 0.2;
                 p.drift = 1 + Math.random() * 100;
-                p.speed = 0.0001 + Math.random() * 0.0002;
+                p.speed = (0.0001 + Math.random() * 0.0002) * intensityMultiplier;
                 p.phase = Math.random() * Math.PI * 2;
                 p.angle = Math.random() * Math.PI * 2;
                 p.spin = -0.01 + Math.random() * 0.02;
-                p.wind = 0.001 + Math.random() * 0.025;
+                p.wind = (0.001 + Math.random() * 0.025) * intensityMultiplier;
                 p.fadeIn = 1;
             }
         }
