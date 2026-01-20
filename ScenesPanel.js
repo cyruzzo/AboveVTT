@@ -1483,7 +1483,8 @@ function edit_scene_dialog(scene_id) {
 	form.append(playlistRow);
 
 	const weatherSelect = $(`<select id='weatherSceneSelect'><option value='0'>None</option></select>`)
-	for(const [weatherType, weatherName] of Object.entries(getWeatherTypes())){
+	for(const [weatherType, weatherData] of Object.entries(getWeatherTypes())){
+		const weatherName = typeof weatherData === 'string' ? weatherData : weatherData.type;
 		weatherSelect.append($(`<option value='${weatherType}'>${weatherName}</option>`));
 	
 	}
@@ -1499,6 +1500,45 @@ function edit_scene_dialog(scene_id) {
 	const weatherRow = form_row('weatherRow', 'Select Weather Overlay', weatherSelect)
 	weatherRow.attr('title', `Applies a weather overlay to the scene. The weather overlay will persist until changed by the DM.`)
 	form.append(weatherRow);
+
+	const getWeatherDefaults = function(weatherType) {
+		const weatherTypes = getWeatherTypes();
+		const weatherData = weatherTypes[weatherType];
+		return weatherData || { min: 0, default: 120, max: 240 };
+	};
+
+	const currentWeatherDefaults = getWeatherDefaults(weatherValue);
+	const weatherIntensity = scene.weatherIntensity !== undefined ? scene.weatherIntensity : currentWeatherDefaults.default;
+	const intensitySlider = $(`<input type='range' id='weatherIntensitySlider' min='${currentWeatherDefaults.min}' max='${currentWeatherDefaults.max}' value='${weatherIntensity}' style='width: 100%;'/>`)
+	const particleCount = $(`<span id='weatherParticleCount'>${weatherIntensity} particles</span>`)
+	const intensityContainer = $(`<div></div>`).append(intensitySlider).append(' ').append(particleCount);
+	const intensityRow = form_row('weatherIntensityRow', 'Weather Intensity', intensityContainer)
+	intensityRow.attr('title', `Adjusts the number of weather particles.`)
+
+	intensitySlider.on('input', function() {
+		const val = $(this).val();
+		particleCount.text(val + ' particles');
+	});
+
+	weatherSelect.on('change', function() {
+		const selectedWeather = $(this).val();
+		if (selectedWeather === '0') {
+			intensityRow.hide();
+		} else {
+			const defaults = getWeatherDefaults(selectedWeather);
+			intensitySlider.attr('min', defaults.min);
+			intensitySlider.attr('max', defaults.max);
+			intensitySlider.val(defaults.default);
+			particleCount.text(defaults.default + ' particles');
+			intensityRow.show();
+		}
+	});
+
+	if (weatherValue === 0 || weatherValue === '0') {
+		intensityRow.hide();
+	}
+
+	form.append(intensityRow);
 	
 	let initialPosition = form_row('initialPosition',
 			'Initial Position',
@@ -1560,6 +1600,7 @@ function edit_scene_dialog(scene_id) {
 		}
 		scene['playlist'] = playlistSelect.val();
 		scene['weather'] = weatherSelect.val();
+		scene['weatherIntensity'] = $('#weatherIntensitySlider').val();
 
 		const isNew = false;
 		window.ScenesHandler.persist_scene(scene_id, isNew);

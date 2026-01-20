@@ -1,5 +1,5 @@
 class WeatherOverlay {
-    constructor(canvas, lightCanvas, type = 'rain') {
+    constructor(canvas, lightCanvas, type = 'rain', intensity = 120) {
         
         this.offscreenCanvas = new OffscreenCanvas(canvas.width, canvas.height);;
         this.offscreenCtx = this.offscreenCanvas.getContext('2d');
@@ -8,14 +8,23 @@ class WeatherOverlay {
         this.lightCanvas = lightCanvas;
         this.lightCtx = lightCanvas.getContext('2d');  
         this.type = type;
+        this.intensity = intensity;
         this.particles = [];
         this.animationId = null;
         this.width = canvas.width;
         this.height = canvas.height;
         this._initParticles();
     }
-    setType(type) {
+    setType(type, intensity) {
         this.type = type;
+        if (intensity !== undefined) {
+            this.intensity = intensity;
+        }
+        this._initParticles();
+    }
+    
+    setIntensity(intensity) {
+        this.intensity = intensity;
         this._initParticles();
     }
 
@@ -29,17 +38,7 @@ class WeatherOverlay {
 
     _initParticles() {
         this.particles = [];
-        let count;
-        if (this.type === 'fog') count = 10;
-        else if (this.type === 'rain') count = 120;
-        else if (this.type === 'snow') count = 320;
-        else if (this.type === 'embers') count = 40;
-        else if (this.type === 'cherryBlossoms') count = 40;
-        else if (this.type === 'lightning') count = 60;
-        else if (this.type === 'faerieLight') count = 23;
-        else if (this.type === 'fireflies') count = 28;
-        else if (this.type === 'leaves' || this.type === 'greenLeaves') count = 32;
-        else count = 60;
+        const count = this.intensity !== undefined ? this.intensity : 120;
 
         if (this.type === 'fog' || this.type === 'embers' || this.type === 'cherryBlossoms') {
             const angle = Math.random() * Math.PI * 2;
@@ -60,14 +59,15 @@ class WeatherOverlay {
                 const endX = Math.random() * this.width;
                 const endY = Math.random() * this.height;
                 const wind = -0.7 + Math.random() * 1.4;
+                const randomFadeIn = Math.floor(Math.random() * fadeInFrames);
                 this.particles.push({
                     id,
                     startX,
                     startY,
                     endX,
                     endY,
-                    z: 0,
-                    fadeIn: 0,
+                    z: Math.random(),
+                    fadeIn: randomFadeIn,
                     fadeInFrames,
                     splash: false,
                     splashed: false
@@ -80,7 +80,7 @@ class WeatherOverlay {
                     r: 3 + Math.random() * 2,
                     life: 0,
                     maxLife: 18 + Math.random() * 10,
-                    fadeIn: 0,
+                    fadeIn: randomFadeIn,
                     fadeInFrames: 10
                 });
             }
@@ -103,7 +103,7 @@ class WeatherOverlay {
                     windDx: this._leavesWindDx + Math.cos(windAngleVar) * windVar,
                     windDy: this._leavesWindDy + Math.sin(windAngleVar) * windVar,
                     pathVar: Math.random() * 1000,
-                    fadeIn: 0,
+                    fadeIn: Math.floor(Math.random() * fadeInFrames),
                     fadeInFrames: fadeInFrames
                 });
             }
@@ -127,7 +127,7 @@ class WeatherOverlay {
                     angle: Math.random() * Math.PI * 2,
                     spin: -0.01 + Math.random() * 0.02,
                     wind: 0.001 + Math.random() * 0.025,
-                    fadeIn: 0,
+                    fadeIn: Math.floor(Math.random() * fadeInFrames),
                     fadeInFrames: fadeInFrames
                 });
             }
@@ -142,7 +142,7 @@ class WeatherOverlay {
                     aspect: aspect,
                     alpha: 0.1 + Math.random() * 0.05,
                     phase: Math.random() * Math.PI * 2,
-                    fadeIn: 1,
+                    fadeIn: Math.random() < 0.5 ? 1 : Math.floor(Math.random() * fadeInFrames),
                     fadeInFrames: fadeInFrames
                 });
             }
@@ -162,7 +162,7 @@ class WeatherOverlay {
                     life: 0,
                     maxLife: 120 + Math.random() * 60,
                     color: Math.random() > 0.5 ? 'rgba(255,180,60,1)' : 'rgba(255,100,0,1)',
-                    fadeIn: 0,
+                    fadeIn: Math.floor(Math.random() * fadeInFrames),
                     fadeInFrames: fadeInFrames
                 });
             }
@@ -170,6 +170,7 @@ class WeatherOverlay {
             for (let i = 0; i < count; i++) {
                 let baseX = Math.random() * (this.width + 40) - 20;
                 let baseY = Math.random() * (this.height + 40) - 20;
+                const randomFadeIn = Math.floor(Math.random() * fadeInFrames);
                 this.particles.push({
                     type: 'blossom',
                     x: baseX,
@@ -187,7 +188,7 @@ class WeatherOverlay {
                     petalColor: `rgba(255,${170+Math.floor(Math.random()*40)},${190+Math.floor(Math.random()*30)},0.85)`,
                     tipColor: `rgba(255,${120+Math.floor(Math.random()*60)},${200+Math.floor(Math.random()*40)},0.95)`,
                     centerColor: 'rgba(255,220,230,0.7)',
-                    fadeIn: 0,
+                    fadeIn: randomFadeIn,
                     fadeInFrames: fadeInFrames
                 });
                 this.particles.push({
@@ -205,7 +206,7 @@ class WeatherOverlay {
                     windDy: this._windDy * 1.1,
                     pathVar: Math.random() * 1000,
                     color: `rgba(255,${170+Math.floor(Math.random()*40)},${190+Math.floor(Math.random()*30)},0.82)`,
-                    fadeIn: 0,
+                    fadeIn: Math.floor(Math.random() * fadeInFrames),
                     fadeInFrames: fadeInFrames
                 });
             }
@@ -223,7 +224,7 @@ class WeatherOverlay {
                     angle: Math.random() * Math.PI * 2,
                     drift: -0.5 + Math.random(),
                     phase: Math.random() * Math.PI * 2,
-                    fadeIn: 0,
+                    fadeIn: Math.floor(Math.random() * fadeInFrames),
                     fadeInFrames: fadeInFrames
                 });
             }
@@ -236,7 +237,7 @@ class WeatherOverlay {
             p.x >= -32 && p.x <= this.width + 32 &&
             p.y >= -32 && p.y <= this.height + 32
         );
-        while (this.particles.length < 32) {
+        while (this.particles.length < this.intensity) {
             let x, y;
             const windDx = this._leavesWindDx || 1;
             const windDy = this._leavesWindDy || 0;
@@ -466,7 +467,7 @@ class WeatherOverlay {
             p.x >= -20 && p.x <= this.width + 20 &&
             p.y >= -20 && p.y <= this.height + 20
         );
-        while (this.particles.length < 23) {
+        while (this.particles.length < this.intensity) {
             this.particles.push({
                 x: Math.random() * this.width,
                 y: Math.random() * this.height,
@@ -504,7 +505,7 @@ class WeatherOverlay {
             p.x >= -20 && p.x <= this.width + 20 &&
             p.y >= -20 && p.y <= this.height + 20
         );
-        while (this.particles.length < 28) {
+        while (this.particles.length < this.intensity) {
             this.particles.push({
                 x: Math.random() * this.width,
                 y: Math.random() * this.height,
@@ -543,7 +544,7 @@ class WeatherOverlay {
             p.y >= -20 && p.y <= this.height + 20 &&
             p.life <= p.maxLife
         );
-        while (this.particles.length < 40) {
+        while (this.particles.length < this.intensity) {
             let baseX = Math.random() * (this.width + 40) - 20;
             let baseY = Math.random() * (this.height + 40) - 20;
             this.particles.push({
@@ -644,7 +645,7 @@ class WeatherOverlay {
             p.x >= -20 && p.x <= this.width + 20 &&
             p.y >= -20 && p.y <= this.height + 20
         );
-        while (this.particles.length < 40) {
+        while (this.particles.length < this.intensity) {
             let baseX = Math.random() * (this.width + 40) - 20;
             let baseY = Math.random() * (this.height + 40) - 20;
             this.particles.push({
@@ -949,10 +950,15 @@ class WeatherOverlay {
 
 function set_weather(){
     const currentWeather = window.CURRENT_SCENE_DATA.weather || 'none';
+    const weatherTypes = getWeatherTypes();
+    const weatherData = weatherTypes[currentWeather];
+    const defaultIntensity = weatherData ? weatherData.default : 120;
+    const weatherIntensity = window.CURRENT_SCENE_DATA.weatherIntensity !== undefined ? window.CURRENT_SCENE_DATA.weatherIntensity : defaultIntensity;
+    
     if(window.WeatherOverlay == undefined){
         const weatherCanvas = $('#weather_overlay');
         const weatherLightCanvas = $('#weather_light');
-        window.WeatherOverlay = new WeatherOverlay(weatherCanvas[0], weatherLightCanvas[0], currentWeather);
+        window.WeatherOverlay = new WeatherOverlay(weatherCanvas[0], weatherLightCanvas[0], currentWeather, weatherIntensity);
     }
 
     if(!currentWeather || currentWeather == 'none' || currentWeather == '0'){
@@ -962,21 +968,21 @@ function set_weather(){
     }
          
     window.WeatherOverlay.stop();
-    window.WeatherOverlay.setType(window.CURRENT_SCENE_DATA.weather);
+    window.WeatherOverlay.setType(window.CURRENT_SCENE_DATA.weather, weatherIntensity);
     window.WeatherOverlay.start();
 }
 
 function getWeatherTypes() {
     return {
-        'rain': 'Rain',
-        'snow': 'Snow',
-        'fog': 'Fog',
-        'embers': 'Embers',
-        'cherryBlossoms': 'Cherry Blossoms',
-        'lightning': 'Lightning',
-        'faerieLight': 'Faerie Light',
-        'fireflies': 'Fireflies',
-        'leaves': 'Fall Leaves',
-        'greenLeaves': 'Green Leaves'
+        'rain': { type: 'Rain', min: 0, default: 180, max: 360 },
+        'snow': { type: 'Snow', min: 0, default: 320, max: 640 },
+        'fog': { type: 'Fog', min: 0, default: 10, max: 20 },
+        'embers': { type: 'Embers', min: 0, default: 40, max: 80 },
+        'cherryBlossoms': { type: 'Cherry Blossoms', min: 0, default: 40, max: 80 },
+        'lightning': { type: 'Lightning', min: 0, default: 60, max: 120 },
+        'faerieLight': { type: 'Faerie Light', min: 0, default: 23, max: 46 },
+        'fireflies': { type: 'Fireflies', min: 0, default: 28, max: 56 },
+        'leaves': { type: 'Fall Leaves', min: 0, default: 32, max: 64 },
+        'greenLeaves': { type: 'Green Leaves', min: 0, default: 32, max: 64 }
     };
 }
