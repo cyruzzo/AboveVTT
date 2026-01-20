@@ -1512,9 +1512,10 @@ function edit_scene_dialog(scene_id) {
 	const intensitySlider = $(`<input type='range' id='weatherIntensitySlider' min='${currentWeatherDefaults.min}' max='${currentWeatherDefaults.max}' value='${weatherIntensity}' style='width: 100%;'/>`)
 	const initialPercentage = Math.round((weatherIntensity - currentWeatherDefaults.min) / (currentWeatherDefaults.max - currentWeatherDefaults.min) * 100);
 	const particleCount = $(`<span id='weatherParticleCount'>${initialPercentage}%</span>`)
-	const intensityContainer = $(`<div></div>`).append(intensitySlider).append(' ').append(particleCount);
+	const performanceWarning = $(`<span style='margin-left: 10px;color: #888; font-size: 0.9em; font-style: italic; margin-top: 4px;'>Note: Increasing intensity may negatively impact performance</span>`);
+	const intensityContainer = $(`<div></div>`).append(intensitySlider).append(' ').append(particleCount).append(performanceWarning);
 	const intensityRow = form_row('weatherIntensityRow', 'Weather Intensity', intensityContainer)
-	intensityRow.attr('title', `Adjusts the number of weather particles.`)
+	intensityRow.attr('title', `Adjusts the number of weather particles and their behaviour.`)
 
 	intensitySlider.on('input', function() {
 		const val = $(this).val();
