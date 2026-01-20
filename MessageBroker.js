@@ -526,6 +526,25 @@ class MessageBroker {
 		this.lastAlertTS = 0;
 		this.latestVersionSeen = window.AVTT_VERSION;
 
+		// Will initialize when the user interacts with the page in any way
+		const initNextTurnAudio = () => {
+			if (!window.nextTurnAudio && !window.DM) {
+				window.nextTurnAudio = document.createElement('audio');
+				window.nextTurnAudio.src = window.EXTENSION_PATH + 'assets/audio/NextTurnIndicator.mp3';
+				window.nextTurnAudio.volume = 0.3;
+				window.nextTurnAudio.preload = 'auto';
+				document.body.appendChild(window.nextTurnAudio);
+				// The below must be done to satisfy browser autoplay policy
+				window.nextTurnAudio.play().then(() => {
+					window.nextTurnAudio.pause();
+					window.nextTurnAudio.currentTime = 0;
+				})
+			}
+		};
+		document.addEventListener('click', initNextTurnAudio, { once: true });
+		document.addEventListener('keydown', initNextTurnAudio, { once: true });
+		
+
 		this.onmessage = async function(event,tries=0) {
 			if (event.data == "pong")
 				return;
@@ -758,6 +777,23 @@ class MessageBroker {
 			}
 			if (msg.eventType == "custom/myVTT/pointer") {
 				set_pointer(msg.data,(!msg.data.dm || (msg.data.dm && !msg.data.center_on_ping)));
+			}
+			
+			if (msg.eventType == "custom/myVTT/nextTurnIndicator") {
+				if(!window.DM && msg.data.playerId == window.PLAYER_ID){
+					if (window.nextTurnAudio) {
+						showTempMessage("Your turn is next! Get ready!");
+						try {
+							window.nextTurnAudio.currentTime = 0;
+							window.nextTurnAudio.play().catch(err => {
+								console.warn("Failed to play next turn notification sound.", err);
+							});
+
+						} catch (error) {
+							console.error("Error playing next turn notification sound:", error);
+						}
+					}
+				}
 			}
 
 			if (msg.eventType == "custom/myVTT/lock") {
