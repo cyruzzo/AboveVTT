@@ -780,17 +780,20 @@ class MessageBroker {
 			}
 			
 			if (msg.eventType == "custom/myVTT/nextTurnIndicator") {
-				if(!window.DM && msg.data.playerId == window.PLAYER_ID){
-					if (window.nextTurnAudio) {
-						showTempMessage("Your turn is next! Get ready!");
-						try {
-							window.nextTurnAudio.currentTime = 0;
-							window.nextTurnAudio.play().catch(err => {
-								console.warn("Failed to play next turn notification sound.", err);
-							});
+				
+				if(get_avtt_setting_value('nextTurnIndicator')){
+					if(!window.DM && msg.data.playerId == window.PLAYER_ID){
+						if (window.nextTurnAudio) {
+							showTempMessage("Your turn is next! Get ready!");
+							try {
+								window.nextTurnAudio.currentTime = 0;
+								window.nextTurnAudio.play().catch(err => {
+									console.warn("Failed to play next turn notification sound.", err);
+								});
 
-						} catch (error) {
-							console.error("Error playing next turn notification sound:", error);
+							} catch (error) {
+								console.error("Error playing next turn notification sound:", error);
+							}
 						}
 					}
 				}
