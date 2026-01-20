@@ -1510,14 +1510,18 @@ function edit_scene_dialog(scene_id) {
 	const currentWeatherDefaults = getWeatherDefaults(weatherValue);
 	const weatherIntensity = scene.weatherIntensity !== undefined ? scene.weatherIntensity : currentWeatherDefaults.default;
 	const intensitySlider = $(`<input type='range' id='weatherIntensitySlider' min='${currentWeatherDefaults.min}' max='${currentWeatherDefaults.max}' value='${weatherIntensity}' style='width: 100%;'/>`)
-	const particleCount = $(`<span id='weatherParticleCount'>${weatherIntensity} particles</span>`)
+	const initialPercentage = Math.round((weatherIntensity - currentWeatherDefaults.min) / (currentWeatherDefaults.max - currentWeatherDefaults.min) * 100);
+	const particleCount = $(`<span id='weatherParticleCount'>${initialPercentage}%</span>`)
 	const intensityContainer = $(`<div></div>`).append(intensitySlider).append(' ').append(particleCount);
 	const intensityRow = form_row('weatherIntensityRow', 'Weather Intensity', intensityContainer)
 	intensityRow.attr('title', `Adjusts the number of weather particles.`)
 
 	intensitySlider.on('input', function() {
 		const val = $(this).val();
-		particleCount.text(val + ' particles');
+		const min = parseFloat($(this).attr('min'));
+		const max = parseFloat($(this).attr('max'));
+		const percentage = Math.round((val - min) / (max - min) * 100);
+		particleCount.text(percentage + '%');
 	});
 
 	weatherSelect.on('change', function() {
@@ -1529,7 +1533,8 @@ function edit_scene_dialog(scene_id) {
 			intensitySlider.attr('min', defaults.min);
 			intensitySlider.attr('max', defaults.max);
 			intensitySlider.val(defaults.default);
-			particleCount.text(defaults.default + ' particles');
+			const percentage = Math.round((defaults.default - defaults.min) / (defaults.max - defaults.min) * 100);
+			particleCount.text(percentage + '%');
 			intensityRow.show();
 		}
 	});
