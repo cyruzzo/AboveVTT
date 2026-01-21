@@ -53,17 +53,16 @@ function build_stat_block_for_copy(listItem, options, open5e = false){
   build_import_loading_indicator('Fetching Statblock Info');
   if (cachedMonsterItem) {
       // we have a cached monster. this data is the best data we have so display that instead of whatever we were given
-      create_token_inside(find_sidebar_list_item_from_path(RootFolder.MyTokens.path), undefined, undefined, undefined, options, build_monster_copy_stat_block(new MonsterStatBlock(cachedMonsterItem.monsterData)));
-      $(".import-loading-indicator").remove();
+    create_token_inside(find_sidebar_list_item_from_path(RootFolder.MyTokens.path), undefined, undefined, undefined, options, build_monster_copy_stat_block(new MonsterStatBlock(cachedMonsterItem.monsterData)));
+    $(".import-loading-indicator").remove();
   } else {
     fetch_and_cache_monsters([monsterId], function (open5e = false) {
-      if(!open5e){
-         create_token_inside(find_sidebar_list_item_from_path(RootFolder.MyTokens.path), undefined, undefined, undefined, options, build_monster_copy_stat_block(new MonsterStatBlock(cached_monster_items[monsterId].monsterData)));
-      }
-      else{
-         create_token_inside(find_sidebar_list_item_from_path(RootFolder.MyTokens.path), undefined, undefined, undefined, options, build_monster_copy_stat_block(new MonsterStatBlock(cached_open5e_items[monsterId].monsterData)));
-   
-      }
+        if(!open5e){
+          create_token_inside(find_sidebar_list_item_from_path(RootFolder.MyTokens.path), undefined, undefined, undefined, options, build_monster_copy_stat_block(new MonsterStatBlock(cached_monster_items[monsterId].monsterData)));
+        }
+        else{
+          create_token_inside(find_sidebar_list_item_from_path(RootFolder.MyTokens.path), undefined, undefined, undefined, options, build_monster_copy_stat_block(new MonsterStatBlock(cached_open5e_items[monsterId].monsterData)));
+        }
       $(".import-loading-indicator").remove();
     }, open5e);
   }  

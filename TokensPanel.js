@@ -2023,29 +2023,43 @@ function register_token_row_context_menu() {
                     }
                 };
             }
-            if (!selectedClicked && rowItem.isTypePC()){
+            if (rowItem.isTypePC()){
                 menuItems["pullToScene"] = {
                     name: "Pull to Current Scene",
-                    callback: async function(itemKey, opt, originalEvent){
-                        let itemToEdit = await find_sidebar_list_item(opt.$trigger);
-                        let currentScene = await AboveApi.getCurrentScene();
-                        let sceneIds = {}
-                        let playerId = itemToEdit.id.split('/')[4];
-                        if(currentScene.playerscene && currentScene.playerscene.players){
-                            sceneIds = {
-                                ...currentScene.playerscene,         
-                            };
+                    callback: async function(itemKey, opt, originalEvent){       
+                        const pcItem = await find_sidebar_list_item(opt.$trigger);  
+                        const selectedItems = $('#tokens-panel .selected');
+                        
+                        
+                        const currentScene = await AboveApi.getCurrentScene();   
+                        const sceneIds = (currentScene.playerscene && currentScene.playerscene.players) ?
+                            { ...currentScene.playerscene } :
+                            { players: currentScene.playerscene };
+                        
+
+                        
+                        if (!selectedItems.length) {
+                            let playerId = pcItem.id.split('/')[4];
                             sceneIds[playerId] = window.CURRENT_SCENE_DATA.id
-                        }
-                        else if(typeof currentScene.playerscene == 'string'){
-                            sceneIds = {
-                                players: currentScene.playerscene,
-                            };
-                            sceneIds[playerId] = window.CURRENT_SCENE_DATA.id
-                        }
+                        } else {
+                            const listItemArray = [];
+                            for (let i = 0; i < selectedItems.length; i++) {
+                                let selectedRow = $(selectedItems[i]);
+                                let selectedItem = await find_sidebar_list_item(selectedRow);
+                                if (selectedItem.isTypePC())
+                                    listItemArray.push(selectedItem);
+
+                            }
+                            for (let index = 0; index < listItemArray.length; index++) {
+                                let pcItem = listItemArray[index];
+                                let playerId = pcItem.id.split('/')[4];
+                                sceneIds[playerId] = window.CURRENT_SCENE_DATA.id
+                            }      
+                        } 
+
                         window.splitPlayerScenes = sceneIds;
-                        window.MB.sendMessage("custom/myVTT/switch_scene", { sceneId: sceneIds});
-                        did_update_scenes();
+                        window.MB.sendMessage("custom/myVTT/switch_scene", { sceneId: sceneIds });
+                        did_update_scenes();    
                     }
                 }
             }
@@ -2067,11 +2081,12 @@ function register_token_row_context_menu() {
                     }
                 };
             }
-            if (!selectedClicked && (find_token_customization(rowItem.type, rowItem.id) != undefined || rowItem.isTypeFolder()) && !rowItem.isTypeEncounter() && rowItem.folderType != 'encounter'){
+            if ((find_token_customization(rowItem.type, rowItem.id) != undefined || rowItem.isTypeFolder()) && !rowItem.isTypeEncounter() && rowItem.folderType != 'encounter'){
                 menuItems['export'] = {
                     name: rowItem.isTypeFolder() ? "Export Folder" : "Export Token",
                     callback: function (itemKey, opt, e) {
-                        let customization_export = function(tokenCustomizations) {
+
+                        let customization_export = function (tokenCustomizations) {
                             build_import_loading_indicator('Preparing Export File');
                             let DataFile = {
                                 version: 2,
@@ -2081,29 +2096,35 @@ function register_token_row_context_menu() {
                                 journalchapters: [],
                                 soundpads: {}
                             };
-                            let currentdate = new Date(); 
-                            let datetime = `${currentdate.getFullYear()}-${(currentdate.getMonth()+1)}-${currentdate.getDate()}`
-                                        
-                            DataFile.tokencustomizations = tokenCustomizations;
+                            let currentdate = new Date();
+                            let datetime = `${currentdate.getFullYear()}-${(currentdate.getMonth() + 1)}-${currentdate.getDate()}`
 
-                            DataFile.notes = Object.fromEntries(Object.entries(window.JOURNAL.notes).filter(([key, value]) => window.JOURNAL.notes[key].statBlock == true && tokenCustomizations.filter(d => d?.id == key)[0] != undefined));
-                            download(b64EncodeUnicode(JSON.stringify(DataFile,null,"\t")),`${window.CAMPAIGN_INFO.name}-${datetime}-token.abovevtt`,"text/plain");
-                                
-                            $(".import-loading-indicator").remove();        
+                            DataFile.tokencustomizations = tokenCustomizations; 
+                            
+                            const notes = Object.fromEntries(
+                                tokenCustomizations.filter(d => window.JOURNAL.notes[d.id]?.statBlock == true).map(d => {
+                                    return [d.id, window.JOURNAL.notes[d.id]];
+                                })
+                            );
+
+                            DataFile.notes = notes;
+                            download(b64EncodeUnicode(JSON.stringify(DataFile, null, "\t")), `${window.CAMPAIGN_INFO.name}-${datetime}-token.abovevtt`, "text/plain");
+
+                            $(".import-loading-indicator").remove();
                         }
-                        let exportTokenFolder = function(exportItems, toExport){                        
-                            for(let i = 0; i<exportItems.length; i++){
-                                if(exportItems[i].tokenType == 'folder'){
-                                    let subExportItems = window.TOKEN_CUSTOMIZATIONS.filter(d => d.parentId == exportItems[i].id) 
+                        let exportTokenFolder = function (exportItems, toExport) {
+                            for (let i = 0; i < exportItems.length; i++) {
+                                if (exportItems[i].tokenType == 'folder') {
+                                    let subExportItems = window.TOKEN_CUSTOMIZATIONS.filter(d => d.parentId == exportItems[i].id)
                                     exportTokenFolder(subExportItems, toExport);
                                 }
                                 toExport.push(exportItems[i]);
                             }
                         };
 
-                        let findAncestor = function(exportItem, found=[]) {           
-                            if(exportItem ==undefined){
-                                return found; 
+                        let findAncestor = function (exportItem, found = []) {
+                            if (exportItem == undefined) {
+                                return found;
                             }
                             let parent = window.TOKEN_CUSTOMIZATIONS.find(d => exportItem.parentId == d.id);
                             if (parent) {
@@ -2113,48 +2134,140 @@ function register_token_row_context_menu() {
                                 return found;
                             }
                         };
-                       
-                        if(rowItem.isTypeFolder()){
-                            let toExport = [];
-                            let exportItems = window.TOKEN_CUSTOMIZATIONS.filter(d => (d.parentId == rowItem.id && d.rootId == "myTokensFolder") || (d.tokenType == rowItem.folderType && rowItem.parentId == "_" && d.rootId != "myTokensFolder"));         
-                            exportTokenFolder(exportItems, toExport);
-                            
-                            let selectedExportItem = window.TOKEN_CUSTOMIZATIONS.find(d => d.id == rowItem.id);
-                            if(selectedExportItem != undefined)
-                                toExport.push(selectedExportItem)
-                            
-                            
-                            
-                            let ancestors = findAncestor(selectedExportItem); 
-                            if(ancestors.length>0)
-                                toExport = toExport.concat(ancestors);
+                        const selectedItems = $('#tokens-panel .selected');
 
-                            customization_export(toExport);
-                        }
-                        else{
-                           let exportItems = window.TOKEN_CUSTOMIZATIONS.find(d => d.id == rowItem.id)
-                           let ancestors = findAncestor(exportItems); 
-                           exportItems = [exportItems].concat(ancestors);
-                           customization_export(exportItems);
-                        }
+                        if (!selectedItems.length) {
+                            if (rowItem.isTypeFolder()) {
+                                let toExport = [];
+                                let exportItems = window.TOKEN_CUSTOMIZATIONS.filter(d => (d.parentId == rowItem.id && d.rootId == "myTokensFolder") || (d.tokenType == rowItem.folderType && rowItem.parentId == "_" && d.rootId != "myTokensFolder"));
+                                exportTokenFolder(exportItems, toExport);
+
+                                let selectedExportItem = window.TOKEN_CUSTOMIZATIONS.find(d => d.id == rowItem.id);
+                                if (selectedExportItem != undefined)
+                                    toExport.push(selectedExportItem)
+
+
+
+                                let ancestors = findAncestor(selectedExportItem);
+                                if (ancestors.length > 0)
+                                    toExport = toExport.concat(ancestors);
+
+                                customization_export(toExport);
+                            }
+                            else {
+                                let exportItems = window.TOKEN_CUSTOMIZATIONS.find(d => d.id == rowItem.id)
+                                let ancestors = findAncestor(exportItems);
+                                exportItems = [exportItems].concat(ancestors);
+                                customization_export(exportItems);
+                            }
+                        } else {
+                            const listItemArray = [];
+                            for (let i = 0; i < selectedItems.length; i++) {
+                                let selectedRow = $(selectedItems[i]);
+                                let selectedItem = find_sidebar_list_item(selectedRow);
+                                const customization = find_token_customization(selectedItem.type, selectedItem.id);
+                                if (customization != undefined)
+                                    listItemArray.push(customization);
+                            }
+                            let exportItems = [];
+                            for (let index = 0; index < listItemArray.length; index++) {
+                                let itemToExport = listItemArray[index];
+                                exportItems.push(itemToExport);
+                                let ancestors = findAncestor(itemToExport);
+                                exportItems = exportItems.concat(ancestors);
+                            }
+                            exportItems = exportItems.filter((obj, index, arr) => {
+                                const firstIndex = arr.findIndex(o => { return JSON.stringify(o) === JSON.stringify(obj) }) 
+                                return firstIndex === index;
+                            });
+                            customization_export(exportItems);
+                        } 
                     }
                 };
             }
-            if (!selectedClicked && (rowItem.isTypeMonster() || rowItem.isTypeOpen5eMonster())){
+            if (rowItem.isTypeMonster() || rowItem.isTypeOpen5eMonster()){
                 menuItems["copyDDBToken"] = {
                     name: 'Copy to My Tokens',
                     callback: function(itemKey, opt, originalEvent) {
-                        let itemToPlace = find_sidebar_list_item(opt.$trigger);
-                        create_token_copy_inside(itemToPlace, rowItem.isTypeOpen5eMonster());
+                        const selectedItems = $('#tokens-panel .selected');
+
+                        if (!selectedItems.length) {
+                            let itemToPlace = find_sidebar_list_item(opt.$trigger);
+                            create_token_copy_inside(itemToPlace, rowItem.isTypeOpen5eMonster());
+                        } else {
+                            const open5eArray = [];
+                            const ddbArray = [];
+                            for (let i = 0; i < selectedItems.length; i++) {
+                                let selectedRow = $(selectedItems[i]);
+                                let selectedItem = find_sidebar_list_item(selectedRow);
+                                if (selectedItem.isTypeMonster())
+                                    ddbArray.push(selectedItem);
+                                else if (selectedItem.isTypeOpen5eMonster())
+                                    open5eArray.push(selectedItem);
+                            }
+
+                            const monsterIds = ddbArray.map((d) => {
+                                return d.id;
+                            })
+
+                            const open5eIds = open5eArray.map((d) => {
+                                return d.id;
+                            })
+                            window.completedTokenCopies = {
+                                current: 0,
+                                total: ddbArray.length + open5eArray.length
+                            };
+                            build_import_loading_indicator('Fetching Statblock Info');
+                            fetch_monsters(monsterIds, function (response) {
+                                if (response !== false) {
+                                    update_monster_item_cache(response.map(m => SidebarListItem.Monster(m)), function(){
+                                        for (let index = 0; index < ddbArray.length; index++) {
+                                            let itemToPlace = ddbArray[index];
+                                            create_token_copy_inside(itemToPlace, false);
+                                        }
+                                    });
+                                }
+                            }, false)
+                            fetch_monsters(open5eIds, function (response) {
+                                if (response !== false) {
+                                    update_open5e_item_cache(response.map(m => SidebarListItem.open5eMonster(m)), function(){
+                                        for (let index = 0; index < open5eArray.length; index++) {
+                                            let itemToPlace = open5eArray[index];
+                                            create_token_copy_inside(itemToPlace, true);
+                                        }
+                                    });
+                                }
+                            }, true)
+
+
+                        } 
                     }
                 }
             }
-            if (!selectedClicked && (rowItem.isTypeMyToken() || rowItem.isTypeBuiltinToken() || rowItem.isTypeDDBToken())){
+            if (rowItem.isTypeMyToken() || rowItem.isTypeBuiltinToken() || rowItem.isTypeDDBToken()){
                 menuItems["duplicateMyToken"] = {
                     name: rowItem.isTypeMyToken()  ? 'Duplicate' : 'Copy to My Tokens',
-                    callback: function(itemKey, opt, originalEvent) {
-                        let itemToPlace = find_sidebar_list_item(opt.$trigger);
-                        duplicate_my_token(itemToPlace);
+                    callback: function(itemKey, opt, originalEvent) {                      
+                        const selectedItems = $('#tokens-panel .selected');
+
+                        if (!selectedItems.length) {
+                            let itemToPlace = find_sidebar_list_item(opt.$trigger);
+                            duplicate_my_token(itemToPlace, false);
+                        } else {
+                            const listItemArray = [];
+                            for (let i = 0; i < selectedItems.length; i++) {
+                                let selectedRow = $(selectedItems[i]);
+                                let selectedItem = find_sidebar_list_item(selectedRow);
+                                if (selectedItem.isTypeMyToken() || selectedItem.isTypeBuiltinToken() || selectedItem.isTypeDDBToken())
+                                    listItemArray.push(selectedItem);
+                            }
+                            for (let index = 0; index < listItemArray.length; index++) {
+                                let itemToPlace = listItemArray[index];
+                                const skipDidChange = index < listItemArray.length - 1;
+                                duplicate_my_token(itemToPlace, skipDidChange);
+                            }
+                        } 
+ 
                     }
                 }
             }
@@ -2173,7 +2286,7 @@ function register_token_row_context_menu() {
                         else{
                             window.hiddenFolderItems.push(itemToHide.id);
                         }
-                           
+                        
                         localStorage.setItem(`${window.gameId}.hiddenFolderItems`, JSON.stringify(window.hiddenFolderItems));
                         let buttonClicked = $('.temporary-visible').length>0;
                         redraw_token_list($('[name="token-search"]').val());
@@ -2209,7 +2322,7 @@ function register_token_row_context_menu() {
                                 
                             }
                             if (confirm(`This will delete ${listItemArray.length} tokens. Are you sure you want to delete all of these tokens?`)) {
-                               
+                            
                                 for (let index = 0; index < listItemArray.length; index++) {
                                     delete_item(listItemArray[index], false);
                                 }
@@ -2461,6 +2574,18 @@ function create_token_inside(listItem, tokenName = "New Token", tokenImage = '',
         };
         window.JOURNAL.persist();
         customization.tokenOptions.statBlock = customization.id;
+    }
+    if (window.completedTokenCopies) {
+        window.completedTokenCopies.current += 1;
+        window.TOKEN_CUSTOMIZATIONS.push(customization);
+        if (window.completedTokenCopies.current >= window.completedTokenCopies.total) {
+            persist_all_token_customizations(window.TOKEN_CUSTOMIZATIONS, function () {
+                did_change_mytokens_items();
+            })
+            delete window.completedTokenCopies;
+
+        } 
+        return;
     }
     if (skipPersist){
         window.TOKEN_CUSTOMIZATIONS.push(customization);
@@ -4322,7 +4447,7 @@ function find_token_options_for_list_item(listItem) {
         return find_or_create_token_customization(listItem.type, listItem.id, listItem.parentId, rootId)?.allCombinedOptions() || {};
     }
 }
-function duplicate_my_token(listItem){
+function duplicate_my_token(listItem, skipDidChange=true){
     if (!listItem) return {};
     let foundOptions = $.extend(true, {}, find_token_options_for_list_item(listItem));
     if(foundOptions.image){
@@ -4332,10 +4457,10 @@ function duplicate_my_token(listItem){
     delete foundOptions.id;
     const folder = listItem.isTypeMyToken() ? find_sidebar_list_item_from_path(listItem.folderPath) : find_sidebar_list_item_from_path(RootFolder.MyTokens.path)
     if(window.JOURNAL.notes[listItem.id] != undefined){
-        create_token_inside(folder, undefined, undefined, undefined, foundOptions, window.JOURNAL.notes[listItem.id].text);
+        create_token_inside(folder, undefined, undefined, undefined, foundOptions, window.JOURNAL.notes[listItem.id].text, skipDidChange);
     }
     else{
-        create_token_inside(folder, undefined, undefined, undefined, foundOptions);
+        create_token_inside(folder, undefined, undefined, undefined, foundOptions, undefined, skipDidChange);
     }
 }
 function create_token_copy_inside(listItem, open5e = false){
