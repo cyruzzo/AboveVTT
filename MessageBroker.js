@@ -781,22 +781,7 @@ class MessageBroker {
 			
 			if (msg.eventType == "custom/myVTT/nextTurnIndicator") {
 				
-				if(get_avtt_setting_value('nextTurnIndicator')){
-					if(!window.DM && msg.data.playerId == window.PLAYER_ID){
-						if (window.nextTurnAudio) {
-							showTempMessage("Your turn is next! Get ready!");
-							try {
-								window.nextTurnAudio.currentTime = 0;
-								window.nextTurnAudio.play().catch(err => {
-									console.warn("Failed to play next turn notification sound.", err);
-								});
-
-							} catch (error) {
-								console.error("Error playing next turn notification sound:", error);
-							}
-						}
-					}
-				}
+				
 			}
 
 			if (msg.eventType == "custom/myVTT/lock") {
@@ -2020,6 +2005,47 @@ class MessageBroker {
 	}
   	handleCT(data){
 		ct_load(data);
+		if(getCombatTrackersettings().next_turn_indicator == '1'){
+			this.handleNextTurnIndicator();
+		}
+			
+	}
+
+	handleNextTurnIndicator() {
+		let nextPlayerId = undefined
+		let nextAfterCurrent = $("#combat_area tr[data-current=1]").nextAll('tr:not([skipTurn])').first();
+		if(nextAfterCurrent.length == 0){
+			// If we're at the end, get the first combatant
+			nextAfterCurrent = $("#combat_area tr:not([skipTurn])").first();
+		}
+
+		if(nextAfterCurrent.length > 0){
+			let nextCombatantId = nextAfterCurrent.attr('data-target');
+			console.log(nextCombatantId);
+			if(nextCombatantId && window.TOKEN_OBJECTS[nextCombatantId]){
+				let token = window.TOKEN_OBJECTS[nextCombatantId];
+				console.log(token);
+				if(token.isPlayer()){
+					let playerId = getPlayerIDFromSheet(token.options.id);
+					console.log(playerId)
+					if(playerId && playerId != -1 && playerId != 'DM'){
+						nextPlayerId = playerId;
+					}
+				}
+			}
+		}
+		if(!window.DM && nextPlayerId == window.PLAYER_ID){
+			showTempMessage("Your turn is next! Get ready!");
+			try {
+				window.nextTurnAudio.currentTime = 0;
+				window.nextTurnAudio.play().catch(err => {
+					console.warn("Failed to play next turn notification sound.", err);
+				});
+
+			} catch (error) {
+				console.error("Error playing next turn notification sound:", error);
+			}
+		}
 	}
 
 	encode_message_text(text) {

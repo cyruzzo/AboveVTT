@@ -365,11 +365,6 @@ function init_combat_tracker(){
 
 		}
 
-		// Send notification to the next combatant after the current one
-		if(window.DM){
-			handleNextTurn();
-		}
-
 		debounceCombatPersist();
 		ct_update_popout();
 		if(window.childWindows['Combat Tracker'] != undefined)
@@ -434,10 +429,6 @@ function init_combat_tracker(){
 				}
 			}
 		}
-		// Send notification to the next combatant after the current one
-		if(window.DM){
-			handleNextTurn();
-		}
 		
 		debounceCombatPersist();
 		ct_update_popout();
@@ -445,30 +436,6 @@ function init_combat_tracker(){
 			$(window.childWindows['Combat Tracker'].document).find("tr[data-current=1]")[0].scrollIntoView({ behavior: 'instant', block: 'center', start: 'inline' });
 		$("#site tr[data-current=1]")[0].scrollIntoView({ behavior: 'instant', block: 'center', start: 'inline' });	
 	});
-
-	function handleNextTurn() {
-		let nextAfterCurrent = $("#combat_area tr[data-current=1]").nextAll('tr:not([skipTurn])').first();
-		if(nextAfterCurrent.length == 0){
-			// If we're at the end, get the first combatant
-			nextAfterCurrent = $("#combat_area tr:not([skipTurn])").first();
-		}
-		if(nextAfterCurrent.length > 0){
-			let nextCombatantId = nextAfterCurrent.attr('data-target');
-			if(nextCombatantId && window.TOKEN_OBJECTS[nextCombatantId]){
-				let token = window.TOKEN_OBJECTS[nextCombatantId];
-				if(token.isPlayer()){
-					let playerId = getPlayerIDFromSheet(token.options.id);
-					if(playerId && playerId != -1 && playerId != 'DM'){
-						window.MB.sendMessage('custom/myVTT/nextTurnIndicator', {
-							playerId: playerId,
-							tokenId: nextCombatantId,
-							tokenName: token.options.name
-						});
-					}
-				}
-			}
-		}
-	}
 
 	let endplayerturn=$('<button id="endplayerturn">E<u>n</u>d Turn</button>');
 	endplayerturn.click(function(e){
@@ -993,6 +960,15 @@ function openCombatTrackerSettings(){
 		let autoGroupRow = form_row(`autoGroup`, `Auto Group Tokens by Stat Block`, autoGroupToggle)
 		form.append(autoGroupRow);
 	}
+
+	if(!window.DM) {
+		let endTurnIndicatorToggle = form_toggle('next_turn_indicator', `If enabled, a visual and audio cue will play when you are up next in initiative`, combatSettingData['next_turn_indicator'] == '1', function(e){
+			handle_basic_form_toggle_click(e)
+		});
+		let endTurnIndicatorRow = form_row(`next_turn_indicator`, `Next Turn Indicator`, endTurnIndicatorToggle)
+		form.append(endTurnIndicatorRow);
+	}
+
 
 
 

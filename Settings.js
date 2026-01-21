@@ -569,18 +569,6 @@ function avtt_settings() {
 				],
 				defaultValue: "all",
 				class: 'stream'
-			},
-			{
-				name: "nextTurnIndicator",
-				label: "Enable Next Turn Indicator",
-				type: "toggle",
-				options: [
-					{ value: true, label: "Enable", description: `If enabled, a visual and audio cue will play when you are up next in initiative.` },
-					{ value: false, label: "Disable", description: `If enabled, a visual and audio cue will play when you are up next in initiative.` }
-				],
-				defaultValue: false,
-				class: 'ui',
-				global: 1
 			}
 		);
 	}
