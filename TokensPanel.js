@@ -886,9 +886,10 @@ async function enable_draggable_token_creation(html, specificImage = undefined) 
             }
             let droppedOn = document.elementFromPoint(event.clientX, event.clientY);
             console.log("droppedOn", droppedOn);
+            const numSelected = $('#tokens-panel .selected').length;
             if (droppedOn?.closest("#VTT")) {
                 // place a token where this was dropped
-                const numSelected = $('#tokens-panel .selected').length;
+                
                 if(numSelected == 0){
                     let draggedItem = getRowItem(event);
                     let hidden = event.shiftKey ? true : undefined; // we only want to force hidden if the shift key is help. otherwise let the global and override settings handle it
@@ -921,33 +922,54 @@ async function enable_draggable_token_creation(html, specificImage = undefined) 
 
             } 
             else if(droppedOn?.closest("#encounterWindow")){
+                const numSelected = $('#tokens-panel .selected').length;
                 const droppedOnWindow = $(droppedOn?.closest("#encounterWindow"));
                 const encounterId = droppedOnWindow.attr('data-encounter-id');
                 console.log("enable_draggable_token_creation stop");
-                let draggedItem = getRowItem(event);
-
                 const customization = find_or_create_token_customization(ItemType.Folder, encounterId);
-                if(customization.encounterData == undefined)
+                if (customization.encounterData == undefined)
                     customization.encounterData = {}
-                if(customization.encounterData.tokenItems == undefined)
+                if (customization.encounterData.tokenItems == undefined)
                     customization.encounterData.tokenItems = {};
+                if (numSelected == 0) {
+                    const draggedItem = getRowItem(event);
 
-                if(customization.encounterData.tokenItems[draggedItem.id] != undefined){
-                    customization.encounterData.tokenItems[draggedItem.id].quantity += 1;
+                    if (customization.encounterData.tokenItems[draggedItem.id] != undefined) {
+                        customization.encounterData.tokenItems[draggedItem.id].quantity += 1;
+                    }
+                    else {
+                        customization.encounterData.tokenItems[draggedItem.id] = draggedItem;
+                        customization.encounterData.tokenItems[draggedItem.id].quantity = 1;
+                    }
+                    if (draggedItem.type == 'pc') {
+                        customization.encounterData.tokenItems[draggedItem.id].isAlly = true;
+                    }
                 }
-                else{
-                    customization.encounterData.tokenItems[draggedItem.id] = draggedItem;
-                    customization.encounterData.tokenItems[draggedItem.id].quantity = 1; 
-                }
-                if(draggedItem.type == 'pc'){
-                    customization.encounterData.tokenItems[draggedItem.id].isAlly = true;
+                else {
+                    const listItemArray = [];
+                    const selectedItems = $('#tokens-panel .selected');
+                    for (let i = 0; i < selectedItems.length; i++) {
+                        const selectedRow = $(selectedItems[i]);
+                        const selectedItem = find_sidebar_list_item(selectedRow);
+                        listItemArray.push(selectedItem);
+                    }
+                    for (let index = 0; index < listItemArray.length; index++) {
+                        const draggedItem = listItemArray[index];
+
+                        if (customization.encounterData.tokenItems[draggedItem.id] != undefined) {
+                            customization.encounterData.tokenItems[draggedItem.id].quantity += 1;
+                        }
+                        else {
+                            customization.encounterData.tokenItems[draggedItem.id] = draggedItem;
+                            customization.encounterData.tokenItems[draggedItem.id].quantity = 1;
+                        }
+                        if (draggedItem.type == 'pc') {
+                            customization.encounterData.tokenItems[draggedItem.id].isAlly = true;
+                        }
+                    }
                 }
                 persist_token_customization(customization)
                 droppedOnWindow.trigger('redrawListing');
-                
-
-                console.log(`Dropped on encounter: ${draggedItem}`);
-
             }else {
                 console.log("Not dropping over element", droppedOn);
             }
