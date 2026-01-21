@@ -778,11 +778,6 @@ class MessageBroker {
 			if (msg.eventType == "custom/myVTT/pointer") {
 				set_pointer(msg.data,(!msg.data.dm || (msg.data.dm && !msg.data.center_on_ping)));
 			}
-			
-			if (msg.eventType == "custom/myVTT/nextTurnIndicator") {
-				
-				
-			}
 
 			if (msg.eventType == "custom/myVTT/lock") {
 				if (window.DM)
