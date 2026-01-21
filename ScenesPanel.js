@@ -2926,22 +2926,94 @@ function register_scene_row_context_menu() {
 					}
 				};
 			}
-			if (!selectedClicked && rowItem.isTypeScene()){
+			if (rowItem.isTypeScene()){
 				menuItems["duplicate"] = {
 					name: "Duplicate",
 					callback: function(itemKey, opt, originalEvent) {
-						let itemToEdit = find_sidebar_list_item(opt.$trigger);
-						duplicate_scene(itemToEdit.id);
+						const selectedItems = $('#scenes-panel .selected');
+						build_import_loading_indicator('Duplicating Scenes');
+						if (!selectedItems.length) {
+							let itemToEdit = find_sidebar_list_item(opt.$trigger);
+							duplicate_scene(itemToEdit.id);
+						} else {
+							const listItemArray = [];
+							for (let i = 0; i < selectedItems.length; i++) {
+								let selectedRow = $(selectedItems[i]);
+								let selectedItem = find_sidebar_list_item(selectedRow);
+								if (selectedItem.isTypeScene())
+									listItemArray.push(selectedItem);
+							}
+							window.toDuplicateScenes = {
+								current: 0,
+								total: listItemArray.length
+							}
+							for (let index = 0; index < listItemArray.length; index++) {
+								const itemToEdit = listItemArray[index];
+								duplicate_scene(itemToEdit.id, true);
+							}
+						}
 					}
 				};
 				menuItems["export"] = {
 					name: "Export",
-					callback: function(itemKey, opt, originalEvent) {
-						let itemToEdit = find_sidebar_list_item(opt.$trigger);
-						export_scene_context(itemToEdit.id)
+					callback: async function(itemKey, opt, originalEvent) {
+
+						const selectedItems = $('#scenes-panel .selected');
+
+						if (!selectedItems.length) {
+							let itemToEdit = find_sidebar_list_item(opt.$trigger);
+							export_scene_context(itemToEdit.id)
+						} else {
+
+							build_import_loading_indicator('Preparing Scenes Export File');
+							const listItemArray = [];
+							for (let i = 0; i < selectedItems.length; i++) {
+								let selectedRow = $(selectedItems[i]);s
+								let selectedItem = find_sidebar_list_item(selectedRow);
+								if (selectedItem.isTypeScene())
+									listItemArray.push(selectedItem);
+							}
+							let DataFile = {
+								version: 2,
+								scenes: [],
+								tokencustomizations: [],
+								notes: {},
+								journalchapters: [],
+								soundpads: {}
+							};
+							for (let index = 0; index < listItemArray.length; index++) {
+								
+								let itemToEdit = listItemArray[index];
+								let scene = await AboveApi.getScene(itemToEdit.id);
+								let currentSceneData = {
+									...scene.data
+								}
+								let tokensObject = {}
+								for (let token in scene.data.tokens) {
+									let tokenId = scene.data.tokens[token].id;
+									let statBlockID = scene.data.tokens[token].statBlock
+									if (statBlockID != undefined && window.JOURNAL.notes[statBlockID] != undefined) {
+										DataFile.notes[statBlockID] = window.JOURNAL.notes[statBlockID];
+									}
+									if (window.JOURNAL.notes[tokenId] != undefined) {
+										DataFile.notes[tokenId] = window.JOURNAL.notes[tokenId];
+									}
+									tokensObject[tokenId] = scene.data.tokens[token];
+								}
+								if (window.JOURNAL.notes[itemToEdit.id]) {
+									DataFile.notes[itemToEdit.id] = window.JOURNAL.notes[itemToEdit.id];
+								}
+								currentSceneData.tokens = tokensObject;
+								DataFile.scenes.push(currentSceneData)	
+							}
+							let currentdate = new Date();
+							let datetime = `${currentdate.getFullYear()}-${(currentdate.getMonth() + 1)}-${currentdate.getDate()}`
+							download(b64EncodeUnicode(JSON.stringify(DataFile, null, "\t")), `MultiScene-${datetime}.abovevtt`, "text/plain");
+							$(".import-loading-indicator").remove();
+						}
 					}
 				};
-				if (window.JOURNAL.notes[rowItem.id]) {
+				if (!selectedClicked && window.JOURNAL.notes[rowItem.id]) {
 					menuItems["openSceneNote"] = {
 						name: "Open Scene Note",
 						callback: function (itemKey, opt, originalEvent) {
@@ -2951,39 +3023,42 @@ function register_scene_row_context_menu() {
 						}
 					}
 				}
-				menuItems["editSceneNote"] = {
-					name: window.JOURNAL.notes[rowItem.id] ? "Edit Scene Note" : "Create Scene Note",
-					callback: function (itemKey, opt, originalEvent) {
-
-						let self = window.JOURNAL;
-						let item = find_sidebar_list_item(opt.$trigger);
-
-						if (!self.notes[item.id]) {
-							self.notes[item.id] = {
-								title: item.name,
-								text: "",
-								player: false,
-								plain: "",
-								isSceneNote: true,
-							};
-							did_update_scenes();
-						}
-						self.edit_note(item.id);
-						
-					}
-				}
-				if (window.JOURNAL.notes[rowItem.id]) {
-					menuItems["deleteSceneNote"] = {
-						name: "Delete Scene Note",
+				if (!selectedClicked){
+					menuItems["editSceneNote"] = {
+						name: window.JOURNAL.notes[rowItem.id] ? "Edit Scene Note" : "Create Scene Note",
 						callback: function (itemKey, opt, originalEvent) {
+
 							let self = window.JOURNAL;
 							let item = find_sidebar_list_item(opt.$trigger);
-							delete self.notes[item.id];
-							self.persist();
-							did_update_scenes();
+
+							if (!self.notes[item.id]) {
+								self.notes[item.id] = {
+									title: item.name,
+									text: "",
+									player: false,
+									plain: "",
+									isSceneNote: true,
+								};
+								did_update_scenes();
+							}
+							self.edit_note(item.id);
+
+						}
+					}
+					if (window.JOURNAL.notes[rowItem.id]) {
+						menuItems["deleteSceneNote"] = {
+							name: "Delete Scene Note",
+							callback: function (itemKey, opt, originalEvent) {
+								let self = window.JOURNAL;
+								let item = find_sidebar_list_item(opt.$trigger);
+								delete self.notes[item.id];
+								self.persist();
+								did_update_scenes();
+							}
 						}
 					}
 				}
+
 			}
 			if (!selectedClicked && rowItem.isTypeFolder()){
 				menuItems["export"] = {
@@ -3041,7 +3116,7 @@ function register_scene_row_context_menu() {
 	});
 }
 
-async function duplicate_scene(sceneId) {
+async function duplicate_scene(sceneId, skipDidChange) {
 	let scene = await AboveApi.getScene(sceneId);
 
 	const oldSceneId = scene.data.id;
@@ -3073,9 +3148,20 @@ async function duplicate_scene(sceneId) {
 	await AboveApi.migrateScenes(window.gameId, [aboveSceneData]);
 
 	window.ScenesHandler.scenes.push(aboveSceneData);
-	await did_update_scenes();
-	await expand_all_folders_up_to_id(aboveSceneData.id);
-	$(`.scene-item[data-scene-id='${aboveSceneData.id}'] .dm_scenes_button`).click();
+	if (window.toDuplicateScenes){
+		window.toDuplicateScenes.current += 1;
+		if(window.toDuplicateScenes.current >= window.toDuplicateScenes.total){
+			await did_update_scenes();
+			await expand_all_folders_up_to_id(aboveSceneData.id);
+			$(`body>.import-loading-indicator`).remove();
+		}
+	}
+	if (!skipDidChange){
+		await did_update_scenes();
+		await expand_all_folders_up_to_id(aboveSceneData.id);
+		$(`.scene-item[data-scene-id='${aboveSceneData.id}'] .dm_scenes_button`).click();
+		$(`body>.import-loading-indicator`).remove();
+	}
 }
 
 function expand_folders_to_active_scenes() {
