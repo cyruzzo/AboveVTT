@@ -68,15 +68,15 @@ class WeatherOverlay {
                 const startX = endX - horizontalOffset;
                 const startY = endY - this.height * (0.5 + Math.random() * 0.5);
                 const wind = -0.7 + Math.random() * 1.4;
-
+                const z = Math.random();
                 this.particles.push({
                     id,
                     startX,
                     startY,
                     endX,
                     endY,
-                    z: 0,
-                    fadeIn: 0,
+                    z: z,
+                    fadeIn: Math.ceil(fadeInFrames * z),
                     fadeInFrames,
                     splash: false,
                     splashed: false
