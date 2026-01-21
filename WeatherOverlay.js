@@ -68,15 +68,15 @@ class WeatherOverlay {
                 const startX = endX - horizontalOffset;
                 const startY = endY - this.height * (0.5 + Math.random() * 0.5);
                 const wind = -0.7 + Math.random() * 1.4;
-                const randomFadeIn = Math.floor(Math.random() * fadeInFrames);
+                const z = Math.random();
                 this.particles.push({
                     id,
                     startX,
                     startY,
                     endX,
                     endY,
-                    z: Math.random(),
-                    fadeIn: randomFadeIn,
+                    z: z,
+                    fadeIn: Math.ceil(fadeInFrames * z),
                     fadeInFrames,
                     splash: false,
                     splashed: false
@@ -89,7 +89,7 @@ class WeatherOverlay {
                     r: 3 + Math.random() * 2,
                     life: 0,
                     maxLife: 18 + Math.random() * 10,
-                    fadeIn: randomFadeIn,
+                    fadeIn: 0,
                     fadeInFrames: 10
                 });
             }
@@ -112,7 +112,7 @@ class WeatherOverlay {
                     windDx: this._leavesWindDx + Math.cos(windAngleVar) * windVar,
                     windDy: this._leavesWindDy + Math.sin(windAngleVar) * windVar,
                     pathVar: Math.random() * 1000,
-                    fadeIn: Math.floor(Math.random() * fadeInFrames),
+                    fadeIn: 0,
                     fadeInFrames: fadeInFrames
                 });
             }
@@ -143,7 +143,7 @@ class WeatherOverlay {
                     angle: Math.random() * Math.PI * 2,
                     spin: -0.01 + Math.random() * 0.02,
                     wind: 0.001 + Math.random() * 0.025,
-                    fadeIn: Math.floor(Math.random() * fadeInFrames),
+                    fadeIn: 0,
                     fadeInFrames: fadeInFrames
                 });
             }
@@ -158,7 +158,7 @@ class WeatherOverlay {
                     aspect: aspect,
                     alpha: 0.1 + Math.random() * 0.05,
                     phase: Math.random() * Math.PI * 2,
-                    fadeIn: Math.random() < 0.5 ? 1 : Math.floor(Math.random() * fadeInFrames),
+                    fadeIn: 0,
                     fadeInFrames: fadeInFrames
                 });
             }
@@ -175,7 +175,7 @@ class WeatherOverlay {
                 this.particles.push({
                     x: baseX,
                     y: baseY,
-                    r: 1 + Math.random() * 1 * intensityMultiplier,
+                    r: 1 + Math.random() * 1,
                     alpha: 0.7 + Math.random() * 0.3,
                     speed: 0.3 + Math.random() * 0.3,
                     drift: -0.2 + Math.random() * 0.4,
@@ -184,7 +184,7 @@ class WeatherOverlay {
                     life: 0,
                     maxLife: 120 + Math.random() * 60,
                     color: Math.random() > 0.5 ? 'rgba(255,180,60,1)' : 'rgba(255,100,0,1)',
-                    fadeIn: Math.floor(Math.random() * fadeInFrames),
+                    fadeIn: 0,
                     fadeInFrames: fadeInFrames
                 });
             }
@@ -192,7 +192,6 @@ class WeatherOverlay {
             for (let i = 0; i < count; i++) {
                 let baseX = Math.random() * (this.width + 40) - 20;
                 let baseY = Math.random() * (this.height + 40) - 20;
-                const randomFadeIn = Math.floor(Math.random() * fadeInFrames);
                 this.particles.push({
                     type: 'blossom',
                     x: baseX,
@@ -210,7 +209,7 @@ class WeatherOverlay {
                     petalColor: `rgba(255,${170+Math.floor(Math.random()*40)},${190+Math.floor(Math.random()*30)},0.85)`,
                     tipColor: `rgba(255,${120+Math.floor(Math.random()*60)},${200+Math.floor(Math.random()*40)},0.95)`,
                     centerColor: 'rgba(255,220,230,0.7)',
-                    fadeIn: randomFadeIn,
+                    fadeIn: 0,
                     fadeInFrames: fadeInFrames
                 });
                 this.particles.push({
@@ -228,7 +227,7 @@ class WeatherOverlay {
                     windDy: this._windDy * 1.1,
                     pathVar: Math.random() * 1000,
                     color: `rgba(255,${170+Math.floor(Math.random()*40)},${190+Math.floor(Math.random()*30)},0.82)`,
-                    fadeIn: Math.floor(Math.random() * fadeInFrames),
+                    fadeIn: 0,
                     fadeInFrames: fadeInFrames
                 });
             }
@@ -245,7 +244,7 @@ class WeatherOverlay {
                 this.particles.push({
                     x: Math.random() * this.width,
                     y: Math.random() * this.height,
-                    r: r * intensityMultiplier,
+                    r: r,
                     baseR: r,
                     alpha: 0.7 + Math.random() * 0.3,
                     hue: Math.random() * 360,
@@ -253,7 +252,7 @@ class WeatherOverlay {
                     angle: Math.random() * Math.PI * 2,
                     drift: -0.5 + Math.random(),
                     phase: Math.random() * Math.PI * 2,
-                    fadeIn: Math.floor(Math.random() * fadeInFrames),
+                    fadeIn: 0,
                     fadeInFrames: fadeInFrames
                 });
             }
@@ -500,7 +499,7 @@ class WeatherOverlay {
             this.particles.push({
                 x: Math.random() * this.width,
                 y: Math.random() * this.height,
-                r: 1 + Math.random() * 2 * intensityMultiplier,
+                r: 1 + Math.random() * 2,
                 alpha: 0.7 + Math.random() * 0.3,
                 hue: Math.random() * 360,
                 drift: -0.5 + Math.random(),
@@ -545,7 +544,7 @@ class WeatherOverlay {
             this.particles.push({
                 x: Math.random() * this.width,
                 y: Math.random() * this.height,
-                r: 1 + Math.random() * 2 * intensityMultiplier,
+                r: 1 + Math.random() * 2,
                 alpha: 0.7 + Math.random() * 0.3,
                 blinkPhase: Math.random() * Math.PI * 2,
                 blinkSpeed: 1.2 + Math.random() * 0.8,
@@ -592,7 +591,7 @@ class WeatherOverlay {
             this.particles.push({
                 x: baseX,
                 y: baseY,
-                r: 0.5 + Math.random() * 1 * intensityMultiplier,
+                r: 0.5 + Math.random() * 1,
                 alpha: 0.7 + Math.random() * 0.3,
                 speed: 0.3 + Math.random() * 0.3,
                 drift: -0.2 + Math.random() * 0.4,
@@ -687,7 +686,7 @@ class WeatherOverlay {
             p.x >= -20 && p.x <= this.width + 20 &&
             p.y >= -20 && p.y <= this.height + 20
         );
-        while (this.particles.length < this.intensity) {
+        while (this.particles.length < this.intensity*2) {
             let baseX = Math.random() * (this.width + 40) - 20;
             let baseY = Math.random() * (this.height + 40) - 20;
             this.particles.push({
