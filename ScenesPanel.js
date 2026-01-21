@@ -2513,7 +2513,7 @@ async function create_scene_inside(parentId, fullPath = RootFolder.Scenes.path, 
 			.map((scene) => scene.title),
 	);
 
-	const sceneData = build_scene_data_payload(parentId, sanitizedFullPath, sceneName, mapUrl, existingNames);
+	const sceneData = await build_scene_data_payload(parentId, sanitizedFullPath, sceneName, mapUrl, existingNames);
 
 	window.ScenesHandler.scenes.push(sceneData);
 
