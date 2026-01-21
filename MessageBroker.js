@@ -526,6 +526,25 @@ class MessageBroker {
 		this.lastAlertTS = 0;
 		this.latestVersionSeen = window.AVTT_VERSION;
 
+		// Will initialize when the user interacts with the page in any way
+		const initNextTurnAudio = () => {
+			if (!window.nextTurnAudio && !window.DM) {
+				window.nextTurnAudio = document.createElement('audio');
+				window.nextTurnAudio.src = window.EXTENSION_PATH + 'assets/audio/NextTurnIndicator.mp3';
+				window.nextTurnAudio.volume = 0.3;
+				window.nextTurnAudio.preload = 'auto';
+				document.body.appendChild(window.nextTurnAudio);
+				// The below must be done to satisfy browser autoplay policy
+				window.nextTurnAudio.play().then(() => {
+					window.nextTurnAudio.pause();
+					window.nextTurnAudio.currentTime = 0;
+				})
+			}
+		};
+		document.addEventListener('click', initNextTurnAudio, { once: true });
+		document.addEventListener('keydown', initNextTurnAudio, { once: true });
+		
+
 		this.onmessage = async function(event,tries=0) {
 			if (event.data == "pong")
 				return;
@@ -1981,6 +2000,47 @@ class MessageBroker {
 	}
   	handleCT(data){
 		ct_load(data);
+		if(getCombatTrackersettings().next_turn_indicator == '1'){
+			this.handleNextTurnIndicator();
+		}
+			
+	}
+
+	handleNextTurnIndicator() {
+		let nextPlayerId = undefined
+		let nextAfterCurrent = $("#combat_area tr[data-current=1]").nextAll('tr:not([skipTurn])').first();
+		if(nextAfterCurrent.length == 0){
+			// If we're at the end, get the first combatant
+			nextAfterCurrent = $("#combat_area tr:not([skipTurn])").first();
+		}
+
+		if(nextAfterCurrent.length > 0){
+			let nextCombatantId = nextAfterCurrent.attr('data-target');
+			console.log(nextCombatantId);
+			if(nextCombatantId && window.TOKEN_OBJECTS[nextCombatantId]){
+				let token = window.TOKEN_OBJECTS[nextCombatantId];
+				console.log(token);
+				if(token.isPlayer()){
+					let playerId = getPlayerIDFromSheet(token.options.id);
+					console.log(playerId)
+					if(playerId && playerId != -1 && playerId != 'DM'){
+						nextPlayerId = playerId;
+					}
+				}
+			}
+		}
+		if(!window.DM && nextPlayerId == window.PLAYER_ID){
+			showTempMessage("Your turn is next! Get ready!");
+			try {
+				window.nextTurnAudio.currentTime = 0;
+				window.nextTurnAudio.play().catch(err => {
+					console.warn("Failed to play next turn notification sound.", err);
+				});
+
+			} catch (error) {
+				console.error("Error playing next turn notification sound:", error);
+			}
+		}
 	}
 
 	encode_message_text(text) {

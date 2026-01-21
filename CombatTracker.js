@@ -961,6 +961,15 @@ function openCombatTrackerSettings(){
 		form.append(autoGroupRow);
 	}
 
+	if(!window.DM) {
+		let endTurnIndicatorToggle = form_toggle('next_turn_indicator', `If enabled, a visual and audio cue will play when you are up next in initiative`, combatSettingData['next_turn_indicator'] == '1', function(e){
+			handle_basic_form_toggle_click(e)
+		});
+		let endTurnIndicatorRow = form_row(`next_turn_indicator`, `Next Turn Indicator`, endTurnIndicatorToggle)
+		form.append(endTurnIndicatorRow);
+	}
+
+
 
 
 	const cancel = $("<button type='button' id='cancel_importer'>Cancel</button>");
