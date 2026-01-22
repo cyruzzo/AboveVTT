@@ -20,10 +20,16 @@ function initDmScreen() {
 async function buildDMScreen(container) {
     console.log("initDmScreen called");
     // Check if the DnD 2024 DMG is owned
-    let dmg2024Owned = false;
-    await fetch_tooltip([undefined, "https://www.dndbeyond.com/sources/dnd/dmg-2024/the-basics#WhatDoesaDMDo"], 'DMG_OWNED', function(data){
-        dmg2024Owned = data.Tooltip.length>0;
-        if (container){
+    window.ownedBooks = {
+        dmg2024Owned: false,
+        dmg2014Owned: false
+    }
+    await fetch_tooltip([undefined, "https://www.dndbeyond.com/sources/dnd/dmg-2014/running-the-game#ImprovisingDamage"], '2014_DMG_OWNED', function(data){
+        window.ownedBooks.dmg2014Owned = data.Tooltip.length > 0; 
+    });
+    await fetch_tooltip([undefined, "https://www.dndbeyond.com/sources/dnd/dmg-2024/the-basics#WhatDoesaDMDo"], 'DMG_OWNED', function (data) {
+        window.ownedBooks.dmg2024Owned = data.Tooltip.length > 0;
+        if (container) {
             let cont = $(`
             <div id='dmScreenContainer'>
                 <div class='dmScreenheader'>
@@ -32,15 +38,20 @@ async function buildDMScreen(container) {
                     </h1>
                     <div class='dmScreenDropdown' style='display: none;'>
                         <div class='dmScreenDropdownItem' data-block='actions'>Actions</div>
-                        ${dmg2024Owned ? `<div class='dmScreenDropdownItem' data-block='bastion'>Bastions</div>` : ""}
+                        ${window.ownedBooks.dmg2024Owned ? `<div class='dmScreenDropdownItem' data-block='bastion'>Bastions</div>` : ""}
                         <div class='dmScreenDropdownItem' data-block='conditions'>Conditions</div>
                         <div class='dmScreenDropdownItem' data-block='damage'>Improvising Objects and Damage</div>
-                        <div class='dmScreenDropdownItem' data-block='names'>Name Improvisation</div>
+                        ${window.ownedBooks.dmg2024Owned ? `<div class='dmScreenDropdownItem' data-block='names'>Name Improvisation</div>` : ""}
                         <div class='dmScreenDropdownItem' data-block='services'>Services</div>
                         <div class='dmScreenDropdownItem' data-block='skills'>Skills and Mechanics</div>
                         <div class='dmScreenDropdownItem' data-block='spellcasting'>Spellcasting</div>
                         <div class='dmScreenDropdownItem' data-block='travel'>Travel</div>
                         <div class='dmScreenDropdownItem' data-block='weapons'>Weapons</div>
+                    </div>
+                    <div class='dmScreenPageButtons'>
+                        <button id="addDmScreenPageButton" title="Add DM Screen Page">+</button>
+                        <button id="editDmScreenPageButton" style='display:none' title="Edit DM Screen Page">✎</button>
+                        <button id="removeDmScreenPageButton" style='display:none' title="Remove DM Screen Page"><svg class="delSVG" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M16 9v10H8V9h8m-1.5-6h-5l-1 1H5v2h14V4h-3.5l-1-1zM18 7H6v12c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7z"/></svg></button>
                     </div>
                 </div>
                 <div id='dmScreenBlocks'>
@@ -48,9 +59,51 @@ async function buildDMScreen(container) {
                 </div>
             </div>
 		    `);
+            const refreshCustomDmPages = function() {     
+                const dropdown = cont.find('.dmScreenDropdown');
+                dropdown.find('.dmScreenCustomDropdownItem').remove();
+                const customDmPages = Object.values(window.JOURNAL.notes).filter(n => n.dmScreen==1);
+                if (customDmPages.length > 0) {
+                    for(let i=0; i<customDmPages.length; i++){
+                        const dmScreenDropdownItem = $(`<div class='dmScreenDropdownItem dmScreenCustomDropdownItem' data-block='custom' data-id='${customDmPages[i].id}'>${customDmPages[i].title}</div>`);
+                        dropdown.append(dmScreenDropdownItem);
+                    }
+                }
+            }
+            refreshCustomDmPages();
+
             container.append(cont);
             const dmScreenBlocks = $("#dmScreenBlocks");
+            $('#addDmScreenPageButton').off('click.addDmPage').on('click.addDmPage', function () {
+                const newId = uuid();
+                const name = prompt("Enter the title for the new DM Screen page:");
+                window.JOURNAL.notes[newId] = {
+                    title: name,
+                    text: "",
+                    player: false,
+                    plain: "",
+                    dmScreen: 1,
+                    id: newId
+                };
+                window.JOURNAL.edit_note(newId);
+                refreshCustomDmPages();
+            });
+            $('#editDmScreenPageButton').off('click.editDmPage').on('click.editDmPage', function () { 
+                const customBlock = dmScreenBlocks.find('.dmScreenCustomBlock');
+                const noteId = customBlock.attr('data-note-id');     
+                window.JOURNAL.edit_note(noteId);
+            });
+            $('#removeDmScreenPageButton').off('click.removeDmPage').on('click.removeDmPage', function () { 
+                const customBlock = dmScreenBlocks.find('.dmScreenCustomBlock');
+                const noteId = customBlock.attr('data-note-id');
+                if(confirm(`Are you sure you want to delete the DM Screen page "${window.JOURNAL.notes[noteId].title}"? This action cannot be undone.`)){
+                    delete window.JOURNAL.notes[noteId];
+                    window.JOURNAL.persist();
+                    $(`.dmScreenDropdownItem:first-of-type`).click();
+                    refreshCustomDmPages();
+                }
 
+            });
             // Set up dropdown functionality
             $('.dmScreenTitle').click(function (e) {
                 e.stopPropagation();
@@ -68,15 +121,23 @@ async function buildDMScreen(container) {
             $('.dmScreenDropdown').click(function (e) {
                 e.stopPropagation();
             });
-
+            const addTooltipAndRoll = function ($element) {
+                $element.find('h2, strong>em, caption, em>strong').toggleClass(`ignore-abovevtt-formating`, true)
+                window.JOURNAL.translateHtmlAndBlocks($element, undefined, false);
+                add_journal_roll_buttons($element);
+                window.JOURNAL.add_journal_tooltip_targets($element);
+                window.JOURNAL.block_send_to_buttons($element);
+                add_stat_block_hover($element);
+            }
             // Handle dropdown item selection
-            $('.dmScreenDropdownItem').click(function () {
-                const blockType = $(this).attr('data-block');
-                const blockTitle = $(this).text();
+            $('.dmScreenDropdown').off('click.buildBlock').on('click.buildBlock', '.dmScreenDropdownItem',function (e) {
+                const blockType = $(e.target).attr('data-block');
+                const blockTitle = $(e.target).text();
 
                 $('.dmScreenTitle').html(`${blockTitle} <span>▼</span>`);
                 $('.dmScreenDropdown').hide();
-
+                $('#editDmScreenPageButton').hide();
+                $('#removeDmScreenPageButton').hide();
                 // Clear current blocks and load the selected one
                 dmScreenBlocks.empty();
                 switch (blockType) {
@@ -90,7 +151,7 @@ async function buildDMScreen(container) {
                         dmScreenBlocks.append(buildActionsBlock());
                         break;
                     case 'skills':
-                        dmScreenBlocks.append(buildSkillsAndMechanicsBlock(dmg2024Owned));
+                        dmScreenBlocks.append(buildSkillsAndMechanicsBlock());
                         break;
                     case 'travel':
                         dmScreenBlocks.append(buildTravelBlock());
@@ -110,18 +171,32 @@ async function buildDMScreen(container) {
                     case 'bastion':
                         dmScreenBlocks.append(buildBastionBlock());
                         break;
+                    case 'custom':
+                        const pageId = $(e.target).attr('data-id'); 
+                        const journalPage = window.JOURNAL.notes[pageId];
+                        $('#editDmScreenPageButton').show();
+                        $('#removeDmScreenPageButton').show();
+                        if (journalPage) {
+                            const pageContent = journalPage.text || "";
+                            const customBlock = $(`
+                                <div class='dmScreenBlock dmScreenCustomBlock' id='dmScreenCustomBlock' data-note-id='${journalPage.id}'>
+                                    <div class='dmScreenColumns note-text'>${pageContent}</div>
+                                </div>
+                            `);
+                            dmScreenBlocks.append(customBlock);
+                        }
+                        break;
                 }
+                addTooltipAndRoll(dmScreenBlocks);
                 updatePopoutWindow("DM Screen", $("#dmScreenContainer"));
             });
 
             // Load initial block
             dmScreenBlocks.append(buildActionsBlock());
+            addTooltipAndRoll(dmScreenBlocks);
             container.show();
 
         }
-
-       
-     
     })
     
 
@@ -152,8 +227,6 @@ function buildConditionsBlock() {
         columnsContainer.append(conditionDiv);
     });
 
-    // Add roll buttons to all dice notation in the travel block
-    add_journal_roll_buttons(block, undefined, undefined, "DM");
 
     return block;
 }
@@ -162,7 +235,7 @@ function buildConditionsBlock() {
  * Build the Skills and Mechanics reference block
  * @returns {jQuery} The skills and mechanics block element
  */
-function buildSkillsAndMechanicsBlock(dmg2024Owned) {
+function buildSkillsAndMechanicsBlock() {
     const block = $(`<div class='dmScreenBlock' id='dmScreenSkillsAndMechanics'>
         <div class='dmScreenColumns'></div>
     </div>`);
@@ -195,9 +268,9 @@ function buildSkillsAndMechanicsBlock(dmg2024Owned) {
     ];
 
     // Add Skills section
-    const skillsSection = $(`<div class='dmScreenChunk'><h2>Skills</h2></div>`);
+    const skillsSection = $(`<div class='dmScreenChunk ignore-abovevtt-formating'><h2>Skills</h2></div>`);
     skills.forEach(skill => {
-        skillsSection.append(`<div><strong>${skill.name}:</strong> ${skill.description}</div>`);
+        skillsSection.append(`<div><strong class='ignore-abovevtt-formating'>${skill.name}:</strong> ${skill.description}</div>`);
     });
     columnsContainer.append(skillsSection);
 
@@ -207,43 +280,50 @@ function buildSkillsAndMechanicsBlock(dmg2024Owned) {
             <h2>Light</h2>
             <div class='dmScreenChunkDefinition'>
                 The presence or absence of light determines the category of illumination in an area, as defined below.<br>
-                <strong>Bright Light.</strong> Bright Light lets most creatures see normally. Even gloomy days provide Bright Light, as do torches, lanterns, fires, and other sources of illumination within a specific radius.<br>
-                <strong>Dim Light.</strong> Dim Light, also called shadows, creates a Lightly Obscured area. An area of Dim Light is usually a boundary between Bright Light and surrounding Darkness. The soft light of twilight and dawn also counts as Dim Light. A full moon might bathe the land in Dim Light.<br>
-                <strong>Darkness.</strong> Darkness creates a Heavily Obscured area. Characters face Darkness outdoors at night (even most moonlit nights), within the confines of an unlit dungeon, or in an area of magical Darkness.<br>
-            </div>
-            <div class='dmScreenChunkDefinition'>
-            <h2>Visibility</h2>
-                <strong>Lightly Obscured</strong><br>
-                ${rules.find(rule => rule.name === "Lightly Obscured").description}<br>
-                <strong>Heavily Obscured</strong><br>
-                ${rules.find(rule => rule.name === "Heavily Obscured").description}
-            </div>
-            <div class='dmScreenChunkDefinition'>
-            <h2>Cover</h2>
-                Cover provides a degree of protection to a target behind it. There are three degrees of cover, each of which provides a different benefit to a target. If behind more than one degree of cover, a target benefits only from the most protective degree.<br>
-                <strong>Half Cover:</strong> ${rules.find(rule => rule.name === "Half Cover").description}<br>
-                <strong>Three-Quarters Cover:</strong> ${rules.find(rule => rule.name === "Three-Quarters Cover").description}<br>
-                <strong>Total Cover:</strong> ${rules.find(rule => rule.name === "Total Cover").description}
+                <strong class='ignore-abovevtt-formating'>Bright Light.</strong> Bright Light lets most creatures see normally. Even gloomy days provide Bright Light, as do torches, lanterns, fires, and other sources of illumination within a specific radius.<br>
+                <strong class='ignore-abovevtt-formating'>Dim Light.</strong> Dim Light, also called shadows, creates a Lightly Obscured area. An area of Dim Light is usually a boundary between Bright Light and surrounding Darkness. The soft light of twilight and dawn also counts as Dim Light. A full moon might bathe the land in Dim Light.<br>
+                <strong class='ignore-abovevtt-formating'>Darkness.</strong> Darkness creates a Heavily Obscured area. Characters face Darkness outdoors at night (even most moonlit nights), within the confines of an unlit dungeon, or in an area of magical Darkness.<br>
             </div>
         </div>
+        <div class='dmScreenChunk'>
+            <h2>Visibility</h2>
+            <div class='dmScreenChunkDefinition'>
+                <strong class='ignore-abovevtt-formating'>Lightly Obscured</strong><br>
+                ${rules.find(rule => rule.name === "Lightly Obscured").description}<br>
+                <strong class='ignore-abovevtt-formating'>Heavily Obscured</strong><br>
+                ${rules.find(rule => rule.name === "Heavily Obscured").description}
+            </div>
+        </div>
+        <div class='dmScreenChunk'>
+            <h2>Cover</h2>
+            <div class='dmScreenChunkDefinition'>
+                Cover provides a degree of protection to a target behind it. There are three degrees of cover, each of which provides a different benefit to a target. If behind more than one degree of cover, a target benefits only from the most protective degree.<br>
+                <strong class='ignore-abovevtt-formating'>Half Cover:</strong> ${rules.find(rule => rule.name === "Half Cover").description}<br>
+                <strong class='ignore-abovevtt-formating'>Three-Quarters Cover:</strong> ${rules.find(rule => rule.name === "Three-Quarters Cover").description}<br>
+                <strong class='ignore-abovevtt-formating'>Total Cover:</strong> ${rules.find(rule => rule.name === "Total Cover").description}
+            </div>
+        </div>
+       
     `);
     columnsContainer.append(visionSection);
 
-    // Add Mechanics section
-    const mechanicsChunk = $(`<div class='dmScreenChunk'></div>`);
+
+
     mechanics.forEach(mechanic => {
         const mechanicDiv = $(`
-            <h2>${mechanic.name}</h2>
-            <div class='dmScreenChunkDefinition'>
-                ${mechanic.description}
+            <div class='dmScreenChunk'>
+                <h2>${mechanic.name}</h2>
+                <div class='dmScreenChunkDefinition'>
+                    ${mechanic.description}
+                </div>
             </div>
         `);
-        mechanicsChunk.append(mechanicDiv);
+        columnsContainer.append(mechanicDiv);
     });
-    columnsContainer.append(mechanicsChunk);
+    
 
     // Exclude if DMG 2024 is not owned
-    if (dmg2024Owned) {
+    if (window.ownedBooks.dmg2024Owned) {
 
         // Add Mob Attacks table
         const mobAttacksData = [
@@ -290,8 +370,6 @@ function buildSkillsAndMechanicsBlock(dmg2024Owned) {
         columnsContainer.append(mobAttacksSection);
     }
 
-    // Add roll buttons to all dice notation in the travel block
-    add_journal_roll_buttons(block, undefined, undefined, "DM");
 
     return block;
 }
@@ -321,8 +399,6 @@ function buildActionsBlock() {
         columnsContainer.append(actionDiv);
     });
 
-    // Add roll buttons to all dice notation in the travel block
-    add_journal_roll_buttons(block, undefined, undefined, "DM");
 
     return block;
 }
@@ -402,8 +478,8 @@ function buildDamageImprovisationBlock() {
             </tr>
         `);
     });
-
-    columnsContainer.append(damageSection);
+    if (window.ownedBooks.dmg2014Owned == true || window.ownedBooks.dmg2024Owned == true)
+     columnsContainer.append(damageSection);
 
     // Add Object AC and HP tables in same section
     const objectACData = [
@@ -417,7 +493,7 @@ function buildDamageImprovisationBlock() {
     ];
 
     const objectHPData = [
-        { size: "Tiny", fragilehp: "2 (1d4)",   lienthp: "5 (2d4)" },
+        { size: "Tiny", fragilehp: "2 (1d4)", resilienthp: "5 (2d4)" },
         { size: "Small", fragilehp: "3 (1d6)", resilienthp: "10 (3d6)" },
         { size: "Medium", fragilehp: "4 (1d8)", resilienthp: "18 (4d8)" },
         { size: "Large", fragilehp: "5 (1d10)", resilienthp: "27 (5d10)" },
@@ -506,8 +582,7 @@ function buildDamageImprovisationBlock() {
 
     columnsContainer.append(damageThresholdSection);
 
-    // Add roll buttons to all dice notation in the travel block
-    add_journal_roll_buttons(block, undefined, undefined, "DM");
+
 
     return block;
 }
@@ -585,7 +660,7 @@ function buildTravelBlock() {
                         <th style='text-align: left; padding: 8px; border-bottom: 2px solid #ccc;'>Encounter Distance</th>
                         <th style='text-align: left; padding: 8px; border-bottom: 2px solid #ccc;'>Foraging DC</th>
                         <th style='text-align: left; padding: 8px; border-bottom: 2px solid #ccc;'>Navigation DC</th>
-                        <th style='text-align: left; padding: 8px; border-bottom: 2px solid #ccc;'>Search DC</th>
+                        <th class='ignore-abovevtt-formating' style='text-align: left; padding: 8px; border-bottom: 2px solid #ccc;'>Search DC</th>
                     </tr>
                 </thead>
                 <tbody></tbody>
@@ -683,13 +758,12 @@ function buildTravelBlock() {
             </tr>
         `);
     });
-
+    
     weatherSection.append(windPrecipTable);
+    if (window.ownedBooks.dmg2024Owned || window.ownedBooks.dmg2014Owned)
+        columnsContainer.append(weatherSection);
 
-    columnsContainer.append(weatherSection);
 
-    // Add roll buttons to all dice notation in the travel block
-    add_journal_roll_buttons(block, undefined, undefined, "DM");
 
     return block;
 }
@@ -895,8 +969,7 @@ function buildNameImprovisationBlock() {
 
     columnsContainer.append(tavernSection);
 
-    // Add roll buttons to all dice notation
-    add_journal_roll_buttons(block, undefined, undefined, "DM");
+
 
     return block;
 }
@@ -942,9 +1015,9 @@ function buildSpellcastingBlock() {
             <div class='dmScreenChunkDefinition'>
                 A spell's components are physical requirements the spellcaster must meet to cast the spell. Each spell's description indicates whether it requires Verbal (V), Somatic (S), or Material (M) components. If the spellcaster can't provide one or more of a spell's components, the spellcaster can't cast the spell.<br><br>
                 <strong>Verbal (V):</strong> ${spellComponents.find((component) => component.name === "Verbal").description}<br><br>
-                <strong>Somatic (S):</strong> ${spellComponents.find((component) => component.name === "Somatic").description}<br><br>
-                <strong>Material (M):</strong> ${spellComponents.find((component) => component.name === "Material").description}<br><br>
-                If a spell doesn't consume its materials and doesn't specify a cost for them, a spellcaster can use a Component Pouch instead of providing the materials specified in the spell, or the spellcaster can substitute a Spellcasting Focus if the caster has a feature that allows that substitution. To use a Component Pouch, you must have a hand free to reach into it, and to use a Spellcasting Focus, you must hold it unless its description says otherwise.
+                <strong>Somatic (S):</strong><span class='ignore-abovevtt-formating'> ${spellComponents.find((component) => component.name === "Somatic").description}</span><br><br>
+                <strong>Material (M):</strong><span class='ignore-abovevtt-formating'> ${spellComponents.find((component) => component.name === "Material").description}</span><br><br>
+                <span class='ignore-abovevtt-formating'>If a spell doesn't consume its materials and doesn't specify a cost for them, a spellcaster can use a Component Pouch instead of providing the materials specified in the spell, or the spellcaster can substitute a Spellcasting Focus if the caster has a feature that allows that substitution. To use a Component Pouch, you must have a hand free to reach into it, and to use a Spellcasting Focus, you must hold it unless its description says otherwise.</span>
             </div>
         </div>
     `);
@@ -956,7 +1029,7 @@ function buildSpellcastingBlock() {
             <h2>Duration</h2>
             <div class='dmScreenChunkDefinition'>
                 A spell's duration is the length of time the spell persists after it is cast. A duration typically takes one of the following forms:<br><br>
-                <strong>Concentration:</strong> A duration that requires Concentration follows the Concentration rules.<br><br>
+                <strong class='ignore-abovevtt-formating'>Concentration:</strong> A duration that requires Concentration follows the Concentration rules.<br><br>
                 <strong>Instantaneous:</strong> An instantaneous duration means the spell's magic appears only for a moment and then disappears.<br><br>
                 <strong>Time Span:</strong> A duration that provides a time span specifies how long the spell lasts in rounds, minutes, hours, or the like. For example, a Duration entry might say "1 minute," meaning the spell ends after 1 minute has passed. While a time-span spell that you cast is ongoing, you can dismiss it (no action required) if you don't have the Incapacitated condition.
             </div>
@@ -999,8 +1072,7 @@ function buildSpellcastingBlock() {
 
     columnsContainer.append(aoeSection);
 
-    // Add roll buttons to all dice notation
-    add_journal_roll_buttons(block, undefined, undefined, "DM");
+
 
     return block;
 }
@@ -1161,8 +1233,7 @@ function buildWeaponsBlock() {
     columnsContainer.append(createWeaponTable("Martial Melee Weapons", martialMeleeData));
     columnsContainer.append(createWeaponTable("Martial Ranged Weapons", martialRangedData));
 
-    // Add roll buttons to all dice notation
-    add_journal_roll_buttons(block, undefined, undefined, "DM");
+
 
     return block;
 }
@@ -1343,7 +1414,7 @@ function buildServicesBlock() {
     ];
 
     const spellcastingSection = $(`
-        <div class='dmScreenChunk'>
+        <div class='dmScreenChunk ignore-abovevtt-formating'>
             <h2>Spellcasting</h2>
             <div class='dmScreenChunkDefinition'>
                 Most settlements contain individuals who are willing to cast spells in exchange for payment. If a spell has expensive components, add the cost of those components to the cost listed in the Spellcasting Services table. The higher the level of a desired spell, the harder it is to find someone to cast it.
@@ -1373,8 +1444,7 @@ function buildServicesBlock() {
     });
     columnsContainer.append(spellcastingSection);
 
-    // Add roll buttons to all dice notation
-    add_journal_roll_buttons(block, undefined, undefined, "DM");
+
 
     return block;
 }
@@ -1384,7 +1454,7 @@ function buildServicesBlock() {
  * @returns {jQuery} The bastion block element
  */
 function buildBastionBlock() {
-    const block = $(`<div class='dmScreenBlock' id='dmScreenBastion'>
+    const block = $(`<div class='dmScreenBlock ignore-abovevtt-formating' id='dmScreenBastion'>
         <div class='dmScreenColumns'></div>
     </div>`);
 
@@ -1690,8 +1760,6 @@ function buildBastionBlock() {
     `);
     columnsContainer.append(fallSection);
 
-    // Add roll buttons to all dice notation
-    add_journal_roll_buttons(block, undefined, undefined, "DM");
 
     return block;
 }

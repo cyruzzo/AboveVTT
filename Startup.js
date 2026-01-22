@@ -23,7 +23,9 @@ $(function() {
       .then((databases)=> {
         window.gameIndexedDb = databases[0];
         window.globalIndexedDB = databases[1];
-        window.EXPERIMENTAL_SETTINGS = JSON.parse(localStorage.getItem(`ExperimentalSettings${window.gameId}`)) || {};
+        const campaignSettings = JSON.parse(localStorage.getItem(`ExperimentalSettings${window.gameId}`)) || {};
+        const globalSettings = JSON.parse(localStorage.getItem(`ExperimentalSettingsGlobal`)) || {}; ;
+        window.EXPERIMENTAL_SETTINGS = {...campaignSettings, ...globalSettings};
         if (is_release_build()) {
           // in case someone left this on during beta testing, we should not allow it here
           set_avtt_setting_value("aggressiveErrorMessages", false);

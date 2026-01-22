@@ -317,17 +317,7 @@ function token_setting_options() {
 
 function avtt_settings() {
 	let settings = [
-		{
-			name: 'alwaysShowSplash',
-			label: 'Always show splash screen',
-			type: 'toggle',
-			options: [
-				{ value: true, label: "Always", description: `You will always see the splash screen on startup.` },
-				{ value: false, label: "Only When New", description: `You will only see the splash screen on startup after updating to a new version.` }
-			],
-			defaultValue: true,
-			class: 'ui'
-		},
+
 		{
 			name: "iconUi",
 			label: "Mobile/Icon UI",
@@ -337,7 +327,8 @@ function avtt_settings() {
 				{ value: false, label: "Disable", description: `` }
 			],
 			defaultValue: true,
-			class: 'ui'
+			class: 'ui',
+			global: 1
 		},
 		{
 			name: 'allowTokenMeasurement',
@@ -348,8 +339,21 @@ function avtt_settings() {
 				{ value: false, label: "Not Measuring", description: `Enable this to automatically measure the distance that you drag a token. When enabled, dropping the token and picking it back up will create a waypoint in the measurement. Clicking anywhere else, or dragging another token will stop the measurement.` }
 			],
 			defaultValue: false,
-			class: 'ui'
+			class: 'ui',
+			global: 1
 		},	
+		{
+			name: "dragLight",
+			label: "Vision check while token moves",
+			type: "toggle",
+			options: [
+				{ value: true, label: "Enable", description: `While moving a token vision will update` },
+				{ value: false, label: "Disable", description: `Vision will only update on drop of a token` }
+			],
+			defaultValue: false,
+			class: 'ui',
+			global: 1
+		},
 		{
 			name: "disableCombatText",
 			label: "Disable DM Damage Button Text",
@@ -359,7 +363,8 @@ function avtt_settings() {
 				{ value: false, label: "Disable", description: `If enabled removes the scrolling text on tokens displayed to DM when using gamelog damage buttons.` }
 			],
 			defaultValue: false,
-			class: 'ui'
+			class: 'ui',
+			global: 1
 		},
 		{
 			name: 'streamDiceRolls',
@@ -395,15 +400,16 @@ function avtt_settings() {
 			class: 'stream'
 		},
 		{
-			name: "dragLight",
-			label: "Vision check while token moves",
-			type: "toggle",
+			name: 'alwaysShowSplash',
+			label: 'Always show splash screen',
+			type: 'toggle',
 			options: [
-				{ value: true, label: "Enable", description: `While moving a token vision will update` },
-				{ value: false, label: "Disable", description: `Vision will only update on drop of a token` }
+				{ value: true, label: "Always", description: `You will always see the splash screen on startup.` },
+				{ value: false, label: "Only When New", description: `You will only see the splash screen on startup after updating to a new version.` }
 			],
-			defaultValue: false,
-			class: 'ui'
+			defaultValue: true,
+			class: 'ui',
+			global: 1
 		},
 		{
 			name: "alwaysHideScrollbar",
@@ -414,7 +420,8 @@ function avtt_settings() {
 				{ value: false, label: "Disable", description: `Scrollbar is allowed` }
 			],
 			defaultValue: false,
-			class: 'ui'
+			class: 'ui',
+			global: 1
 		}
 	];
 
@@ -587,7 +594,8 @@ function avtt_settings() {
 			{ value: false, label: "Disable", description: `If enabled adjusts green text to yellow` }
 		],
 		defaultValue: false,
-		class: 'ui'
+		class: 'ui',
+		global: 1
 	})
 	settings.push(
 	{
@@ -636,7 +644,8 @@ function avtt_settings() {
 			{ value: 2, label: "Always 2024", description: `Will always display in 2024 style` },
 		],
 		defaultValue: false,
-		class: 'ui'
+		class: 'ui',
+		global: 1
 	})
 	settings.push(
 	{
@@ -910,7 +919,9 @@ function get_avtt_setting_value(name) {
 			return get_avtt_setting_default_value(name);
 	}
 }
-
+function get_avtt_setting_is_global(name) {
+	return avtt_settings().find(s => s.name === name)?.global === 1;
+}
 function set_avtt_setting_value(name, newValue) {
 	console.log(`set_avtt_setting_value ${name} is now ${newValue}`);
 
@@ -1103,7 +1114,7 @@ function init_settings() {
 		<h3 class="token-image-modal-footer-title no-bottom-margin-setting" >AboveVTT Settings</h3>
 		<div class="sidebar-panel-header-explanation"><b>Some settings can have an impact on performance.</b></div>
 		<div class='avtt-settings-section avtt-settings-defaults'><h4 class="token-image-modal-footer-title">Default Settings</h4></div>
-		<div class='avtt-settings-section avtt-settings-ui'><h4 class="token-image-modal-footer-title">UI</h4></div>
+		<div class='avtt-settings-section avtt-settings-ui'><h4 class="token-image-modal-footer-title">UI</h4><div class='global-setting'><h5 class="token-image-modal-footer-title">Global</h5></div><div class='campaign-setting'><h5 class="token-image-modal-footer-title">Campaign</h5></div></div>
 		<div class='avtt-settings-section avtt-settings-stream'><h4 class="token-image-modal-footer-title">Streaming/P2P</h4></div>
 		<div class='avtt-settings-section avtt-settings-performance'><h4 class="token-image-modal-footer-title">Performance</h4><div class="sidebar-panel-header-explanation"><b>These settings can improve performance</b></div></div>
 		<div class='avtt-settings-section avtt-settings-debug'><h4 class="token-image-modal-footer-title">Debugging</h4><div class="sidebar-panel-header-explanation"><b>These settings can be used to debug issues or as last resorts when defaults aren't working</b></div></div>
@@ -1171,7 +1182,7 @@ function init_settings() {
 				break;
 		}
 		if (inputWrapper) {
-			body.find(`.avtt-settings-${setting.class}`).append(inputWrapper);
+			body.find(`.avtt-settings-${setting.class}${setting.class == 'ui' ? setting.global == 1 ? ' .global-setting': ' .campaign-setting' : ''}`).append(inputWrapper);
 		}
 	}
 
@@ -1642,6 +1653,13 @@ function persist_token_settings(settings){
 
 
 function persist_experimental_settings(settings) {
+	const globalSettings = {};
+	for(let item in settings){
+		if (get_avtt_setting_is_global(item)){
+			globalSettings[item] = settings[item];
+		}
+	}
+	localStorage.setItem("ExperimentalSettingsGlobal", JSON.stringify(globalSettings));
 	const gameid = find_game_id();
 	localStorage.setItem("ExperimentalSettings" + gameid, JSON.stringify(settings));
 }

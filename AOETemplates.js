@@ -25,7 +25,7 @@ const AOE_TEMPLATES = {
 
 function setup_aoe_button(buttons) {
     
-    const aoeButton = $("<div style='display:inline-block;width:fit-content;' id='aoe_button' class='drawbutton menu-button hideable ddbc-tab-options__header-heading'><u>A</u>OE</div>");
+    const aoeButton = $("<div style='display:inline-block;width:fit-content;' id='aoe_button' data-name='AoE Templates (A)' class='drawbutton hasTooltip menu-button hideable ddbc-tab-options__header-heading'><span class='button-text'><u>A</u>OE</span></div>");
     const aoeMenu = $("<div id='aoe_menu' class='top_menu'></div>");
 
     aoeMenu.append("<div class='menu-subtitle'>Size</div>");

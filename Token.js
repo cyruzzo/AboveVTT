@@ -47,7 +47,7 @@ const throttleLight = throttle((darknessMoved = false) => {
 	if (!window.walls || window.walls?.length < 5) {
 		redraw_light_walls();
 	} 
-	requestAnimationFrame(()=>{redraw_light(darknessMoved)})
+	requestAnimationFrame(()=>{redraw_light(darknessMoved, 1000)})
 }, 1000/30);
 const throttleTokenCheck = mydebounce(throttle(do_check_token_visibility, 1000/4), 20);
 const debounceStoreExplored = mydebounce((exploredCanvas, sceneId) => {		
@@ -66,13 +66,13 @@ const debounceStoreExplored = mydebounce((exploredCanvas, sceneId) => {
 var debounceLightChecks = mydebounce((darknessMoved = false) => {		
 		if(window.DRAGGING)
 			return;
-	if (!window.walls || window.walls?.length < 5){
+		if (!window.walls || window.walls?.length < 5){
 			redraw_light_walls();	
 		}
 		
 		requestAnimationFrame(()=>{
 			if(darknessMoved === true)
-				redraw_drawn_light();
+				redraw_drawn_light(darknessMoved);
 			redraw_light(darknessMoved)
 		});
 		
@@ -93,7 +93,7 @@ var longDebounceLightChecks = mydebounce((darknessMoved = false) => {
 		//let promise = [new Promise (_ => setTimeout(redraw_light(), 1000))];
 		requestAnimationFrame(()=>{
 			if(darknessMoved === true)
-				redraw_drawn_light();
+				redraw_drawn_light(darknessMoved);
 			redraw_light(darknessMoved)
 		});
 		debounceAudioChecks();
@@ -771,9 +771,9 @@ class Token {
 
 			old.animate({left: this.options.left,top: this.options.top,}, { duration: 0, queue: true, 
 				complete: async function() {
-					const darknessMoved = self.options.darkness || self.options.tokenWall;
+					const darknessMoved = (self.options.darkness || self.options.tokenWall) ? true : false;
 					if (darknessMoved)
-						redraw_drawn_light();
+						redraw_drawn_light(darknessMoved);
 					
 					if(window.EXPERIMENTAL_SETTINGS.dragLight == true)
 						throttleLight(darknessMoved);
@@ -2186,9 +2186,12 @@ class Token {
 						left: this.options.left,
 						top: this.options.top,
 					}, { duration: animationDuration, queue: true, complete: async function() {
-						const darknessMoved = self.options.darkness || self.options.tokenWall;
-							if (darknessMoved)
-								redraw_drawn_light();
+							const darknessMoved = (self.options.darkness || self.options.tokenWall) ? true : false;
+							if (darknessMoved){
+								redraw_drawn_light(darknessMoved);
+							}
+								
+
 							
 							if(window.EXPERIMENTAL_SETTINGS.dragLight == true)
 								throttleLight(darknessMoved);
@@ -2251,9 +2254,9 @@ class Token {
 							width: this.sizeWidth(),
 							height: this.sizeHeight()
 						}, { duration: animationDuration, queue: false, complete: async function() {
-							const darknessMoved = self.options.darkness || self.options.tokenWall;
+							const darknessMoved = (self.options.darkness || self.options.tokenWall) ? true : false;
 							if(darknessMoved)
-								redraw_drawn_light();
+								redraw_drawn_light(darknessMoved);
 							
 							if(window.EXPERIMENTAL_SETTINGS.dragLight == true)
 								throttleLight(darknessMoved);
@@ -2616,9 +2619,9 @@ class Token {
 						}, 
 						{ 
 							duration: animationDuration, queue: true, complete: async function() {
-								const darknessMoved = self.options.darkness || self.options.tokenWall;
+								const darknessMoved = (self.options.darkness || self.options.tokenWall) ? true : false;
 								if (darknessMoved)
-									redraw_drawn_light();
+									redraw_drawn_light(darknessMoved);
 								
 								if(window.EXPERIMENTAL_SETTINGS.dragLight == true)
 									throttleLight(darknessMoved);
@@ -2699,7 +2702,7 @@ class Token {
 								}, 
 								{ 
 									duration: animationDuration, queue: true, complete: async function() {
-										const darknessMoved = self.options.darkness || self.options.tokenWall;
+										const darknessMoved = (self.options.darkness || self.options.tokenWall) ? true : false;
 									
 										if(window.EXPERIMENTAL_SETTINGS.dragLight == true)
 											throttleLight(darknessMoved);
@@ -3075,13 +3078,15 @@ class Token {
 
 				tok.draggable({
 					stop: function (event) {
-							event.stopPropagation();
+							event.stopPropagation();						
+							window.DRAGGING = false;
 							window.enable_window_mouse_handlers();
+		
 							if(window.TOKEN_OBJECTS[self.options.id] != undefined){
 								self.sync($.extend(true, {}, self.options));
 							}
 							
-							let darknessMoved = self.options.darkness || self.options.tokenWall;
+						let darknessMoved = (self.options.darkness || self.options.tokenWall) ? true : false;
 							if (self.selected ) {
 								for (let tok of window.dragSelectedTokens){
 									let id = $(tok).attr("data-id");	
@@ -3098,7 +3103,7 @@ class Token {
 							}
 							if(darknessMoved){
 								redraw_light(darknessMoved);
-								redraw_drawn_light();
+								redraw_drawn_light(darknessMoved);
 								if(window.EXPERIMENTAL_SETTINGS.dragLight == true)
 									throttleLight();
 								else
@@ -3118,9 +3123,7 @@ class Token {
 							if (get_avtt_setting_value("allowTokenMeasurement")){
 								WaypointManager.fadeoutMeasuring(window.PLAYER_ID)
 							}	
-							
-
-							window.DRAGGING = false;
+														
 							draw_selected_token_bounding_box();
 							window.toggleSnap=false;
 
@@ -4253,17 +4256,19 @@ function token_menu() {
 		$("#tokens").on("touchstart", ".VTTToken, .door-button", function(event) {
 			event.stopPropagation();
 			event.preventDefault();
-			initialX = event.touches[0].clientX;
-			initialY = event.touches[0].clientY;
+			initialX = event.touches[0].pageX;
+			initialY = event.touches[0].pageY;
 		    LongPressTimer = setTimeout(function() {
 			    console.log("context_menu_flyout contextmenu event", event);
-				
+				if (window.DRAGGING || $(".pause_click").length > 0) {
+					return;
+				}
 				if ($(event.currentTarget).hasClass("tokenselected") && window.CURRENTLY_SELECTED_TOKENS.length > 0) {
 					token_context_menu_expanded(window.CURRENTLY_SELECTED_TOKENS, event);
 				} else {
 					token_context_menu_expanded([$(event.currentTarget).attr("data-id")], event);
 				}
-		    }, 600)
+		    }, 1100)
 		  })
 		  .on('touchend', function(e) {
 		  	e.stopPropagation();
@@ -4273,9 +4278,9 @@ function token_menu() {
 		  .on('touchmove', function(e) {
 		  	e.stopPropagation();
 			e.preventDefault();
-		  	let currentY = e.touches[0].clientY;
-		  	let currentX = e.touches[0].clientX;
-		  	if(Math.abs(initialX-currentX) > 15 || Math.abs(initialY-currentY) > 15 ){
+			let currentY = e.touches[0].pageY;
+			let currentX = e.touches[0].pageX;
+		  	if(Math.abs(initialX-currentX) >= 5 || Math.abs(initialY-currentY) >= 5 ){
 		  		clearTimeout(LongPressTimer)
 		  	}
 		    
@@ -4284,7 +4289,9 @@ function token_menu() {
 			console.log("context_menu_flyout contextmenu event", event);
 			event.preventDefault();
 			event.stopPropagation();
-		
+			if (window.DRAGGING || $(".pause_click").length > 0) {
+				return;
+			}
 			if ($(event.currentTarget).hasClass("tokenselected") && window.CURRENTLY_SELECTED_TOKENS.length > 0) {
 				token_context_menu_expanded(window.CURRENTLY_SELECTED_TOKENS, event);
 			} else {

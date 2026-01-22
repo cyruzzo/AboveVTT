@@ -366,7 +366,13 @@ button .ddbc-tab-options__header-heading .menu-option{
     height: calc(100% - 100px);
     max-height: fit-content;
 }
-
+span.button-text{
+    width:fit-content;
+    display:block;
+    position:relative;
+    margin:0;
+    padding:0;
+}
 .body-rpgcharacter-sheet div.avtt-sidebar-controls {
     margin: 4px 0px 0px 0px !important;
 }
@@ -1887,12 +1893,22 @@ div#combat-tracker-settings form > div {
     display:none;
 }
 
-.hasTooltip:hover:after {
+.hasTooltip:not(.drawbutton):hover:after,
+.mobileAVTTUI .drawbutton.hasTooltip:hover:after {
     opacity: 1;
     visibility: visible;
-    transition: 0.05s ease-in-out 0.3s;
+    transition: 0.05s ease-in-out 0.4s;
 }
-
+.drawbutton.hasTooltip{
+    position: relative;
+}
+.drawbutton.hasTooltip:after{
+    position:absolute;
+    font-size: 12px;
+    top: 9px;
+    left: 35px;
+    transition: none;
+}
 .hasTooltip.CTToken:hover:after {
     transition: visibility 0s ease-in-out 0s;
 }
@@ -3250,16 +3266,48 @@ body .note-visibility-toggle-container {
     position: relative;
     top: -5px;
     background: var(--background-color, #F9F8F3);
+
+    .tooltip-hover:not(.spell-tooltip):not(.monster-tooltip):not(.magic-item-tooltip){
+        color: #18623d !important;
+        &:hover,
+        &:focus,
+        &:active,
+        &:visited{
+            color: #18623d !important;
+        }
+    }
+
     .dmScreenheader{
         position: sticky;
         top: 0px;
         background: var(--background-color, #F9F8F3);
+        z-index: 10;
         .dmScreenTitle {
             cursor: pointer;
             span {
                 font-size: 0.8em;
             }
         }
+        .dmScreenPageButtons{
+            position: absolute;
+            right: 10px;
+            top: 5px;
+            display:flex;
+            align-items: center;
+            align-content: center;
+            button {
+                width: 20px;
+                height: 20px;
+                background: var(--background-color, #F9F8F3);
+                border: 1px solid #ddd;
+                border-radius: 3px;
+                padding: 0px;
+                margin-left: 5px;
+                font-size: 14px;
+                color: var(--font-color, #000);
+            }
+        }
+
     }
     h1{
         font-size: 24px;
@@ -3332,7 +3380,10 @@ body .note-visibility-toggle-container {
         }
     }
 }
-
+#dmScreenContainer .dmScreenColumns>.note-text>.block-send-to-game-log {
+    right: -6px;
+    top: 10px;
+}
 #patreons ul li {
     width: 136px;
 }
@@ -3624,7 +3675,7 @@ div#selectedTokensBorder {
     z-index: 10;
 }
 .mce-floatpanel{
-    z-index: 91000 !important;
+    z-index: 191000 !important;
 }
 .icon-condition,
 .context-menu-icon-condition {
@@ -4823,6 +4874,10 @@ h5.token-image-modal-footer-title:after {
     background-color: #979AA4;
     display: block;
 }
+.avtt-settings-section h4~div>h5.token-image-modal-footer-title:after {
+    margin: 0px;
+}
+
 .sidebar-panel-footer input,
 .token-image-modal-footer input {
     margin-bottom: 6px;
@@ -4848,6 +4903,19 @@ h5.token-image-modal-footer-title:after {
 }
 .avtt-settings-section h4.token-image-modal-footer-title {
     font-size: 15px;
+}
+
+.avtt-settings-section h4~div>h5.token-image-modal-footer-title {
+    margin-top: 20px;
+    font-size: 12px;
+    text-align: center;
+    width: 100px;
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+}
+.avtt-settings-section h4~div:first-of-type>h5.token-image-modal-footer-title {
+    margin-top: 0px;
 }
 h3.no-bottom-margin-setting:after {
     margin-bottom:0px;
@@ -5593,6 +5661,15 @@ button.token-row-button.token-row-edit-encounter{
     overflow-y: auto;
     background-color: rgb(235, 241, 245);
     height: 100%;
+}
+.sidebar__pane-content>div.sidebar-panel-content {
+    display: none;
+    pointer-events: none;
+}
+
+.sidebar__pane-content>div.sidebar-panel-content.selected-tab {
+    display: flex;
+    pointer-events: auto;
 }
 .sidebar-panel-content .sidebar-panel-body {
     height: 100%;
@@ -8088,6 +8165,7 @@ button span.onedrive-btn-status{
 }
 .flyout-from-menu-item,
 #tokenOptionsContainer>button,
+#tokenOptionsContainer>div>button,
 #notes-flyout button,
 #adjustments-flyout>div>button {
     line-height: 24px;
@@ -8220,6 +8298,31 @@ button#changeTokenImage:before{
     border-left: 5px solid #ddd;
 }
 
+.button-right-arrow:hover {
+    background-color: rgba(41, 128, 185);
+}
+
+.button-right-arrow:hover > .token-image-modal-footer-title {
+    color: #ddd;
+}
+
+.button-right-arrow:after {
+    position: absolute;
+    content: '';
+    right: 5px;
+    top: 9px;
+    width: 0;
+    height: 0;
+    border-top: 5px solid transparent;
+    border-bottom: 5px solid transparent;
+    border-left: 5px solid #738694;
+    font-size: 5px;
+}
+.button-right-arrow:hover:after {
+    border-left: 5px solid #ddd;
+}
+
+
 .context-menu-flyout{
     visibility: hidden;
     transition: visibility 0s;
@@ -8300,8 +8403,10 @@ button#changeTokenImage:before{
 .ct-character-sheet__inner,
 .ct-sidebar__inner *,
 .moveableWindow *,
-.sidebar *,
+.sidebar .sidebar-panel-body,
+.sidepanel-content [class*='-GameLog'],
 .sidebar-flyout,
+#mixer-channels,
 .note,
 .sources-import-main-container *,
 .sidebar-modal{
@@ -8742,7 +8847,9 @@ body.color-blind-avtt {
     right: 0;
     bottom: 0;
 }
-
+.ui-front{
+    z-index: 100000 !important;
+}
 #combat_area tr.CTToken:before{
     content:  '???';
     font-size: 12px;
@@ -8823,7 +8930,6 @@ body.avtt-spectator-sheet #combat_area tr.CTToken:before{
 
 div.ddbc-tab-options--layout-pill button{
     background-image: none;
-    height: auto;
     box-shadow: none;
     transition: none;
     border: 0px;
@@ -14294,7 +14400,7 @@ button#displayedDiceFormulaExit:hover {
 }
 
 .list-item-identifier.folder.avtt-drop-target:after,
-.sidebar-panel-body.avtt-drop-target:after,
+.sidebar-panel-content.avtt-drop-target:after,
 #track-list.avtt-drop-target:after {
     content: '';
     position: absolute;
@@ -14306,7 +14412,9 @@ button#displayedDiceFormulaExit:hover {
     border: 1px #0000ff33 dotted;
     pointer-events: none;
 }
-
+.sidebar-panel-content.avtt-drop-target::after {
+    top: 89px;
+}
 /***** Icon UI *****/
 
 .mobileAVTTUI #VTTWRAPPER ~ div.ddbc-tab-options--layout-pill>button, 
@@ -14314,11 +14422,12 @@ button#displayedDiceFormulaExit:hover {
 .mobileAVTTUI #combat_tracker div.ddbc-tab-options--layout-pill>button{
     width: 30px !important;
     height: 30px !important;
-    text-indent: 40px;
-    overflow: hidden;
     padding: 0px;
     margin: 0px 0px 3px 0px;
     font-size: 20px;
+}
+.mobileAVTTUI .drawbutton .button-text{
+    display:none;
 }
 .mobileAVTTUI>div.ddbc-tab-options--layout-pill{
     display: flex;
@@ -14383,6 +14492,7 @@ button#displayedDiceFormulaExit:hover {
     height: 30px;
     width: 30px;
     text-indent: 0px;
+    position:relative;
 }
 .mobileAVTTUI #select-button:before{
     content:"\f82f";        

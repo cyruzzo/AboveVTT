@@ -11,8 +11,6 @@ function consider_upscaling(target){
 		}
 }
 
-
-
 function handle_basic_form_toggle_click(event){
 	if ($(event.currentTarget).hasClass("rc-switch-checked")) {
 		// it was checked. now it is no longer checked
@@ -374,8 +372,8 @@ function create_full_scene_from_uvtt(data, url, doorType, doorHidden){ //this se
 		'tokens': sceneTokens,
 		'UVTTFile': 1 
 	};
-
 	return sceneData;
+
 }
 
 function open_grid_wizard_controls(scene_id, aligner1, aligner2, regrid=function(){}, copiedSceneData = window.CURRENT_SCENE_DATA) {
@@ -1485,7 +1483,8 @@ function edit_scene_dialog(scene_id) {
 	form.append(playlistRow);
 
 	const weatherSelect = $(`<select id='weatherSceneSelect'><option value='0'>None</option></select>`)
-	for(const [weatherType, weatherName] of Object.entries(getWeatherTypes())){
+	for(const [weatherType, weatherData] of Object.entries(getWeatherTypes())){
+		const weatherName = typeof weatherData === 'string' ? weatherData : weatherData.type;
 		weatherSelect.append($(`<option value='${weatherType}'>${weatherName}</option>`));
 	
 	}
@@ -1501,6 +1500,51 @@ function edit_scene_dialog(scene_id) {
 	const weatherRow = form_row('weatherRow', 'Select Weather Overlay', weatherSelect)
 	weatherRow.attr('title', `Applies a weather overlay to the scene. The weather overlay will persist until changed by the DM.`)
 	form.append(weatherRow);
+
+	const getWeatherDefaults = function(weatherType) {
+		const weatherTypes = getWeatherTypes();
+		const weatherData = weatherTypes[weatherType];
+		return weatherData || { min: 0, default: 120, max: 240 };
+	};
+
+	const currentWeatherDefaults = getWeatherDefaults(weatherValue);
+	const weatherIntensity = scene.weatherIntensity !== undefined ? scene.weatherIntensity : currentWeatherDefaults.default;
+	const intensitySlider = $(`<input type='range' id='weatherIntensitySlider' min='${currentWeatherDefaults.min}' max='${currentWeatherDefaults.max}' value='${weatherIntensity}' style='width: 100%;'/>`)
+	const initialPercentage = Math.round((weatherIntensity - currentWeatherDefaults.min) / (currentWeatherDefaults.max - currentWeatherDefaults.min) * 100);
+	const particleCount = $(`<span id='weatherParticleCount'>${initialPercentage}%</span>`)
+	const performanceWarning = $(`<span style='margin-left: 10px;color: #888; font-size: 0.9em; font-style: italic; margin-top: 4px;'>Note: Increasing intensity may negatively impact performance</span>`);
+	const intensityContainer = $(`<div></div>`).append(intensitySlider).append(' ').append(particleCount).append(performanceWarning);
+	const intensityRow = form_row('weatherIntensityRow', 'Weather Intensity', intensityContainer)
+	intensityRow.attr('title', `Adjusts the number of weather particles and their behaviour.`)
+
+	intensitySlider.on('input', function() {
+		const val = $(this).val();
+		const min = parseFloat($(this).attr('min'));
+		const max = parseFloat($(this).attr('max'));
+		const percentage = Math.round((val - min) / (max - min) * 100);
+		particleCount.text(percentage + '%');
+	});
+
+	weatherSelect.on('change', function() {
+		const selectedWeather = $(this).val();
+		if (selectedWeather === '0') {
+			intensityRow.hide();
+		} else {
+			const defaults = getWeatherDefaults(selectedWeather);
+			intensitySlider.attr('min', defaults.min);
+			intensitySlider.attr('max', defaults.max);
+			intensitySlider.val(defaults.default);
+			const percentage = Math.round((defaults.default - defaults.min) / (defaults.max - defaults.min) * 100);
+			particleCount.text(percentage + '%');
+			intensityRow.show();
+		}
+	});
+
+	if (weatherValue === 0 || weatherValue === '0') {
+		intensityRow.hide();
+	}
+
+	form.append(intensityRow);
 	
 	let initialPosition = form_row('initialPosition',
 			'Initial Position',
@@ -1562,6 +1606,7 @@ function edit_scene_dialog(scene_id) {
 		}
 		scene['playlist'] = playlistSelect.val();
 		scene['weather'] = weatherSelect.val();
+		scene['weatherIntensity'] = $('#weatherIntensitySlider').val();
 
 		const isNew = false;
 		window.ScenesHandler.persist_scene(scene_id, isNew);
@@ -1943,7 +1988,7 @@ function default_scene_data() {
 	return defaultData;
 }
 
-function build_scene_data_payload(parentId, fullPath, sceneName = "New Scene", mapUrl = "", existingNameSet = new Set()) {
+async function build_scene_data_payload(parentId, fullPath, sceneName = "New Scene", mapUrl = "", existingNameSet = new Set()) {
 	const sanitizedFullPath = sanitize_folder_path(fullPath || RootFolder.Scenes.path);
 	const baseName = avttScenesSafeDecode(sceneName || "New Scene") || "New Scene";
 	let candidate = baseName;
@@ -1970,6 +2015,17 @@ function build_scene_data_payload(parentId, fullPath, sceneName = "New Scene", m
 	const lowerMap = typeof sceneData.player_map === "string" ? sceneData.player_map.toLowerCase() : "";
 	if ([".mp4", ".webm", ".m4v", ".mov", ".avi", ".mkv", ".wmv", ".flv"].some((ext) => lowerMap.includes(ext))) {
 		sceneData.player_map_is_video = "1";
+	}
+	else if (["uvtt", "dd2vtt", "df2vtt"].some((ext) => lowerMap.includes(ext))) {
+		let uvttSceneData = await getUvttData(sceneData.player_map);
+		const newSceneData = await create_full_scene_from_uvtt(uvttSceneData, sceneData.player_map, 0, false);
+		uvttSceneData = {
+			...newSceneData,
+			title: candidate,
+			parentId,
+			folderPath: relativeFolderPath
+		} 
+		return uvttSceneData;
 	}
 
 	return sceneData;
@@ -2457,7 +2513,7 @@ async function create_scene_inside(parentId, fullPath = RootFolder.Scenes.path, 
 			.map((scene) => scene.title),
 	);
 
-	const sceneData = build_scene_data_payload(parentId, sanitizedFullPath, sceneName, mapUrl, existingNames);
+	const sceneData = await build_scene_data_payload(parentId, sanitizedFullPath, sceneName, mapUrl, existingNames);
 
 	window.ScenesHandler.scenes.push(sceneData);
 
@@ -2481,15 +2537,7 @@ function avttScenesSafeDecode(value) {
 	}
 }
 
-const AVTT_SCENE_ALLOWED_EXTENSIONS = (() => {
-	const imageTypes = (typeof allowedImageTypes !== "undefined" && Array.isArray(allowedImageTypes))
-		? allowedImageTypes
-		: ["jpeg", "jpg", "png", "gif", "bmp", "webp"];
-	const videoTypes = (typeof allowedVideoTypes !== "undefined" && Array.isArray(allowedVideoTypes))
-		? allowedVideoTypes
-		: ["mp4", "mov", "avi", "mkv", "wmv", "flv", "webm"];
-	return new Set([...imageTypes, ...videoTypes].map((ext) => String(ext).toLowerCase()));
-})();
+
 
 function avttScenesNormalizeRelativePath(path) {
 	if (typeof path !== "string") {
@@ -2536,6 +2584,7 @@ async function avttScenesFetchFolderListing(relativePath) {
 }
 
 async function avttScenesCollectAssets(folderRelativePath) {
+	const AVTT_SCENE_ALLOWED_EXTENSIONS = new Set([...allowedImageTypes, ...allowedVideoTypes, "uvtt", "dd2vtt", "df2vtt"].map((ext) => String(ext).toLowerCase()));
 	const normalizedBase = avttScenesNormalizeRelativePath(folderRelativePath);
 	if (!normalizedBase) {
 		return { files: [], folders: [] };
@@ -2697,9 +2746,9 @@ async function importAvttSelections(selectedItems, baseParentId, baseFullPath) {
 		};
 	};
 
-	const addSceneForFile = (item, targetContext, sceneNameSource) => {
+	const addSceneForFile = async (item, targetContext, sceneNameSource) => {
 		const nameSet = getSceneNameSet(targetContext.parentId);
-		const sceneData = build_scene_data_payload(
+		const sceneData = await build_scene_data_payload(
 			targetContext.parentId,
 			targetContext.fullPath,
 			sceneNameSource,
@@ -2709,15 +2758,15 @@ async function importAvttSelections(selectedItems, baseParentId, baseFullPath) {
 		pendingScenes.push(sceneData);
 	};
 
-	const processStandaloneFile = (item) => {
+	const processStandaloneFile = async (item) => {
 		if (!item || !item.link) {
 			return;
 		}
 		const relativePath = item.path || avttScenesRelativePathFromLink(item.link);
 		const sceneName = relativePath ? avttScenesDeriveSceneName(relativePath) : avttScenesSafeDecode(item.name || "New Scene");
 		const targetContext = ensureFolderSegments([]);
-		addSceneForFile(item, targetContext, sceneName);
-	};
+		await addSceneForFile(item, targetContext, sceneName);
+	};	
 
 	const processFolderSelection = async (folderItem) => {
 		const folderPathRaw = (folderItem && folderItem.path) || avttScenesRelativePathFromLink(folderItem?.link);
@@ -2766,7 +2815,7 @@ async function importAvttSelections(selectedItems, baseParentId, baseFullPath) {
 			const targetContext = segments.length > 0 ? ensureFolderSegments(segments) : rootContext;
 			const sceneName = avttScenesDeriveSceneName(relativePath);
 			const sceneLink = `above-bucket-not-a-url/${window.PATREON_ID}/${relativePath}`;
-			addSceneForFile({ link: sceneLink }, targetContext, sceneName);
+			await addSceneForFile({ link: sceneLink }, targetContext, sceneName);
 		}
 	};
 
@@ -2777,7 +2826,7 @@ async function importAvttSelections(selectedItems, baseParentId, baseFullPath) {
 		if (item.isFolder || item.type === avttFilePickerTypes.FOLDER) {
 			await processFolderSelection(item);
 		} else {
-			processStandaloneFile(item);
+			await processStandaloneFile(item);
 		}
 	}
 
@@ -2864,8 +2913,11 @@ function register_scene_row_context_menu() {
 				};
 				return { items: menuItems };
 			}
-
-			if (rowItem.canEdit() ) {
+			const selectedClicked = rowHtml.closest('.sidebar-list-item-row').hasClass('selected')
+			if (!selectedClicked) {
+				$('#scenes-panel .selected').removeClass('selected');
+			}
+			if (!selectedClicked && rowItem.canEdit() ) {
 				menuItems["edit"] = {
 					name: "Edit",
 					callback: function(itemKey, opt, originalEvent) {
@@ -2874,22 +2926,94 @@ function register_scene_row_context_menu() {
 					}
 				};
 			}
-			if(rowItem.isTypeScene()){
+			if (rowItem.isTypeScene()){
 				menuItems["duplicate"] = {
 					name: "Duplicate",
 					callback: function(itemKey, opt, originalEvent) {
-						let itemToEdit = find_sidebar_list_item(opt.$trigger);
-						duplicate_scene(itemToEdit.id);
+						const selectedItems = $('#scenes-panel .selected');
+						build_import_loading_indicator('Duplicating Scenes');
+						if (!selectedItems.length) {
+							let itemToEdit = find_sidebar_list_item(opt.$trigger);
+							duplicate_scene(itemToEdit.id);
+						} else {
+							const listItemArray = [];
+							for (let i = 0; i < selectedItems.length; i++) {
+								let selectedRow = $(selectedItems[i]);
+								let selectedItem = find_sidebar_list_item(selectedRow);
+								if (selectedItem.isTypeScene())
+									listItemArray.push(selectedItem);
+							}
+							window.toDuplicateScenes = {
+								current: 0,
+								total: listItemArray.length
+							}
+							for (let index = 0; index < listItemArray.length; index++) {
+								const itemToEdit = listItemArray[index];
+								duplicate_scene(itemToEdit.id, true);
+							}
+						}
 					}
 				};
 				menuItems["export"] = {
 					name: "Export",
-					callback: function(itemKey, opt, originalEvent) {
-						let itemToEdit = find_sidebar_list_item(opt.$trigger);
-						export_scene_context(itemToEdit.id)
+					callback: async function(itemKey, opt, originalEvent) {
+
+						const selectedItems = $('#scenes-panel .selected');
+
+						if (!selectedItems.length) {
+							let itemToEdit = find_sidebar_list_item(opt.$trigger);
+							export_scene_context(itemToEdit.id)
+						} else {
+
+							build_import_loading_indicator('Preparing Scenes Export File');
+							const listItemArray = [];
+							for (let i = 0; i < selectedItems.length; i++) {
+								let selectedRow = $(selectedItems[i]);s
+								let selectedItem = find_sidebar_list_item(selectedRow);
+								if (selectedItem.isTypeScene())
+									listItemArray.push(selectedItem);
+							}
+							let DataFile = {
+								version: 2,
+								scenes: [],
+								tokencustomizations: [],
+								notes: {},
+								journalchapters: [],
+								soundpads: {}
+							};
+							for (let index = 0; index < listItemArray.length; index++) {
+								
+								let itemToEdit = listItemArray[index];
+								let scene = await AboveApi.getScene(itemToEdit.id);
+								let currentSceneData = {
+									...scene.data
+								}
+								let tokensObject = {}
+								for (let token in scene.data.tokens) {
+									let tokenId = scene.data.tokens[token].id;
+									let statBlockID = scene.data.tokens[token].statBlock
+									if (statBlockID != undefined && window.JOURNAL.notes[statBlockID] != undefined) {
+										DataFile.notes[statBlockID] = window.JOURNAL.notes[statBlockID];
+									}
+									if (window.JOURNAL.notes[tokenId] != undefined) {
+										DataFile.notes[tokenId] = window.JOURNAL.notes[tokenId];
+									}
+									tokensObject[tokenId] = scene.data.tokens[token];
+								}
+								if (window.JOURNAL.notes[itemToEdit.id]) {
+									DataFile.notes[itemToEdit.id] = window.JOURNAL.notes[itemToEdit.id];
+								}
+								currentSceneData.tokens = tokensObject;
+								DataFile.scenes.push(currentSceneData)	
+							}
+							let currentdate = new Date();
+							let datetime = `${currentdate.getFullYear()}-${(currentdate.getMonth() + 1)}-${currentdate.getDate()}`
+							download(b64EncodeUnicode(JSON.stringify(DataFile, null, "\t")), `MultiScene-${datetime}.abovevtt`, "text/plain");
+							$(".import-loading-indicator").remove();
+						}
 					}
 				};
-				if (window.JOURNAL.notes[rowItem.id]) {
+				if (!selectedClicked && window.JOURNAL.notes[rowItem.id]) {
 					menuItems["openSceneNote"] = {
 						name: "Open Scene Note",
 						callback: function (itemKey, opt, originalEvent) {
@@ -2899,41 +3023,44 @@ function register_scene_row_context_menu() {
 						}
 					}
 				}
-				menuItems["editSceneNote"] = {
-					name: window.JOURNAL.notes[rowItem.id] ? "Edit Scene Note" : "Create Scene Note",
-					callback: function (itemKey, opt, originalEvent) {
-
-						let self = window.JOURNAL;
-						let item = find_sidebar_list_item(opt.$trigger);
-
-						if (!self.notes[item.id]) {
-							self.notes[item.id] = {
-								title: item.name,
-								text: "",
-								player: false,
-								plain: "",
-								isSceneNote: true,
-							};
-							did_update_scenes();
-						}
-						self.edit_note(item.id, false);
-						
-					}
-				}
-				if (window.JOURNAL.notes[rowItem.id]) {
-					menuItems["deleteSceneNote"] = {
-						name: "Delete Scene Note",
+				if (!selectedClicked){
+					menuItems["editSceneNote"] = {
+						name: window.JOURNAL.notes[rowItem.id] ? "Edit Scene Note" : "Create Scene Note",
 						callback: function (itemKey, opt, originalEvent) {
+
 							let self = window.JOURNAL;
 							let item = find_sidebar_list_item(opt.$trigger);
-							delete self.notes[item.id];
-							self.persist();
-							did_update_scenes();
+
+							if (!self.notes[item.id]) {
+								self.notes[item.id] = {
+									title: item.name,
+									text: "",
+									player: false,
+									plain: "",
+									isSceneNote: true,
+								};
+								did_update_scenes();
+							}
+							self.edit_note(item.id);
+
+						}
+					}
+					if (window.JOURNAL.notes[rowItem.id]) {
+						menuItems["deleteSceneNote"] = {
+							name: "Delete Scene Note",
+							callback: function (itemKey, opt, originalEvent) {
+								let self = window.JOURNAL;
+								let item = find_sidebar_list_item(opt.$trigger);
+								delete self.notes[item.id];
+								self.persist();
+								did_update_scenes();
+							}
 						}
 					}
 				}
+
 			}
-			if(rowItem.isTypeFolder()){
+			if (!selectedClicked && rowItem.isTypeFolder()){
 				menuItems["export"] = {
 					name: "Export",
 					callback: function(itemKey, opt, originalEvent) {
@@ -2951,8 +3078,29 @@ function register_scene_row_context_menu() {
 				menuItems["delete"] = {
 					name: "Delete",
 					callback: function(itemKey, opt, originalEvent) {
-						let itemToDelete = find_sidebar_list_item(opt.$trigger);
-						delete_item(itemToDelete);
+						const listItemArray = [];
+						const selectedItems = $('#scenes-panel .selected');
+
+						if (!selectedItems.length) {
+							let itemToDelete = find_sidebar_list_item(opt.$trigger);
+							delete_item(itemToDelete);
+						} else {
+							const listItemArray = [];
+							for (let i = 0; i < selectedItems.length; i++) {
+								let selectedRow = $(selectedItems[i]);
+								let selectedItem = find_sidebar_list_item(selectedRow);
+								if (selectedItem.canDelete())
+									listItemArray.push(selectedItem);
+
+							}
+							if (confirm(`This will delete ${listItemArray.length} scenes. Are you sure you want to delete all of these scenes?`)) {
+
+								for (let index = 0; index < listItemArray.length; index++) {
+									delete_item(listItemArray[index], false, true);
+								}
+								did_update_scenes();
+							}
+						} 
 					}
 				};
 			}
@@ -2968,7 +3116,7 @@ function register_scene_row_context_menu() {
 	});
 }
 
-async function duplicate_scene(sceneId) {
+async function duplicate_scene(sceneId, skipDidChange) {
 	let scene = await AboveApi.getScene(sceneId);
 
 	const oldSceneId = scene.data.id;
@@ -3000,9 +3148,20 @@ async function duplicate_scene(sceneId) {
 	await AboveApi.migrateScenes(window.gameId, [aboveSceneData]);
 
 	window.ScenesHandler.scenes.push(aboveSceneData);
-	await did_update_scenes();
-	await expand_all_folders_up_to_id(aboveSceneData.id);
-	$(`.scene-item[data-scene-id='${aboveSceneData.id}'] .dm_scenes_button`).click();
+	if (window.toDuplicateScenes){
+		window.toDuplicateScenes.current += 1;
+		if(window.toDuplicateScenes.current >= window.toDuplicateScenes.total){
+			await did_update_scenes();
+			await expand_all_folders_up_to_id(aboveSceneData.id);
+			$(`body>.import-loading-indicator`).remove();
+		}
+	}
+	if (!skipDidChange){
+		await did_update_scenes();
+		await expand_all_folders_up_to_id(aboveSceneData.id);
+		$(`.scene-item[data-scene-id='${aboveSceneData.id}'] .dm_scenes_button`).click();
+		$(`body>.import-loading-indicator`).remove();
+	}
 }
 
 function expand_folders_to_active_scenes() {
@@ -3412,8 +3571,8 @@ function build_UVTT_import_container(){
 	
 
 
-	const doorTypeSelect = $(`<select id='doorTypeSelectUVTT'></select>`);
 	const availableDoors = get_available_doors();
+	const doorTypeSelect = $(`<select id='doorTypeSelectUVTT'></select>`);
 	for(let i in availableDoors){
 		doorTypeSelect.append(`<option value='${i}'>${availableDoors[i]}</option>`)
 	}

@@ -49,7 +49,7 @@ function init_combat_tracker(){
 	let ct=$("<div id='combat_tracker'/>");
 	ct.css("height","20px"); // IMPORTANT
 	
-	let toggle=$("<button id='combat_button' class='hideable ddbc-tab-options__header-heading' style='display:inline-block'><u>C</u>OMBAT</button>");
+	let toggle = $("<button id='combat_button' data-name='Combat Tracker (C)' class='drawbutton hideable hasTooltip ddbc-tab-options__header-heading' style='display:inline-block'><span class='button-text'><u>C</u>OMBAT</span></button>");
 	toggle.click(function(){
 		if($("#combat_tracker_inside #combat_tracker_title_bar.minimized").length>0) {
 			$("#combat_tracker_title_bar").dblclick();
@@ -960,6 +960,15 @@ function openCombatTrackerSettings(){
 		let autoGroupRow = form_row(`autoGroup`, `Auto Group Tokens by Stat Block`, autoGroupToggle)
 		form.append(autoGroupRow);
 	}
+
+	if(!window.DM) {
+		let endTurnIndicatorToggle = form_toggle('next_turn_indicator', `If enabled, a visual and audio cue will play when you are up next in initiative`, combatSettingData['next_turn_indicator'] == '1', function(e){
+			handle_basic_form_toggle_click(e)
+		});
+		let endTurnIndicatorRow = form_row(`next_turn_indicator`, `Next Turn Indicator`, endTurnIndicatorToggle)
+		form.append(endTurnIndicatorRow);
+	}
+
 
 
 

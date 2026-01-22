@@ -1107,6 +1107,8 @@ function folder_path_of_scene(scene) {
 	}
 }
 function find_parent_of_scene(scene) {
+	if(scene.parentId == undefined)
+		return false;
 	return window.ScenesHandler.scenes.find(s => s.id === scene.parentId);
 }
 function find_ancestors_of_scene(scene, found = []) {

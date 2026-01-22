@@ -1143,6 +1143,7 @@ function inject_dice(){
               left: 10px;
               pointer-events: all
           }
+
         </style>
     </div>
   `);
@@ -2342,7 +2343,7 @@ function inject_sidebar_send_to_gamelog_button(sidebarPaneContent) {
 function find_items_in_cache_by_id_and_name(items = []) {
   const foundItems = [];
   for (let item of items) {
-    const cachedItem = window.ITEMS_CACHE.find(ci => ci.id.toString() === item.id.toString() && ci.name.toLowerCase().replace(/[^a-z0-9]/g, '').includes(item.name.toLowerCase().replace(/[^a-z0-9]/g, '')));
+    const cachedItem = window.ITEMS_CACHE.find(ci => ci.id.toString() === item.id.toString() && ci.name.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]/g, '').includes(item.name.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]/g, '')));
     if (cachedItem) {
       foundItems.push(cachedItem);
     }
@@ -2565,7 +2566,7 @@ function display_url_embeded(url){
   $('body').append(container);
 }
 
-function find_or_create_generic_draggable_window(id, titleBarText, addLoadingIndicator = true, addPopoutButton = false, popoutSelector=``, width='80%', height='80%', top='10%', left='10%', showSlow = true, cancelClasses='') {
+function find_or_create_generic_draggable_window(id, titleBarText, addLoadingIndicator = true, addPopoutButton = false, popoutSelector=``, width='80%', height='80%', top='10%', left='10%', showSlow = true, cancelClasses='', hideOnX = false) {
   console.log(`find_or_create_generic_draggable_window id: ${id}, titleBarText: ${titleBarText}, addLoadingIndicator: ${addLoadingIndicator}, addPopoutButton: ${addPopoutButton}`);
   const existing = id.startsWith("#") ? $(id) : $(`#${id}`);
   if (existing.length > 0) {
@@ -2620,7 +2621,13 @@ function find_or_create_generic_draggable_window(id, titleBarText, addLoadingInd
   const close_title_button = $(`<div class="title_bar_close_button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><g transform="rotate(-45 50 50)"><rect></rect></g><g transform="rotate(45 50 50)"><rect></rect></g></svg></div>`);
   titleBar.append(close_title_button);
   close_title_button.on("click.close", function (event) {
-    close_and_cleanup_generic_draggable_window($(event.currentTarget).closest('.resize_drag_window').attr('id'));
+    if(hideOnX){
+      $(event.currentTarget).closest('.resize_drag_window').hide();
+    }
+    else{
+      close_and_cleanup_generic_draggable_window($(event.currentTarget).closest('.resize_drag_window').attr('id'));
+    }
+
   });
 
   if (addPopoutButton) {

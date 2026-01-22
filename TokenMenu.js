@@ -1516,6 +1516,42 @@ function token_context_menu_expanded(tokenIds, e) {
 		let tokenNames = tokens.map(t => t.options.name);
 		let uniqueNames = [...new Set(tokenNames)];
 		let nameInput = $(`<input title="Token Name" placeholder="Token Name" name="name" type="text" />`);
+		let nameGeneratorButton = $(`<button title="Generate Random Name" type="button" class="button-right-arrow"></button>`);
+		nameGeneratorButton.on('click', function() {
+			if (tokens.length > 1) {
+				tokens.forEach(token => {
+					const gender = Math.random() < 0.5 ? 'male' : 'female';
+					const firstNames = gender === 'male' ? MaleFirstNames : FemaleFirstNames;
+					const firstName = firstNames[Math.floor(Math.random() * firstNames.length)];
+					const surname = Surnames[Math.floor(Math.random() * Surnames.length)];
+					const generatedName = `${firstName} ${surname}`;
+					
+					if(window.JOURNAL.notes[token.options.id]){
+						window.JOURNAL.notes[token.options.id].title = generatedName;
+						window.JOURNAL.persist();
+					}
+					token.options.name = generatedName;
+					token.place_sync_persist();
+				});
+				nameInput.val("Individual names generated");
+			} else {
+				const gender = Math.random() < 0.5 ? 'male' : 'female';
+				const firstNames = gender === 'male' ? MaleFirstNames : FemaleFirstNames;
+				const firstName = firstNames[Math.floor(Math.random() * firstNames.length)];
+				const surname = Surnames[Math.floor(Math.random() * Surnames.length)];
+				const generatedName = `${firstName} ${surname}`;
+				
+				nameInput.val(generatedName);
+				tokens.forEach(token => {
+					if(window.JOURNAL.notes[token.options.id]){
+						window.JOURNAL.notes[token.options.id].title = generatedName;
+						window.JOURNAL.persist();
+					}
+					token.options.name = generatedName;
+					token.place_sync_persist();
+				});
+			}
+		});
 		if (uniqueNames.length === 1) {
 			nameInput.val(tokenNames[0]);
 		} else {
@@ -1556,6 +1592,7 @@ function token_context_menu_expanded(tokenIds, e) {
 			</div>
 		`);
 		nameWrapper.append(nameInput); // input below label
+		nameWrapper.append(nameGeneratorButton);
 
 
 		
@@ -3624,6 +3661,9 @@ function build_adjustments_flyout_menu(tokenIds) {
 			let inputWrapper = build_dropdown_input(setting, currentValue, function(name, newValue) {
 				tokens.forEach(token => {
 					token.options[name] = newValue;
+					if (name == 'tokenWall' && window.visionBlockingTokenCache?.[token.options.id] != undefined){
+						delete window.visionBlockingTokenCache[token.options.id];
+					}
 					token.place_sync_persist();
 				});
 				if(setting.name =='tokenStyleSelect'){		
@@ -3661,19 +3701,22 @@ function build_adjustments_flyout_menu(tokenIds) {
 				body.append(inputWrapper);
 			}
 			if(setting.name =='tokenWall'){
-				const polyButton = $(`<button class="token-wall-poly-button material-icons ${typeof currentValue === 'string' && currentValue.includes('poly') ? 'visible' : ''}" title="Edit Token Wall Polygon">${!window.TOKEN_OBJECTS[tokenIds].options.tokenWallPoly ? "Draw" : "Delete"} Token Wall Polygon</button>`);
+				const tokenId = tokenIds[0];
+				const polyButton = $(`<button class="token-wall-poly-button material-icons ${typeof currentValue === 'string' && currentValue.includes('poly') ? 'visible' : ''}" title="Edit Token Wall Polygon">${!window.TOKEN_OBJECTS[tokenId].options.tokenWallPoly ? "Draw" : "Delete"} Token Wall Polygon</button>`);
 				polyButton.off('click').on('click', function(){
 					let clickedItem = $(this);
-					if (window.TOKEN_OBJECTS[tokenIds].options.tokenWallPoly == undefined) {
-						window.drawingTokenWallTokenId = tokenIds[0];
+					if (window.visionBlockingTokenCache?.[tokenId] != undefined)
+						delete window.visionBlockingTokenCache[tokenId];
+					if (window.TOKEN_OBJECTS[tokenId].options.tokenWallPoly == undefined) {
+						window.drawingTokenWallTokenId = tokenId;
 						window.drawTokenWallPolygon = true;
 						$("#temp_overlay").css("z-index", "50");
 						close_token_context_menu();
 					}
 					else {
 						$(this).text('Draw Token Wall Polygon')
-						delete window.TOKEN_OBJECTS[tokenIds].options.tokenWallPoly;
-						window.TOKEN_OBJECTS[tokenIds].place_sync_persist();
+						delete window.TOKEN_OBJECTS[tokenId].options.tokenWallPoly;
+						window.TOKEN_OBJECTS[tokenId].place_sync_persist();
 						clear_temp_canvas();
 					}
 				});

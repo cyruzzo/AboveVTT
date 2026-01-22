@@ -1505,7 +1505,7 @@ function init_splash() {
 	ul.append("<li><a style='font-weight:bold;text-decoration: underline;' target='_blank' href='https://www.patreon.com/AboveVTT'>Patreon</a></li>");
 	cont.append(ul);*/
 	cont.append("");
-	cont.append("<div style='padding-top:10px'>Contributors: <b>SnailDice (Nadav),Stumpy, Palad1N, KuzKuz, Coryphon, Johnno, Hypergig, JoshBrodieNZ, Kudolpf, Koals, Mikedave, Jupi Taru, Limping Ninja, Turtle_stew, Etus12, Cyelis1224, Ellasar, DotterTrotter, Mosrael, Bain, Faardvark, Azmoria, Natemoonlife, Pensan, H2, CollinHerber, Josh-Archer, TachyonicSpace, TheRyanMC, j3f (jeffsenn), MonstraG, Wyrmwood, Drenam1</b></div>");
+	cont.append("<div style='padding-top:10px'>Contributors: <b>SnailDice (Nadav),Stumpy, Palad1N, KuzKuz, Coryphon, Johnno, Hypergig, JoshBrodieNZ, Kudolpf, Koals, Mikedave, Jupi Taru, Limping Ninja, Turtle_stew, Etus12, Cyelis1224, Ellasar, DotterTrotter, Mosrael, Bain, Faardvark, Azmoria, Natemoonlife, Pensan, H2, CollinHerber, Josh-Archer, TachyonicSpace, TheRyanMC, j3f (jeffsenn), MonstraG, Wyrmwood, Drenam1, Lauriel</b></div>");
 
 	cont.append("<br>AboveVTT is an hobby opensource project. It's completely free (like in Free Speech). The resources needed to pay for the infrastructure are kindly donated by the supporters through <a style='font-weight:bold;text-decoration: underline;' target='_blank' href='https://www.patreon.com/AboveVTT'>Patreon</a> , what's left is used to buy wine for cyruzzo");
 
@@ -2596,7 +2596,7 @@ function init_buttons() {
 	let buttons = $(`<div class="ddbc-tab-options--layout-pill"></div>`);
 	$("body").append(buttons);
 
-	buttons.append($("<button style='display:inline; width:75px;' id='select-button' class='drawbutton hideable ddbc-tab-options__header-heading' data-shape='rect' data-function='select'><u>S</u>ELECT</button>"));
+	buttons.append($("<button style='display:inline; width:75px;' id='select-button' data-name='Select (S)' class='drawbutton hasTooltip hideable ddbc-tab-options__header-heading' data-shape='rect' data-function='select'><spam class='button-text'><u>S</u>ELECT</span></button>"));
 
 	init_ruler_menu(buttons);
 	
@@ -2615,7 +2615,7 @@ function init_buttons() {
 	setup_aoe_button(buttons);
 	handle_drawing_button_click();
 
-	buttons.append("<button style='display:inline;width:75px' id='help_button' class='hideable ddbc-tab-options__header-heading'>HELP</button>");
+	buttons.append("<button style='display:inline;width:75px' id='help_button' data-name='Help' class='drawbutton hideable hasTooltip ddbc-tab-options__header-heading'>HELP</button>");
 
 	buttons.css("position", "fixed");
 	buttons.css("top", '5px');
@@ -2678,7 +2678,7 @@ function init_zoom_buttons() {
 				dmScreen.show();
 			}
 			else{
-				const dmScreenContainer = find_or_create_generic_draggable_window("dmScreenDragContainer", "DM Screen", false, true, '#dmScreenContainer', '90%', '90%', '5%', '5%', false)
+				const dmScreenContainer = find_or_create_generic_draggable_window("dmScreenDragContainer", "DM Screen", false, true, '#dmScreenContainer', '90%', '90%', '5%', '5%', false, '', true)
 				buildDMScreen(dmScreenContainer);
 			}
 		});
@@ -3073,7 +3073,7 @@ function init_help_menu() {
 			<div id="help-menu">
 				<div class="help-tabs">
 					<ul>
-						<li class="active"><a href="#tab1"> Keyboard shortcuts</a></li>
+						<li class="active"><a href="#tab1">Keyboard/Mouse shortcuts</a></li>
 						<li><a href="#tab19" class='popout' data-href="https://github.com/cyruzzo/AboveVTT/wiki" data-name='AboveVTT Wiki'>Wiki <svg xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 0 24 24" width="18px" fill="#000000"><path d="M0 0h24v24H0V0z" fill="none"></path><path d="M18 19H6c-.55 0-1-.45-1-1V6c0-.55.45-1 1-1h5c.55 0 1-.45 1-1s-.45-1-1-1H5c-1.11 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-6c0-.55-.45-1-1-1s-1 .45-1 1v5c0 .55-.45 1-1 1zM14 4c0 .55.45 1 1 1h2.59l-9.13 9.13c-.39.39-.39 1.02 0 1.41.39.39 1.02.39 1.41 0L19 6.41V9c0 .55.45 1 1 1s1-.45 1-1V4c0-.55-.45-1-1-1h-5c-.55 0-1 .45-1 1z"></path></svg></a></li>
 						<li><a href="#tab2">FAQ</a></li>
 						<li><a href="#tab3">Scene Creation</a></li>
@@ -3095,7 +3095,7 @@ function init_help_menu() {
 
 				<section class="tabs-content">
 					<div id="tab1">
-						<h3>Keyboard Shortcuts</h3>
+						<h3>Keyboard/Mouse Shortcuts</h3>
 						<dl>
 							<dt>SPACE</dt>
 							<dd>Show/hide character sheet (players only)</dd>
@@ -3155,6 +3155,10 @@ function init_help_menu() {
 						<dl>
 							<dt>P</dt>
 							<dd>Prev creature in combat</dd>
+						</dl>
+						<dl>
+							<dt>Double Click on Scene/Token</dt>
+							<dd>Ping/highlight location or token to all players. The DM has a quick toggle (right side) for centering player views on scene ping.</dd>
 						</dl>
 						<dl>
 							<dt>- / ${getCtrlKeyName()}+Mouse Wheel Down</dt>

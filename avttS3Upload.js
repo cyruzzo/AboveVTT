@@ -7211,7 +7211,7 @@ function refreshFiles(
                 const closestFolder = droppedOn.closest('.folder.list-item-identifier')
                 $('.avtt-drop-target').toggleClass('avtt-drop-target', false);
                 if (closestFolder.is('#scenesFolder') || droppedOn.is('.sidebar-panel-body'))
-                  droppedOn.closest('.sidebar-panel-body').toggleClass('avtt-drop-target', true);
+                  droppedOn.closest('.sidebar-panel-content').toggleClass('avtt-drop-target', true);
                 else
                   closestFolder.toggleClass('avtt-drop-target', true);
               }
@@ -8209,7 +8209,7 @@ async function fetchFileFromS3WithRetry(originalName, cacheKey, sanitizedKey) {
   while (attempt < GET_FILE_FROM_S3_MAX_RETRIES) {
     attempt += 1;
     try {
-      const response = await fetch(`${AVTT_S3}?user=${patreonId}&filename=${fileNameOnly}`);
+      const response = await fetch(`${AVTT_S3}?user=${patreonId}&filename=${encodeURIComponent(fileNameOnly)}`);
       const json = await response.json();
       if (!response.ok) {
         throw new Error(json?.message || `Failed to fetch file from S3 (${response.status})`);

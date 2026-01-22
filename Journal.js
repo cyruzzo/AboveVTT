@@ -2087,7 +2087,7 @@ class JournalManager{
 	    }
 	}
 	block_send_to_buttons(target){
-		const blocks = target.find('img:not(.mon-stat-block__separator-img), .text--quote-box, .rules-text, .block-torn-paper, .read-aloud-text')
+		const blocks = target.find('img:not(.mon-stat-block__separator-img), .text--quote-box, .rules-text, .block-torn-paper, .read-aloud-text, .dmScreenChunk')
 
 		const sendToGamelogButton = $('<button class="block-send-to-game-log"><span class="material-symbols-outlined">login</span></button>')
 		const container = $(`<div class='note-text' style='position:relative; width:'></div>`)
@@ -2096,7 +2096,7 @@ class JournalManager{
 
 	    const whisper_container=$("<div class='whisper-container'/>");
 
-        for(let i=0; i<window.playerUsers; i++){
+        for(let i=0; i<window.playerUsers.length; i++){
 			if(whisper_container.find(`input[name='${window.playerUsers[i].userId}']`).length == 0){
 				const randomId = uuid();
 				let whisper_toggle=$(`<input type='checkbox' name='${window.playerUsers[i].userId}'/>`);
@@ -2206,7 +2206,7 @@ class JournalManager{
 
 
 
-    async translateHtmlAndBlocks(target, displayNoteId) {
+	async translateHtmlAndBlocks(target, displayNoteId, isStatBlock=true) {
     	let pastedButtons = target.find('.avtt-roll-button, [data-rolltype="recharge"], .integrated-dice__container, span[data-dicenotation]');
     	target.find('>style:first-of-type, >style#contentStyles').remove();
 		
@@ -2232,13 +2232,13 @@ class JournalManager{
 
 
 
-
-
 		
 
     	let data = $(target).clone().html();
 
-
+		//remove DDB tags if loading from DDB data eg. on the DM Screen
+		data = data.replace(/\[rule\]|\[\/rule\]/gi, '');
+		data = data.replace(/\[condition\]|\[\/condition\]/gi, '');
 
 
         data = data.replace(/\[pin(.*?)\]([\s\S]+?)\[\/pin\]/gi, function(m, m1, m2){
@@ -2270,7 +2270,8 @@ class JournalManager{
         lines = lines.map((line, li) => {
             let input = line;
 
-            input = general_statblock_formating(input);
+			if(isStatBlock == true)
+            	input = general_statblock_formating(input);
         
             // Find cover rules
             input = input.replace(
@@ -2901,7 +2902,7 @@ class JournalManager{
 				 background: url('https://media-waterdeep.cursecdn.com/file-attachments/0/579/stat-block-header-bar.svg') center center no-repeat 
 			}
 			.dm-eyes-only{
-				 border: 1px solid #000;
+				 border: 1px solid var(--border-color, #000);
 				 border-radius: 5px;
 				 background: var(--background-color, #f5f5f5);
 				 padding: 0px 5px;
@@ -2916,7 +2917,7 @@ class JournalManager{
 				 top: -10px;
 				 right: 2px;
 				 float:right;
-				 border:1px #000 solid;
+				 border:1px var(--border-color, #000); solid;
 				 border-radius:5px;
 				 background: var(--background-color, #f5f5f5);
 				 font-weight: bold;
@@ -2946,6 +2947,9 @@ class JournalManager{
 			}
 			.ignore-abovevtt-formating{
 				 border: 2px dotted #b100ff;
+			}
+			.dmScreenChunk{
+				border: 2px dotted #880000;	
 			}
 			.ignore-abovevtt-formating.no-border{
 				border: none;
@@ -3799,7 +3803,8 @@ class JournalManager{
 			      { title: 'Stat Block Paper (1 Column)', block: 'div', wrapper: true, classes: 'Basic-Text-Frame stat-block-background one-column-stat' },
 			      { title: 'Stat Block Paper (2 Column)', block: 'div', wrapper: true, classes: 'Basic-Text-Frame stat-block-background' },
 			      { title: 'For DM Eyes Online', block: 'div', wrapper: true, classes: 'dm-eyes-only' },
-			      { title: 'Add Ability Tracker; Format: "Wild Shape 2"', inline: 'span', wrapper:true, classes: 'note-tracker'},
+				  { title: 'DM Screen Chunk - won\'t be auto split into columns when used with the DM Screen', block: 'div', wrapper: true, classes: 'dmScreenChunk' },
+				  { title: 'Add Ability Tracker; Format: "Wild Shape 2"', inline: 'span', wrapper:true, classes: 'note-tracker'},
 			      { title: 'Ignore AboveVTT auto formating', inline: 'span', wrapper: true, classes: 'ignore-abovevtt-formating' },
 			      { title: 'Embed Site in Journal', inline: 'span', wrapper: true, classes: 'journal-site-embed'}
 			    ] },
@@ -4032,6 +4037,27 @@ class JournalManager{
 									<td class="item-description-cell" style="padding: 8px; text-align: left;">Auto Fills</td>
 									<td class="item-cost-cell" style="padding: 8px; text-align: left;">50gp</td>
 									<td class="item-add-cell" style="padding: 8px; text-align: left;">Auto Fills</td>
+								</tr>
+								<tr>
+									<td class="item-quantity-cell" style="padding: 8px; text-align: left;">&nbsp;</td>
+									<td class="item-link-cell" style="padding: 8px; text-align: left;">&nbsp;</td>
+									<td class="item-description-cell" style="padding: 8px; text-align: left;">&nbsp;</td>
+									<td class="item-cost-cell" style="padding: 8px; text-align: left;"></td>
+									<td class="item-add-cell" style="padding: 8px; text-align: left;">&nbsp;</td>
+								</tr>
+								<tr>
+									<td class="item-quantity-cell" style="padding: 8px; text-align: left;">&nbsp;</td>
+									<td class="item-link-cell" style="padding: 8px; text-align: left;">&nbsp;</td>
+									<td class="item-description-cell" style="padding: 8px; text-align: left;">&nbsp;</td>
+									<td class="item-cost-cell" style="padding: 8px; text-align: left;"></td>
+									<td class="item-add-cell" style="padding: 8px; text-align: left;">&nbsp;</td>
+								</tr>
+								<tr>
+									<td class="item-quantity-cell" style="padding: 8px; text-align: left;">&nbsp;</td>
+									<td class="item-link-cell" style="padding: 8px; text-align: left;">&nbsp;</td>
+									<td class="item-description-cell" style="padding: 8px; text-align: left;">&nbsp;</td>
+									<td class="item-cost-cell" style="padding: 8px; text-align: left;"></td>
+									<td class="item-add-cell" style="padding: 8px; text-align: left;">&nbsp;</td>
 								</tr>
 								<tr>
 									<td class="item-quantity-cell" style="padding: 8px; text-align: left;">&nbsp;</td>
@@ -4314,6 +4340,13 @@ class JournalManager{
 				self.notes[note_id].plain = tinymce.activeEditor.getContent({ format: 'text' });
 				self.notes[note_id].statBlock = statBlock;
 				self.persist();
+				const dmScreenPageOpen = $('#dmScreenCustomBlock');
+				if(dmScreenPageOpen.length > 0){
+					const openNoteId = dmScreenPageOpen.attr('data-note-id');
+					if(openNoteId == note_id){
+						$(`.dmScreenCustomDropdownItem[data-id='${note_id}']`).trigger('click');
+					}
+				}
 				if(note_id in window.TOKEN_OBJECTS){
 					window.TOKEN_OBJECTS[note_id].place(); // trigger display of the "note" condition
 				}
