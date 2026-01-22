@@ -258,7 +258,8 @@ class DDBApi {
 
   static async putCharacterHP(characterId, hp) {
     //have to fetch first: use tmp first to reduce or for addition beyond max
-    const prev = await DDBApi.fetchCharacterDetails([characterId])?.[0];
+    const prev = (await DDBApi.fetchCharacterDetails([characterId]))?.[0];
+    const snd = { characterId, temporaryHitPoints: 0, removedHitPoints: 0 };
     //heuristic: use tmp points first in a damage
     if(prev?.hitPointInfo) {
       if(hp > prev.hitPointInfo.current) { //heal
