@@ -3809,7 +3809,8 @@ class JournalManager{
 			      { title: 'HP Roll', inline: 'b', classes: 'custom-hp-roll custom-stat' },
 			      { title: 'Initiative', inline: 'b', classes: 'custom-initiative custom-stat' },
 			      { title: 'CR', inline: 'b', classes: 'custom-challenge-rating custom-stat' },
-			      { title: 'Custom PC Sheet Link', inline: 'b', classes: 'custom-pc-sheet custom-stat' },
+  			      { title: 'Custom PC Sheet Link', inline: 'b', classes: 'custom-pc-sheet custom-stat' },
+			      { title: 'Custom PC Sheet Link (synced)', inline: 'b', classes: 'custom-pc-sheet custom-stat custom-pc-sheet-linked' },
 			      { title: 'AboveVTT Slash Command Roll Button', inline: 'span', classes: 'abovevtt-slash-command-journal custom-stat' }
 			   	]}
 			],

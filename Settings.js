@@ -779,6 +779,19 @@ function avtt_settings() {
         },
 		class: 'ui'
 	})
+	settings.push(
+	{
+		name: "sheetPCSync",
+		label: "Sync PC Sheets (DM Only, requires reload)",
+		type: "toggle",
+		options: [
+			{ value: true, label: "Disabled", description: `By default AVTT does not attempt to sync hit point updates back to character sheets` },
+			{ value: false, label: "Enabled", description: `Syncing hit point counts back to characters can be inconsistent!` }
+		],
+		defaultValue: false,
+		class: 'ui'
+	})
+	
 
 
 
