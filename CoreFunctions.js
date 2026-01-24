@@ -392,9 +392,11 @@ function inject_chat_buttons() {
   if ($(".roll-button").length == 0) {
     const rollButton = $(`<button class="roll-button">Roll</button>`);
     const modInput = $(`<div class='roll-mod-container'>
+        <button class="roll-button-mod dis roll_mods_button icon-disadvantage markers-icon"></button>
         <button class="roll-button-mod minus">-</button>
         <input class="roll-input-mod" type='number' value='0' step='1'></input>
         <button class="roll-button-mod plus">+</button>
+        <button class="roll-button-mod adv roll_mods_button icon-advantage markers-icon"></button>
       </div>`)
     modInput.append(rollButton);
 
@@ -411,18 +413,24 @@ function inject_chat_buttons() {
       else if(clickedButton.hasClass('plus')){
         input.val(parseInt(input.val())+1);
       }
+      else if (clickedButton.hasClass('adv') || clickedButton.hasClass('dis')){
+        modInput.find('.active').toggleClass('active', false);
+        clickedButton.toggleClass('active', true);
+        rollButton.click();
+      }
     });
     rollButton.on("click", function (e) {
       let modValue = parseInt($('.roll-input-mod').val())
-      if ($(".dice-toolbar").hasClass("rollable") && modValue == 0 && !window.EXPERIMENTAL_SETTINGS['rpgRoller']) {     
+      /*if ($(".dice-toolbar").hasClass("rollable") && modValue == 0 && !window.EXPERIMENTAL_SETTINGS['rpgRoller']) {     
           let theirRollButton = $(".dice-toolbar__target").children().first();
           if (theirRollButton.length > 0) {
             // we found a DDB dice roll button. Click it and move on
             theirRollButton.click();
             return;
           }
-      }
+      }*/
 
+      const advDis = modInput.find('.adv.active').length > 0 ? 'kh' : modInput.find('.dis.active') ? 'kl' : undefined;
       const rollExpression = [];
       const diceToCount = $(".dice-roller > div img[data-count]").length>0 ? $(".dice-roller > div img[data-count]") : $('.dice-die-button__count')
       diceToCount.each(function() {
@@ -435,35 +443,18 @@ function inject_chat_buttons() {
           count = $(this).attr("data-count");
           dieType = $(this).attr("alt");
         }
-        rollExpression.push(count + dieType);
+        if(advDis != undefined){
+          rollExpression.push(count*2 + dieType + advDis + count);
+        }
+        else{
+          rollExpression.push(count + dieType);
+        }
+        
       });
       $('.dice-toolbar__dropdown-selected>div:first-of-type')?.click();
       let expression = `${rollExpression.join("+")}${modValue<0 ? modValue : `+${modValue}`}`
-      let sendToDM = window.DM || false;
-      let sentAsDDB = send_rpg_dice_to_ddb(expression, sendToDM);
-      if (!sentAsDDB) {
-        const roll = new rpgDiceRoller.DiceRoll(rollExpression.join("+"));
-        
-        const text = roll.output;
-        const uuid = new Date().getTime();
-        const data = {
-          player: window.PLAYER_NAME,
-          img: window.PLAYER_IMG,
-          text: text,
-          dmonly: sendToDM,
-          id: window.DM ? `li_${uuid}` : undefined
-        };
-        window.MB.inject_chat(data);
 
-        if (window.DM) { // THIS STOPPED WORKING SINCE INJECT_CHAT
-          $("#" + uuid).on("click", () => {
-            const newData = {...data, dmonly: false, id: undefined, text: text};
-            window.MB.inject_chat(newData);
-            $(this).remove();
-          });
-        }
-            
-      }
+      window.diceRoller.roll(new DiceRoll(expression));
 
       $(".roll-mod-container").removeClass("show");
       $(".dice-roller > div img[data-count]").removeAttr("data-count");
