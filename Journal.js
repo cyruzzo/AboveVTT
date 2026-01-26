@@ -2361,7 +2361,7 @@ class JournalManager{
             if (
                 spellcasting >= 0 &&
                 spellcasting < li &&
-                (input.match('At will:') ||
+                (input.match(/At will:/gi) ||
                     input.match(/Cantrips \(at will\):/gi) ||
                     input.match(/(\d+\/day( each)?|\d+\w+ level \(\d slots?\))\:/gi))
             ) {
