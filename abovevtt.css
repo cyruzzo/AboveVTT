@@ -10678,7 +10678,7 @@ button.resistanceButton.qrm_buttons_bar span {
 [data-animation='aurafx-rotate'] .islight,
 .aura-element[data-animation='aurafx-rotate'][id*='aura_'],
 [data-animation='aurafx-rotate'].darkvision-animation .darkvision {
-    animation: aurafx-rotate 40s infinite linear;
+    animation: aurafx-rotate var(--custom-rotate-rpm, 40s) infinite linear;
     transform: scale(var(--animation-scale)) rotate(calc(1deg * var(--animation-rotation, 0)));
 }
 
@@ -10699,7 +10699,7 @@ button.resistanceButton.qrm_buttons_bar span {
 
 [data-animation='rays-fx'] .islight:after,
 .aura-element[data-animation='rays-fx'][id*='aura_']:after{
-    animation: aurafx-rotate 100s infinite linear;
+    animation: aurafx-rotate var(--custom-rotate-rpm, 100s) infinite linear;
     transform: scale(var(--animation-scale)) rotate(calc(1deg * var(--animation-rotation, 0)));
     content:'';
     width:100%;
@@ -10712,7 +10712,7 @@ button.resistanceButton.qrm_buttons_bar span {
     background-image: repeating-conic-gradient(from 0deg, transparent 0deg 3deg, #000 5deg 7deg, transparent 9deg)
 }
 .aura-element[data-animation='rays-fx'][id*='aura_']{
-    animation: aurafx-rotate 100s infinite linear;
+    animation: aurafx-rotate var(--custom-rotate-rpm, 100s) infinite linear;
     transform: scale(var(--animation-scale)) rotate(calc(1deg * var(--animation-rotation, 0)));
     -webkit-mask-image: repeating-conic-gradient(from 0deg, #fff 0deg 3deg, transparent 5deg 7deg, #fff 9deg);
 }
@@ -10790,21 +10790,21 @@ button.resistanceButton.qrm_buttons_bar span {
 
 [data-animation='magic-circle-fx'] .islight,
 .aura-element[data-animation='magic-circle-fx'][id*='aura_'] {
-    animation: aurafx-rotate 80s infinite linear;
+    animation: aurafx-rotate var(--custom-rotate-rpm, 80s) infinite linear;
     transform: scale(var(--animation-scale)) rotate(calc(1deg * var(--animation-rotation, 0)));
    -webkit-mask-size: contain;
 }
 
 [data-animation='magic-circle-2-fx'] .islight,
 .aura-element[data-animation='magic-circle-2-fx'][id*='aura_'] {
-    animation: aurafx-rotate 80s infinite linear;
+    animation: aurafx-rotate var(--custom-rotate-rpm, 80s) infinite linear;
     transform: scale(var(--animation-scale)) rotate(calc(1deg * var(--animation-rotation, 0)));
     -webkit-mask-size: contain;
 }
 
 [data-animation='spore-fx'] .islight,
 .aura-element[data-animation='spore-fx'][id*='aura_'] {
-    animation: aurafx-rotate 180s infinite linear;
+    animation: aurafx-rotate var(--custom-rotate-rpm, 180s) infinite linear;
     transform: scale(var(--animation-scale)) rotate(calc(1deg * var(--animation-rotation, 0)));
    -webkit-mask-size: contain;
    filter:blur(5px);
@@ -10822,7 +10822,7 @@ button.resistanceButton.qrm_buttons_bar span {
 
 [data-animation='hurricane-fx'] .islight,
 .aura-element[data-animation='hurricane-fx'][id*='aura_'] {
-    animation: aurafx-rotate 30s infinite linear;
+    animation: aurafx-rotate var(--custom-rotate-rpm, 30s) infinite linear;
     transform: scale(var(--animation-scale)) rotate(calc(1deg * var(--animation-rotation, 0)));
     -webkit-mask-size: contain;
     --light1-blur-size: var(--radius1);

@@ -4532,6 +4532,9 @@ function setTokenAuras (token, options) {
 			if(options.animation.customAuraMask != undefined){
 				if(options.animation.customAuraRotate == true){
 					currAura.attr('data-animation', 'aurafx-rotate')
+					if (options.animation.customAuraRpm) {
+						currAura.css('--custom-rotate-rpm', `${60/options.animation.customAuraRpm}s`)
+					}
 				}
 				else{
 					currAura.attr('data-animation', '')
@@ -4678,6 +4681,9 @@ function setTokenLight (token, options) {
 			if(options.animation.customLightMask != undefined){
 				if(options.animation.customLightRotate == true){
 					token.parent().parent().find(".aura-element-container-clip[id='" + options.id +"']").attr('data-animation', 'aurafx-rotate')
+					if(options.animation.customLightRpm){
+						token.parent().parent().find(".aura-element-container-clip[id='" + options.id + "']").css('--custom-rotate-rpm', `${60/options.animation.customLightRpm}s`)
+					}
 				}
 				else{
 					token.parent().parent().find(".aura-element-container-clip[id='" + options.id +"']").attr('data-animation', '')
