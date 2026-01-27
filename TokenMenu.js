@@ -2077,7 +2077,8 @@ function build_token_auras_inputs(tokenIds) {
 					...token.options.animation,
 					aura: preset,
 					customAuraMask: undefined,
-					customAuraRotate: undefined
+					customAuraRotate: undefined,
+					customAuraRpm: undefined
 				}
 			}
 			else{
@@ -2085,7 +2086,8 @@ function build_token_auras_inputs(tokenIds) {
 					...token.options.animation,
 					aura: preset,
 					customAuraMask: customPreset.mask,
-					customAuraRotate: customPreset.rotate
+					customAuraRotate: customPreset.rotate,
+					customAuraRpm: customPreset.rpm
 				}
 			}
 			token.place_sync_persist();
@@ -2565,8 +2567,8 @@ function build_token_light_inputs(tokenIds, door=false) {
 					light: preset,
 					customLightMask: undefined,
 					customLightRotate: undefined,
-					customLightDarkvision: undefined
-
+					customLightDarkvision: undefined,
+					customLightRpm: undefined
 				}
 			}
 			else{
@@ -2575,7 +2577,8 @@ function build_token_light_inputs(tokenIds, door=false) {
 					light: preset,
 					customLightMask: customPreset.mask,
 					customLightRotate: customPreset.rotate,
-					customLightDarkvision: customPreset.darkvision
+					customLightDarkvision: customPreset.darkvision,
+					customLightRpm: customPreset.rpm
 				}
 			}
 			
@@ -2876,6 +2879,9 @@ function create_animation_presets_edit(isVision = false){
 				<th>
 					Rotate	
 				</th>
+				<th>
+					RPM
+				</th>
 				${isVision ? `<th>
 					Apply to Darkvision			
 				</th>` : ``}
@@ -2890,6 +2896,7 @@ function create_animation_presets_edit(isVision = false){
 				<td><input class='animation_preset_title' value='${window.ANIMATION_PRESETS[i].name}'></input>
 				<td><input class='animation_preset_mask' placeholder='transparency mask url' value='${window.ANIMATION_PRESETS[i].mask}'></input></td>
 				<td><button name="rotate_button" data-id='rotate' type="button" role="switch" class="rc-switch ${(window.ANIMATION_PRESETS[i].rotate === true) ? 'rc-switch-checked' : ''}"><span class="rc-switch-inner"></span></button></td>
+				<td><input class='rotate_rpm' placeholder='1' type='number' min='0' step='0.1' value='${window.ANIMATION_PRESETS[i].rpm || ''}'></input></td>
 				${isVision ? ` <td><button name="apply_darkvision" data-id='darkvision' type="button" role="switch" class="rc-switch ${(window.ANIMATION_PRESETS[i].darkvision === true) ? 'rc-switch-checked' : ''}"><span class="rc-switch-inner"></span></button></td>` : ''}
 				<td><div class='removePreset'><svg class="" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><g transform="rotate(-45 50 50)"><rect></rect></g><g transform="rotate(45 50 50)"><rect></rect></g></svg></div></td>
 			</tr>
@@ -2909,6 +2916,10 @@ function create_animation_presets_edit(isVision = false){
 		})
 		row.find('input[class*="animation_preset_mask"]').off('change.mask').on('change.mask', function(){
 			window.ANIMATION_PRESETS[i].mask = $(this).val();
+			localStorage.setItem('ANIMATION_PRESETS', JSON.stringify(window.ANIMATION_PRESETS));
+		})
+		row.find('input[class*="rotate_rpm"]').off('change.rpm').on('change.rpm', function () {
+			window.ANIMATION_PRESETS[i].rpm = $(this).val();
 			localStorage.setItem('ANIMATION_PRESETS', JSON.stringify(window.ANIMATION_PRESETS));
 		})
 		row.find('.removePreset').off('click.removePreset').on('click.removePreset', function(){
