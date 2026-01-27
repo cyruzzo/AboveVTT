@@ -5293,6 +5293,8 @@ function bucketFill(ctx, mouseX, mouseY, fogStyle = 'rgba(0,0,0,0)', fogType = 0
 		window.bucketFillCanvas = new OffscreenCanvas(ctx.canvas.width, ctx.canvas.height);
 		window.bucketFillCtx = window.bucketFillCanvas.getContext('2d');
 	}
+	window.bucketFillCanvas.height = ctx.canvas.height;
+	window.bucketFillCanvas.width = ctx.canvas.width;
 	const bucketFillCtx = window.bucketFillCtx;
 	bucketFillCtx.clearRect(0, 0, bucketFillCtx.canvas.width, bucketFillCtx.canvas.height);
 	bucketFillCtx.globalCompositeOperation = "lighten";
