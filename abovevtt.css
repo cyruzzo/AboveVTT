@@ -8315,31 +8315,20 @@ button#changeTokenImage:before{
 .flyout-from-menu-item:hover:after {
     border-left: 5px solid #ddd;
 }
-
-.button-right-arrow:hover {
-    background-color: rgba(41, 128, 185);
+.button-refresh.material-symbols-outlined {
+    margin: 0px 0px 0px 2px !important;
+    background: none;
+    font-size: 18px;
+    display: flex;
+    flex-direction: row;
+    width: 20px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    height: 26px;
+    color: #738694;
+    padding: 0px;
 }
-
-.button-right-arrow:hover > .token-image-modal-footer-title {
-    color: #ddd;
-}
-
-.button-right-arrow:after {
-    position: absolute;
-    content: '';
-    right: 5px;
-    top: 9px;
-    width: 0;
-    height: 0;
-    border-top: 5px solid transparent;
-    border-bottom: 5px solid transparent;
-    border-left: 5px solid #738694;
-    font-size: 5px;
-}
-.button-right-arrow:hover:after {
-    border-left: 5px solid #ddd;
-}
-
 
 .context-menu-flyout{
     visibility: hidden;

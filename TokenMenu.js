@@ -1516,7 +1516,7 @@ function token_context_menu_expanded(tokenIds, e) {
 		let tokenNames = tokens.map(t => t.options.name);
 		let uniqueNames = [...new Set(tokenNames)];
 		let nameInput = $(`<input title="Token Name" placeholder="Token Name" name="name" type="text" />`);
-		let nameGeneratorButton = $(`<button title="Generate Random Name" type="button" class="button-right-arrow"></button>`);
+		let nameGeneratorButton = $(`<button title="Generate Random Name" type="button" class="button-refresh material-symbols-outlined">autorenew</button>`);
 		nameGeneratorButton.on('click', function() {
 			if (tokens.length > 1) {
 				tokens.forEach(token => {
