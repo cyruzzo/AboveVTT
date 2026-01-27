@@ -831,7 +831,9 @@ function getCombatTrackersettings(){
 			auto_init: 0,
 			remove_init: 0,
 			carousel: 0,
-			autoGroup: 0
+			autoGroup: 0,
+			next_turn_indicator: 0,
+			always_add_hidden: 0
 		}
 	}else{
 		combatSettingData = $.parseJSON(localStorage.getItem(`abovevtt-combat-tracker-settings-${window.DM}`));
@@ -959,6 +961,12 @@ function openCombatTrackerSettings(){
 		});
 		let autoGroupRow = form_row(`autoGroup`, `Auto Group Tokens by Stat Block`, autoGroupToggle)
 		form.append(autoGroupRow);
+
+		let hiddenGroupToggle = form_toggle('always_add_hidden', `Always add tokens not controlled by players to combat tracker as hidden.`, combatSettingData['always_add_hidden'] == '1', function (e) {
+			handle_basic_form_toggle_click(e);
+		});
+		let hiddenGroupRow = form_row(`always_add_hidden`, `Add tokens not controlled by players to combat as hidden`, hiddenGroupToggle)
+		form.append(hiddenGroupRow);
 	}
 
 	if(!window.DM) {
@@ -1059,7 +1067,9 @@ function ct_add_token(token,persist=true,disablerolling=false, adv=false, dis=fa
 		token.build_conditions(entry, true);
 	}
 	if (typeof(token.options.ct_show) == 'undefined'){
-		if(token.options.hidden) {
+		const shouldHide = token.options.hidden ||
+			(!token.isPlayer() && !token.options.share_vision && !token.options.player_owned)
+		if (shouldHide) {
 			token.options.ct_show = false;
 	
 			window.all_token_objects[token.options.id].options.ct_show = false;
