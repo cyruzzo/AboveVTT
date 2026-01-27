@@ -402,7 +402,7 @@ function inject_chat_buttons() {
 
     
     $("body").append(modInput);
-
+    let advDis;
     modInput.off('click.button').on('click.button', 'button.roll-button-mod', function(e){
       e.preventDefault();
       const clickedButton = $(this)
@@ -413,9 +413,11 @@ function inject_chat_buttons() {
       else if(clickedButton.hasClass('plus')){
         input.val(parseInt(input.val())+1);
       }
-      else if (clickedButton.hasClass('adv') || clickedButton.hasClass('dis')){
-        modInput.find('.active').toggleClass('active', false);
-        clickedButton.toggleClass('active', true);
+      else if (clickedButton.hasClass('adv')){
+        advDis = 'kh';
+      }
+      else if(clickedButton.hasClass('dis')){
+        advDis = 'kl'
         rollButton.click();
       }
     });
@@ -430,7 +432,6 @@ function inject_chat_buttons() {
           }
       }*/
 
-      const advDis = modInput.find('.adv.active').length > 0 ? 'kh' : modInput.find('.dis.active') ? 'kl' : undefined;
       const rollExpression = [];
       const diceToCount = $(".dice-roller > div img[data-count]").length>0 ? $(".dice-roller > div img[data-count]") : $('.dice-die-button__count')
       diceToCount.each(function() {
@@ -445,6 +446,7 @@ function inject_chat_buttons() {
         }
         if(advDis != undefined){
           rollExpression.push(count*2 + dieType + advDis + count);
+          advDis = undefined;
         }
         else{
           rollExpression.push(count + dieType);
