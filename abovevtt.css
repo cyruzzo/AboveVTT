@@ -7946,7 +7946,9 @@ button span.onedrive-btn-status{
 #sounds-panel .sidebar-panel-body>button{
     vertical-align:top;
 }
-
+#journal-panel .addTokenMenu button {
+    height: 28px;
+}
 .addTokenMenu {
     display: flex;
     width: 34px;
@@ -8329,7 +8331,9 @@ button#changeTokenImage:before{
     color: #738694;
     padding: 0px;
 }
-
+.ui-dialog .ui-dialog-titlebar{
+    display:block;
+}
 .context-menu-flyout{
     visibility: hidden;
     transition: visibility 0s;

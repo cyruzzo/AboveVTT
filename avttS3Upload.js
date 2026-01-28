@@ -7207,7 +7207,7 @@ function refreshFiles(
                   top: (ui.position.top - (size / 2))
                 };
                 $('.avtt-drop-target').toggleClass('avtt-drop-target', false);
-              } else if (droppedOn.closest('#myTokensFolder').length > 0 || droppedOn.closest('#scenes-panel').length > 0)  {
+              } else if (droppedOn.closest('#myTokensFolder').length > 0 || droppedOn.closest('#scenes-panel').length > 0 || droppedOn.closest('#journal-panel'))  {
                 const closestFolder = droppedOn.closest('.folder.list-item-identifier')
                 $('.avtt-drop-target').toggleClass('avtt-drop-target', false);
                 if (closestFolder.is('#scenesFolder') || droppedOn.is('.sidebar-panel-body'))
@@ -7279,6 +7279,18 @@ function refreshFiles(
                     console.error("Failed to import from AVTT File Picker selection", error);
                     alert(error?.message || "Failed to import selection from AVTT. See console for details.");
                   }
+                }
+              }
+              else if(droppedOn.closest('#journal-panel').length>0){
+                const paths = window.getAvttFilePickerPaths();
+                try {
+                  const targetFolder = droppedOn.closest('.folder[data-id]');
+                  const targetFolderId = targetFolder.length > 0 ? targetFolder.attr('data-id') : null;
+                  
+                  window.JOURNAL.importFilesAndFolders(paths, targetFolderId);
+                } catch (error) {
+                  console.error("Failed to import from AVTT File Picker selection to Journal", error);
+                  alert(error?.message || "Failed to import selection from AVTT to Journal. See console for details.");
                 }
               }
               else if (droppedOn.closest('#sounds-panel').length > 0){
