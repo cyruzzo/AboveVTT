@@ -1295,7 +1295,7 @@ function createCustomAvttChooser(text, callback = function () { }, selectionType
   })
   return button;
 }
-function createCustomDropboxChooser(text, options){
+function createCustomDropboxChooser(text, options) {
   let button = $(`<button class="dropboxChooser"><span class="dropin-btn-status"></span>${text}</button>`)
   button.off('click.dropbox').on('click.dropbox', function(e){
     e.stopPropagation();

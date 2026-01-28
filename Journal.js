@@ -10,7 +10,6 @@ cached_journal_items = {};
 
 const AVTT_JOURNAL_CHUNK_SIZE = 100000;
 const AVTT_JOURNAL_CHUNK_STRATEGY = "chunked-json";
-
 function avttPromisifyIdbRequest(request) {
 	if (!request) {
 		return Promise.reject(new Error("Missing IDB request"));
@@ -642,7 +641,7 @@ class JournalManager{
 
 			
 			filteredChapters.forEach(chapter => {
-				chapter.notes.forEach(note_id => {
+				chapter.notes.forEach(note_id => { 
 					if(!relevantNotes[note_id]){
 						relevantNotes[note_id] = self.notes[note_id];
 					}
@@ -655,14 +654,14 @@ class JournalManager{
 
 		for(let i=0; i<self.chapters.length;i++){
 			// Check if the chapter is in relevantChapters - if not, don't render it or any children of
-			if(relevantChapters.find(d => d.id == self.chapters[i].id)){
-		
-				if(!self.chapters[i].id){
-					self.chapters[i].id = uuid();
+			const currChapter = self.chapters[i];
+			if(relevantChapters.find(d => d.id == currChapter.id)){
+				if(!currChapter.id){
+					currChapter.id = uuid();
 				}
 				// A chapter title can be clicked to expand/collapse the chapter notes
 				let section_chapter=$(`
-					<div data-index='${i}' data-id='${self.chapters[i].id}' class='sidebar-list-item-row list-item-identifier folder ${self.chapters[i]?.collapsed ? 'collapsed' : ''}'></div>
+					<div data-index='${i}' data-id='${currChapter.id}' class='sidebar-list-item-row list-item-identifier folder ${currChapter?.collapsed ? 'collapsed' : ''}'></div>
 				`);
 
 				// Create a sortale list of notes
@@ -728,13 +727,13 @@ class JournalManager{
 								self.chapters.splice(new_index, 0, self.chapters.splice(old_index, 1)[0]);
 							}
 							else{
-								const old_index = self.chapters[i].notes.findIndex(function(note) {
+								const old_index = currChapter.notes.findIndex(function(note) {
 									return note == ui.item.attr('data-id')
 								});
 								// Find the new index of the dragged element
 								const new_index = ui.item.index();
 								// Move the dragged element to the new index
-								self.chapters[i].notes.splice(new_index, 0, self.chapters[i].notes.splice(old_index, 1)[0]);
+								currChapter.notes.splice(new_index, 0, currChapter.notes.splice(old_index, 1)[0]);
 							}
 							self.persist();
 							window.MB.sendMessage('custom/myVTT/JournalChapters',{
@@ -749,15 +748,15 @@ class JournalManager{
 					
 				let row_chapter_title=$("<div class='row-chapter'></div>");
 				
-				let prependIcon = (self.chapters[i].shareWithPlayer && window.DM) ? $(`<span class="material-symbols-outlined" style='font-size:12px; margin-right: 5px;'>share</span>`) : '';
+				let prependIcon = (currChapter.shareWithPlayer && window.DM) ? $(`<span class="material-symbols-outlined" style='font-size:12px; margin-right: 5px;'>share</span>`) : '';
 					
-				let chapter_title=$(`<div class='journal-chapter-title' title='${self.chapters[i].title}'/>`);
-				chapter_title.text(self.chapters[i].title);
+				let chapter_title=$(`<div class='journal-chapter-title' title='${currChapter.title}'/>`);
+				chapter_title.text(currChapter.title);
 
 				// If the user clicks the chapter title, expand/collapse the chapter notes
 				chapter_title.click(function(){
 					section_chapter.toggleClass('collapsed');
-					self.chapters[i].collapsed = !self.chapters[i].collapsed;
+					currChapter.collapsed = !currChapter.collapsed;
 					self.persist();
 				});
 				
@@ -780,7 +779,7 @@ class JournalManager{
 								player: false,
 								plain: ""
 							};
-							self.chapters[i].notes.push(new_noteid);
+							currChapter.notes.push(new_noteid);
 							window.MB.sendMessage('custom/myVTT/JournalChapters',{
 								chapters: self.chapters
 							});
@@ -812,6 +811,114 @@ class JournalManager{
 
 					input_add_note.focus();
 				});
+			
+
+				const dropboxOptions = dropBoxOptions(function (links) {
+					for (let j = 0; j < links.length; j++) {
+						const link = links[j].link;
+						const new_note_title = links[j].name;
+						const new_noteid = uuid();
+						self.notes[new_noteid] = {
+							title: new_note_title,
+							text: `<p><span class=\"journal-site-embed\">${link}</span><p>`,
+							player: false,
+							plain: `${link}`
+						};
+						currChapter.notes.push(new_noteid);
+					}
+					self.persist();
+					self.build_journal(searchText);
+				}, true, ['images', 'video', 'audio', 'document', 'text']);
+				const dropboxButton = createCustomDropboxChooser('', dropboxOptions);
+				dropboxButton.addClass('token-row-button');
+				
+
+				const avttFilePickerButton = createCustomAvttChooser('', async function (files) {
+					try {
+						if (!currChapter.id) {
+							currChapter.id = uuid();
+						}
+						
+						const processFilesAndFolders = async (fileList, parentChapterId) => {
+							const createdNoteIds = [];
+							
+							for (let j = 0; j < fileList.length; j++) {
+								const new_note_title = fileList[j].name;
+								
+								if(fileList[j].type == 'FOLDER'){
+									const newFolderID = uuid();
+									const newFolder = {
+										title: new_note_title,
+										collapsed: false,
+										notes: [],
+										parentID: parentChapterId,
+										id: newFolderID
+									};
+									self.chapters.push(newFolder);
+
+									try {
+										const folderContents = await self.avttJournalCollectAssets(fileList[j].path);
+										if(folderContents && folderContents.length > 0) {
+											await processFilesAndFolders(folderContents, newFolderID);
+										}
+									} catch (error) {
+										console.warn('Failed to load folder contents', fileList[j].path, error);
+									}
+									continue;
+								}
+								
+
+								const link = fileList[j].link;
+								const new_noteid = uuid();
+								self.notes[new_noteid] = {
+									title: new_note_title,
+									text: `<p><span class=\"journal-site-embed\">${link}</span><p>`,
+									player: false,
+									plain: `${link}`
+								};
+								createdNoteIds.push(new_noteid);
+							}
+							
+							const parentChapter = self.chapters.find(ch => ch.id === parentChapterId);
+							if(parentChapter) {
+								parentChapter.notes.push(...createdNoteIds);
+							}
+							
+							return createdNoteIds;
+						};
+						
+						await processFilesAndFolders(files, currChapter.id);
+						
+						self.persist();
+						self.build_journal(searchText);
+					} catch (error) {
+						console.error("Failed to import from AVTT File Picker selection", error);
+						alert(error?.message || "Failed to import selection from AVTT. See console for details.");
+					}
+				});
+				avttFilePickerButton.addClass('token-row-button');
+
+				const onedriveButton = createCustomOnedriveChooser('', function (links) {
+					for (let j = 0; j < links.length; j++) {
+						const link = links[j].link;
+						const new_note_title = links[j].name;
+						const new_noteid = uuid();
+						self.notes[new_noteid] = {
+							title: new_note_title,
+							text: `<p><span class=\"journal-site-embed\">${link}</span><p>`,
+							player: false,
+							plain: `${link}`
+						};
+						currChapter.notes.push(new_noteid);
+					}
+					self.persist();
+					self.build_journal(searchText);
+				}, 'multiple', ['files'])
+				onedriveButton.addClass('token-row-button');
+				
+				let addJournalMenu = $(`<div class='addTokenMenu'></div>`)
+				addJournalMenu.append(add_note_btn, dropboxButton, avttFilePickerButton, onedriveButton);
+				
 				let add_fold_btn=$("<button class='token-row-button'><span class='material-icons'>create_new_folder</span></button>");
 				add_fold_btn.click(function(){
 
@@ -864,7 +971,7 @@ class JournalManager{
 							
 							visibility_row.append(visibility_toggle)
 
-							visibility_toggle.prop("checked",(self.chapters[i]?.shareWithPlayer instanceof Array && self.chapters[i]?.shareWithPlayer.includes(`${window.playerUsers[j].userId}`)));
+							visibility_toggle.prop("checked",(currChapter?.shareWithPlayer instanceof Array && currChapter?.shareWithPlayer.includes(`${window.playerUsers[j].userId}`)));
 							
 							visibility_toggle.change(function(){
 								let sharedUsers = toggle_container.find(`input:checked:not([name='allPlayers'])`).toArray().map(d => d.name);
@@ -877,7 +984,7 @@ class JournalManager{
 						}
 					}
 
-					visibility_toggle.prop("checked",self.chapters[i].shareWithPlayer == true);
+					visibility_toggle.prop("checked",currChapter.shareWithPlayer == true);
 						
 					if(visibility_toggle.is(":checked"))
 						toggle_container.find(`input:not([name='allPlayers'])`).prop('disabled', true);
@@ -896,18 +1003,18 @@ class JournalManager{
 				
 				row_chapter_title.append(folderIcon, prependIcon, chapter_title);	
 				if(window.DM) {
-					row_chapter_title.append(add_note_btn, add_fold_btn, share_fold_btn);
+					row_chapter_title.append(addJournalMenu,add_fold_btn, share_fold_btn);
 				}	
 
 				let containsPlayerNotes = false;
-				for(let n=0; n<self.chapters[i].notes.length;n++){
-					let note_id=self.chapters[i].notes[n];
+				for(let n=0; n<currChapter.notes.length;n++){
+					let note_id=currChapter.notes[n];
 					if(self.notes[note_id]?.player == true || (self.notes[note_id]?.player instanceof Array && self.notes[note_id].player?.includes(`${window.myUser}`))){
 						containsPlayerNotes = true;
 						break;
 					} 
 				}
-				const sharedFolder = (self.chapters[i].shareWithPlayer == true || (self.chapters[i].shareWithPlayer instanceof Array && self.chapters[i].shareWithPlayer.includes(`${window.myUser}`)));
+				const sharedFolder = (currChapter.shareWithPlayer == true || (currChapter.shareWithPlayer instanceof Array && currChapter.shareWithPlayer.includes(`${window.myUser}`)));
 				section_chapter.toggleClass('shared-folder', sharedFolder);
 				if(window.DM || containsPlayerNotes || sharedFolder) {
 					section_chapter.append(row_chapter_title);
@@ -918,15 +1025,15 @@ class JournalManager{
 
 				let sharedParentFolder = false;
 
-				if(!self.chapters[i].parentID){
+				if(!currChapter.parentID){
 					chapter_list.append(section_chapter);
 				}
 				else{		
-					let parentFolder = chapter_list.find(`.folder[data-id='${self.chapters[i].parentID}']`);
-					let parentID = self.chapters[i]?.parentID
+					let parentFolder = chapter_list.find(`.folder[data-id='${currChapter.parentID}']`);
+					let parentID = currChapter?.parentID
 					sharedParentFolder = parentFolder.closest('.shared-folder').length>0;
-					if(self.chapters[i].id == self.chapters.filter(d => d.id == parentID)[0].parentID){
-						delete self.chapters[i].parentID
+					if(currChapter.id == self.chapters.filter(d => d.id == parentID)[0].parentID){
+						delete currChapter.parentID
 					}
 					if(parentFolder.length == 0){
 						self.chapters.splice(self.chapters.length-1, 0, self.chapters.splice(i, 1)[0]);
@@ -934,8 +1041,8 @@ class JournalManager{
 						continue;
 					}	
 					let containsPlayerNotes = false;
-					for(let n=0; n<self.chapters[i].notes.length;n++){
-						let note_id=self.chapters[i].notes[n];
+					for(let n=0; n<currChapter.notes.length;n++){
+						let note_id=currChapter.notes[n];
 						if(self.notes[note_id]?.player == true || (self.notes[note_id]?.player instanceof Array && self.notes[note_id]?.player.includes(`${window.myUser}`))){
 							containsPlayerNotes = true;
 						} 
@@ -957,15 +1064,15 @@ class JournalManager{
 				journalPanel.body.append(chapter_list);
 
 
-				for(let n=0; n<self.chapters[i].notes.length;n++){
+				for(let n=0; n<currChapter.notes.length;n++){
 
-					let note_id=self.chapters[i].notes[n];
+					let note_id=currChapter.notes[n];
 					
 					// Check if the note is in relevantNotes - if not, don't render it
 					if(! (note_id in self.notes && note_id in relevantNotes ))
 						continue;
 						
-					if( (! window.DM) && (!sharedParentFolder) && (self.notes[note_id]?.player == false || (self.notes[note_id]?.player instanceof Array && !self.notes[note_id]?.player.includes(`${window.myUser}`))) && !(self.chapters[i]?.shareWithPlayer == true || (self.chapters[i]?.shareWithPlayer instanceof Array && self.chapters[i]?.shareWithPlayer.includes(`${window.myUser}`))))
+					if( (! window.DM) && (!sharedParentFolder) && (self.notes[note_id]?.player == false || (self.notes[note_id]?.player instanceof Array && !self.notes[note_id]?.player.includes(`${window.myUser}`))) && !(currChapter?.shareWithPlayer == true || (currChapter?.shareWithPlayer instanceof Array && currChapter?.shareWithPlayer.includes(`${window.myUser}`))))
 						continue;
 					
 					let prependIcon = (self.notes[note_id].player && window.DM) ? $(`<span class="material-symbols-outlined" style='font-size:12px'>share</span>`) : '';
@@ -1234,18 +1341,18 @@ class JournalManager{
 
 		            let menuItems = {};
 
-		           	let i = window.JOURNAL.chapters.findIndex(d=>d.id==$(element).closest('[data-id]').attr('data-id'))
-							
+					let i = self.chapters.findIndex(d=>d.id==$(element).closest('[data-id]').attr('data-id'))
+					const currChapter = self.chapters[i];
 
 		            menuItems["rename"] = {
 		                name: "Rename",
 		                callback: function(itemKey, opt, originalEvent) {
-		                    let input_chapter_title=$(`<input type='text' class='input-add-chapter' value='${self.chapters[i].title}'>`);
+		                    let input_chapter_title=$(`<input type='text' class='input-add-chapter' value='${currChapter.title}'>`);
 	
 							input_chapter_title.keypress(function(e){
 								
 								if (e.which == 13 && input_chapter_title.val() !== "") {
-									self.chapters[i].title = input_chapter_title.val();
+									currChapter.title = input_chapter_title.val();
 									window.MB.sendMessage('custom/myVTT/JournalChapters',{
 										chapters: self.chapters
 									});
@@ -1299,9 +1406,10 @@ class JournalManager{
 
 
 	                            for(let i = 0; i<self.chapters.length; i++){
-	                                if(self.chapters[i].parentID == chapterId){
-	                                   exportNoteChapters(self.chapters[i].id, chaptertoExport);
-	                                   chaptertoExport.push(self.chapters[i]);
+									const currChapter = self.chapters[i];
+	                                if(currChapter.parentID == chapterId){
+	                                   exportNoteChapters(currChapter.id, chaptertoExport);
+	                                   chaptertoExport.push(currChapter);
 	                                }
 	                            }
 	                        };
@@ -1335,12 +1443,12 @@ class JournalManager{
 	                    callback: function(itemKey, opt, originalEvent) {
                         	if(confirm("Delete this chapter and all the contained notes?")){
                         		
-                        		for(let k=0;k<self.chapters[i].notes.length;k++){
-									let nid=self.chapters[i].notes[k];
+                        		for(let k=0;k<currChapter.notes.length;k++){
+									let nid=currChapter.notes[k];
 									delete self.notes[nid];
 								}
 								
-								self.chapters = self.chapters.filter(d => d.id != self.chapters[i].id)
+								self.chapters = self.chapters.filter(d => d.id != currChapter.id)
 								
 								$(element).closest('.folder').find('.folder').each(function(){
 									let folderId = $(this).attr('data-id');
@@ -1381,8 +1489,9 @@ class JournalManager{
 		            let menuItems = {};
 
 		           	let note_id = $(element).closest('[data-id]').attr('data-id');
-					let i = window.JOURNAL.chapters.findIndex(d=>d.id==$(element).closest('.folder[data-id]').attr('data-id'))
-					let note_index =window.JOURNAL.chapters[i].notes.indexOf(note_id)
+					let i = self.chapters.findIndex(d=>d.id==$(element).closest('.folder[data-id]').attr('data-id'));
+					const currChapter = self.chapters[i];
+					let note_index = currChapter.notes.indexOf(note_id)
 							
 
 		            menuItems["rename"] = {
@@ -1481,7 +1590,7 @@ class JournalManager{
 	                    callback: function(itemKey, opt, originalEvent) {
                         	if(confirm("Delete this note?")){
                         		console.log("deleting note_index"+note_index);
-                        		self.chapters[i].notes.splice(note_index,1);
+                        		currChapter.notes.splice(note_index,1);
                         		delete self.notes[note_id];
                         		self.build_journal(searchText);
                         		self.persist();
@@ -2204,8 +2313,139 @@ class JournalManager{
         });
 	}
 
+	/**
+	 * Import files and folders from AVTT file picker into journal
+	 * Recursively processes folders and creates chapters with notes
+	 * @param {Array} files - Array of file/folder objects from AVTT file picker
+	 * @param {string} parentChapterId - Optional parent chapter ID, defaults to current chapter
+	 */
+	importFilesAndFolders = async function (files, parentChapterId = null) {
+		const self = this;
 
+		let targetParentId = parentChapterId;
+		if (!targetParentId) {
+			const importedFilesChapter = {
+				title: 'Imported Files',
+				collapsed: false,
+				notes: [],
+				id: uuid()
+			};
+			self.chapters.push(importedFilesChapter);
+			targetParentId = importedFilesChapter.id;
+		}
 
+		const processFilesAndFolders = async (fileList, parentId) => {
+			const createdNoteIds = [];
+
+			for (let j = 0; j < fileList.length; j++) {
+				const file = fileList[j];
+				const new_note_title = file.name;
+
+				if (file.type === 'FOLDER') {
+					const newFolderID = uuid();
+					const newFolder = {
+						title: new_note_title,
+						collapsed: false,
+						notes: [],
+						parentID: parentId,
+						id: newFolderID
+					};
+					self.chapters.push(newFolder);
+
+					try {
+						const folderContents = await self.avttJournalCollectAssets(file.path);
+						if (folderContents && folderContents.length > 0) {
+							await processFilesAndFolders(folderContents, newFolderID);
+						}
+					} catch (error) {
+						console.warn('Failed to load folder contents', file.path, error);
+					}
+					continue;
+				}
+
+				const link = file.link;
+				const new_noteid = uuid();
+				self.notes[new_noteid] = {
+					title: new_note_title,
+					text: `<p><span class=\"journal-site-embed\">${link}</span><p>`,
+					player: false,
+					plain: `${link}`
+				};
+				createdNoteIds.push(new_noteid);
+			}
+
+			// Add all created note IDs to parent chapter
+			const parentChapter = self.chapters.find(ch => ch.id === parentId);
+			if (parentChapter) {
+				parentChapter.notes.push(...createdNoteIds);
+			}
+
+			return createdNoteIds;
+		};
+
+		await processFilesAndFolders(files, targetParentId);
+
+		self.persist();
+		self.build_journal();
+	}
+	avttJournalCollectAssets = async function (folderRelativePath) {
+		const normalizedBase = avttNormalizeRelativePath(folderRelativePath);
+		if (!normalizedBase) {
+			return [];
+		}
+		const immediateChildren = [];
+		let entries;
+		try {
+			entries = await avttGetFolderListingCached(normalizedBase);
+		} catch (error) {
+			console.warn('Failed to load AVTT journal folder listing', normalizedBase, error);
+			return [];
+		}
+		if (!Array.isArray(entries)) {
+			return [];
+		}
+		for (const entry of entries) {
+			const keyValue = typeof entry === 'string' ? entry : entry?.Key || entry?.key || '';
+			if (!keyValue) {
+				continue;
+			}
+			let relativeKey = keyValue;
+			if (typeof avttExtractRelativeKey === 'function') {
+				relativeKey = avttExtractRelativeKey(keyValue);
+			} else {
+				const prefix = `${window.PATREON_ID}/`;
+				relativeKey = keyValue.startsWith(prefix) ? keyValue.slice(prefix.length) : keyValue;
+			}
+			if (!relativeKey || !relativeKey.startsWith(normalizedBase)) {
+				continue;
+			}
+			const isFolder = relativeKey.endsWith('/');
+			const remainingPath = relativeKey.slice(normalizedBase.length).replace(/^\//, '').replace(/\/+$/, '');
+			if (!remainingPath) {
+				continue;
+			}
+			if (remainingPath.includes('/')) {
+				continue;
+			}
+			const link = `above-bucket-not-a-url/${window.PATREON_ID}/${relativeKey}`;
+			let displayName = "";
+			if (isFolder) {
+				const trimmed = relativeKey.replace(/\/+$/, "");
+				const folderName = trimmed.split("/").filter(Boolean).pop() || trimmed;
+				displayName = decodeURIComponent(folderName);
+			} else {
+				const fileName = relativeKey.split("/").filter(Boolean).pop() || relativeKey;
+				displayName = decodeURIComponent(fileName.replace(/\.[^.]+$/, ""));
+			}
+			immediateChildren.push({
+				link,
+				name: displayName,
+				path: relativeKey,
+				type: (isFolder ? "FOLDER" : "")
+			});
+		}
+		return immediateChildren;
+	}
 	async translateHtmlAndBlocks(target, displayNoteId, isStatBlock=true) {
     	let pastedButtons = target.find('.avtt-roll-button, [data-rolltype="recharge"], .integrated-dice__container, span[data-dicenotation]');
     	target.find('>style:first-of-type, >style#contentStyles').remove();
@@ -4503,3 +4743,6 @@ function render_source_chapter_in_iframe(url) {
 
 	iframe.attr('src', url);
 }
+
+
+
