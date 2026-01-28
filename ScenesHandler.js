@@ -508,10 +508,10 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 
 		let copiedSceneData = {
 			...$.extend(true, {}, window.CURRENT_SCENE_DATA),
-			hpps: window.CURRENT_SCENE_DATA.hpps,
-			vpps: window.CURRENT_SCENE_DATA.vpps,
-			offsetx: window.CURRENT_SCENE_DATA.offsetx,
-			offsety: window.CURRENT_SCENE_DATA.offsety
+			hpps: 60,
+			vpps: 60,
+			offsetx: 0,
+			offsety: 0
 		}
 
 		scene.scale_factor = 1;
