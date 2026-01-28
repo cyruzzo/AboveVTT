@@ -415,6 +415,7 @@ function inject_chat_buttons() {
       }
       else if (clickedButton.hasClass('adv')){
         advDis = 'kh';
+        rollButton.click();
       }
       else if(clickedButton.hasClass('dis')){
         advDis = 'kl'
@@ -423,14 +424,6 @@ function inject_chat_buttons() {
     });
     rollButton.on("click", function (e) {
       let modValue = parseInt($('.roll-input-mod').val())
-      /*if ($(".dice-toolbar").hasClass("rollable") && modValue == 0 && !window.EXPERIMENTAL_SETTINGS['rpgRoller']) {     
-          let theirRollButton = $(".dice-toolbar__target").children().first();
-          if (theirRollButton.length > 0) {
-            // we found a DDB dice roll button. Click it and move on
-            theirRollButton.click();
-            return;
-          }
-      }*/
 
       const rollExpression = [];
       const diceToCount = $(".dice-roller > div img[data-count]").length>0 ? $(".dice-roller > div img[data-count]") : $('.dice-die-button__count')
@@ -446,13 +439,14 @@ function inject_chat_buttons() {
         }
         if(advDis != undefined){
           rollExpression.push(count*2 + dieType + advDis + count);
-          advDis = undefined;
+       
         }
         else{
           rollExpression.push(count + dieType);
         }
         
       });
+      advDis = undefined;
       $('.dice-toolbar__dropdown-selected>div:first-of-type')?.click();
       let expression = `${rollExpression.join("+")}${modValue<0 ? modValue : `+${modValue}`}`
 
