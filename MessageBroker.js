@@ -1885,7 +1885,7 @@ class MessageBroker {
 							$('.import-loading-indicator .percentageLoaded').css('width', `20%`);		
 						}
 						await reset_canvas();
-        		await set_default_vttwrapper_size();
+        				await set_default_vttwrapper_size();
 						remove_loading_overlay();
 						console.log("LOADING TOKENS!");
 						

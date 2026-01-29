@@ -836,7 +836,10 @@ function getCombatTrackersettings(){
 			always_add_hidden: 0
 		}
 	}else{
-		combatSettingData = $.parseJSON(localStorage.getItem(`abovevtt-combat-tracker-settings-${window.DM}`));
+		combatSettingData = {
+			...$.parseJSON(localStorage.getItem(`abovevtt-combat-tracker-settings-${window.gameId}-${window.DM}`)),
+			...$.parseJSON(localStorage.getItem(`abovevtt-combat-tracker-settings-${window.DM}`))	
+		};
 	}
 	return combatSettingData;
 }
@@ -879,6 +882,7 @@ function openCombatTrackerSettings(){
 		return toggle
 	}
 
+	const globalSettings = ['tie_breaker', 'scroll_to_next', 'select_next', 'next_turn_indicator', 'ct_selected_token']
 
 	$("#edit_dialog").remove();
 
@@ -900,8 +904,9 @@ function openCombatTrackerSettings(){
 
 	const form = $("<form id='edit_scene_form'/>");
 	form.on('submit', function(e) { e.preventDefault(); });
-
-
+	const globalDiv= $(`<div class='combat-settings-header'><h7>Global ${window.DM ? 'DM' : 'Player'} Settings</h7></div>`)
+	const campaignDiv = $(`<div class='combat-settings-header'><h7>Campaign ${window.DM ? 'DM' : 'Player'} Settings</h7></div>`)
+	form.append(globalDiv, campaignDiv);
 
 	let tieBreakerToggle = form_toggle('tie_breaker', 'Adds the dex score as a decimal to tie break initiative', combatSettingData['tie_breaker'] == '1', function(e){
 		handle_basic_form_toggle_click(e)
@@ -909,39 +914,39 @@ function openCombatTrackerSettings(){
 	let tieBreakerRow = form_row(`tie_breaker`, `Add Tie Breaker to Initiative Rolls`, tieBreakerToggle)
 
 	if(window.DM){
-		form.append(tieBreakerRow);
+		globalDiv.append(tieBreakerRow);
 	}
 
 	let scrollToNextToggle = form_toggle('scroll_to_next', 'Scroll to Token on Next/Prev', combatSettingData['scroll_to_next'] == '1', function(e){
 		handle_basic_form_toggle_click(e)
 	});
 	let scrollToNextRow = form_row(`scroll_to_next`, `Auto Center Token on Next/Prev`, scrollToNextToggle)
-	form.append(scrollToNextRow);
+	globalDiv.append(scrollToNextRow);
 
 	let autoSelectNextToggle = form_toggle('select_next', 'Select Token on Next/Prev', combatSettingData['select_next'] == '1', function(e){
 		handle_basic_form_toggle_click(e)
 	});
 	let autoSelectNextRow = form_row(`select_next`, `Select Token on Next/Prev`, autoSelectNextToggle)
-	form.append(autoSelectNextRow);
+	globalDiv.append(autoSelectNextRow);
 
 	let autoRollInitAtTopToggle = form_toggle('auto_init', `${window.DM ? 'Auto Roll Monster Init at Top of Round' : 'Auto Roll Initiative at Top of Round'}`, combatSettingData['auto_init'] == '1', function(e){
 		handle_basic_form_toggle_click(e)
 	});
 	let autoRollInitAtTopRow = form_row(`auto_init`, `${window.DM ? 'Auto Roll Monster Init at Top of Round' : 'Auto Roll Initiative at Top of Round'}`, autoRollInitAtTopToggle)
-	form.append(autoRollInitAtTopRow);
+	campaignDiv.append(autoRollInitAtTopRow);
 
 	let removeInitToggle = form_toggle('remove_init', `When enabled instead of using a tokens saved initiative when removed and added back to combat it will be rerolled.`, combatSettingData['remove_init'] == '1', function(e){
 		handle_basic_form_toggle_click(e)
 	});
 	let removeInitRow = form_row(`remove_init`, `Ignore token's saved init on add to combat`, removeInitToggle)
 	if(window.DM)
-		form.append(removeInitRow);
+		campaignDiv.append(removeInitRow);
 
 	let highlightSelectedTokensToggle = form_toggle('ct_selected_token', `Adds a selected highlight to tokens in the combat tracker`, combatSettingData['ct_selected_token'] == '1', function(e){
 		handle_basic_form_toggle_click(e)
 	});
 	let highlightSelectedTokensRow = form_row(`ct_selected_token`, `${window.DM ? 'Highlight Selected Token Image' : 'Highlight Selected Token Image'}`, highlightSelectedTokensToggle)
-	form.append(highlightSelectedTokensRow);
+	globalDiv.append(highlightSelectedTokensRow);
 
 	let carouselToggle = form_toggle('carousel', `Always displays some combat data as a carousel`, combatSettingData['carousel'] == '1', function(e){
 		handle_basic_form_toggle_click(e);
@@ -953,20 +958,20 @@ function openCombatTrackerSettings(){
 		}
 	});
 	let carouselRow = form_row(`carousel`, `${window.DM ? 'Display Combat Tracker Carousel' : 'Always displays some combat data as a carousel'}`, carouselToggle)
-	form.append(carouselRow);
+	campaignDiv.append(carouselRow);
 
 	if(window.DM){
 		let autoGroupToggle = form_toggle('autoGroup', `Auto Group Tokens by stat block when using the 'Add to Combat Tracker' button. Players will be added individually. You can still create custom groups using the add a group button.`, combatSettingData['autoGroup'] == '1', function(e){
 			handle_basic_form_toggle_click(e);
 		});
 		let autoGroupRow = form_row(`autoGroup`, `Auto Group Tokens by Stat Block`, autoGroupToggle)
-		form.append(autoGroupRow);
+		campaignDiv.append(autoGroupRow);
 
 		let hiddenGroupToggle = form_toggle('always_add_hidden', `Always add tokens not controlled by players to combat tracker as hidden.`, combatSettingData['always_add_hidden'] == '1', function (e) {
 			handle_basic_form_toggle_click(e);
 		});
 		let hiddenGroupRow = form_row(`always_add_hidden`, `Add tokens not controlled by players to combat as hidden`, hiddenGroupToggle)
-		form.append(hiddenGroupRow);
+		campaignDiv.append(hiddenGroupRow);
 	}
 
 	if(!window.DM) {
@@ -974,7 +979,7 @@ function openCombatTrackerSettings(){
 			handle_basic_form_toggle_click(e)
 		});
 		let endTurnIndicatorRow = form_row(`next_turn_indicator`, `Next Turn Indicator`, endTurnIndicatorToggle)
-		form.append(endTurnIndicatorRow);
+		globalDiv.append(endTurnIndicatorRow);
 	}
 
 
@@ -988,18 +993,23 @@ function openCombatTrackerSettings(){
 		
 	})
 	const submitButton = $("<button type='button'>Save</button>");
+	
 	submitButton.click(async function() {
 		let settings = {};
 		const formData = await get_edit_form_data();
-		for (key in formData) {
-			settings[key] = formData[key];
+		const globalCombatSettings = {};
+		
+		for (key in formData) {		
+			if(globalSettings.includes(key))
+				globalCombatSettings[key] = formData[key];
+			else
+				settings[key] = formData[key];
 		}
-
-
-				
-		localStorage.setItem(`abovevtt-combat-tracker-settings-${window.DM}`, JSON.stringify(settings))
-
-
+		
+		
+		localStorage.setItem(`abovevtt-combat-tracker-settings-${window.gameId}-${window.DM}`, JSON.stringify(settings))	
+		localStorage.setItem(`abovevtt-combat-tracker-settings-${window.DM}`, JSON.stringify(globalCombatSettings))
+		
 
 		$("#sources-import-main-container").remove();
 		$("#scene_selector").removeAttr("disabled");

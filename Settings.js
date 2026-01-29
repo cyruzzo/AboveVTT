@@ -438,7 +438,8 @@ function avtt_settings() {
 					{ value: "combatTurn", label: "Current Combat Turn", description: `You will only see players' cursors during their turn in combat. You will not see cursors of any player that disables cursor/ruler streaming.` }
 				],
 				defaultValue: "all",
-				class: 'stream'
+				class: 'stream',
+				global: 1
 			},
 			{
 				name: "receiveRulerFromPeers",
@@ -450,7 +451,8 @@ function avtt_settings() {
 					{ value: "combatTurn", label: "Current Combat Turn", description: `You will only see players' token measurement and ruler measurement during their turn in combat. You will not see rulers of any player that disables cursor/ruler streaming.` }
 				],
 				defaultValue: "all",
-				class: 'stream'
+				class: 'stream',
+				global: 1
 			},
 			{
 				name: "projector",
@@ -583,7 +585,8 @@ function avtt_settings() {
 			{ value: false, label: "DDB Dice", description: `Defaults to DDB dice` }
 		],
 		defaultValue: false,
-		class: 'performance'
+		class: 'performance',
+		global: 1
 	})
 	settings.push({
 		name: "colorBlindText",
@@ -619,7 +622,8 @@ function avtt_settings() {
 			{ value: false, label: "Enabled", description: `All animations will be enabled` }
 		],
 		defaultValue: false,
-		class: 'performance'
+		class: 'performance',
+		global: 1
 	})
 	settings.push(
 	{
@@ -1099,11 +1103,11 @@ function init_settings() {
 	body.append(`
 		<br />
 		<h3 class="token-image-modal-footer-title no-bottom-margin-setting" >AboveVTT Settings</h3>
-		<div class="sidebar-panel-header-explanation"><b>Some settings can have an impact on performance.</b></div>
+		<div class="sidebar-panel-header-explanation"><b>Some settings can have an impact on performance. Settings are saved per campaign unless indicated otherwise</b></div>
 		<div class='avtt-settings-section avtt-settings-defaults'><h4 class="token-image-modal-footer-title">Default Settings</h4></div>
 		<div class='avtt-settings-section avtt-settings-ui'><h4 class="token-image-modal-footer-title">UI</h4><div class='global-setting'><h5 class="token-image-modal-footer-title">Global</h5></div><div class='campaign-setting'><h5 class="token-image-modal-footer-title">Campaign</h5></div></div>
 		<div class='avtt-settings-section avtt-settings-stream'><h4 class="token-image-modal-footer-title">Streaming/P2P</h4></div>
-		<div class='avtt-settings-section avtt-settings-performance'><h4 class="token-image-modal-footer-title">Performance</h4><div class="sidebar-panel-header-explanation"><b>These settings can improve performance</b></div></div>
+		<div class='avtt-settings-section avtt-settings-performance'><h4 class="token-image-modal-footer-title">Performance</h4><div class="sidebar-panel-header-explanation"><b>These settings can improve performance and are stored globally</b></div></div>
 		<div class='avtt-settings-section avtt-settings-debug'><h4 class="token-image-modal-footer-title">Debugging</h4><div class="sidebar-panel-header-explanation"><b>These settings can be used to debug issues or as last resorts when defaults aren't working</b></div></div>
 	`);
 	for(let i = 0; i < experimental_features.length; i++) {	
@@ -1169,7 +1173,11 @@ function init_settings() {
 				break;
 		}
 		if (inputWrapper) {
-			body.find(`.avtt-settings-${setting.class}${setting.class == 'ui' ? setting.global == 1 ? ' .global-setting': ' .campaign-setting' : ''}`).append(inputWrapper);
+			body.find(`.avtt-settings-${setting.class}${setting.class == 'ui' ? 
+					setting.global == 1 ? 
+						' .global-setting' : 
+						' .campaign-setting' : 
+					''}`).append(inputWrapper);
 		}
 	}
 
