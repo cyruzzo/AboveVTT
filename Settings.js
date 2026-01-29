@@ -438,8 +438,7 @@ function avtt_settings() {
 					{ value: "combatTurn", label: "Current Combat Turn", description: `You will only see players' cursors during their turn in combat. You will not see cursors of any player that disables cursor/ruler streaming.` }
 				],
 				defaultValue: "all",
-				class: 'stream',
-				global: 1
+				class: 'stream'
 			},
 			{
 				name: "receiveRulerFromPeers",
@@ -451,8 +450,7 @@ function avtt_settings() {
 					{ value: "combatTurn", label: "Current Combat Turn", description: `You will only see players' token measurement and ruler measurement during their turn in combat. You will not see rulers of any player that disables cursor/ruler streaming.` }
 				],
 				defaultValue: "all",
-				class: 'stream',
-				global: 1
+				class: 'stream'
 			},
 			{
 				name: "projector",
