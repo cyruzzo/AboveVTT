@@ -1395,13 +1395,48 @@ input {
 }
 
 #scene_properties form > button,
-#combat-tracker-settings form > button
+#combat-tracker-settings form>button
  {
     float: right;
     vertical-align: bottom;
     margin-top: 20px;
 }
+#combat-tracker-settings>#edit_scene_form>div {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    padding: 5px 5px;
+}
 
+#combat-tracker-settings>#edit_scene_form>div>div {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    margin: 2px 5px;
+}
+#combat-tracker-settings form>div {
+    text-transform: uppercase;
+    display: flex;
+    justify-content: space-between;
+    font-weight: bold;
+    align-items: center;
+}
+#combat-tracker-settings h7{
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    flex-grow: 1;
+    margin: 4px 6px 2px 2px;
+    align-self: center;
+    line-height: 20px;
+    display: block;
+    font-size: 15px;
+    text-align: center;
+    position: relative;
+    margin: 10px 0px;
+    border-bottom: 1px solid;
+}
 #mega_importer {
     width:100%;
     height: calc(100% - 16px);
@@ -1596,23 +1631,15 @@ div#template_section {
     border-bottom:  1px solid #00000066;
 }
 
-div#scene_properties,
-div#combat-tracker-settings {
+div#scene_properties{
     margin: 0 5px;
 }
 
-div#scene_properties form > div,
-div#combat-tracker-settings form > div {
+div#scene_properties form > div{
     margin: 5px 0;
 }
 
-#combat-tracker-settings form > div {
-    text-transform: uppercase;
-    display: flex;
-    justify-content: space-between;
-    font-weight: bold;
-    align-items: center;
-}
+
 
 #importer_toggles {
     display: flex;

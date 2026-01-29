@@ -138,8 +138,8 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 			aligner1.height(59);
 			aligner1.css("position", "absolute");
 			aligner1.css("border-radius", "50%");
-			aligner1.css("top", Math.floor($("#scene_map").height() / 60) / 2 * 60 - 29 + "px");
-			aligner1.css("left", Math.floor($("#scene_map").width() / 60) / 2  * 60 - 29 + "px");
+			aligner1.css("top", `${Math.floor($("#scene_map").height() / 60) / 2 * 60 - 29}px`);
+			aligner1.css("left", `${Math.floor($("#scene_map").width() / 60) / 2 * 60 - 29}px`);
 			aligner1.css("z-index", 40);
 
 			let drawX = function(canvas) {
@@ -178,8 +178,8 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 			aligner2.css("position", "absolute");
 			aligner2.css("border-radius", "50%");
 			
-			aligner2.css("top", parseFloat(aligner1.css('top')) + 180 + "px");
-			aligner2.css("left", parseFloat(aligner1.css('left')) + 180  + "px");
+			aligner2.css("top", `${parseFloat(aligner1.css('top')) + 180}px`);
+			aligner2.css("left", `${parseFloat(aligner1.css('left')) + 180}px`);
 			
 			
 			aligner2.css("z-index", 40);
@@ -543,10 +543,10 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 		}
 
 		//This is still used for grid wizard loading since we load so many times -- it is not used for other scene loading though. You can find that in message broker handleScene
-		load_scenemap(map_url, map_is_video, window.CURRENT_SCENE_DATA.width, window.CURRENT_SCENE_DATA.height, window.CURRENT_SCENE_DATA.UVTTFile, function() {
+		load_scenemap(map_url, map_is_video, window.CURRENT_SCENE_DATA.width, window.CURRENT_SCENE_DATA.height, window.CURRENT_SCENE_DATA.UVTTFile, async function() {
 			$("#scene_map").off("load");
-			reset_canvas();
-			set_default_vttwrapper_size()
+			await reset_canvas();
+			await set_default_vttwrapper_size()
 			align_grid(false, false, copiedSceneData);
 			window.WeatherOverlay.stop();
 		});
