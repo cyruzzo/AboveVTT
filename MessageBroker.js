@@ -44,6 +44,7 @@ const debounceHandleInjected = mydebounce(() => {
 					let damageButton = $(`<button class='applyDamageButton flat'>${damageSVG}</button>`);
 					let halfDamage = $(`<button class='applyDamageButton resist'>1/2 ${damageSVG}</button>`);
 					let doubleDamage = $(`<button class='applyDamageButton vulnerable'>2x${damageSVG}</button>`);
+					let quarterDamage = $(`<button class='applyDamageButton resist-save'>1/4 ${damageSVG}</button>`);
 					let healDamage = $(`<button class='applyDamageButton heal'>${healSVG}</button>`);
 
 
@@ -53,6 +54,9 @@ const debounceHandleInjected = mydebounce(() => {
 						let damage = current.data.injected_data.result;
 						if(clicked.hasClass('resist')){
 							damage = Math.max(1, Math.floor(damage/2));
+						}
+						else if(clicked.hasClass('resist-save')){
+							damage = Math.max(1, Math.floor(damage / 4));
 						}
 						else if(clicked.hasClass('vulnerable')){
 							damage = damage*2;
@@ -91,13 +95,13 @@ const debounceHandleInjected = mydebounce(() => {
 						}
 					})
 					if(rollType == 'damage'){
-						damageButtonContainer.append(damageButton, halfDamage, doubleDamage);
+						damageButtonContainer.append(damageButton, halfDamage, quarterDamage, doubleDamage);
 					}
 					else if(rollType == 'heal'){
 						damageButtonContainer.append(healDamage);
 					}
 					else{
-						damageButtonContainer.append(damageButton, halfDamage, doubleDamage, healDamage);
+						damageButtonContainer.append(damageButton, halfDamage, quarterDamage, doubleDamage, healDamage);
 					}
 					
 					li.find(`[class*='MessageContainer-Flex']`).append(damageButtonContainer);
@@ -1404,6 +1408,7 @@ class MessageBroker {
 									let damageButton = $(`<button class='applyDamageButton flat'>${damageSVG}</button>`);
 									let halfDamage = $(`<button class='applyDamageButton resist'>1/2 ${damageSVG}</button>`);
 									let doubleDamage = $(`<button class='applyDamageButton vulnerable'>2x${damageSVG}</button>`);
+									let quarterDamage = $(`<button class='applyDamageButton resist-save'>1/4 ${damageSVG}</button>`);
 									let healDamage = $(`<button class='applyDamageButton heal'>${healSVG}</button>`);
 
 
@@ -1413,6 +1418,9 @@ class MessageBroker {
 										let damage = allRollsTotal;
 										if(clicked.hasClass('resist')){
 											damage = Math.max(1, Math.floor(damage/2));
+										}
+										else if (clicked.hasClass('resist-save')) {
+											damage = Math.max(1, Math.floor(damage / 4));
 										}
 										else if(clicked.hasClass('vulnerable')){
 											damage = damage*2;
@@ -1451,13 +1459,13 @@ class MessageBroker {
 
 									})
 									if(rollType == 'damage'){
-										damageButtonContainer.append(damageButton, halfDamage, doubleDamage);
+										damageButtonContainer.append(damageButton, halfDamage, quarterDamage, doubleDamage);
 									}
 									else if(rollType == 'heal'){
 										damageButtonContainer.append(healDamage);
 									}
 									else{
-										damageButtonContainer.append(damageButton, halfDamage, doubleDamage, healDamage);
+										damageButtonContainer.append(damageButton, halfDamage, quarterDamage, doubleDamage, healDamage);
 									}
 								
 									target.find(`[class*='MessageContainer-Flex']`).append(damageButtonContainer);
