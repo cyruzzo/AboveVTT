@@ -3148,6 +3148,8 @@ class Token {
 						ctx = window.moveOffscreenContext
 						window.DRAWFUNCTION = "select"
 						window.DRAGGING = true;
+						if (contextMenuLongPressTimer)
+							clearTimeout(contextMenuLongPressTimer);
 						window.oldTokenPosition = {};
 						
 						self.prepareWalkableArea()
@@ -4249,7 +4251,7 @@ function determine_hidden_classname(tokenIds) {
 		return "some-active active-condition";
 	}
 }
-
+let contextMenuLongPressTimer;
 function token_menu() {
 		let initialX;
 		let initialY;
@@ -4258,7 +4260,7 @@ function token_menu() {
 			event.preventDefault();
 			initialX = event.touches[0].pageX;
 			initialY = event.touches[0].pageY;
-		    LongPressTimer = setTimeout(function() {
+			contextMenuLongPressTimer = setTimeout(function() {
 			    console.log("context_menu_flyout contextmenu event", event);
 				if (window.DRAGGING || $(".pause_click").length > 0) {
 					return;
@@ -4273,7 +4275,7 @@ function token_menu() {
 		  .on('touchend', function(e) {
 		  	e.stopPropagation();
 			e.preventDefault();
-		    clearTimeout(LongPressTimer)
+		    clearTimeout(contextMenuLongPressTimer)
 		  })
 		  .on('touchmove', function(e) {
 		  	e.stopPropagation();
@@ -4281,7 +4283,7 @@ function token_menu() {
 			let currentY = e.touches[0].pageY;
 			let currentX = e.touches[0].pageX;
 		  	if(Math.abs(initialX-currentX) >= 5 || Math.abs(initialY-currentY) >= 5 ){
-		  		clearTimeout(LongPressTimer)
+		  		clearTimeout(contextMenuLongPressTimer)
 		  	}
 		    
 		  });
@@ -4290,6 +4292,7 @@ function token_menu() {
 			event.preventDefault();
 			event.stopPropagation();
 			if (window.DRAGGING || $(".pause_click").length > 0) {
+				clearTimeout(contextMenuLongPressTimer);
 				return;
 			}
 			if ($(event.currentTarget).hasClass("tokenselected") && window.CURRENTLY_SELECTED_TOKENS.length > 0) {
