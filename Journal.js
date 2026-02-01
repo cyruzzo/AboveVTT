@@ -4026,6 +4026,7 @@ class JournalManager{
 			selector: '#' + tmp,
 			menubar: false,
 			end_container_on_empty_block: true,
+			forced_root_block: 'p',
 			style_formats:  [
 				 { title: 'Headers', items: [
 			      { title: 'h1', block: 'h1' },
@@ -4324,6 +4325,32 @@ class JournalManager{
 			],
 			valid_children : '+body[style]',
 			setup: function (editor) { 
+				editor.on("keydown", function (e) {
+					if (e.which == "13" || e.keyCode == "13") {
+						
+						if(!e.shiftKey){
+							let currentNode = editor.selection.getNode();
+							const skipInsertP = currentNode.tagName == 'P' || currentNode.textContent.trim() == ""
+							if (skipInsertP)
+								return;
+							e.preventDefault();
+
+							editor.insertContent('<p id="temp_new_p"></p>')
+							
+							
+							setTimeout(() => {
+								let newP = editor.dom.get('temp_new_p');
+								if (newP) {
+									editor.focus();
+									editor.selection.setCursorLocation(newP, 0);
+									editor.dom.setAttrib(newP, 'id', null);
+								}
+							}, 0)
+							
+						}
+						
+					}
+				});
 				editor.addButton('horizontalrules', {
 					  type: 'splitbutton',
 				      text: '',
