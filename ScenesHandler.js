@@ -516,7 +516,7 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 
 		$("#tokens").show();
 		$("#grid_overlay").show();
-
+		$(".alphaNumGrid").remove();
 
 
 		window.FOG_OF_WAR = true;
