@@ -1210,6 +1210,7 @@ function edit_scene_dialog(scene_id) {
 	
 		const {hpps, vpps, offsetx, offsety, grid_color, grid_line_width, grid_subdivided, grid} = await get_edit_form_data()
 		// redraw grid with new information
+		window.CURRENT_SCENE_DATA.grid = grid;
 		if(grid === "1" && window.CURRENT_SCENE_DATA.scale_check){
 			let conversion = window.CURRENT_SCENE_DATA.scale_factor * window.CURRENT_SCENE_DATA.conversion
 			redraw_grid(parseFloat(hpps*conversion), parseFloat(vpps*conversion), offsetx*conversion, offsety*conversion, grid_color, grid_line_width, grid_subdivided )
@@ -1336,7 +1337,7 @@ function edit_scene_dialog(scene_id) {
 		$("#darkness_layer").toggleClass("smooth-transition", true);
 		let darknessFilterRangeValue = parseInt(darknessFilterRange.val());
    	 	let darknessPercent = 100 - darknessFilterRangeValue;
-   	 	if(window.CURRENT_SCENE_DATA.id == window.ScenesHandler.scenes[scene_id].id) {
+   	 	if(window.CURRENT_SCENE_DATA.id == scene.id) {
 	   	 	$('#VTT').css('--darkness-filter', darknessPercent + "%");
    		}
    		setTimeout(function(){
@@ -1350,7 +1351,7 @@ function edit_scene_dialog(scene_id) {
 		darknessFilterRange.val(darknessNumberInput.val());
 		let darknessFilterRangeValue = parseInt(darknessFilterRange.val());
    	 	let darknessPercent = 100 - darknessFilterRangeValue;
-   	 	if(window.CURRENT_SCENE_DATA.id == window.ScenesHandler.scenes[scene_id].id) {
+		if (window.CURRENT_SCENE_DATA.id == scene.id) {
 	   	 	$('#VTT').css('--darkness-filter', darknessPercent + "%");
    		}
    		setTimeout(function(){
@@ -1401,18 +1402,33 @@ function edit_scene_dialog(scene_id) {
 		if ($(event.currentTarget).hasClass("rc-switch-checked")) {
 			// it was checked. now it is no longer checked
 			$(event.currentTarget).removeClass("rc-switch-checked");
-			if(window.ScenesHandler.current_scene_id == scene_id){
+			if (window.CURRENT_SCENE_DATA.id == scene.id){
 				window.CURRENT_SCENE_DATA.snap = "0";	
 			}	
 		} else {
 			// it was not checked. now it is checked
 			$(event.currentTarget).removeClass("rc-switch-unknown");
 			$(event.currentTarget).addClass("rc-switch-checked");
-			if(window.ScenesHandler.current_scene_id == scene_id){
+			if (window.CURRENT_SCENE_DATA.id == scene.id){
 				window.CURRENT_SCENE_DATA.snap = "1";
 			}	
 		}
-	})));
+	}))); 
+	form.append(form_row('alphaNumGrid', 'Add Alphanumeric Grid Labels', form_toggle("alphaNumGrid", null, false, function (event) {
+		if ($(event.currentTarget).hasClass("rc-switch-checked")) {
+			$(event.currentTarget).removeClass("rc-switch-checked");
+			if (window.CURRENT_SCENE_DATA.id == scene.id) {
+				window.CURRENT_SCENE_DATA.alphaNumGrid = "0";
+			}
+		} else {
+			$(event.currentTarget).removeClass("rc-switch-unknown");
+			$(event.currentTarget).addClass("rc-switch-checked");
+			if (window.CURRENT_SCENE_DATA.id == scene.id) {
+				window.CURRENT_SCENE_DATA.alphaNumGrid = "1";
+			}
+		}
+		redraw_alphanum_grid();
+	}))); 
 	form.find('#snapToGrid_row').attr('title', 'When enabled snaps the tokens to the grid. Otherwise tokens are able to be placed freely. Hold ctrl to when moving a token to temporarily override this.')
 
 
