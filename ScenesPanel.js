@@ -1429,7 +1429,7 @@ function edit_scene_dialog(scene_id) {
 		}
 		redraw_alphanum_grid();
 	}))); 
-	form.find('#alphaNumGrid_row').attr('title', 'When enabled will add an alphanumeric grid labels the scene. This is only supported when using square grid type.')
+	form.find('#alphaNumGrid_row').attr('title', 'When enabled adds alphanumeric grid labels the scene. This is only supported when using the square grid type.')
 
 	form.find('#snapToGrid_row').attr('title', 'When enabled snaps the tokens to the grid. Otherwise tokens are able to be placed freely. Hold ctrl to when moving a token to temporarily override this.')
 
