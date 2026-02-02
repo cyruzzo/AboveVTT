@@ -8242,6 +8242,7 @@ async function fetchFileFromS3WithRetry(originalName, cacheKey, sanitizedKey) {
 }
 
 async function getFileFromS3(fileName, highPriority=false) {
+  fileName = fileName.replace("’", "'")
   const originalName = typeof fileName === "string" ? fileName : "";
   if (!originalName) {
     throw new Error("Missing filename for S3 request");
