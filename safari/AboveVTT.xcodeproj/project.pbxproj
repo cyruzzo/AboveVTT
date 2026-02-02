@@ -167,6 +167,14 @@
 		20BD39B52D7619E300E6DADC /* color-picker.js in Resources */ = {isa = PBXBuildFile; fileRef = 20BD391D2D7619E300E6DADC /* color-picker.js */; };
 		20BD39B72D7619E300E6DADC /* color-picker.min.css in Resources */ = {isa = PBXBuildFile; fileRef = 20BD391F2D7619E300E6DADC /* color-picker.min.css */; };
 		20BD39B82D7619E300E6DADC /* DiceContextMenu in Resources */ = {isa = PBXBuildFile; fileRef = 20BD39202D7619E300E6DADC /* DiceContextMenu */; };
+		20F9D20E2F31324200A70999 /* avttS3Upload.js in Resources */ = {isa = PBXBuildFile; fileRef = 20F9D20D2F31324200A70999 /* avttS3Upload.js */; };
+		20F9D20F2F31324200A70999 /* avttS3Upload.js in Resources */ = {isa = PBXBuildFile; fileRef = 20F9D20D2F31324200A70999 /* avttS3Upload.js */; };
+		20F9D2112F31326800A70999 /* WeatherOverlay.js in Resources */ = {isa = PBXBuildFile; fileRef = 20F9D2102F31326800A70999 /* WeatherOverlay.js */; };
+		20F9D2122F31326800A70999 /* WeatherOverlay.js in Resources */ = {isa = PBXBuildFile; fileRef = 20F9D2102F31326800A70999 /* WeatherOverlay.js */; };
+		20F9D2192F31355900A70999 /* constants in Resources */ = {isa = PBXBuildFile; fileRef = 20F9D2182F31355900A70999 /* constants */; };
+		20F9D21A2F31355900A70999 /* constants in Resources */ = {isa = PBXBuildFile; fileRef = 20F9D2182F31355900A70999 /* constants */; };
+		20F9D21C2F31362900A70999 /* DMScreen.js in Resources */ = {isa = PBXBuildFile; fileRef = 20F9D21B2F31362900A70999 /* DMScreen.js */; };
+		20F9D21D2F31362900A70999 /* DMScreen.js in Resources */ = {isa = PBXBuildFile; fileRef = 20F9D21B2F31362900A70999 /* DMScreen.js */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -305,6 +313,10 @@
 		20BD391D2D7619E300E6DADC /* color-picker.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = "color-picker.js"; path = "../../color-picker.js"; sourceTree = "<group>"; };
 		20BD391F2D7619E300E6DADC /* color-picker.min.css */ = {isa = PBXFileReference; lastKnownFileType = text.css; name = "color-picker.min.css"; path = "../../color-picker.min.css"; sourceTree = "<group>"; };
 		20BD39202D7619E300E6DADC /* DiceContextMenu */ = {isa = PBXFileReference; lastKnownFileType = folder; name = DiceContextMenu; path = ../../DiceContextMenu; sourceTree = "<group>"; };
+		20F9D20D2F31324200A70999 /* avttS3Upload.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = avttS3Upload.js; path = ../avttS3Upload.js; sourceTree = SOURCE_ROOT; };
+		20F9D2102F31326800A70999 /* WeatherOverlay.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = WeatherOverlay.js; path = ../WeatherOverlay.js; sourceTree = SOURCE_ROOT; };
+		20F9D2182F31355900A70999 /* constants */ = {isa = PBXFileReference; lastKnownFileType = folder; path = ../../constants; sourceTree = "<group>"; };
+		20F9D21B2F31362900A70999 /* DMScreen.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = DMScreen.js; path = ../DMScreen.js; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -439,6 +451,7 @@
 			children = (
 				20BD38D52D7619E300E6DADC /* DDBApi.js */,
 				20BD38D62D7619E300E6DADC /* purify.min.js */,
+				20F9D20D2F31324200A70999 /* avttS3Upload.js */,
 				20BD38D72D7619E300E6DADC /* ajaxQueue */,
 				20BD38D82D7619E300E6DADC /* PeerManager.js */,
 				20BD38D92D7619E300E6DADC /* fuse.min.js */,
@@ -494,10 +507,13 @@
 				20BD39102D7619E300E6DADC /* DiceRoller.js */,
 				20BD39112D7619E300E6DADC /* TokenCustomization.js */,
 				20BD39122D7619E300E6DADC /* peerVideo.js */,
+				20F9D21B2F31362900A70999 /* DMScreen.js */,
 				20BD39132D7619E300E6DADC /* CampaignPage.js */,
+				20F9D2102F31326800A70999 /* WeatherOverlay.js */,
 				20BD39142D7619E300E6DADC /* TokensPanel.js */,
 				20BD39152D7619E300E6DADC /* SidebarPanel.js */,
 				20BD39162D7619E300E6DADC /* assets */,
+				20F9D2182F31355900A70999 /* constants */,
 				20BD39172D7619E300E6DADC /* CombatTracker.js */,
 				20BD39182D7619E300E6DADC /* environment.js */,
 				20BD39192D7619E300E6DADC /* Settings.js */,
@@ -686,6 +702,7 @@
 				20BD39732D7619E300E6DADC /* jquery.contextMenu.css in Resources */,
 				20BD39A72D7619E300E6DADC /* manifest.json in Resources */,
 				20BD39702D7619E300E6DADC /* PeerManager.js in Resources */,
+				20F9D2122F31326800A70999 /* WeatherOverlay.js in Resources */,
 				20BD397C2D7619E300E6DADC /* jquery-ui.min.css in Resources */,
 				20BD39B12D7619E300E6DADC /* Settings.js in Resources */,
 				20BD39982D7619E300E6DADC /* rpg-dice-roller.bundle.min.js in Resources */,
@@ -702,6 +719,7 @@
 				20BD39B82D7619E300E6DADC /* DiceContextMenu in Resources */,
 				20BD39B52D7619E300E6DADC /* color-picker.js in Resources */,
 				20BD398E2D7619E300E6DADC /* jquery.ui.touch-punch.js in Resources */,
+				20F9D20E2F31324200A70999 /* avttS3Upload.js in Resources */,
 				20BD39782D7619E300E6DADC /* jquery.magnific-popup.min.js in Resources */,
 				20BD398B2D7619E300E6DADC /* StatHandler.js in Resources */,
 				20BD39A92D7619E300E6DADC /* TokenCustomization.js in Resources */,
@@ -725,8 +743,10 @@
 				20BD39862D7619E300E6DADC /* ChatObserver.js in Resources */,
 				20BD397F2D7619E300E6DADC /* ScenesPanel.js in Resources */,
 				20BD39B42D7619E300E6DADC /* PeerCommunication.js in Resources */,
+				20F9D21C2F31362900A70999 /* DMScreen.js in Resources */,
 				20BD397B2D7619E300E6DADC /* Fog.js in Resources */,
 				20BD39802D7619E300E6DADC /* LICENSE in Resources */,
+				20F9D2192F31355900A70999 /* constants in Resources */,
 				20BD39962D7619E300E6DADC /* Journal.js in Resources */,
 				20BD39832D7619E300E6DADC /* images in Resources */,
 				20BD398F2D7619E300E6DADC /* mousetrap.1.6.5.min.js in Resources */,
@@ -762,6 +782,7 @@
 				20BD39272D7619E300E6DADC /* jquery.contextMenu.css in Resources */,
 				20BD395B2D7619E300E6DADC /* manifest.json in Resources */,
 				20BD39242D7619E300E6DADC /* PeerManager.js in Resources */,
+				20F9D2112F31326800A70999 /* WeatherOverlay.js in Resources */,
 				20BD39302D7619E300E6DADC /* jquery-ui.min.css in Resources */,
 				20BD39652D7619E300E6DADC /* Settings.js in Resources */,
 				20BD394C2D7619E300E6DADC /* rpg-dice-roller.bundle.min.js in Resources */,
@@ -778,6 +799,7 @@
 				20BD396C2D7619E300E6DADC /* DiceContextMenu in Resources */,
 				20BD39692D7619E300E6DADC /* color-picker.js in Resources */,
 				20BD39422D7619E300E6DADC /* jquery.ui.touch-punch.js in Resources */,
+				20F9D20F2F31324200A70999 /* avttS3Upload.js in Resources */,
 				20BD392C2D7619E300E6DADC /* jquery.magnific-popup.min.js in Resources */,
 				20BD393F2D7619E300E6DADC /* StatHandler.js in Resources */,
 				20BD395D2D7619E300E6DADC /* TokenCustomization.js in Resources */,
@@ -801,8 +823,10 @@
 				20BD393A2D7619E300E6DADC /* ChatObserver.js in Resources */,
 				20BD39332D7619E300E6DADC /* ScenesPanel.js in Resources */,
 				20BD39682D7619E300E6DADC /* PeerCommunication.js in Resources */,
+				20F9D21D2F31362900A70999 /* DMScreen.js in Resources */,
 				20BD392F2D7619E300E6DADC /* Fog.js in Resources */,
 				20BD39342D7619E300E6DADC /* LICENSE in Resources */,
+				20F9D21A2F31355900A70999 /* constants in Resources */,
 				20BD394A2D7619E300E6DADC /* Journal.js in Resources */,
 				20BD39372D7619E300E6DADC /* images in Resources */,
 				20BD39432D7619E300E6DADC /* mousetrap.1.6.5.min.js in Resources */,
@@ -1097,6 +1121,8 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "iOS (App)/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = AboveVTT;
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.role-playing-games";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
@@ -1133,6 +1159,8 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "iOS (App)/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = AboveVTT;
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.role-playing-games";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
