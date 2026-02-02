@@ -3326,7 +3326,10 @@ function drawing_mousemove(e) {
 		clientY: (e.touches) ? e.touches[0].clientY : e.clientY,
 		pageY: (e.touches) ? e.touches[0].pageY : e.pageY
 	}
-
+	if(!window.temp_context){
+		window.temp_canvas = document.getElementById("temp_overlay");;
+		window.temp_context = window.temp_canvas.getContext("2d");
+	}
 	window.temp_context.filter = window.LINEBLUR != undefined ? `blur(${window.LINEBLUR}px)` : `none`;
 
 	if (window.MOUSEDOWN || window.DRAWSHAPE === "brush") {
