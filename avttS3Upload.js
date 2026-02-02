@@ -7944,7 +7944,7 @@ function getFileFromS3Delay(ms) {
   });
 }
 
-function cacheGetFileFromS3Url(cacheKey, sanitizedKey, fileURL) {
+function cacheGetFileFromS3Url(cacheKey, fileURL) {
   if (!cacheKey || !fileURL) {
     return;
   }
@@ -7956,12 +7956,6 @@ function cacheGetFileFromS3Url(cacheKey, sanitizedKey, fileURL) {
     url: fileURL,
     expire: expireAt,
   };
-  if (sanitizedKey && sanitizedKey !== cacheKey) {
-    window.avtt_file_urls[sanitizedKey] = {
-      url: fileURL,
-      expire: expireAt,
-    };
-  }
 }
 
 async function processGetFileFromS3Queue() {
@@ -8086,7 +8080,7 @@ async function processGetFileFromS3Queue() {
         const url = result?.url;
         if (url) {
           for (const item of entry.items) {
-            cacheGetFileFromS3Url(item.cacheKey, item.sanitizedKey, url);
+            cacheGetFileFromS3Url(item.cacheKey, url);
             item.resolve(url);
             unresolvedItems.delete(item);
           }
@@ -8230,7 +8224,7 @@ async function fetchFileFromS3WithRetry(originalName, cacheKey, sanitizedKey) {
       if (!fileURL) {
         throw new Error("File not found on S3");
       }
-      cacheGetFileFromS3Url(cacheKey, sanitizedKey, fileURL);
+      cacheGetFileFromS3Url(cacheKey, fileURL);
       return fileURL;
     } catch (error) {
       lastError = error;
@@ -8258,12 +8252,12 @@ async function getFileFromS3(fileName, highPriority=false) {
   if (!window.avtt_file_urls) {
     window.avtt_file_urls = {};
   } 
-  const cachedValue = window.avtt_file_urls[cacheKey] || (sanitizedKey ? window.avtt_file_urls[sanitizedKey] : undefined);
+  const cachedValue = window.avtt_file_urls[cacheKey] || undefined;
   if (cachedValue?.expire > Date.now()){
     return cachedValue.url;
   }
 
-  if (getFileFromS3Pending.has(cacheKey)) {
+  if (getFileFromS3Pending.has(cacheKey)) { 
 
     if (highPriority) {
       const i = getFileFromS3Queue.findIndex(item => item.cacheKey === cacheKey);
