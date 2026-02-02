@@ -2768,7 +2768,7 @@ class JournalManager{
 			} else if (url?.startsWith('above-bucket-not-a-url')) {
 				url = await getAvttStorageUrl(url);
 			}
-			encodeURI(url);
+			
 			const newFrame = $(`<iframe class='journal-site-embed'
 						src='${window.EXTENSION_PATH}iframe.html?src=${encodeURIComponent(url)}'
 						allowfullscreen
