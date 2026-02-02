@@ -1541,6 +1541,8 @@ function edit_scene_dialog(scene_id) {
 		const max = parseFloat($(this).attr('max'));
 		const percentage = Math.round((val - min) / (max - min) * 100);
 		particleCount.text(percentage + '%');
+		window.CURRENT_SCENE_DATA.weatherIntensity = val;
+		set_weather();
 	});
 
 	weatherSelect.on('change', function() {
@@ -1556,6 +1558,9 @@ function edit_scene_dialog(scene_id) {
 			particleCount.text(percentage + '%');
 			intensityRow.show();
 		}
+		window.CURRENT_SCENE_DATA.weather = selectedWeather;
+		window.CURRENT_SCENE_DATA.weatherIntensity = intensitySlider.val();
+		set_weather();
 	});
 
 	if (weatherValue === 0 || weatherValue === '0') {
