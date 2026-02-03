@@ -1332,7 +1332,7 @@ function edit_scene_dialog(scene_id) {
 	let darknessValue = scene.darkness_filter || 0;
 	let darknessFilterRange = $(`<input name="darkness_filter" class="darkness-filter-range" type="range" value="${darknessValue}" min="0" max="100" step="1"/>`);
 	let darknessNumberInput = $(`<input name='darkness_filter_number' class='styled-number-input' type='number' min='0' max='100' value='${darknessValue}'/>`)
-	
+
 	darknessFilterRange.on('input change', function(){
 		$("#darkness_layer").toggleClass("smooth-transition", true);
 		let darknessFilterRangeValue = parseInt(darknessFilterRange.val());
@@ -1359,10 +1359,7 @@ function edit_scene_dialog(scene_id) {
    		}, 400);  		
 	});
 
-	darknessFilterRange.on('mouseup', function(){
-   	 	let darknessFilterRangeValue = parseInt(darknessFilterRange.val());
-   	 	scene.darkness_filter = darknessFilterRangeValue;
-	});
+
 
 	form.append(form_row('darknessFilter',
 						'Line of Sight/Darkness Opacity',
@@ -1702,12 +1699,10 @@ function edit_scene_dialog(scene_id) {
 		// redraw or clear grid based on scene data
 		// discarding any changes that have been made to live modification of grid
 		if (scene.id === window.CURRENT_SCENE_DATA.id){
-			if(window.CURRENT_SCENE_DATA.grid === "1"){
-				redraw_grid()
+			const msg = {
+				data: {...scene}
 			}
-			else{
-				clear_grid()
-			}
+			window.MB.handleScene(msg);
 		}
 		$("#sources-import-main-container").remove();
 		$(".ddb-classes-page-stylesheet").remove();
