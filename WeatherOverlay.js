@@ -92,9 +92,10 @@ class WeatherOverlay {
     _initParticles() {
         this.particles = [];
         const count = this.intensity !== undefined ? this.intensity : 120;
-        if(this.type != '0'){
-            const weatherTypes = getWeatherTypes();
-            const data = weatherTypes[this.type];
+        const weatherTypes = getWeatherTypes();
+        const data = weatherTypes[this.type];
+        if (data != undefined){
+
             const defaultIntensity = data.default;
 
             const intensityMultiplier = this.intensity > defaultIntensity

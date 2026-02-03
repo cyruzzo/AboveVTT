@@ -2730,12 +2730,11 @@ class JournalManager{
 		const aboveSrc = $newHTML.find(`[src*='above-bucket']:not([src*='?src=above-bucket']), [href*='above-bucket']`);
 		for (let i = 0; i < aboveSrc.length; i++) {
 			const currTarget = aboveSrc[i];
-			const src = decodeURI(currTarget.src);
-			const href = decodeURI(currTarget.href);
-
+			const src = decodeURI(currTarget.src).replaceAll("’", "'");
+			const href = decodeURI(currTarget.href).replaceAll("’", "'");
 			if (src?.match(/.*?above-bucket-not-a-url\/(.*?)/gi)) {
 				let url = src.replace(/.*?above-bucket-not-a-url\/(.*?)/gi, '$1')
-				url = await getAvttStorageUrl(url);
+				url = await getAvttStorageUrl(url, true);
 				if ($(currTarget).is('source') && $(currTarget).parent().is('video')) {
 					const parentVideo = $(currTarget).parent('video');
 					parentVideo.attr('src', url);
@@ -2749,14 +2748,14 @@ class JournalManager{
 			}
 			else if (href?.match(/.*?above-bucket-not-a-url\/(.*?)/gi)) {
 				let url = href.replace(/.*?above-bucket-not-a-url\/(.*?)/gi, '$1')
-				url = await getAvttStorageUrl(decodeURI(url));
+				url = await getAvttStorageUrl(decodeURI(url), true);
 				$(currTarget).attr('href', url);
 			}
 		}
 
 		const iframes = $newHTML.find('.journal-site-embed')
 		for (let i = 0; i < iframes.length; i++) {
-			let url = $(iframes[i]).text();
+			let url = $(iframes[i]).text().replaceAll("’", "'");
 			if (url?.includes('dropbox.com')) {
 				url = url.replace('dl=0', 'raw=1')
 			}
@@ -2766,9 +2765,9 @@ class JournalManager{
 				url = url.replace("youtube.com", "youtube-nocookie.com");
 				url = url.replace(/watch\?v=(.*)/gi, 'embed/$1');
 			} else if (url?.startsWith('above-bucket-not-a-url')) {
-				url = await getAvttStorageUrl(url);
+				url = await getAvttStorageUrl(url, true);
 			}
-			encodeURI(url);
+			
 			const newFrame = $(`<iframe class='journal-site-embed'
 						src='${window.EXTENSION_PATH}iframe.html?src=${encodeURIComponent(url)}'
 						allowfullscreen
@@ -2778,7 +2777,7 @@ class JournalManager{
 		}
 		const avttIframes = $newHTML.find('iframe[src*="src=above-bucket-not-a-url"]');
 		for (let i = 0; i < avttIframes.length; i++) {
-			const currSrc = avttIframes[i].src;
+			const currSrc = avttIframes[i].src.replaceAll("’", "'");
 			const urlParams = new URLSearchParams(currSrc.split('?')[1]);
 			const origSrc = urlParams.get('src');
 			const src = await getAvttStorageUrl(origSrc, true);
@@ -2787,7 +2786,8 @@ class JournalManager{
 		const avttImages = $newHTML.find('img[data-src*="above-bucket-not-a-url"]')
 
 		for(let i = 0; i < avttImages.length; i++){
-			const src = await getAvttStorageUrl(avttImages[i].getAttribute('data-src'), true);
+			const dataSrc = avttImages[i].getAttribute('data-src').replaceAll("’", "'")
+			const src = await getAvttStorageUrl(dataSrc, true);
 			avttImages[i].src = src;
 			avttImages[i].href = src;
 		}

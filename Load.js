@@ -124,7 +124,7 @@ if (isPlainCharacterPage) {
 		{ src: "SidebarPanel.js" },
 		{ src: "StatHandler.js" },
 		{ src: "Token.js" },
-		{ src: "constants/Names.js" },
+		{ src: "constants/names.js" },
 		{ src: "TokenMenu.js" },
 		{ src: "ChatObserver.js" },
 		{ src: "DiceContextMenu/DiceContextMenu.js" },
