@@ -1114,7 +1114,7 @@ async function create_and_place_token(listItem, hidden = undefined, specificImag
         return;
     }
 
-    if (listItem.isTypeFolder() || listItem.isTypeEncounter()) {{tokenStyleSelect: "definitelyNotAToken"}
+    if (listItem.isTypeFolder() || listItem.isTypeEncounter()) {
 
         let tokensToPlace = [];
 
@@ -4268,14 +4268,13 @@ function register_custom_token_image_context_menu() {
             }
             items.copy = {
                 name: "Copy Url",
-                callback: function (itemKey, opt, e) {
-                      
-                        let selectedItem = $(opt.$trigger[0]);
-                        let imgSrc = selectedItem.find(".token-image").attr("src");
-                        if(tokenChangeImage){
-                            imgSrc = selectedItem.attr("src");
-                        }
-                        copy_to_clipboard(imgSrc); 
+                callback: function (itemKey, opt, e) {          
+                    let selectedItem = $(opt.$trigger[0]);
+                    let imgSrc = selectedItem.find(".token-image").attr("data-src");
+                    if(tokenChangeImage){
+                        imgSrc = selectedItem.attr("data-src");
+                    }
+                    copy_to_clipboard(imgSrc); 
                 }
             };
             items.sendToGamelog = {
