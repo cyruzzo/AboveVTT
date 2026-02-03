@@ -741,10 +741,10 @@ class WeatherOverlay {
             this.lightCtx.globalAlpha = 0.5;
             this.lightCtx.beginPath();
             this.lightCtx.ellipse(
-                this._lightningStrike.x + Math.cos(this._lightningStrike.angle) * this._lightningStrike.length * 0.5,
-                this._lightningStrike.y + Math.sin(this._lightningStrike.angle) * this._lightningStrike.length * 0.5,
-                glowRadiusX,
-                glowRadiusY,
+                (this._lightningStrike.x + Math.cos(this._lightningStrike.angle) * this._lightningStrike.length * 0.5) / window.CURRENT_SCENE_DATA.scale_factor,
+                (this._lightningStrike.y + Math.sin(this._lightningStrike.angle) * this._lightningStrike.length * 0.5) / window.CURRENT_SCENE_DATA.scale_factor,
+                glowRadiusX / window.CURRENT_SCENE_DATA.scale_factor,
+                glowRadiusY / window.CURRENT_SCENE_DATA.scale_factor,
                 this._lightningStrike.angle,
                 0,
                 Math.PI * 2
@@ -797,10 +797,6 @@ class WeatherOverlay {
     }
 
     _drawRain() {
-
-
-
-
         for (let p of this.particles) {
             if (p.splash && p.start == true) {
                 this.offscreenCtx.save();
