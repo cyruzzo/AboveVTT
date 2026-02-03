@@ -1,26 +1,80 @@
 class WeatherOverlay {
     constructor(canvas, lightCanvas, type = 'rain', intensity = 120) {
-        
-        this.offscreenCanvas = new OffscreenCanvas(canvas.width, canvas.height);;
-        this.offscreenCtx = this.offscreenCanvas.getContext('2d');
+        this.offscreenCanvas = new OffscreenCanvas(0,0);
         this.canvas = canvas;
-        this.ctx = canvas.getContext('2d');
         this.lightCanvas = lightCanvas;
-        this.lightCtx = lightCanvas.getContext('2d');  
-        this.type = type;
-        this.intensity = intensity;
         this.particles = [];
         this.animationId = null;
         this.width = canvas.width;
         this.height = canvas.height;
-        this._initParticles();
+        this.setType(type, intensity);
+    }
+    resizedCtx(current, canvas, nonzero) {
+        if(nonzero) {
+            if(!current || canvas.width != this.width || canvas.height != this.height) {
+                canvas.width = this.width;
+                canvas.height = this.height;
+		$(canvas).css({
+			'transform-origin': 'top left',
+			'transform': 'scale(var(--scene-scale))'
+		});
+                current = canvas.getContext('2d');
+            } else {
+                current.clearRect(0, 0, this.width, this.height);                            
+            }
+        } else {
+            canvas.width = canvas.height = 0;
+            current = null;
+        }
+        return current;
     }
     setType(type, intensity) {
-        this.type = type;
-        if (intensity !== undefined) {
-            this.intensity = intensity;
+        console.log("WEATHERTYPE", type, intensity);
+        if (this.animationId) {        //stop
+            cancelAnimationFrame(this.animationId);
+            this.animationId = null;
         }
-        this._initParticles();
+        this.type = type;
+        const weatherData = getWeatherTypes()[this.type];
+        this.intensity = intensity || weatherData?.default || 120;
+        //start or optimize canvas away
+        const weatherExists = (this.type && this.type != '0');
+        this.ctx = this.resizedCtx(this.ctx, this.canvas, weatherExists);
+        this.offscreenCtx = this.resizedCtx(this.offscreenCtx, this.offscreenCanvas, weatherExists);
+        this.lightCtx = this.resizedCtx(this.lightCtx, this.lightCanvas, weatherExists && weatherData?.lit);
+        
+        if(weatherExists) {
+            this._initParticles();
+            this._animate();
+            
+            if (this.type === 'fog') {
+                $(this.canvas).css({
+                    filter: `blur(${window.CURRENT_SCENE_DATA.hpps / window.CURRENT_SCENE_DATA.scale_factor}px`
+                })
+            }
+            else if (this.type === 'faerieLight' || this.type === 'fireflies') {
+                $(this.canvas).css({
+                    filter: `blur(1px)`
+                })
+            }
+            else {
+                $(this.canvas).css({
+                    filter: ``
+                })
+            }
+            
+            if (weatherData.lit) {
+                $(this.lightCanvas).css({
+                    filter: `blur(${window.CURRENT_SCENE_DATA.hpps / window.CURRENT_SCENE_DATA.scale_factor}px`
+                })
+            }
+            else{
+                $(this.lightCanvas).css({
+                    filter: ``
+                })
+            }
+            
+        }
     }
     
     setIntensity(intensity) {
@@ -29,10 +83,9 @@ class WeatherOverlay {
     }
 
     setSize(width, height) {
+        console.log("WEATHERSIZE", width, height);
         this.width = width;
         this.height = height;
-        this.offscreenCanvas.width = width;
-        this.offscreenCanvas.height = height;
         this._initParticles();
     }
 
@@ -370,49 +423,7 @@ class WeatherOverlay {
         }
     }
 
-    start() {
-        if (!this.animationId) {
-            this._animate();
-            if (this.type === 'fog') {
-                $(this.canvas).css({
-                    filter: `blur(${window.CURRENT_SCENE_DATA.hpps / window.CURRENT_SCENE_DATA.scale_factor}px`
-                })
-            }
-            else if (this.type === 'faerieLight' || this.type === 'fireflies') {
-                $(this.canvas).css({
-                    filter: `blur(1px)`
-                })
-            }
-            else {
-                $(this.canvas).css({
-                    filter: ``
-                })
-            }
-
-            if (this.type === 'lightning') {
-                $(this.lightCanvas).css({
-                    filter: `blur(${window.CURRENT_SCENE_DATA.hpps / window.CURRENT_SCENE_DATA.scale_factor}px`
-                })
-            }
-            else{
-                $(this.lightCanvas).css({
-                    filter: ``
-                })
-            }
-        }
-    }
-
     
-    stop(){
-        if (this.animationId) {
-            cancelAnimationFrame(this.animationId);
-            this.animationId = null;
-        }
-        this.offscreenCtx.clearRect(0, 0, this.width, this.height);
-        this.ctx.clearRect(0, 0, this.width, this.height);
-        this.lightCtx.clearRect(0, 0, this.width, this.height);   
-    }
-
     _animate = () => {
         const now = Date.now();
         if (!this._lastFrameTime) this._lastFrameTime = now;
@@ -971,28 +982,21 @@ class WeatherOverlay {
     }
 }
 
-function set_weather(){
-    const currentWeather = window.CURRENT_SCENE_DATA.weather || 'none';
-    const weatherTypes = getWeatherTypes();
-    const weatherData = weatherTypes[currentWeather];
-    const defaultIntensity = weatherData ? weatherData.default : 120;
-    const weatherIntensity = window.CURRENT_SCENE_DATA.weatherIntensity !== undefined ? window.CURRENT_SCENE_DATA.weatherIntensity : defaultIntensity;
-    
+function ensure_weather() {
     if(window.WeatherOverlay == undefined){
         const weatherCanvas = $('#weather_overlay');
         const weatherLightCanvas = $('#weather_light');
-        window.WeatherOverlay = new WeatherOverlay(weatherCanvas[0], weatherLightCanvas[0], currentWeather, weatherIntensity);
+        window.WeatherOverlay = new WeatherOverlay(weatherCanvas[0], weatherLightCanvas[0]);
     }
-
-    if(!currentWeather || currentWeather == 'none' || currentWeather == '0'){
-        window.WeatherOverlay.stop();
-        window.WeatherOverlay.ctx.clearRect(0, 0, window.WeatherOverlay.width, window.WeatherOverlay.height);
-        return;
-    }
-         
-    window.WeatherOverlay.stop();
-    window.WeatherOverlay.setType(window.CURRENT_SCENE_DATA.weather, weatherIntensity);
-    window.WeatherOverlay.start();
+}
+function set_weather(){
+    ensure_weather();
+    window.WeatherOverlay.setType(window.CURRENT_SCENE_DATA.weather || 'none', window.CURRENT_SCENE_DATA.weatherIntensity);
+}
+function set_weather_size(w, h){
+    ensure_weather();
+    window.WeatherOverlay.setSize(w, h);
+    set_weather();
 }
 
 function getWeatherTypes() {
@@ -1002,7 +1006,7 @@ function getWeatherTypes() {
         'fog': { type: 'Fog', min: 0, default: 10, max: 20 },
         'embers': { type: 'Embers', min: 0, default: 40, max: 80 },
         'cherryBlossoms': { type: 'Cherry Blossoms', min: 0, default: 40, max: 80 },
-        'lightning': { type: 'Lightning', min: 0, default: 60, max: 120 },
+        'lightning': { type: 'Lightning', min: 0, default: 60, max: 120, lit: true },
         'faerieLight': { type: 'Faerie Light', min: 0, default: 23, max: 46 },
         'fireflies': { type: 'Fireflies', min: 0, default: 28, max: 56 },
         'leaves': { type: 'Fall Leaves', min: 0, default: 32, max: 64 },
