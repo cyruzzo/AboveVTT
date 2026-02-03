@@ -873,7 +873,9 @@ function load_monster_stat(monsterId, tokenId, customStatBlock=undefined) {
 		return container;
 	}
 	if (should_use_iframes_for_monsters()) {
-		load_monster_stat_iframe(monsterId, tokenId);
+		const container = build_draggable_monster_window(tokenId);
+		container.find('.avtt-stat-block-container').remove();
+		container.append(load_monster_stat_iframe(monsterId, tokenId));
 		return container;
 	}
 	let container = build_draggable_monster_window(tokenId);
@@ -908,25 +910,10 @@ function load_monster_stat_iframe(monsterId, tokenId) {
 		$('#old_monster_block').remove();
 		$("#resizeDragMon").removeClass("hideMon");
 	}
-
-	// create a monster block wrapper element
-	if (! $("#resizeDragMon").length) {
-		const monStatBlockContainer = $(`<div id='resizeDragMon' style="display:none; left:300px"></div>`);
-		$("body").append(monStatBlockContainer)
-		monStatBlockContainer.append(build_combat_tracker_loading_indicator())
-		const loadingIndicator = monStatBlockContainer.find(".sidebar-panel-loading-indicator")
-		loadingIndicator.css("top", "25px")
-		loadingIndicator.css("height", "calc(100% - 25px)")
-		monStatBlockContainer.show("slow")
-		monStatBlockContainer.resize(function(e) {
-			e.stopPropagation();
-		});
-	}
-
-	const iframe = $(`<iframe id=monster_block data-monid=${monsterId}>`);
+	const container = $(`<div class='container avtt-stat-block-container'></div>`)
+	const iframe = $(`<iframe id='monster_block' data-monid='${monsterId}' style='width: 100%; height:100%; position:relative;'>`);
 	iframe.css("display", "none");
 
-	$("#resizeDragMon").append(iframe);
 
 	window.StatHandler.getStat(monsterId, function(stats) {
 		iframe.on("load", function(event) {
@@ -1017,77 +1004,8 @@ function load_monster_stat_iframe(monsterId, tokenId) {
 			});
 		});
 	});
-
-	/*Set draggable and resizeable on monster sheets for players. Allow dragging and resizing through iFrames by covering them to avoid mouse interaction*/
-	if($("#monster_close_title_button").length==0){
-		const monster_close_title_button=$('<div id="monster_close_title_button"><svg class="" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><g transform="rotate(-45 50 50)"><rect></rect></g><g transform="rotate(45 50 50)"><rect></rect></g></svg></div>')
-		$("#resizeDragMon").append(monster_close_title_button);
-		monster_close_title_button.click(function() {
-			close_player_monster_stat_block()
-		});
-	}
-	if($("#resizeDragMon .popout-button").length==0){
-		const monster_popout_button=$('<div class="popout-button"><svg xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 0 24 24" width="18px" fill="#000000"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M18 19H6c-.55 0-1-.45-1-1V6c0-.55.45-1 1-1h5c.55 0 1-.45 1-1s-.45-1-1-1H5c-1.11 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-6c0-.55-.45-1-1-1s-1 .45-1 1v5c0 .55-.45 1-1 1zM14 4c0 .55.45 1 1 1h2.59l-9.13 9.13c-.39.39-.39 1.02 0 1.41.39.39 1.02.39 1.41 0L19 6.41V9c0 .55.45 1 1 1s1-.45 1-1V4c0-.55-.45-1-1-1h-5c-.55 0-1 .45-1 1z"/></svg></div>')
-		$("#resizeDragMon").append(monster_popout_button);
-		monster_popout_button.click(function() {
-			let name = $("#resizeDragMon .avtt-stat-block-container .mon-stat-block__name-link").text();
-			popoutWindow(name, $("#resizeDragMon .avtt-stat-block-container"));
-			name = name.replace(/(\r\n|\n|\r)/gm, "").trim();
-			$(window.childWindows[name].document).find(".avtt-roll-button").on("contextmenu", function (contextmenuEvent) {
-				$(window.childWindows[name].document).find("body").append($("div[role='presentation']").clone(true, true));
-				let popoutContext = $(window.childWindows[name].document).find(".dcm-container");
-				let maxLeft = window.childWindows[name].innerWidth - popoutContext.width();
-				let maxTop =  window.childWindows[name].innerHeight - popoutContext.height();
-				if(parseInt(popoutContext.css("left")) > maxLeft){
-					popoutContext.css("left", maxLeft)
-				}
-				if(parseInt(popoutContext.css("top")) > maxTop){
-					popoutContext.css("top", maxTop)
-				}
-				$(window.childWindows[name].document).find("div[role='presentation']").on("click", function (clickEvent) {
-           			 $(window.childWindows[name].document).find("div[role='presentation']").remove();
-        		});
-				$(".dcm-backdrop").remove();
-			});
-			monster_close_title_button.click();
-		});
-	}
-	$("#resizeDragMon").addClass("moveableWindow");
-	if(!$("#resizeDragMon").hasClass("minimized")){
-		$("#resizeDragMon").addClass("restored");
-	}
-	else{
-		$("#resizeDragMon").dblclick();
-	}
-	$("#resizeDragMon").resizable({
-		addClasses: false,
-		handles: "all",
-		containment: "#windowContainment",
-		start: function () {
-			$("#resizeDragMon, .note:has(iframe) form .mce-container-body, #sheet").append($('<div class="iframeResizeCover"></div>'));
-		},
-		stop: function () {
-			$('.iframeResizeCover').remove();
-		},
-		minWidth: 200,
-		minHeight: 200
-	});
-
-	$("#resizeDragMon").mousedown(function(){
-		frame_z_index_when_click($(this));
-	});
-	$("#resizeDragMon").draggable({
-		addClasses: false,
-		scroll: false,
-		containment: "#windowContainment",
-		start: function () {
-			$("#resizeDragMon, .note:has(iframe) form .mce-container-body, #sheet").append($('<div class="iframeResizeCover"></div>'));
-		},
-		stop: function () {
-			$('.iframeResizeCover').remove();
-		}
-	});
-	minimize_player_monster_window_double_click($("#resizeDragMon"));
+	container.append(iframe);
+	return container;
 }
 
 function build_draggable_monster_window(tokenId) {

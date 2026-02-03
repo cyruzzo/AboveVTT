@@ -51,7 +51,7 @@ class WeatherOverlay {
             
             if (this.type === 'fog') {
                 $(this.canvas).css({
-                    filter: `blur(${window.CURRENT_SCENE_DATA.hpps / window.CURRENT_SCENE_DATA.scale_factor}px`
+                    filter: `blur(${ window.CURRENT_SCENE_DATA.hpps }px`
                 })
             }
             else if (this.type === 'faerieLight' || this.type === 'fireflies') {
