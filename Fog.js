@@ -1189,30 +1189,58 @@ function redraw_alphanum_grid(){
 
 
 
-
 	if (!window.CURRENT_SCENE_DATA.gridType || window.CURRENT_SCENE_DATA.gridType==1){
 		const numGridWide = Math.ceil((width + offsetx) * scale_factor / hpps);
 		const numGridHigh = Math.ceil((height + offsety) * scale_factor / vpps);
+		horizontalSvg.css({
+			'--stroke-width': `${hpps / 10}`,
+			'--font-size': `${hpps / 2}px`
+		})
+		verticalSvg.css({
+			'--stroke-width': `${vpps / 10}`,
+			'--font-size': `${vpps / 2}px`
+		})
 		for (let i = 1; i < numGridWide; i++) {
-			const textLine = `<text x='${(i * hpps) + hpps / 2 + offsetx - hpps * (Math.ceil(offsetx / hpps))}' y='50%' dominant-baseline="middle" text-anchor="middle" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0); stroke-width: 1; text-decoration: none rgb(0, 0, 0);stroke-linecap:butt;stroke-linejoin:round;paint-order:stroke;stroke-opacity:1; font-size: ${hpps / 2}px;"><tspan>${getAlphaLabel(i)}</tspan></text>`;
+			const textLine = `<text x='${(i * hpps) + hpps / 2 + offsetx - hpps * (Math.ceil(offsetx / hpps))}' y='50%'><tspan>${getAlphaLabel(i)}</tspan></text>`;
 			horizontalSvg[0].innerHTML += textLine;
 		}
 		for (let i = 1; i < numGridHigh; i++) {
-			const textLine = `<text x='50%' y='${(i * vpps) + vpps / 2 + offsety - vpps * (Math.ceil(offsety / vpps))}' dominant-baseline="middle" text-anchor="middle" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0); stroke-width: 1; text-decoration: none rgb(0, 0, 0);stroke-linecap:butt;stroke-linejoin:round;paint-order:stroke;stroke-opacity:1; font-size: ${vpps / 2}px;"><tspan>${i}</tspan></text>`;
+			const textLine = `<text x='50%' y='${(i * vpps) + vpps / 2 + offsety - vpps * (Math.ceil(offsety / vpps))}'><tspan>${i}</tspan></text>`;
 			verticalSvg[0].innerHTML += textLine;
 		}
+
 	} else if (window.CURRENT_SCENE_DATA.gridType == 2 || window.CURRENT_SCENE_DATA.gridType == 3){
-		hpps = window.hexGridSize.width;
-		vpps = window.hexGridSize.height;
+		const scaleX = window.CURRENT_SCENE_DATA.scaleAdjustment != undefined ? parseFloat(window.CURRENT_SCENE_DATA.scaleAdjustment.x) : 1;
+		const scaleY = window.CURRENT_SCENE_DATA.scaleAdjustment != undefined ? parseFloat(window.CURRENT_SCENE_DATA.scaleAdjustment.y) : 1;
+
+		hpps = window.hexGridSize.width * scaleX;
+		vpps = window.hexGridSize.height * scaleY;
+		/* Enable if we want half ticks for offset
+		if (window.CURRENT_SCENE_DATA.gridType == 2){
+			hpps = hpps / 2;
+		}
+		else if(window.CURRENT_SCENE_DATA.gridType == 3){
+			vpps = vpps / 2;
+		}
+		*/
+		horizontalSvg.css({
+			'--stroke-width': `${hpps / 10}`,
+			'--font-size': `${hpps / 2}px`
+		})
+		verticalSvg.css({
+			'--stroke-width': `${vpps / 10}`,
+			'--font-size': `${vpps / 2}px`
+		})
 		const numGridWide = Math.ceil((width + offsetx) * scale_factor / hpps);
 		const numGridHigh = Math.ceil((height + offsety) * scale_factor / vpps);
 	
+		
 		for (let i = 1; i < numGridWide; i++) {
-			const textLine = `<text x='${(i * hpps) + offsetx * (Math.ceil(offsetx / hpps))}' y='50%' dominant-baseline="middle" text-anchor="middle" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0); stroke-width: 1; text-decoration: none rgb(0, 0, 0);stroke-linecap:butt;stroke-linejoin:round;paint-order:stroke;stroke-opacity:1; font-size: ${hpps / 2}px;"><tspan>${getAlphaLabel(i)}</tspan></text>`;
+			const textLine = `<text x='${(i * hpps) + offsetx * (Math.ceil(offsetx / hpps))}' y='50%'><tspan>${getAlphaLabel(i)}</tspan></text>`;
 			horizontalSvg[0].innerHTML += textLine;
 		}
 		for (let i = 1; i < numGridHigh; i++) {
-			const textLine = `<text x='50%' y='${(i * vpps) + offsety * (Math.ceil(offsety / vpps))}' dominant-baseline="middle" text-anchor="middle" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0); stroke-width: 1; text-decoration: none rgb(0, 0, 0);stroke-linecap:butt;stroke-linejoin:round;paint-order:stroke;stroke-opacity:1; font-size: ${vpps / 2}px;"><tspan>${i}</tspan></text>`;
+			const textLine = `<text x='50%' y='${(i * vpps) + offsety * (Math.ceil(offsety / vpps))}'><tspan>${i}</tspan></text>`;
 			verticalSvg[0].innerHTML += textLine;
 		}
 	}
