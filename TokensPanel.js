@@ -1242,7 +1242,7 @@ async function create_and_place_token(listItem, hidden = undefined, specificImag
             options.color = `#${color}`;
             switch (options['placeType']) {
                 case 'personality':
-                    let personailityTrait = getPersonailityTrait()
+                    let personailityTrait = getPersonalityTrait()
                     console.log(`updating monster name with trait: ${personailityTrait}, and setting color: ${color}`);
                     options.name = ` ${personailityTrait} ${listItem.name}`;
                     break;
@@ -1328,7 +1328,7 @@ async function create_and_place_token(listItem, hidden = undefined, specificImag
             options.color = `#${color}`;
             switch (options['placeType']) {
                 case 'personality':
-                    let personailityTrait = getPersonailityTrait()
+                    let personailityTrait = getPersonalityTrait()
                     console.log(`updating monster name with trait: ${personailityTrait}, and setting color: ${color}`);
                     options.name = ` ${personailityTrait} ${listItem.name}`;
                     break;
@@ -1395,7 +1395,7 @@ async function create_and_place_token(listItem, hidden = undefined, specificImag
             switch (options['placeType']) {
            
                 case 'personality':
-                    let personailityTrait = getPersonailityTrait()
+                    let personailityTrait = getPersonalityTrait()
                     console.log(`updating monster name with trait: ${personailityTrait}, and setting color: ${color}`);
                     options.name = ` ${personailityTrait} ${listItem.name}`;
                     break;
@@ -1433,7 +1433,7 @@ async function create_and_place_token(listItem, hidden = undefined, specificImag
             options.color = `#${color}`;
             switch (options['placeType']) {
                 case 'personality':
-                    let personailityTrait = getPersonailityTrait()
+                    let personailityTrait = getPersonalityTrait()
                     console.log(`updating monster name with trait: ${personailityTrait}, and setting color: ${color}`);
                     options.name = ` ${personailityTrait} ${listItem.name}`;
                     break;
@@ -5121,7 +5121,7 @@ function convert_open5e_monsterData(monsterData){
 
         return monsterData;
 }
-function getPersonailityTrait(){
+function getPersonalityTrait(){
     let tokenPersonality = {
         1: "Accessible",
         2: "Active",
