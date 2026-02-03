@@ -910,8 +910,8 @@ function load_monster_stat_iframe(monsterId, tokenId) {
 		$('#old_monster_block').remove();
 		$("#resizeDragMon").removeClass("hideMon");
 	}
-
-	const iframe = $(`<iframe id=monster_block data-monid=${monsterId}>`);
+	const container = $(`<div class='container avtt-stat-block-container'></div>`)
+	const iframe = $(`<iframe id='monster_block' data-monid='${monsterId}' style='width: 100%; height:100%; position:relative;'>`);
 	iframe.css("display", "none");
 
 
@@ -1004,8 +1004,8 @@ function load_monster_stat_iframe(monsterId, tokenId) {
 			});
 		});
 	});
-
-	return iframe;
+	container.append(iframe);
+	return container;
 }
 
 function build_draggable_monster_window(tokenId) {
