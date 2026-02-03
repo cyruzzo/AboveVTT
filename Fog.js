@@ -1251,6 +1251,57 @@ function redraw_alphanum_grid(){
 
 	$('#VTT').append(horizontalSvg, verticalSvg);
 }
+
+const sr3 = Math.sqrt(3)/2; //for hex drawing
+//xs is measure face to face (should it be vertex?)
+function svg_grid(type = '1', xs = 100, ys = 100, color = 'black', lineWidth = 5, subdivide = null, dash = []) {
+    console.log("SVGGRID", type);
+    const strokeAttr = `fill="none" stroke="${color}" stroke-width="${lineWidth}" vector-effect="non-scaling-stroke"`;
+    const svg = ((type === '1') ? // Rectangular Grid
+        `<svg xmlns="http://www.w3.org/2000/svg" width="${xs}" height="${ys}" overflow="visible">
+            <path d="M ${xs} 0 L 0 0 0 ${ys}" ${strokeAttr}/>
+        </svg>` 
+        : (type === '2') ? // Vertical Hex (Pointy Top, Vertical Sides)
+        `<svg xmlns="http://www.w3.org/2000/svg" width="${xs}" height="${ys*1.5}" overflow="visible">
+            <path d="M ${xs} ${ys/4} L ${xs/2} 0 L 0 ${ys/4} L 0 ${ys*3/4} L ${xs/2} ${ys} L ${xs} ${ys*3/4} M ${xs/2} ${ys} L ${xs/2} ${ys*1.5} Z" ${strokeAttr}/>
+        </svg>` 
+        : // Horizontal Hex (Flat Top, Pointy Sides)
+        `<svg xmlns="http://www.w3.org/2000/svg" width="${xs*1.5}" height="${ys}" overflow="visible">
+            <path d="M ${xs/4} ${ys} L 0 ${ys/2} L ${xs/4} 0 L ${xs*3/4} 0 L ${xs} ${ys/2} L ${xs*3/4} ${ys} M ${xs} ${ys/2} L ${xs*1.5} ${ys/2} Z" ${strokeAttr}/>
+        </svg>`
+		).replace(/\s+/g, ' ').trim();
+    console.log("SVGGRID",svg);	
+    return "data:image/svg+xml;base64," + btoa(svg);
+}
+
+
+function draw_svg_grid(type=null, hpps=null, vpps=null, offsetX=null, offsetY=null, color=null, lineWidth=null, subdivide=null, dash=[]) {
+	const gridType = window.CURRENT_SCENE_DATA.gridType;
+	console.log("GRID TYPE", gridType);
+	const scale = window.CURRENT_SCENE_DATA.scale_factor
+	//what does grid scale measure for hex - i'm confused ????
+	const hexscale = (gridType === '1' ? 1 : sr3);
+	const xs = (hpps || window.CURRENT_SCENE_DATA.hpps)/ scale / (gridType === '3' ? sr3 : 1) / hexscale;
+	const ys = (vpps || window.CURRENT_SCENE_DATA.vpps)/ scale / (gridType === '2' ? sr3 : 1) / hexscale;
+	let startX = Math.round((offsetX || window.CURRENT_SCENE_DATA.offsetx) / scale);
+	let startY = Math.round((offsetY || window.CURRENT_SCENE_DATA.offsety) / scale); 
+	if(gridType !== '1') { //old 0,0 was center of hex - we are going from edge
+		startX -= xs/2;
+		startY -= ys/2;		
+	}
+	const gr = svg_grid(gridType, xs, ys,
+			    "red" || color || window.CURRENT_SCENE_DATA.grid_color,
+			    lineWidth || window.CURRENT_SCENE_DATA.grid_line_width);
+	const grc = $('#grid_svg_overlay');
+	const yadj = gridType === '2' ? 1.5 : 1; //adjust for next row/col extra bits
+	const xadj = gridType === '3' ? 1.5 : 1;
+	grc.css('background-image', "url("+gr+")");
+	grc.css('background-size', `${Math.round(xs * xadj)}px ${Math.round(ys * yadj)}px`);
+	grc.css('background-position-x', startX);
+	grc.css('background-position-y', startY);
+	grc.css('height', $('#scene_map').height());
+}	
+
 function redraw_grid(hpps=null, vpps=null, offsetX=null, offsetY=null, color=null, lineWidth=null, subdivide=null, dash=[]){
 	if(window.CURRENT_SCENE_DATA.gridType && window.CURRENT_SCENE_DATA.gridType != 1){
 		let type = (window.CURRENT_SCENE_DATA.gridType == 2) ? false : true;
@@ -1499,6 +1550,7 @@ function reset_canvas(apply_zoom=true) {
 		//alert('inizio 1');
 
 		if (!window.WIZARDING) {
+			draw_svg_grid();
 			redraw_grid();
 			redraw_alphanum_grid();
 		}

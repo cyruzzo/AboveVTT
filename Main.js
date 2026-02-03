@@ -2198,7 +2198,10 @@ function init_ui() {
 	grid.css("z-index", "19");
 
 	const grid_css_overlay = $("<div id='grid_css_overlay' class='grid-css-overlay'></div>");
-	grid_css_overlay.css("z-index", "19");
+	grid_css_overlay.css("z-index", "1"); //hide css for now so not confusing (was: 19)
+	
+	const grid_svg_overlay = $("<div id='grid_svg_overlay' class='grid-svg-overlay'></div>");
+	grid_svg_overlay.css("z-index", "19");
 	
 	const walls = $("<canvas id='walls_layer'></canvas>");
 	walls.css("position", "absolute");
@@ -2325,7 +2328,8 @@ function init_ui() {
 	mapContainer.append(outer_light_container);
 	mapContainer.append(mapItems);
 	mapContainer.append(darknessLayer);
-	mapContainer.append(grid_css_overlay);	
+	mapContainer.append(grid_css_overlay);
+	mapContainer.append(grid_svg_overlay);
 	
 	outer_light_container.append(rayCasting);
 	outer_light_container.append(lightContainer);

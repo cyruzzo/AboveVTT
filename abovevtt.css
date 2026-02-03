@@ -14492,7 +14492,14 @@ button#displayedDiceFormulaExit:hover {
   opacity: min(1, max(0, (var(--hide-when) - var(--line-weight)) * 10000));
   transition: opacity 0.2s ease-in-out;
   /* for later:  filter: drop-shadow(0px 0px 1px rgba(0,0,0,0.8)); */
-} 
+}
+.grid-svg-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  width: 100%;
+  background-repeat: repeat;
+}
 /***** Icon UI *****/
 
 .mobileAVTTUI #VTTWRAPPER ~ div.ddbc-tab-options--layout-pill>button, 
