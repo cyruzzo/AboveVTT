@@ -28,12 +28,14 @@ class WeatherOverlay {
             canvas.width = canvas.height = 0;
         }
     }
-    setType(type, intensity) {
-        console.log("WEATHERTYPE", type, intensity);
+    stop() {
         if (this.animationId) {        //stop
             cancelAnimationFrame(this.animationId);
             this.animationId = null;
         }
+    }
+    setType(type, intensity) {
+        this.stop();
         this.type = type;
         const weatherData = getWeatherTypes()[this.type];
         this.intensity = intensity || weatherData?.default || 120;
