@@ -1257,14 +1257,13 @@ function redraw_grid(hpps=null, vpps=null, offsetX=null, offsetY=null, color=nul
 		redraw_hex_grid(hpps, vpps, offsetX, offsetY, color, lineWidth, subdivide, dash, type)
 		return;
 	}
+	clear_grid(true);
 	if(window.CURRENT_SCENE_DATA.grid != '1' && !window.WIZARDING){
 		return;
 	}
-	const gridCanvas = document.getElementById("grid_overlay");
-	gridCanvas.width = $('#scene_map').width();
-	gridCanvas.height = $('#scene_map').height();
+	const gridCanvas = ctxScale("grid_overlay", $('#scene_map').width(), $('#scene_map').height())
+	
 	const gridContext = gridCanvas.getContext("2d");
-	clear_grid(true);
 	gridContext.setLineDash(dash);
 	let startX = offsetX / window.CURRENT_SCENE_DATA.scale_factor || window.CURRENT_SCENE_DATA.offsetx / window.CURRENT_SCENE_DATA.scale_factor;
 	let startY = offsetY / window.CURRENT_SCENE_DATA.scale_factor || window.CURRENT_SCENE_DATA.offsety / window.CURRENT_SCENE_DATA.scale_factor;
@@ -1414,16 +1413,17 @@ function draw_wizarding_box() {
 	}
 
 }
-function ctxScale(canvasid, doNotScale=false){
+function ctxScale(canvasid,  w, h, doNotScale=false){
 	let canvas = document.getElementById(canvasid);
-	canvas.width = $("#scene_map").width();
-  	canvas.height = $("#scene_map").height();
+	canvas.width = w;
+  	canvas.height = h;
   	if (!doNotScale) {
 		$(canvas).css({
 			'transform-origin': 'top left',
 			'transform': 'scale(var(--scene-scale))'
 		});
 	}
+	return canvas;
 }
 
 function reset_canvas(apply_zoom=true) {
@@ -1433,15 +1433,13 @@ function reset_canvas(apply_zoom=true) {
 	$('#darkness_layer').css({"width": sceneMapWidth, "height": sceneMapHeight});
 	$("#scene_map_container").css({"width": sceneMapWidth, "height": sceneMapHeight});
 	
-	ctxScale('peer_overlay');
-	ctxScale('temp_overlay');
-	ctxScale('draw_overlay_under_fog_darkness', true);
-	ctxScale('fog_overlay');
-	ctxScale('grid_overlay');	
-	ctxScale('draw_overlay');
-	ctxScale('walls_layer');
-	ctxScale('elev_overlay');
-
+	ctxScale('peer_overlay', sceneMapWidth, sceneMapHeight);
+	ctxScale('temp_overlay', sceneMapWidth, sceneMapHeight);
+	ctxScale('draw_overlay_under_fog_darkness', sceneMapWidth, sceneMapHeight, true);
+	ctxScale('fog_overlay', sceneMapWidth, sceneMapHeight);
+	ctxScale('draw_overlay', sceneMapWidth, sceneMapHeight);
+	ctxScale('walls_layer', sceneMapWidth, sceneMapHeight);
+	ctxScale('elev_overlay', sceneMapWidth, sceneMapHeight);
 
 	window.WeatherOverlay?.setSize(sceneMapWidth, sceneMapHeight);
 
@@ -1483,10 +1481,6 @@ function reset_canvas(apply_zoom=true) {
 		else{
 			$("#VTT").css("--scene-scale", window.CURRENT_SCENE_DATA.scale_factor);		
 		}
-		
-		const canvas_grid = document.getElementById("grid_overlay");
-		canvas_grid.width = sceneMapWidth;
-		canvas_grid.height = sceneMapHeight;
 
 		startX = Math.round(window.CURRENT_SCENE_DATA.offsetx);
 		startY = Math.round(window.CURRENT_SCENE_DATA.offsety);
