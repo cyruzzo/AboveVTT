@@ -14465,6 +14465,34 @@ button#displayedDiceFormulaExit:hover {
 .sidebar-panel-content.avtt-drop-target::after {
     top: 89px;
 }
+.grid-css-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-size: calc(var(--grid-size-x) / var(--scene-scale) * 1px) 
+                   calc(var(--grid-size-y) / var(--scene-scale) * 1px);
+                   
+  --line-weight: calc(var(--grid-thickness) / var(--scene-scale) / var(--window-zoom));
+  --line-weight-px: calc(var(--line-weight) * 1px);
+
+  /*hide when line weight approaches box size- adjust the constant*/
+  --hide-when: calc(0.4 * min(var(--grid-size-x), var(--grid-size-y)) / var(--scene-scale));
+
+  background-image: 
+    linear-gradient(to right, 
+                    var(--grid-color) var(--line-weight-px), 
+                    transparent var(--line-weight-px)),
+    linear-gradient(to bottom, 
+                    var(--grid-color) var(--line-weight-px), 
+                    transparent var(--line-weight-px));
+                    
+  background-position-x: calc(var(--grid-offset-x) / var(--scene-scale) * 1px);
+  background-position-y: calc(var(--grid-offset-y) / var(--scene-scale) * 1px);  
+
+  opacity: min(1, max(0, (var(--hide-when) - var(--line-weight)) * 10000));
+  transition: opacity 0.2s ease-in-out;
+  /* for later:  filter: drop-shadow(0px 0px 1px rgba(0,0,0,0.8)); */
+} 
 /***** Icon UI *****/
 
 .mobileAVTTUI #VTTWRAPPER ~ div.ddbc-tab-options--layout-pill>button, 

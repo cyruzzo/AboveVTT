@@ -1475,11 +1475,18 @@ function reset_canvas(apply_zoom=true) {
 	window.temp_context = window.temp_canvas.getContext("2d");
 	if (window.CURRENT_SCENE_DATA && window.CURRENT_SCENE_DATA.hpps > 10 && window.CURRENT_SCENE_DATA.vpps > 10) {
 		//alert(window.CURRENT_SCENE_DATA.hpps + " "+ window.CURRENT_SCENE_DATA.vpps);
+		const vtt = $("#VTT");
 		if(window.WIZARDING){
-			$("#VTT").css("--scene-scale", 1)
+			vtt.css("--scene-scale", 1);
 		}
 		else{
-			$("#VTT").css("--scene-scale", window.CURRENT_SCENE_DATA.scale_factor);		
+			vtt.css("--scene-scale", window.CURRENT_SCENE_DATA.scale_factor);
+			vtt.css("--grid-size-x", window.CURRENT_SCENE_DATA.hpps);
+			vtt.css("--grid-size-y", window.CURRENT_SCENE_DATA.vpps);
+			vtt.css("--grid-offset-x", window.CURRENT_SCENE_DATA.offsetx);
+			vtt.css("--grid-offset-y", window.CURRENT_SCENE_DATA.offsety);
+			vtt.css("--grid-thickness", window.CURRENT_SCENE_DATA.grid_line_width);
+			vtt.css("--grid-color", window.CURRENT_SCENE_DATA.grid_color);
 		}
 
 		startX = Math.round(window.CURRENT_SCENE_DATA.offsetx);

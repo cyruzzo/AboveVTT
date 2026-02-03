@@ -2279,6 +2279,9 @@ function init_ui() {
 	grid.css("left", "0");
 	grid.css("z-index", "19");
 
+	const grid_css_overlay = $("<div id='grid_css_overlay' class='grid-css-overlay'></div>");
+	grid_css_overlay.css("z-index", "19");
+	
 	const walls = $("<canvas id='walls_layer'></canvas>");
 	walls.css("position", "absolute");
 	walls.css("top", "0");
@@ -2404,6 +2407,8 @@ function init_ui() {
 	mapContainer.append(outer_light_container);
 	mapContainer.append(mapItems);
 	mapContainer.append(darknessLayer);
+	mapContainer.append(grid_css_overlay);	
+	
 	outer_light_container.append(rayCasting);
 	outer_light_container.append(lightContainer);
 	lightContainer.append(lightOverlay, weatherLight);
