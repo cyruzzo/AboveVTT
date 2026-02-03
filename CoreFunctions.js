@@ -438,8 +438,9 @@ function inject_chat_buttons() {
           dieType = $(this).attr("alt");
         }
         if(advDis != undefined){
-          rollExpression.push(count*2 + dieType + advDis + count);
-       
+          for (let i = 0; i<count; i++){
+            rollExpression.push('2' + dieType + advDis + '1');
+          }       
         }
         else{
           rollExpression.push(count + dieType);
