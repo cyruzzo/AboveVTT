@@ -1170,7 +1170,7 @@ function redraw_hex_grid(hpps=null, vpps=null, offsetX=null, offsetY=null, color
 function redraw_alphanum_grid(){
 
 	$('.alphaNumGrid').remove();
-	if (!window.CURRENT_SCENE_DATA.gridType || window.CURRENT_SCENE_DATA.gridType != '1' || window.CURRENT_SCENE_DATA.alphaNumGrid != '1')
+	if (window.CURRENT_SCENE_DATA.alphaNumGrid != '1')
 		return;
 	const getAlphaLabel = function(n) {
 		let label = "";
@@ -1187,19 +1187,36 @@ function redraw_alphanum_grid(){
 	const horizontalSvg = $(`<svg class='alphaNumGrid' width="${width * scale_factor}" height="${vpps}" viewBox="0 0 ${width * scale_factor} ${vpps}" style="opacity:1; position:absolute; z-index: 500; pointer-events:none;"></svg>`);
 	const verticalSvg = $(`<svg class='alphaNumGrid' width="${hpps}" height="${height * scale_factor}" viewBox="0 0 ${hpps} ${height * scale_factor}" style="opacity:1; position:absolute; z-index: 500; pointer-events:none;"></svg>`);
 
-	const numGridWide = Math.ceil((width + offsetx) * scale_factor / hpps);
-	const numGridHigh = Math.ceil((height + offsety) * scale_factor / vpps);
 
 
 
-	for (let i = 1; i < numGridWide; i++) {
-		const textLine = `<text x='${(i * hpps) + hpps / 2 + offsetx - hpps*(Math.ceil(offsetx / hpps))}' y='50%' dominant-baseline="middle" text-anchor="middle" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0); stroke-width: 1; text-decoration: none rgb(0, 0, 0);stroke-linecap:butt;stroke-linejoin:round;paint-order:stroke;stroke-opacity:1; font-size: ${hpps/2}px;"><tspan>${getAlphaLabel(i)}</tspan></text>`;
-		horizontalSvg[0].innerHTML += textLine;
+	if (!window.CURRENT_SCENE_DATA.gridType || window.CURRENT_SCENE_DATA.gridType==1){
+		const numGridWide = Math.ceil((width + offsetx) * scale_factor / hpps);
+		const numGridHigh = Math.ceil((height + offsety) * scale_factor / vpps);
+		for (let i = 1; i < numGridWide; i++) {
+			const textLine = `<text x='${(i * hpps) + hpps / 2 + offsetx - hpps * (Math.ceil(offsetx / hpps))}' y='50%' dominant-baseline="middle" text-anchor="middle" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0); stroke-width: 1; text-decoration: none rgb(0, 0, 0);stroke-linecap:butt;stroke-linejoin:round;paint-order:stroke;stroke-opacity:1; font-size: ${hpps / 2}px;"><tspan>${getAlphaLabel(i)}</tspan></text>`;
+			horizontalSvg[0].innerHTML += textLine;
+		}
+		for (let i = 1; i < numGridHigh; i++) {
+			const textLine = `<text x='50%' y='${(i * vpps) + vpps / 2 + offsety - vpps * (Math.ceil(offsety / vpps))}' dominant-baseline="middle" text-anchor="middle" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0); stroke-width: 1; text-decoration: none rgb(0, 0, 0);stroke-linecap:butt;stroke-linejoin:round;paint-order:stroke;stroke-opacity:1; font-size: ${vpps / 2}px;"><tspan>${i}</tspan></text>`;
+			verticalSvg[0].innerHTML += textLine;
+		}
+	} else if (window.CURRENT_SCENE_DATA.gridType == 2 || window.CURRENT_SCENE_DATA.gridType == 3){
+		hpps = window.hexGridSize.width;
+		vpps = window.hexGridSize.height;
+		const numGridWide = Math.ceil((width + offsetx) * scale_factor / hpps);
+		const numGridHigh = Math.ceil((height + offsety) * scale_factor / vpps);
+	
+		for (let i = 1; i < numGridWide; i++) {
+			const textLine = `<text x='${(i * hpps) + offsetx * (Math.ceil(offsetx / hpps))}' y='50%' dominant-baseline="middle" text-anchor="middle" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0); stroke-width: 1; text-decoration: none rgb(0, 0, 0);stroke-linecap:butt;stroke-linejoin:round;paint-order:stroke;stroke-opacity:1; font-size: ${hpps / 2}px;"><tspan>${getAlphaLabel(i)}</tspan></text>`;
+			horizontalSvg[0].innerHTML += textLine;
+		}
+		for (let i = 1; i < numGridHigh; i++) {
+			const textLine = `<text x='50%' y='${(i * vpps) + offsety * (Math.ceil(offsety / vpps))}' dominant-baseline="middle" text-anchor="middle" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0); stroke-width: 1; text-decoration: none rgb(0, 0, 0);stroke-linecap:butt;stroke-linejoin:round;paint-order:stroke;stroke-opacity:1; font-size: ${vpps / 2}px;"><tspan>${i}</tspan></text>`;
+			verticalSvg[0].innerHTML += textLine;
+		}
 	}
-	for (let i = 1; i < numGridHigh; i++) {
-		const textLine = `<text x='50%' y='${(i * vpps) + vpps / 2 + offsety - vpps * (Math.ceil(offsety / vpps)) }' dominant-baseline="middle" text-anchor="middle" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0); stroke-width: 1; text-decoration: none rgb(0, 0, 0);stroke-linecap:butt;stroke-linejoin:round;paint-order:stroke;stroke-opacity:1; font-size: ${vpps / 2}px;"><tspan>${i}</tspan></text>`;
-		verticalSvg[0].innerHTML += textLine;
-	}
+
 
 	$('#VTT').append(horizontalSvg, verticalSvg);
 }
@@ -1392,9 +1409,7 @@ function reset_canvas(apply_zoom=true) {
 	ctxScale('draw_overlay');
 	ctxScale('walls_layer');
 	ctxScale('elev_overlay');
-	// WeatherOverlay does this now on setSize()
-	//ctxScale('weather_overlay');
-	//ctxScale('weather_light', true);
+
 
 	window.WeatherOverlay?.setSize(sceneMapWidth, sceneMapHeight);
 
