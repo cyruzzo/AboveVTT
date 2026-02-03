@@ -65,7 +65,7 @@ class WeatherOverlay {
                 })
             }
             
-            if (weatherData.lit) {
+            if (weatherData?.lit) {
                 $(this.lightCanvas).css({
                     filter: `blur(${window.CURRENT_SCENE_DATA.hpps / window.CURRENT_SCENE_DATA.scale_factor}px`
                 })
