@@ -1066,10 +1066,13 @@ function midPointBtw(p1, p2) {
   };
 }
 
-function clear_grid(){
+function clear_grid(expect_redraw=false){
 	const gridCanvas = document.getElementById("grid_overlay");
-	const gridContext = gridCanvas.getContext("2d");
-	gridContext.clearRect(0, 0, gridCanvas.width, gridCanvas.height);
+	if(expect_redraw) {
+		gridCanvas.getContext("2d").clearRect(0, 0, gridCanvas.width, gridCanvas.height);
+	} else {
+		gridCanvas.width = gridCanvas.height = 0;
+	}
 }
 function redraw_hex_grid(hpps=null, vpps=null, offsetX=null, offsetY=null, color=null, lineWidth=null, subdivide=null, dash=[], columns=true, drawGrid = window.CURRENT_SCENE_DATA.grid){
 	
@@ -1085,7 +1088,7 @@ function redraw_hex_grid(hpps=null, vpps=null, offsetX=null, offsetY=null, color
 		hpps = vpps || window.CURRENT_SCENE_DATA.vpps;
 		window.CURRENT_SCENE_DATA.hpps = vpps || window.CURRENT_SCENE_DATA.vpps;
 	}
-	clear_grid();
+	clear_grid(true);
 	gridContext.setLineDash(dash);
 	let startX = offsetX / window.CURRENT_SCENE_DATA.scale_factor || window.CURRENT_SCENE_DATA.offsetx / window.CURRENT_SCENE_DATA.scale_factor;
 	let startY = offsetY / window.CURRENT_SCENE_DATA.scale_factor || window.CURRENT_SCENE_DATA.offsety / window.CURRENT_SCENE_DATA.scale_factor;
@@ -1261,7 +1264,7 @@ function redraw_grid(hpps=null, vpps=null, offsetX=null, offsetY=null, color=nul
 	gridCanvas.width = $('#scene_map').width();
 	gridCanvas.height = $('#scene_map').height();
 	const gridContext = gridCanvas.getContext("2d");
-	clear_grid();
+	clear_grid(true);
 	gridContext.setLineDash(dash);
 	let startX = offsetX / window.CURRENT_SCENE_DATA.scale_factor || window.CURRENT_SCENE_DATA.offsetx / window.CURRENT_SCENE_DATA.scale_factor;
 	let startY = offsetY / window.CURRENT_SCENE_DATA.scale_factor || window.CURRENT_SCENE_DATA.offsety / window.CURRENT_SCENE_DATA.scale_factor;
@@ -1273,9 +1276,10 @@ function redraw_grid(hpps=null, vpps=null, offsetX=null, offsetY=null, color=nul
 	gridContext.strokeStyle = color || window.CURRENT_SCENE_DATA.grid_color;
 	let isSubdivided = subdivide === "1" || window.CURRENT_SCENE_DATA.grid_subdivided === "1"
 	let skip = true;
-
+	const gridWidth = $("#grid_overlay").width();
+	const gridHeight = $("#grid_overlay").height();
 	gridContext.beginPath();	
-	for (let i = startX; i < $("#grid_overlay").width(); i = i + incrementX) {
+	for (let i = startX; i < gridWidth; i = i + incrementX) {
 		if (isSubdivided && skip) {
 			skip = false;
 			continue;
@@ -1284,14 +1288,14 @@ function redraw_grid(hpps=null, vpps=null, offsetX=null, offsetY=null, color=nul
 			skip = true;
 		}
 		gridContext.moveTo(i, 0);
-		gridContext.lineTo(i, $("#grid_overlay").height());
+		gridContext.lineTo(i, gridHeight);
 	}
 	gridContext.stroke();
 	skip = true;
 
 	
 	gridContext.beginPath();
-	for (let i = startY; i < $("#grid_overlay").height(); i = i + incrementY) {
+	for (let i = startY; i < gridHeight; i = i + incrementY) {
 		if (isSubdivided && skip) {
 			skip = false;
 			continue;
@@ -1301,7 +1305,7 @@ function redraw_grid(hpps=null, vpps=null, offsetX=null, offsetY=null, color=nul
 		}
 
 		gridContext.moveTo(0, i);
-		gridContext.lineTo($("#grid_overlay").width(), i);
+		gridContext.lineTo(gridWidth, i);
 
 	}
 	gridContext.stroke();
@@ -1423,8 +1427,8 @@ function ctxScale(canvasid, doNotScale=false){
 }
 
 function reset_canvas(apply_zoom=true) {
-	let sceneMapWidth = $("#scene_map").width();
-	let sceneMapHeight = $("#scene_map").height();
+	const sceneMapWidth = $("#scene_map").width();
+	const sceneMapHeight = $("#scene_map").height();
 
 	$('#darkness_layer').css({"width": sceneMapWidth, "height": sceneMapHeight});
 	$("#scene_map_container").css({"width": sceneMapWidth, "height": sceneMapHeight});
@@ -1442,20 +1446,18 @@ function reset_canvas(apply_zoom=true) {
 	window.WeatherOverlay?.setSize(sceneMapWidth, sceneMapHeight);
 
 	let canvas = document.getElementById('raycastingCanvas');
-	canvas.width = $("#scene_map").width();
-  	canvas.height = $("#scene_map").height();
+	canvas.width = sceneMapWidth;
+  	canvas.height = sceneMapHeight;
 
   	canvas = document.getElementById('light_overlay');
-	canvas.width = $("#scene_map").width();
-  	canvas.height = $("#scene_map").height();
+	canvas.width = sceneMapWidth;
+  	canvas.height = sceneMapHeight;
 
 	$("#text_div").css({"width": sceneMapWidth * window.CURRENT_SCENE_DATA.scale_factor,  "height": sceneMapHeight * window.CURRENT_SCENE_DATA.scale_factor});
 
-	canvas = document.getElementById("fog_overlay");
-	let ctx = canvas.getContext("2d");
-
 	if (!window.FOG_OF_WAR) {
-		ctx.clearRect(0, 0, canvas.width, canvas.height);
+		const canvas = document.getElementById("fog_overlay");
+		canvas.getContext("2d").clearRect(0, 0, canvas.width, canvas.height);
 		return;
 	}
 	
@@ -1471,13 +1473,6 @@ function reset_canvas(apply_zoom=true) {
  	delete window.lightAuraClipPolygon;
  	delete window.lineOfSightPolygons;
 
-
-	
-	
-
-	let canvas_grid = document.getElementById("grid_overlay");
-	let ctx_grid = canvas_grid.getContext("2d");
-
 	window.temp_canvas = document.getElementById("temp_overlay");;
 	window.temp_context = window.temp_canvas.getContext("2d");
 	if (window.CURRENT_SCENE_DATA && window.CURRENT_SCENE_DATA.hpps > 10 && window.CURRENT_SCENE_DATA.vpps > 10) {
@@ -1488,8 +1483,10 @@ function reset_canvas(apply_zoom=true) {
 		else{
 			$("#VTT").css("--scene-scale", window.CURRENT_SCENE_DATA.scale_factor);		
 		}
-		canvas_grid.width = $("#scene_map").width();
-		canvas_grid.height = $("#scene_map").height();
+		
+		const canvas_grid = document.getElementById("grid_overlay");
+		canvas_grid.width = sceneMapWidth;
+		canvas_grid.height = sceneMapHeight;
 
 		startX = Math.round(window.CURRENT_SCENE_DATA.offsetx);
 		startY = Math.round(window.CURRENT_SCENE_DATA.offsety);
@@ -1507,7 +1504,7 @@ function reset_canvas(apply_zoom=true) {
 		//alert('sopravvissuto');
 	}
 	else {
-		ctx_grid.clearRect(0, 0, canvas_grid.width, canvas_grid.height);
+		clear_grid();
 	}
 	if(apply_zoom)
 		apply_zoom_from_storage();
