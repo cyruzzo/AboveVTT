@@ -1518,38 +1518,27 @@ function token_context_menu_expanded(tokenIds, e) {
 		let nameInput = $(`<input title="Token Name" placeholder="Token Name" name="name" type="text" />`);
 		let nameGeneratorButton = $(`<button title="Generate Random Name" type="button" class="button-refresh material-symbols-outlined">autorenew</button>`);
 		nameGeneratorButton.on('click', function() {
-			if (tokens.length > 1) {
-				tokens.forEach(token => {
-					const gender = Math.random() < 0.5 ? 'male' : 'female';
-					const firstNames = gender === 'male' ? MaleFirstNames : FemaleFirstNames;
-					const firstName = firstNames[Math.floor(Math.random() * firstNames.length)];
-					const surname = Surnames[Math.floor(Math.random() * Surnames.length)];
-					const generatedName = `${firstName} ${surname}`;
-					
-					if(window.JOURNAL.notes[token.options.id]){
-						window.JOURNAL.notes[token.options.id].title = generatedName;
-						window.JOURNAL.persist();
-					}
-					token.options.name = generatedName;
-					token.place_sync_persist();
-				});
-				nameInput.val("Individual names generated");
-			} else {
+			let generatedName;
+			tokens.forEach(token => {
 				const gender = Math.random() < 0.5 ? 'male' : 'female';
 				const firstNames = gender === 'male' ? MaleFirstNames : FemaleFirstNames;
 				const firstName = firstNames[Math.floor(Math.random() * firstNames.length)];
 				const surname = Surnames[Math.floor(Math.random() * Surnames.length)];
-				const generatedName = `${firstName} ${surname}`;
+				const personality = token.options.placeType == 'personality' ? ` (${getPersonalityTrait()})` : '';
+				generatedName = `${firstName} ${surname}${personality}`;
 				
+				if(window.JOURNAL.notes[token.options.id]){
+					window.JOURNAL.notes[token.options.id].title = generatedName;
+					window.JOURNAL.persist();
+				}
+				token.options.name = generatedName;
+				token.place_sync_persist();
+			});
+				
+			if (tokens.length > 1) {
+				nameInput.val("Individual names generated");
+			} else {
 				nameInput.val(generatedName);
-				tokens.forEach(token => {
-					if(window.JOURNAL.notes[token.options.id]){
-						window.JOURNAL.notes[token.options.id].title = generatedName;
-						window.JOURNAL.persist();
-					}
-					token.options.name = generatedName;
-					token.place_sync_persist();
-				});
 			}
 		});
 		if (uniqueNames.length === 1) {
