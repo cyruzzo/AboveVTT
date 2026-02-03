@@ -1,32 +1,32 @@
 class WeatherOverlay {
     constructor(canvas, lightCanvas, type = 'rain', intensity = 120) {
         this.offscreenCanvas = new OffscreenCanvas(0,0);
+        this.offscreenCtx = this.offscreenCanvas.getContext('2d');          
         this.canvas = canvas;
+        this.ctx = canvas.getContext('2d');          
         this.lightCanvas = lightCanvas;
+        this.lightCtx = lightCanvas.getContext('2d');  
         this.particles = [];
         this.animationId = null;
         this.width = canvas.width;
         this.height = canvas.height;
         this.setType(type, intensity);
     }
-    resizedCtx(current, canvas, nonzero) {
+    resizeCtx(current, canvas, nonzero) {
         if(nonzero) {
-            if(!current || canvas.width != this.width || canvas.height != this.height) {
+            if(canvas.width != this.width || canvas.height != this.height) {
                 canvas.width = this.width;
                 canvas.height = this.height;
 		$(canvas).css({
 			'transform-origin': 'top left',
 			'transform': 'scale(var(--scene-scale))'
 		});
-                current = canvas.getContext('2d');
             } else {
-                current.clearRect(0, 0, this.width, this.height);                            
+                current.clearRect(0, 0, this.width, this.height);
             }
         } else {
             canvas.width = canvas.height = 0;
-            current = null;
         }
-        return current;
     }
     setType(type, intensity) {
         console.log("WEATHERTYPE", type, intensity);
@@ -39,9 +39,9 @@ class WeatherOverlay {
         this.intensity = intensity || weatherData?.default || 120;
         //start or optimize canvas away
         const weatherExists = (this.type && this.type != '0');
-        this.ctx = this.resizedCtx(this.ctx, this.canvas, weatherExists);
-        this.offscreenCtx = this.resizedCtx(this.offscreenCtx, this.offscreenCanvas, weatherExists);
-        this.lightCtx = this.resizedCtx(this.lightCtx, this.lightCanvas, weatherExists && weatherData?.lit);
+        this.resizeCtx(this.ctx, this.canvas, weatherExists);
+        this.resizeCtx(this.offscreenCtx, this.offscreenCanvas, weatherExists);
+        this.resizeCtx(this.lightCtx, this.lightCanvas, weatherExists && weatherData?.lit);
         
         if(weatherExists) {
             this._initParticles();
