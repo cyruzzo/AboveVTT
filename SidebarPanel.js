@@ -2681,8 +2681,7 @@ function edit_encounter(clickEvent) {
         }
         for(let j = 0; j<item.quantity; j++ ){
           if(item.type != 'pc'){
-            if((item.isAllyQuantity == undefined && item.isAlly == true) || item.isAllyQuantity > j){         
-              let addedLowXp, addedMidXp, addedHighXp, addedDeadlyXp;          
+            if((item.isAllyQuantity == undefined && item.isAlly == true) || item.isAllyQuantity > j){                
               cr = Math.min(30, cr);
               xpLowMax += isOldrules ? crXpTable[cr]/4 :crXpTable[cr]/2;
               xpMidMax += isOldrules ? crXpTable[cr]/2 : crXpTable[cr]*3/4;
@@ -2692,7 +2691,7 @@ function edit_encounter(clickEvent) {
               } 
             }
             else{
-              const xpValue = hasCustomStatBlock ? crXpTable[cr]: statBlock.findObj("challengeRatings", statBlock.data.challengeRatingId).xp;
+              const xpValue = hasCustomStatBlock ? crXpTable[cr]: statBlock.data != undefined ? statBlock.findObj("challengeRatings", statBlock.data.challengeRatingId).xp : 0;
               xp += xpValue;
             }
           } else if(item.type == 'pc' && ((item.isAllyQuantity == undefined && item.isAlly == true) || item.isAllyQuantity > j)){
