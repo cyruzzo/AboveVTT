@@ -1411,7 +1411,7 @@ function edit_scene_dialog(scene_id) {
 			}	
 		}
 	}))); 
-	form.append(form_row('alphaNumGrid', 'Alphanumeric Grid Labels (square grid)', form_toggle("alphaNumGrid", null, false, function (event) {
+	form.append(form_row('alphaNumGrid', 'Alphanumeric Grid Labels', form_toggle("alphaNumGrid", null, false, function (event) {
 		if ($(event.currentTarget).hasClass("rc-switch-checked")) {
 			$(event.currentTarget).removeClass("rc-switch-checked");
 			if (window.CURRENT_SCENE_DATA.id == scene.id) {
@@ -1426,7 +1426,7 @@ function edit_scene_dialog(scene_id) {
 		}
 		redraw_alphanum_grid();
 	}))); 
-	form.find('#alphaNumGrid_row').attr('title', 'When enabled adds alphanumeric grid labels to the scene. This is only supported when using the square grid type.')
+	form.find('#alphaNumGrid_row').attr('title', 'When enabled adds alphanumeric grid labels to the scene.')
 
 	form.find('#snapToGrid_row').attr('title', 'When enabled snaps the tokens to the grid. Otherwise tokens are able to be placed freely. Hold ctrl to when moving a token to temporarily override this.')
 
