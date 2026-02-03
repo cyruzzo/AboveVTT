@@ -1252,8 +1252,7 @@ function redraw_alphanum_grid(){
 	$('#VTT').append(horizontalSvg, verticalSvg);
 }
 
-const sr3 = Math.sqrt(3)/2; //for hex drawing
-//xs is measure face to face (should it be vertex?)
+const sr3 = Math.sqrt(3)/2; //high precision constant for hex drawing
 function svg_grid(type = '1', xs = 100, ys = 100, color = 'black', lineWidth = 5, subdivide = null, dash = []) {
     console.log("SVGGRID", type);
     const strokeAttr = `fill="none" stroke="${color}" stroke-width="${lineWidth}" vector-effect="non-scaling-stroke"`;
@@ -1270,14 +1269,12 @@ function svg_grid(type = '1', xs = 100, ys = 100, color = 'black', lineWidth = 5
             <path d="M ${xs/4} ${ys} L 0 ${ys/2} L ${xs/4} 0 L ${xs*3/4} 0 L ${xs} ${ys/2} L ${xs*3/4} ${ys} M ${xs} ${ys/2} L ${xs*1.5} ${ys/2} Z" ${strokeAttr}/>
         </svg>`
 		).replace(/\s+/g, ' ').trim();
-    console.log("SVGGRID",svg);	
     return "data:image/svg+xml;base64," + btoa(svg);
 }
 
 
 function draw_svg_grid(type=null, hpps=null, vpps=null, offsetX=null, offsetY=null, color=null, lineWidth=null, subdivide=null, dash=[]) {
 	const gridType = window.CURRENT_SCENE_DATA.gridType;
-	console.log("GRID TYPE", gridType);
 	const scale = window.CURRENT_SCENE_DATA.scale_factor
 	//what does grid scale measure for hex - i'm confused ????
 	const hexscale = (gridType === '1' ? 1 : sr3);
