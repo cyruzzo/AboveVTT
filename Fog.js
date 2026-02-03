@@ -1392,8 +1392,9 @@ function reset_canvas(apply_zoom=true) {
 	ctxScale('draw_overlay');
 	ctxScale('walls_layer');
 	ctxScale('elev_overlay');
-	ctxScale('weather_overlay');
-	ctxScale('weather_light', true);
+	// WeatherOverlay does this now on setSize()
+	//ctxScale('weather_overlay');
+	//ctxScale('weather_light', true);
 
 	window.WeatherOverlay?.setSize(sceneMapWidth, sceneMapHeight);
 
@@ -1421,7 +1422,7 @@ function reset_canvas(apply_zoom=true) {
 	redraw_light();
 	redraw_fog();
 	redraw_elev();
-	set_weather();
+	set_weather_size(sceneMapWidth, sceneMapHeight);
 
 
  	delete window.lightAuraClipPolygon;
