@@ -1125,6 +1125,10 @@ function redraw_alphanum_grid(){
 
 		hpps = window.hexGridSize.width * scaleX;
 		vpps = window.hexGridSize.height * scaleY;
+		horizontalSvg.attr('height', vpps);
+		verticalSvg.attr('width', hpps);
+		horizontalSvg.attr('viewBox', `0 0 ${width * scale_factor} ${vpps}`);
+		verticalSvg.attr('viewBox', `0 0 ${hpps} ${height * scale_factor}`);
 		/* Enable if we want half ticks for offset
 		if (window.CURRENT_SCENE_DATA.gridType == 2){
 			hpps = hpps / 2;
@@ -1146,11 +1150,11 @@ function redraw_alphanum_grid(){
 	
 		
 		for (let i = 1; i < numGridWide; i++) {
-			const textLine = `<text x='${(i * hpps) + offsetx * (Math.ceil(offsetx / hpps))}' y='50%'><tspan>${getAlphaLabel(i)}</tspan></text>`;
+			const textLine = `<text x='${(i * hpps) + (offsetx % hpps) }' y='50%'><tspan>${getAlphaLabel(i)}</tspan></text>`;
 			horizontalSvg[0].innerHTML += textLine;
 		}
 		for (let i = 1; i < numGridHigh; i++) {
-			const textLine = `<text x='50%' y='${(i * vpps) + offsety * (Math.ceil(offsety / vpps))}'><tspan>${i}</tspan></text>`;
+			const textLine = `<text x='50%' y='${(i * vpps) + (offsety % vpps) }'><tspan>${i}</tspan></text>`;
 			verticalSvg[0].innerHTML += textLine;
 		}
 	}
