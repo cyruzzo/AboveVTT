@@ -726,15 +726,9 @@ function open_grid_wizard_controls(scene_id, aligner1, aligner2, regrid=function
 			}
 		
 			
-			redraw_grid(null,null,null,null,color,width,null,dash);
-		}
-		else if(window.CURRENT_SCENE_DATA.gridType == 2){
-			redraw_hex_grid(null,null,null,null,color,width,null,dash, false);
-		}
-		else if(window.CURRENT_SCENE_DATA.gridType == 3){
-			redraw_hex_grid(null,null,null,null,color,width,null,dash, true);
-		}
 
+		}
+		redraw_grid(null,null,null,null,color,width,null,dash);		
 		//to do: move the grid aligners to match the input settings.
 	}			
 

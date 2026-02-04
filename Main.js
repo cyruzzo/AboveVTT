@@ -2191,17 +2191,35 @@ function init_ui() {
 	textDiv.css("left", "0");
 	textDiv.css("z-index", "20");
 
-	const grid = $("<canvas id='grid_overlay'></canvas>");
-	grid.css("position", "absolute");
-	grid.css("top", "0");
-	grid.css("left", "0");
-	grid.css("z-index", "19");
-
-	const grid_css_overlay = $("<div id='grid_css_overlay' class='grid-css-overlay'></div>");
-	grid_css_overlay.css("z-index", "1"); //hide css for now so not confusing (was: 19)
-	
 	const grid_svg_overlay = $("<div id='grid_svg_overlay' class='grid-svg-overlay'></div>");
 	grid_svg_overlay.css("z-index", "19");
+	grid_svg_overlay.css("pointer-events","none");
+	//change the wizbox styling here
+	const wb = 
+`<svg id="main-svg" style="display: block; width: 100%; height: 100%;" xmlns="http://www.w3.org/2000/svg">
+        <style>
+            .grid-box {
+                fill: rgba(0, 255, 255, 0.1);
+                stroke: #ff0000;
+                stroke-width: 4px;
+                vector-effect: non-scaling-stroke;
+                transition: fill 0.2s;
+            }
+        </style>
+        <defs>
+            <polygon id="wiz-hex" class="grid-box" 
+                     points="0,-1 0.866,-0.5 0.866,0.5 0,1 -0.866,0.5 -0.866,-0.5" />
+        </defs>
+        <g id="wizbox-grid" visibility="hidden">
+            <path class="grid-box" d="M 0 0 L 0 1 L 1 1 L 1 0 L 0 0 M 0.33 0 L 0.33 1 M 0.67 0 L 0.67 1 M 0 0.33 L 1 0.33 M 0 0.67 L 1 0.67"/>
+        </g>
+        <g id="wizbox-hex" visibility="hidden">
+            <use href="#wiz-hex" x="0" y="0" />
+            <use href="#wiz-hex" transform="translate(0, -1.5) translate(0.866, 0)" /> <use href="#wiz-hex" transform="translate(0.866, 1.5)" />  <use href="#wiz-hex" transform="translate(-0.866, 1.5)" /> <use href="#wiz-hex" transform="translate(-1.732, 0)" />   <use href="#wiz-hex" transform="translate(-0.866, -1.5)" /><use href="#wiz-hex" transform="translate(1.732, 0)" />    </g>
+    </svg>
+`;
+	const wizbox = $(wb);
+	wizbox.css("z-index", "19");
 	
 	const walls = $("<canvas id='walls_layer'></canvas>");
 	walls.css("position", "absolute");
@@ -2317,7 +2335,6 @@ function init_ui() {
 	VTT.append(peerOverlay);
 	VTT.append(drawOverlayUnderFogDarkness);
 	VTT.append(fog);
-	VTT.append(grid);
 	VTT.append(drawOverlay);
 	VTT.append(textDiv);
 	VTT.append(tempOverlay);
@@ -2328,8 +2345,8 @@ function init_ui() {
 	mapContainer.append(outer_light_container);
 	mapContainer.append(mapItems);
 	mapContainer.append(darknessLayer);
-	mapContainer.append(grid_css_overlay);
 	mapContainer.append(grid_svg_overlay);
+	mapContainer.append(wizbox);
 	
 	outer_light_container.append(rayCasting);
 	outer_light_container.append(lightContainer);
