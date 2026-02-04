@@ -3084,17 +3084,11 @@ function drawing_mousedown(e) {
 		const offscreen_canvas = new OffscreenCanvas($('#scene_map')[0].width, $('#scene_map')[0].height); 
 		const offscreen_context = offscreen_canvas.getContext('2d');
 		offscreen_context.fillStyle = "#FFF";
-
-		if(window.CURRENT_SCENE_DATA.gridType == '1'){
-			const {x,y} = snap_point_to_grid(window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, true);
-			window.BRUSHPOINTS.push([Math.round(x), Math.round(y)])
-		}
-		else{
-			//prob could use snap_point_to_grid above			
-			const hexCenter = getCurrentClosestHexCenter(window.BEGIN_MOUSEX, window.BEGIN_MOUSEY);
-			window.BRUSHPOINTS.push(hexCenter);
-			window.BRUSHPOINTS = Array.from(new Set(window.BRUSHPOINTS.map(JSON.stringify)), JSON.parse)
-		}
+		
+		//prob should supress arrow keys here?
+		const {x,y} = snap_point_to_grid(window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, true);
+		window.BRUSHPOINTS.push([Math.round(x), Math.round(y)]) //round???
+		window.BRUSHPOINTS = Array.from(new Set(window.BRUSHPOINTS.map(JSON.stringify)), JSON.parse)		
 		if(window.CURRENT_SCENE_DATA.gridType == '1'){
 			for(let i in window.BRUSHPOINTS){
 				drawRect(window.temp_context, window.BRUSHPOINTS[i][0], window.BRUSHPOINTS[i][1], window.CURRENT_SCENE_DATA.hpps, window.CURRENT_SCENE_DATA.vpps, window.DRAWCOLOR, true, window.DRAWTYPE);
@@ -3102,10 +3096,10 @@ function drawing_mousedown(e) {
 		}
 		else{
 			window.temp_context.scale(window.CURRENT_SCENE_DATA.scaleAdjustment.x, window.CURRENT_SCENE_DATA.scaleAdjustment.y)
-				for(let i in window.BRUSHPOINTS){
-					drawHexagon(window.temp_context, window.BRUSHPOINTS[i][0], window.BRUSHPOINTS[i][1])
-				}
-				window.temp_context.setTransform(1, 0, 0, 1, 0, 0);
+			for(let i in window.BRUSHPOINTS){
+				drawHexagon(window.temp_context, window.BRUSHPOINTS[i][0], window.BRUSHPOINTS[i][1])
+			}
+			window.temp_context.setTransform(1, 0, 0, 1, 0, 0);
 		}
 	}
 	else if (window.DRAWSHAPE === "polygon") {
@@ -3532,25 +3526,16 @@ function drawing_mousemove(e) {
 			const offscreen_context = offscreen_canvas.getContext('2d');
 			offscreen_context.fillStyle = "#FFF";
 
-			if(window.CURRENT_SCENE_DATA.gridType == '1'){
-				const roundDown = true;
-				const { x, y } = snap_point_to_grid(mouseX, mouseY, true, undefined, undefined, undefined, roundDown);
-				window.BRUSHPOINTS.push([Math.round(x), Math.round(y)])
-			}
-			else{
-				//prob could use snap_point_to_grid above
-				const hexCenter = getCurrentClosestHexCenter(mouseX, mouseY);
-				window.BRUSHPOINTS.push(hexCenter);
-			}
-			
+			//prob should supress arrow keys here?
+			const { x, y } = snap_point_to_grid(mouseX, mouseY, true, undefined, undefined, undefined, true);
+			window.BRUSHPOINTS.push([Math.round(x), Math.round(y)]) //round??
 			window.BRUSHPOINTS = Array.from(new Set(window.BRUSHPOINTS.map(JSON.stringify)), JSON.parse)
-			
 			
 			if(window.CURRENT_SCENE_DATA.gridType == '1'){
 				for(let i in window.BRUSHPOINTS){
 					drawRect(window.temp_context, window.BRUSHPOINTS[i][0], window.BRUSHPOINTS[i][1], window.CURRENT_SCENE_DATA.hpps, window.CURRENT_SCENE_DATA.vpps, window.DRAWCOLOR, true, window.DRAWTYPE);
-					}
 				}
+			}
 			else{
 				window.temp_context.scale(window.CURRENT_SCENE_DATA.scaleAdjustment.x, window.CURRENT_SCENE_DATA.scaleAdjustment.y)
  				for(let i in window.BRUSHPOINTS){
