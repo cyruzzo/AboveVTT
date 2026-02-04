@@ -1084,6 +1084,9 @@ function redraw_hex_grid(hpps=null, vpps=null, offsetX=null, offsetY=null, color
 	if(window.CURRENT_SCENE_DATA.gridType == 2){
 		hpps = vpps || window.CURRENT_SCENE_DATA.vpps;
 		window.CURRENT_SCENE_DATA.hpps = vpps || window.CURRENT_SCENE_DATA.vpps;
+	} else if (window.CURRENT_SCENE_DATA.gridType == 3){
+		vpps = hpps || window.CURRENT_SCENE_DATA.hpps;
+		window.CURRENT_SCENE_DATA.vpps = hpps || window.CURRENT_SCENE_DATA.hpps;
 	}
 	clear_grid();
 	gridContext.setLineDash(dash);
