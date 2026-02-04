@@ -2176,7 +2176,7 @@ function init_ui() {
 	lightOverlay.css("z-index", "9");
 	lightOverlay.css("mix-blend-mode", "lighten");
 
-	const outer_light_container = $("<div id='outer_light_container'></canvas>");
+	const outer_light_container = $("<div id='outer_light_container'></div>");
 	outer_light_container.css("position", "absolute");
 	outer_light_container.css("top", "0");
 	outer_light_container.css("left", "0");
@@ -2192,8 +2192,13 @@ function init_ui() {
 	textDiv.css("z-index", "20");
 
 	const grid_svg_overlay = $("<div id='grid_svg_overlay' class='grid-svg-overlay'></div>");
-	grid_svg_overlay.css("z-index", "19");
+	grid_svg_overlay.css("position", "absolute");
+	grid_svg_overlay.css("top", "0");
+	grid_svg_overlay.css("left", "0");
+	grid_svg_overlay.css("z-index", "19");	
 	grid_svg_overlay.css("pointer-events","none");
+	grid_svg_overlay.css("transform-origin", "top left");		
+	grid_svg_overlay.css("transform", "scale(var(--scene-scale))");	
 	//change the wizbox styling here
 	const wb = 
 `<svg id="main-svg" style="display: block; width: 100%; height: 100%;" xmlns="http://www.w3.org/2000/svg">
@@ -2345,8 +2350,9 @@ function init_ui() {
 	mapContainer.append(outer_light_container);
 	mapContainer.append(mapItems);
 	mapContainer.append(darknessLayer);
+	//todo: move elsewhere for vision/fog fix
 	mapContainer.append(grid_svg_overlay);
-	mapContainer.append(wizbox);
+	if(window.DM) mapContainer.append(wizbox);
 	
 	outer_light_container.append(rayCasting);
 	outer_light_container.append(lightContainer);
@@ -2408,7 +2414,7 @@ function init_ui() {
 	token_menu();
 	
 
-	// EXPERRIMENTAL DRAG TO MOVE
+	// EXPERIMENTAL DRAG TO MOVE
 	let  curDown = false,
 		curYPos = 0,
 		curXPos = 0;

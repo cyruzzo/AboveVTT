@@ -1323,6 +1323,7 @@ function reset_canvas(apply_zoom=true) {
 
 	$('#darkness_layer').css({"width": sceneMapWidth, "height": sceneMapHeight});
 	$("#scene_map_container").css({"width": sceneMapWidth, "height": sceneMapHeight});
+	$('#grid_svg_overlay').css({"width": sceneMapWidth, "height": sceneMapHeight});	
 	
 	ctxScale('peer_overlay', sceneMapWidth, sceneMapHeight);
 	ctxScale('temp_overlay', sceneMapWidth, sceneMapHeight);
@@ -3089,8 +3090,8 @@ function drawing_mousedown(e) {
 		const offscreen_context = offscreen_canvas.getContext('2d');
 		offscreen_context.fillStyle = "#FFF";
 		
-		//prob should supress arrow keys here?
-		const {x,y} = snap_point_to_grid(window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, true);
+		const {x,y} = snap_point_to_grid(window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, true,
+						 undefined, undefined, undefined, true);		
 		window.BRUSHPOINTS.push([Math.round(x), Math.round(y)]) //round???
 		window.BRUSHPOINTS = Array.from(new Set(window.BRUSHPOINTS.map(JSON.stringify)), JSON.parse)		
 		if(window.CURRENT_SCENE_DATA.gridType == '1'){
@@ -3530,7 +3531,6 @@ function drawing_mousemove(e) {
 			const offscreen_context = offscreen_canvas.getContext('2d');
 			offscreen_context.fillStyle = "#FFF";
 
-			//prob should supress arrow keys here?
 			const { x, y } = snap_point_to_grid(mouseX, mouseY, true, undefined, undefined, undefined, true);
 			window.BRUSHPOINTS.push([Math.round(x), Math.round(y)]) //round??
 			window.BRUSHPOINTS = Array.from(new Set(window.BRUSHPOINTS.map(JSON.stringify)), JSON.parse)
