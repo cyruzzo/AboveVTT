@@ -3211,7 +3211,7 @@ function drawing_mousedown(e) {
 
 		
 		if(window.CURRENT_SCENE_DATA.gridType == '1'){
-			const {x,y} = snap_point_to_grid(window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, true);
+			const { x, y } = snap_point_to_grid(window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, true, undefined, undefined, undefined, true);
 			window.BRUSHPOINTS.push([Math.round(x), Math.round(y)])
 		}
 		else{
