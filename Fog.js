@@ -1200,7 +1200,7 @@ function getClosestHexCenter(type, x, y, offset_x, offset_y, d, sax, say) {
 }
 
 function getCurrentClosestHexCenter(x, y) {
-	const scale = window.CURRENT_SCENE_DATA.scale_factor
+	const scale = 1.0; //window.CURRENT_SCENE_DATA.scale_factor
 	const hexsize = window.CURRENT_SCENE_DATA.hpps / scale / (sr3 / 2);
 	const startX = Math.round( window.CURRENT_SCENE_DATA.offsetx / scale );
 	const startY = Math.round( window.CURRENT_SCENE_DATA.offsety / scale );	      	
@@ -1232,9 +1232,11 @@ function svg_tile(type = '1', xs = 100, ys = 100, color = 'black', lineWidth = 5
 }
 
 function draw_svg_grid(type=null, hpps=null, vpps=null, offsetX=null, offsetY=null, color=null, lineWidth=null, subdivide=null, dash=[]) {
-	const grc = $('#grid_svg_overlay');
+	const grc = $('#grid_svg_underlay');
+	const grc2 = $('#grid_svg_overlay');	
 	if(type === "x") { //hack for clear grid
-		grc.css('display', 'hidden');		
+		grc.css('visibility', 'hidden');
+		grc2.css('visibility', 'hidden');
 		return;
 	}
 	const gridType = window.CURRENT_SCENE_DATA.gridType;
@@ -1257,13 +1259,15 @@ function draw_svg_grid(type=null, hpps=null, vpps=null, offsetX=null, offsetY=nu
 			    lineWidth || window.CURRENT_SCENE_DATA.grid_line_width, dash);
 	const yadj = gridType === '2' ? 1.5 : 1; //adjust for next row/col extra hex fill line
 	const xadj = gridType === '3' ? 1.5 : 1;
-	grc.css('background-image', "url("+gr+")");
-	grc.css('background-size', `${xs * xadj}px ${ys * yadj}px`);
-	//grc.css('background-size', `${Math.round(xs * xadj)}px ${Math.round(ys * yadj)}px`);
-	grc.css('background-position-x', Math.round(startX)); //todo? Round or not?
-	grc.css('background-position-y', Math.round(startY));
-        grc.css('height', '100%') ; //$('#scene_map').height()); //todo??
-	grc.css('display', 'display');			 
+	const bk = {
+		'background-image': "url("+gr+")",
+		'background-size': `${xs * xadj}px ${ys * yadj}px`,
+		'background-position-x': Math.round(startX), //todo? Round or not?
+		'background-position-y': Math.round(startY),
+		'visibility': 'visible'
+	}
+	grc2.css(bk);
+	grc.css(bk);
 }	
 
 function redraw_grid(hpps=null, vpps=null, offsetX=null, offsetY=null, color=null, lineWidth=null, subdivide=null, dash=[]){
@@ -1322,7 +1326,7 @@ function reset_canvas(apply_zoom=true) {
 
 	$('#darkness_layer').css({"width": sceneMapWidth, "height": sceneMapHeight});
 	$("#scene_map_container").css({"width": sceneMapWidth, "height": sceneMapHeight});
-	$('#grid_svg_overlay').css({"width": sceneMapWidth, "height": sceneMapHeight});	
+	$("#grid_svg_overlay_container").css({"width": sceneMapWidth, "height": sceneMapHeight});
 	
 	ctxScale('peer_overlay', sceneMapWidth, sceneMapHeight);
 	ctxScale('temp_overlay', sceneMapWidth, sceneMapHeight);
@@ -2901,7 +2905,9 @@ function drawing_mousedown(e) {
 	// select modifies this line but never resets it, so reset it here
 	// otherwise all drawings are dashed
 
-
+	if(window.DRAWFUNCTION === 'measure') {
+		$("#VTT").css('--grid-overlay-on-tmp', '1');
+	}
 	
 	// these are generic values used by most drawing functionality
 	window.LINEWIDTH = data.draw_line_width
@@ -3598,6 +3604,8 @@ function drawing_mousemove(e) {
  * @returns
  */
 function drawing_mouseup(e) {
+	$("#VTT").css('--grid-overlay-on-tmp', '0');
+	
 	// ignore this if we're dragging a token
 	if ($(".ui-draggable-dragging:not([data-clone-id])").length > 0) {
 		$(".ui-draggable-dragging:not([data-clone-id])").toggleClass('.ui-draggable-dragging', false);

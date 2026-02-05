@@ -33,6 +33,15 @@ body > button,
     border: 1px solid lightgray;
     font-size: 12px;
 }
+.TLA {
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+.SST {
+    transform: scale(var(--scene-scale));
+    transform-origin: top left;
+}
 .note-text table{
     width: revert-layer;
 }
@@ -14465,11 +14474,14 @@ button#displayedDiceFormulaExit:hover {
 .sidebar-panel-content.avtt-drop-target::after {
     top: 89px;
 }
-.grid-svg-overlay {
+.grid-svg-tile {
   position: absolute;
-  inset: 0;
+  transform-origin: top left;
+  top: 0;
+  left: 0;
   pointer-events: none;
   width: 100%;
+  height: 100%;  
   background-repeat: repeat;
 }
 /***** Icon UI *****/
