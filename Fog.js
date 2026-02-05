@@ -1066,7 +1066,6 @@ function midPointBtw(p1, p2) {
   };
 }
 
-//todo: remove most
 function clear_grid(){
 	draw_svg_grid("x");
 }
@@ -3493,9 +3492,8 @@ function drawing_mousemove(e) {
 		else if (window.DRAWSHAPE == "grid-brush"){
 			
 			window.temp_context.fillStyle = window.DRAWCOLOR;
-			const hpps = window.CURRENT_SCENE_DATA.gridType == 2 ? window.CURRENT_SCENE_DATA.vpps : window.CURRENT_SCENE_DATA.hpps;
-
-			const hexSize = hpps/1.5 / window.CURRENT_SCENE_DATA.scale_factor || window.CURRENT_SCENE_DATA.hpps/1.5 / window.CURRENT_SCENE_DATA.scale_factor;
+			const hpps = (window.CURRENT_SCENE_DATA.gridType == 2 ? window.CURRENT_SCENE_DATA.vpps : window.CURRENT_SCENE_DATA.hpps) || window.CURRENT_SCENE_DATA.hpps;
+			const hexSize = hpps/1.5 / window.CURRENT_SCENE_DATA.scale_factor;
 
 			function drawHexagon(ctx, x, y) { //todo: hexSize from closure is odd?!
 				if(window.CURRENT_SCENE_DATA.gridType == 3){
