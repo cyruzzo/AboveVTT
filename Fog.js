@@ -3090,8 +3090,8 @@ function drawing_mousedown(e) {
 		const offscreen_context = offscreen_canvas.getContext('2d');
 		offscreen_context.fillStyle = "#FFF";
 		
-		const {x,y} = snap_point_to_grid(window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, true,
-						 undefined, undefined, undefined, true);		
+		const { x, y } = snap_point_to_grid(window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, true, undefined, undefined, undefined, true);
+
 		window.BRUSHPOINTS.push([Math.round(x), Math.round(y)]) //round???
 		window.BRUSHPOINTS = Array.from(new Set(window.BRUSHPOINTS.map(JSON.stringify)), JSON.parse)		
 		if(window.CURRENT_SCENE_DATA.gridType == '1'){
