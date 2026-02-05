@@ -463,7 +463,7 @@ class MessageBroker {
 				}
 
 
-				let combatSettingData = getCombatTrackersettings();
+				let combatSettingData = getCombatTrackerSettings();
 				if(combatSettingData['tie_breaker'] !='1'){
 					total = parseInt(total);
 				}
@@ -1531,7 +1531,7 @@ class MessageBroker {
 							}
 						}
 						
-						let combatSettingData = getCombatTrackersettings();
+						let combatSettingData = getCombatTrackerSettings();
 						if(combatSettingData['tie_breaker'] !='1'){
 							total = parseInt(total);
 						}
@@ -2008,7 +2008,7 @@ class MessageBroker {
 	}
   	handleCT(data){
 		ct_load(data);
-		if(getCombatTrackersettings().next_turn_indicator == '1'){
+		if(getCombatTrackerSettings().next_turn_indicator == '1'){
 			this.handleNextTurnIndicator();
 		}
 			

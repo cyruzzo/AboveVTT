@@ -1063,7 +1063,7 @@ function token_context_menu_expanded(tokenIds, e) {
 					e.stopPropagation();
 					$(this).parent().trigger(shiftClick);
 				});
-				const reset_init = getCombatTrackersettings().remove_init;
+				const reset_init = getCombatTrackerSettings().remove_init;
 				tokens.forEach(t =>{
 					if(t.options.combatGroup && Object.values(window.TOKEN_OBJECTS).filter(d=>d.options.combatGroup == t.options.combatGroup).length == 2 && window.TOKEN_OBJECTS[t.options.combatGroup]){
 						window.TOKEN_OBJECTS[t.options.combatGroup].delete()
@@ -1084,9 +1084,9 @@ function token_context_menu_expanded(tokenIds, e) {
 			} else {
 				clickedButton.removeClass("add-to-ct").addClass("remove-from-ct");
 				clickedButton.html(removeButtonInternals);
-				const reset_init = getCombatTrackersettings().remove_init;
+				const reset_init = getCombatTrackerSettings().remove_init;
 
-				const autoGroup = getCombatTrackersettings().autoGroup;
+				const autoGroup = getCombatTrackerSettings().autoGroup;
 
 				if(autoGroup === '1'){
 					const groupedByStat = tokens.reduce((acc, token) => {
@@ -1103,7 +1103,7 @@ function token_context_menu_expanded(tokenIds, e) {
 						let group = uuid();
 						let allHidden = true;
 						let allVisibleNames = true
-						const reset_init = getCombatTrackersettings().remove_init;
+						const reset_init = getCombatTrackerSettings().remove_init;
 						
 						groupedByStat[i].forEach(t => {
 							if(t.isPlayer()){
@@ -1200,7 +1200,7 @@ function token_context_menu_expanded(tokenIds, e) {
 					e.stopPropagation();
 					$(this).parent().trigger(shiftClick);
 				});
-				const reset_init = getCombatTrackersettings().remove_init;
+				const reset_init = getCombatTrackerSettings().remove_init;
 				tokens.forEach(t =>{
 					if(t.options.combatGroup != undefined && Object.values(window.TOKEN_OBJECTS)?.filter(d=>d.options.combatGroup == t.options.combatGroup)?.length == 2 && window.TOKEN_OBJECTS[t.options.combatGroup]){
 						window.TOKEN_OBJECTS[t.options.combatGroup].delete()
@@ -1227,7 +1227,7 @@ function token_context_menu_expanded(tokenIds, e) {
 				let group = uuid();
 				let allHidden = true;
 				let allVisibleNames = true
-				const reset_init = getCombatTrackersettings().remove_init;
+				const reset_init = getCombatTrackerSettings().remove_init;
 	
 
 				tokens.forEach(t => {

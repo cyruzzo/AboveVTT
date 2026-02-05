@@ -284,7 +284,7 @@ function init_combat_tracker(){
 			if(window.TOKEN_OBJECTS[currentTarget] != undefined){
 				window.TOKEN_OBJECTS[currentTarget].options.current = true;
 				window.TOKEN_OBJECTS[currentTarget].update_and_sync();
-				let combatSettingData = getCombatTrackersettings();
+				let combatSettingData = getCombatTrackerSettings();
 				let group = false;
 				if(window.TOKEN_OBJECTS[currentTarget].options.combatGroupToken){
 					group = Object.values(window.TOKEN_OBJECTS).find(d=> d.options.combatGroup == window.TOKEN_OBJECTS[currentTarget].options.combatGroup && !d.options.combatGroupToken);
@@ -313,7 +313,7 @@ function init_combat_tracker(){
 			current.css('background','');
 			next=$(current.nextAll('tr:not([skipTurn])')[0]);
 			if(next.length==0){
-				const autoInit = getCombatTrackersettings().auto_init;
+				const autoInit = getCombatTrackerSettings().auto_init;
 				if(autoInit == '1'){
 					$('.roll-init-button').click();
 				}
@@ -340,7 +340,7 @@ function init_combat_tracker(){
 				window.TOKEN_OBJECTS[newTarget].options.round = window.ROUND_NUMBER;
 				adjust_reaction_condition(window.TOKEN_OBJECTS[newTarget]);
 				window.TOKEN_OBJECTS[newTarget].place_sync_persist();
-				let combatSettingData = getCombatTrackersettings();
+				let combatSettingData = getCombatTrackerSettings();
 				let group = false;
 				if(window.TOKEN_OBJECTS[newTarget].options.combatGroupToken){
 					group = Object.values(window.TOKEN_OBJECTS).find(d=> d.options.combatGroup == window.TOKEN_OBJECTS[newTarget].options.combatGroup && !d.options.combatGroupToken);
@@ -406,7 +406,7 @@ function init_combat_tracker(){
 				window.TOKEN_OBJECTS[newTarget].options.round = window.ROUND_NUMBER;
 				window.TOKEN_OBJECTS[newTarget].place_sync_persist();
 				window.TOKEN_OBJECTS[newTarget].build_conditions(prev, true);
-				let combatSettingData = getCombatTrackersettings();
+				let combatSettingData = getCombatTrackerSettings();
 				let group = false;
 				if(window.TOKEN_OBJECTS[newTarget].options.combatGroupToken){
 					group = Object.values(window.TOKEN_OBJECTS).find(d=> d.options.combatGroup == window.TOKEN_OBJECTS[newTarget].options.combatGroup && !d.options.combatGroupToken);
@@ -505,7 +505,7 @@ function init_combat_tracker(){
 		frame_z_index_when_click($(this));
 	});
 
-	if(getCombatTrackersettings().carousel == '1'){
+	if(getCombatTrackerSettings().carousel == '1'){
 		init_carousel_combat_tracker()
 	}
 }
@@ -821,7 +821,7 @@ function update_carousel_combat_tracker(){
 
 
 
-function getCombatTrackersettings(){
+function getCombatTrackerSettings(){
 	let combatSettingData = {};
 	if(localStorage.getItem(`abovevtt-combat-tracker-settings-${window.DM}`) == null){
 		combatSettingData = {
@@ -844,7 +844,7 @@ function getCombatTrackersettings(){
 	return combatSettingData;
 }
 function openCombatTrackerSettings(){
-	let combatSettingData = getCombatTrackersettings();		
+	let combatSettingData = getCombatTrackerSettings();		
 
 	function form_row(name, title, inputOverride=null, imageValidation=false) {
 		const row = $(`<div style='width:100%;' id='${name}_row'/>`);
@@ -1077,14 +1077,13 @@ function ct_add_token(token,persist=true,disablerolling=false, adv=false, dis=fa
 		token.build_conditions(entry, true);
 	}
 	if (typeof(token.options.ct_show) == 'undefined'){
+		const addHidden = getCombatTrackerSettings().always_add_hidden;
 		const shouldHide = token.options.hidden ||
-			(!token.isPlayer() && !token.options.share_vision && !token.options.player_owned)
+			(addHidden && !token.isPlayer() && !token.options.share_vision && !token.options.player_owned)
 		if (shouldHide) {
 			token.options.ct_show = false;
-	
 			window.all_token_objects[token.options.id].options.ct_show = false;
 			window.all_token_objects[token.options.id].update_and_sync();
-			
 		}
 		else {		
 			if(typeof window.all_token_objects[token.options.id].options.ct_show != 'undefined') {
@@ -1585,7 +1584,7 @@ function ct_load(data=null){
 				if(window.ROUND_NUMBER != data[i]['round_number']){
 					window.ROUND_NUMBER = data[i]['round_number'];
 					document.getElementById('round_number').value = window.ROUND_NUMBER;
-					const autoInit = getCombatTrackersettings().auto_init;
+					const autoInit = getCombatTrackerSettings().auto_init;
 					const tokenInCombat = $(`#combat_area tr[data-target='${window.pcs.find(d => d.sheet.includes(window.PLAYER_SHEET)).sheet}']`).length > 0;
 					if(autoInit == '1' && !window.DM && tokenInCombat == true){
 						$('.roll-init-button').click();
@@ -1623,7 +1622,7 @@ function ct_load(data=null){
 				if(data[i]['current']){
 					$("#combat_area tr[data-target='"+data[i]['data-target']+"']").attr("data-current","1");
 					if(window.TOKEN_OBJECTS[data[i]['data-target']] != undefined){
-						let combatSettingData = getCombatTrackersettings();
+						let combatSettingData = getCombatTrackerSettings();
 						let group = false;
 						if(window.TOKEN_OBJECTS[data[i]['data-target']].options.combatGroupToken){
 							group = Object.values(window.TOKEN_OBJECTS).find(d=> d.options.combatGroup == window.TOKEN_OBJECTS[data[i]['data-target']].options.combatGroup && !d.options.combatGroupToken);
