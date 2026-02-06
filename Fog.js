@@ -379,9 +379,9 @@ class WaypointManagerClass {
 		const rulerType = $('#ruler_menu .button-enabled').attr('data-type');
 		if(window.CURRENT_SCENE_DATA.gridType != undefined){
 			if((xLength > yLength && window.CURRENT_SCENE_DATA.gridType != 1 && rulerType != 'euclidean') || (window.CURRENT_SCENE_DATA.gridType == 2 && rulerType == 'euclidean')){
-				gridSize = window.hexGridSize.width/window.CURRENT_SCENE_DATA.scale_factor;
+				gridSize = grid_size(true, false)[0];
 			} else if((xLength < yLength && window.CURRENT_SCENE_DATA.gridType != 1 && rulerType != 'euclidean' )|| (window.CURRENT_SCENE_DATA.gridType == 3 && rulerType == 'euclidean')){
-				gridSize = window.hexGridSize.height/window.CURRENT_SCENE_DATA.scale_factor;
+				gridSize = grid_size(true, false)[1];
 			}
 		}
 		
@@ -1070,12 +1070,6 @@ function clear_grid(){
 	draw_svg_grid("x");
 }
 
-//needed for one place in Token
-function get_hex_size() {
-	const pps = window.CURRENT_SCENE_DATA.gridType == 2 ? window.CURRENT_SCENE_DATA.vpps : window.CURRENT_SCENE_DATA.hpps;
-	return (pps || window.CURRENT_SCENE_DATA.hpps) / 1.5 / window.CURRENT_SCENE_DATA.scale_factor;
-}
-
 function redraw_alphanum_grid(){
 
 	$('.alphaNumGrid').remove();
@@ -1119,41 +1113,37 @@ function redraw_alphanum_grid(){
 		}
 
 	} else if (window.CURRENT_SCENE_DATA.gridType == 2 || window.CURRENT_SCENE_DATA.gridType == 3){
-		const scaleX = window.CURRENT_SCENE_DATA.scaleAdjustment != undefined ? parseFloat(window.CURRENT_SCENE_DATA.scaleAdjustment.x) : 1;
-		const scaleY = window.CURRENT_SCENE_DATA.scaleAdjustment != undefined ? parseFloat(window.CURRENT_SCENE_DATA.scaleAdjustment.y) : 1;
-
-		hpps = window.hexGridSize.width * scaleX;
-		vpps = window.hexGridSize.height * scaleY;
-		horizontalSvg.attr('height', vpps);
-		verticalSvg.attr('width', hpps);
-		horizontalSvg.attr('viewBox', `0 0 ${width * scale_factor} ${vpps}`);
-		verticalSvg.attr('viewBox', `0 0 ${hpps} ${height * scale_factor}`);
+		const [hpps_g, vpps_g] = grid_size(false, false); //grid units
+		horizontalSvg.attr('height', vpps_g);
+		verticalSvg.attr('width', hpps_g);
+		horizontalSvg.attr('viewBox', `0 0 ${width * scale_factor} ${vpps_g}`);
+		verticalSvg.attr('viewBox', `0 0 ${hpps_g} ${height * scale_factor}`);
 		/* Enable if we want half ticks for offset
 		if (window.CURRENT_SCENE_DATA.gridType == 2){
-			hpps = hpps / 2;
+			hpps_g = hpps_g / 2;
 		}
 		else if(window.CURRENT_SCENE_DATA.gridType == 3){
-			vpps = vpps / 2;
+			vpps_g = vpps_g / 2;
 		}
 		*/
 		horizontalSvg.css({
-			'--stroke-width': `${hpps / 10}`,
-			'--font-size': `${hpps / 2}px`
+			'--stroke-width': `${hpps_g / 10}`,
+			'--font-size': `${hpps_g / 2}px`
 		})
 		verticalSvg.css({
-			'--stroke-width': `${vpps / 10}`,
-			'--font-size': `${vpps / 2}px`
+			'--stroke-width': `${vpps_g / 10}`,
+			'--font-size': `${vpps_g / 2}px`
 		})
-		const numGridWide = Math.ceil((width + offsetx) * scale_factor / hpps);
-		const numGridHigh = Math.ceil((height + offsety) * scale_factor / vpps);
+		const numGridWide = Math.ceil((width + offsetx) * scale_factor / hpps_g);
+		const numGridHigh = Math.ceil((height + offsety) * scale_factor / vpps_g);
 	
 		
 		for (let i = 1; i < numGridWide; i++) {
-			const textLine = `<text x='${(i * hpps) + (offsetx % hpps) }' y='50%'><tspan>${getAlphaLabel(i)}</tspan></text>`;
+			const textLine = `<text x='${(i * hpps_g) + (offsetx % hpps_g) }' y='50%'><tspan>${getAlphaLabel(i)}</tspan></text>`;
 			horizontalSvg[0].innerHTML += textLine;
 		}
 		for (let i = 1; i < numGridHigh; i++) {
-			const textLine = `<text x='50%' y='${(i * vpps) + (offsety % vpps) }'><tspan>${i}</tspan></text>`;
+			const textLine = `<text x='50%' y='${(i * vpps_g) + (offsety % vpps_g) }'><tspan>${i}</tspan></text>`;
 			verticalSvg[0].innerHTML += textLine;
 		}
 	}
@@ -1162,24 +1152,26 @@ function redraw_alphanum_grid(){
 	$('#VTT').append(horizontalSvg, verticalSvg);
 }
 
-const sr3 = Math.sqrt(3); //high precision constant for hex calcs
-/*type: 3 = flat, 2 = pointy top; d = center to center distance*/
-function getClosestHexCenter(type, x, y, offset_x, offset_y, d, sax, say) {
-    const px = (x - offset_x) / sax; //divide out "minor adjustment - add back later
-    const py = (y - offset_y) / say;
-    const size = d / sr3;
-    let q, r, centerX, centerY;	
+
+const sr3 = Math.sqrt(3);
+const hexDeltas = [[sr3/2, 0.5],[-sr3/2, 0.5],[-sr3/2, -0.5],[sr3/2, -0.5],[0, 1],[0, -1]];	
+/*type: 3 = flat, 2 = pointy top; size = face-to-face*/
+//use cubic coord system
+function closestHexCenter(type, size, x, y, offset_x, offset_y, adjx=1, adjy=1) {
+    x = (x - offset_x) / adjx; //divide out "minor adjustment - add back later
+    y = (y - offset_y) / adjy;
+    let q, r, retX, retY;
     if(type === '3') {
-	    q = (2/3 * px) / (d / sr3);
-	    r = (-1/3 * px + sr3/3 * py) / (d / sr3);
+	    q = (2/3 * x) / size;
+	    r = (-1/3 * x + sr3/3 * y) / size;
     } else {
-	    q = (sr3/3 * px - 1/3 * py) / size;
-	    r = (2/3 * py) / size;
+	    q = (sr3/3 * x - 1/3 * y) / size;
+	    r = (2/3 * y) / size;
     }
-    let s = -q - r;
+    const s = -q - r;
     let rx = Math.round(q);
     let ry = Math.round(r);
-    let rz = Math.round(s);
+    const rz = Math.round(s);
     const x_diff = Math.abs(rx - q);
     const y_diff = Math.abs(ry - r);
     const z_diff = Math.abs(rz - s);
@@ -1189,27 +1181,42 @@ function getClosestHexCenter(type, x, y, offset_x, offset_y, d, sax, say) {
         ry = -rx - rz;
     }
     if(type === '3') {
-	    centerX = (3/2 * rx) * (d / sr3);
-	    centerY = (sr3/2 * rx + sr3 * ry) * (d / sr3);
+            retX = size * 3/2 * rx;
+            retY = size * sr3 * (rx/2 + ry);
     } else {
-	    centerX = size * (sr3 * rx + sr3/2 * ry);
-	    centerY = size * (3/2 * ry);
+            retX = size * sr3 * (rx + ry/2);
+	    retY = size * 3/2 * ry;
     }
-    //todo: any rounding?
-    return [centerX * sax + offset_x, centerY * say + offset_y]
+    return [retX * adjx + offset_x, retY * adjy + offset_y]
 }
 
-function getCurrentClosestHexCenter(x, y) {
-	const scale = 1.0; //window.CURRENT_SCENE_DATA.scale_factor
-	const hexsize = window.CURRENT_SCENE_DATA.hpps / scale / (sr3 / 2);
-	const startX = Math.round( window.CURRENT_SCENE_DATA.offsetx / scale );
-	const startY = Math.round( window.CURRENT_SCENE_DATA.offsety / scale );	      	
-	const ret = getClosestHexCenter(window.CURRENT_SCENE_DATA.gridType, x, y,
-				   startX, startY, hexsize,
-				   window.CURRENT_SCENE_DATA.scaleAdjustment?.x || 1,
-				   window.CURRENT_SCENE_DATA.scaleAdjustment?.y || 1
-				  );
-	return ret;
+function closestHexVertex(type, size, x, y, offsetx = 0, offsety = 0, adjx = 1, adjy = 1, allowCenter = false) {
+	//which vertex is closest (including center if allowed) - closest center - then vertex
+	const [cx, cy] = closestHexCenter(type, size, x, y, offsetx, offsety, adjx, adjy);
+	let dist = allowCenter ? ((x-cx)**2 + (y-cy)**2) : undefined;
+	return hexDeltas.reduce((prev,[dx,dy]) => {
+		//flip/flop x/y for rotated grid ( could optimize by quadrant, but not worth it )
+		const pt = type === '2' ? [cx+dx*size,cy+dy*size] : [cx+dy*size,cy+dx*size];
+		const newdist = (x-pt[0])**2 + (y-pt[1])**2;
+		if(dist === undefined || newdist < dist) {
+			dist = newdist;
+			return pt;
+		} else {
+			return prev;
+		}}, [cx, cy]);
+}
+
+function getCurrentClosestHex(x, y, vertex=false) {
+	const scale = window.CURRENT_SCENE_DATA.scale_factor
+	//hpps = vpps by convention
+	const hexSize = window.CURRENT_SCENE_DATA.hpps / 1.5;
+	const startX = window.CURRENT_SCENE_DATA.offsetx;
+	const startY = window.CURRENT_SCENE_DATA.offsety;
+	return  (vertex ? closestHexVertex : closestHexCenter)
+	(window.CURRENT_SCENE_DATA.gridType, hexSize,
+	 x, y, startX, startY,
+	 window.CURRENT_SCENE_DATA.scaleAdjustment?.x || 1,
+	 window.CURRENT_SCENE_DATA.scaleAdjustment?.y || 1);
 }
 
 function svg_tile(type = '1', xs = 100, ys = 100, color = 'black', lineWidth = 5, dash = []) {
@@ -1248,22 +1255,25 @@ function draw_svg_grid(type=null, hpps=null, vpps=null, offsetX=null, offsetY=nu
 	const say = gridType === '1' ? 1 : (window.CURRENT_SCENE_DATA.scaleAdjustment?.y || 1);
 	let startX = (offsetX || window.CURRENT_SCENE_DATA.offsetx) * sax / scale;
 	let startY = (offsetY || window.CURRENT_SCENE_DATA.offsety) * say / scale;
-	//Note: global side effects of drawing right here!!!! vvvvv
+	// Warning: global side effects of drawing right here!!!
+	// the draw function makes pps 1:1 (this is how old code worked)
+	// todo: would love to remove this as it's confusing
 	if(gridType === '2') {
-		window.hexGridSize = { width: vpps * sr3 / 1.5,  height: vpps };
 		window.CURRENT_SCENE_DATA.hpps = hpps = vpps;
 	} else if(gridType === '3') {
-		window.hexGridSize = { width: hpps, height: hpps * sr3 / 1.5 };
 		window.CURRENT_SCENE_DATA.vpps = vpps = hpps;
 	}
-	const xs = hpps / ((gridType === 1) ? 1 : 0.75) * (gridType === '2' ? (sr3/2) : 1) * sax / scale;
-	const ys = vpps / ((gridType === 1) ? 1 : 0.75) * (gridType === '3' ? (sr3/2) : 1) * say / scale;
+	const xs = hpps / ((gridType === '1') ? 1 : 0.75) * (gridType === '2' ? (sr3/2) : 1) * sax / scale;
+	const ys = vpps / ((gridType === '1') ? 1 : 0.75) * (gridType === '3' ? (sr3/2) : 1) * say / scale;
+	var submult = 1;
 	if(gridType !== '1') {
 		startX -= xs/2;
 		startY -= ys/2;
+	} else {
+		if(!subdivide) subdivide = window.CURRENT_SCENE_DATA.grid_subdivided;
+		if(subdivide && subdivide !== '0') submult = parseInt(subdivide)+1
 	}
-	const submult = (gridType == '1' && subdivide || (subdivide == null && window.CURRENT_SCENE_DATA.grid_subdivided)) ? 2 : 1;
-	console.log("HEX", xs, ys, startX, startY, hpps, vpps, sax, say)
+	console.log("GRID TILE", xs, ys, startX, startY, hpps, vpps, sax, say, submult)
 	const gr = svg_tile(gridType, xs*submult, ys*submult,
 			    color || window.CURRENT_SCENE_DATA.grid_color,
 			    lineWidth || window.CURRENT_SCENE_DATA.grid_line_width, dash);
@@ -1278,7 +1288,19 @@ function draw_svg_grid(type=null, hpps=null, vpps=null, offsetX=null, offsetY=nu
 	}
 	grc2.css(bk);
 	grc.css(bk);
-}	
+}
+
+//returns current [width,height] of grid (including hex)
+function grid_size(scaled = false, adjusted = false) {
+	const sd = window.CURRENT_SCENE_DATA;
+	const hexadj = sr3 / 1.5; //1.155...
+	const xhex = (sd.gridType == '2') ? hexadj : 1;
+	const yhex = (sd.gridType == '3') ? hexadj : 1;
+	const scale = scaled ? sd.scale_factor : 1;
+	const adjx = ((adjusted ? sd.scaleAdjustment?.x : 1) || 1) / scale * xhex;
+	const adjy = ((adjusted ? sd.scaleAdjustment?.y : 1) || 1) / scale * yhex;
+	return [sd.hpps * adjx, sd.vpps * adjy];
+}
 
 function redraw_grid(hpps=null, vpps=null, offsetX=null, offsetY=null, color=null, lineWidth=null, subdivide=null, dash=[]){
 	clear_grid();
@@ -1548,37 +1570,6 @@ function redraw_fog() {
 
 	ctx.fillStyle = fogStyle;
 	ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-	function drawHexagon(ctx, x, y) {
-		const hpps = window.CURRENT_SCENE_DATA.gridType == 2 ? window.CURRENT_SCENE_DATA.vpps : window.CURRENT_SCENE_DATA.hpps;
-
-		const hexSize = hpps/1.5 / window.CURRENT_SCENE_DATA.scale_factor || window.CURRENT_SCENE_DATA.hpps/1.5 / window.CURRENT_SCENE_DATA.scale_factor;
-
-		if(window.CURRENT_SCENE_DATA.gridType == 3){
-		  ctx.beginPath();
-		  ctx.moveTo(x + hexSize, y);
-		  for (let i = 1; i <= 6; i++) {
-		    let angle = i * Math.PI / 3;
-		    let dx = hexSize * Math.cos(angle);
-		    let dy = hexSize * Math.sin(angle);
-		    ctx.lineTo(x + dx, y + dy);
-		  }
-		  ctx.closePath();
-		  ctx.fill();
-		}
-		else{
-		  ctx.beginPath();
-		  ctx.moveTo(x, y + hexSize);
-		  for (let i = 1; i <= 6; i++) {
-		    let angle = i * Math.PI / 3;
-		    let dx = hexSize * Math.sin(angle);
-		    let dy = hexSize * Math.cos(angle);
-		    ctx.lineTo(x + dx, y + dy);
-		  }
-		  ctx.closePath();
-		  ctx.fill();
-		}
-	}
 
 	for (let i = 0; i < window.REVEALED.length; i++) {
 		let d = window.REVEALED[i];
@@ -3067,36 +3058,6 @@ function drawing_mousedown(e) {
 		window.temp_context.fillStyle = window.DRAWCOLOR;
 		const hpps = window.CURRENT_SCENE_DATA.gridType == 2 ? window.CURRENT_SCENE_DATA.vpps : window.CURRENT_SCENE_DATA.hpps;
 
-		const hexSize = hpps/1.5 / window.CURRENT_SCENE_DATA.scale_factor || window.CURRENT_SCENE_DATA.hpps/1.5 / window.CURRENT_SCENE_DATA.scale_factor;
-
-		function drawHexagon(ctx, x, y) {
-			if(window.CURRENT_SCENE_DATA.gridType == 3){
-			  ctx.beginPath();
-			  ctx.moveTo(x + hexSize, y);
-			  for (let i = 1; i <= 6; i++) {
-			    let angle = i * Math.PI / 3;
-			    let dx = hexSize * Math.cos(angle);
-			    let dy = hexSize * Math.sin(angle);
-			    ctx.lineTo(x + dx, y + dy);
-			  }
-			  ctx.closePath();
-			  ctx.fill();
-			}
-			else{
-			  ctx.beginPath();
-			  ctx.moveTo(x, y + hexSize);
-			  for (let i = 1; i <= 6; i++) {
-			    let angle = i * Math.PI / 3;
-			    let dx = hexSize * Math.sin(angle);
-			    let dy = hexSize * Math.cos(angle);
-			    ctx.lineTo(x + dx, y + dy);
-			  }
-			  ctx.closePath();
-			  ctx.fill();
-			}
-		}
-
-
 		clear_temp_canvas()
 
 		const offscreen_canvas = new OffscreenCanvas($('#scene_map')[0].width, $('#scene_map')[0].height); 
@@ -3506,45 +3467,10 @@ function drawing_mousemove(e) {
 		else if (window.DRAWSHAPE == "grid-brush"){
 			
 			window.temp_context.fillStyle = window.DRAWCOLOR;
-			const hpps = (window.CURRENT_SCENE_DATA.gridType == 2 ? window.CURRENT_SCENE_DATA.vpps : window.CURRENT_SCENE_DATA.hpps) || window.CURRENT_SCENE_DATA.hpps;
-			const hexSize = hpps/1.5 / window.CURRENT_SCENE_DATA.scale_factor;
-
-			function drawHexagon(ctx, x, y) { //todo: hexSize from closure is odd?!
-				if(window.CURRENT_SCENE_DATA.gridType == 3){
-				  ctx.beginPath();
-				  ctx.moveTo(x + hexSize, y);
-				  for (let i = 1; i <= 6; i++) {
-				    let angle = i * Math.PI / 3;
-				    let dx = hexSize * Math.cos(angle);
-				    let dy = hexSize * Math.sin(angle);
-				    ctx.lineTo(x + dx, y + dy);
-				  }
-				  ctx.closePath();
-				  ctx.fill();
-				}
-				else{
-				  ctx.beginPath();
-				  ctx.moveTo(x, y + hexSize);
-				  for (let i = 1; i <= 6; i++) {
-				    let angle = i * Math.PI / 3;
-				    let dx = hexSize * Math.sin(angle);
-				    let dy = hexSize * Math.cos(angle);
-				    ctx.lineTo(x + dx, y + dy);
-				  }
-				  ctx.closePath();
-				  ctx.fill();
-				}
-			}
-		
-
 			clear_temp_canvas()
-
-			const offscreen_canvas = new OffscreenCanvas($('#scene_map')[0].width, $('#scene_map')[0].height); 
-			const offscreen_context = offscreen_canvas.getContext('2d');
-			offscreen_context.fillStyle = "#FFF";
-
 			const { x, y } = snap_point_to_grid(mouseX, mouseY, true, undefined, undefined, undefined, true);
 			window.BRUSHPOINTS.push([Math.round(x), Math.round(y)]) //round??
+			//todo: unclear why we do this:
 			window.BRUSHPOINTS = Array.from(new Set(window.BRUSHPOINTS.map(JSON.stringify)), JSON.parse)
 			
 			if(window.CURRENT_SCENE_DATA.gridType == '1'){
@@ -4844,6 +4770,40 @@ function drawCircle(ctx, centerX, centerY, radius, style, fill=true, lineWidth =
 	}
 
 }
+
+
+function drawHexagon(ctx, x, y) {
+	const hexSize = window.CURRENT_SCENE_DATA.hpps / 1.5 / window.CURRENT_SCENE_DATA.scale_factor;
+	x = x / window.CURRENT_SCENE_DATA.scale_factor;
+	y = y / window.CURRENT_SCENE_DATA.scale_factor;	
+	if(window.CURRENT_SCENE_DATA.gridType == 3){ //todo: collapse both loops simpler code
+		ctx.beginPath();
+		ctx.moveTo(x + hexSize, y);
+		for (let i = 1; i <= 6; i++) {
+			//todo: a lot of slow math for constants...
+			let angle = i * Math.PI / 3;
+			let dx = hexSize * Math.cos(angle);
+			let dy = hexSize * Math.sin(angle);
+			ctx.lineTo(x + dx, y + dy);
+		}
+		ctx.closePath();
+		ctx.fill();
+	}
+	else{
+		ctx.beginPath();
+		ctx.moveTo(x, y + hexSize);
+		for (let i = 1; i <= 6; i++) {
+			let angle = i * Math.PI / 3;
+			let dx = hexSize * Math.sin(angle);
+			let dy = hexSize * Math.cos(angle);
+			ctx.lineTo(x + dx, y + dy);
+		}
+		ctx.closePath();
+		ctx.fill();
+	}
+}
+
+		 
 
 function drawRect(ctx, startx, starty, width, height, style, fill=true, lineWidth = 6, addStrokeToFill = false, addDottedStrokeToBorder)
 {
