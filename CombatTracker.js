@@ -1079,7 +1079,7 @@ function ct_add_token(token,persist=true,disablerolling=false, adv=false, dis=fa
 	if (typeof(token.options.ct_show) == 'undefined'){
 		const addHidden = getCombatTrackerSettings().always_add_hidden;
 		const shouldHide = token.options.hidden ||
-			(addHidden != 0 && !token.isPlayer() && !token.options.share_vision && !token.options.player_owned)
+			(addHidden && addHidden != 0 && !token.isPlayer() && !token.options.share_vision && !token.options.player_owned)
 		if (shouldHide) {
 			token.options.ct_show = false;
 			window.all_token_objects[token.options.id].options.ct_show = false;
