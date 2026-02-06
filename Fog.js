@@ -1241,23 +1241,23 @@ function draw_svg_grid(type=null, hpps=null, vpps=null, offsetX=null, offsetY=nu
 	}
 	const gridType = window.CURRENT_SCENE_DATA.gridType;
 	const scale = window.CURRENT_SCENE_DATA.scale_factor
-	//pps for hex
+	//pps for hex - hex radius is (pps / 1.5)
 	hpps = hpps || window.CURRENT_SCENE_DATA.hpps;
 	vpps = vpps || window.CURRENT_SCENE_DATA.vpps;	
 	const sax = gridType === '1' ? 1 : (window.CURRENT_SCENE_DATA.scaleAdjustment?.x || 1);
 	const say = gridType === '1' ? 1 : (window.CURRENT_SCENE_DATA.scaleAdjustment?.y || 1);
-	let startX = (offsetX || window.CURRENT_SCENE_DATA.offsetx) / scale * sax;
-	let startY = (offsetY || window.CURRENT_SCENE_DATA.offsety) / scale * say;
+	let startX = (offsetX || window.CURRENT_SCENE_DATA.offsetx) * sax / scale;
+	let startY = (offsetY || window.CURRENT_SCENE_DATA.offsety) * say / scale;
+	//Note: global side effects of drawing right here!!!! vvvvv
 	if(gridType === '2') {
-		//Note: global side effects of drawing right here!!!!
-		window.hexGridSize = { width: vpps * sr3 / 1.5,  height: vpps }; //todo:scale?
+		window.hexGridSize = { width: vpps * sr3 / 1.5,  height: vpps };
 		window.CURRENT_SCENE_DATA.hpps = hpps = vpps;
 	} else if(gridType === '3') {
 		window.hexGridSize = { width: hpps, height: hpps * sr3 / 1.5 };
 		window.CURRENT_SCENE_DATA.vpps = vpps = hpps;
 	}
-	const xs = ((gridType === 1) ? 1 : 0.75) * hpps * (gridType === '2' ? (sr3/2) : 1) * sax / scale;
-	const ys = ((gridType === 1) ? 1 : 0.75) * vpps * (gridType === '3' ? (sr3/2) : 1) * say / scale;
+	const xs = hpps / ((gridType === 1) ? 1 : 0.75) * (gridType === '2' ? (sr3/2) : 1) * sax / scale;
+	const ys = vpps / ((gridType === 1) ? 1 : 0.75) * (gridType === '3' ? (sr3/2) : 1) * say / scale;
 	if(gridType !== '1') {
 		startX -= xs/2;
 		startY -= ys/2;
@@ -1267,11 +1267,11 @@ function draw_svg_grid(type=null, hpps=null, vpps=null, offsetX=null, offsetY=nu
 	const gr = svg_tile(gridType, xs*submult, ys*submult,
 			    color || window.CURRENT_SCENE_DATA.grid_color,
 			    lineWidth || window.CURRENT_SCENE_DATA.grid_line_width, dash);
-	const yadj = gridType === '2' ? 1.5 : 1; //adjust for next row/col extra hex fill line
-	const xadj = gridType === '3' ? 1.5 : 1;
+	const tilex = gridType === '3' ? 1.5 : 1;
+	const tiley = gridType === '2' ? 1.5 : 1; //adjust for next row/col extra hex fill line
 	const bk = {
 		'background-image': "url("+gr+")",
-		'background-size': `${xs * xadj}px ${ys * yadj}px`,
+		'background-size': `${xs * tilex}px ${ys * tiley}px`,
 		'background-position-x': Math.round(startX), //todo? Round or not?
 		'background-position-y': Math.round(startY),
 		'visibility': 'visible'
