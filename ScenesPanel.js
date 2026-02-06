@@ -1112,6 +1112,7 @@ function edit_scene_vision_settings(scene_id){
 		window.CURRENT_SCENE_DATA.daylight = originalColor;
 		$('#VTT').css('--daylight-color', originalColor);
 		if (scene.id === window.CURRENT_SCENE_DATA.id){
+			//todo: eval whether hex grid could be active here
 			if(window.CURRENT_SCENE_DATA.grid === "1"){
 				redraw_grid()
 			}

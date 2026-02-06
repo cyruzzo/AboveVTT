@@ -1219,11 +1219,11 @@ function svg_tile(type = '1', xs = 100, ys = 100, color = 'black', lineWidth = 5
         `<svg xmlns="http://www.w3.org/2000/svg" width="${xs}" height="${ys}" overflow="visible">
             <path d="M ${xs} 0 L 0 0 0 ${ys}" ${strokeAttr}/>
         </svg>` 
-        : (type === '2') ? // Vertical Hex (Pointy Top, Vertical Sides)
+        : (type === '2') ? // (Pointy Top, Vertical Sides)
         `<svg xmlns="http://www.w3.org/2000/svg" width="${xs}" height="${ys*1.5}" overflow="visible">
             <path d="M ${xs} ${ys/4} L ${xs/2} 0 L 0 ${ys/4} L 0 ${ys*3/4} L ${xs/2} ${ys} L ${xs} ${ys*3/4} L ${xs} ${ys/4} M ${xs/2} ${ys} L ${xs/2} ${ys*1.5} Z" ${strokeAttr}/>
         </svg>` 
-        : // Horizontal Hex (Flat Top, Pointy Sides)
+        : // (Flat Top, Pointy Sides)
         `<svg xmlns="http://www.w3.org/2000/svg" width="${xs*1.5}" height="${ys}" overflow="visible">
             <path d="M ${xs/4} ${ys} L 0 ${ys/2} L ${xs/4} 0 L ${xs*3/4} 0 L ${xs} ${ys/2} L ${xs*3/4} ${ys} L ${xs/4} ${ys} M ${xs} ${ys/2} L ${xs*1.5} ${ys/2} Z" ${strokeAttr}/>
         </svg>`
@@ -1241,19 +1241,29 @@ function draw_svg_grid(type=null, hpps=null, vpps=null, offsetX=null, offsetY=nu
 	}
 	const gridType = window.CURRENT_SCENE_DATA.gridType;
 	const scale = window.CURRENT_SCENE_DATA.scale_factor
-	//what does grid scale measure for hex - i'm confused ????
-	const hexscale = (gridType === '1' ? 1 : (sr3/2));
+	//pps for hex
+	hpps = hpps || window.CURRENT_SCENE_DATA.hpps;
+	vpps = vpps || window.CURRENT_SCENE_DATA.vpps;	
 	const sax = gridType === '1' ? 1 : (window.CURRENT_SCENE_DATA.scaleAdjustment?.x || 1);
-	const say = gridType === '1' ? 1 : (window.CURRENT_SCENE_DATA.scaleAdjustment?.y || 1);	
-	const xs = (hpps || window.CURRENT_SCENE_DATA.hpps)/ scale / (gridType === '3' ? (sr3/2) : 1) / hexscale * sax;
-	const ys = (hpps || window.CURRENT_SCENE_DATA.hpps)/ scale / (gridType === '2' ? (sr3/2) : 1) / hexscale * say;
-	let startX = (offsetX || window.CURRENT_SCENE_DATA.offsetx) / scale;
-	let startY = (offsetY || window.CURRENT_SCENE_DATA.offsety) / scale; 
-	if(gridType !== '1') { //old 0,0 was center of hex - we are going from edge
+	const say = gridType === '1' ? 1 : (window.CURRENT_SCENE_DATA.scaleAdjustment?.y || 1);
+	let startX = (offsetX || window.CURRENT_SCENE_DATA.offsetx) / scale * sax;
+	let startY = (offsetY || window.CURRENT_SCENE_DATA.offsety) / scale * say;
+	if(gridType === '2') {
+		//Note: global side effects of drawing right here!!!!
+		window.hexGridSize = { width: vpps * sr3 / 1.5,  height: vpps }; //todo:scale?
+		window.CURRENT_SCENE_DATA.hpps = hpps = vpps;
+	} else if(gridType === '3') {
+		window.hexGridSize = { width: hpps, height: hpps * sr3 / 1.5 };
+		window.CURRENT_SCENE_DATA.vpps = vpps = hpps;
+	}
+	const xs = ((gridType === 1) ? 1 : 0.75) * hpps * (gridType === '2' ? (sr3/2) : 1) * sax / scale;
+	const ys = ((gridType === 1) ? 1 : 0.75) * vpps * (gridType === '3' ? (sr3/2) : 1) * say / scale;
+	if(gridType !== '1') {
 		startX -= xs/2;
 		startY -= ys/2;
 	}
 	const submult = (gridType == '1' && subdivide || (subdivide == null && window.CURRENT_SCENE_DATA.grid_subdivided)) ? 2 : 1;
+	console.log("HEX", xs, ys, startX, startY, hpps, vpps, sax, say)
 	const gr = svg_tile(gridType, xs*submult, ys*submult,
 			    color || window.CURRENT_SCENE_DATA.grid_color,
 			    lineWidth || window.CURRENT_SCENE_DATA.grid_line_width, dash);
@@ -1272,7 +1282,6 @@ function draw_svg_grid(type=null, hpps=null, vpps=null, offsetX=null, offsetY=nu
 
 function redraw_grid(hpps=null, vpps=null, offsetX=null, offsetY=null, color=null, lineWidth=null, subdivide=null, dash=[]){
 	clear_grid();
-	if(window.CURRENT_SCENE_DATA.grid != '1' && !window.WIZARDING) return;
 	draw_svg_grid(null, hpps, vpps, offsetX, offsetY, color, lineWidth, subdivide, dash);	
 }
 
@@ -1394,7 +1403,6 @@ function reset_canvas(apply_zoom=true) {
 		//alert('inizio 1');
 
 		if (!window.WIZARDING) {
-			draw_svg_grid();
 			redraw_grid();
 			redraw_alphanum_grid();
 		}
