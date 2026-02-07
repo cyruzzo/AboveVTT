@@ -2469,9 +2469,15 @@ class JournalManager{
 		const trackerSpans = target.find('.note-tracker');
 		for(let i=0; i<trackerSpans.length; i++){
 			const currentSpan = $(trackerSpans[i]);
+			const currText = currentSpan.text();
 			const children = currentSpan.find('*');
-			const trackText = `[track]${currentSpan.text()}[/track]`
+			const trackText = `[track]${currText}[/track]`
 			if(children.length>0){
+				currentSpan.contents().each(function () {
+					if (this.nodeType === 3) { 
+						$(this).remove();
+					}
+				});
 				children.last().text(trackText);
 				continue;
 			}
@@ -2722,11 +2728,18 @@ class JournalManager{
                 return `<a class="tooltip-hover source-tooltip" href="${sourceUrl}" aria-haspopup="true" target="_blank">${source}</a>`
             })
 
-            input = input.replace(/\[track\](.*?([a-zA-Z\s]+)([\d]+).*?)\[\/track\]/g, function(m, m1, m2, m3){
+            input = input.replace(/\[track\](.*?[a-zA-Z\s]+[\d]+.*?)\[\/track\]/g, function(m, m1){
 				const currentSpan = $(`<div>${m1}</div>`);
+				const trackText = currentSpan.text().replace(/([a-zA-Z\s]+)([\d]+)/gi, function(m, m1, m2){
+					return `<span>${m1}</span><span class="add-input each" data-number="${m2}" data-spell="${m2}"></span>`
+				})
 				const children = currentSpan.find('*');
-				const trackText = `<span>${m2}</span><span class="add-input each" data-number="${m3}" data-spell="${m2}"></span>`
 				if (children.length>0) {
+					currentSpan.contents().each(function () {
+						if (this.nodeType === 3) { // Text node
+							$(this).remove();
+						}
+					});
 					children.last().empty()
 					children.last().append(trackText);
 				}
