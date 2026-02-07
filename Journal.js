@@ -2901,7 +2901,7 @@ class JournalManager{
 						const descriptionCell = $(this).find('.item-description-cell');
 						descriptionCell.html(itemData[0].description);
 						if(link.length == 0){
-							const itemLink = $(`<a href=${targetLink?.match(/https.*\/\d*?\-.*?$/i)?.[0]}" class='tooltip-hover no-border ignore-abovevtt-formating'>${itemData[0].name}</a>`);
+							const itemLink = $(`<a href="${targetLink?.match(/https.*\/\d*?\-.*?$/i)?.[0]}" class='tooltip-hover no-border ignore-abovevtt-formating'>${itemData[0].name}</a>`);
 							$(this).find('.item-link-cell').empty().append(itemLink);
 						}
 						
