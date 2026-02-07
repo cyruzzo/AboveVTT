@@ -2776,7 +2776,7 @@ function door_note_icon(id){
 			symbolImage.on({
 				'mouseover': function(e){
 					hoverNoteTimer = setTimeout(function () {
-		            	build_and_display_sidebar_flyout(e.clientY, function (flyout) {
+		            	build_and_display_sidebar_flyout(e.clientY, async function (flyout) {
 				            flyout.addClass("prevent-sidebar-modal-close"); // clicking inside the tooltip should not close the sidebar modal that opened it
 				            let noteHover = `<div>
 								<div class="tooltip-header">
@@ -2799,59 +2799,60 @@ function door_note_icon(id){
 							    </div>
 							</div>`
 				            const tooltipHtml = $(noteHover);
-							window.JOURNAL.translateHtmlAndBlocks(tooltipHtml, id);	
+							await window.JOURNAL.translateHtmlAndBlocks(tooltipHtml, id)
 							add_journal_roll_buttons(tooltipHtml);
 							window.JOURNAL.add_journal_tooltip_targets(tooltipHtml);
 							add_stat_block_hover(tooltipHtml);
 							add_aoe_statblock_click(tooltipHtml);
-				            flyout.append(tooltipHtml);
-				            let sendToGamelogButton = $(`<a class="ddbeb-button" href="#">Send To Gamelog</a>`);
-				            sendToGamelogButton.css({ "float": "right" });
-				            sendToGamelogButton.on("click", function(ce) {
-				                ce.stopPropagation();
-				                ce.preventDefault();
-				                const tooltipWithoutButton = $(noteHover);
-				                tooltipWithoutButton.css({
-				                    "width": "100%",
-				                    "max-width": "100%",
-				                    "min-width": "100%"
-				                });
-				                send_html_to_gamelog(noteHover);
-				            });
-				            let flyoutLeft = e.clientX+20
-				            if(flyoutLeft + 400 > window.innerWidth){
-				            	flyoutLeft = window.innerWidth - 420
-				            }
-				            flyout.css({
-				            	left: flyoutLeft,
-				            	width: '400px'
-				            })
+							flyout.append(tooltipHtml);
+							let sendToGamelogButton = $(`<a class="ddbeb-button" href="#">Send To Gamelog</a>`);
+							sendToGamelogButton.css({ "float": "right" });
+							sendToGamelogButton.on("click", function (ce) {
+								ce.stopPropagation();
+								ce.preventDefault();
+								const tooltipWithoutButton = $(noteHover);
+								tooltipWithoutButton.css({
+									"width": "100%",
+									"max-width": "100%",
+									"min-width": "100%"
+								});
+								send_html_to_gamelog(noteHover);
+							});
+							let flyoutLeft = e.clientX + 20
+							if (flyoutLeft + 400 > window.innerWidth) {
+								flyoutLeft = window.innerWidth - 420
+							}
+							flyout.css({
+								left: flyoutLeft,
+								width: '400px'
+							})
 
-				            const buttonFooter = $("<div></div>");
-				            buttonFooter.css({
-				                height: "40px",
-				                width: "100%",
-				                position: "relative",
-				                background: "#fff"
-				            });
-				            flyout.append(buttonFooter);
-				            buttonFooter.append(sendToGamelogButton);
-				            flyout.find("a").attr("target","_blank");
-				      		flyout.off('click').on('click', '.tooltip-hover[href*="https://www.dndbeyond.com/sources/dnd/"], .int_source_link ', function(event){
+							const buttonFooter = $("<div></div>");
+							buttonFooter.css({
+								height: "40px",
+								width: "100%",
+								position: "relative",
+								background: "#fff"
+							});
+							flyout.append(buttonFooter);
+							buttonFooter.append(sendToGamelogButton);
+							flyout.find("a").attr("target", "_blank");
+							flyout.off('click').on('click', '.tooltip-hover[href*="https://www.dndbeyond.com/sources/dnd/"], .int_source_link ', function (event) {
 								event.preventDefault();
 								render_source_chapter_in_iframe(event.target.href);
 							});
-							
 
-				            flyout.hover(function (hoverEvent) {
-				                if (hoverEvent.type === "mouseenter") {
-				                    clearTimeout(removeToolTipTimer);
-				                    removeToolTipTimer = undefined;
-				                } else {
-				                    remove_tooltip(500);
-				                }
-				            });
-				            flyout.css("background-color", "#fff");
+
+							flyout.hover(function (hoverEvent) {
+								if (hoverEvent.type === "mouseenter") {
+									clearTimeout(removeToolTipTimer);
+									removeToolTipTimer = undefined;
+								} else {
+									remove_tooltip(500);
+								}
+							});
+							flyout.css("background-color", "#fff");
+							
 				        });
 		        	}, 500);		
 				
