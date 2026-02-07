@@ -3682,7 +3682,7 @@ class JournalManager{
 				 margin-bottom: 0;
 				 padding-top: 0 
 			}
-			.stat-block .monster-header {
+			.monster-header {
 				 padding-top: 4px;
 				 letter-spacing: .35px;
 				 font-weight: 500;
@@ -3692,7 +3692,7 @@ class JournalManager{
 				 border-bottom: 2px solid var(--monster-header-underline,#7a3c2f);
 				 font-variant: small-caps; 
 			}
-			.stat-block .monster-header+p {
+			.monster-header+p {
 				 break-before: avoid 
 			}
 			.stat-block .stats {
@@ -4050,9 +4050,9 @@ class JournalManager{
 			selector: '#' + tmp,
 			menubar: false,
 			end_container_on_empty_block: true,
-			forced_root_block: 'p',
 			style_formats:  [
-				 { title: 'Headers', items: [
+				{ title: 'Headers', items: [
+				  { title: 'Statblock Header', block: 'p', classes: 'monster-header' },
 			      { title: 'h1', block: 'h1' },
 			      { title: 'h2', block: 'h2' },
 			      { title: 'h3', block: 'h3' },
@@ -4353,8 +4353,11 @@ class JournalManager{
 					if (e.which == "13" || e.keyCode == "13") {
 						
 						if(!e.shiftKey){
-							let currentNode = editor.selection.getNode();
-							const skipInsertP = currentNode.tagName == 'P' || currentNode.textContent.trim() == ""
+							let currentNode = $(editor.selection.getNode());
+							const skipInsertP = currentNode.closest('ul, ol').length > 0 || 
+								currentNode.is('p, span, strong, em') || 
+								currentNode.closest('div').length == 0
+								currentNode.text().trim() == '';
 							if (skipInsertP)
 								return;
 							e.preventDefault();
