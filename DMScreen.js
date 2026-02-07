@@ -121,9 +121,9 @@ async function buildDMScreen(container) {
             $('.dmScreenDropdown').click(function (e) {
                 e.stopPropagation();
             });
-            const addTooltipAndRoll = function ($element) {
+            const addTooltipAndRoll = async function ($element) {
                 $element.find('h2, strong>em, caption, em>strong').toggleClass(`ignore-abovevtt-formating`, true)
-                window.JOURNAL.translateHtmlAndBlocks($element, undefined, false);
+                await window.JOURNAL.translateHtmlAndBlocks($element, undefined, false)
                 add_journal_roll_buttons($element);
                 window.JOURNAL.add_journal_tooltip_targets($element);
                 window.JOURNAL.block_send_to_buttons($element);

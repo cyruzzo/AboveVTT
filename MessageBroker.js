@@ -16,7 +16,7 @@ const debounceHandleInjected = mydebounce(() => {
 		let injection_data=current.data?.injected_data;
 
 		let found=false;
-		$(self.diceMessageSelector).each(function(){
+		$(self.diceMessageSelector).each(async function(){
 			if($(this).text()==injection_id){
 				found=true;
 				let li = $(this).closest("li");
@@ -29,11 +29,12 @@ const debounceHandleInjected = mydebounce(() => {
 				
 			 	li.html(newlihtml);
 				if(window.JOURNAL){
-					window.JOURNAL.translateHtmlAndBlocks(li);
+					await window.JOURNAL.translateHtmlAndBlocks(li);
 					add_journal_roll_buttons(li);
 					window.JOURNAL.add_journal_tooltip_targets(li);
 					add_stat_block_hover(li)
 					add_aoe_statblock_click(li);
+					
 				}
 				let rollType = current.data.injected_data?.rollType?.toLowerCase();
 				let rollAction = current.data.injected_data?.rollTitle?.toLowerCase();

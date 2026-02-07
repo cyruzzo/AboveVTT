@@ -1691,99 +1691,101 @@ class JournalManager{
 			$(this).on({
 					'mouseover': function(e){
 						hoverNoteTimer = setTimeout(function () {
-			            	build_and_display_sidebar_flyout(e.clientY, function (flyout) {
+			            	build_and_display_sidebar_flyout(e.clientY, async function (flyout) {
 					            flyout.addClass("prevent-sidebar-modal-close"); // clicking inside the tooltip should not close the sidebar modal that opened it
 					            flyout.addClass('note-flyout');
 					            const tooltipHtml = $(noteHover);
-								window.JOURNAL.translateHtmlAndBlocks(tooltipHtml, noteId);	
+								await window.JOURNAL.translateHtmlAndBlocks(tooltipHtml, noteId);
 								add_journal_roll_buttons(tooltipHtml);
 								window.JOURNAL.add_journal_tooltip_targets(tooltipHtml);
 								add_stat_block_hover(tooltipHtml);
 								add_aoe_statblock_click(tooltipHtml);
 
-								$(tooltipHtml).find('.add-input').each(function(){
-								    let numberFound = $(this).attr('data-number');
-								    const spellName = $(this).attr('data-spell');
-								    const remainingText = $(this).hasClass('each') ? '' : `${spellName} slots remaining`
-									
-								    const track_ability = function(key, updatedValue){	    	
+								$(tooltipHtml).find('.add-input').each(function () {
+									let numberFound = $(this).attr('data-number');
+									const spellName = $(this).attr('data-spell');
+									const remainingText = $(this).hasClass('each') ? '' : `${spellName} slots remaining`
+
+									const track_ability = function (key, updatedValue) {
 										if (window.JOURNAL.notes[noteId].abilityTracker === undefined) {
 											window.JOURNAL.notes[noteId].abilityTracker = {};
 										}
-										const asNumber = parseInt(updatedValue); 
+										const asNumber = parseInt(updatedValue);
 										window.JOURNAL.notes[noteId].abilityTracker[key] = asNumber;
 										window.JOURNAL.persist();
 										debounceSendNote(noteId, window.JOURNAL.notes[noteId])
-							    	}
-								    if (window.JOURNAL.notes[noteId].abilityTracker?.[spellName]>= 0){
-							    		numberFound = window.JOURNAL.notes[noteId].abilityTracker[spellName]
-							    	} 
-							    	else{
-								    	track_ability(spellName, numberFound)
-								    }
+									}
+									if (window.JOURNAL.notes[noteId].abilityTracker?.[spellName] >= 0) {
+										numberFound = window.JOURNAL.notes[noteId].abilityTracker[spellName]
+									}
+									else {
+										track_ability(spellName, numberFound)
+									}
 
-								    let input = createCountTracker(window.JOURNAL.notes[noteId], spellName, numberFound, remainingText, "", track_ability);
+									let input = createCountTracker(window.JOURNAL.notes[noteId], spellName, numberFound, remainingText, "", track_ability);
 									const playerDisabled = $(this).hasClass('player-disabled');
 									if (!window.DM && playerDisabled) {
 										input.prop('disabled', true);
 									}
 									const partyLootTable = $(this).closest('.party-item-table');
-									if(partyLootTable.length > 0){
-										if (partyLootTable.hasClass('shop') && numberFound > 0){
+									if (partyLootTable.length > 0) {
+										if (partyLootTable.hasClass('shop') && numberFound > 0) {
 											$(this).closest('tr').find('td>.item-quantity-take-input').val(1);
 										}
-										else{
+										else {
 											$(this).closest('tr').find('td>.item-quantity-take-input').val(numberFound);
 										}
 									}
 									$(this).find('p').remove();
-								    $(this).after(input)
-							    })
-					            flyout.append(tooltipHtml);
-					            let sendToGamelogButton = $(`<a class="ddbeb-button" href="#">Send To Gamelog</a>`);
-					            sendToGamelogButton.css({ "float": "right" });
-					            sendToGamelogButton.on("click", function(ce) {
-					                ce.stopPropagation();
-					                ce.preventDefault();
-									
-					                send_html_to_gamelog(noteHover);
-					            });
-					            let flyoutLeft = e.clientX+20
-					            if(flyoutLeft + 400 > window.innerWidth){
-					            	flyoutLeft = window.innerWidth - 420
-					            }
-					            flyout.css({
-					            	left: flyoutLeft,
-					            	width: '400px'
-					            })
+									$(this).after(input)
+								})
+								flyout.append(tooltipHtml);
+								let sendToGamelogButton = $(`<a class="ddbeb-button" href="#">Send To Gamelog</a>`);
+								sendToGamelogButton.css({ "float": "right" });
+								sendToGamelogButton.on("click", function (ce) {
+									ce.stopPropagation();
+									ce.preventDefault();
 
-					            const buttonFooter = $("<div></div>");
-					            buttonFooter.css({
-					                height: "40px",
-					                width: "100%",
-					                position: "relative",
-					                background: "#fff"
-					            });
-					            window.JOURNAL.block_send_to_buttons(flyout);
-					            flyout.append(buttonFooter);
-					            buttonFooter.append(sendToGamelogButton);
-					            flyout.find("a").attr("target","_blank");
-					      		flyout.off('click').on('click', '.tooltip-hover[href*="https://www.dndbeyond.com/sources/dnd/"], .int_source_link ', function(event){
+									send_html_to_gamelog(noteHover);
+								});
+								let flyoutLeft = e.clientX + 20
+								if (flyoutLeft + 400 > window.innerWidth) {
+									flyoutLeft = window.innerWidth - 420
+								}
+								flyout.css({
+									left: flyoutLeft,
+									width: '400px'
+								})
+
+								const buttonFooter = $("<div></div>");
+								buttonFooter.css({
+									height: "40px",
+									width: "100%",
+									position: "relative",
+									background: "#fff"
+								});
+								window.JOURNAL.block_send_to_buttons(flyout);
+								flyout.append(buttonFooter);
+								buttonFooter.append(sendToGamelogButton);
+								flyout.find("a").attr("target", "_blank");
+								flyout.off('click').on('click', '.tooltip-hover[href*="https://www.dndbeyond.com/sources/dnd/"], .int_source_link ', function (event) {
 									event.preventDefault();
 									render_source_chapter_in_iframe(event.target.href);
 								});
+
+
+								flyout.hover(function (hoverEvent) {
+									if (hoverEvent.type === "mouseenter") {
+										clearTimeout(removeToolTipTimer);
+										removeToolTipTimer = undefined;
+									} else {
+										remove_tooltip(500);
+									}
+								});
+
+								flyout.css("background-color", "#fff");
 								
 
-					            flyout.hover(function (hoverEvent) {
-					                if (hoverEvent.type === "mouseenter") {
-					                    clearTimeout(removeToolTipTimer);
-					                    removeToolTipTimer = undefined;
-					                } else {
-					                    remove_tooltip(500);
-					                }
-					            });
-
-					            flyout.css("background-color", "#fff");
 					        });
 			        	}, 500);		
 					
@@ -1904,115 +1906,117 @@ class JournalManager{
 		}
 		note_text.append(self.notes[id].text); // valid tags are controlled by tinyMCE.init()
 		
-		this.translateHtmlAndBlocks(note_text, id);	
-		add_journal_roll_buttons(note_text);
-		this.add_journal_tooltip_targets(note_text);
-		this.block_send_to_buttons(note_text);
-		add_stat_block_hover(note_text);
-		add_aoe_statblock_click(note_text);
-		$(note_text).find('.add-input').each(function(){
-		    let numberFound = $(this).attr('data-number');
-		    const spellName = $(this).attr('data-spell');
-		    const remainingText = $(this).hasClass('each') ? '' : `${spellName} slots remaining`
-		    const track_ability = function(key, updatedValue){	    	
-				if (self.notes[id].abilityTracker === undefined) {
-					self.notes[id].abilityTracker = {};
-				}
-				const asNumber = parseInt(updatedValue); 
-				self.notes[id].abilityTracker[key] = asNumber;
-				window.JOURNAL.persist();
-				debounceSendNote(id, self.notes[id])
-	    	}
-		    if (self.notes[id].abilityTracker?.[spellName]>= 0){
-	    		numberFound = self.notes[id].abilityTracker[spellName]
-	    	} 
-	    	else{
-		    	track_ability(spellName, numberFound)
-		    }
-
-		    let input = createCountTracker(self.notes[id], spellName, numberFound, remainingText, "", track_ability);
-			const playerDisabled = $(this).hasClass('player-disabled');
-			if (!window.DM && playerDisabled) {
-				input.prop('disabled', true);
-			}
-			const partyLootTable = $(this).closest('.party-item-table');
-			if (partyLootTable.hasClass('shop') && numberFound > 0) {
-				$(this).closest('tr').find('td>.item-quantity-take-input').val(1);
-			}
-			else {
-				$(this).closest('tr').find('td>.item-quantity-take-input').val(numberFound);
-			}
-		    $(this).find('p').remove();
-		    $(this).after(input)
-	    })
-
-		if(!noteAlreadyOpen){
-			note.append(note_text);
-		}
-		note.find("a").attr("target","_blank");
-		if(!noteAlreadyOpen){
-			note.dialog({
-				draggable: true,
-				width: 860,
-				height: 600,
-				position:{
-				   my: "center",
-				   at: "center-200",
-				   of: window
-				},
-				close: function( event, ui ) {
-					$(this).remove();
+		this.translateHtmlAndBlocks(note_text, id).then(() => {
+			add_journal_roll_buttons(note_text);
+			this.add_journal_tooltip_targets(note_text);
+			this.block_send_to_buttons(note_text);
+			add_stat_block_hover(note_text);
+			add_aoe_statblock_click(note_text);
+			$(note_text).find('.add-input').each(function () {
+				let numberFound = $(this).attr('data-number');
+				const spellName = $(this).attr('data-spell');
+				const remainingText = $(this).hasClass('each') ? '' : `${spellName} slots remaining`
+				const track_ability = function (key, updatedValue) {
+					if (self.notes[id].abilityTracker === undefined) {
+						self.notes[id].abilityTracker = {};
 					}
-				});	
-			$("[role='dialog']").draggable({
-				containment: "#windowContainment",
-				start: function () {
-					$("#resizeDragMon, .note:has(iframe) form .mce-container-body, #sheet").append($('<div class="iframeResizeCover"></div>'));
-				},
-				stop: function () {
-					$('.iframeResizeCover').remove();			
+					const asNumber = parseInt(updatedValue);
+					self.notes[id].abilityTracker[key] = asNumber;
+					window.JOURNAL.persist();
+					debounceSendNote(id, self.notes[id])
 				}
-			});
-			$("[role='dialog']").resizable({
-				start: function () {
-					$("#resizeDragMon, .note:has(iframe) form .mce-container-body, #sheet").append($('<div class="iframeResizeCover"></div>'));
-				},
-				stop: function () {
-					$('.iframeResizeCover').remove();			
+				if (self.notes[id].abilityTracker?.[spellName] >= 0) {
+					numberFound = self.notes[id].abilityTracker[spellName]
 				}
-			});
+				else {
+					track_ability(spellName, numberFound)
+				}
 
-			note.parent().mousedown(function() {
-				frame_z_index_when_click($(this));
-			});		
-			let btn_popout=$(`<div class="popout-button journal-button"><svg xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 0 24 24" width="18px" fill="#000000"><path d="M0 0h24v24H0V0z" fill="none"></path><path d="M18 19H6c-.55 0-1-.45-1-1V6c0-.55.45-1 1-1h5c.55 0 1-.45 1-1s-.45-1-1-1H5c-1.11 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-6c0-.55-.45-1-1-1s-1 .45-1 1v5c0 .55-.45 1-1 1zM14 4c0 .55.45 1 1 1h2.59l-9.13 9.13c-.39.39-.39 1.02 0 1.41.39.39 1.02.39 1.41 0L19 6.41V9c0 .55.45 1 1 1s1-.45 1-1V4c0-.55-.45-1-1-1h-5c-.55 0-1 .45-1 1z"></path></svg></div>"`);
-			note.parent().append(btn_popout);
-			btn_popout.click(function(){	
-				let uiId = $(this).siblings(".note").attr("id");
-				let journal_text = $(`#${uiId}.note .note-text`)
-				let title = self.notes[id]?.title?.trim() || $("#resizeDragMon .avtt-stat-block-container .mon-stat-block__name-link").text();
-				popoutWindow(title, note, journal_text.width(), journal_text.height());
-				removeFromPopoutWindow(title, ".visibility-container");
-				removeFromPopoutWindow(title, ".ui-resizable-handle");
-				$(window.childWindows[title].document).find("head").append(`<style id='noteStyles'>
+				let input = createCountTracker(self.notes[id], spellName, numberFound, remainingText, "", track_ability);
+				const playerDisabled = $(this).hasClass('player-disabled');
+				if (!window.DM && playerDisabled) {
+					input.prop('disabled', true);
+				}
+				const partyLootTable = $(this).closest('.party-item-table');
+				if (partyLootTable.hasClass('shop') && numberFound > 0) {
+					$(this).closest('tr').find('td>.item-quantity-take-input').val(1);
+				}
+				else {
+					$(this).closest('tr').find('td>.item-quantity-take-input').val(numberFound);
+				}
+				$(this).find('p').remove();
+				$(this).after(input)
+			})
+
+			if (!noteAlreadyOpen) {
+				note.append(note_text);
+			}
+			note.find("a").attr("target", "_blank");
+			if (!noteAlreadyOpen) {
+				note.dialog({
+					draggable: true,
+					width: 860,
+					height: 600,
+					position: {
+						my: "center",
+						at: "center-200",
+						of: window
+					},
+					close: function (event, ui) {
+						$(this).remove();
+					}
+				});
+				$("[role='dialog']").draggable({
+					containment: "#windowContainment",
+					start: function () {
+						$("#resizeDragMon, .note:has(iframe) form .mce-container-body, #sheet").append($('<div class="iframeResizeCover"></div>'));
+					},
+					stop: function () {
+						$('.iframeResizeCover').remove();
+					}
+				});
+				$("[role='dialog']").resizable({
+					start: function () {
+						$("#resizeDragMon, .note:has(iframe) form .mce-container-body, #sheet").append($('<div class="iframeResizeCover"></div>'));
+					},
+					stop: function () {
+						$('.iframeResizeCover').remove();
+					}
+				});
+
+				note.parent().mousedown(function () {
+					frame_z_index_when_click($(this));
+				});
+				let btn_popout = $(`<div class="popout-button journal-button"><svg xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 0 24 24" width="18px" fill="#000000"><path d="M0 0h24v24H0V0z" fill="none"></path><path d="M18 19H6c-.55 0-1-.45-1-1V6c0-.55.45-1 1-1h5c.55 0 1-.45 1-1s-.45-1-1-1H5c-1.11 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-6c0-.55-.45-1-1-1s-1 .45-1 1v5c0 .55-.45 1-1 1zM14 4c0 .55.45 1 1 1h2.59l-9.13 9.13c-.39.39-.39 1.02 0 1.41.39.39 1.02.39 1.41 0L19 6.41V9c0 .55.45 1 1 1s1-.45 1-1V4c0-.55-.45-1-1-1h-5c-.55 0-1 .45-1 1z"></path></svg></div>"`);
+				note.parent().append(btn_popout);
+				btn_popout.click(function () {
+					let uiId = $(this).siblings(".note").attr("id");
+					let journal_text = $(`#${uiId}.note .note-text`)
+					let title = self.notes[id]?.title?.trim() || $("#resizeDragMon .avtt-stat-block-container .mon-stat-block__name-link").text();
+					popoutWindow(title, note, journal_text.width(), journal_text.height());
+					removeFromPopoutWindow(title, ".visibility-container");
+					removeFromPopoutWindow(title, ".ui-resizable-handle");
+					$(window.childWindows[title].document).find("head").append(`<style id='noteStyles'>
 					body div.note[id^="ui-id"]{
 						height: 100% !important;
 					    max-height: 100% !important;
 					    overflow: auto !important;
 					}
 				</stlye>`);
-				if(!window.DM)
-					$(window.childWindows[title].document).find("body").addClass('body-rpgcharacter-sheet');
-				
-				$(this).siblings(".ui-dialog-titlebar").children(".ui-dialog-titlebar-close").click();
-			});
-			note.off('click').on('click', '.tooltip-hover[href*="https://www.dndbeyond.com/sources/dnd/"], .int_source_link ', function(event){
-				event.preventDefault();
-				render_source_chapter_in_iframe(event.target.href);
-			});
-			note.parent().css('height', '600px');
-		}
-		this.positionNotePins(id, note_text);
+					if (!window.DM)
+						$(window.childWindows[title].document).find("body").addClass('body-rpgcharacter-sheet');
+
+					$(this).siblings(".ui-dialog-titlebar").children(".ui-dialog-titlebar-close").click();
+				});
+				note.off('click').on('click', '.tooltip-hover[href*="https://www.dndbeyond.com/sources/dnd/"], .int_source_link ', function (event) {
+					event.preventDefault();
+					render_source_chapter_in_iframe(event.target.href);
+				});
+				note.parent().css('height', '600px');
+			}
+			this.positionNotePins(id, note_text);
+		});	
+		
 	}
 	add_journal_tooltip_targets(target){
 		$(target).find('.tooltip-hover').each(function(){
@@ -2056,61 +2060,63 @@ class JournalManager{
 					$(self).on({
 						'mouseover': function(e){
 							hoverNoteTimer = setTimeout(function () {
-				            	build_and_display_sidebar_flyout(e.clientY, function (flyout) {
+								build_and_display_sidebar_flyout(e.clientY, async function (flyout) {
 						            flyout.addClass("prevent-sidebar-modal-close"); // clicking inside the tooltip should not close the sidebar modal that opened it
 						            flyout.addClass('note-flyout');
 						            $(self).toggleClass('loading-tooltip', false);
 						            const tooltipHtml = $(noteHover);
-									window.JOURNAL.translateHtmlAndBlocks(tooltipHtml, noteId);	
+									await window.JOURNAL.translateHtmlAndBlocks(tooltipHtml, noteId);
 									add_journal_roll_buttons(tooltipHtml);
 									window.JOURNAL.add_journal_tooltip_targets(tooltipHtml);
 									add_stat_block_hover(tooltipHtml);
 									add_aoe_statblock_click(tooltipHtml);
-						            flyout.append(tooltipHtml);
-						            let sendToGamelogButton = $(`<a class="ddbeb-button" href="#">Send To Gamelog</a>`);
-						            sendToGamelogButton.css({ "float": "right" });
-						            sendToGamelogButton.on("click", function(ce) {
-						                ce.stopPropagation();
-						                ce.preventDefault();
-										
-						                send_html_to_gamelog(noteHover);
-						            });
-						            let flyoutLeft = e.clientX+20
-						            if(flyoutLeft + 400 > window.innerWidth){
-						            	flyoutLeft = window.innerWidth - 420
-						            }
-						            flyout.css({
-						            	left: flyoutLeft,
-						            	width: '400px'
-						            })
+									flyout.append(tooltipHtml);
+									let sendToGamelogButton = $(`<a class="ddbeb-button" href="#">Send To Gamelog</a>`);
+									sendToGamelogButton.css({ "float": "right" });
+									sendToGamelogButton.on("click", function (ce) {
+										ce.stopPropagation();
+										ce.preventDefault();
 
-						            const buttonFooter = $("<div></div>");
-						            buttonFooter.css({
-						                height: "40px",
-						                width: "100%",
-						                position: "relative",
-						                background: "#fff"
-						            });
-						            window.JOURNAL.block_send_to_buttons(flyout);
-						            flyout.append(buttonFooter);
-						            buttonFooter.append(sendToGamelogButton);
-						            flyout.find("a").attr("target","_blank");
-						      		flyout.off('click').on('click', '.tooltip-hover[href*="https://www.dndbeyond.com/sources/dnd/"], .int_source_link ', function(event){
+										send_html_to_gamelog(noteHover);
+									});
+									let flyoutLeft = e.clientX + 20
+									if (flyoutLeft + 400 > window.innerWidth) {
+										flyoutLeft = window.innerWidth - 420
+									}
+									flyout.css({
+										left: flyoutLeft,
+										width: '400px'
+									})
+
+									const buttonFooter = $("<div></div>");
+									buttonFooter.css({
+										height: "40px",
+										width: "100%",
+										position: "relative",
+										background: "#fff"
+									});
+									window.JOURNAL.block_send_to_buttons(flyout);
+									flyout.append(buttonFooter);
+									buttonFooter.append(sendToGamelogButton);
+									flyout.find("a").attr("target", "_blank");
+									flyout.off('click').on('click', '.tooltip-hover[href*="https://www.dndbeyond.com/sources/dnd/"], .int_source_link ', function (event) {
 										event.preventDefault();
 										render_source_chapter_in_iframe(event.target.href);
 									});
-									
 
-						            flyout.hover(function (hoverEvent) {
-						                if (hoverEvent.type === "mouseenter") {
-						                    clearTimeout(removeToolTipTimer);
-						                    removeToolTipTimer = undefined;
-						                } else {
-						                    remove_tooltip(500);
-						                }
-						            });
 
-						            flyout.css("background-color", "#fff");
+									flyout.hover(function (hoverEvent) {
+										if (hoverEvent.type === "mouseenter") {
+											clearTimeout(removeToolTipTimer);
+											removeToolTipTimer = undefined;
+										} else {
+											remove_tooltip(500);
+										}
+									});
+
+									flyout.css("background-color", "#fff");
+										
+
 						        });
 				        	}, 500);		
 						
