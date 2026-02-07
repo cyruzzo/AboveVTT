@@ -2468,7 +2468,14 @@ class JournalManager{
 
 		const trackerSpans = target.find('.note-tracker');
 		for(let i=0; i<trackerSpans.length; i++){
-			$(trackerSpans[i]).replaceWith(`[track]${$(trackerSpans[i]).text()}[/track]`);
+			const currentSpan = $(trackerSpans[i]);
+			const children = currentSpan.find('*');
+			const trackText = `[track]${currentSpan.text()}[/track]`
+			if(children.length>0){
+				children.last().text(trackText);
+				continue;
+			}
+			currentSpan.text(trackText);
 		}
 		const embededIframes = target.find('iframe');
 		for(let i=0; i<embededIframes.length; i++){
@@ -2715,8 +2722,19 @@ class JournalManager{
                 return `<a class="tooltip-hover source-tooltip" href="${sourceUrl}" aria-haspopup="true" target="_blank">${source}</a>`
             })
 
-            input = input.replace(/\[track\]([a-zA-Z\s]+)([\d]+)\[\/track\]/g, function(m, m1, m2){
-                return `<span>${m1}</span><span class="add-input each" data-number="${m2}" data-spell="${m1}"></span>`
+            input = input.replace(/\[track\](.*?([a-zA-Z\s]+)([\d]+).*?)\[\/track\]/g, function(m, m1, m2, m3){
+				const currentSpan = $(`<div>${m1}</div>`);
+				const children = currentSpan.find('*');
+				const trackText = `<span>${m2}</span><span class="add-input each" data-number="${m3}" data-spell="${m2}"></span>`
+				if (children.length>0) {
+					children.last().empty()
+					children.last().append(trackText);
+				}
+				else{
+					currentSpan.empty();
+					currentSpan.append(trackText);
+				}
+				return currentSpan[0].innerHTML;
             })		
  
             input = input.replace(/\&nbsp\;/g, ' ');
