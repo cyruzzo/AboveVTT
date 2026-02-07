@@ -4993,6 +4993,7 @@ function handle_drawing_button_click() {
 
 function drawCircle(ctx, centerX, centerY, radius, style, fill=true, lineWidth = 6)
 {
+	radius = Math.max(0, radius)
 	ctx.beginPath();
 	ctx.arc(centerX/window.CURRENT_SCENE_DATA.scale_factor, centerY/window.CURRENT_SCENE_DATA.scale_factor, radius/window.CURRENT_SCENE_DATA.scale_factor, 0, 2 * Math.PI, false);
 	if(fill){
@@ -5707,6 +5708,7 @@ function clearPolygon (ctx, points, scale = window.CURRENT_SCENE_DATA.scale_fact
 
 function clearCircle(ctx, centerX, centerY, radius)
 {
+	radius = Math.max(0, radius);
 	ctx.save();
 	ctx.beginPath();
 	ctx.fillStyle = "rgba(0,0,0,0);"
