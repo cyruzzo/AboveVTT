@@ -12120,7 +12120,7 @@ div#playlistFields {
 }
 
 
-.stat-block .monster-header+p {
+p.monster-header+p {
     break-before: avoid
 }
 
@@ -12183,7 +12183,7 @@ div#playlistFields {
 .stat-block .stats+p {
     margin-top: 10px
 }
-.stat-block :is(p.monster-header, .monster-header) {
+:is(p.monster-header, .monster-header) {
     padding-top: 4px;
     letter-spacing: .35px;
     font-weight: 500;
@@ -13485,7 +13485,7 @@ button#displayedDiceFormulaExit:hover {
     padding-top: 0
 }
 
-:is(.tooltip) .stat-block .monster-header {
+:is(.tooltip) .monster-header {
     padding-top: 4px;
     letter-spacing: .35px;
     font-weight: 500;
