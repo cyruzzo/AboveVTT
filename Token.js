@@ -3864,30 +3864,27 @@ function should_snap_to_grid() {
 // rounddown only matters for square ( floor instead of round)
 function snap_point_to_grid(mapX, mapY, forceSnap = false, tinyToken = false, tokenWidth = 0,
 			    arrowKeys=false, roundDown=false) {
+	const sd = window.CURRENT_SCENE_DATA;
 	//todo implement tinytoken
 	if (forceSnap || should_snap_to_grid()) {
-		console.log("SNAP",mapX, mapY, tinyToken, tokenWidth, arrowKeys, roundDown);
-		if(window.CURRENT_SCENE_DATA.gridType == 3 ||
-		   window.CURRENT_SCENE_DATA.gridType == 2) {
+		if(sd.gridType == 3 || sd.gridType == 2) {
 			//hex snaps to vertex if tokensize / hexsize is even
 			const vertexInstead = tokenWidth && ! (Math.round(tokenWidth / Math.min(...grid_size())) % 2);
-			console.log("SI", tokenWidth, grid_size(), (Math.round(tokenWidth / Math.min(...grid_size()))), vertexInstead);
 			const [cx, cy] = getCurrentClosestHex(mapX, mapY, vertexInstead);
-			const ret = { x: cx - (tokenWidth||0)/2, y: cy - (tokenWidth||0) / 2 };
-			console.log("RET", ret);
-			return ret;
+			//later: do we want tinyToken for hex?
+			return { x: cx - (tokenWidth||0)/2, y: cy - (tokenWidth||0) / 2 };
 		}
-		// adjust to the nearest square coordinate (rect doesn't have scale adj)
+
 		// todo: why parseFloat here?
-		const startX = parseFloat(window.CURRENT_SCENE_DATA.offsetx);
-		const startY = parseFloat(window.CURRENT_SCENE_DATA.offsety);
+		const offsetx = parseFloat(sd.offsetx);
+		const offsety = parseFloat(sd.offsety);
 		const [gridWidth, gridHeight] = grid_size();
 		const func = (roundDown ? Math.round : Math.floor);
-		const currentGridX = func((mapX - startX) / gridWidth);
-		const currentGridY = func((mapY - startY) / gridHeight);
+		const currentGridX = func((mapX - offsetx) / gridWidth);
+		const currentGridY = func((mapY - offsety) / gridHeight);
 		return {
-			x: Math.ceil((currentGridX * gridWidth) + startX),
-			y: Math.ceil((currentGridY * gridHeight) + startY)
+			x: Math.ceil((currentGridX * gridWidth) + offsetx),
+			y: Math.ceil((currentGridY * gridHeight) + offsety)
 		}
 	} else {
 		return { x: mapX, y: mapY };

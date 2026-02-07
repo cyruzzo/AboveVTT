@@ -1155,11 +1155,12 @@ function redraw_alphanum_grid(){
 
 const sr3 = Math.sqrt(3);
 const hexDeltas = [[sr3/2, 0.5],[-sr3/2, 0.5],[-sr3/2, -0.5],[sr3/2, -0.5],[0, 1],[0, -1]];	
-/*type: 3 = flat, 2 = pointy top; size = face-to-face*/
-//use cubic coord system
-function closestHexCenter(type, size, x, y, offset_x, offset_y, adjx=1, adjy=1) {
-    x = (x - offset_x) / adjx; //divide out "minor adjustment - add back later
-    y = (y - offset_y) / adjy;
+// type: 3 = flat-top, 2 = pointy top; size = long hex radius
+// adjx/y scaleAdjustment
+// uses transform to cubic coord system
+function closestHexCenter(type, size, x, y, offsetx, offsety, allowCenter_unused) {
+    x = (x - offsetx); //subtract out before transform - add back later
+    y = (y - offsety);
     let q, r, retX, retY;
     if(type === '3') {
 	    q = (2/3 * x) / size;
@@ -1187,12 +1188,13 @@ function closestHexCenter(type, size, x, y, offset_x, offset_y, adjx=1, adjy=1) 
             retX = size * sr3 * (rx + ry/2);
 	    retY = size * 3/2 * ry;
     }
-    return [retX * adjx + offset_x, retY * adjy + offset_y]
+    return [retX + offsetx, retY + offsety]
 }
 
-function closestHexVertex(type, size, x, y, offsetx = 0, offsety = 0, adjx = 1, adjy = 1, allowCenter = false) {
+// type: 3 = flat-top, 2 = pointy top; size = long hex radius
+function closestHexVertex(type, size, x, y, offsetx = 0, offsety = 0, allowCenter = false) {
 	//which vertex is closest (including center if allowed) - closest center - then vertex
-	const [cx, cy] = closestHexCenter(type, size, x, y, offsetx, offsety, adjx, adjy);
+	const [cx, cy] = closestHexCenter(type, size, x, y, offsetx, offsety);
 	let dist = allowCenter ? ((x-cx)**2 + (y-cy)**2) : undefined;
 	return hexDeltas.reduce((prev,[dx,dy]) => {
 		//flip/flop x/y for rotated grid ( could optimize by quadrant, but not worth it )
@@ -1206,20 +1208,19 @@ function closestHexVertex(type, size, x, y, offsetx = 0, offsety = 0, adjx = 1, 
 		}}, [cx, cy]);
 }
 
-function getCurrentClosestHex(x, y, vertex=false) {
+function getCurrentClosestHex(x, y, vertex=false, allowCenter=false) {
 	const sd = window.CURRENT_SCENE_DATA;
-	const scale = sd.scale_factor
-	//hpps = vpps by convention
-	const hexSize = sd.hpps / 1.5;
-	const startX = sd.offsetx;
-	const startY = sd.offsety;
+	const hexSize = sd.hpps / 1.5; // long radius; hpps = vpps by avtt convention
+	//subtle: adjust x before and after finding points
 	const adjx = sd.scaleAdjustment?.x || 1;
 	const adjy = sd.scaleAdjustment?.y || 1;
-	const ret = (vertex ? closestHexVertex : closestHexCenter)
-	(sd.gridType, hexSize, x/adjx, y/adjy, startX, startY, 1, 1);
+	const ret = (vertex ? closestHexVertex : closestHexCenter) (sd.gridType, hexSize,
+								    x/adjx, y/adjy, sd.offsetx, sd.offsety,
+								    allowCenter);
 	return [ret[0]*adjx,ret[1]*adjy];
 }
 
+// make a tile grid suitable for a CSS background pattern
 function svg_tile(type = '1', xs = 100, ys = 100, color = 'black', lineWidth = 5, dash = []) {
 	//todo: check dash
 	const strokeAttr = `fill="none" stroke="${color}" stroke-width="${lineWidth}" vector-effect="non-scaling-stroke" ${dash ? 'stroke-dasharray="' + dash.join(',')+ '"': ''}`;
@@ -1240,6 +1241,7 @@ function svg_tile(type = '1', xs = 100, ys = 100, color = 'black', lineWidth = 5
 }
 
 function draw_svg_grid(type=null, hpps=null, vpps=null, offsetX=null, offsetY=null, color=null, lineWidth=null, subdivide=null, dash=[]) {
+	const sd = window.CURRENT_SCENE_DATA;
 	const grc = $('#grid_svg_underlay');
 	const grc2 = $('#grid_svg_overlay');	
 	if(type === "0") { //hack for clear grid
@@ -1247,39 +1249,38 @@ function draw_svg_grid(type=null, hpps=null, vpps=null, offsetX=null, offsetY=nu
 		grc2.css('visibility', 'hidden');
 		return;
 	}
-	const gridType = window.CURRENT_SCENE_DATA.gridType;
-	const scale = window.CURRENT_SCENE_DATA.scale_factor
+	const gridType = sd.gridType;
+	const scale = sd.scale_factor
 	//pps for hex - hex radius is (pps / 1.5)
-	hpps = hpps || window.CURRENT_SCENE_DATA.hpps;
-	vpps = vpps || window.CURRENT_SCENE_DATA.vpps;	
-	const sax = gridType === '1' ? 1 : (window.CURRENT_SCENE_DATA.scaleAdjustment?.x || 1);
-	const say = gridType === '1' ? 1 : (window.CURRENT_SCENE_DATA.scaleAdjustment?.y || 1);
-	let startX = (offsetX || window.CURRENT_SCENE_DATA.offsetx) * sax / scale;
-	let startY = (offsetY || window.CURRENT_SCENE_DATA.offsety) * say / scale;
+	hpps = hpps || sd.hpps;
+	vpps = vpps || sd.vpps;	
+	const adjx = gridType == 1 ? 1 : (sd.scaleAdjustment?.x || 1);
+	const adjy = gridType == 1 ? 1 : (sd.scaleAdjustment?.y || 1);
+	let startX = (offsetX || sd.offsetx) * adjx / scale;
+	let startY = (offsetY || sd.offsety) * adjy / scale;
 	// Warning: global side effects of drawing right here!!!
-	// the draw function makes pps 1:1 (this is how old code worked)
-	// todo: would love to remove this as it's confusing
-	if(gridType === '2') {
-		window.CURRENT_SCENE_DATA.hpps = hpps = vpps;
-	} else if(gridType === '3') {
-		window.CURRENT_SCENE_DATA.vpps = vpps = hpps;
+	// the draw function makes h/vpps 1:1 (this is how old code worked)
+	// todo: would love to remove this as it's confusing in a drawing routine
+	if(gridType == 2) {
+		sd.hpps = hpps = vpps;
+	} else if(gridType == 3) {
+		sd.vpps = vpps = hpps;
 	}
-	const xs = hpps / ((gridType === '1') ? 1 : 0.75) * (gridType === '2' ? (sr3/2) : 1) * sax / scale;
-	const ys = vpps / ((gridType === '1') ? 1 : 0.75) * (gridType === '3' ? (sr3/2) : 1) * say / scale;
+	const xs = hpps / ((gridType == 1) ? 1 : 0.75) * (gridType == 2 ? (sr3/2) : 1) * adjx / scale;
+	const ys = vpps / ((gridType == 1) ? 1 : 0.75) * (gridType == 3 ? (sr3/2) : 1) * adjy / scale;
 	var submult = 1;
-	if(gridType !== '1') {
+	if(gridType != 1) {
 		startX -= xs/2;
 		startY -= ys/2;
 	} else {
-		if(!subdivide) subdivide = window.CURRENT_SCENE_DATA.grid_subdivided;
+		if(!subdivide) subdivide = sd.grid_subdivided;
 		if(subdivide && subdivide !== '0') submult = parseInt(subdivide)+1
 	}
-	console.log("GRID TILE", xs, ys, startX, startY, hpps, vpps, sax, say, submult)
 	const gr = svg_tile(gridType, xs*submult, ys*submult,
-			    color || window.CURRENT_SCENE_DATA.grid_color,
-			    lineWidth || window.CURRENT_SCENE_DATA.grid_line_width, dash);
-	const tilex = gridType === '3' ? 1.5 : 1;
-	const tiley = gridType === '2' ? 1.5 : 1; //adjust for next row/col extra hex fill line
+			    color || sd.grid_color,
+			    lineWidth || sd.grid_line_width, dash);
+	const tilex = gridType == 3 ? 1.5 : 1;
+	const tiley = gridType == 2 ? 1.5 : 1; //adjust for next row/col extra hex fill line
 	const bk = {
 		'background-image': "url("+gr+")",
 		'background-size': `${xs * tilex}px ${ys * tiley}px`,
@@ -1287,6 +1288,7 @@ function draw_svg_grid(type=null, hpps=null, vpps=null, offsetX=null, offsetY=nu
 		'background-position-y': Math.round(startY),
 		'visibility': 'visible'
 	}
+	//grid renders into 2 elements (below darkness and above)
 	grc2.css(bk);
 	grc.css(bk);
 }
@@ -1294,9 +1296,9 @@ function draw_svg_grid(type=null, hpps=null, vpps=null, offsetX=null, offsetY=nu
 //returns current [width,height] of grid (including hex)
 function grid_size(scaled = false, adjusted = false) {
 	const sd = window.CURRENT_SCENE_DATA;
-	const hexadj = sr3 / 1.5; //1.155...
-	const xhex = (sd.gridType == '2') ? hexadj : 1;
-	const yhex = (sd.gridType == '3') ? hexadj : 1;
+	const hexadj_constant = sr3 / 1.5; //1.155...
+	const xhex = (sd.gridType == 2) ? hexadj_constant : 1;
+	const yhex = (sd.gridType == 3) ? hexadj_constant : 1;
 	const scale = scaled ? sd.scale_factor : 1;
 	const adjx = ((adjusted ? sd.scaleAdjustment?.x : 1) || 1) / scale * xhex;
 	const adjy = ((adjusted ? sd.scaleAdjustment?.y : 1) || 1) / scale * yhex;
@@ -1308,16 +1310,18 @@ function redraw_grid(hpps=null, vpps=null, offsetX=null, offsetY=null, color=nul
 	draw_svg_grid(null, hpps, vpps, offsetX, offsetY, color, lineWidth, subdivide, dash);	
 }
 
+//See Main.js for styling of wiz box
 function draw_wizarding_box() {
+	const sd = window.CURRENT_SCENE_DATA;
 	const svg = document.getElementById("wizbox");
 	let al1 = {
-		x: (parseInt($("#aligner1").css("left")) + 29)/window.CURRENT_SCENE_DATA.scale_factor,
-		y: (parseInt($("#aligner1").css("top")) + 29)/window.CURRENT_SCENE_DATA.scale_factor,
+		x: (parseInt($("#aligner1").css("left")) + 29)/sd.scale_factor,
+		y: (parseInt($("#aligner1").css("top")) + 29)/sd.scale_factor,
 	};
 
 	let al2 = {
-		x: (parseInt($("#aligner2").css("left")) + 29)/window.CURRENT_SCENE_DATA.scale_factor,
-		y: (parseInt($("#aligner2").css("top")) + 29)/window.CURRENT_SCENE_DATA.scale_factor,
+		x: (parseInt($("#aligner2").css("left")) + 29)/sd.scale_factor,
+		y: (parseInt($("#aligner2").css("top")) + 29)/sd.scale_factor,
 	};
 	const grid = document.getElementById('wizbox-grid');
 	const hex = document.getElementById('wizbox-hex');	
@@ -1330,12 +1334,12 @@ function draw_wizarding_box() {
 	} else {
 		const hexedge = Math.abs(al2.y - al1.y) / 3;
 		const rotate = $('#gridType input:checked').val() == 3 ? 90 : 0;
-		const sax = window.CURRENT_SCENE_DATA.scaleAdjustment?.x || 1.0;
-		const say = window.CURRENT_SCENE_DATA.scaleAdjustment?.y || 1.0;
-		//todo deal with translate for sax/say
+		const adjx = sd.scaleAdjustment?.x || 1.0;
+		const adjy = sd.scaleAdjustment?.y || 1.0;
+		//todo deal with translate for adjx/adjy
 		hex.setAttribute('visibility', 'visible');
 		grid.setAttribute('visibility', 'hidden');
-		hex.setAttribute('transform', `translate(${al1.x}, ${al1.y}) scale(${hexedge*sax}, ${hexedge*say}) rotate(${rotate})`);		
+		hex.setAttribute('transform', `translate(${al1.x}, ${al1.y}) scale(${hexedge*adjx}, ${hexedge*adjy}) rotate(${rotate})`);		
 	}
 }
 
@@ -1358,6 +1362,7 @@ function reset_canvas(apply_zoom=true) {
 
 	$('#darkness_layer').css({"width": sceneMapWidth, "height": sceneMapHeight});
 	$("#scene_map_container").css({"width": sceneMapWidth, "height": sceneMapHeight});
+	// grid overlay css tiling needs a container to fill that matches map
 	$("#grid_svg_overlay_container").css({"width": sceneMapWidth, "height": sceneMapHeight});
 	
 	ctxScale('peer_overlay', sceneMapWidth, sceneMapHeight);
@@ -2812,18 +2817,18 @@ function is_rgba_fully_transparent(rgba){
  */
 function get_snapped_coordinates(pointX, pointY) {
 
-    const offsetX = parseFloat(window.CURRENT_SCENE_DATA.offsetx) || 0;
-    const offsetY = parseFloat(window.CURRENT_SCENE_DATA.offsety) || 0;
-
     if (window.CURRENT_SCENE_DATA.gridType == "1" || typeof window.CURRENT_SCENE_DATA.gridType == "undefined") {
         // Square grid
+        const offsetX = parseFloat(window.CURRENT_SCENE_DATA.offsetx) || 0;
+        const offsetY = parseFloat(window.CURRENT_SCENE_DATA.offsety) || 0;
         const gridWidth = parseFloat(window.CURRENT_SCENE_DATA.hpps)/2;
         const gridHeight = parseFloat(window.CURRENT_SCENE_DATA.vpps)/2;
         pointX = Math.round((pointX-offsetX) / gridWidth) * gridWidth + offsetX;
         pointY = Math.round((pointY-offsetY) / gridHeight) * gridHeight + offsetY;
     } else if (window.CURRENT_SCENE_DATA.gridType == "2" || window.CURRENT_SCENE_DATA.gridType == "3") {
         // Hex grid (vertical or horizontal)
-        console.log("Hex snapping is not implemented yet.");
+        // todo: decide which points you want to snap to -- assume all vertices and center for now   
+        [pointX, pointY] = getCurrentClosestHex(pointX, pointY, true, true);
     }
 
     return [pointX, pointY];
