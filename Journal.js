@@ -4354,8 +4354,10 @@ class JournalManager{
 						
 						if(!e.shiftKey){
 							const currentNode = editor.selection.getNode();
-							const skipElements = ['DIV', 'BLOCKQUOTE']
-							const skipInsertP = !skipElements.includes(currentNode.tagName) || 
+							/* Do no copy elements can be 0 size when pasted from elsewhere and can lead to enter not adding a line. Insert <p> element instead.
+							   We also want to run default behaviour on empty lines so it breaks out of containers.*/
+							const doNotCopyElement = ['DIV', 'BLOCKQUOTE'];
+							const skipInsertP = !doNotCopyElement.includes(currentNode.tagName) || 
 												currentNode.textContent.trim() == ""
 
 							if (skipInsertP)
