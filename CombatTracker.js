@@ -822,26 +822,19 @@ function update_carousel_combat_tracker(){
 
 
 function getCombatTrackerSettings(){
-	let combatSettingData = {};
-	if(localStorage.getItem(`abovevtt-combat-tracker-settings-${window.DM}`) == null){
-		combatSettingData = {
-			tie_breaker: 0,
-			scroll_to_next: 0,
-			select_next: 0,
-			auto_init: 0,
-			remove_init: 0,
-			carousel: 0,
-			autoGroup: 0,
-			next_turn_indicator: 0,
-			always_add_hidden: 0
-		}
-	}else{
-		combatSettingData = {
-			...$.parseJSON(localStorage.getItem(`abovevtt-combat-tracker-settings-${window.gameId}-${window.DM}`)),
-			...$.parseJSON(localStorage.getItem(`abovevtt-combat-tracker-settings-${window.DM}`))	
-		};
-	}
-	return combatSettingData;
+	return {
+		tie_breaker: 0,
+		scroll_to_next: 0,
+		select_next: 0,
+		auto_init: 0,
+		remove_init: 0,
+		carousel: 0,
+		autoGroup: 0,
+		next_turn_indicator: 0,
+		always_add_hidden: 0,
+		...$.parseJSON(localStorage.getItem(`abovevtt-combat-tracker-settings-${window.gameId}-${window.DM}`)),
+		...$.parseJSON(localStorage.getItem(`abovevtt-combat-tracker-settings-${window.DM}`))	
+	};
 }
 function openCombatTrackerSettings(){
 	let combatSettingData = getCombatTrackerSettings();		
