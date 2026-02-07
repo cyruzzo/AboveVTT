@@ -1067,7 +1067,7 @@ function midPointBtw(p1, p2) {
 }
 
 function clear_grid(){
-	draw_svg_grid("x");
+	draw_svg_grid("0");
 }
 
 function redraw_alphanum_grid(){
@@ -1207,16 +1207,17 @@ function closestHexVertex(type, size, x, y, offsetx = 0, offsety = 0, adjx = 1, 
 }
 
 function getCurrentClosestHex(x, y, vertex=false) {
-	const scale = window.CURRENT_SCENE_DATA.scale_factor
+	const sd = window.CURRENT_SCENE_DATA;
+	const scale = sd.scale_factor
 	//hpps = vpps by convention
-	const hexSize = window.CURRENT_SCENE_DATA.hpps / 1.5;
-	const startX = window.CURRENT_SCENE_DATA.offsetx;
-	const startY = window.CURRENT_SCENE_DATA.offsety;
-	return  (vertex ? closestHexVertex : closestHexCenter)
-	(window.CURRENT_SCENE_DATA.gridType, hexSize,
-	 x, y, startX, startY,
-	 window.CURRENT_SCENE_DATA.scaleAdjustment?.x || 1,
-	 window.CURRENT_SCENE_DATA.scaleAdjustment?.y || 1);
+	const hexSize = sd.hpps / 1.5;
+	const startX = sd.offsetx;
+	const startY = sd.offsety;
+	const adjx = sd.scaleAdjustment?.x || 1;
+	const adjy = sd.scaleAdjustment?.y || 1;
+	const ret = (vertex ? closestHexVertex : closestHexCenter)
+	(sd.gridType, hexSize, x/adjx, y/adjy, startX, startY, 1, 1);
+	return [ret[0]*adjx,ret[1]*adjy];
 }
 
 function svg_tile(type = '1', xs = 100, ys = 100, color = 'black', lineWidth = 5, dash = []) {
@@ -1241,7 +1242,7 @@ function svg_tile(type = '1', xs = 100, ys = 100, color = 'black', lineWidth = 5
 function draw_svg_grid(type=null, hpps=null, vpps=null, offsetX=null, offsetY=null, color=null, lineWidth=null, subdivide=null, dash=[]) {
 	const grc = $('#grid_svg_underlay');
 	const grc2 = $('#grid_svg_overlay');	
-	if(type === "x") { //hack for clear grid
+	if(type === "0") { //hack for clear grid
 		grc.css('visibility', 'hidden');
 		grc2.css('visibility', 'hidden');
 		return;
@@ -1629,11 +1630,9 @@ function redraw_fog() {
  				}
 				else{
 					ctx.fillStyle = "#000"
-					ctx.scale(window.CURRENT_SCENE_DATA.scaleAdjustment.x, window.CURRENT_SCENE_DATA.scaleAdjustment.y)
 	 				for(let i=0; i<d[0].length; i++){
 	 					drawHexagon(ctx, d[0][i][0], d[0][i][1])
 	 				}
-	 				ctx.setTransform(1, 0, 0, 1, 0, 0);
 	 			}
 			
 
@@ -1688,12 +1687,10 @@ function redraw_fog() {
  				}
 				else{
 					ctx.globalCompositeOperation = 'destination-out';
-					ctx.scale(window.CURRENT_SCENE_DATA.scaleAdjustment.x, window.CURRENT_SCENE_DATA.scaleAdjustment.y)
 	 				ctx.fillStyle = "#000000";
 	 				for(let i=0; i<d[0].length; i++){
 	 					drawHexagon(ctx, d[0][i][0], d[0][i][1])
 	 				}
-	 				ctx.setTransform(1, 0, 0, 1, 0, 0);
 	 			}				
 
 				ctx.globalCompositeOperation = 'source-over';
@@ -1705,11 +1702,9 @@ function redraw_fog() {
 					}
 				}
 				else{
-					ctx.scale(window.CURRENT_SCENE_DATA.scaleAdjustment.x, window.CURRENT_SCENE_DATA.scaleAdjustment.y)
 	 				for(let i=0; i<d[0].length; i++){
 	 					drawHexagon(ctx, d[0][i][0], d[0][i][1])
 	 				}
-	 				ctx.setTransform(1, 0, 0, 1, 0, 0);
 	 			}
 			}
 		}
@@ -3059,26 +3054,17 @@ function drawing_mousedown(e) {
 		const hpps = window.CURRENT_SCENE_DATA.gridType == 2 ? window.CURRENT_SCENE_DATA.vpps : window.CURRENT_SCENE_DATA.hpps;
 
 		clear_temp_canvas()
-
-		const offscreen_canvas = new OffscreenCanvas($('#scene_map')[0].width, $('#scene_map')[0].height); 
-		const offscreen_context = offscreen_canvas.getContext('2d');
-		offscreen_context.fillStyle = "#FFF";
-		
-		const { x, y } = snap_point_to_grid(window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, true, undefined, undefined, undefined, true);
-
-		window.BRUSHPOINTS.push([Math.round(x), Math.round(y)]) //round???
+		let { x, y } = snap_point_to_grid(window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, true, undefined, undefined, undefined, true);
+		window.BRUSHPOINTS.push([Math.round(x), Math.round(y)])
 		window.BRUSHPOINTS = Array.from(new Set(window.BRUSHPOINTS.map(JSON.stringify)), JSON.parse)		
 		if(window.CURRENT_SCENE_DATA.gridType == '1'){
 			for(let i in window.BRUSHPOINTS){
 				drawRect(window.temp_context, window.BRUSHPOINTS[i][0], window.BRUSHPOINTS[i][1], window.CURRENT_SCENE_DATA.hpps, window.CURRENT_SCENE_DATA.vpps, window.DRAWCOLOR, true, window.DRAWTYPE);
 			}
-		}
-		else{
-			window.temp_context.scale(window.CURRENT_SCENE_DATA.scaleAdjustment.x, window.CURRENT_SCENE_DATA.scaleAdjustment.y)
+		} else {
 			for(let i in window.BRUSHPOINTS){
 				drawHexagon(window.temp_context, window.BRUSHPOINTS[i][0], window.BRUSHPOINTS[i][1])
 			}
-			window.temp_context.setTransform(1, 0, 0, 1, 0, 0);
 		}
 	}
 	else if (window.DRAWSHAPE === "polygon") {
@@ -3468,9 +3454,8 @@ function drawing_mousemove(e) {
 			
 			window.temp_context.fillStyle = window.DRAWCOLOR;
 			clear_temp_canvas()
-			const { x, y } = snap_point_to_grid(mouseX, mouseY, true, undefined, undefined, undefined, true);
-			window.BRUSHPOINTS.push([Math.round(x), Math.round(y)]) //round??
-			//todo: unclear why we do this:
+			let { x, y } = snap_point_to_grid(mouseX, mouseY, true, undefined, undefined, undefined, true);
+			window.BRUSHPOINTS.push([Math.round(x), Math.round(y)])
 			window.BRUSHPOINTS = Array.from(new Set(window.BRUSHPOINTS.map(JSON.stringify)), JSON.parse)
 			
 			if(window.CURRENT_SCENE_DATA.gridType == '1'){
@@ -3479,11 +3464,9 @@ function drawing_mousemove(e) {
 				}
 			}
 			else{
-				window.temp_context.scale(window.CURRENT_SCENE_DATA.scaleAdjustment.x, window.CURRENT_SCENE_DATA.scaleAdjustment.y)
  				for(let i in window.BRUSHPOINTS){
  					drawHexagon(window.temp_context, window.BRUSHPOINTS[i][0], window.BRUSHPOINTS[i][1])
  				}
- 				window.temp_context.setTransform(1, 0, 0, 1, 0, 0);
  			}
 		}
 	}
@@ -4773,17 +4756,20 @@ function drawCircle(ctx, centerX, centerY, radius, style, fill=true, lineWidth =
 
 
 function drawHexagon(ctx, x, y) {
-	const hexSize = window.CURRENT_SCENE_DATA.hpps / 1.5 / window.CURRENT_SCENE_DATA.scale_factor;
-	x = x / window.CURRENT_SCENE_DATA.scale_factor;
-	y = y / window.CURRENT_SCENE_DATA.scale_factor;	
+	const scale = window.CURRENT_SCENE_DATA.scale_factor;
+	const adjx = window.CURRENT_SCENE_DATA.scaleAdjustment.x || 1;
+	const adjy = window.CURRENT_SCENE_DATA.scaleAdjustment.y || 1;
+	const hexSize = window.CURRENT_SCENE_DATA.hpps / 1.5 / scale;
+	x = x/scale;
+	y = y/scale;
 	if(window.CURRENT_SCENE_DATA.gridType == 3){ //todo: collapse both loops simpler code
 		ctx.beginPath();
-		ctx.moveTo(x + hexSize, y);
+		ctx.moveTo(x + hexSize * adjx, y);
 		for (let i = 1; i <= 6; i++) {
 			//todo: a lot of slow math for constants...
 			let angle = i * Math.PI / 3;
-			let dx = hexSize * Math.cos(angle);
-			let dy = hexSize * Math.sin(angle);
+			let dx = hexSize * Math.cos(angle) * adjx;
+			let dy = hexSize * Math.sin(angle) * adjy;
 			ctx.lineTo(x + dx, y + dy);
 		}
 		ctx.closePath();
@@ -4791,11 +4777,11 @@ function drawHexagon(ctx, x, y) {
 	}
 	else{
 		ctx.beginPath();
-		ctx.moveTo(x, y + hexSize);
+		ctx.moveTo(x, y + hexSize * adjy);
 		for (let i = 1; i <= 6; i++) {
 			let angle = i * Math.PI / 3;
-			let dx = hexSize * Math.sin(angle);
-			let dy = hexSize * Math.cos(angle);
+			let dx = hexSize * Math.sin(angle) * adjx;
+			let dy = hexSize * Math.cos(angle) * adjy;
 			ctx.lineTo(x + dx, y + dy);
 		}
 		ctx.closePath();
@@ -4807,22 +4793,19 @@ function drawHexagon(ctx, x, y) {
 
 function drawRect(ctx, startx, starty, width, height, style, fill=true, lineWidth = 6, addStrokeToFill = false, addDottedStrokeToBorder)
 {
+	const scale = window.CURRENT_SCENE_DATA.scale_factor;
 	ctx.beginPath();
 	ctx.lineWidth = lineWidth;
 	ctx.strokeStyle = style;
 	ctx.fillStyle = style;
-	if(fill)
-	{
-		ctx.rect(startx/window.CURRENT_SCENE_DATA.scale_factor, starty/window.CURRENT_SCENE_DATA.scale_factor, width/window.CURRENT_SCENE_DATA.scale_factor, height/window.CURRENT_SCENE_DATA.scale_factor);
+	ctx.rect(startx/scale, starty/scale, width/scale, height/scale);
+	if(fill) {
 		ctx.fill()
 		if(addStrokeToFill){
 			ctx.stroke();
 		}
-	}
-	else
-	{
-		ctx.rect(startx/window.CURRENT_SCENE_DATA.scale_factor, starty/window.CURRENT_SCENE_DATA.scale_factor, width/window.CURRENT_SCENE_DATA.scale_factor, height/window.CURRENT_SCENE_DATA.scale_factor);
-		ctx.stroke();
+	} else {
+		ctx.stroke();		
 		if(addDottedStrokeToBorder){
 			ctx.setLineDash([2*lineWidth, 2*lineWidth])
 			ctx.strokeStyle = `rgba(0,0,0,1)`;

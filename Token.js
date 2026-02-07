@@ -641,6 +641,9 @@ class Token {
 		debounceLightChecks();
 		update_pc_token_rows();
 	}
+	tinyToken() {
+		return (Math.round(parseFloat(this.options.gridSquares)*2)/2 < 1) || this.isAoe();
+	}
 	rotate(newRotation) {
 		if (!window.DM && (this.options.restrictPlayerMove || this.options.locked) && !this.isCurrentPlayer()) return; // don't allow rotating if the token is locked
 		if (window.DM && this.options.locked && !$('#select_locked .ddbc-tab-options__header-heading').hasClass('ddbc-tab-options__header-heading--is-active')) return; // don't allow rotating if the token is locked
@@ -664,60 +667,52 @@ class Token {
 		$(`.aura-element-container-clip[id='${this.options.id}'] .aura-element, .aura-element[data-id='${this.options.id}']`).css('--rotation', newRotation + "deg");
 	}
 	moveUp() {	
-		let tinyToken = (Math.round(parseFloat(this.options.gridSquares)*2)/2 < 1) || this.isAoe();	
-		let addvpps = (window.CURRENT_SCENE_DATA.gridType && window.CURRENT_SCENE_DATA.gridType != 1) ? grid_size(false,true)[1] : (!tinyToken || window.CURRENTLY_SELECTED_TOKENS.length > 1) ? parseFloat(window.CURRENT_SCENE_DATA.vpps) : parseFloat(window.CURRENT_SCENE_DATA.vpps)/2;
+		let addvpps = (window.CURRENT_SCENE_DATA.gridType && window.CURRENT_SCENE_DATA.gridType != 1) ? grid_size(false,true)[1] : (!this.tinyToken() || window.CURRENTLY_SELECTED_TOKENS.length > 1) ? parseFloat(window.CURRENT_SCENE_DATA.vpps) : parseFloat(window.CURRENT_SCENE_DATA.vpps)/2;
 		let newTop = `${parseFloat(this.options.top) - addvpps/2-5}px`;
 		this.move(newTop, parseFloat(this.options.left)+5)	
 	}
 	moveDown() {
-		let tinyToken = (Math.round(parseFloat(this.options.gridSquares)*2)/2 < 1) || this.isAoe();		
-		let addvpps = (window.CURRENT_SCENE_DATA.gridType && window.CURRENT_SCENE_DATA.gridType != 1) ? grid_size(false,true)[1] : (!tinyToken || window.CURRENTLY_SELECTED_TOKENS.length > 1) ? parseFloat(window.CURRENT_SCENE_DATA.vpps) : parseFloat(window.CURRENT_SCENE_DATA.vpps)/2;
+		let addvpps = (window.CURRENT_SCENE_DATA.gridType && window.CURRENT_SCENE_DATA.gridType != 1) ? grid_size(false,true)[1] : (!this.tinyToken() || window.CURRENTLY_SELECTED_TOKENS.length > 1) ? parseFloat(window.CURRENT_SCENE_DATA.vpps) : parseFloat(window.CURRENT_SCENE_DATA.vpps)/2;
 		let newTop = `${parseFloat(this.options.top) + addvpps+5}px`;
 		this.move(newTop, parseFloat(this.options.left)+5)	
 	}
 	moveLeft() {
-		let tinyToken = (Math.round(parseFloat(this.options.gridSquares)*2)/2 < 1) || this.isAoe();		
-		let addhpps = (window.CURRENT_SCENE_DATA.gridType && window.CURRENT_SCENE_DATA.gridType != 1) ? grid_size(false,true)[0] : (!tinyToken || window.CURRENTLY_SELECTED_TOKENS.length > 1) ? parseFloat(window.CURRENT_SCENE_DATA.hpps) : parseFloat(window.CURRENT_SCENE_DATA.hpps)/2;
+		let addhpps = (window.CURRENT_SCENE_DATA.gridType && window.CURRENT_SCENE_DATA.gridType != 1) ? grid_size(false,true)[0] : (!this.tinyToken() || window.CURRENTLY_SELECTED_TOKENS.length > 1) ? parseFloat(window.CURRENT_SCENE_DATA.hpps) : parseFloat(window.CURRENT_SCENE_DATA.hpps)/2;
 		let newLeft = `${parseFloat(this.options.left) - addhpps/2-5}px`;
 		this.move(parseFloat(this.options.top)+5, newLeft)	
 	}
 	moveRight() {
-		let tinyToken = (Math.round(parseFloat(this.options.gridSquares)*2)/2 < 1) || this.isAoe();		
-		let addhpps = (window.CURRENT_SCENE_DATA.gridType && window.CURRENT_SCENE_DATA.gridType != 1) ? grid_size(false,true)[0] : (!tinyToken || window.CURRENTLY_SELECTED_TOKENS.length > 1) ? parseFloat(window.CURRENT_SCENE_DATA.hpps) : parseFloat(window.CURRENT_SCENE_DATA.hpps)/2;
+		let addhpps = (window.CURRENT_SCENE_DATA.gridType && window.CURRENT_SCENE_DATA.gridType != 1) ? grid_size(false,true)[0] : (!this.tinyToken() || window.CURRENTLY_SELECTED_TOKENS.length > 1) ? parseFloat(window.CURRENT_SCENE_DATA.hpps) : parseFloat(window.CURRENT_SCENE_DATA.hpps)/2;
 		let newLeft = `${parseFloat(this.options.left) + addhpps+5}px`;
 		this.move(parseFloat(this.options.top)+5, newLeft)	
 	}
 	moveUpRight() {
-		let tinyToken = (Math.round(parseFloat(this.options.gridSquares)*2)/2 < 1) || this.isAoe();		
-		let addhpps = (window.CURRENT_SCENE_DATA.gridType && window.CURRENT_SCENE_DATA.gridType != 1) ? grid_size(false,true)[0] : (!tinyToken || window.CURRENTLY_SELECTED_TOKENS.length > 1) ? parseFloat(window.CURRENT_SCENE_DATA.hpps) : parseFloat(window.CURRENT_SCENE_DATA.hpps)/2;
+		let addhpps = (window.CURRENT_SCENE_DATA.gridType && window.CURRENT_SCENE_DATA.gridType != 1) ? grid_size(false,true)[0] : (!this.tinyToken() || window.CURRENTLY_SELECTED_TOKENS.length > 1) ? parseFloat(window.CURRENT_SCENE_DATA.hpps) : parseFloat(window.CURRENT_SCENE_DATA.hpps)/2;
 		let newLeft = `${parseFloat(this.options.left) + addhpps+5}px`;
-		let addvpps = (window.CURRENT_SCENE_DATA.gridType && window.CURRENT_SCENE_DATA.gridType != 1) ? grid_size(false,true)[1] : (!tinyToken || window.CURRENTLY_SELECTED_TOKENS.length > 1) ? parseFloat(window.CURRENT_SCENE_DATA.vpps) : parseFloat(window.CURRENT_SCENE_DATA.vpps)/2;
+		let addvpps = (window.CURRENT_SCENE_DATA.gridType && window.CURRENT_SCENE_DATA.gridType != 1) ? grid_size(false,true)[1] : (!this.tinyToken() || window.CURRENTLY_SELECTED_TOKENS.length > 1) ? parseFloat(window.CURRENT_SCENE_DATA.vpps) : parseFloat(window.CURRENT_SCENE_DATA.vpps)/2;
 		let newTop = `${parseFloat(this.options.top) - addvpps/2-5}px`;
 		this.move(newTop, newLeft)		
 	}
 	moveDownRight() {
-		let tinyToken = (Math.round(parseFloat(this.options.gridSquares)*2)/2 < 1) || this.isAoe();		
-		let addhpps = (window.CURRENT_SCENE_DATA.gridType && window.CURRENT_SCENE_DATA.gridType != 1) ? grid_size(false,true)[0] : (!tinyToken || window.CURRENTLY_SELECTED_TOKENS.length > 1) ? parseFloat(window.CURRENT_SCENE_DATA.hpps) : parseFloat(window.CURRENT_SCENE_DATA.hpps)/2;
+		let addhpps = (window.CURRENT_SCENE_DATA.gridType && window.CURRENT_SCENE_DATA.gridType != 1) ? grid_size(false,true)[0] : (!this.tinyToken() || window.CURRENTLY_SELECTED_TOKENS.length > 1) ? parseFloat(window.CURRENT_SCENE_DATA.hpps) : parseFloat(window.CURRENT_SCENE_DATA.hpps)/2;
 		let newLeft = `${parseFloat(this.options.left) + addhpps+5}px`;
-		let addvpps = (window.CURRENT_SCENE_DATA.gridType && window.CURRENT_SCENE_DATA.gridType != 1) ? grid_size(false,true)[1] : (!tinyToken || window.CURRENTLY_SELECTED_TOKENS.length > 1) ? parseFloat(window.CURRENT_SCENE_DATA.vpps) : parseFloat(window.CURRENT_SCENE_DATA.vpps)/2;
+		let addvpps = (window.CURRENT_SCENE_DATA.gridType && window.CURRENT_SCENE_DATA.gridType != 1) ? grid_size(false,true)[1] : (!this.tinyToken() || window.CURRENTLY_SELECTED_TOKENS.length > 1) ? parseFloat(window.CURRENT_SCENE_DATA.vpps) : parseFloat(window.CURRENT_SCENE_DATA.vpps)/2;
 		let newTop = `${parseFloat(this.options.top) + addvpps+5}px`;
 		this.move(newTop, newLeft)		
 	}
 	moveUpLeft() {
-		let tinyToken = (Math.round(parseFloat(this.options.gridSquares)*2)/2 < 1) || this.isAoe();		
-		let addhpps = (window.CURRENT_SCENE_DATA.gridType && window.CURRENT_SCENE_DATA.gridType != 1) ? grid_size(false,true)[0] : (!tinyToken || window.CURRENTLY_SELECTED_TOKENS.length > 1) ? parseFloat(window.CURRENT_SCENE_DATA.hpps) : parseFloat(window.CURRENT_SCENE_DATA.hpps)/2;
+		let addhpps = (window.CURRENT_SCENE_DATA.gridType && window.CURRENT_SCENE_DATA.gridType != 1) ? grid_size(false,true)[0] : (!this.tinyToken() || window.CURRENTLY_SELECTED_TOKENS.length > 1) ? parseFloat(window.CURRENT_SCENE_DATA.hpps) : parseFloat(window.CURRENT_SCENE_DATA.hpps)/2;
 		let newLeft = `${parseFloat(this.options.left) - addhpps/2-5}px`;
-		let addvpps = (window.CURRENT_SCENE_DATA.gridType && window.CURRENT_SCENE_DATA.gridType != 1) ? grid_size(false,true)[1] : (!tinyToken || window.CURRENTLY_SELECTED_TOKENS.length > 1) ? parseFloat(window.CURRENT_SCENE_DATA.vpps) : parseFloat(window.CURRENT_SCENE_DATA.vpps)/2;
+		let addvpps = (window.CURRENT_SCENE_DATA.gridType && window.CURRENT_SCENE_DATA.gridType != 1) ? grid_size(false,true)[1] : (!this.tinyToken() || window.CURRENTLY_SELECTED_TOKENS.length > 1) ? parseFloat(window.CURRENT_SCENE_DATA.vpps) : parseFloat(window.CURRENT_SCENE_DATA.vpps)/2;
 		let newTop = `${parseFloat(this.options.top) - addvpps/2-5}px`;
 		this.move(newTop, newLeft)	
 	}
 	moveDownLeft() {
-		let tinyToken = (Math.round(parseFloat(this.options.gridSquares)*2)/2 < 1) || this.isAoe();		
-		let addhpps = (window.CURRENT_SCENE_DATA.gridType && window.CURRENT_SCENE_DATA.gridType != 1) ? grid_size(false,true)[0] : (!tinyToken || window.CURRENTLY_SELECTED_TOKENS.length > 1) ? parseFloat(window.CURRENT_SCENE_DATA.hpps) : parseFloat(window.CURRENT_SCENE_DATA.hpps)/2;
+		let addhpps = (window.CURRENT_SCENE_DATA.gridType && window.CURRENT_SCENE_DATA.gridType != 1) ? grid_size(false,true)[0] : (!this.tinyToken() || window.CURRENTLY_SELECTED_TOKENS.length > 1) ? parseFloat(window.CURRENT_SCENE_DATA.hpps) : parseFloat(window.CURRENT_SCENE_DATA.hpps)/2;
 		let newLeft = `${parseFloat(this.options.left) - addhpps/2-5}px`;
-		let addvpps = (window.CURRENT_SCENE_DATA.gridType && window.CURRENT_SCENE_DATA.gridType != 1) ? grid_size(false,true)[1] : (!tinyToken || window.CURRENTLY_SELECTED_TOKENS.length > 1) ? parseFloat(window.CURRENT_SCENE_DATA.vpps) : parseFloat(window.CURRENT_SCENE_DATA.vpps)/2;
+		let addvpps = (window.CURRENT_SCENE_DATA.gridType && window.CURRENT_SCENE_DATA.gridType != 1) ? grid_size(false,true)[1] : (!this.tinyToken() || window.CURRENTLY_SELECTED_TOKENS.length > 1) ? parseFloat(window.CURRENT_SCENE_DATA.vpps) : parseFloat(window.CURRENT_SCENE_DATA.vpps)/2;
 		let newTop = `${parseFloat(this.options.top) + addvpps+5}px`;
-		this.move(newTop, newLeft)	
+		this.move(nnewTop, newLeft)	
 	}
 
 	/**
@@ -736,11 +731,8 @@ class Token {
 		
 		this.prepareWalkableArea()
 		
-		let tinyToken = (Math.round(this.options.gridSquares*2)/2 < 1) || this.isAoe();
-
-
 		//todo verify if this is center or TL
-		let tokenPosition = snap_point_to_grid(left, top, true, tinyToken, this.options.size, true)
+		let tokenPosition = snap_point_to_grid(left, top, true, this.tinyToken(), this.options.size, true)
 		
 		
 
@@ -3320,15 +3312,16 @@ class Token {
 						let zoom = parseFloat(window.ZOOM);
 
 						let original = ui.originalPosition;
-						let tokenX = (ui.position.left - ((zoom-parseFloat(window.orig_zoom)) * parseFloat(self.sizeWidth())/2)) / parseFloat(window.ZOOM);
-						let tokenY = (ui.position.top - ((zoom-parseFloat(window.orig_zoom)) * parseFloat(self.sizeHeight())/2)) / parseFloat(window.ZOOM);
+						let tokenX = (ui.position.left - ((zoom-parseFloat(window.orig_zoom)) * parseFloat(self.sizeWidth())/2)) / zoom;
+						let tokenY = (ui.position.top - ((zoom-parseFloat(window.orig_zoom)) * parseFloat(self.sizeHeight())/2)) / zoom;
 						let tinyToken = (Math.round(parseFloat(window.TOKEN_OBJECTS[this.dataset.id].options.gridSquares)*2)/2 < 1) || window.TOKEN_OBJECTS[this.dataset.id].isAoe();
 
 						if (should_snap_to_grid() && (window.CURRENT_SCENE_DATA.gridType == '2' || window.CURRENT_SCENE_DATA.gridType == '3')) {
-							tokenX +=  !(tinyToken) ? (parseFloat(window.CURRENT_SCENE_DATA.hpps) / 2) : (parseFloat(window.CURRENT_SCENE_DATA.hpps) / 4);
-							tokenY +=  !(tinyToken) ? (parseFloat(window.CURRENT_SCENE_DATA.vpps) / 2) : (parseFloat(window.CURRENT_SCENE_DATA.vpps) / 4) ;
+							//TODO: WHY?
+							tokenX +=  parseFloat(window.CURRENT_SCENE_DATA.hpps) / (tinyToken ? 4 : 2);
+							tokenY +=  parseFloat(window.CURRENT_SCENE_DATA.vpps) /  (tinyToken ? 4 : 2);
 						}
-						
+						//snap to where mouse is
 						let tokenPosition = snap_point_to_grid(tokenX, tokenY, undefined, tinyToken, self.options.size);
 
 						if(self.walkableArea.bottom != null && self.walkableArea.right != null){ // need to figure out what's causing these to be null but this is a workaround for the error for now
@@ -3864,9 +3857,13 @@ function should_snap_to_grid() {
 		|| ((window.CURRENT_SCENE_DATA.snap != "1") && window.toggleSnap);
 }
 
-//arrowKeys unnecessary
-// x/y is un-scaled
-function snap_point_to_grid(mapX, mapY, forceSnap = false, tinyToken = false, tokenWidth = 0, arrowKeys=false, roundDown=false) {
+//arrowKeys: special function
+// assumes mapX/Y is current and should just re-align (TODO:)
+// tinytoken - only matters for hex and arrowmode
+// tokenWidth only matters for hex grid
+// rounddown only matters for square ( floor instead of round)
+function snap_point_to_grid(mapX, mapY, forceSnap = false, tinyToken = false, tokenWidth = 0,
+			    arrowKeys=false, roundDown=false) {
 	//todo implement tinytoken
 	if (forceSnap || should_snap_to_grid()) {
 		console.log("SNAP",mapX, mapY, tinyToken, tokenWidth, arrowKeys, roundDown);
@@ -3876,13 +3873,11 @@ function snap_point_to_grid(mapX, mapY, forceSnap = false, tinyToken = false, to
 			const vertexInstead = tokenWidth && ! (Math.round(tokenWidth / Math.min(...grid_size())) % 2);
 			console.log("SI", tokenWidth, grid_size(), (Math.round(tokenWidth / Math.min(...grid_size()))), vertexInstead);
 			const [cx, cy] = getCurrentClosestHex(mapX, mapY, vertexInstead);
-			const [acx, acy] = getCurrentClosestHex(mapX, mapY, false);
-			console.log("BOTH", cx, cy, "...", acx, acy);
-			const ret = { x: cx - tokenWidth/2, y: cy - tokenWidth / 2 };
+			const ret = { x: cx - (tokenWidth||0)/2, y: cy - (tokenWidth||0) / 2 };
 			console.log("RET", ret);
 			return ret;
 		}
-		// adjust to the nearest square coordinate
+		// adjust to the nearest square coordinate (rect doesn't have scale adj)
 		// todo: why parseFloat here?
 		const startX = parseFloat(window.CURRENT_SCENE_DATA.offsetx);
 		const startY = parseFloat(window.CURRENT_SCENE_DATA.offsety);

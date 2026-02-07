@@ -33,14 +33,11 @@ body > button,
     border: 1px solid lightgray;
     font-size: 12px;
 }
+/*Common simple positioning*/
 .TLA {
     position: absolute;
     top: 0;
     left: 0;
-}
-.SST {
-    transform: scale(var(--scene-scale));
-    transform-origin: top left;
 }
 .note-text table{
     width: revert-layer;

@@ -2159,19 +2159,18 @@ function init_ui() {
 
 
 	const textDiv = $("<div id='text_div' class='TLA SST'/>");
-	textDiv.css("z-index", "20");
+	textDiv.css({ "z-index": "20", transform: "scale(var(--scene-scale))", "transform-origin": "top left"});	
 
 	const grid_svg_underlay = $("<div id='grid_svg_underlay' class='grid-svg-tile'/>");
 	grid_svg_underlay.css("z-index", "11");	//over map but under mapdrawing
 	const grid = $("<div id='grid_svg_overlay' class='grid-svg-tile'/>");
 	grid.css("opacity", "calc(min(var(--grid-overlay-on) + var(--grid-overlay-on-tmp), 1) * 0.5)");
-	const grid_svg_overlay_container = $("<div id='grid_svg_overlay_container' class='TLA SST'/>");
+	const grid_svg_overlay_container = $("<div id='grid_svg_overlay_container' class='TLA'/>")
+	grid_svg_overlay_container.css({ transform: "scale(var(--scene-scale))", "transform-origin": "top left"});
+
 	grid_svg_overlay_container.css("pointer-events", "none");
 	grid_svg_overlay_container.css("z-index", "40"); //todo: adjust
 	grid_svg_overlay_container.append(grid);
-
-	//todo: fix scaling
-	//grid_svg_overlay.css("transform", "scale(var(--scene-scale))");	
 	//change the wizbox styling here
 	const wb = 
 `<svg id="main-svg" style="display: block; width: 100%; height: 100%;" xmlns="http://www.w3.org/2000/svg">
@@ -2271,7 +2270,7 @@ function init_ui() {
 	window.ZOOM = 1.0;
 
 	
-	const VTT = $(`<div id='VTT' style='position:absolute; top:0px;left:0px;  '/>`);
+	const VTT = $(`<div id='VTT' class="TLA"'/>`);
 
 	//VTT.css("margin-left","200px");
 	//VTT.css("margin-top","200px");
