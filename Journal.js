@@ -4353,11 +4353,11 @@ class JournalManager{
 					if (e.which == "13" || e.keyCode == "13") {
 						
 						if(!e.shiftKey){
-							let currentNode = $(editor.selection.getNode());
-							const skipInsertP = currentNode.closest('ul, ol').length > 0 || 
-								currentNode.is('p, span, strong, em') || 
-								currentNode.closest('div').length == 0
-								currentNode.text().trim() == '';
+							const currentNode = editor.selection.getNode();
+							const skipElements = ['DIV', 'BLOCKQUOTE']
+							const skipInsertP = !skipElements.includes(currentNode.tagName) || 
+												currentNode.textContent.trim() == ""
+
 							if (skipInsertP)
 								return;
 							e.preventDefault();
