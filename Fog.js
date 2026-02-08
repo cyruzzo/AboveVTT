@@ -5376,26 +5376,16 @@ function bucketFill(ctx, mouseX, mouseY, fogStyle = 'rgba(0,0,0,0)', fogType = 0
 		particleLook(ctx, allWalls, undefined, fog, fogStyle, fogType, true, islight, undefined, blur, 0); 
 		return;
 	}
-	
 
-
-	
 	const isBlur = parseInt(blur) > 0;
-	if (window.bucketFillCanvas == undefined) {
-		window.bucketFillCanvas = new OffscreenCanvas(ctx.canvas.width, ctx.canvas.height);
-		window.bucketFillCtx = window.bucketFillCanvas.getContext('2d');
-	}
-	window.bucketFillCanvas.height = ctx.canvas.height;
-	window.bucketFillCanvas.width = ctx.canvas.width;
-	const bucketFillCtx = window.bucketFillCtx;
-	bucketFillCtx.clearRect(0, 0, bucketFillCtx.canvas.width, bucketFillCtx.canvas.height);
-	bucketFillCtx.globalCompositeOperation = "lighten";
-	bucketFillCtx.filter = isBlur ? `blur(${parseInt(blur)}px)` : `none`;
+	ctx.save();
+	ctx.filter = isBlur ? `blur(${parseInt(blur)}px)` : `none`;
+
 	const scaleFactor = window.CURRENT_SCENE_DATA.scale_factor ?? 1;
 	const scaledMouseX = mouseX * scaleFactor;
 	const scaledMouseY = mouseY * scaleFactor;
 	if (distance1 != 0) {
-		drawCircle(bucketFillCtx, scaledMouseX, scaledMouseY, distance1 * scaleFactor, fogStyle, true, 0);
+		drawCircle(ctx, scaledMouseX, scaledMouseY, distance1 * scaleFactor, fogStyle, true, 0);
 	}
 	if (distance2 != undefined) {
 		function halfLuminosity(rgbaStr) {
@@ -5414,38 +5404,31 @@ function bucketFill(ctx, mouseX, mouseY, fogStyle = 'rgba(0,0,0,0)', fogType = 0
 			return `rgba(${r}, ${g}, ${b}, ${a})`
 		}
 		distance2 += distance1;
-		drawCircle(bucketFillCtx, scaledMouseX, scaledMouseY, distance2 * scaleFactor, halfLuminosity(fogStyle), true, 0);
+		drawCircle(ctx, scaledMouseX, scaledMouseY, distance2 * scaleFactor, halfLuminosity(fogStyle), true, 0);
 	}
 	if (window.lightDrawingLosCache == undefined) {
 		window.lightDrawingLosCache = {};
 	}
 	const cacheKey = `${mouseX},${mouseY},${distance1 ?? 0},${distance2 ?? 0}`;
 	const cachedData = window.lightDrawingLosCache[cacheKey];
+	ctx.globalCompositeOperation = "lighten";
 	if (cachedData !== undefined &&
 		!darknessMoved &&
 		cachedData.wallLength == allWalls.length &&
 		cachedData.sceneId == window.CURRENT_SCENE_DATA.id &&
 		cachedData.scaleChecked == window.CURRENT_SCENE_DATA.scale_factor) {
-		bucketFillCtx.filter = `none`;
-		bucketFillCtx.globalCompositeOperation = "destination-in";
-		drawPolygon(bucketFillCtx, cachedData.lightPolygon, "#000", true);
+		drawPolygon(ctx, cachedData.lightPolygon, "#000", true);
 	}
 	else {
-		particleLook(bucketFillCtx, allWalls, undefined, fog, undefined, fogType, true, islight, undefined, blur, 0);
+		particleLook(ctx, allWalls, undefined, fog, undefined, fogType, true, islight, undefined, 0, 0);
 		window.lightDrawingLosCache[cacheKey] = {
-			lightPolygon: [...window.lightPolygon],
+			lightPolygon: lightPolygon,
 			wallLength: allWalls.length,
 			sceneId: window.CURRENT_SCENE_DATA.id,
 			scaleChecked: window.CURRENT_SCENE_DATA.scale_factor
 		}
 	}
-
-	ctx.globalCompositeOperation = 'lighten';
-	ctx.drawImage(window.bucketFillCanvas, 0, 0);
-	
-
-
-	
+	ctx.restore();
 }
 
 function save3PointRect(e){
@@ -7649,6 +7632,7 @@ function redraw_light(darknessMoved = false, limitActiveRays = 0) {
 	else if (window.DM && window.SelectedTokenVision !== true) {
 		tokenVisionAuras.toggleClass('notVisible', false);
 	}
+	
 	for (let i = 0; i < light_auras.length; i++) {
 
 		let auraId = light_auras[i];
@@ -7743,8 +7727,6 @@ function redraw_light(darknessMoved = false, limitActiveRays = 0) {
 			drawCircle(combineCtx, window.lightAuraClipPolygon[auraId].middle.x, window.lightAuraClipPolygon[auraId].middle.y, window.lightAuraClipPolygon[auraId].light1.range, window.lightAuraClipPolygon[auraId].light1.color)		
 			combineCtx.globalCompositeOperation = 'destination-in';
 			combineCtx.drawImage(offScreenCombine2, 0, 0);
-			lightInLosContext.globalCompositeOperation = "lighten";
-			lightInLosContext.drawImage(offScreenCombine, 0, 0);
 		}
 
 
@@ -7759,8 +7741,6 @@ function redraw_light(darknessMoved = false, limitActiveRays = 0) {
 
 			if (hideVisionWhenPlayerTokenExists)	//when player token does exist show your own vision and shared vision.
 				continue; //we don't want to draw this tokens vision - go next token.
-
-
 
 			if (window.DM !== true || window.SelectedTokenVision === true) {
 				if (window.lightAuraClipPolygon[auraId] != undefined && (window.TOKEN_OBJECTS[auraId].options.sight === 'devilsight' || window.TOKEN_OBJECTS[auraId].options.sight === 'truesight')) {
@@ -7788,8 +7768,7 @@ function redraw_light(darknessMoved = false, limitActiveRays = 0) {
 				drawCircle(combineCtx, window.lightAuraClipPolygon[auraId].middle.x, window.lightAuraClipPolygon[auraId].middle.y, window.lightAuraClipPolygon[auraId].darkvision, window.lightAuraClipPolygon[auraId].vision.color);
 				combineCtx.globalCompositeOperation = 'destination-in';
 				combineCtx.drawImage(offScreenCombine2, 0, 0);
-				lightInLosContext.globalCompositeOperation = "lighten";
-				lightInLosContext.drawImage(offScreenCombine, 0, 0);
+
 			}
 
 			$(`.aura-element-container-clip[id='${auraId}'] [id*='vision_']`).toggleClass('notVisible', false);
@@ -7797,12 +7776,11 @@ function redraw_light(darknessMoved = false, limitActiveRays = 0) {
 			drawPolygon(offscreenContext, lightPolygon, 'rgba(255, 255, 255, 1)', true, 6, undefined, undefined, undefined, true, true); //draw to offscreen canvas so we don't have to render every draw and use this for a mask	
 			drawPolygon(moveOffscreenContext, movePolygon, 'rgba(255, 255, 255, 1)', true, 6, undefined, undefined, undefined, true, true); //draw to offscreen canvas so we don't have to render every draw and use this for a mask
 
-
-
 		}
 
 	}
-
+	lightInLosContext.globalCompositeOperation = "lighten";
+	lightInLosContext.drawImage(offScreenCombine, 0, 0);
 
 
 	const tokenObjectValues = Object.values(window.TOKEN_OBJECTS);
