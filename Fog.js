@@ -2196,7 +2196,7 @@ function redraw_drawn_light(darknessMoved = false){
 }
 
 function setVisionLightOffscreenCanvas(){
-	//To Do: look at zeroing these out when no bucket fills, vision are present to save memory
+	//To Do: look at zeroing these out when no bucket fills, vision are present in scene to save memory
 	const {sceneWidth, sceneHeight} = getSceneMapSize()
 	if (window.bucketFillCanvas == undefined) {
 		window.bucketFillCanvas = new OffscreenCanvas(sceneWidth, sceneHeight);
@@ -2210,8 +2210,8 @@ function setVisionLightOffscreenCanvas(){
 		window.particleOffScreenCombine = new OffscreenCanvas(sceneWidth, sceneHeight);
 	}
 	else {
-		window.bucketFillCanvas.width = sceneWidth;
-		window.bucketFillCanvas.height = sceneHeight;
+		window.particleOffScreenCombine.width = sceneWidth;
+		window.particleOffScreenCombine.height = sceneHeight;
 	}
 	if (window.offScreenCombine == undefined) {
 		window.offScreenCombine = new OffscreenCanvas(sceneWidth, sceneHeight);
