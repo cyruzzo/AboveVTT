@@ -2372,41 +2372,7 @@ async function redraw_scene_list(searchTerm) {
 									add_stat_block_hover(tooltipHtml, sceneId);
 									add_aoe_statblock_click(tooltipHtml, sceneId);
 
-									$(tooltipHtml).find('.add-input').each(function () {
-										let numberFound = $(this).attr('data-number');
-										const spellName = $(this).attr('data-spell');
-										const remainingText = $(this).hasClass('each') ? '' : `${spellName} slots remaining`
-										const track_ability = function (key, updatedValue) {
-											if (window.JOURNAL.notes[noteId].abilityTracker === undefined) {
-												window.JOURNAL.notes[noteId].abilityTracker = {};
-											}
-											const asNumber = parseInt(updatedValue);
-											window.JOURNAL.notes[noteId].abilityTracker[key] = asNumber;
-											window.JOURNAL.persist();
-											debounceSendNote(noteId, window.JOURNAL.notes[noteId])
-										}
-										if (window.JOURNAL.notes[noteId].abilityTracker?.[spellName] >= 0) {
-											numberFound = window.JOURNAL.notes[noteId].abilityTracker[spellName]
-										}
-										else {
-											track_ability(spellName, numberFound)
-										}
-
-										let input = createCountTracker(window.JOURNAL.notes[noteId], spellName, numberFound, remainingText, "", track_ability);
-										const playerDisabled = $(this).hasClass('player-disabled');
-										if (!window.DM && playerDisabled) {
-											input.prop('disabled', true);
-										}
-										const partyLootTable = $(this).closest('.party-item-table');
-										if (partyLootTable.hasClass('shop') && numberFound > 0) {
-											$(this).closest('tr').find('td>.item-quantity-take-input').val(1);
-										}
-										else {
-											$(this).closest('tr').find('td>.item-quantity-take-input').val(numberFound);
-										}
-										$(this).find('p').remove();
-										$(this).after(input)
-									})
+									$(tooltipHtml).find('.add-input').each(function(){window.JOURNAL.addTrackedInputs($(this), {noteId})})
 									flyout.append(tooltipHtml);
 									let sendToGamelogButton = $(`<a class="ddbeb-button" href="#">Send To Gamelog</a>`);
 									sendToGamelogButton.css({ "float": "right" });

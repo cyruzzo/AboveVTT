@@ -17,10 +17,10 @@ class WeatherOverlay {
             if(canvas.width != this.width || canvas.height != this.height) {
                 canvas.width = this.width;
                 canvas.height = this.height;
-		$(canvas).css({
-			'transform-origin': 'top left',
-			'transform': 'scale(var(--scene-scale))'
-		});
+            $(canvas).css({
+                'transform-origin': 'top left',
+                'transform': 'scale(var(--scene-scale))'
+            });
             } else {
                 current.clearRect(0, 0, this.width, this.height);
             }

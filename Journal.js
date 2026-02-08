@@ -1612,6 +1612,74 @@ class JournalManager{
 		    });
 		}
 	}
+
+	addTrackedInputs(target, id = {noteId: undefined, token: undefined}){
+		let numberFound = target.attr('data-number');
+		const spellName = target.attr('data-spell');
+		const remainingText = target.hasClass('each') ? '' : `${spellName} slots remaining`
+		const {noteId, token} = id;
+
+		const track_ability = function (key, updatedValue) {
+			if(noteId != undefined){
+				if (window.JOURNAL.notes[noteId].abilityTracker === undefined) {
+					window.JOURNAL.notes[noteId].abilityTracker = {};
+				}
+				const asNumber = parseInt(updatedValue);
+				window.JOURNAL.notes[noteId].abilityTracker[key] = asNumber;
+				window.JOURNAL.persist();
+				debounceSendNote(noteId, window.JOURNAL.notes[noteId])
+			}
+			else if(token != undefined){
+				if (token.options.abilityTracker?.[spellName] >= 0) {
+					numberFound = token.options.abilityTracker[spellName]
+				} else {
+					token.track_ability(spellName, numberFound)
+				}
+				
+			}
+		}
+		if (noteId && window.JOURNAL.notes[noteId].abilityTracker?.[spellName] >= 0) {
+			numberFound = window.JOURNAL.notes[noteId].abilityTracker[spellName]
+		}
+		else if(token && token.options.abilityTracker?.[spellName] >= 0){
+			numberFound = token.options.abilityTracker[spellName]
+		}
+		else if(token){
+			token.track_ability(spellName, numberFound)
+		}
+		else {
+			track_ability(spellName, numberFound)
+		}
+		const trackerTarget = token || window.JOURNAL.notes[noteId];
+		const trackFunction = noteId ? track_ability : undefined;
+		let input = createCountTracker(trackerTarget, spellName, numberFound, remainingText, "", trackFunction);
+		const playerDisabled = target.hasClass('player-disabled');
+		if (!window.DM && playerDisabled) {
+			input.prop('disabled', true);
+		}
+		const partyLootTable = target.closest('.party-item-table');
+		if (partyLootTable.length > 0) {
+			if (partyLootTable.hasClass('shop') && numberFound > 0) {
+				target.closest('tr').find('td>.item-quantity-take-input').val(1);
+			}
+			else {
+				target.closest('tr').find('td>.item-quantity-take-input').val(numberFound);
+			}
+		}
+		target.find('p').remove();
+		target.after(input)
+
+		const parentLink = input.closest('a');
+		if (parentLink.length > 0) {
+			parentLink.on('click', function (e) {
+				if (e.target === input[0]) {
+					e.preventDefault();
+					e.stopPropagation();
+				}
+			});
+		};
+	}
+
 	
 	positionNotePins(id, note_text){
 		let pins = $(note_text).find(`.note-pin`);
@@ -1701,44 +1769,7 @@ class JournalManager{
 								add_stat_block_hover(tooltipHtml);
 								add_aoe_statblock_click(tooltipHtml);
 
-								$(tooltipHtml).find('.add-input').each(function () {
-									let numberFound = $(this).attr('data-number');
-									const spellName = $(this).attr('data-spell');
-									const remainingText = $(this).hasClass('each') ? '' : `${spellName} slots remaining`
-
-									const track_ability = function (key, updatedValue) {
-										if (window.JOURNAL.notes[noteId].abilityTracker === undefined) {
-											window.JOURNAL.notes[noteId].abilityTracker = {};
-										}
-										const asNumber = parseInt(updatedValue);
-										window.JOURNAL.notes[noteId].abilityTracker[key] = asNumber;
-										window.JOURNAL.persist();
-										debounceSendNote(noteId, window.JOURNAL.notes[noteId])
-									}
-									if (window.JOURNAL.notes[noteId].abilityTracker?.[spellName] >= 0) {
-										numberFound = window.JOURNAL.notes[noteId].abilityTracker[spellName]
-									}
-									else {
-										track_ability(spellName, numberFound)
-									}
-
-									let input = createCountTracker(window.JOURNAL.notes[noteId], spellName, numberFound, remainingText, "", track_ability);
-									const playerDisabled = $(this).hasClass('player-disabled');
-									if (!window.DM && playerDisabled) {
-										input.prop('disabled', true);
-									}
-									const partyLootTable = $(this).closest('.party-item-table');
-									if (partyLootTable.length > 0) {
-										if (partyLootTable.hasClass('shop') && numberFound > 0) {
-											$(this).closest('tr').find('td>.item-quantity-take-input').val(1);
-										}
-										else {
-											$(this).closest('tr').find('td>.item-quantity-take-input').val(numberFound);
-										}
-									}
-									$(this).find('p').remove();
-									$(this).after(input)
-								})
+								$(tooltipHtml).find('.add-input').each(function(){window.JOURNAL.addTrackedInputs($(this), {noteId})})
 								flyout.append(tooltipHtml);
 								let sendToGamelogButton = $(`<a class="ddbeb-button" href="#">Send To Gamelog</a>`);
 								sendToGamelogButton.css({ "float": "right" });
@@ -1912,41 +1943,7 @@ class JournalManager{
 			this.block_send_to_buttons(note_text);
 			add_stat_block_hover(note_text);
 			add_aoe_statblock_click(note_text);
-			$(note_text).find('.add-input').each(function () {
-				let numberFound = $(this).attr('data-number');
-				const spellName = $(this).attr('data-spell');
-				const remainingText = $(this).hasClass('each') ? '' : `${spellName} slots remaining`
-				const track_ability = function (key, updatedValue) {
-					if (self.notes[id].abilityTracker === undefined) {
-						self.notes[id].abilityTracker = {};
-					}
-					const asNumber = parseInt(updatedValue);
-					self.notes[id].abilityTracker[key] = asNumber;
-					window.JOURNAL.persist();
-					debounceSendNote(id, self.notes[id])
-				}
-				if (self.notes[id].abilityTracker?.[spellName] >= 0) {
-					numberFound = self.notes[id].abilityTracker[spellName]
-				}
-				else {
-					track_ability(spellName, numberFound)
-				}
-
-				let input = createCountTracker(self.notes[id], spellName, numberFound, remainingText, "", track_ability);
-				const playerDisabled = $(this).hasClass('player-disabled');
-				if (!window.DM && playerDisabled) {
-					input.prop('disabled', true);
-				}
-				const partyLootTable = $(this).closest('.party-item-table');
-				if (partyLootTable.hasClass('shop') && numberFound > 0) {
-					$(this).closest('tr').find('td>.item-quantity-take-input').val(1);
-				}
-				else {
-					$(this).closest('tr').find('td>.item-quantity-take-input').val(numberFound);
-				}
-				$(this).find('p').remove();
-				$(this).after(input)
-			})
+			$(note_text).find('.add-input').each(function(){window.JOURNAL.addTrackedInputs($(this), {noteId: id})})
 
 			if (!noteAlreadyOpen) {
 				note.append(note_text);
@@ -2469,19 +2466,8 @@ class JournalManager{
 		const trackerSpans = target.find('.note-tracker');
 		for(let i=0; i<trackerSpans.length; i++){
 			const currentSpan = $(trackerSpans[i]);
-			const currText = currentSpan.text();
-			const children = currentSpan.find('*');
-			const trackText = `[track]${currText}[/track]`
-			if(children.length>0){
-				currentSpan.contents().each(function () {
-					if (this.nodeType === 3) { 
-						$(this).remove();
-					}
-				});
-				children.last().text(trackText);
-				continue;
-			}
-			currentSpan.text(trackText);
+			const trackText = `[track]${trackerSpans[i].innerHTML}[/track]`
+			currentSpan.html(trackText);
 		}
 		const embededIframes = target.find('iframe');
 		for(let i=0; i<embededIframes.length; i++){
@@ -2728,10 +2714,11 @@ class JournalManager{
                 return `<a class="tooltip-hover source-tooltip" href="${sourceUrl}" aria-haspopup="true" target="_blank">${source}</a>`
             })
 
-            input = input.replace(/\[track\](.*?[a-zA-Z\s]+[\d]+.*?)\[\/track\]/g, function(m, m1){
+            input = input.replace(/\[track\](.*?[a-zA-Z\s]+.*?[\d]+.*?)\[\/track\]/g, function(m, m1){
 				const currentSpan = $(`<div>${m1}</div>`);
+				currentSpan.find('a.ignore-abovevtt-formating, .ignore-abovevtt-formating:has(a)').removeClass('ignore-abovevtt-formating');
 				const trackText = currentSpan.text().replace(/([a-zA-Z\s]+)([\d]+)/gi, function(m, m1, m2){
-					return `<span>${m1}</span><span class="add-input each" data-number="${m2}" data-spell="${m2}"></span>`
+					return `<span>${m1}</span><span class="add-input each" data-number="${m2}" data-spell="${m1}"></span>`
 				})
 				const children = currentSpan.find('*');
 				if (children.length>0) {
