@@ -2243,24 +2243,23 @@ function redraw_light_walls(clear=true, editingWallPoints = false){
 	else{
 		$('#walls_layer').css('display', 'none');
 	}
-		
+	const { sceneWidth, sceneHeight } = getSceneMapSize();
+
 	if(displayWalls == true || clear)
-		ctx.clearRect(0, 0, canvas.width, canvas.height);
+		ctx.clearRect(0, 0, sceneWidth, sceneHeight);
 
 
 
 	window.walls =[];
-	const sceneSize = getSceneMapSize();
-	let sceneMapHeight = sceneSize.sceneHeight;
-	let sceneMapWidth = sceneSize.sceneWidth;
 
-	let wall5 = new Boundary(new Vector(0, 0), new Vector(sceneMapWidth, 0), 0);
+
+	let wall5 = new Boundary(new Vector(0, 0), new Vector(sceneWidth, 0), 0);
 	window.walls.push(wall5);
-	let wall6 = new Boundary(new Vector(0, 0), new Vector(0, sceneMapHeight), 0);
+	let wall6 = new Boundary(new Vector(0, 0), new Vector(0, sceneHeight), 0);
 	window.walls.push(wall6);
-	let wall7 = new Boundary(new Vector(sceneMapWidth, 0), new Vector(sceneMapWidth, sceneMapHeight), 0);
+	let wall7 = new Boundary(new Vector(sceneWidth, 0), new Vector(sceneWidth, sceneHeight), 0);
 	window.walls.push(wall7);
-	let wall8 = new Boundary(new Vector(0, sceneMapHeight), new Vector(sceneMapWidth, sceneMapHeight), 0);
+	let wall8 = new Boundary(new Vector(0, sceneHeight), new Vector(sceneWidth, sceneHeight), 0);
 	window.walls.push(wall8);
 
 	const drawings = window.DRAWINGS.filter(d => d[1] == "wall");
@@ -2276,7 +2275,7 @@ function redraw_light_walls(clear=true, editingWallPoints = false){
 	else{
 		$('#VTT').css('--walls-up-shadow-percent', '0%');
 	}
-	const offscreenCanvas = new OffscreenCanvas(canvas.width, canvas.height);
+	const offscreenCanvas = new OffscreenCanvas(sceneWidth, sceneHeight);
 
 	const offscreenContext = offscreenCanvas.getContext('2d');
 	for (let i = 0; i < drawings.length; i++) {
@@ -2294,7 +2293,7 @@ function redraw_light_walls(clear=true, editingWallPoints = false){
 
 		scale = (scale == undefined) ?  currentSceneScale/currentSceneConversion : scale/currentSceneConversion;
 		let adjustedScale = scale/currentSceneScale;
-		lineWidth = Math.min(lineWidth, Math.max(lineWidth/window.ZOOM/scale, lineWidth/2));
+		lineWidth = Math.min(lineWidth, Math.max(lineWidth/window.ZOOM/scale, 1));
 		if (displayWalls) {
 				
 			if(!editingWallPoints && ((wallBottom != undefined && wallBottom != '') || (wallTop != undefined && wallTop != ''))){
