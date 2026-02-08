@@ -33,6 +33,12 @@ body > button,
     border: 1px solid lightgray;
     font-size: 12px;
 }
+/*Common simple positioning*/
+.TLA {
+    position: absolute;
+    top: 0;
+    left: 0;
+}
 .note-text table{
     width: revert-layer;
 }
@@ -14464,6 +14470,16 @@ button#displayedDiceFormulaExit:hover {
 }
 .sidebar-panel-content.avtt-drop-target::after {
     top: 89px;
+}
+.grid-svg-tile {
+  position: absolute;
+  transform-origin: top left;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  width: 100%;
+  height: 100%;  
+  background-repeat: repeat;
 }
 /***** Icon UI *****/
 
