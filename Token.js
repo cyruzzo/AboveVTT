@@ -1924,11 +1924,11 @@ class Token {
 				conditionContainer.on({
 					'mouseover': function(e){
 						hoverNoteTimer = setTimeout(function () {
-			            	build_and_display_sidebar_flyout(e.clientY, function (flyout) {
+			            	build_and_display_sidebar_flyout(e.clientY, async function (flyout) {
 					            flyout.addClass("prevent-sidebar-modal-close"); // clicking inside the tooltip should not close the sidebar modal that opened it
 					            flyout.addClass('note-flyout');
 					            const tooltipHtml = $(noteHover);
-								window.JOURNAL.translateHtmlAndBlocks(tooltipHtml, noteId);	
+								await window.JOURNAL.translateHtmlAndBlocks(tooltipHtml, noteId);	
 								add_journal_roll_buttons(tooltipHtml);
 								window.JOURNAL.add_journal_tooltip_targets(tooltipHtml);
 								add_stat_block_hover(tooltipHtml, tokenId);
@@ -2256,7 +2256,7 @@ class Token {
 				if (this.selected) {
 					old.addClass("tokenselected");
 					toggle_player_selectable(this, old)
-					$(`:is(#combat_area, #combat_area_carousel) tr[data-target='${this.options.id}']`).toggleClass('selected-token', getCombatTrackersettings().ct_selected_token == '1');
+					$(`:is(#combat_area, #combat_area_carousel) tr[data-target='${this.options.id}']`).toggleClass('selected-token', getCombatTrackerSettings().ct_selected_token == '1');
 				}
 				else {
 					old.css("border", "");
@@ -2331,7 +2331,7 @@ class Token {
 									if (thisSelected == true) {
 										parentToken.addClass('tokenselected');
 										toggle_player_selectable(window.TOKEN_OBJECTS[tokID], parentToken)
-										$(`:is(#combat_area, #combat_area_carousel) tr[data-target='${tokID}']`).toggleClass('selected-token', getCombatTrackersettings().ct_selected_token == '1');
+										$(`:is(#combat_area, #combat_area_carousel) tr[data-target='${tokID}']`).toggleClass('selected-token', getCombatTrackerSettings().ct_selected_token == '1');
 									} else {
 										parentToken.removeClass('tokenselected');
 										$(`:is(#combat_area, #combat_area_carousel) tr[data-target='${tokID}']`).toggleClass('selected-token', false);
@@ -2412,7 +2412,7 @@ class Token {
 							if (thisSelected == true) {
 								parentToken.addClass('tokenselected');
 								toggle_player_selectable(window.TOKEN_OBJECTS[tokID], parentToken)
-								$(`:is(#combat_area, #combat_area_carousel) tr[data-target='${tokID}']`).toggleClass('selected-token', getCombatTrackersettings().ct_selected_token == '1');
+								$(`:is(#combat_area, #combat_area_carousel) tr[data-target='${tokID}']`).toggleClass('selected-token', getCombatTrackerSettings().ct_selected_token == '1');
 							} else {
 								parentToken.removeClass('tokenselected');
 								$(`:is(#combat_area, #combat_area_carousel) tr[data-target='${tokID}']`).toggleClass('selected-token', false);
@@ -3115,7 +3115,7 @@ class Token {
 						self.selected = true;
 						window.CURRENTLY_SELECTED_TOKENS.push(self.options.id);
 						$("#tokens [data-id='" + self.options.id + "']").toggleClass(["tokenselected", 'pause_click'], true);
-						$(`:is(#combat_area, #combat_area_carousel) tr[data-target='${self.options.id}']`).toggleClass('selected-token', getCombatTrackersettings().ct_selected_token == '1');
+						$(`:is(#combat_area, #combat_area_carousel) tr[data-target='${self.options.id}']`).toggleClass('selected-token', getCombatTrackerSettings().ct_selected_token == '1');
 						if(tok.is(":animated")){
 							self.stopAnimation();
 						}
@@ -3143,7 +3143,7 @@ class Token {
 							for (let tok of window.dragSelectedTokens){
 								let id = $(tok).attr("data-id");
 								window.TOKEN_OBJECTS[id].selected = true;
-								$(`:is(#combat_area, #combat_area_carousel) tr[data-target='${id}']`).toggleClass('selected-token', getCombatTrackersettings().ct_selected_token == '1');
+								$(`:is(#combat_area, #combat_area_carousel) tr[data-target='${id}']`).toggleClass('selected-token', getCombatTrackerSettings().ct_selected_token == '1');
 						
 								$(tok).addClass("pause_click");
 								if($(tok).is(":animated")){
@@ -3566,7 +3566,7 @@ class Token {
 					if (thisSelected == true) {
 						parentToken.addClass('tokenselected');
 						toggle_player_selectable(window.TOKEN_OBJECTS[tokID], parentToken)
-						$(`:is(#combat_area, #combat_area_carousel) tr[data-target='${tokID}']`).toggleClass('selected-token', getCombatTrackersettings().ct_selected_token == '1');
+						$(`:is(#combat_area, #combat_area_carousel) tr[data-target='${tokID}']`).toggleClass('selected-token', getCombatTrackerSettings().ct_selected_token == '1');
 					} else {
 						parentToken.removeClass('tokenselected');
 						$(`:is(#combat_area, #combat_area_carousel) tr[data-target='${tokID}']`).toggleClass('selected-token', false);
@@ -4820,7 +4820,7 @@ async function do_draw_selected_token_bounding_box() {
 		}));	
 		window.CURRENTLY_SELECTED_TOKENS.push(id);	
 		$("#tokens").find(selector).toggleClass('tokenselected', true);	
-		$(`:is(#combat_area, #combat_area_carousel) tr[data-target='${id}']`).toggleClass('selected-token', getCombatTrackersettings().ct_selected_token == '1');
+		$(`:is(#combat_area, #combat_area_carousel) tr[data-target='${id}']`).toggleClass('selected-token', getCombatTrackerSettings().ct_selected_token == '1');
 					
 		if(window.TOKEN_OBJECTS[id].options.groupId && !groupIDs.includes(window.TOKEN_OBJECTS[id].options.groupId)){
 			groupIDs.push(window.TOKEN_OBJECTS[id].options.groupId)
@@ -4834,7 +4834,7 @@ async function do_draw_selected_token_bounding_box() {
 			if(window.CURRENTLY_SELECTED_TOKENS.includes($(this).attr('data-id')))
 				return;
 			$(this).toggleClass('tokenselected', true);	
-			$(`:is(#combat_area, #combat_area_carousel) tr[data-target='${$(this).attr('data-id')}']`).toggleClass('selected-token', getCombatTrackersettings().ct_selected_token == '1');		
+			$(`:is(#combat_area, #combat_area_carousel) tr[data-target='${$(this).attr('data-id')}']`).toggleClass('selected-token', getCombatTrackerSettings().ct_selected_token == '1');		
 			const tokenObject = window.TOKEN_OBJECTS[$(this).attr('data-id')];
 			if (tokenObject){
 				tokenObject.selected = true;

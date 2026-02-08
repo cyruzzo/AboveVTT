@@ -76,7 +76,7 @@ async function display_stat_block_in_container(statBlock, container, tokenId, cu
     container.find(".avtt-stat-block-container").remove(); // in case we're re-rendering with better data
     container.append(html);
     if(customStatBlock){
-      window.JOURNAL.translateHtmlAndBlocks(html)
+      await window.JOURNAL.translateHtmlAndBlocks(html);
       add_journal_roll_buttons(html, tokenId);
       window.JOURNAL.add_journal_tooltip_targets(html);
 
