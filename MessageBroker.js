@@ -1677,7 +1677,7 @@ class MessageBroker {
 				$("#VTT").css("--scene-scale", scaleFactor)
 				window.CURRENT_SCENE_DATA.width = mapWidth;
 				window.CURRENT_SCENE_DATA.height = mapHeight;
-				
+				await reset_canvas(false);
 
 				if(window.CURRENT_SCENE_DATA.gridType == 2 || window.CURRENT_SCENE_DATA.gridType == 3){
 					const a = 2 * Math.PI / 6;
@@ -1694,7 +1694,7 @@ class MessageBroker {
 						setTokenLight(token, window.TOKEN_OBJECTS[i].options);
 					}
 				}
-				await reset_canvas(false);
+				
 				if(!window.DM || window.SelectedTokenVision)
 					check_token_visibility();
 			}
@@ -1814,13 +1814,13 @@ class MessageBroker {
 	
 						window.CURRENT_SCENE_DATA.conversion = 1;
 
-						if(!data.is_video && (mapHeight > 2000 || mapWidth > 2000)){
+						if (!data.is_video && (mapHeight > 1500 || mapWidth > 1500)){
 							let conversion = 2;
 							if(mapWidth >= mapHeight){
-								conversion = 1980 / mapWidth;
+								conversion = 1500 / mapWidth;
 							}
 							else{
-								conversion = 1980 / mapHeight;
+								conversion = 1500 / mapHeight;
 							}
 							mapHeight = mapHeight*conversion;
 							mapWidth = mapWidth*conversion;
