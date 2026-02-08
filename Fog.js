@@ -2246,7 +2246,7 @@ function redraw_light_walls(clear=true, editingWallPoints = false){
 	const { sceneWidth, sceneHeight } = getSceneMapSize();
 
 	if(displayWalls == true || clear)
-		ctx.clearRect(0, 0, sceneWidth, sceneHeight);
+		ctx.clearRect(0, 0, canvas.width, canvas.height);
 
 
 
@@ -2275,7 +2275,7 @@ function redraw_light_walls(clear=true, editingWallPoints = false){
 	else{
 		$('#VTT').css('--walls-up-shadow-percent', '0%');
 	}
-	const offscreenCanvas = new OffscreenCanvas(sceneWidth, sceneHeight);
+	const offscreenCanvas = new OffscreenCanvas(canvas.width, canvas.height);
 
 	const offscreenContext = offscreenCanvas.getContext('2d');
 	for (let i = 0; i < drawings.length; i++) {
