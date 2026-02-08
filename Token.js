@@ -666,53 +666,27 @@ class Token {
 		tokenElement.find(".token-image").css("transform", `scale(var(--token-scale)) rotate(var(--token-rotation))`);
 		$(`.aura-element-container-clip[id='${this.options.id}'] .aura-element, .aura-element[data-id='${this.options.id}']`).css('--rotation', newRotation + "deg");
 	}
-	moveUp() {	
-		let addvpps = (window.CURRENT_SCENE_DATA.gridType && window.CURRENT_SCENE_DATA.gridType != 1) ? grid_size(false,true)[1] : (!this.tinyToken() || window.CURRENTLY_SELECTED_TOKENS.length > 1) ? parseFloat(window.CURRENT_SCENE_DATA.vpps) : parseFloat(window.CURRENT_SCENE_DATA.vpps)/2;
-		let newTop = `${parseFloat(this.options.top) - addvpps/2-5}px`;
-		this.move(newTop, parseFloat(this.options.left)+5)	
-	}
-	moveDown() {
-		let addvpps = (window.CURRENT_SCENE_DATA.gridType && window.CURRENT_SCENE_DATA.gridType != 1) ? grid_size(false,true)[1] : (!this.tinyToken() || window.CURRENTLY_SELECTED_TOKENS.length > 1) ? parseFloat(window.CURRENT_SCENE_DATA.vpps) : parseFloat(window.CURRENT_SCENE_DATA.vpps)/2;
-		let newTop = `${parseFloat(this.options.top) + addvpps+5}px`;
-		this.move(newTop, parseFloat(this.options.left)+5)	
-	}
-	moveLeft() {
-		let addhpps = (window.CURRENT_SCENE_DATA.gridType && window.CURRENT_SCENE_DATA.gridType != 1) ? grid_size(false,true)[0] : (!this.tinyToken() || window.CURRENTLY_SELECTED_TOKENS.length > 1) ? parseFloat(window.CURRENT_SCENE_DATA.hpps) : parseFloat(window.CURRENT_SCENE_DATA.hpps)/2;
-		let newLeft = `${parseFloat(this.options.left) - addhpps/2-5}px`;
-		this.move(parseFloat(this.options.top)+5, newLeft)	
-	}
-	moveRight() {
-		let addhpps = (window.CURRENT_SCENE_DATA.gridType && window.CURRENT_SCENE_DATA.gridType != 1) ? grid_size(false,true)[0] : (!this.tinyToken() || window.CURRENTLY_SELECTED_TOKENS.length > 1) ? parseFloat(window.CURRENT_SCENE_DATA.hpps) : parseFloat(window.CURRENT_SCENE_DATA.hpps)/2;
-		let newLeft = `${parseFloat(this.options.left) + addhpps+5}px`;
-		this.move(parseFloat(this.options.top)+5, newLeft)	
-	}
-	moveUpRight() {
-		let addhpps = (window.CURRENT_SCENE_DATA.gridType && window.CURRENT_SCENE_DATA.gridType != 1) ? grid_size(false,true)[0] : (!this.tinyToken() || window.CURRENTLY_SELECTED_TOKENS.length > 1) ? parseFloat(window.CURRENT_SCENE_DATA.hpps) : parseFloat(window.CURRENT_SCENE_DATA.hpps)/2;
-		let newLeft = `${parseFloat(this.options.left) + addhpps+5}px`;
-		let addvpps = (window.CURRENT_SCENE_DATA.gridType && window.CURRENT_SCENE_DATA.gridType != 1) ? grid_size(false,true)[1] : (!this.tinyToken() || window.CURRENTLY_SELECTED_TOKENS.length > 1) ? parseFloat(window.CURRENT_SCENE_DATA.vpps) : parseFloat(window.CURRENT_SCENE_DATA.vpps)/2;
-		let newTop = `${parseFloat(this.options.top) - addvpps/2-5}px`;
-		this.move(newTop, newLeft)		
-	}
-	moveDownRight() {
-		let addhpps = (window.CURRENT_SCENE_DATA.gridType && window.CURRENT_SCENE_DATA.gridType != 1) ? grid_size(false,true)[0] : (!this.tinyToken() || window.CURRENTLY_SELECTED_TOKENS.length > 1) ? parseFloat(window.CURRENT_SCENE_DATA.hpps) : parseFloat(window.CURRENT_SCENE_DATA.hpps)/2;
-		let newLeft = `${parseFloat(this.options.left) + addhpps+5}px`;
-		let addvpps = (window.CURRENT_SCENE_DATA.gridType && window.CURRENT_SCENE_DATA.gridType != 1) ? grid_size(false,true)[1] : (!this.tinyToken() || window.CURRENTLY_SELECTED_TOKENS.length > 1) ? parseFloat(window.CURRENT_SCENE_DATA.vpps) : parseFloat(window.CURRENT_SCENE_DATA.vpps)/2;
-		let newTop = `${parseFloat(this.options.top) + addvpps+5}px`;
-		this.move(newTop, newLeft)		
-	}
-	moveUpLeft() {
-		let addhpps = (window.CURRENT_SCENE_DATA.gridType && window.CURRENT_SCENE_DATA.gridType != 1) ? grid_size(false,true)[0] : (!this.tinyToken() || window.CURRENTLY_SELECTED_TOKENS.length > 1) ? parseFloat(window.CURRENT_SCENE_DATA.hpps) : parseFloat(window.CURRENT_SCENE_DATA.hpps)/2;
-		let newLeft = `${parseFloat(this.options.left) - addhpps/2-5}px`;
-		let addvpps = (window.CURRENT_SCENE_DATA.gridType && window.CURRENT_SCENE_DATA.gridType != 1) ? grid_size(false,true)[1] : (!this.tinyToken() || window.CURRENTLY_SELECTED_TOKENS.length > 1) ? parseFloat(window.CURRENT_SCENE_DATA.vpps) : parseFloat(window.CURRENT_SCENE_DATA.vpps)/2;
-		let newTop = `${parseFloat(this.options.top) - addvpps/2-5}px`;
-		this.move(newTop, newLeft)	
-	}
-	moveDownLeft() {
-		let addhpps = (window.CURRENT_SCENE_DATA.gridType && window.CURRENT_SCENE_DATA.gridType != 1) ? grid_size(false,true)[0] : (!this.tinyToken() || window.CURRENTLY_SELECTED_TOKENS.length > 1) ? parseFloat(window.CURRENT_SCENE_DATA.hpps) : parseFloat(window.CURRENT_SCENE_DATA.hpps)/2;
-		let newLeft = `${parseFloat(this.options.left) - addhpps/2-5}px`;
-		let addvpps = (window.CURRENT_SCENE_DATA.gridType && window.CURRENT_SCENE_DATA.gridType != 1) ? grid_size(false,true)[1] : (!this.tinyToken() || window.CURRENTLY_SELECTED_TOKENS.length > 1) ? parseFloat(window.CURRENT_SCENE_DATA.vpps) : parseFloat(window.CURRENT_SCENE_DATA.vpps)/2;
-		let newTop = `${parseFloat(this.options.top) + addvpps+5}px`;
-		this.move(nnewTop, newLeft)	
+	moveUp()        { this.moveDirection(-1,  0); }
+	moveDown()      { this.moveDirection( 1,  0); }
+	moveLeft()      { this.moveDirection( 0, -1); }
+	moveRight()     { this.moveDirection( 0,  1); }
+	moveUpRight()   { this.moveDirection(-1,  1); }
+	moveDownRight() { this.moveDirection( 1,  1); }
+	moveUpLeft()    { this.moveDirection(-1, -1); }
+	moveDownLeft()  { this.moveDirection( 1, -1); }
+	// grid move; dy/dx in abstract grid coords units	
+        moveDirection(dy,dx) { 
+		const grsize = grid_size(false,true);
+		const addhpps = grsize[0] / (this.tinyToken() ? 2 : 1);
+		const addvpps = grsize[1] / (this.tinyToken() ? 2 : 1);
+		let tmpx = parseFloat(this.options.left);
+		let tmpy = parseFloat(this.options.top);		
+		// have to fudge the move a bit for hex grid to maintain consistent adjacency
+		// when a "math" arrow delta would land on a line (arbitrarily go either direction)
+		// this is harmless for square grid and just gets realigned
+		const xTieBreak = Math.round(tmpx / grsize[0]) % 2 ? 2 : -2;
+		const yTieBreak = Math.round(tmpy / grsize[1]) % 2 ? 2 : -2;		
+		this.move(tmpy + dy*addvpps + yTieBreak, tmpx + dx*addhpps + xTieBreak)
 	}
 
 	/**
@@ -732,7 +706,9 @@ class Token {
 		this.prepareWalkableArea()
 		
 		//todo verify if this is center or TL
-		let tokenPosition = snap_point_to_grid(left, top, true, this.tinyToken(), this.options.size, true)
+		//use center of token as snap position
+		let tokenPosition = snap_point_to_grid(left + this.options.size/2, top + this.options.size/2,
+						       true, this.tinyToken(), this.options.size, true)
 		
 		
 
@@ -888,29 +864,6 @@ class Token {
 
 	}
 
-	snap_to_closest_square() {
-		if ((!window.DM && this.options.restrictPlayerMove && !this.isCurrentPlayer() && this.options.share_vision != true &&  this.options.share_vision != window.myUser) || this.options.locked) return; // don't allow moving if the token is locked
-		if (window.DM && this.options.locked) return; // don't allow moving if the token is locked
-		// shamelessly copied from the draggable code later in this file
-		// this should be a XOR... (A AND !B) OR (!A AND B)
-		let shallwesnap = (window.CURRENT_SCENE_DATA.snap == "1"  && !(window.toggleSnap)) || ((window.CURRENT_SCENE_DATA.snap != "1") && window.toggleSnap);		
-		if (shallwesnap) {
-			// calculate offset in real coordinates
-			const startX = window.CURRENT_SCENE_DATA.offsetx;
-			const startY = window.CURRENT_SCENE_DATA.offsety;
-
-			const selectedOldTop = parseInt(this.options.top);
-			const selectedOldleft = parseInt(this.options.left);
-			
-			const selectedNewtop =  Math.round(Math.round( (selectedOldTop - startY) / window.CURRENT_SCENE_DATA.vpps)) * window.CURRENT_SCENE_DATA.vpps + startY;
-			const selectedNewleft = Math.round(Math.round( (selectedOldleft - startX) / window.CURRENT_SCENE_DATA.hpps)) * window.CURRENT_SCENE_DATA.hpps + startX;
-
-			this.update_from_page();
-			this.options.top = `${selectedNewtop}px`;
-			this.options.left = `${selectedNewleft}px`;
-			this.place_sync_persist();
-		}		
-	}
 	place_sync_persist(animationDuration) {
 		this.place(animationDuration);
 		this.sync($.extend(true, {}, this.options));
