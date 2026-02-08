@@ -379,9 +379,9 @@ class WaypointManagerClass {
 		const rulerType = $('#ruler_menu .button-enabled').attr('data-type');
 		if(window.CURRENT_SCENE_DATA.gridType != undefined){
 			if((xLength > yLength && window.CURRENT_SCENE_DATA.gridType != 1 && rulerType != 'euclidean') || (window.CURRENT_SCENE_DATA.gridType == 2 && rulerType == 'euclidean')){
-				gridSize = window.hexGridSize.width/window.CURRENT_SCENE_DATA.scale_factor;
+				gridSize = grid_size(true, false)[0];
 			} else if((xLength < yLength && window.CURRENT_SCENE_DATA.gridType != 1 && rulerType != 'euclidean' )|| (window.CURRENT_SCENE_DATA.gridType == 3 && rulerType == 'euclidean')){
-				gridSize = window.hexGridSize.height/window.CURRENT_SCENE_DATA.scale_factor;
+				gridSize = grid_size(true, false)[1];
 			}
 		}
 		
@@ -1067,109 +1067,9 @@ function midPointBtw(p1, p2) {
 }
 
 function clear_grid(){
-	const gridCanvas = document.getElementById("grid_overlay");
-	const gridContext = gridCanvas.getContext("2d");
-	gridContext.clearRect(0, 0, gridCanvas.width, gridCanvas.height);
+	draw_svg_grid("0");
 }
-function redraw_hex_grid(hpps=null, vpps=null, offsetX=null, offsetY=null, color=null, lineWidth=null, subdivide=null, dash=[], columns=true, drawGrid = window.CURRENT_SCENE_DATA.grid){
-	
-	window.gridCentersArray = [];
-	if (window.CURRENT_SCENE_DATA.scaleAdjustment == undefined){
-		window.CURRENT_SCENE_DATA.scaleAdjustment = {x:1, y:1};
-	}
-	const gridCanvas = document.getElementById("grid_overlay");
-	gridCanvas.width = $('#scene_map').width() / window.CURRENT_SCENE_DATA.scaleAdjustment.x
-	gridCanvas.height = $('#scene_map').height() / window.CURRENT_SCENE_DATA.scaleAdjustment.y;
-	const gridContext = gridCanvas.getContext("2d");
-	if(window.CURRENT_SCENE_DATA.gridType == 2){
-		hpps = vpps || window.CURRENT_SCENE_DATA.vpps;
-		window.CURRENT_SCENE_DATA.hpps = vpps || window.CURRENT_SCENE_DATA.vpps;
-	} else if (window.CURRENT_SCENE_DATA.gridType == 3){
-		vpps = hpps || window.CURRENT_SCENE_DATA.hpps;
-		window.CURRENT_SCENE_DATA.vpps = hpps || window.CURRENT_SCENE_DATA.hpps;
-	}
-	clear_grid();
-	gridContext.setLineDash(dash);
-	let startX = offsetX / window.CURRENT_SCENE_DATA.scale_factor || window.CURRENT_SCENE_DATA.offsetx / window.CURRENT_SCENE_DATA.scale_factor;
-	let startY = offsetY / window.CURRENT_SCENE_DATA.scale_factor || window.CURRENT_SCENE_DATA.offsety / window.CURRENT_SCENE_DATA.scale_factor;
-	startX = Math.round(startX)
-	startY = Math.round(startY) 
-	const hexSize = hpps/1.5 / window.CURRENT_SCENE_DATA.scale_factor || window.CURRENT_SCENE_DATA.hpps/1.5 / window.CURRENT_SCENE_DATA.scale_factor;
-	gridContext.lineWidth = lineWidth || window.CURRENT_SCENE_DATA.grid_line_width;
-	gridContext.strokeStyle = color || window.CURRENT_SCENE_DATA.grid_color;
 
-
-	const a = 2 * Math.PI / 6;
-			
-	
-
-
-	if(window.CURRENT_SCENE_DATA.gridType == 2){
-		
-		for (let x = startX-4*(hexSize * Math.sin(a)), j = 0; x + hexSize * Math.sin(a) < gridCanvas.width+4*hexSize+startX; x += 2 ** ((j + 1) % 2) * hexSize * Math.sin(a), j = 0){
-		   for (let y = startY-4*(hexSize * (1 + Math.cos(a))); y + hexSize * (1 + Math.cos(a)) < gridCanvas.height+4*hexSize+startY; y += hexSize * (1 + Math.cos(a)), x += (-1) ** j++ * hexSize * Math.sin(a)){		    
-		    drawHexagon(x, y);
-		  }
-		}	
-		
-			
-
-		let hexWidth = hexSize * Math.sin(a) * 2 * window.CURRENT_SCENE_DATA.scale_factor;
-		let hexHeight = hexSize * (1 + Math.cos(a)) * window.CURRENT_SCENE_DATA.scale_factor;
-		window.hexGridSize = {
-			width: hexWidth,
-			height: hexHeight
-		}
-	}
-	else{
-		
-		for (let y = startY-4*(hexSize * Math.sin(a)), j = 0; y + hexSize * Math.sin(a) < gridCanvas.height+startY+4*hexSize; y += 2 ** ((j + 1) % 2) * hexSize * Math.sin(a), j = 0){
-		   for (let x = startX-4*(hexSize * (1 + Math.cos(a))); x + hexSize * (1 + Math.cos(a)) < gridCanvas.width+startX+4*hexSize; x += hexSize * (1 + Math.cos(a)), y += (-1) ** j++ * hexSize * Math.sin(a)){
-		    drawHexagon(x, y);
-		  }
-		}
-		
-		let hexWidth = hexSize * (1 + Math.cos(a)) * window.CURRENT_SCENE_DATA.scale_factor;
-		let hexHeight = hexSize * Math.sin(a) * 2 * window.CURRENT_SCENE_DATA.scale_factor;
-		window.hexGridSize = {
-			width: hexWidth,
-			height: hexHeight
-		}
-	}
-
-	function drawHexagon(x, y) {
-		if(drawGrid == 1 || window.WIZARDING){
-			if(window.CURRENT_SCENE_DATA.gridType == 3){
-			  gridContext.beginPath();
-			  gridContext.moveTo(x + hexSize, y);
-			  for (let i = 1; i <= 6; i++) {
-			    let angle = i * Math.PI / 3;
-			    let dx = hexSize * Math.cos(angle);
-			    let dy = hexSize * Math.sin(angle);
-			    gridContext.lineTo(x + dx, y + dy);
-			  }
-			  gridContext.closePath();
-			  gridContext.stroke();
-			}
-			else{
-			  gridContext.beginPath();
-			  gridContext.moveTo(x, y + hexSize);
-			  for (let i = 1; i <= 6; i++) {
-			    let angle = i * Math.PI / 3;
-			    let dx = hexSize * Math.sin(angle);
-			    let dy = hexSize * Math.cos(angle);
-			    gridContext.lineTo(x + dx, y + dy);
-			  }
-			  gridContext.closePath();
-			  gridContext.stroke();
-			}
-		}
-		
-		window.gridCentersArray.push([x,y]);
-	}
-	$('#grid_overlay').css('transform', `scale(calc(var(--scene-scale) * ${window.CURRENT_SCENE_DATA.scaleAdjustment.x}), calc(var(--scene-scale) * ${window.CURRENT_SCENE_DATA.scaleAdjustment.y}))`)
-
-}
 function redraw_alphanum_grid(){
 
 	$('.alphaNumGrid').remove();
@@ -1213,11 +1113,7 @@ function redraw_alphanum_grid(){
 		}
 
 	} else if (window.CURRENT_SCENE_DATA.gridType == 2 || window.CURRENT_SCENE_DATA.gridType == 3){
-		const scaleX = window.CURRENT_SCENE_DATA.scaleAdjustment != undefined ? parseFloat(window.CURRENT_SCENE_DATA.scaleAdjustment.x) : 1;
-		const scaleY = window.CURRENT_SCENE_DATA.scaleAdjustment != undefined ? parseFloat(window.CURRENT_SCENE_DATA.scaleAdjustment.y) : 1;
-
-		hpps = window.hexGridSize.width * scaleX;
-		vpps = window.hexGridSize.height * scaleY;
+		const [hpps, vpps] = grid_size(false, false); //grid units
 		horizontalSvg.attr('height', vpps);
 		verticalSvg.attr('width', hpps);
 		horizontalSvg.attr('viewBox', `0 0 ${width * scale_factor} ${vpps}`);
@@ -1255,214 +1151,243 @@ function redraw_alphanum_grid(){
 
 	$('#VTT').append(horizontalSvg, verticalSvg);
 }
-function redraw_grid(hpps=null, vpps=null, offsetX=null, offsetY=null, color=null, lineWidth=null, subdivide=null, dash=[]){
-	if(window.CURRENT_SCENE_DATA.gridType && window.CURRENT_SCENE_DATA.gridType != 1){
-		let type = (window.CURRENT_SCENE_DATA.gridType == 2) ? false : true;
-		redraw_hex_grid(hpps, vpps, offsetX, offsetY, color, lineWidth, subdivide, dash, type)
-		return;
-	}
-	if(window.CURRENT_SCENE_DATA.grid != '1' && !window.WIZARDING){
-		return;
-	}
-	const gridCanvas = document.getElementById("grid_overlay");
-	gridCanvas.width = $('#scene_map').width();
-	gridCanvas.height = $('#scene_map').height();
-	const gridContext = gridCanvas.getContext("2d");
-	clear_grid();
-	gridContext.setLineDash(dash);
-	let startX = offsetX / window.CURRENT_SCENE_DATA.scale_factor || window.CURRENT_SCENE_DATA.offsetx / window.CURRENT_SCENE_DATA.scale_factor;
-	let startY = offsetY / window.CURRENT_SCENE_DATA.scale_factor || window.CURRENT_SCENE_DATA.offsety / window.CURRENT_SCENE_DATA.scale_factor;
-	startX = Math.round(startX)
-	startY = Math.round(startY) 
-	const incrementX = hpps / window.CURRENT_SCENE_DATA.scale_factor || window.CURRENT_SCENE_DATA.hpps / window.CURRENT_SCENE_DATA.scale_factor;
-	const incrementY = vpps / window.CURRENT_SCENE_DATA.scale_factor || window.CURRENT_SCENE_DATA.vpps / window.CURRENT_SCENE_DATA.scale_factor;
-	gridContext.lineWidth = lineWidth || window.CURRENT_SCENE_DATA.grid_line_width;
-	gridContext.strokeStyle = color || window.CURRENT_SCENE_DATA.grid_color;
-	let isSubdivided = subdivide === "1" || window.CURRENT_SCENE_DATA.grid_subdivided === "1"
-	let skip = true;
 
-	gridContext.beginPath();	
-	for (let i = startX; i < $("#grid_overlay").width(); i = i + incrementX) {
-		if (isSubdivided && skip) {
-			skip = false;
-			continue;
-		}
-		else {
-			skip = true;
-		}
-		gridContext.moveTo(i, 0);
-		gridContext.lineTo(i, $("#grid_overlay").height());
-	}
-	gridContext.stroke();
-	skip = true;
 
-	
-	gridContext.beginPath();
-	for (let i = startY; i < $("#grid_overlay").height(); i = i + incrementY) {
-		if (isSubdivided && skip) {
-			skip = false;
-			continue;
-		}
-		else {
-			skip = true;
-		}
-
-		gridContext.moveTo(0, i);
-		gridContext.lineTo($("#grid_overlay").width(), i);
-
-	}
-	gridContext.stroke();
-	$('#grid_overlay').css('transform', `scale(var(--scene-scale))`)
-
+const sr3 = Math.sqrt(3);
+const hexDeltas = [[sr3/2, 0.5],[-sr3/2, 0.5],[-sr3/2, -0.5],[sr3/2, -0.5],[0, 1],[0, -1]];	
+// type: 3 = flat-top, 2 = pointy top; size = long hex radius
+// adjx/y scaleAdjustment
+// uses transform to cubic coord system
+function closestHexCenter(type, size, x, y, offsetx, offsety, allowCenter_unused) {
+    x = (x - offsetx); //subtract out before transform - add back later
+    y = (y - offsety);
+    let q, r, retX, retY;
+    if(type === '3') {
+	    q = (2/3 * x) / size;
+	    r = (-1/3 * x + sr3/3 * y) / size;
+    } else {
+	    q = (sr3/3 * x - 1/3 * y) / size;
+	    r = (2/3 * y) / size;
+    }
+    const s = -q - r;
+    let rx = Math.round(q);
+    let ry = Math.round(r);
+    const rz = Math.round(s);
+    const x_diff = Math.abs(rx - q);
+    const y_diff = Math.abs(ry - r);
+    const z_diff = Math.abs(rz - s);
+    if (x_diff > y_diff && x_diff > z_diff) {
+        rx = -ry - rz;
+    } else if (y_diff > z_diff) {
+        ry = -rx - rz;
+    }
+    if(type === '3') {
+            retX = size * 3/2 * rx;
+            retY = size * sr3 * (rx/2 + ry);
+    } else {
+            retX = size * sr3 * (rx + ry/2);
+	    retY = size * 3/2 * ry;
+    }
+    return [retX + offsetx, retY + offsety]
 }
 
+// type: 3 = flat-top, 2 = pointy top; size = long hex radius
+function closestHexVertex(type, size, x, y, offsetx = 0, offsety = 0, allowCenter = false) {
+	//which vertex is closest (including center if allowed) - closest center - then vertex
+	const [cx, cy] = closestHexCenter(type, size, x, y, offsetx, offsety);
+	let dist = allowCenter ? ((x-cx)**2 + (y-cy)**2) : undefined;
+	return hexDeltas.reduce((prev,[dx,dy]) => {
+		//flip/flop x/y for rotated grid ( could optimize by quadrant, but not worth it )
+		const pt = type === '2' ? [cx+dx*size,cy+dy*size] : [cx+dy*size,cy+dx*size];
+		const newdist = (x-pt[0])**2 + (y-pt[1])**2;
+		if(dist === undefined || newdist < dist) {
+			dist = newdist;
+			return pt;
+		} else {
+			return prev;
+		}}, [cx, cy]);
+}
+
+function getCurrentClosestHex(x, y, vertex=false, allowCenter=false) {
+	const sd = window.CURRENT_SCENE_DATA;
+	const hexSize = sd.hpps / 1.5; // long radius; hpps = vpps by avtt convention
+	//subtle: adjust x before and after finding points
+	const adjx = sd.scaleAdjustment?.x || 1;
+	const adjy = sd.scaleAdjustment?.y || 1;
+	const ret = (vertex ? closestHexVertex : closestHexCenter) (sd.gridType, hexSize,
+								    x/adjx, y/adjy, sd.offsetx, sd.offsety,
+								    allowCenter);
+	return [ret[0]*adjx,ret[1]*adjy];
+}
+
+// make a tile grid suitable for a CSS background pattern
+function svg_tile(type = '1', xs = 100, ys = 100, color = 'black', lineWidth = 5, dash = []) {
+	//todo: check dash
+	const strokeAttr = `fill="none" stroke="${color}" stroke-width="${lineWidth}" vector-effect="non-scaling-stroke" ${dash ? 'stroke-dasharray="' + dash.join(',')+ '"': ''}`;
+    const svg = ((type === '1') ? // Rectangular Grid
+        `<svg xmlns="http://www.w3.org/2000/svg" width="${xs}" height="${ys}" overflow="visible">
+            <path d="M ${xs} 0 L 0 0 0 ${ys}" ${strokeAttr}/>
+        </svg>` 
+        : (type === '2') ? // (Pointy Top, Vertical Sides)
+        `<svg xmlns="http://www.w3.org/2000/svg" width="${xs}" height="${ys*1.5}" overflow="visible">
+            <path d="M ${xs} ${ys/4} L ${xs/2} 0 L 0 ${ys/4} L 0 ${ys*3/4} L ${xs/2} ${ys} L ${xs} ${ys*3/4} L ${xs} ${ys/4} M ${xs/2} ${ys} L ${xs/2} ${ys*1.5} Z" ${strokeAttr}/>
+        </svg>` 
+        : // (Flat Top, Pointy Sides)
+        `<svg xmlns="http://www.w3.org/2000/svg" width="${xs*1.5}" height="${ys}" overflow="visible">
+            <path d="M ${xs/4} ${ys} L 0 ${ys/2} L ${xs/4} 0 L ${xs*3/4} 0 L ${xs} ${ys/2} L ${xs*3/4} ${ys} L ${xs/4} ${ys} M ${xs} ${ys/2} L ${xs*1.5} ${ys/2} Z" ${strokeAttr}/>
+        </svg>`
+		).replace(/\s+/g, ' ').trim();
+    return "data:image/svg+xml;base64," + btoa(svg);
+}
+
+function draw_svg_grid(type=null, hpps=null, vpps=null, offsetX=null, offsetY=null, color=null, lineWidth=null, subdivide=null, dash=[]) {
+	const sd = window.CURRENT_SCENE_DATA;
+	const grc = $('#grid_svg_underlay');
+	const grc2 = $('#grid_svg_overlay');	
+	if(type === "0") { //hack for clear grid
+		grc.css('visibility', 'hidden');
+		grc2.css('visibility', 'hidden');
+		return;
+	}
+	const gridType = sd.gridType;
+	const scale = sd.scale_factor
+	//pps for hex - hex radius is (pps / 1.5)
+	hpps = hpps || sd.hpps;
+	vpps = vpps || sd.vpps;	
+	const adjx = gridType == 1 ? 1 : (sd.scaleAdjustment?.x || 1);
+	const adjy = gridType == 1 ? 1 : (sd.scaleAdjustment?.y || 1);
+	let startX = (offsetX || sd.offsetx) * adjx / scale;
+	let startY = (offsetY || sd.offsety) * adjy / scale;
+	// Warning: global side effects of drawing right here!!!
+	// the draw function makes h/vpps 1:1 (this is how old code worked)
+	// todo: would love to remove this as it's confusing in a drawing routine
+	if(gridType == 2) {
+		sd.hpps = hpps = vpps;
+	} else if(gridType == 3) {
+		sd.vpps = vpps = hpps;
+	}
+	const xs = hpps / ((gridType == 1) ? 1 : 0.75) * (gridType == 2 ? (sr3/2) : 1) * adjx / scale;
+	const ys = vpps / ((gridType == 1) ? 1 : 0.75) * (gridType == 3 ? (sr3/2) : 1) * adjy / scale;
+	var submult = 1;
+	if(gridType != 1) {
+		startX -= xs/2;
+		startY -= ys/2;
+	} else {
+		if(!subdivide) subdivide = sd.grid_subdivided;
+		if(subdivide && subdivide !== '0') submult = parseInt(subdivide)+1
+	}
+	const gr = svg_tile(gridType, xs*submult, ys*submult,
+			    color || sd.grid_color,
+			    lineWidth || sd.grid_line_width, dash);
+	const tilex = gridType == 3 ? 1.5 : 1;
+	const tiley = gridType == 2 ? 1.5 : 1; //adjust for next row/col extra hex fill line
+	const bk = {
+		'background-image': "url("+gr+")",
+		'background-size': `${xs * tilex}px ${ys * tiley}px`,
+		'background-position-x': Math.round(startX), //todo? Round or not?
+		'background-position-y': Math.round(startY),
+		'visibility': 'visible'
+	}
+	//grid renders into 2 elements (below darkness and above)
+	grc2.css(bk);
+	grc.css(bk);
+}
+
+//returns current [width,height] of grid (including hex)
+function grid_size(scaled = false, adjusted = false) {
+	const sd = window.CURRENT_SCENE_DATA;
+	const hexadj_constant = sr3 / 1.5; //1.155...
+	const xhex = (sd.gridType == 2) ? hexadj_constant : 1;
+	const yhex = (sd.gridType == 3) ? hexadj_constant : 1;
+	const scale = scaled ? sd.scale_factor : 1;
+	const adjx = ((adjusted ? sd.scaleAdjustment?.x : 1) || 1) / scale * xhex;
+	const adjy = ((adjusted ? sd.scaleAdjustment?.y : 1) || 1) / scale * yhex;
+	return [sd.hpps * adjx, sd.vpps * adjy];
+}
+
+function redraw_grid(hpps=null, vpps=null, offsetX=null, offsetY=null, color=null, lineWidth=null, subdivide=null, dash=[]){
+	clear_grid();
+	draw_svg_grid(null, hpps, vpps, offsetX, offsetY, color, lineWidth, subdivide, dash);	
+}
+
+//See Main.js for styling of wiz box
 function draw_wizarding_box() {
-
-	let gridCanvas = document.getElementById("grid_overlay");
-	let gridContext = gridCanvas.getContext("2d");
-	gridCanvas.width = $("#scene_map").width();
-	gridCanvas.height = $("#scene_map").height();
-
-	startX = Math.round(window.CURRENT_SCENE_DATA.offsetx);
-	startY = Math.round(window.CURRENT_SCENE_DATA.offsety);
-
+	const sd = window.CURRENT_SCENE_DATA;
+	const svg = document.getElementById("wizbox");
 	let al1 = {
-		x: (parseInt($("#aligner1").css("left")) + 29)/window.CURRENT_SCENE_DATA.scale_factor,
-		y: (parseInt($("#aligner1").css("top")) + 29)/window.CURRENT_SCENE_DATA.scale_factor,
+		x: (parseInt($("#aligner1").css("left")) + 29)/sd.scale_factor,
+		y: (parseInt($("#aligner1").css("top")) + 29)/sd.scale_factor,
 	};
 
 	let al2 = {
-		x: (parseInt($("#aligner2").css("left")) + 29)/window.CURRENT_SCENE_DATA.scale_factor,
-		y: (parseInt($("#aligner2").css("top")) + 29)/window.CURRENT_SCENE_DATA.scale_factor,
+		x: (parseInt($("#aligner2").css("left")) + 29)/sd.scale_factor,
+		y: (parseInt($("#aligner2").css("top")) + 29)/sd.scale_factor,
 	};
-	gridContext.setLineDash([30, 5]);
-
-	gridContext.lineWidth = 2;
-	gridContext.strokeStyle = "green";
-
+	const grid = document.getElementById('wizbox-grid');
+	const hex = document.getElementById('wizbox-hex');	
 	if($('#gridType input:checked').val() == 1){
-		gridContext.beginPath();
-		gridContext.moveTo(al1.x, al1.y);
-		gridContext.lineTo(al2.x, al1.y);
-		gridContext.moveTo(al2.x, al1.y);
-		gridContext.lineTo(al2.x, al2.y);
-		gridContext.moveTo(al2.x, al2.y);
-		gridContext.lineTo(al1.x, al2.y);
-		gridContext.moveTo(al1.x, al2.y);
-		gridContext.lineTo(al1.x, al1.y);
-	
-		let hpps = (al2.x - al1.x)/3
-		let vpps = (al2.y - al1.y)/3
-	
-		gridContext.moveTo(al1.x, al1.y + vpps);
-		gridContext.lineTo(al2.x, al1.y + vpps);
-		gridContext.moveTo(al1.x, al1.y + vpps*2);
-		gridContext.lineTo(al2.x, al1.y + vpps*2);
-		gridContext.moveTo(al1.x + hpps, al1.y);
-		gridContext.lineTo(al1.x + hpps, al2.y);
-		gridContext.moveTo(al1.x + hpps*2, al1.y);
-		gridContext.lineTo(al1.x + hpps*2, al2.y);
-	
-		gridContext.stroke();
+		grid.setAttribute('visibility', 'visible');
+		hex.setAttribute('visibility', 'hidden');
+		const width = al2.x - al1.x;
+		const height = al2.y - al1.y;
+		grid.setAttribute('transform', `translate(${al1.x}, ${al1.y}) scale(${width}, ${height})`);
+	} else {
+		const hexedge = Math.abs(al2.y - al1.y) / 3;
+		const rotate = $('#gridType input:checked').val() == 3 ? 90 : 0;
+		const adjx = sd.scaleAdjustment?.x || 1.0;
+		const adjy = sd.scaleAdjustment?.y || 1.0;
+		//todo deal with translate for adjx/adjy
+		hex.setAttribute('visibility', 'visible');
+		grid.setAttribute('visibility', 'hidden');
+		hex.setAttribute('transform', `translate(${al1.x * adjx}, ${al1.y * adjy}) scale(${hexedge*adjx}, ${hexedge*adjy}) rotate(${rotate})`);		
 	}
-	else{
-		drawHexagon(al1.x, al1.y);
-		let hexSize = (al2.x - al1.x)/1.5/2;
-		const a = 2 * Math.PI / 6;
-		if($('#gridType input:checked').val() == 3){			
-				drawHexagon(al1.x, al1.y + hexSize* Math.sin(a)*2);
-				drawHexagon(al1.x, al1.y - hexSize * Math.sin(a)*2);
-				drawHexagon(al1.x+hexSize * (1 + Math.cos(a)), al1.y+hexSize * Math.sin(a));
-				drawHexagon(al1.x-hexSize * (1 + Math.cos(a)), al1.y+hexSize * Math.sin(a));
-				drawHexagon(al1.x+hexSize * (1 + Math.cos(a)), al1.y-hexSize * Math.sin(a));
-				drawHexagon(al1.x-hexSize * (1 + Math.cos(a)), al1.y-hexSize * Math.sin(a));
-		}
-		if($('#gridType input:checked').val() == 2){				
-				drawHexagon(al1.x + hexSize * Math.sin(a)*2, al1.y);
-				drawHexagon(al1.x - hexSize * Math.sin(a)*2, al1.y);
-				drawHexagon(al1.x+hexSize * Math.sin(a), al1.y+hexSize * (1 + Math.cos(a)));
-				drawHexagon(al1.x+hexSize * Math.sin(a), al1.y-hexSize * (1 + Math.cos(a)));
-				drawHexagon(al1.x-hexSize * Math.sin(a), al1.y+hexSize * (1 + Math.cos(a)));
-				drawHexagon(al1.x-hexSize * Math.sin(a), al1.y-hexSize * (1 + Math.cos(a)));
-		}
-	}
-
-
-	function drawHexagon(x, y) {
-		let hexSize = (al2.x - al1.x)/2/1.5 / window.CURRENT_SCENE_DATA.scale_factor;
-		if(window.CURRENT_SCENE_DATA.gridType == 3){
-		  gridContext.beginPath();
-		  gridContext.moveTo(x + hexSize, y);
-		  for (let i = 1; i <= 6; i++) {
-		    let angle = i * Math.PI / 3;
-		    let dx = hexSize * Math.cos(angle);
-		    let dy = hexSize * Math.sin(angle);
-		    gridContext.lineTo(x + dx, y + dy);
-		  }
-		  gridContext.closePath();
-		  gridContext.stroke();
-		}
-		else{
-		  gridContext.beginPath();
-		  gridContext.moveTo(x, y + hexSize);
-		  for (let i = 1; i <= 6; i++) {
-		    let angle = i * Math.PI / 3;
-		    let dx = hexSize * Math.sin(angle);
-		    let dy = hexSize * Math.cos(angle);
-		    gridContext.lineTo(x + dx, y + dy);
-		  }
-		  gridContext.closePath();
-		  gridContext.stroke();
-		}
-	}
-
 }
-function ctxScale(canvasid, doNotScale=false){
+
+function ctxScale(canvasid,  w, h, doNotScale=false){
 	let canvas = document.getElementById(canvasid);
-	canvas.width = $("#scene_map").width();
-  	canvas.height = $("#scene_map").height();
+	canvas.width = w;
+  	canvas.height = h;
   	if (!doNotScale) {
 		$(canvas).css({
 			'transform-origin': 'top left',
 			'transform': 'scale(var(--scene-scale))'
 		});
 	}
+	return canvas;
 }
 
 function reset_canvas(apply_zoom=true) {
-	let sceneMapWidth = $("#scene_map").width();
-	let sceneMapHeight = $("#scene_map").height();
+	const sceneMapWidth = $("#scene_map").width();
+	const sceneMapHeight = $("#scene_map").height();
 
 	$('#darkness_layer').css({"width": sceneMapWidth, "height": sceneMapHeight});
 	$("#scene_map_container").css({"width": sceneMapWidth, "height": sceneMapHeight});
+	// grid overlay css tiling needs a container to fill that matches map
+	$("#grid_svg_overlay_container").css({"width": sceneMapWidth, "height": sceneMapHeight});
 	
-	ctxScale('peer_overlay');
-	ctxScale('temp_overlay');
-	ctxScale('draw_overlay_under_fog_darkness', true);
-	ctxScale('fog_overlay');
-	ctxScale('grid_overlay');	
-	ctxScale('draw_overlay');
-	ctxScale('walls_layer');
-	ctxScale('elev_overlay');
-
+	ctxScale('peer_overlay', sceneMapWidth, sceneMapHeight);
+	ctxScale('temp_overlay', sceneMapWidth, sceneMapHeight);
+	ctxScale('draw_overlay_under_fog_darkness', sceneMapWidth, sceneMapHeight, true);
+	ctxScale('fog_overlay', sceneMapWidth, sceneMapHeight);
+	ctxScale('draw_overlay', sceneMapWidth, sceneMapHeight);
+	ctxScale('walls_layer', sceneMapWidth, sceneMapHeight);
+	ctxScale('elev_overlay', sceneMapWidth, sceneMapHeight);
 
 	window.WeatherOverlay?.setSize(sceneMapWidth, sceneMapHeight);
 
 	let canvas = document.getElementById('raycastingCanvas');
-	canvas.width = $("#scene_map").width();
-  	canvas.height = $("#scene_map").height();
+	canvas.width = sceneMapWidth;
+  	canvas.height = sceneMapHeight;
 
   	canvas = document.getElementById('light_overlay');
-	canvas.width = $("#scene_map").width();
-  	canvas.height = $("#scene_map").height();
+	canvas.width = sceneMapWidth;
+  	canvas.height = sceneMapHeight;
 
 	$("#text_div").css({"width": sceneMapWidth * window.CURRENT_SCENE_DATA.scale_factor,  "height": sceneMapHeight * window.CURRENT_SCENE_DATA.scale_factor});
 
-	canvas = document.getElementById("fog_overlay");
-	let ctx = canvas.getContext("2d");
-
 	if (!window.FOG_OF_WAR) {
-		ctx.clearRect(0, 0, canvas.width, canvas.height);
+		const canvas = document.getElementById("fog_overlay");
+		canvas.getContext("2d").clearRect(0, 0, canvas.width, canvas.height);
 		return;
 	}
 	
@@ -1478,25 +1403,11 @@ function reset_canvas(apply_zoom=true) {
  	delete window.lightAuraClipPolygon;
  	delete window.lineOfSightPolygons;
 
-
-	
-	
-
-	let canvas_grid = document.getElementById("grid_overlay");
-	let ctx_grid = canvas_grid.getContext("2d");
-
 	window.temp_canvas = document.getElementById("temp_overlay");;
 	window.temp_context = window.temp_canvas.getContext("2d");
 	if (window.CURRENT_SCENE_DATA && window.CURRENT_SCENE_DATA.hpps > 10 && window.CURRENT_SCENE_DATA.vpps > 10) {
 		//alert(window.CURRENT_SCENE_DATA.hpps + " "+ window.CURRENT_SCENE_DATA.vpps);
-		if(window.WIZARDING){
-			$("#VTT").css("--scene-scale", 1)
-		}
-		else{
-			$("#VTT").css("--scene-scale", window.CURRENT_SCENE_DATA.scale_factor);		
-		}
-		canvas_grid.width = $("#scene_map").width();
-		canvas_grid.height = $("#scene_map").height();
+		$("#VTT").css("--scene-scale", window.WIZARDING ? 1 : window.CURRENT_SCENE_DATA.scale_factor);
 
 		startX = Math.round(window.CURRENT_SCENE_DATA.offsetx);
 		startY = Math.round(window.CURRENT_SCENE_DATA.offsety);
@@ -1514,7 +1425,7 @@ function reset_canvas(apply_zoom=true) {
 		//alert('sopravvissuto');
 	}
 	else {
-		ctx_grid.clearRect(0, 0, canvas_grid.width, canvas_grid.height);
+		clear_grid();
 	}
 	if(apply_zoom)
 		apply_zoom_from_storage();
@@ -1654,37 +1565,6 @@ function redraw_fog() {
 	ctx.fillStyle = fogStyle;
 	ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-	function drawHexagon(ctx, x, y) {
-		const hpps = window.CURRENT_SCENE_DATA.gridType == 2 ? window.CURRENT_SCENE_DATA.vpps : window.CURRENT_SCENE_DATA.hpps;
-
-		const hexSize = hpps/1.5 / window.CURRENT_SCENE_DATA.scale_factor || window.CURRENT_SCENE_DATA.hpps/1.5 / window.CURRENT_SCENE_DATA.scale_factor;
-
-		if(window.CURRENT_SCENE_DATA.gridType == 3){
-		  ctx.beginPath();
-		  ctx.moveTo(x + hexSize, y);
-		  for (let i = 1; i <= 6; i++) {
-		    let angle = i * Math.PI / 3;
-		    let dx = hexSize * Math.cos(angle);
-		    let dy = hexSize * Math.sin(angle);
-		    ctx.lineTo(x + dx, y + dy);
-		  }
-		  ctx.closePath();
-		  ctx.fill();
-		}
-		else{
-		  ctx.beginPath();
-		  ctx.moveTo(x, y + hexSize);
-		  for (let i = 1; i <= 6; i++) {
-		    let angle = i * Math.PI / 3;
-		    let dx = hexSize * Math.sin(angle);
-		    let dy = hexSize * Math.cos(angle);
-		    ctx.lineTo(x + dx, y + dy);
-		  }
-		  ctx.closePath();
-		  ctx.fill();
-		}
-	}
-
 	for (let i = 0; i < window.REVEALED.length; i++) {
 		let d = window.REVEALED[i];
 		let adjustedArray = [];
@@ -1743,11 +1623,9 @@ function redraw_fog() {
  				}
 				else{
 					ctx.fillStyle = "#000"
-					ctx.scale(window.CURRENT_SCENE_DATA.scaleAdjustment.x, window.CURRENT_SCENE_DATA.scaleAdjustment.y)
 	 				for(let i=0; i<d[0].length; i++){
 	 					drawHexagon(ctx, d[0][i][0], d[0][i][1])
 	 				}
-	 				ctx.setTransform(1, 0, 0, 1, 0, 0);
 	 			}
 			
 
@@ -1802,12 +1680,10 @@ function redraw_fog() {
  				}
 				else{
 					ctx.globalCompositeOperation = 'destination-out';
-					ctx.scale(window.CURRENT_SCENE_DATA.scaleAdjustment.x, window.CURRENT_SCENE_DATA.scaleAdjustment.y)
 	 				ctx.fillStyle = "#000000";
 	 				for(let i=0; i<d[0].length; i++){
 	 					drawHexagon(ctx, d[0][i][0], d[0][i][1])
 	 				}
-	 				ctx.setTransform(1, 0, 0, 1, 0, 0);
 	 			}				
 
 				ctx.globalCompositeOperation = 'source-over';
@@ -1819,11 +1695,9 @@ function redraw_fog() {
 					}
 				}
 				else{
-					ctx.scale(window.CURRENT_SCENE_DATA.scaleAdjustment.x, window.CURRENT_SCENE_DATA.scaleAdjustment.y)
 	 				for(let i=0; i<d[0].length; i++){
 	 					drawHexagon(ctx, d[0][i][0], d[0][i][1])
 	 				}
-	 				ctx.setTransform(1, 0, 0, 1, 0, 0);
 	 			}
 			}
 		}
@@ -2932,18 +2806,18 @@ function is_rgba_fully_transparent(rgba){
  */
 function get_snapped_coordinates(pointX, pointY) {
 
-    const offsetX = parseFloat(window.CURRENT_SCENE_DATA.offsetx) || 0;
-    const offsetY = parseFloat(window.CURRENT_SCENE_DATA.offsety) || 0;
-
     if (window.CURRENT_SCENE_DATA.gridType == "1" || typeof window.CURRENT_SCENE_DATA.gridType == "undefined") {
         // Square grid
+        const offsetX = parseFloat(window.CURRENT_SCENE_DATA.offsetx) || 0;
+        const offsetY = parseFloat(window.CURRENT_SCENE_DATA.offsety) || 0;
         const gridWidth = parseFloat(window.CURRENT_SCENE_DATA.hpps)/2;
         const gridHeight = parseFloat(window.CURRENT_SCENE_DATA.vpps)/2;
         pointX = Math.round((pointX-offsetX) / gridWidth) * gridWidth + offsetX;
         pointY = Math.round((pointY-offsetY) / gridHeight) * gridHeight + offsetY;
     } else if (window.CURRENT_SCENE_DATA.gridType == "2" || window.CURRENT_SCENE_DATA.gridType == "3") {
         // Hex grid (vertical or horizontal)
-        console.log("Hex snapping is not implemented yet.");
+        // todo: decide which points you want to snap to -- assume all vertices and center for now   
+        [pointX, pointY] = getCurrentClosestHex(pointX, pointY, true, true);
     }
 
     return [pointX, pointY];
@@ -3019,7 +2893,9 @@ function drawing_mousedown(e) {
 	// select modifies this line but never resets it, so reset it here
 	// otherwise all drawings are dashed
 
-
+	if(window.DRAWFUNCTION === 'measure') {
+		$("#VTT").css('--grid-overlay-on-tmp', '1');
+	}
 	
 	// these are generic values used by most drawing functionality
 	window.LINEWIDTH = data.draw_line_width
@@ -3171,84 +3047,17 @@ function drawing_mousedown(e) {
 		window.temp_context.fillStyle = window.DRAWCOLOR;
 		const hpps = window.CURRENT_SCENE_DATA.gridType == 2 ? window.CURRENT_SCENE_DATA.vpps : window.CURRENT_SCENE_DATA.hpps;
 
-		const hexSize = hpps/1.5 / window.CURRENT_SCENE_DATA.scale_factor || window.CURRENT_SCENE_DATA.hpps/1.5 / window.CURRENT_SCENE_DATA.scale_factor;
-
-		function drawHexagon(ctx, x, y) {
-			if(window.CURRENT_SCENE_DATA.gridType == 3){
-			  ctx.beginPath();
-			  ctx.moveTo(x + hexSize, y);
-			  for (let i = 1; i <= 6; i++) {
-			    let angle = i * Math.PI / 3;
-			    let dx = hexSize * Math.cos(angle);
-			    let dy = hexSize * Math.sin(angle);
-			    ctx.lineTo(x + dx, y + dy);
-			  }
-			  ctx.closePath();
-			  ctx.fill();
-			}
-			else{
-			  ctx.beginPath();
-			  ctx.moveTo(x, y + hexSize);
-			  for (let i = 1; i <= 6; i++) {
-			    let angle = i * Math.PI / 3;
-			    let dx = hexSize * Math.sin(angle);
-			    let dy = hexSize * Math.cos(angle);
-			    ctx.lineTo(x + dx, y + dy);
-			  }
-			  ctx.closePath();
-			  ctx.fill();
-			}
-		}
-
-
 		clear_temp_canvas()
-
-		const offscreen_canvas = new OffscreenCanvas($('#scene_map')[0].width, $('#scene_map')[0].height); 
-		const offscreen_context = offscreen_canvas.getContext('2d');
-		offscreen_context.fillStyle = "#FFF";
-
-		const [scaledX,scaledY] = [window.BEGIN_MOUSEX/window.CURRENT_SCENE_DATA.scale_factor, window.BEGIN_MOUSEY/window.CURRENT_SCENE_DATA.scale_factor];
-	
-
-		
+		let { x, y } = snap_point_to_grid(window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, true, undefined, undefined, undefined, true);
+		window.BRUSHPOINTS.push([Math.round(x), Math.round(y)])
+		window.BRUSHPOINTS = Array.from(new Set(window.BRUSHPOINTS.map(JSON.stringify)), JSON.parse)		
 		if(window.CURRENT_SCENE_DATA.gridType == '1'){
-			const { x, y } = snap_point_to_grid(window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, true, undefined, undefined, undefined, true);
-			window.BRUSHPOINTS.push([Math.round(x), Math.round(y)])
-		}
-		else{
-			const hpps = window.CURRENT_SCENE_DATA.gridType == 2 ? window.CURRENT_SCENE_DATA.vpps : window.CURRENT_SCENE_DATA.hpps;
-
-			const hexSize = hpps/1.5 / window.CURRENT_SCENE_DATA.scale_factor || window.CURRENT_SCENE_DATA.hpps/1.5 / window.CURRENT_SCENE_DATA.scale_factor;
-
-			const closeHexes = window.gridCentersArray.filter(d => Math.abs(d[0]*window.CURRENT_SCENE_DATA.scaleAdjustment.x-scaledX) < hexSize && Math.abs(d[1]*window.CURRENT_SCENE_DATA.scaleAdjustment.y-scaledY)< hexSize);
-
-			for(let i in closeHexes){
-				const hexCenter = closeHexes[i];
-				const x = hexCenter[0];
-				const y = hexCenter[1];
-				offscreen_context.clearRect(0, 0, offscreen_canvas.width, offscreen_canvas.height); 
-				offscreen_context.scale(window.CURRENT_SCENE_DATA.scaleAdjustment.x, window.CURRENT_SCENE_DATA.scaleAdjustment.y)
-				drawHexagon(offscreen_context, x, y);
-				const pixeldata = offscreen_context.getImageData(scaledX, scaledY, 1, 1).data;
-			    offscreen_context.setTransform(1, 0, 0, 1, 0, 0);
-			    if(pixeldata[1] > 200){
-			    	window.BRUSHPOINTS.push([Math.round(x),Math.round(y)]);
-				}
-			}	
-			window.BRUSHPOINTS = Array.from(new Set(window.BRUSHPOINTS.map(JSON.stringify)), JSON.parse)
-		
-		
-			if(window.CURRENT_SCENE_DATA.gridType == '1'){
-				for(let i in window.BRUSHPOINTS){
-						drawRect(window.temp_context, window.BRUSHPOINTS[i][0], window.BRUSHPOINTS[i][1], window.CURRENT_SCENE_DATA.hpps, window.CURRENT_SCENE_DATA.vpps, window.DRAWCOLOR, true, window.DRAWTYPE);
-					}
-				}
-			else{
-			window.temp_context.scale(window.CURRENT_SCENE_DATA.scaleAdjustment.x, window.CURRENT_SCENE_DATA.scaleAdjustment.y)
-				for(let i in window.BRUSHPOINTS){
-					drawHexagon(window.temp_context, window.BRUSHPOINTS[i][0], window.BRUSHPOINTS[i][1])
-				}
-				window.temp_context.setTransform(1, 0, 0, 1, 0, 0);
+			for(let i in window.BRUSHPOINTS){
+				drawRect(window.temp_context, window.BRUSHPOINTS[i][0], window.BRUSHPOINTS[i][1], window.CURRENT_SCENE_DATA.hpps, window.CURRENT_SCENE_DATA.vpps, window.DRAWCOLOR, true, window.DRAWTYPE);
+			}
+		} else {
+			for(let i in window.BRUSHPOINTS){
+				drawHexagon(window.temp_context, window.BRUSHPOINTS[i][0], window.BRUSHPOINTS[i][1])
 			}
 		}
 	}
@@ -3638,90 +3447,20 @@ function drawing_mousemove(e) {
 		else if (window.DRAWSHAPE == "grid-brush"){
 			
 			window.temp_context.fillStyle = window.DRAWCOLOR;
-			const hpps = window.CURRENT_SCENE_DATA.gridType == 2 ? window.CURRENT_SCENE_DATA.vpps : window.CURRENT_SCENE_DATA.hpps;
-
-			const hexSize = hpps/1.5 / window.CURRENT_SCENE_DATA.scale_factor || window.CURRENT_SCENE_DATA.hpps/1.5 / window.CURRENT_SCENE_DATA.scale_factor;
-
-			function drawHexagon(ctx, x, y) {
-				if(window.CURRENT_SCENE_DATA.gridType == 3){
-				  ctx.beginPath();
-				  ctx.moveTo(x + hexSize, y);
-				  for (let i = 1; i <= 6; i++) {
-				    let angle = i * Math.PI / 3;
-				    let dx = hexSize * Math.cos(angle);
-				    let dy = hexSize * Math.sin(angle);
-				    ctx.lineTo(x + dx, y + dy);
-				  }
-				  ctx.closePath();
-				  ctx.fill();
-				}
-				else{
-				  ctx.beginPath();
-				  ctx.moveTo(x, y + hexSize);
-				  for (let i = 1; i <= 6; i++) {
-				    let angle = i * Math.PI / 3;
-				    let dx = hexSize * Math.sin(angle);
-				    let dy = hexSize * Math.cos(angle);
-				    ctx.lineTo(x + dx, y + dy);
-				  }
-				  ctx.closePath();
-				  ctx.fill();
-				}
-			}
-		
-
 			clear_temp_canvas()
-
-			const offscreen_canvas = new OffscreenCanvas($('#scene_map')[0].width, $('#scene_map')[0].height); 
-			const offscreen_context = offscreen_canvas.getContext('2d');
-			offscreen_context.fillStyle = "#FFF";
-
-			const [scaledX,scaledY] = [mouseX/window.CURRENT_SCENE_DATA.scale_factor, mouseY/window.CURRENT_SCENE_DATA.scale_factor];
-			
-
-		
-
-			if(window.CURRENT_SCENE_DATA.gridType == '1'){
-				const roundDown = true;
-				const { x, y } = snap_point_to_grid(mouseX, mouseY, true, undefined, undefined, undefined, roundDown);
-				window.BRUSHPOINTS.push([Math.round(x), Math.round(y)])
-			}
-			else{
-				const hpps = window.CURRENT_SCENE_DATA.gridType == 2 ? window.CURRENT_SCENE_DATA.vpps : window.CURRENT_SCENE_DATA.hpps;
-
-				const hexSize = hpps/1.5 / window.CURRENT_SCENE_DATA.scale_factor || window.CURRENT_SCENE_DATA.hpps/1.5 / window.CURRENT_SCENE_DATA.scale_factor;
-
-				const closeHexes = window.gridCentersArray.filter(d => Math.abs(d[0]*window.CURRENT_SCENE_DATA.scaleAdjustment.x-scaledX) < hexSize && Math.abs(d[1]*window.CURRENT_SCENE_DATA.scaleAdjustment.y-scaledY)< hexSize);
-
-				for(let i in closeHexes){
-					const hexCenter = closeHexes[i];
-					const x = hexCenter[0];
-					const y = hexCenter[1];
-					offscreen_context.clearRect(0, 0, offscreen_canvas.width, offscreen_canvas.height); 
-					offscreen_context.scale(window.CURRENT_SCENE_DATA.scaleAdjustment.x, window.CURRENT_SCENE_DATA.scaleAdjustment.y)
-					drawHexagon(offscreen_context, x, y);
-					const pixeldata = offscreen_context.getImageData(scaledX, scaledY, 1, 1).data;
-				    offscreen_context.setTransform(1, 0, 0, 1, 0, 0);
-				    if(pixeldata[1] > 200){
-				    	window.BRUSHPOINTS.push([Math.round(x),Math.round(y)]);
-					}
-				}	
-			}
-			
+			let { x, y } = snap_point_to_grid(mouseX, mouseY, true, undefined, undefined, undefined, true);
+			window.BRUSHPOINTS.push([Math.round(x), Math.round(y)])
 			window.BRUSHPOINTS = Array.from(new Set(window.BRUSHPOINTS.map(JSON.stringify)), JSON.parse)
-			
 			
 			if(window.CURRENT_SCENE_DATA.gridType == '1'){
 				for(let i in window.BRUSHPOINTS){
 					drawRect(window.temp_context, window.BRUSHPOINTS[i][0], window.BRUSHPOINTS[i][1], window.CURRENT_SCENE_DATA.hpps, window.CURRENT_SCENE_DATA.vpps, window.DRAWCOLOR, true, window.DRAWTYPE);
-					}
 				}
+			}
 			else{
-				window.temp_context.scale(window.CURRENT_SCENE_DATA.scaleAdjustment.x, window.CURRENT_SCENE_DATA.scaleAdjustment.y)
  				for(let i in window.BRUSHPOINTS){
  					drawHexagon(window.temp_context, window.BRUSHPOINTS[i][0], window.BRUSHPOINTS[i][1])
  				}
- 				window.temp_context.setTransform(1, 0, 0, 1, 0, 0);
  			}
 		}
 	}
@@ -3776,6 +3515,8 @@ function drawing_mousemove(e) {
  * @returns
  */
 function drawing_mouseup(e) {
+	$("#VTT").css('--grid-overlay-on-tmp', '0');
+	
 	// ignore this if we're dragging a token
 	if ($(".ui-draggable-dragging:not([data-clone-id])").length > 0) {
 		$(".ui-draggable-dragging:not([data-clone-id])").toggleClass('.ui-draggable-dragging', false);
@@ -5008,24 +4749,58 @@ function drawCircle(ctx, centerX, centerY, radius, style, fill=true, lineWidth =
 
 }
 
+
+function drawHexagon(ctx, x, y) {
+	const scale = window.CURRENT_SCENE_DATA.scale_factor;
+	const adjx = window.CURRENT_SCENE_DATA.scaleAdjustment.x || 1;
+	const adjy = window.CURRENT_SCENE_DATA.scaleAdjustment.y || 1;
+	const hexSize = window.CURRENT_SCENE_DATA.hpps / 1.5 / scale;
+	x = x/scale;
+	y = y/scale;
+	if(window.CURRENT_SCENE_DATA.gridType == 3){ //todo: collapse both loops simpler code
+		ctx.beginPath();
+		ctx.moveTo(x + hexSize * adjx, y);
+		for (let i = 1; i <= 6; i++) {
+			//todo: a lot of slow math for constants...
+			let angle = i * Math.PI / 3;
+			let dx = hexSize * Math.cos(angle) * adjx;
+			let dy = hexSize * Math.sin(angle) * adjy;
+			ctx.lineTo(x + dx, y + dy);
+		}
+		ctx.closePath();
+		ctx.fill();
+	}
+	else{
+		ctx.beginPath();
+		ctx.moveTo(x, y + hexSize * adjy);
+		for (let i = 1; i <= 6; i++) {
+			let angle = i * Math.PI / 3;
+			let dx = hexSize * Math.sin(angle) * adjx;
+			let dy = hexSize * Math.cos(angle) * adjy;
+			ctx.lineTo(x + dx, y + dy);
+		}
+		ctx.closePath();
+		ctx.fill();
+	}
+}
+
+		 
+
 function drawRect(ctx, startx, starty, width, height, style, fill=true, lineWidth = 6, addStrokeToFill = false, addDottedStrokeToBorder)
 {
+	const scale = window.CURRENT_SCENE_DATA.scale_factor;
 	ctx.beginPath();
 	ctx.lineWidth = lineWidth;
 	ctx.strokeStyle = style;
 	ctx.fillStyle = style;
-	if(fill)
-	{
-		ctx.rect(startx/window.CURRENT_SCENE_DATA.scale_factor, starty/window.CURRENT_SCENE_DATA.scale_factor, width/window.CURRENT_SCENE_DATA.scale_factor, height/window.CURRENT_SCENE_DATA.scale_factor);
+	ctx.rect(startx/scale, starty/scale, width/scale, height/scale);
+	if(fill) {
 		ctx.fill()
 		if(addStrokeToFill){
 			ctx.stroke();
 		}
-	}
-	else
-	{
-		ctx.rect(startx/window.CURRENT_SCENE_DATA.scale_factor, starty/window.CURRENT_SCENE_DATA.scale_factor, width/window.CURRENT_SCENE_DATA.scale_factor, height/window.CURRENT_SCENE_DATA.scale_factor);
-		ctx.stroke();
+	} else {
+		ctx.stroke();		
 		if(addDottedStrokeToBorder){
 			ctx.setLineDash([2*lineWidth, 2*lineWidth])
 			ctx.strokeStyle = `rgba(0,0,0,1)`;

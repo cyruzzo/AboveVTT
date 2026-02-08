@@ -2127,131 +2127,108 @@ function init_ui() {
         <link rel="stylesheet" href="/content/1-0-2027-0/js/libs/lightbox2/dist/css/lightbox.min.css">
 	`);
 
-	const background = $("<img id='scene_map'>");
-	background.css("top", "0");
-	background.css("left", "0");
-	background.css("position", "absolute");
+	const background = $("<img id='scene_map' class='TLA'/>");
 	background.css("z-index", "10");
 	
-	const drawOverlayUnderFogDarkness = $("<canvas id='draw_overlay_under_fog_darkness'></canvas>");
-	drawOverlayUnderFogDarkness.css("position", "absolute");
-	drawOverlayUnderFogDarkness.css("top", "0");
-	drawOverlayUnderFogDarkness.css("left", "0");
+	const drawOverlayUnderFogDarkness = $("<canvas id='draw_overlay_under_fog_darkness' class='TLA'></canvas>");
 	drawOverlayUnderFogDarkness.css("z-index", "11");
 
-	const mapItems = $("<div id='map_items'></div>");
-	mapItems.css("top", "0");
-	mapItems.css("left", "0");
-	mapItems.css("position", "absolute");
+	const mapItems = $("<div id='map_items' class='TLA'/>");
 	mapItems.css("z-index", "11");
 
-	const tokenMapItems = $("<div id='token_map_items'></div>")
-	tokenMapItems.css("top", "0");
-	tokenMapItems.css("left", "0");
-	tokenMapItems.css("position", "absolute");
+	const tokenMapItems = $("<div id='token_map_items' class='TLA'/>")
 	tokenMapItems.css("z-index", "12");
+	
+	const mapContainer = $("<div id='scene_map_container' class='TLA'/>");
 
-	const mapContainer = $("<div id='scene_map_container' />");
-	mapContainer.css("top", "0");
-	mapContainer.css("left", "0");
-	mapContainer.css("position", "absolute");
-
-	lightContainer = $("<div id='light_container'/>");
-	lightContainer.css("top", "0");
-	lightContainer.css("left", "0");
+	lightContainer = $("<div id='light_container' class='TLA'/>");
 	lightContainer.css("bottom", "0");
 	lightContainer.css("right", "0");
-	lightContainer.css("position", "absolute");
 
-	const drawOverlay = $("<canvas id='draw_overlay'></canvas>");
-	drawOverlay.css("position", "absolute");
-	drawOverlay.css("top", "0");
-	drawOverlay.css("left", "0");
+	const drawOverlay = $("<canvas id='draw_overlay' class='TLA'/>");
 	drawOverlay.css("z-index", "22");
 
-	const lightOverlay = $("<canvas id='light_overlay'></canvas>");
-	lightOverlay.css("position", "absolute");
-	lightOverlay.css("top", "0");
-	lightOverlay.css("left", "0");
+	const lightOverlay = $("<canvas id='light_overlay' class='TLA'/>");
 	lightOverlay.css("z-index", "9");
 	lightOverlay.css("mix-blend-mode", "lighten");
 
-	const outer_light_container = $("<div id='outer_light_container'></canvas>");
-	outer_light_container.css("position", "absolute");
-	outer_light_container.css("top", "0");
-	outer_light_container.css("left", "0");
+	const outer_light_container = $("<div id='outer_light_container' class='TLA'/>");
 	outer_light_container.css("z-index", "9");
 	outer_light_container.css("width", "100%");
 	outer_light_container.css("height", "100%");
 
 
-	const textDiv = $("<div id='text_div'></div>");
-	textDiv.css("position", "absolute");
-	textDiv.css("top", "0");
-	textDiv.css("left", "0");
-	textDiv.css("z-index", "20");
+	const textDiv = $("<div id='text_div' class='TLA SST'/>");
+	textDiv.css({ "z-index": "20", transform: "scale(var(--scene-scale))", "transform-origin": "top left"});	
 
-	const grid = $("<canvas id='grid_overlay'></canvas>");
-	grid.css("position", "absolute");
-	grid.css("top", "0");
-	grid.css("left", "0");
-	grid.css("z-index", "19");
+	const grid_svg_underlay = $("<div id='grid_svg_underlay' class='grid-svg-tile'/>");
+	grid_svg_underlay.css("z-index", "11");	//over map but under mapdrawing
+	const grid = $("<div id='grid_svg_overlay' class='grid-svg-tile'/>");
+	grid.css("opacity", "calc(min(var(--grid-overlay-on) + var(--grid-overlay-on-tmp), 1) * 0.5)");
+	const grid_svg_overlay_container = $("<div id='grid_svg_overlay_container' class='TLA'/>")
+	grid_svg_overlay_container.css({ transform: "scale(var(--scene-scale))", "transform-origin": "top left"});
 
-	const walls = $("<canvas id='walls_layer'></canvas>");
-	walls.css("position", "absolute");
-	walls.css("top", "0");
-	walls.css("left", "0");
+	grid_svg_overlay_container.css("pointer-events", "none");
+	grid_svg_overlay_container.css("z-index", "40"); //todo: adjust
+	grid_svg_overlay_container.append(grid);
+	//change the wizbox styling here
+	const wizbox = $(
+`<svg id="main-svg" style="display: block; width: 100%; height: 100%;" xmlns="http://www.w3.org/2000/svg">
+        <style>
+            .grid-box {
+                fill: rgba(0, 255, 255, 0.1);
+                stroke: #ff0000;
+                stroke-width: 4px;
+                vector-effect: non-scaling-stroke;
+                transition: fill 0.2s;
+            }
+        </style>
+        <defs>
+            <polygon id="wiz-hex" class="grid-box" 
+                     points="0,-1 0.866,-0.5 0.866,0.5 0,1 -0.866,0.5 -0.866,-0.5" />
+        </defs>
+        <g id="wizbox-grid" visibility="hidden">
+            <path class="grid-box" d="M 0 0 L 0 1 L 1 1 L 1 0 L 0 0 M 0.33 0 L 0.33 1 M 0.67 0 L 0.67 1 M 0 0.33 L 1 0.33 M 0 0.67 L 1 0.67"/>
+        </g>
+        <g id="wizbox-hex" visibility="hidden">
+            <use href="#wiz-hex" x="0" y="0" />
+            <use href="#wiz-hex" transform="translate(0, -1.5) translate(0.866, 0)" /> <use href="#wiz-hex" transform="translate(0.866, 1.5)" />  <use href="#wiz-hex" transform="translate(-0.866, 1.5)" /> <use href="#wiz-hex" transform="translate(-1.732, 0)" />   <use href="#wiz-hex" transform="translate(-0.866, -1.5)" /><use href="#wiz-hex" transform="translate(1.732, 0)" />    </g>
+    </svg>
+`
+	);
+	wizbox.css("z-index", "19");
+	
+	const walls = $("<canvas id='walls_layer' class='TLA'/>");
 	walls.css("z-index", "19");
 
-	const elev = $("<canvas id='elev_overlay'></canvas>");
-	elev.css("position", "absolute");
-	elev.css("top", "0");
-	elev.css("left", "0");
-	elev.css("z-index", "19");
+	const elev = $("<canvas id='elev_overlay' class='TLA'/>");
+	elev.css("z-index", "23");
 
-	const weather = $("<canvas id='weather_overlay'></canvas>");
-	weather.css("position", "absolute");
-	weather.css("top", "0");
-	weather.css("left", "0");
+	const weather = $("<canvas id='weather_overlay' class='TLA'/>");
 	weather.css("z-index", "55");
 
-	const weatherLight = $("<canvas id='weather_light'></canvas>");
-	weatherLight.css("position", "absolute");
-	weatherLight.css("top", "0");
-	weatherLight.css("left", "0");
+	const weatherLight = $("<canvas id='weather_light' class='TLA'/>");
 	weatherLight.css("z-index", "25");
 
-	const fog = $("<canvas id='fog_overlay'></canvas>");
-	fog.css("top", "0");
-	fog.css("left", "0");
-	fog.css("position", "absolute");
+	const fog = $("<canvas id='fog_overlay' class='TLA'/>");
 	fog.css("z-index", "21");
 
 
-	const rayCasting = $("<canvas id='raycastingCanvas'></canvas>");
-	rayCasting.css({"top": "0", "left": "0", "position": "absolute", "z-index": "22"});
+	const rayCasting = $("<canvas id='raycastingCanvas' class='TLA'/>");
+	rayCasting.css("z-index", "22");
 
 	// this overlay sits above other canvases, but below tempOverlay
 	// when peers stream their rulers, this canvas is where we draw them
-	const peerOverlay = $("<canvas id='peer_overlay'></canvas>");
-	peerOverlay.css("position", "absolute");
-	peerOverlay.css("top", "0");
-	peerOverlay.css("left", "0");
+	const peerOverlay = $("<canvas id='peer_overlay' class='TLA'/>");
 	peerOverlay.css("z-index", "15"); // below fog
 
 	// this overlay sits above all other canvases
 	// we draw to this and then bake the image into the corresponding
 	// canvas, based on the drawing function
-	const tempOverlay = $("<canvas id='temp_overlay'></canvas>");
-	tempOverlay.css("position", "absolute");
-	tempOverlay.css("top", "0");
-	tempOverlay.css("left", "0");
+	const tempOverlay = $("<canvas id='temp_overlay' class='TLA'/>");
 	tempOverlay.css("z-index", "25");
 
-	const darknessLayer = $("<div id='darkness_layer'></div>");
-	darknessLayer.css("position", "absolute");
-	darknessLayer.css("top", "0");
-	darknessLayer.css("left", "0");
+	const darknessLayer = $("<div id='darkness_layer' class='TLA'/>");
 
 	tempOverlay.dblclick(function(e) {
 		if(window.DRAWFUNCTION != 'select')
@@ -2293,25 +2270,21 @@ function init_ui() {
 	window.ZOOM = 1.0;
 
 	
-	const VTT = $(`<div id='VTT' style='position:absolute; top:0px;left:0px;  '/>`);
+	const VTT = $(`<div id='VTT' class="TLA"'/>`);
 
 	//VTT.css("margin-left","200px");
 	//VTT.css("margin-top","200px");
 	//VTT.css("padding-right","400px");
 	//VTT.css("padding-bottom","400px");
 
-	let tokens = $("<div id='tokens'></div>");
-	tokens.css("position", "absolute");
-	tokens.css("top", 0);
-	tokens.css("left", 0);
-
-	VTT.append(tokens);
-
+	VTT.append($("<div id='tokens' class='TLA'/>")); //(40)
 	VTT.append(mapContainer);
 	VTT.append(peerOverlay);
 	VTT.append(drawOverlayUnderFogDarkness);
 	VTT.append(fog);
-	VTT.append(grid);
+	VTT.append(grid_svg_overlay_container);
+	VTT.css('--grid-overlay-on', '0');
+	VTT.css('--grid-overlay-on-tmp', '0');
 	VTT.append(drawOverlay);
 	VTT.append(textDiv);
 	VTT.append(tempOverlay);
@@ -2319,8 +2292,12 @@ function init_ui() {
 	VTT.append(elev);
 	VTT.append(weather);
 	mapItems.append(tokenMapItems);
+	mapItems.append(grid_svg_underlay);
+	
 	mapContainer.append(outer_light_container);
 	mapContainer.append(mapItems);
+	if(window.DM) mapContainer.append(wizbox);
+	
 	mapContainer.append(darknessLayer);
 	outer_light_container.append(rayCasting);
 	outer_light_container.append(lightContainer);
@@ -2330,28 +2307,20 @@ function init_ui() {
 	mapItems.append(background);
 	mapItems.append(drawOverlayUnderFogDarkness);
 
-
-
-	wrapper = $("<div id='VTTWRAPPER'/>");
+	wrapper = $("<div id='VTTWRAPPER' class='TLA'/>");
 	wrapper.css("margin-left", `${window.VTTMargin}px`);
 	wrapper.css("margin-top", `${window.VTTMargin}px`);
 	wrapper.css("paddning-right", "200px");
 	wrapper.css("padding-bottom", "200px");
-	wrapper.css("position", "absolute");
-	wrapper.css("top", "0px");
-	wrapper.css("left", "0px");
 	wrapper.width(window.width);
 	wrapper.height(window.height);
 
 	wrapper.append(VTT);
 	$("body").append(wrapper);
 
-	black_layer = $("<div id='black_layer'/>");
+	black_layer = $("<div id='black_layer' class='TLA'/>");
 	black_layer.width(window.width+window.VTTMargin);
 	black_layer.height(window.height+window.VTTMargin);
-	black_layer.css("position", "absolute");
-	black_layer.css("top", "0px");
-	black_layer.css("left", "0px");
 	black_layer.css("background", "black");
 	black_layer.css("opacity", "0");
 	$("body").append(black_layer);
@@ -2382,7 +2351,7 @@ function init_ui() {
 	token_menu();
 	
 
-	// EXPERRIMENTAL DRAG TO MOVE
+	// EXPERIMENTAL DRAG TO MOVE
 	let  curDown = false,
 		curYPos = 0,
 		curXPos = 0;
@@ -3029,6 +2998,10 @@ function init_help_menu() {
 						<dl>
 							<dt>Q</dt>
 							<dd>Show/hide sidebar</dd>
+						</dl>
+						<dl>
+							<dt>G</dt>
+							<dd>Show/hide high visibility grid</dd>
 						</dl>
 						<dl>
 							<dt>ESC</dt>
