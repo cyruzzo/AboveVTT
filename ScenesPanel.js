@@ -1203,9 +1203,10 @@ function edit_scene_dialog(scene_id) {
 			return
 		}
 	
-		const {hpps, vpps, offsetx, offsety, grid_color, grid_line_width, grid_subdivided, grid} = await get_edit_form_data()
+		const {hpps, vpps, offsetx, offsety, grid_color, grid_line_width, grid_subdivided, grid, grid_above_dark} = await get_edit_form_data()
 		// redraw grid with new information
 		window.CURRENT_SCENE_DATA.grid = grid;
+		window.CURRENT_SCENE_DATA.grid_above_dark = grid_above_dark;		
 		if(grid === "1" && window.CURRENT_SCENE_DATA.scale_check){
 			let conversion = window.CURRENT_SCENE_DATA.scale_factor * window.CURRENT_SCENE_DATA.conversion
 			redraw_grid(parseFloat(hpps*conversion), parseFloat(vpps*conversion), offsetx*conversion, offsety*conversion, grid_color, grid_line_width, grid_subdivided )
@@ -1982,6 +1983,7 @@ function default_scene_data() {
 		offsetx: 0,
 		offsety: 0,
 		grid: 0,
+		grid_above_dark: 0,
 		snap: 0,
 		reveals: [[0, 0, 0, 0, 2, 0, 1]],
 		order: Date.now(),

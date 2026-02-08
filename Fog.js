@@ -1308,6 +1308,7 @@ function grid_size(scaled = false, adjusted = false) {
 function redraw_grid(hpps=null, vpps=null, offsetX=null, offsetY=null, color=null, lineWidth=null, subdivide=null, dash=[]){
 	hide_wizarding_box();
 	clear_grid();
+	$("#VTT").css('--grid-overlay-on', !!window.CURRENT_SCENE_DATA.grid_above_dark);
 	draw_svg_grid(null, hpps, vpps, offsetX, offsetY, color, lineWidth, subdivide, dash);	
 }
 

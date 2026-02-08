@@ -3000,7 +3000,7 @@ function init_help_menu() {
 							<dd>Show/hide sidebar</dd>
 						</dl>
 						<dl>
-							<dt>G</dt>
+							<dt>${getShiftKeyName()}+G</dt>
 							<dd>Show/hide high visibility grid</dd>
 						</dl>
 						<dl>

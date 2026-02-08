@@ -501,8 +501,7 @@ Mousetrap.bind('shift+s', function (e) {
     }
 });
            
-//todo: TEMP!!
-Mousetrap.bind('g', function () { //toggle high visibility grid
+Mousetrap.bind('shift+g', function () { //toggle high visibility grid
     const vtt = $("#VTT");
     vtt.css('--grid-overlay-on', vtt.css('--grid-overlay-on') === '1' ? '0' : '1');
 });
