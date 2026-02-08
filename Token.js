@@ -675,18 +675,21 @@ class Token {
 	moveUpLeft()    { this.moveDirection(-1, -1); }
 	moveDownLeft()  { this.moveDirection( 1, -1); }
 	// grid move; dy/dx in abstract grid coords units	
-        moveDirection(dy,dx) { 
+        moveDirection(dy,dx) {
+		const gridType = window.CURRENT_SCENE_DATA.gridType;
 		const grsize = grid_size(false,true);
-		const addhpps = grsize[0] / (this.tinyToken() ? 2 : 1);
-		const addvpps = grsize[1] / (this.tinyToken() ? 2 : 1);
 		let tmpx = parseFloat(this.options.left);
-		let tmpy = parseFloat(this.options.top);		
-		// have to fudge the move a bit for hex grid to maintain consistent adjacency
-		// when a "math" arrow delta would land on a line (arbitrarily go either direction)
-		// this is harmless for square grid and just gets realigned
-		const xTieBreak = Math.round(tmpx / grsize[0]) % 2 ? 2 : -2;
-		const yTieBreak = Math.round(tmpy / grsize[1]) % 2 ? 2 : -2;		
-		this.move(tmpy + dy*addvpps + yTieBreak, tmpx + dx*addhpps + xTieBreak)
+		let tmpy = parseFloat(this.options.top);
+		if(gridType == 2 || gridType == 3) {		
+			// have to fudge the move a bit for hex grid to maintain consistent movement
+			// when a move "lands on" an edge (arbitrarily go either direction)
+			// todo: there is some small bug with this mechanism (it's not 100% consistent)
+			tmpx += Math.round(tmpx / grsize[0]) % 2 ? 1 : -1;
+			tmpy += Math.round(tmpy / grsize[1]) % 2 ? 1 : -1;
+		}
+		tmpx += dx * (grsize[0] / ((this.tinyToken() && gridType == 1) ? 2 : 1));
+		tmpy += dy * (grsize[1] / ((this.tinyToken() && gridType == 1) ? 2 : 1));
+		this.move(tmpy, tmpx)
 	}
 
 	/**
@@ -3831,7 +3834,10 @@ function snap_point_to_grid(mapX, mapY, forceSnap = false, tinyToken = false, to
 		// todo: why parseFloat here?
 		const offsetx = parseFloat(sd.offsetx);
 		const offsety = parseFloat(sd.offsety);
-		const [gridWidth, gridHeight] = grid_size();
+		let [gridWidth, gridHeight] = grid_size();
+		if(tinyToken) {
+			gridWidth /= 2; gridHeight /= 2;
+		}
 		const func = (roundDown ? Math.round : Math.floor);
 		const currentGridX = func((mapX - offsetx) / gridWidth);
 		const currentGridY = func((mapY - offsety) / gridHeight);
