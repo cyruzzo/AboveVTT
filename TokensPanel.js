@@ -1507,16 +1507,20 @@ async function create_and_place_token(listItem, hidden = undefined, specificImag
                 temp: 0
             };
         }
-        let newStatBlockInit = searchText.matchAll(/Initiative[\s\S]*?[\s>]([+-][0-9]+)/gi).next()
+        let newStatBlockInit = searchText.matchAll(/Initiative[\s\S]*?([\s>]([+-][0-9]+)|[\s>(](\d+)\)?)/gi).next()
 
         if(newStatBlockInit.value != undefined){
-            if(newStatBlockInit.value[1] != undefined)
-                options.customInit = newStatBlockInit.value[1];
+            options.customInit = newStatBlockInit.value[2];
+            options.customInitStatic = newStatBlockInit.value[3]; 
         }        
 
         const newInit = $(searchText).find('.custom-initiative.custom-stat').text();
         if(newInit){
-            options.customInit = newInit
+            const match = newInit.matchAll(/([+-][0-9]+)|(\d+)/gi).next()
+            if(match.value != undefined){
+                options.customInit = match.value[1];
+                options.customInitStatic = match.value[2]; 
+            }
         }
 
         let newAC = $(searchText).find('.custom-ac.custom-stat').text();

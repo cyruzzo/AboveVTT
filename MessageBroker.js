@@ -1630,11 +1630,12 @@ class MessageBroker {
 			if(msg.data.scale_factor == undefined || msg.data.scale_factor == ''){
 				msg.data.scale_factor = 1;
 			}
+			window.CURRENT_SCENE_DATA.conversion = window.CURRENT_SCENE_DATA.conversion || 1;
 			let isCurrentScene = window.CURRENT_SCENE_DATA?.id != undefined && msg.data.id == window.CURRENT_SCENE_DATA.id
 			let dmMapEqual = msg.data.dm_map == window.CURRENT_SCENE_DATA.dm_map && msg.data.dm_map_usable == '1' || msg.data.player_map == window.CURRENT_SCENE_DATA.player_map && msg.data.dm_map_usable == '0'
 			let dmMapToggleEqual = msg.data.dm_map_usable == window.CURRENT_SCENE_DATA.dm_map_usable
 			let playerMapEqual = msg.data.player_map == window.CURRENT_SCENE_DATA.player_map
-			let scaleFactorEqual = (msg.data.scale_factor == window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion ||
+			let scaleFactorEqual = (msg.data.scale_factor/window.CURRENT_SCENE_DATA.conversion == window.CURRENT_SCENE_DATA.scale_factor ||
 																		(msg.data.UVTTFile == 1  && msg.data.scale_factor == window.CURRENT_SCENE_DATA.scale_factor) || 
 																		((msg.data.scale_factor == undefined || msg.data.scale_factor=='') && window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion == 1))
 			let hppsEqual = window.CURRENT_SCENE_DATA.hpps==parseFloat(msg.data.hpps*msg.data.scale_factor)
@@ -1676,7 +1677,7 @@ class MessageBroker {
 				$("#VTT").css("--scene-scale", scaleFactor)
 				window.CURRENT_SCENE_DATA.width = mapWidth;
 				window.CURRENT_SCENE_DATA.height = mapHeight;
-				
+				await reset_canvas(false);
 
 				if(!isSameTokenLight){
 					for(let i in window.TOKEN_OBJECTS){
@@ -1684,7 +1685,7 @@ class MessageBroker {
 						setTokenLight(token, window.TOKEN_OBJECTS[i].options);
 					}
 				}
-				await reset_canvas(false);
+				
 				if(!window.DM || window.SelectedTokenVision)
 					check_token_visibility();
 			}
@@ -1804,13 +1805,13 @@ class MessageBroker {
 	
 						window.CURRENT_SCENE_DATA.conversion = 1;
 
-						if(!data.is_video && (mapHeight > 2500 || mapWidth > 2500)){
+						if (!data.is_video && (mapHeight > 1500 || mapWidth > 1500)){
 							let conversion = 2;
 							if(mapWidth >= mapHeight){
-								conversion = 1980 / mapWidth;
+								conversion = 1500 / mapWidth;
 							}
 							else{
-								conversion = 1980 / mapHeight;
+								conversion = 1500 / mapHeight;
 							}
 							mapHeight = mapHeight*conversion;
 							mapWidth = mapWidth*conversion;

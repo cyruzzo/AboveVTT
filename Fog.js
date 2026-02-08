@@ -1390,7 +1390,8 @@ function reset_canvas(apply_zoom=true) {
 		canvas.getContext("2d").clearRect(0, 0, canvas.width, canvas.height);
 		return;
 	}
-	
+
+	setVisionLightOffscreenCanvas(); //adding this here as it was previously being done every fill causing webgl issues
 	redraw_light_walls();
 	redraw_drawings();
 	redraw_drawn_light();
@@ -2068,6 +2069,40 @@ function redraw_drawn_light(darknessMoved = false){
 	lightCtx.drawImage(offscreenDraw, 0, 0); // draw to visible canvas only once so we render this once
 }
 
+function setVisionLightOffscreenCanvas(){
+	//To Do: look at zeroing these out when no bucket fills, vision are present in scene to save memory
+	const {sceneWidth, sceneHeight} = getSceneMapSize()
+	if (window.bucketFillCanvas == undefined) {
+		window.bucketFillCanvas = new OffscreenCanvas(sceneWidth, sceneHeight);
+		window.bucketFillCtx = window.bucketFillCanvas.getContext('2d');
+	}	
+	else{
+		window.bucketFillCanvas.width = sceneWidth;
+		window.bucketFillCanvas.height = sceneHeight;
+	}
+	if (window.particleOffScreenCombine == undefined) {
+		window.particleOffScreenCombine = new OffscreenCanvas(sceneWidth, sceneHeight);
+	}
+	else {
+		window.particleOffScreenCombine.width = sceneWidth;
+		window.particleOffScreenCombine.height = sceneHeight;
+	}
+	if (window.offScreenCombine == undefined) {
+		window.offScreenCombine = new OffscreenCanvas(sceneWidth, sceneHeight);
+	}
+	else {
+		window.offScreenCombine.width = sceneWidth;
+		window.offScreenCombine.height = sceneHeight;
+	}
+	if (window.offScreenCombine2 == undefined) {
+		window.offScreenCombine2 = new OffscreenCanvas(sceneWidth, sceneHeight);
+	}
+	else {
+		window.offScreenCombine2.width = sceneWidth;
+		window.offScreenCombine2.height = sceneHeight;
+	}
+
+}
 function redraw_light_walls(clear=true, editingWallPoints = false){
 	let showWallsToggle = $('#show_walls').hasClass('button-enabled');
 	let canvas = document.getElementById("walls_layer");	
@@ -2082,24 +2117,23 @@ function redraw_light_walls(clear=true, editingWallPoints = false){
 	else{
 		$('#walls_layer').css('display', 'none');
 	}
-		
+	const { sceneWidth, sceneHeight } = getSceneMapSize();
+
 	if(displayWalls == true || clear)
-		ctx.clearRect(0, 0, canvas.width, canvas.height);
+		ctx.clearRect(0, 0, sceneWidth, sceneHeight);
 
 
 
 	window.walls =[];
-	const sceneSize = getSceneMapSize();
-	let sceneMapHeight = sceneSize.sceneHeight;
-	let sceneMapWidth = sceneSize.sceneWidth;
 
-	let wall5 = new Boundary(new Vector(0, 0), new Vector(sceneMapWidth, 0), 0);
+
+	let wall5 = new Boundary(new Vector(0, 0), new Vector(sceneWidth, 0), 0);
 	window.walls.push(wall5);
-	let wall6 = new Boundary(new Vector(0, 0), new Vector(0, sceneMapHeight), 0);
+	let wall6 = new Boundary(new Vector(0, 0), new Vector(0, sceneHeight), 0);
 	window.walls.push(wall6);
-	let wall7 = new Boundary(new Vector(sceneMapWidth, 0), new Vector(sceneMapWidth, sceneMapHeight), 0);
+	let wall7 = new Boundary(new Vector(sceneWidth, 0), new Vector(sceneWidth, sceneHeight), 0);
 	window.walls.push(wall7);
-	let wall8 = new Boundary(new Vector(0, sceneMapHeight), new Vector(sceneMapWidth, sceneMapHeight), 0);
+	let wall8 = new Boundary(new Vector(0, sceneHeight), new Vector(sceneWidth, sceneHeight), 0);
 	window.walls.push(wall8);
 
 	const drawings = window.DRAWINGS.filter(d => d[1] == "wall");
@@ -2115,7 +2149,7 @@ function redraw_light_walls(clear=true, editingWallPoints = false){
 	else{
 		$('#VTT').css('--walls-up-shadow-percent', '0%');
 	}
-	const offscreenCanvas = new OffscreenCanvas(canvas.width, canvas.height);
+	const offscreenCanvas = new OffscreenCanvas(sceneWidth, sceneHeight);
 
 	const offscreenContext = offscreenCanvas.getContext('2d');
 	for (let i = 0; i < drawings.length; i++) {
@@ -2133,7 +2167,7 @@ function redraw_light_walls(clear=true, editingWallPoints = false){
 
 		scale = (scale == undefined) ?  currentSceneScale/currentSceneConversion : scale/currentSceneConversion;
 		let adjustedScale = scale/currentSceneScale;
-		lineWidth = Math.min(lineWidth, Math.max(lineWidth/window.ZOOM/scale, lineWidth/2));
+		lineWidth = Math.min(lineWidth, Math.max(lineWidth/window.ZOOM/scale, 1));
 		if (displayWalls) {
 				
 			if(!editingWallPoints && ((wallBottom != undefined && wallBottom != '') || (wallTop != undefined && wallTop != ''))){
@@ -5153,14 +5187,18 @@ function bucketFill(ctx, mouseX, mouseY, fogStyle = 'rgba(0,0,0,0)', fogType = 0
 	}
 
 	const isBlur = parseInt(blur) > 0;
-	ctx.save();
-	ctx.filter = isBlur ? `blur(${parseInt(blur)}px)` : `none`;
+	
+	const bucketFillCtx = window.bucketFillCtx;
+	bucketFillCtx.clearRect(0, 0, bucketFillCtx.canvas.width, bucketFillCtx.canvas.height);
+	bucketFillCtx.globalCompositeOperation = "lighten";
+	bucketFillCtx.filter = isBlur ? `blur(${parseInt(blur)}px)` : `none`;
 
 	const scaleFactor = window.CURRENT_SCENE_DATA.scale_factor ?? 1;
 	const scaledMouseX = mouseX * scaleFactor;
 	const scaledMouseY = mouseY * scaleFactor;
+
 	if (distance1 != 0) {
-		drawCircle(ctx, scaledMouseX, scaledMouseY, distance1 * scaleFactor, fogStyle, true, 0);
+		drawCircle(bucketFillCtx, scaledMouseX, scaledMouseY, distance1 * scaleFactor, fogStyle, true, 0);
 	}
 	if (distance2 != undefined) {
 		function halfLuminosity(rgbaStr) {
@@ -5179,31 +5217,37 @@ function bucketFill(ctx, mouseX, mouseY, fogStyle = 'rgba(0,0,0,0)', fogType = 0
 			return `rgba(${r}, ${g}, ${b}, ${a})`
 		}
 		distance2 += distance1;
-		drawCircle(ctx, scaledMouseX, scaledMouseY, distance2 * scaleFactor, halfLuminosity(fogStyle), true, 0);
+		drawCircle(bucketFillCtx, scaledMouseX, scaledMouseY, distance2 * scaleFactor, halfLuminosity(fogStyle), true, 0);
 	}
 	if (window.lightDrawingLosCache == undefined) {
 		window.lightDrawingLosCache = {};
 	}
 	const cacheKey = `${mouseX},${mouseY},${distance1 ?? 0},${distance2 ?? 0}`;
 	const cachedData = window.lightDrawingLosCache[cacheKey];
-	ctx.globalCompositeOperation = "lighten";
+	bucketFillCtx.filter = "none";
+	bucketFillCtx.globalCompositeOperation = "destination-in";
 	if (cachedData !== undefined &&
 		!darknessMoved &&
 		cachedData.wallLength == allWalls.length &&
 		cachedData.sceneId == window.CURRENT_SCENE_DATA.id &&
 		cachedData.scaleChecked == window.CURRENT_SCENE_DATA.scale_factor) {
-		drawPolygon(ctx, cachedData.lightPolygon, "#000", true);
+		drawPolygon(bucketFillCtx, cachedData.lightPolygon, "#000", true);
 	}
 	else {
-		particleLook(ctx, allWalls, undefined, fog, undefined, fogType, true, islight, undefined, 0, 0);
+		particleLook(bucketFillCtx, allWalls, undefined, fog, undefined, fogType, false, islight, undefined, 0, 0);
+		drawPolygon(bucketFillCtx, window.lightPolygon, "#000", true);
 		window.lightDrawingLosCache[cacheKey] = {
-			lightPolygon: lightPolygon,
+			lightPolygon: window.lightPolygon,
 			wallLength: allWalls.length,
 			sceneId: window.CURRENT_SCENE_DATA.id,
 			scaleChecked: window.CURRENT_SCENE_DATA.scale_factor
 		}
 	}
-	ctx.restore();
+
+	ctx.globalCompositeOperation = 'lighten';
+	ctx.drawImage(window.bucketFillCanvas, 0, 0);
+
+
 }
 
 function save3PointRect(e){
@@ -6641,7 +6685,6 @@ function initParticle(pos, divisor) {
 	window.PARTICLE.pos = pos;
 	window.PARTICLE.rays = [];
 	window.PARTICLE.baseAngles = [];
-	window.PARTICLE.featureRayCache = {};
 	window.PARTICLE.divisor =  divisor || 40; // the degree of approximation
 	for (let a = 0; a < 360; a += window.PARTICLE.divisor) {
     	window.PARTICLE.rays.push(new Ray(window.PARTICLE.pos, degreeToRadian(a)));
@@ -6758,11 +6801,7 @@ function buildActiveRays(particle, walls, limit) {
 			if(used.has(angleRounded))
 				continue;
 			used.add(angleRounded);
-			let ray = particle.featureRayCache[angleRounded];
-			if(ray === undefined){
-				ray = new Ray(particle.pos, degreeToRadian(angleDeg));
-				particle.featureRayCache[angleRounded] = ray;
-			}
+			ray = new Ray(particle.pos, degreeToRadian(angleDeg));
 			combined.push({ angle: angleDeg, ray: ray });
 		}
 	}
@@ -6772,9 +6811,9 @@ function buildActiveRays(particle, walls, limit) {
 
 function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogType=0, draw=true, islight=false, auraId=undefined, blur=0, activeRayLimit=0) {
 
-	lightPolygon = [];
-	movePolygon = [];
-	noDarknessPolygon = [];
+	let lightPolygon = [];
+	let movePolygon = [];
+	let noDarknessPolygon = [];
 
 	let canSeeDarkness = (auraId !== undefined && (window.TOKEN_OBJECTS[auraId].options.sight == 'devilsight' || window.TOKEN_OBJECTS[auraId].options.sight =='truesight'));
 	let tokenElev = 0;
@@ -7111,11 +7150,9 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
 						const canvasWidth = getSceneMapSize().sceneWidth;
 						const canvasHeight = getSceneMapSize().sceneHeight;
 
-						if (window.offScreenCombine == undefined) {
-							window.offScreenCombine = new OffscreenCanvas(canvasWidth, canvasHeight);
-						}
+
 						const isBlur = parseInt(blur) > 0;
-						combineCtx = window.offScreenCombine.getContext('2d');
+						combineCtx = window.particleOffScreenCombine.getContext('2d');
 						combineCtx.clearRect(0, 0, canvasWidth, canvasHeight);
 						combineCtx.globalCompositeOperation = "source-over";
 
@@ -7126,24 +7163,28 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
 						if (isBlur) {
 							combineCtx.filter = `none`;
 							combineCtx.globalCompositeOperation = "destination-in";
-							drawPolygon(combineCtx, window.lightPolygon, "#000", true);
+							drawPolygon(combineCtx, lightPolygon, "#000", true);
 						}
 
 						combineCtx.globalCompositeOperation = "destination-out";
 						drawPolygon(combineCtx, lightPolygon, "#000", false, 10);
 						ctx.save();
 						ctx.globalCompositeOperation = 'lighten';
-						ctx.drawImage(window.offScreenCombine, 0, 0);
+						ctx.drawImage(window.particleOffScreenCombine, 0, 0);
 						ctx.restore();
 						return;
 					}
 					ctx.filter = `none`;
 					ctx.globalCompositeOperation = "destination-in";
-					drawPolygon(ctx, window.lightPolygon, "#000", true);
+					drawPolygon(ctx, lightPolygon, "#000", true);
 				}	
 			}
 		}
-	} 		
+	} 	
+	
+	window.lightPolygon = lightPolygon;
+	window.movePolygon = movePolygon;
+	window.noDarknessPolygon = noDarknessPolygon;
 };
 
 function rectLineIntersection(x1, y1, x2, y2, rectx, rexty, rectw, recth) {
@@ -7239,25 +7280,9 @@ function redraw_light(darknessMoved = false, limitActiveRays = 0) {
 	if(window.PARTICLE == undefined){
 		initParticle(new Vector(200, 200), 1);
 	}
-	if(window.offScreenCombine == undefined){
-		window.offScreenCombine = new OffscreenCanvas(canvasWidth, canvasHeight);
-	}
-	else{
-		window.offScreenCombine.width = canvasWidth;
-		window.offScreenCombine.height = canvasHeight;
-	}
+
 
 	const combineCtx = window.offScreenCombine.getContext("2d");
-
-
-	if (window.offScreenCombine2 == undefined) {
-		window.offScreenCombine2 = new OffscreenCanvas(canvasWidth, canvasHeight);
-	}
-	else {
-		window.offScreenCombine2.width = canvasWidth;
-		window.offScreenCombine2.height = canvasHeight;
-	}
-
 	const combineCtx2 = window.offScreenCombine2.getContext("2d");
 
 
@@ -7447,16 +7472,16 @@ function redraw_light(darknessMoved = false, limitActiveRays = 0) {
 			}
 			particleLook(context, allWalls, 100000, undefined, undefined, undefined, false, false, auraId, undefined, limitActiveRays);  // if the token has moved or walls have changed look for a new vision poly. This function takes a lot of processing time - so keeping this limited is prefered.
 
-			let pts = lightPolygon
+			let pts = window.lightPolygon
 				.map(p => `${p.x / adjustScale}px ${p.y / adjustScale}px`)
 				.join(', ');
 
 		
 
 			window.lineOfSightPolygons[auraId] = {
-				polygon: lightPolygon,
-				move: movePolygon,
-				noDarkness: noDarknessPolygon,
+				polygon: window.lightPolygon,
+				move: window.movePolygon,
+				noDarkness: window.noDarknessPolygon,
 				x: tokenPos.x,
 				y: tokenPos.y,
 				numberofwalls: allWalls.length,
@@ -7473,7 +7498,7 @@ function redraw_light(darknessMoved = false, limitActiveRays = 0) {
 
 
 			if (window.lineOfSightPolygons[auraId] !== undefined && (window.TOKEN_OBJECTS[auraId].options.sight === 'devilsight' || window.TOKEN_OBJECTS[auraId].options.sight === 'truesight')) {
-				let pts = noDarknessPolygon
+				let pts = window.noDarknessPolygon
 					.map(p => `${p.x / adjustScale}px ${p.y / adjustScale}px`)
 					.join(', ');
 				window.lineOfSightPolygons[auraId].devilsightClip = pts;
@@ -7484,7 +7509,7 @@ function redraw_light(darknessMoved = false, limitActiveRays = 0) {
 			if (window.lightAuraClipPolygon === undefined) {
 				window.lightAuraClipPolygon = {};
 			}
-			clipped_light(auraId, lightPolygon, playerTokenId, canvasWidth, canvasHeight, darknessBoundarys, selectedIds.length);
+			clipped_light(auraId, window.lightPolygon, playerTokenId, canvasWidth, canvasHeight, darknessBoundarys, selectedIds.length);
 		}
 
 
@@ -7492,9 +7517,9 @@ function redraw_light(darknessMoved = false, limitActiveRays = 0) {
 		
 		combineCtx2.clearRect(0, 0, canvasWidth, canvasHeight);
 		combineCtx2.globalCompositeOperation = "source-over";
-		drawPolygon(combineCtx2, lightPolygon, "#FFF", true);
+		drawPolygon(combineCtx2, window.lightPolygon, "#FFF", true);
 		combineCtx2.globalCompositeOperation = "destination-out";
-		drawPolygon(combineCtx2, lightPolygon, "#000", false, 10);
+		drawPolygon(combineCtx2, window.lightPolygon, "#000", false, 10);
 
 		if (window.lightAuraClipPolygon[auraId]?.light !== undefined) {
 			combineCtx.globalCompositeOperation = 'lighten';
@@ -7523,7 +7548,7 @@ function redraw_light(darknessMoved = false, limitActiveRays = 0) {
 					drawCircle(tempDarkvisionCtx, window.lightAuraClipPolygon[auraId].middle.x, window.lightAuraClipPolygon[auraId].middle.y, window.lightAuraClipPolygon[auraId].darkvision, 'white')
 
 					tempDarkvisionCtx.globalCompositeOperation = 'destination-in';
-					drawPolygon(tempDarkvisionCtx, noDarknessPolygon, 'rgba(255, 255, 255, 1)', true);
+					drawPolygon(tempDarkvisionCtx, window.noDarknessPolygon, 'rgba(255, 255, 255, 1)', true);
 					offscreenContext.globalCompositeOperation = 'source-over';
 					offscreenContext.drawImage(tempDarkvisionCanvas, 0, 0)
 				}
@@ -7548,8 +7573,8 @@ function redraw_light(darknessMoved = false, limitActiveRays = 0) {
 
 			$(`.aura-element-container-clip[id='${auraId}'] [id*='vision_']`).toggleClass('notVisible', false);
 			offscreenContext.globalCompositeOperation = "lighten";
-			drawPolygon(offscreenContext, lightPolygon, 'rgba(255, 255, 255, 1)', true, 6, undefined, undefined, undefined, true, true); //draw to offscreen canvas so we don't have to render every draw and use this for a mask	
-			drawPolygon(moveOffscreenContext, movePolygon, 'rgba(255, 255, 255, 1)', true, 6, undefined, undefined, undefined, true, true); //draw to offscreen canvas so we don't have to render every draw and use this for a mask
+			drawPolygon(offscreenContext, window.lightPolygon, 'rgba(255, 255, 255, 1)', true, 6, undefined, undefined, undefined, true, true); //draw to offscreen canvas so we don't have to render every draw and use this for a mask	
+			drawPolygon(moveOffscreenContext, window.movePolygon, 'rgba(255, 255, 255, 1)', true, 6, undefined, undefined, undefined, true, true); //draw to offscreen canvas so we don't have to render every draw and use this for a mask
 
 		}
 
@@ -7718,13 +7743,13 @@ function getTokenVision(tokenId, darknessMoved){
 	particleLook(undefined, allWalls, 100000, undefined, undefined, undefined, false, false, tokenId);  // if the token has moved or walls have changed look for a new vision poly. This function takes a lot of processing time - so keeping this limited is prefered.
 	const adjustScale = (window.CURRENT_SCENE_DATA.scale_factor != undefined) ? window.CURRENT_SCENE_DATA.scale_factor : 1;
 	let path = "";
-	for(let i = 0; i < lightPolygon.length; i++){
-		path += (i && "L" || "M") + lightPolygon[i].x/adjustScale+','+lightPolygon[i].y/adjustScale
+	for (let i = 0; i < window.lightPolygon.length; i++){
+		path += (i && "L" || "M") + window.lightPolygon[i].x / adjustScale + ',' + window.lightPolygon[i].y/adjustScale
 	}
 	window.lineOfSightPolygons[tokenId] = {
-		polygon: lightPolygon,
-		move: movePolygon,
-		noDarkness: noDarknessPolygon,
+		polygon: window.lightPolygon,
+		move: window.movePolygon,
+		noDarkness: window.noDarknessPolygon,
 		x: tokenPos.x,
 		y: tokenPos.y,
 		numberofwalls: walls.length+darknessBoundarys.length,
@@ -7734,8 +7759,8 @@ function getTokenVision(tokenId, darknessMoved){
 	}
 	if(window.lineOfSightPolygons[tokenId] !== undefined &&(window.TOKEN_OBJECTS[tokenId].options.sight === 'devilsight' || window.TOKEN_OBJECTS[tokenId].options.sight === 'truesight')){
 		let path = "";
-		for(let i = 0; i < noDarknessPolygon.length; i++){
-			path += (i && "L" || "M") + noDarknessPolygon[i].x/adjustScale+','+noDarknessPolygon[i].y/adjustScale
+		for (let i = 0; i < window.noDarknessPolygon.length; i++){
+			path += (i && "L" || "M") + window.noDarknessPolygon[i].x / adjustScale + ',' + window.noDarknessPolygon[i].y/adjustScale
 		}
 		window.lineOfSightPolygons[tokenId].devilsightClip = path;
 	}
