@@ -1306,11 +1306,17 @@ function grid_size(scaled = false, adjusted = false) {
 }
 
 function redraw_grid(hpps=null, vpps=null, offsetX=null, offsetY=null, color=null, lineWidth=null, subdivide=null, dash=[]){
+	hide_wizarding_box();
 	clear_grid();
 	draw_svg_grid(null, hpps, vpps, offsetX, offsetY, color, lineWidth, subdivide, dash);	
 }
 
-//See Main.js for styling of wiz box
+function hide_wizarding_box() {
+	const grid = document.getElementById('wizbox-grid');
+	const hex = document.getElementById('wizbox-hex');	
+	grid.setAttribute('visibility', 'hidden');
+	hex.setAttribute('visibility', 'hidden');
+}
 function draw_wizarding_box() {
 	const sd = window.CURRENT_SCENE_DATA;
 	const svg = document.getElementById("wizbox");
@@ -1326,20 +1332,20 @@ function draw_wizarding_box() {
 	const grid = document.getElementById('wizbox-grid');
 	const hex = document.getElementById('wizbox-hex');	
 	if($('#gridType input:checked').val() == 1){
-		grid.setAttribute('visibility', 'visible');
 		hex.setAttribute('visibility', 'hidden');
 		const width = al2.x - al1.x;
 		const height = al2.y - al1.y;
 		grid.setAttribute('transform', `translate(${al1.x}, ${al1.y}) scale(${width}, ${height})`);
+		grid.setAttribute('visibility', 'visible');
 	} else {
 		const hexedge = Math.abs(al2.y - al1.y) / 3;
 		const rotate = $('#gridType input:checked').val() == 3 ? 90 : 0;
 		const adjx = sd.scaleAdjustment?.x || 1.0;
 		const adjy = sd.scaleAdjustment?.y || 1.0;
 		//todo deal with translate for adjx/adjy
-		hex.setAttribute('visibility', 'visible');
 		grid.setAttribute('visibility', 'hidden');
-		hex.setAttribute('transform', `translate(${al1.x * adjx}, ${al1.y * adjy}) scale(${hexedge*adjx}, ${hexedge*adjy}) rotate(${rotate})`);		
+		hex.setAttribute('transform', `translate(${al1.x * adjx}, ${al1.y * adjy}) scale(${hexedge*adjx}, ${hexedge*adjy}) rotate(${rotate})`);
+		hex.setAttribute('visibility', 'visible');
 	}
 }
 
@@ -1416,10 +1422,7 @@ function reset_canvas(apply_zoom=true) {
 		//alert(startX+ " "+startY);
 		if (window.WIZARDING) {
 			draw_wizarding_box();
-		}
-		//alert('inizio 1');
-
-		if (!window.WIZARDING) {
+		} else {
 			redraw_grid();
 			redraw_alphanum_grid();
 		}
@@ -3082,7 +3085,7 @@ function drawing_mousedown(e) {
 		const hpps = window.CURRENT_SCENE_DATA.gridType == 2 ? window.CURRENT_SCENE_DATA.vpps : window.CURRENT_SCENE_DATA.hpps;
 
 		clear_temp_canvas()
-		let { x, y } = snap_point_to_grid(window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, true, undefined, undefined, undefined, true);
+		let { x, y } = snap_point_to_grid(window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, true);
 		window.BRUSHPOINTS.push([Math.round(x), Math.round(y)])
 		window.BRUSHPOINTS = Array.from(new Set(window.BRUSHPOINTS.map(JSON.stringify)), JSON.parse)		
 		if(window.CURRENT_SCENE_DATA.gridType == '1'){
@@ -3482,7 +3485,7 @@ function drawing_mousemove(e) {
 			
 			window.temp_context.fillStyle = window.DRAWCOLOR;
 			clear_temp_canvas()
-			let { x, y } = snap_point_to_grid(mouseX, mouseY, true, undefined, undefined, undefined, true);
+			let { x, y } = snap_point_to_grid(mouseX, mouseY, true);
 			window.BRUSHPOINTS.push([Math.round(x), Math.round(y)])
 			window.BRUSHPOINTS = Array.from(new Set(window.BRUSHPOINTS.map(JSON.stringify)), JSON.parse)
 			

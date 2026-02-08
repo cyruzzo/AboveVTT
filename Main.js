@@ -2169,7 +2169,7 @@ function init_ui() {
 	grid_svg_overlay_container.css({ transform: "scale(var(--scene-scale))", "transform-origin": "top left"});
 
 	grid_svg_overlay_container.css("pointer-events", "none");
-	grid_svg_overlay_container.css("z-index", "40"); //todo: adjust
+	grid_svg_overlay_container.css("z-index", "22");
 	grid_svg_overlay_container.append(grid);
 	//change the wizbox styling here
 	const wizbox = $(

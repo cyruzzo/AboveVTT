@@ -708,12 +708,8 @@ class Token {
 		
 		this.prepareWalkableArea()
 		
-		//todo verify if this is center or TL
-		//use center of token as snap position
 		let tokenPosition = snap_point_to_grid(left + this.options.size/2, top + this.options.size/2,
-						       true, this.tinyToken(), this.options.size, true)
-		
-		
+						       true, this.tinyToken(), this.options.size);
 
 		// Stop movement if new position is outside of the scene
 		if (
@@ -3238,9 +3234,13 @@ class Token {
 						let tokenY = (ui.position.top - ((zoom-parseFloat(window.orig_zoom)) * parseFloat(self.sizeHeight())/2)) / zoom;
 						let tinyToken = (Math.round(parseFloat(window.TOKEN_OBJECTS[this.dataset.id].options.gridSquares)*2)/2 < 1) || window.TOKEN_OBJECTS[this.dataset.id].isAoe();
 
-						if (should_snap_to_grid() && (window.CURRENT_SCENE_DATA.gridType == '2' || window.CURRENT_SCENE_DATA.gridType == '3')) {
-							tokenX +=  parseFloat(window.CURRENT_SCENE_DATA.hpps) / (tinyToken ? 4 : 2);
-							tokenY +=  parseFloat(window.CURRENT_SCENE_DATA.vpps) /  (tinyToken ? 4 : 2);
+						if (should_snap_to_grid()) { // && (window.CURRENT_SCENE_DATA.gridType == '2' || window.CURRENT_SCENE_DATA.gridType == '3')) {
+							//we really want the exact mouse position -
+							//someone fix this if there is a better way with this draggable impl
+							const sd = window.CURRENT_SCENE_DATA;
+							const rect = document.querySelector('#scene_map_container').getBoundingClientRect();
+							tokenX = (event.clientX - rect.left) * $("#scene_map").width() * sd.scale_factor / rect.width;
+							tokenY = (event.clientY - rect.top) * $("#scene_map").height() * sd.scale_factor / rect.height
 						}
 						//snap to where mouse is
 						let tokenPosition = snap_point_to_grid(tokenX, tokenY, undefined, tinyToken, self.options.size);
@@ -3779,12 +3779,10 @@ function should_snap_to_grid() {
 }
 
 //arrowKeys: special function
-// assumes mapX/Y is current and should just re-align (TODO:)
 // tinytoken - only matters for hex and arrowmode
 // tokenWidth only matters for hex grid
 // rounddown only matters for square ( floor instead of round)
-function snap_point_to_grid(mapX, mapY, forceSnap = false, tinyToken = false, tokenWidth = 0,
-			    arrowKeys=false, roundDown=false) {
+function snap_point_to_grid(mapX, mapY, forceSnap = false, tinyToken = false, tokenWidth = 0) {
 	const sd = window.CURRENT_SCENE_DATA;
 	//todo implement tinytoken
 	if (forceSnap || should_snap_to_grid()) {
@@ -3803,12 +3801,13 @@ function snap_point_to_grid(mapX, mapY, forceSnap = false, tinyToken = false, to
 		if(tinyToken) {
 			gridWidth /= 2; gridHeight /= 2;
 		}
-		const func = (roundDown ? Math.round : Math.floor);
-		const currentGridX = func((mapX - offsetx) / gridWidth);
-		const currentGridY = func((mapY - offsety) / gridHeight);
+		const currentGridX = (mapX - offsetx) / gridWidth;
+		const currentGridY = (mapY - offsety) / gridHeight;
+		console.log("mapX", mapX, mapY, offsetx, offsety, gridWidth, gridHeight, currentGridX, currentGridY);
 		return {
-			x: Math.ceil((currentGridX * gridWidth) + offsetx),
-			y: Math.ceil((currentGridY * gridHeight) + offsety)
+			//todo not sure what ceil is for here
+			x: Math.floor(currentGridX) * gridWidth + offsetx,
+			y: Math.floor(currentGridY) * gridHeight + offsety
 		}
 	} else {
 		return { x: mapX, y: mapY };
