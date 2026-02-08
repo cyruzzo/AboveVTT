@@ -5413,7 +5413,7 @@ function bucketFill(ctx, mouseX, mouseY, fogStyle = 'rgba(0,0,0,0)', fogType = 0
 	}
 
 	const isBlur = parseInt(blur) > 0;
-
+	
 	const bucketFillCtx = window.bucketFillCtx;
 	bucketFillCtx.clearRect(0, 0, bucketFillCtx.canvas.width, bucketFillCtx.canvas.height);
 	bucketFillCtx.globalCompositeOperation = "lighten";
@@ -6911,7 +6911,6 @@ function initParticle(pos, divisor) {
 	window.PARTICLE.pos = pos;
 	window.PARTICLE.rays = [];
 	window.PARTICLE.baseAngles = [];
-	window.PARTICLE.featureRayCache = {};
 	window.PARTICLE.divisor =  divisor || 40; // the degree of approximation
 	for (let a = 0; a < 360; a += window.PARTICLE.divisor) {
     	window.PARTICLE.rays.push(new Ray(window.PARTICLE.pos, degreeToRadian(a)));
@@ -7028,11 +7027,7 @@ function buildActiveRays(particle, walls, limit) {
 			if(used.has(angleRounded))
 				continue;
 			used.add(angleRounded);
-			let ray = particle.featureRayCache[angleRounded];
-			if(ray === undefined){
-				ray = new Ray(particle.pos, degreeToRadian(angleDeg));
-				particle.featureRayCache[angleRounded] = ray;
-			}
+			ray = new Ray(particle.pos, degreeToRadian(angleDeg));
 			combined.push({ angle: angleDeg, ray: ray });
 		}
 	}
