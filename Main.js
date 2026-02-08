@@ -2172,7 +2172,7 @@ function init_ui() {
 	grid_svg_overlay_container.css("z-index", "40"); //todo: adjust
 	grid_svg_overlay_container.append(grid);
 	//change the wizbox styling here
-	const wb = 
+	const wizbox = $(
 `<svg id="main-svg" style="display: block; width: 100%; height: 100%;" xmlns="http://www.w3.org/2000/svg">
         <style>
             .grid-box {
@@ -2194,8 +2194,8 @@ function init_ui() {
             <use href="#wiz-hex" x="0" y="0" />
             <use href="#wiz-hex" transform="translate(0, -1.5) translate(0.866, 0)" /> <use href="#wiz-hex" transform="translate(0.866, 1.5)" />  <use href="#wiz-hex" transform="translate(-0.866, 1.5)" /> <use href="#wiz-hex" transform="translate(-1.732, 0)" />   <use href="#wiz-hex" transform="translate(-0.866, -1.5)" /><use href="#wiz-hex" transform="translate(1.732, 0)" />    </g>
     </svg>
-`;
-	const wizbox = $(wb);
+`
+	);
 	wizbox.css("z-index", "19");
 	
 	const walls = $("<canvas id='walls_layer' class='TLA'/>");

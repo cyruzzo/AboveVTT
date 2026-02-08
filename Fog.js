@@ -1339,7 +1339,7 @@ function draw_wizarding_box() {
 		//todo deal with translate for adjx/adjy
 		hex.setAttribute('visibility', 'visible');
 		grid.setAttribute('visibility', 'hidden');
-		hex.setAttribute('transform', `translate(${al1.x}, ${al1.y}) scale(${hexedge*adjx}, ${hexedge*adjy}) rotate(${rotate})`);		
+		hex.setAttribute('transform', `translate(${al1.x * adjx}, ${al1.y * adjy}) scale(${hexedge*adjx}, ${hexedge*adjy}) rotate(${rotate})`);		
 	}
 }
 
