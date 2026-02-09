@@ -4,7 +4,6 @@
  * so be thoughtful about which functions go in this file
  * */
 
-
 /** The first time we load, collect all the things that we need.
  * Remember that this is injected from both Load.js and LoadCharacterPage.js
  * If you need to add things for when AboveVTT is actively running, do that in Startup.js
@@ -196,7 +195,8 @@ function inject_chat_buttons() {
     Advantage: 2d20kh1 (keep highest)&#xa;
     Disadvantage: 2d20kl1 (keep lowest)&#xa;
     '/w [playername] a whisper to playername'&#xa;
-    '/dm for a shortcut to whisper THE DM'"><input id='chat-text' autocomplete="off" placeholder='Chat, /r 1d20+4..'></div>`
+    '/dm for a shortcut to whisper THE DM'&#xa;
+    '/timer Timer Title 5:00' or '/timer 5:00'"><input id='chat-text' autocomplete="off" placeholder='Chat, /r 1d20+4..'></div>`
   );
   const diceRoller = $(`
     <div class="dice-roller">
@@ -1543,6 +1543,33 @@ function showTempMessage(messageString){
     messageBox.fadeOut(1000, function() { $(this).remove(); });
   }, 1000);
 
+}
+
+function create_gamelog_timer(message, duration = 60000, startTime = Date.now()){
+  let timerId;
+  const startTimeString = `${`${Math.floor(duration / 60000)}`.padStart(2, '0')}:${`${Math.floor((duration % 60000) / 1000)}`.padStart(2, '0')}`;
+  const timerBox = $(`<div class='chatTimer' data-start='${startTime}'><span class='timerMessage'>${message}</span><span class='timerBar'>${startTimeString}</span></div>`);
+  const closeButton = $(`<span class='timerCloseButton'>&#10006;</span>`);
+  closeButton.on('click', function(){
+    clearInterval(timerId);
+    timerBox.remove();
+  });
+  timerBox.append(closeButton);
+  $(".glc-game-log > [class*='-GameLog']").before(timerBox);
+  timerId = setInterval(function(){
+    const elapsed = Date.now() - startTime;
+    const remaining = duration - elapsed;
+    if(remaining <= 0){
+      clearInterval(timerId);
+      setTimeout(function(){
+        timerBox.remove();
+      }, 5000)
+      timerBox.find('.timerBar').css('color', 'red');
+    } else {
+      const timeRemainingString = `${`${Math.floor(remaining / 60000)}`.padStart(2, '0')}:${`${Math.floor((remaining % 60000) / 1000)}`.padStart(2, '0')}`;
+      timerBox.find('.timerBar').text(timeRemainingString);
+    }
+  });
 }
 /** The string "THE DM" has been used in a lot of places.
  * This prevents typos or case sensitivity in strings.

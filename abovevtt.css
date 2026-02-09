@@ -10534,6 +10534,26 @@ button.journal-view-button.journal-button img {
     border: 1px solid #d8e1e8; 
     border-radius: 3px;
 }
+.chatTimer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position:relative;
+    width: calc(100% - 40px);
+    span.timerMessage {
+        font-weight: bold;
+        font-size: 16px;
+        max-width: 80%;
+    }
+    span.timerBar {
+        font-size: 20px;
+    }
+    .timerCloseButton{
+        position:absolute;
+        top: 5px;
+        right: 5px;
+    }
+}
 
 .custom-stat-block input.injected-input {
     margin-left: 5px;

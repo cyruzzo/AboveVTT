@@ -675,6 +675,12 @@ class MessageBroker {
 					});
 				}
 			}
+			if(msg.eventType == "custom/myVTT/createTimer"){
+				const {type, message, startTime, duration} = msg.data;
+				if(type === "gamelog"){
+					create_gamelog_timer(message, duration, startTime)
+				}
+			}
 			if (msg.eventType == "custom/myVTT/open-url-embed"){
 				const url = msg.data;
 				display_url_embeded(url);
