@@ -19,12 +19,28 @@ class ChatObserver {
                     return;
                 }
                 let slashCommandMatch = value.match(diceRollCommandRegex);
+                const timerCommandRegex = /^\/timer\s([\w\s\d]+\s)?(\d+):(\d+)/gi; 
+                let timerCommandMatch = timerCommandRegex.exec(value);
                 if (slashCommandMatch !== null) {
                     if (self.#parseSlashCommand(value)) {
                         self.#didSubmit(input, value);
                     } else {
                         self.#shake(input);
                     }
+                } else if(timerCommandMatch !== null){
+                    const message = timerCommandMatch[1]?.trim() || "";
+                    const minutes = parseInt(timerCommandMatch[2]);
+                    const seconds = parseInt(timerCommandMatch[3]);
+                    const duration = (minutes * 60 + seconds) * 1000;
+                    const startTime = Date.now();
+                    window.MB.sendMessage("custom/myVTT/createTimer", {
+                        type: "gamelog",
+                        message,
+                        duration,
+                        startTime
+                    });
+                    create_gamelog_timer(message, duration, startTime);
+                    self.#didSubmit(input, value);
                 } else {
                     self.#sendChatMessage(value);
                     self.#didSubmit(input, value);
@@ -69,8 +85,6 @@ class ChatObserver {
             didSend = send_rpg_dice_to_ddb(expression, window.pc?.name, window.pc?.image);
         }
         return didSend;
-        
-
     }
 
     async #sendChatMessage(text) {
