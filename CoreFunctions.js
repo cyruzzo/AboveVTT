@@ -1566,6 +1566,10 @@ function create_gamelog_timer(message, duration = 60000, startTime = Date.now())
       }, 5000)
       timerBox.find('.timerBar').css('color', 'red');
     } else {
+      const timerExists = $(`.chatTimer[data-start="${startTime}"]`).length > 0;
+      if(!timerExists){
+        $(".glc-game-log > [class*='-GameLog']").before(timerBox);
+      }
       const timeRemainingString = `${`${Math.floor(remaining / 60000)}`.padStart(2, '0')}:${`${Math.floor((remaining % 60000) / 1000)}`.padStart(2, '0')}`;
       timerBox.find('.timerBar').text(timeRemainingString);
     }
