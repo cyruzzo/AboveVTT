@@ -1176,8 +1176,43 @@ function token_context_menu_expanded(tokenIds, e) {
 							t.options.init = undefined;
 							window.all_token_objects[t.options.id].options.init = undefined;
 						}
-						ct_add_token(t, false, undefined, clickEvent.shiftKey, clickEvent.ctrlKey)
-						t.update_and_sync();
+						const callback = (monsterItem) => {
+							ct_add_token(t, false, undefined, clickEvent.shiftKey, clickEvent.ctrlKey)
+
+							const addLairToken = monsterItem?.monsterData?.hasLair;
+							
+							if(addLairToken) {
+								const id = uuid();
+								const lairToken = new Token({
+									...t.options,
+									name: `${t.options.name} (Lair)`,
+									image: "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/letters/EXCLAMATION.png",
+									imgsrc: "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/letters/EXCLAMATION.png",
+									id: id,
+									init: 20,
+									ct_show: false,
+									revealname: false,
+									hasLair: false, 
+								});
+								window.TOKEN_OBJECTS[id] = lairToken
+								window.all_token_objects[id] = lairToken;
+								window.all_token_objects[t.options.id].options.lairTokenId = id;
+								ct_add_token(lairToken, false, true, false, false);
+							}
+							t.update_and_sync();
+						}
+						if(t.options.monster > 0 || t.options.monster == 'open5e' || t.options.monster == 'customStat' ){
+							const open5e = t.options.monster == 'open5e';
+							const monsterId = open5e ? t.options.itemId : t.options.monster;
+							let cachedMonsterItem = open5e ? cached_open5e_items[monsterId] : cached_monster_items[monsterId];
+							if (cachedMonsterItem) {
+								callback(cachedMonsterItem);
+							} else {
+								fetch_and_cache_monsters([t], callback(cachedMonsterItem));
+							}
+						}else {
+							callback();
+						}
 					});
 				}
 			}

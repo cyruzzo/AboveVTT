@@ -1734,16 +1734,24 @@ function ct_load(data=null){
 
 
 function ct_remove_token(token,persist=true) {
-
-	let id = token.options.id;
-	if ($("#combat_area tr[data-target='" + id + "']").length > 0) {
-		if ($("#combat_area tr[data-target='" + id + "']").attr('data-current') == "1") {
-			$("#combat_next_button").click();
+	if(token){
+		let id = token.options.id;
+		if ($("#combat_area tr[data-target='" + id + "']").length > 0) {
+			if ($("#combat_area tr[data-target='" + id + "']").attr('data-current') == "1") {
+				$("#combat_next_button").click();
+			}
+			$("#combat_area tr[data-target='" + id + "']").remove(); // delete token from the combat tracker if it's there
 		}
-		$("#combat_area tr[data-target='" + id + "']").remove(); // delete token from the combat tracker if it's there
-	}
-	ct_update_popout()
-	if (persist) {
-		debounceCombatPersist();
+		if(token?.options.lairTokenId){
+			let lairTokenId = token.options.lairTokenId;
+			ct_remove_token(window.all_token_objects[lairTokenId]);
+			if(window.all_token_objects[lairTokenId]){
+				window.all_token_objects[lairTokenId].delete();
+			}
+		}
+		ct_update_popout()
+		if (persist) {
+			debounceCombatPersist();
+		}
 	}
 }
