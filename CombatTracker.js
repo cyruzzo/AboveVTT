@@ -109,19 +109,19 @@ function init_combat_tracker(){
 				let id = $(this).parent().parent().parent().attr("data-target");
 				$(`tr[data-target='${id}'] input.hp`).val($(this).val());
 				$(`tr[data-target='${id}'] input.hp`).trigger("change");
-				ct_update_popout();
+				ct_update_popout(true);
 			});	
 			$(childWindows['Combat Tracker'].document).find('input.max_hp').change(function(e) {
 				let id = $(this).parent().parent().parent().attr("data-target");
 				$(`tr[data-target='${id}'] input.max_hp`).val($(this).val());
 				$(`tr[data-target='${id}'] input.max_hp`).trigger("change");
-				ct_update_popout();
+				ct_update_popout(true);
 			});	
 			$(childWindows['Combat Tracker'].document).find('input.init').change(function(){
 				let id = $(this).parent().parent().attr("data-target");
 				$(`tr[data-target='${id}'] input.init`).val($(this).val());
 				$(`tr[data-target='${id}'] input.init`).trigger("change");
-				ct_update_popout();
+				ct_update_popout(true);
 			});
 		}
 	});
@@ -1092,7 +1092,7 @@ function create_combat_tracker_timer(duration = 60000, startTime = Date.now()) {
 			const timeRemainingString = convertMsToMmSs(remaining);
 			timerBars.text(timeRemainingString);
 		}
-		ct_update_popout();
+		ct_update_popout(true);
 	}, 1000);
 }
 function ct_reorder(persist=true) {
@@ -1415,7 +1415,7 @@ function ct_add_token(token,persist=true,disablerolling=false, adv=false, dis=fa
 			  	$(`#combat_area tr[data-target='${target}'] .findSVG`).remove();
 	           	let findSVG=$('<svg class="findSVG" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M0 0h24v24H0z" fill="none"/><path d="M12 11c1.33 0 4 .67 4 2v.16c-.97 1.12-2.4 1.84-4 1.84s-3.03-.72-4-1.84V13c0-1.33 2.67-2 4-2zm0-1c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm6 .2C18 6.57 15.35 4 12 4s-6 2.57-6 6.2c0 2.34 1.95 5.44 6 9.14 4.05-3.7 6-6.8 6-9.14zM12 2c4.2 0 8 3.22 8 8.2 0 3.32-2.67 7.25-8 11.8-5.33-4.55-8-8.48-8-11.8C4 5.22 7.8 2 12 2z"/></svg>');	
 	            $(`#combat_area tr[data-target='${target}'] .findTokenCombatButton`).append(findSVG);
-	            ct_update_popout();
+				ct_update_popout(true);
 			}
 		});
 
@@ -1612,7 +1612,7 @@ function ct_persist(){
 	window.MB.sendMessage("custom/myVTT/CT",data);
 }
 
-function ct_update_popout(){
+function ct_update_popout(skipCarousel = false){
 	if(childWindows['Combat Tracker']){
 		$(childWindows['Combat Tracker'].document).find("body").empty("");
 		updatePopoutWindow("Combat Tracker", $("#combat_tracker_inside"));
@@ -1633,19 +1633,19 @@ function ct_update_popout(){
 				let id = $(this).parent().parent().parent().attr("data-target");
 				$(`tr[data-target='${id}'] input.hp`).val($(this).val());
 				$(`tr[data-target='${id}'] input.hp`).trigger("change");
-				ct_update_popout();
+				ct_update_popout(true);
 			});	
 			$(childWindows['Combat Tracker'].document).find('input.max_hp').change(function(e) {
 				let id = $(this).parent().parent().parent().attr("data-target");
 				$(`tr[data-target='${id}'] input.max_hp`).val($(this).val());
 				$(`tr[data-target='${id}'] input.max_hp`).trigger("change");
-				ct_update_popout();
+				ct_update_popout(true);
 			});	
 			$(childWindows['Combat Tracker'].document).find('input.init').change(function(){
 				let id = $(this).parent().parent().attr("data-target");
 				$(`tr[data-target='${id}'] input.init`).val($(this).val());
 				$(`tr[data-target='${id}'] input.init`).trigger("change");
-				ct_update_popout();
+				ct_update_popout(true);
 			});
 		}
 		
@@ -1654,8 +1654,8 @@ function ct_update_popout(){
 		}
 		
 	}
-
-	update_carousel_combat_tracker();
+	if(!skipCarousel)
+		update_carousel_combat_tracker();
 	
 
 }
