@@ -1831,13 +1831,13 @@ class MessageBroker {
 	
 						window.CURRENT_SCENE_DATA.conversion = 1;
 
-						if (!data.is_video && (mapHeight > 1500 || mapWidth > 1500)){
+						if (!data.is_video && (mapHeight > 2500 || mapWidth > 2500)){
 							let conversion = 2;
 							if(mapWidth >= mapHeight){
-								conversion = 1500 / mapWidth;
+								conversion = 1980 / mapWidth;
 							}
 							else{
-								conversion = 1500 / mapHeight;
+								conversion = 1980 / mapHeight;
 							}
 							mapHeight = mapHeight*conversion;
 							mapWidth = mapWidth*conversion;
