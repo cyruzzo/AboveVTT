@@ -2936,18 +2936,24 @@ class Token {
 
 				this.update_health_aura(tok);
 				let currentSceneScale = parseFloat(window.CURRENT_SCENE_DATA.scale_factor) ? parseFloat(window.CURRENT_SCENE_DATA.scale_factor) : 1
+				
 				if(this.options.scaleCreated){
-					if (window.CURRENT_SCENE_DATA.scale_factor == this.options.scaleCreated / window.CURRENT_SCENE_DATA.conversion)
-						this.options.scaleCreated = window.CURRENT_SCENE_DATA.scale_factor;
-
-					if (this.options.scaleCreated != currentSceneScale) {
-						let difference = this.sizeWidth() / this.options.scaleCreated * currentSceneScale / 2 - this.sizeWidth() / 2;
-						this.options.top = `${parseFloat(this.options.top) / this.options.scaleCreated * currentSceneScale + difference}px`
-						this.options.left = `${parseFloat(this.options.left) / this.options.scaleCreated * currentSceneScale + difference}px`
+					let scaleCreated = parseFloat(this.options.scaleCreated);
+					if (scaleCreated != currentSceneScale) {
+						if (currentSceneScale == scaleCreated / window.CURRENT_SCENE_DATA.conversion){
+							scaleCreated = currentSceneScale;
+						}				
+						this.options.top = `${parseFloat(this.options.top) / scaleCreated * currentSceneScale }px`
+						this.options.left = `${parseFloat(this.options.left) / scaleCreated * currentSceneScale }px`
+						this.options.scaleCreated = currentSceneScale;
+						if(scaleCreated == currentSceneScale){
+							//Need to resync after auto-scaling scenes that have tokens created before the scene was auto scaled. This allows future scaling to work.
+							this.sync($.extend(true, {}, this.options));
+						}
 					}
 				}
 
-				this.options.scaleCreated = window.CURRENT_SCENE_DATA.scale_factor;
+				this.options.scaleCreated = currentSceneScale;
 
 				tok.css("position", "absolute");
 				tok.css("--z-index-diff", zindexdiff);
