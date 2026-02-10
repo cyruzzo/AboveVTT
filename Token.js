@@ -2941,7 +2941,7 @@ class Token {
 						this.options.scaleCreated = window.CURRENT_SCENE_DATA.scale_factor;
 
 					if (this.options.scaleCreated != currentSceneScale) {
-						let difference = this.sizeWidth() / this.options.scaleCreated * currentSceneScale / 2 - this.sizeWidth() / 2;
+						let difference = this.sizeWidth() / this.options.scaleCreated * currentSceneScale - this.sizeWidth() / 2;
 						this.options.top = `${parseFloat(this.options.top) / this.options.scaleCreated * currentSceneScale + difference}px`
 						this.options.left = `${parseFloat(this.options.left) / this.options.scaleCreated * currentSceneScale + difference}px`
 					}
