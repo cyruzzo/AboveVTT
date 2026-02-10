@@ -676,9 +676,20 @@ class MessageBroker {
 				}
 			}
 			if(msg.eventType == "custom/myVTT/createTimer"){
-				const {type, message, startTime, duration} = msg.data;
+				const {type, message, startTime, duration, remove} = msg.data;
 				if(type === "gamelog"){
 					create_gamelog_timer(message, duration, startTime)
+				}
+				else if(type === "combatTracker"){
+					if(remove){
+						$('.ctTimer').remove();
+						if (combatTrackerTimerId) {
+							clearInterval(combatTrackerTimerId);
+							combatTrackerTimerId = null;
+						}
+						return;
+					}
+					create_combat_tracker_timer(duration, startTime)
 				}
 			}
 			if (msg.eventType == "custom/myVTT/open-url-embed"){
@@ -2019,7 +2030,6 @@ class MessageBroker {
 		if(getCombatTrackerSettings().next_turn_indicator == '1'){
 			this.handleNextTurnIndicator();
 		}
-			
 	}
 
 	handleNextTurnIndicator() {

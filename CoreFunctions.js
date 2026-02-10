@@ -1544,10 +1544,17 @@ function showTempMessage(messageString){
   }, 1000);
 
 }
-
+function convertMmSsToMs(text) {
+  const [minutes, seconds] = text.split(':').map(Number); //
+  const totalMilliseconds = (minutes * 60 + seconds) * 1000; //
+  return totalMilliseconds;
+}
+function convertMsToMmSs(duration) {
+  return  `${`${Math.floor(duration / 60000)}`.padStart(2, '0')}:${`${Math.floor((duration % 60000) / 1000)}`.padStart(2, '0')}`
+}
 function create_gamelog_timer(message, duration = 60000, startTime = Date.now()){
   let timerId;
-  const startTimeString = `${`${Math.floor(duration / 60000)}`.padStart(2, '0')}:${`${Math.floor((duration % 60000) / 1000)}`.padStart(2, '0')}`;
+  const startTimeString = convertMsToMmSs(duration);
   const timerBox = $(`<div class='chatTimer' data-start='${startTime}'><span class='timerMessage'>${message}</span><span class='timerBar'>${startTimeString}</span></div>`);
   const closeButton = $(`<span class='timerCloseButton'>&#10006;</span>`);
   closeButton.on('click', function(){
@@ -1570,10 +1577,10 @@ function create_gamelog_timer(message, duration = 60000, startTime = Date.now())
       if(!timerExists){
         $(".glc-game-log > [class*='-GameLog']").before(timerBox);
       }
-      const timeRemainingString = `${`${Math.floor(remaining / 60000)}`.padStart(2, '0')}:${`${Math.floor((remaining % 60000) / 1000)}`.padStart(2, '0')}`;
+      const timeRemainingString = convertMsToMmSs(remaining);
       timerBox.find('.timerBar').text(timeRemainingString);
     }
-  });
+  }, 1000);
 }
 /** The string "THE DM" has been used in a lot of places.
  * This prevents typos or case sensitivity in strings.
