@@ -1305,7 +1305,7 @@ class Token {
 			$("#combat_tracker_inside tr[data-target='" + this.options.id + "']").find('.Avatar_AvatarPortrait__2dP8u').css('opacity','0.5');
 		}
 		//this.options.ct_show = $("#combat_tracker_inside tr[data-target='" + this.options.id + "']").find('input').checked;
-		ct_update_popout();
+		ct_update_popout(true);
 	}
 	update_quick_roll(){
 		/* UPDATE QUICK ROLL */
@@ -1622,7 +1622,7 @@ class Token {
 		}
 		if(window.DM){
 			$(`#combat_area tr[data-target='${this.options.id}'] .ac svg text`).text(this.ac);
-			ct_update_popout();
+			ct_update_popout(true);
 		}
 	}
 
