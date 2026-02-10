@@ -2946,10 +2946,6 @@ class Token {
 						this.options.top = `${parseFloat(this.options.top) / scaleCreated * currentSceneScale }px`
 						this.options.left = `${parseFloat(this.options.left) / scaleCreated * currentSceneScale }px`
 						this.options.scaleCreated = currentSceneScale;
-						if(scaleCreated == currentSceneScale){
-							//Need to resync after auto-scaling scenes that have tokens created before the scene was auto scaled. This allows future scaling to work.
-							this.sync($.extend(true, {}, this.options));
-						}
 					}
 				}
 
