@@ -2937,7 +2937,7 @@ class Token {
 				this.update_health_aura(tok);
 				let currentSceneScale = parseFloat(window.CURRENT_SCENE_DATA.scale_factor) ? parseFloat(window.CURRENT_SCENE_DATA.scale_factor) : 1
 				if(this.options.scaleCreated){
-					if (window.CURRENT_SCENE_DATA.scale_factor * window.CURRENT_SCENE_DATA.conversion == this.options.scaleCreated)
+					if (window.CURRENT_SCENE_DATA.scale_factor == this.options.scaleCreated / window.CURRENT_SCENE_DATA.conversion)
 						this.options.scaleCreated = window.CURRENT_SCENE_DATA.scale_factor;
 
 					if (this.options.scaleCreated != currentSceneScale) {
