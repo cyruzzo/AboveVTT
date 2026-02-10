@@ -6885,7 +6885,19 @@ div#selectedTokensBorderRotationGrabberConnector,
     position: absolute;
     right: 55px;
     width: 20px;
-    height: 20px
+    height: 20px;
+    top:0px;
+}
+.combat-settings-header input {
+    border-radius: 5px;
+    width: 45px;
+}
+#round_number_label .ctTimer {
+    position: absolute;
+    display: inline-flex;
+    align-items: center;
+    float: right;
+    right: 5px;
 }
 #combat_tracker_title_bar_settings span{
     height: 20px;
