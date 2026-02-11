@@ -1285,12 +1285,17 @@ function draw_svg_grid(type=null, hpps=null, vpps=null, offsetX=null, offsetY=nu
 		'background-image': "url("+gr+")",
 		'background-size': `${xs * tilex}px ${ys * tiley}px`,
 		'background-position-x': Math.round(startX), //todo? Round or not?
-		'background-position-y': Math.round(startY),
-		'visibility': 'visible'
+		'background-position-y': Math.round(startY)
 	}
 	//grid renders into 2 elements (below darkness and above)
+	// .grid - global visibility control
+	// .gridOver - grid overlay control:
+	//    0=never 1=always 2=drag guide 3=only show drag guide
 	grc2.css(bk);
+	grc2.css('visibility', (sd.grid != 0 && sd.gridOver) ? 'visible' : 'hidden');
+	$("#VTT").css('--grid-overlay-on', sd.gridOver == 1 ? '1' : '0');
 	grc.css(bk);
+	grc.css('visibility', (sd.grid != '0' && sd.gridOver != 3) ? 'visible' : 'hidden');
 }
 
 //returns current [width,height] of grid (including hex)

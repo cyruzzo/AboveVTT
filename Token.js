@@ -2988,7 +2988,8 @@ class Token {
 
 				tok.draggable({
 					stop: function (event) {
-							event.stopPropagation();						
+						        event.stopPropagation();
+						        $("#VTT").css('--grid-overlay-on-tmp', '0');						
 							window.DRAGGING = false;
 							window.enable_window_mouse_handlers();
 		
@@ -3050,6 +3051,7 @@ class Token {
 						},
 					start: function (event) {
 						event.stopPropagation();
+						$("#VTT").css('--grid-overlay-on-tmp', '1');
 						window.disable_window_mouse_handlers();
 						pauseCursorEventListener = true; // we're going to send events from drag, so we don't need the eventListener sending events, too
 						if (get_avtt_setting_value("allowTokenMeasurement")) {

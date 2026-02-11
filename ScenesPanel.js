@@ -55,6 +55,7 @@ async function get_edit_form_data(){
 	})
 	
 	await Promise.all(promises);
+	data['gridOver'] = +$("#gridOverSelect").val();
 	return data;
 	
 }
@@ -1476,6 +1477,20 @@ function edit_scene_dialog(scene_id) {
 	colorPickers.on('change.spectrum', handle_form_grid_on_change); // commit the changes when the user clicks the submit button
 	colorPickers.on('hide.spectrum', handle_form_grid_on_change);   // the hide event includes the original color so let's change it back when we get it
 
+	const gridOver = $(`<select id='gridOverSelect' name="gridOver" value="${scene["gridOver"] || 0}" >
+<option value=0>Never</option>
+<option value=1>Always</option>
+<option value=2>Drag Assist</option>
+<option value=3>Only Drag Assist</option>
+</select>`)
+	form.append(form_row('gridOver', 'Grid Overlay', gridOver));
+	gridOver.on('change', function() {
+		const gridOverValue = $(this).val();
+		//todo: this is too soon - wait for save
+		window.CURRENT_SCENE_DATA.gridOver = + gridOverValue;
+	});
+	form.find('#gridOver_row').attr('title', 'When to draw the grid overlay.')
+	
 	const playlistSelect = $(`<select id='playlistSceneSelect'><option value='0'>None</option></select>`)
 	const playlists = window.MIXER.playlists();
 
@@ -1983,7 +1998,7 @@ function default_scene_data() {
 		offsetx: 0,
 		offsety: 0,
 		grid: 0,
-		grid_above_dark: 0,
+		gridOver: 0, //0- never, 1-always, 2-drag help+under, 3-drag help only
 		snap: 0,
 		reveals: [[0, 0, 0, 0, 2, 0, 1]],
 		order: Date.now(),
