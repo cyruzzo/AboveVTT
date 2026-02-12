@@ -1055,7 +1055,11 @@ function openCombatTrackerSettings(){
 	}, 1000);
 }
 let combatTrackerTimerId;
+let prevCtTimerTokenId;
 function create_combat_tracker_timer(duration = 60000, startTime = Date.now()) {
+	const currTurnId = $('#combat_area tr[data-current="1"]').attr('data-target');
+	if (prevCtTimerTokenId && prevCtTimerTokenId == currTurnId)
+		return;
 	$('.ctTimer').remove();
 	if (combatTrackerTimerId){
 		clearInterval(combatTrackerTimerId);
@@ -1066,6 +1070,8 @@ function create_combat_tracker_timer(duration = 60000, startTime = Date.now()) {
 	const startTimeString = convertMsToMmSs(remaining);
 	const timerBox = $(`<div class='ctTimer' data-start='${startTime}'><span class='timerBar'>${startTimeString}</span></div>`);
 	const timerBox2 = timerBox.clone();
+
+	prevCtTimerTokenId = currTurnId;
 	const currentTurnContainer = $('#combat_area_carousel [data-current="1"]');
 	const combatRoundBar = $('#round_number_label');
 	currentTurnContainer.append(timerBox);

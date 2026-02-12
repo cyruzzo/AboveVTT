@@ -713,9 +713,11 @@ class MessageBroker {
 						window.handleSceneQueue.push(msg);
 					}
 					else{
+						window.LOADING = true;
 						AboveApi.getScene(msg.data.sceneid).then((response) => {
 							self.handleScene(response);
 						}).catch((error) => {
+							delete window.LOADING;
 							console.error("Failed to download scene", error);
 						});
 					}
@@ -1643,6 +1645,7 @@ class MessageBroker {
 
 	async handleScene (msg, forceRefresh=false) {
 		console.debug("handlescene", msg);
+		window.LOADING = true;
 		try{
 			if(msg.data.scale_factor == undefined || msg.data.scale_factor == ''){
 				msg.data.scale_factor = 1;
@@ -1812,7 +1815,6 @@ class MessageBroker {
 					else {
 						window.DRAWINGS = [];
 					}
-					window.LOADING = true;
 					if(!window.DM && (data.player_map_is_video == '1' || data.player_map?.includes('youtube.com') || data.player_map?.includes("youtu.be") || data.is_video == '1')){
 						data.map = data.player_map;
 						data.is_video = data.player_map_is_video;
@@ -2004,6 +2006,7 @@ class MessageBroker {
 			}
 		}
 		catch (e) {
+			delete window.LOADING;
 			window.MB.loadNextScene();
 			remove_loading_overlay();
 			showError(e);
@@ -2015,12 +2018,17 @@ class MessageBroker {
 		if (window.handleSceneQueue == undefined || window.handleSceneQueue?.length == 0)
 			return;
 		const msg = window.handleSceneQueue.pop(); // get most recent item and load it
+		if(msg.data.sceneid == window.CURRENT_SCENE_DATA.id){ 
+			this.loadNextScene();
+			return;
+		}
 		window.handleSceneQueue = [];
+		window.LOADING = true;
 		AboveApi.getScene(msg.data.sceneid).then((response) => {
 			window.MB.handleScene(response);
 		}).catch((error) => {
 			if (window.handleSceneQueue?.length > 0) {
-				setTimeout(loadNextScene, 100);
+				setTimeout(window.MB.loadNextScene, 100);
 			}
 			console.error("Failed to download scene", error);
 		});
@@ -2589,6 +2597,7 @@ class MessageBroker {
 	  $("#reconnect-button").on("click", function(){
 	  	window.onCloseNumberPerPopup = 0;
 	  	window.MB.loadAboveWS(function(){ 
+			window.LOADING = true;
 	  		AboveApi.getScene(window.CURRENT_SCENE_DATA.id).then((response) => {
 	  			window.MB.handleScene(response, true);
 	  			setTimeout(
@@ -2603,6 +2612,7 @@ class MessageBroker {
 	  				}, 4000)
 	  			removeError();
 	  		}).catch((error) => {
+				delete window.LOADING;
 	  			console.error("Failed to download scene", error);
 	  		});
   		}, true);	
