@@ -895,8 +895,8 @@ function key_rotation(angle) {
         grouprotate_commit(key_rotation_angle);
         draw_selected_token_bounding_box();	        
     }, 1000);
-    key_rotation_angle += angle;
-    grouprotate_rotate((key_rotation_angle + 360) % 360);
+    key_rotation_angle += (360 + angle) % 360;
+    grouprotate_rotate(key_rotation_angle);
 }
 
 function rotate_by_gridtype() {
