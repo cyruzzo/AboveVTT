@@ -5185,7 +5185,8 @@ async function do_draw_selected_token_bounding_box() {
 
 			let centerPointRotateOrigin = {
 				x: 0,
-				y: 0
+				y: 0,
+				original_scene_bounding: []
 			};
 			
 			let angle;
@@ -5197,6 +5198,9 @@ async function do_draw_selected_token_bounding_box() {
 					self.orig_top = grabberTop;
 					self.orig_left = grabberLeft;
 
+					//in case the scene autoscrolls while rotating
+					centerPointRotateOrigin.original_scene_bounding = document.getElementById('VTT').getBoundingClientRect();
+					
 					let furthest_coord = {}
 
 
@@ -5263,9 +5267,12 @@ async function do_draw_selected_token_bounding_box() {
 					// adjust based on zoom level
 					let zoom = window.ZOOM;
 					let original = ui.originalPosition;
+					const newBounding = document.getElementById("VTT").getBoundingClientRect();
+					const dx = newBounding.x - centerPointRotateOrigin.original_scene_bounding.x;
+					const dy = newBounding.y - centerPointRotateOrigin.original_scene_bounding.y;
 					ui.position = {
-						left: Math.round((event.clientX - click.x + original.left) / zoom),
-						top: Math.round((event.clientY - click.y + original.top) / zoom)
+						left: Math.round((event.clientX - click.x - dx + original.left) / zoom),
+						top: Math.round((event.clientY - click.y - dy + original.top) / zoom)
 					};
 
 					angle = rotation_towards_cursor_from_point(centerPointRotateOrigin.x, centerPointRotateOrigin.y, ui.position.left, ui.position.top, event.shiftKey)
