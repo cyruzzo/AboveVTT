@@ -4927,7 +4927,6 @@ function rotation_towards_cursor_from_point(tokenCenterX, tokenCenterY, mousex, 
 }
 /// rotates all selected tokens to the specified newRotation
 function rotate_selected_tokens(newRotation, persist = false) {
-	console.log("ROTATE SEL", newRotation);
 	if ($("#select-button").hasClass("button-enabled") || !window.DM) { // players don't have a select tool
 		for (let i = 0; i < window.CURRENTLY_SELECTED_TOKENS.length; i++) {
 			let id = window.CURRENTLY_SELECTED_TOKENS[i];
@@ -4948,6 +4947,101 @@ const debounceDrawSelectedToken = mydebounce(() => {
 
 function draw_selected_token_bounding_box(){
 	debounceDrawSelectedToken();
+}
+
+//used by draggable and keypress handler
+// returns center - point
+function grouprotate_create() {
+	let furthest_coord = {}
+	$('.tokenselected').wrap('<div class="grouprotate"></div>');
+
+	
+	
+	for (let i = 0; i < window.CURRENTLY_SELECTED_TOKENS.length; i++) {
+
+		let id = window.CURRENTLY_SELECTED_TOKENS[i];
+		let token = window.TOKEN_OBJECTS[id];
+		$(`#scene_map_container .token[data-id='${id}'], [data-darkness='darkness_${id.replaceAll("/", "")}']`).remove();
+		
+		
+		let sceneToken = $(`div.token[data-id='${id}']`)
+
+
+		let tokenImageClientPosition = $(`div.token[data-id='${id}']>.token-image`)[0].getBoundingClientRect();
+		let tokenImagePosition = $(`div.token[data-id='${id}']>.token-image`).position();
+		let tokenImageWidth = (tokenImageClientPosition.width) / (window.ZOOM);
+		let tokenImageHeight = (tokenImageClientPosition.height) / (window.ZOOM);
+		let tokenTop = (sceneToken.position().top + tokenImagePosition.top) / (window.ZOOM);
+		let tokenBottom = tokenTop + tokenImageHeight;
+		let tokenLeft = (sceneToken.position().left  + tokenImagePosition.left) / (window.ZOOM);
+		let tokenRight = tokenLeft + tokenImageWidth;
+		
+		furthest_coord.top  = (furthest_coord.top  == undefined) ? tokenTop : Math.min(furthest_coord.top, tokenTop)
+		furthest_coord.left  = (furthest_coord.left  == undefined) ? tokenLeft : Math.min(furthest_coord.left, tokenLeft)
+
+		furthest_coord.right  = (furthest_coord.right  == undefined) ? tokenRight : Math.max(furthest_coord.right, tokenRight)
+		furthest_coord.bottom  = (furthest_coord.bottom  == undefined) ? tokenBottom : Math.max(furthest_coord.bottom , tokenBottom)
+	}
+
+	let centerPointRotateOrigin;
+	if(window.CURRENTLY_SELECTED_TOKENS.length == 1 && window.TOKEN_OBJECTS[window.CURRENTLY_SELECTED_TOKENS[0]].isAoe()){
+		let id = window.CURRENTLY_SELECTED_TOKENS[0];
+		let rayAngle = 90;
+		let ray = new Ray({x: (furthest_coord.left + furthest_coord.right)/2, y: (furthest_coord.top + furthest_coord.bottom)/2}, degreeToRadian(parseFloat($(`div.token[data-id='${id}']`).css('--token-rotation')) % 360 - rayAngle));	
+		let dir = ray.dir;
+		let tokenWidth = window.TOKEN_OBJECTS[id].sizeWidth();
+		let tokenHeight = window.TOKEN_OBJECTS[id].sizeHeight();
+		let widthAdded = tokenHeight;
+		
+		centerPointRotateOrigin = { x: (furthest_coord.left + furthest_coord.right)/2 + (widthAdded*dir.x/2),
+					    y: (furthest_coord.top + furthest_coord.bottom)/2 + (widthAdded*dir.y/2) };
+	} else {
+		centerPointRotateOrigin = { x: (furthest_coord.left + furthest_coord.right)/2,
+					    y: (furthest_coord.top + furthest_coord.bottom)/2 };
+	}
+	$('.grouprotate').css('transform-origin', `${centerPointRotateOrigin.x}px ${centerPointRotateOrigin.y}px` )
+	return centerPointRotateOrigin;
+}
+function grouprotate_rotate(angle) {
+	$(`.grouprotate`).css({
+		'rotate': `${angle}deg`		
+	});
+}
+function grouprotate_commit(angle) {
+	for (let i = 0; i < window.CURRENTLY_SELECTED_TOKENS.length; i++) {
+		let id = window.CURRENTLY_SELECTED_TOKENS[i];
+		let token = window.TOKEN_OBJECTS[id];
+
+		let sceneToken = $(`#tokens .token[data-id='${id}']`)
+
+		window.TOKEN_OBJECTS[id].options.rotation = angle + parseFloat(sceneToken.css('--token-rotation'))
+		
+		
+		if(window.CURRENTLY_SELECTED_TOKENS.length > 1){
+			sceneToken.css({
+				'rotate': `-${angle%360}deg`
+			});
+			currentplace = sceneToken.offset();
+		}
+		else{
+			sceneToken.css({
+				'rotate': `-${(angle+parseFloat(sceneToken.css('--token-rotation')))%360}deg`
+			});
+			currentplace = sceneToken.find('.token-image').offset();
+		}
+		
+		newCoords = convert_point_from_view_to_map(currentplace.left, currentplace.top, true, true)
+		window.TOKEN_OBJECTS[id].options.left = `${newCoords.x}px`;
+		window.TOKEN_OBJECTS[id].options.top = `${newCoords.y}px`;
+	}
+	$(`.grouprotate`).remove();
+	//should this be here or outside this func?
+	for (let i = 0; i < window.CURRENTLY_SELECTED_TOKENS.length; i++) {
+		let id = window.CURRENTLY_SELECTED_TOKENS[i];
+		let token = window.TOKEN_OBJECTS[id];
+		token.selected = true;
+		token.place_sync_persist();
+	}		
 }
 
 
@@ -5198,64 +5292,9 @@ async function do_draw_selected_token_bounding_box() {
 					self.orig_top = grabberTop;
 					self.orig_left = grabberLeft;
 
+					centerPointRotateOrigin = grouprotate_create();
 					//in case the scene autoscrolls while rotating
-					centerPointRotateOrigin.original_scene_bounding = document.getElementById('VTT').getBoundingClientRect();
-					
-					let furthest_coord = {}
-
-
-					$('.tokenselected').wrap('<div class="grouprotate"></div>');
-
-					
-					
-					for (let i = 0; i < window.CURRENTLY_SELECTED_TOKENS.length; i++) {
-
-						let id = window.CURRENTLY_SELECTED_TOKENS[i];
-						let token = window.TOKEN_OBJECTS[id];
-						$(`#scene_map_container .token[data-id='${id}'], [data-darkness='darkness_${id.replaceAll("/", "")}']`).remove();
-						
-					
-						let sceneToken = $(`div.token[data-id='${id}']`)
-
-
-						let tokenImageClientPosition = $(`div.token[data-id='${id}']>.token-image`)[0].getBoundingClientRect();
-						let tokenImagePosition = $(`div.token[data-id='${id}']>.token-image`).position();
-						let tokenImageWidth = (tokenImageClientPosition.width) / (window.ZOOM);
-						let tokenImageHeight = (tokenImageClientPosition.height) / (window.ZOOM);
-						let tokenTop = (sceneToken.position().top + tokenImagePosition.top) / (window.ZOOM);
-						let tokenBottom = tokenTop + tokenImageHeight;
-						let tokenLeft = (sceneToken.position().left  + tokenImagePosition.left) / (window.ZOOM);
-						let tokenRight = tokenLeft + tokenImageWidth;
-						
-						furthest_coord.top  = (furthest_coord.top  == undefined) ? tokenTop : Math.min(furthest_coord.top, tokenTop)
-						furthest_coord.left  = (furthest_coord.left  == undefined) ? tokenLeft : Math.min(furthest_coord.left, tokenLeft)
-
-						furthest_coord.right  = (furthest_coord.right  == undefined) ? tokenRight : Math.max(furthest_coord.right, tokenRight)
-						furthest_coord.bottom  = (furthest_coord.bottom  == undefined) ? tokenBottom : Math.max(furthest_coord.bottom , tokenBottom)
-					}
-
-					if(window.CURRENTLY_SELECTED_TOKENS.length == 1 && window.TOKEN_OBJECTS[window.CURRENTLY_SELECTED_TOKENS[0]].isAoe()){
-						let id = window.CURRENTLY_SELECTED_TOKENS[0];
-						let rayAngle = 90;
-						let ray = new Ray({x: (furthest_coord.left + furthest_coord.right)/2, y: (furthest_coord.top + furthest_coord.bottom)/2}, degreeToRadian(parseFloat($(`div.token[data-id='${id}']`).css('--token-rotation')) % 360 - rayAngle));	
-						let dir = ray.dir;
-						let tokenWidth = window.TOKEN_OBJECTS[id].sizeWidth();
-						let tokenHeight = window.TOKEN_OBJECTS[id].sizeHeight();
-						let widthAdded = tokenHeight;
-						
-						centerPointRotateOrigin.x = (furthest_coord.left + furthest_coord.right)/2 + (widthAdded*dir.x/2);
-						centerPointRotateOrigin.y = (furthest_coord.top + furthest_coord.bottom)/2 + (widthAdded*dir.y/2);
-					}
-					else{
-						centerPointRotateOrigin.x = (furthest_coord.left + furthest_coord.right)/2;
-						centerPointRotateOrigin.y = (furthest_coord.top + furthest_coord.bottom)/2;	
-					}
-						
-						
-
-
-				
-					$('.grouprotate').css('transform-origin', `${centerPointRotateOrigin.x}px ${centerPointRotateOrigin.y}px` )
+					centerPointRotateOrigin.original_scene_bounding = document.getElementById('VTT').getBoundingClientRect();				
 
 					// the drag has started so remove the bounding boxes, but not the grabber
 					$("#selectedTokensBorder").remove();
@@ -5280,49 +5319,12 @@ async function do_draw_selected_token_bounding_box() {
 						let id = window.CURRENTLY_SELECTED_TOKENS[0];
 						angle = angle-parseFloat($(`.token[data-id='${id}']`).css('--token-rotation')); // account for group rotation grabber being at corner
 					}
-					$(`.grouprotate`).css({
-						'rotate': `${angle}deg`		
-					});
+					grouprotate_rotate(angle);
 
 				},
 				stop: function (event) { 
 					// rotate for all players
-									
-					for (let i = 0; i < window.CURRENTLY_SELECTED_TOKENS.length; i++) {
-						let id = window.CURRENTLY_SELECTED_TOKENS[i];
-						let token = window.TOKEN_OBJECTS[id];
-
-						let sceneToken = $(`#tokens .token[data-id='${id}']`)
-
-						window.TOKEN_OBJECTS[id].options.rotation = angle + parseFloat(sceneToken.css('--token-rotation'))
-						
-						
-						if(window.CURRENTLY_SELECTED_TOKENS.length > 1){
-							sceneToken.css({
-								'rotate': `-${angle%360}deg`
-							});
-							currentplace = sceneToken.offset();
-						}
-						else{
-							sceneToken.css({
-								'rotate': `-${(angle+parseFloat(sceneToken.css('--token-rotation')))%360}deg`
-							});
-							currentplace = sceneToken.find('.token-image').offset();
-						}
-						
-						newCoords = convert_point_from_view_to_map(currentplace.left, currentplace.top, true, true)
-						window.TOKEN_OBJECTS[id].options.left = `${newCoords.x}px`;
-						window.TOKEN_OBJECTS[id].options.top = `${newCoords.y}px`;
-						
-					
-					}
-					$(`.grouprotate`).remove();
-					for (let i = 0; i < window.CURRENTLY_SELECTED_TOKENS.length; i++) {
-						let id = window.CURRENTLY_SELECTED_TOKENS[i];
-						let token = window.TOKEN_OBJECTS[id];
-						token.selected = true;
-						token.place_sync_persist();
-					}		
+					grouprotate_commit(angle);
 					draw_selected_token_bounding_box();	
 				},
 			});
