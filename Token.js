@@ -5017,13 +5017,13 @@ function grouprotate_commit(angle) {
 		window.TOKEN_OBJECTS[id].options.rotation = angle + parseFloat(sceneToken.css('--token-rotation'))
 		
 		
-		if(window.CURRENTLY_SELECTED_TOKENS.length > 1){
+		if (window.CURRENTLY_SELECTED_TOKENS.length > 1 || !token.isAoe()){
 			sceneToken.css({
 				'rotate': `-${angle%360}deg`
 			});
 			currentplace = sceneToken.offset();
 		}
-		else{
+		else{	
 			sceneToken.css({
 				'rotate': `-${(angle+parseFloat(sceneToken.css('--token-rotation')))%360}deg`
 			});
@@ -5040,7 +5040,7 @@ function grouprotate_commit(angle) {
 		let id = window.CURRENTLY_SELECTED_TOKENS[i];
 		let token = window.TOKEN_OBJECTS[id];
 		token.selected = true;
-		token.place_sync_persist();
+		token.place_sync_persist(0);
 	}		
 }
 
