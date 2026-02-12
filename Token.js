@@ -4916,17 +4916,18 @@ function rotation_towards_cursor(token, mousex, mousey, largerSnapAngle) {
 	const target = Math.atan2(mousey - tokenCenterY, mousex - tokenCenterX) + Math.PI * 3 / 2; // down = 0
 	const degrees = target * radToDeg;
 	const snap = (largerSnapAngle == true) ? 45 : 5; // if we ever allow hex, use 45 for square and 60 for hex
-	return Math.round(degrees / snap) * snap
+	return (Math.round(degrees / snap) * snap + 360.0) % 360.0;
 }
 
 function rotation_towards_cursor_from_point(tokenCenterX, tokenCenterY, mousex, mousey, largerSnapAngle) {
 	const target = Math.atan2(mousey - tokenCenterY, mousex - tokenCenterX) + Math.PI * 3 / 2; // down = 0
 	const degrees = target * radToDeg;
 	const snap = (largerSnapAngle == true) ? 45 : 5; // if we ever allow hex, use 45 for square and 60 for hex
-	return Math.round(degrees / snap) * snap
+	return (Math.round(degrees / snap) * snap + 360.0) % 360.0;
 }
 /// rotates all selected tokens to the specified newRotation
 function rotate_selected_tokens(newRotation, persist = false) {
+	console.log("ROTATE SEL", newRotation);
 	if ($("#select-button").hasClass("button-enabled") || !window.DM) { // players don't have a select tool
 		for (let i = 0; i < window.CURRENTLY_SELECTED_TOKENS.length; i++) {
 			let id = window.CURRENTLY_SELECTED_TOKENS[i];
@@ -5129,7 +5130,8 @@ async function do_draw_selected_token_bounding_box() {
 			// handle eye grabber dragging
 			let click = {
 				x: 0,
-				y: 0
+				y: 0,
+				original_scene_bounding : []
 			};
 			
 			grabber.draggable({
@@ -5139,6 +5141,9 @@ async function do_draw_selected_token_bounding_box() {
 					click.y = event.clientY;
 					self.orig_top = grabberTop;
 					self.orig_left = grabberLeft;
+
+					//in case the scene autoscrolls while rotating
+					click.original_scene_bounding = document.getElementById('VTT').getBoundingClientRect();
 					
 					// the drag has started so remove the bounding boxes, but not the grabber
 					$("#selectedTokensBorder").remove();
@@ -5151,9 +5156,12 @@ async function do_draw_selected_token_bounding_box() {
 					// adjust based on zoom level
 					let zoom = window.ZOOM;
 					let original = ui.originalPosition;
+					const newBounding = document.getElementById("VTT").getBoundingClientRect();
+					const dx = newBounding.x - click.original_scene_bounding.x;
+					const dy = newBounding.y - click.original_scene_bounding.y;
 					ui.position = {
-						left: Math.round((event.clientX - click.x + original.left) / zoom),
-						top: Math.round((event.clientY - click.y + original.top) / zoom)
+						left: Math.round((event.clientX - click.x - dx + original.left) / zoom),
+						top: Math.round((event.clientY - click.y - dy + original.top) / zoom)
 					};
 
 					// rotate all selected tokens to face the grabber, but only for this user while dragging
