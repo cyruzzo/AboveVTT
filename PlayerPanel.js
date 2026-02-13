@@ -166,7 +166,7 @@ function find_and_set_player_color() {
 		return;
 	}
 
-	const index = window.pcs.findIndex(pc => pc.sheet.includes(idOrSheet));
+	const index = window.pcs.findIndex(pc => pc.sheet.includes(playerId));
 	const colorByIndex = get_token_color_by_index(index);
 	change_player_color(colorByIndex);
 }

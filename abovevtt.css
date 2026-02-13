@@ -6891,7 +6891,19 @@ div#selectedTokensBorderRotationGrabberConnector,
     position: absolute;
     right: 55px;
     width: 20px;
-    height: 20px
+    height: 20px;
+    top:0px;
+}
+.combat-settings-header input {
+    border-radius: 5px;
+    width: 45px;
+}
+#round_number_label .ctTimer {
+    position: absolute;
+    display: inline-flex;
+    align-items: center;
+    float: right;
+    right: 5px;
 }
 #combat_tracker_title_bar_settings span{
     height: 20px;
@@ -10539,6 +10551,26 @@ button.journal-view-button.journal-button img {
     appearance: none; 
     border: 1px solid #d8e1e8; 
     border-radius: 3px;
+}
+.chatTimer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position:relative;
+    width: calc(100% - 40px);
+    span.timerMessage {
+        font-weight: bold;
+        font-size: 16px;
+        max-width: 80%;
+    }
+    span.timerBar {
+        font-size: 20px;
+    }
+    .timerCloseButton{
+        position:absolute;
+        top: 5px;
+        right: 5px;
+    }
 }
 
 .custom-stat-block input.injected-input {

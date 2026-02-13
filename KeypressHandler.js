@@ -885,6 +885,32 @@ function handle_undo(){
 
 }
 
+let key_rotation_done;
+let key_rotation_angle = 0;
+function key_rotation(angle) {
+    if(key_rotation_done) {
+        clearTimeout(key_rotation_done);
+    } else {
+        key_rotation_angle = 0;
+        grouprotate_create();
+    }
+    key_rotation_done = setTimeout(() => {
+        key_rotation_done = null;
+        grouprotate_commit(key_rotation_angle);
+        draw_selected_token_bounding_box();	        
+    }, 1000);
+    key_rotation_angle += (360 + angle) % 360;
+    grouprotate_rotate(key_rotation_angle);
+}
+
+function rotate_by_gridtype() {
+    return window.CURRENT_SCENE_DATA.gridType == '1' ? 45 : 30;
+}
+Mousetrap.bind('[', () => key_rotation(-rotate_by_gridtype()));
+Mousetrap.bind(']', () => key_rotation(rotate_by_gridtype()));
+Mousetrap.bind('shift+[', () => key_rotation(-10));
+Mousetrap.bind('shift+]', () => key_rotation(10));
+    
 var rotationKeyPresses = [];
 window.addEventListener("keydown", async (event) => {
     const arrowKeys = [ 'ArrowLeft', 'ArrowUp', 'ArrowRight', 'ArrowDown' ];

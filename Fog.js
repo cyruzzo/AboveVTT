@@ -2471,8 +2471,8 @@ function redraw_light_walls(clear=true, editingWallPoints = false){
 		delete window.selectedWallCanvas;
 		delete window.selectedWallCtx;
 	}
-
-	ctx.drawImage(offscreenCanvas, 0, 0); 
+	if(displayWalls)
+		ctx.drawImage(offscreenCanvas, 0, 0); 
 	if(!editingWallPoints){
 		check_darkness_value();
 		if(window.DM){

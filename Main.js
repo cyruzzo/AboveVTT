@@ -3060,6 +3060,10 @@ function init_help_menu() {
 							<dd>Zoom in</dd>
 						</dl>
 						<dl>
+							<dt>[</dt>&nbsp;<dt>]</dt>&nbsp;<dt>${getShiftKeyName()}+[</dt>&nbsp;<dt>${getShiftKeyName()}+]</dt> <dd> Rotate Selected Tokens as a Group</dd>
+						</dl>
+
+						<dl>
 							<dt>1-9</dt>
 							<dd>Add Custom Numkey Dice to Dice Pool</dd>
 						</dl>
