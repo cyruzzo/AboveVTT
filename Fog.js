@@ -1320,12 +1320,13 @@ function redraw_grid(hpps=null, vpps=null, offsetX=null, offsetY=null, color=nul
 function hide_wizarding_box() {
 	const grid = document.getElementById('wizbox-grid');
 	const hex = document.getElementById('wizbox-hex');	
-	grid.setAttribute('visibility', 'hidden');
-	hex.setAttribute('visibility', 'hidden');
+	if(grid) grid.setAttribute('visibility', 'hidden');
+	if(hex) hex.setAttribute('visibility', 'hidden');
 }
 function draw_wizarding_box() {
 	const sd = window.CURRENT_SCENE_DATA;
 	const svg = document.getElementById("wizbox");
+	if(!svg) return;
 	let al1 = {
 		x: (parseInt($("#aligner1").css("left")) + 29)/sd.scale_factor,
 		y: (parseInt($("#aligner1").css("top")) + 29)/sd.scale_factor,
