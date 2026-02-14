@@ -111,6 +111,14 @@ canvas.dice-rolling-panel__container{
     text-transform: uppercase;
     font-weight:bold;
 }
+#hidden-scenes-message{
+    background: #000d;
+    border-radius:5px;
+    width: fit-content;
+    max-width: calc(100% - 600px);
+    min-width: 400px;
+    padding:5px;
+}
 .percentageLoaded{
     height: 10px;
     position: absolute;
