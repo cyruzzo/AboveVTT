@@ -1654,7 +1654,7 @@ class MessageBroker {
 				$('#VTT').toggleClass('hide-players', true);
 				hiddenMessage = `<div id="hidden-scenes-message">The DM currently has the map hidden from players.</div>`;
 			} else {
-				hiddenMessage = `<div id="hidden-scenes-message">You have hidden the scene from players in the scenes tab.</div>`;
+				hiddenMessage = `<div id="hidden-scenes-message">You have scenes hidden from players (DM user can still preview).</div>`;
 			}
 			$('body').append(hiddenMessage);
 		} else {
