@@ -2055,7 +2055,20 @@ function init_scenes_panel() {
 
 	scenesPanel.updateHeader("Scenes");
 	add_expand_collapse_buttons_to_header(scenesPanel);
-
+	let hideMapFromPlayers = $(`<button class="token-row-button hide-button ${window.AVTT_CAMPAIGN_INFO?.hidePlayersScene == 1 ? 'active' : ''}" title="Hide Scene from Players"><span class="material-icons"><span class="material-symbols-outlined">group_off</span></span></button>`);
+	hideMapFromPlayers.on("click", function (clickEvent) {
+		const data = { ...window.AVTT_CAMPAIGN_INFO };
+		const button = $(clickEvent.currentTarget);
+		button.toggleClass("active");
+		if (button.hasClass("active")) {
+			data.hidePlayersScene = 1
+		} else {
+			delete data.hidePlayersScene;
+		}
+		AboveApi.setCampaignData(data);
+		window.MB.sendMessage("custom/myVTT/campaignData", data);
+	});
+	scenesPanel.header.find('.expand-collapse-wrapper').prepend(hideMapFromPlayers);
 	let searchInput = $(`<input name="scene-search" type="search" style="width:96%;margin:2%" placeholder="search scenes">`);
 	searchInput.off("input").on("input", mydebounce(() => {
 		let textValue = scenesPanel.header.find("input[name='scene-search']").val();
@@ -2105,10 +2118,7 @@ function init_scenes_panel() {
 
 	let headerWrapper = $(`<div class="scenes-panel-add-buttons-wrapper"></div>`);
 	headerWrapper.append(`<span class='reorder-explanation'>Drag items to move them between folders</span>`);
-	headerWrapper.append(searchInput);
-	headerWrapper.append(addFolderButton);
-	headerWrapper.append(addSceneButton);
-	headerWrapper.append(reorderButton);
+	headerWrapper.append(searchInput, addFolderButton, addSceneButton, reorderButton);
 	scenesPanel.header.append(headerWrapper);
 	headerWrapper.find(".reorder-explanation").hide();
 
@@ -2520,8 +2530,6 @@ function avttScenesSafeDecode(value) {
 		return value;
 	}
 }
-
-
 
 function avttScenesNormalizeRelativePath(path) {
 	if (typeof path !== "string") {
