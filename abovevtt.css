@@ -83,7 +83,11 @@ canvas.dice-rolling-panel__container{
     max-width: calc(100% - var(--sidebar-width, 340px)) !important;
     z-index: 160000 !important;
 }
-
+.hide-button.active{
+    color: #fff;
+    background-color: #c53131;
+}
+#hidden-scenes-message,
 .abovevttTempMessage{
     display:block;
     position:fixed;
@@ -14501,6 +14505,12 @@ button#displayedDiceFormulaExit:hover {
 .sidebar-panel-content.avtt-drop-target::after {
     top: 89px;
 }
+
+#VTT.hide-players *{
+    visibility:hidden !important;
+    pointer-events:none !important;
+}
+
 /***** Icon UI *****/
 
 .mobileAVTTUI #VTTWRAPPER ~ div.ddbc-tab-options--layout-pill>button, 

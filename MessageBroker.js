@@ -665,6 +665,10 @@ class MessageBroker {
 					deleteExploredScene(msg.data.sceneId)
 				}
 			}
+			if (msg.eventType == "custom/myVTT/campaignData"){
+				window.AVTT_CAMPAIGN_INFO = msg.data;
+				window.MB.checkHideSceneFromPlayers();
+			}
 			if(msg.eventType == "custom/myVTT/place-extras-token"){
 				if(window.DM){
 					let left = parseInt(msg.data.centerView.x);
@@ -1642,10 +1646,25 @@ class MessageBroker {
 		self.loadAboveWS(notify_player_join);
 
 	}
-
+	checkHideSceneFromPlayers(){
+		$('#hidden-scenes-message').remove();
+		if (window.AVTT_CAMPAIGN_INFO?.hidePlayersScene == 1 && !window.DM) {
+			let hiddenMessage;
+			if (window.myUser != window.CAMPAIGN_INFO.dmId && window.myUser != 'THE_DM') {
+				$('#VTT').toggleClass('hide-players', true);
+				hiddenMessage = `<div id="hidden-scenes-message">The DM currently has the map hidden from players.</div>`;
+			} else {
+				hiddenMessage = `<div id="hidden-scenes-message">You have hidden the scene from players in the scenes tab.</div>`;
+			}
+			$('body').append(hiddenMessage);
+		} else {
+			$('#VTT').toggleClass('hide-players', false);	
+		}
+	}
 	async handleScene (msg, forceRefresh=false) {
 		console.debug("handlescene", msg);
 		window.LOADING = true;
+		window.MB.checkHideSceneFromPlayers();
 		try{
 			if(msg.data.scale_factor == undefined || msg.data.scale_factor == ''){
 				msg.data.scale_factor = 1;
