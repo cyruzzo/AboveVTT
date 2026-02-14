@@ -3087,7 +3087,16 @@ function init_help_menu() {
 							<dd>Zoom in</dd>
 						</dl>
 						<dl>
-							<dt>[</dt>&nbsp;<dt>]</dt>&nbsp;<dt>${getShiftKeyName()}+[</dt>&nbsp;<dt>${getShiftKeyName()}+]</dt> <dd> Rotate Selected Tokens as a Group</dd>
+							<dt>Arrow Keys</dt> 
+							<dd>Move selected tokens in direction of arrow key</dd>
+						</dl>
+						<dl>
+							<dt>Shift+Arrow Keys</dt> 
+							<dd>Rotate selected tokens to face in direction of arrow key</dd>
+						</dl>
+						<dl>
+							<dt>[</dt>&nbsp;<dt>]</dt>&nbsp;<dt>${getShiftKeyName()}+[</dt>&nbsp;<dt>${getShiftKeyName()}+]</dt> 
+							<dd>Rotate Selected Tokens as a Group. Shift rotates in smaller increments</dd>
 						</dl>
 
 						<dl>
