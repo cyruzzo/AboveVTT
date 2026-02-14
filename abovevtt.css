@@ -375,8 +375,8 @@ button .ddbc-tab-options__header-heading .menu-option{
     max-height: 100%;
     border: solid black 1px;
     overflow: hidden auto;
-    height: calc(100% - 100px);
-    max-height: fit-content;
+    height: fit-content;
+    max-height: calc(100% - 100px);
 }
 span.button-text{
     width:fit-content;
