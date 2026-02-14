@@ -55,6 +55,7 @@ async function get_edit_form_data(){
 	})
 	
 	await Promise.all(promises);
+	data['gridOver'] = +$("#gridOverSelect").val();
 	return data;
 	
 }
@@ -726,15 +727,9 @@ function open_grid_wizard_controls(scene_id, aligner1, aligner2, regrid=function
 			}
 		
 			
-			redraw_grid(null,null,null,null,color,width,null,dash);
-		}
-		else if(window.CURRENT_SCENE_DATA.gridType == 2){
-			redraw_hex_grid(null,null,null,null,color,width,null,dash, false);
-		}
-		else if(window.CURRENT_SCENE_DATA.gridType == 3){
-			redraw_hex_grid(null,null,null,null,color,width,null,dash, true);
-		}
 
+		}
+		redraw_grid(null,null,null,null,color,width,null,dash);		
 		//to do: move the grid aligners to match the input settings.
 	}			
 
@@ -1118,6 +1113,7 @@ function edit_scene_vision_settings(scene_id){
 		window.CURRENT_SCENE_DATA.daylight = originalColor;
 		$('#VTT').css('--daylight-color', originalColor);
 		if (scene.id === window.CURRENT_SCENE_DATA.id){
+			//todo: eval whether hex grid could be active here
 			if(window.CURRENT_SCENE_DATA.grid === "1"){
 				redraw_grid()
 			}
@@ -1208,9 +1204,10 @@ function edit_scene_dialog(scene_id) {
 			return
 		}
 	
-		const {hpps, vpps, offsetx, offsety, grid_color, grid_line_width, grid_subdivided, grid} = await get_edit_form_data()
+		const {hpps, vpps, offsetx, offsety, grid_color, grid_line_width, grid_subdivided, grid, grid_above_dark} = await get_edit_form_data()
 		// redraw grid with new information
 		window.CURRENT_SCENE_DATA.grid = grid;
+		window.CURRENT_SCENE_DATA.grid_above_dark = grid_above_dark;		
 		if(grid === "1" && window.CURRENT_SCENE_DATA.scale_check){
 			let conversion = window.CURRENT_SCENE_DATA.scale_factor * window.CURRENT_SCENE_DATA.conversion
 			redraw_grid(parseFloat(hpps*conversion), parseFloat(vpps*conversion), offsetx*conversion, offsety*conversion, grid_color, grid_line_width, grid_subdivided )
@@ -1480,6 +1477,20 @@ function edit_scene_dialog(scene_id) {
 	colorPickers.on('change.spectrum', handle_form_grid_on_change); // commit the changes when the user clicks the submit button
 	colorPickers.on('hide.spectrum', handle_form_grid_on_change);   // the hide event includes the original color so let's change it back when we get it
 
+	const gridOver = $(`<select id='gridOverSelect' name="gridOver" value="${scene["gridOver"] || 0}" >
+<option value=0>Never</option>
+<option value=1>Always</option>
+<option value=2>Drag Assist</option>
+<option value=3>Only Drag Assist</option>
+</select>`)
+	form.append(form_row('gridOver', 'Grid Overlay', gridOver));
+	gridOver.on('change', function() {
+		const gridOverValue = $(this).val();
+		//todo: this is too soon - wait for save
+		window.CURRENT_SCENE_DATA.gridOver = + gridOverValue;
+	});
+	form.find('#gridOver_row').attr('title', 'When to draw the grid overlay.')
+	
 	const playlistSelect = $(`<select id='playlistSceneSelect'><option value='0'>None</option></select>`)
 	const playlists = window.MIXER.playlists();
 
@@ -1987,6 +1998,7 @@ function default_scene_data() {
 		offsetx: 0,
 		offsety: 0,
 		grid: 0,
+		gridOver: 0, //0- never, 1-always, 2-drag help+under, 3-drag help only
 		snap: 0,
 		reveals: [[0, 0, 0, 0, 2, 0, 1]],
 		order: Date.now(),

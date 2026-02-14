@@ -1699,15 +1699,6 @@ class MessageBroker {
 				window.CURRENT_SCENE_DATA.height = mapHeight;
 				await reset_canvas(false);
 
-				if(window.CURRENT_SCENE_DATA.gridType == 2 || window.CURRENT_SCENE_DATA.gridType == 3){
-					const a = 2 * Math.PI / 6;
-					const hexWidth = window.CURRENT_SCENE_DATA.hpps * Math.sin(a) * 2 * window.CURRENT_SCENE_DATA.scale_factor;
-					const hexHeight = window.CURRENT_SCENE_DATA.hpps * (1 + Math.cos(a)) * window.CURRENT_SCENE_DATA.scale_factor;
-					window.hexGridSize = {
-						width: hexWidth,
-						height: hexHeight
-					}
-				}
 				if(!isSameTokenLight){
 					for(let i in window.TOKEN_OBJECTS){
 						const token = $(`#tokens div[data-id='${i}']`);
@@ -1863,16 +1854,7 @@ class MessageBroker {
 						$('.import-loading-indicator .percentageLoaded').css('width', `10%`);	
 						window.CURRENT_SCENE_DATA.width = mapWidth;
 						window.CURRENT_SCENE_DATA.height = mapHeight;
-						
-
 						if(window.CURRENT_SCENE_DATA.gridType == 2 || window.CURRENT_SCENE_DATA.gridType == 3){
-							const a = 2 * Math.PI / 6;
-							const hexWidth = window.CURRENT_SCENE_DATA.hpps * Math.sin(a) * 2 * window.CURRENT_SCENE_DATA.scale_factor;
-							const hexHeight = window.CURRENT_SCENE_DATA.hpps * (1 + Math.cos(a)) * window.CURRENT_SCENE_DATA.scale_factor;
-							window.hexGridSize = {
-								width: hexWidth,
-								height: hexHeight
-							}
 						}else{
 							delete window.CURRENT_SCENE_DATA.scaleAdjustment;
 						}

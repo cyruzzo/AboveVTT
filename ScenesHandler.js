@@ -302,16 +302,7 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 				const color = "rgba(255, 0, 0,0.5)";
 				// nulls will take the window.current_scene_data from above
 				window.CURRENT_SCENE_DATA.gridType = $('#gridType input:checked').val();
-				if(window.CURRENT_SCENE_DATA.gridType == 1){
-					redraw_grid(null,null,null,null,color,width,null,dash)
-				}
-				else if(window.CURRENT_SCENE_DATA.gridType == 2){
-					redraw_hex_grid(null,null,null,null,color,width,null,dash,false)
-				}
-				else if(window.CURRENT_SCENE_DATA.gridType == 3){
-					redraw_hex_grid(null,null,null,null,color,width,null,dash,true)
-				}
-				
+				redraw_grid(null,null,null,null,color,width,null,dash)
 			};
 
 			let click2 = {
@@ -515,9 +506,7 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 		scene['scaleY'] = (60.0 / parseInt(scene['vpps'])); // for backward compatibility, this will be horizonat sca
 
 		$("#tokens").show();
-		$("#grid_overlay").show();
 		$(".alphaNumGrid").remove();
-
 
 		window.FOG_OF_WAR = true;
 		window.REVEALED = [[0, 0, 0, 0, 2, 0]].concat(self.scene.reveals);
