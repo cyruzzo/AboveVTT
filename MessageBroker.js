@@ -1677,8 +1677,11 @@ class MessageBroker {
 			let scaleFactorEqual = (msg.data.scale_factor/window.CURRENT_SCENE_DATA.conversion == window.CURRENT_SCENE_DATA.scale_factor ||
 																		(msg.data.UVTTFile == 1  && msg.data.scale_factor == window.CURRENT_SCENE_DATA.scale_factor) || 
 																		((msg.data.scale_factor == undefined || msg.data.scale_factor=='') && window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion == 1))
-			let hppsEqual = window.CURRENT_SCENE_DATA.hpps==parseFloat(msg.data.hpps*msg.data.scale_factor)
-			let vppsEqual = window.CURRENT_SCENE_DATA.vpps==parseFloat(msg.data.vpps*msg.data.scale_factor)
+			let hppsEqual = (window.CURRENT_SCENE_DATA.gridType == 2 && window.CURRENT_SCENE_DATA.hpps == parseFloat(msg.data.vpps * msg.data.scale_factor)) || window.CURRENT_SCENE_DATA.hpps==parseFloat(msg.data.hpps*msg.data.scale_factor)
+			let vppsEqual = (window.CURRENT_SCENE_DATA.gridType == 3 && window.CURRENT_SCENE_DATA.vpps == parseFloat(msg.data.hpps * msg.data.scale_factor)) || window.CURRENT_SCENE_DATA.vpps==parseFloat(msg.data.vpps*msg.data.scale_factor)
+			
+			
+			
 			let isVideoEqual = window.CURRENT_SCENE_DATA.player_map_is_video == msg.data.player_map_is_video && window.CURRENT_SCENE_DATA.dm_map_is_video == msg.data.dm_map_is_video
 
 			let isSameScaleAndMaps = isCurrentScene && scaleFactorEqual && hppsEqual && vppsEqual && isVideoEqual && ((window.DM && dmMapEqual && dmMapToggleEqual) || (!window.DM && playerMapEqual))
