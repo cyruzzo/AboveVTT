@@ -4995,10 +4995,10 @@ function grouprotate_create() {
 
 		let id = window.CURRENTLY_SELECTED_TOKENS[i];
 		let token = window.TOKEN_OBJECTS[id];
-		$(`#scene_map_container .token[data-id='${id}'], [data-darkness='darkness_${id.replaceAll("/", "")}']`).remove();
 		const selectedGroupToken = token.options.groupId && $(`.tokenselected[data-group-id="${token.options.groupId}"]:not(.ui-draggable-disabled)`).length > 0
 		if ((token.isPlayerLocked() || token.isDMLocked()) && !selectedGroupToken) continue;
-		
+
+		$(`#scene_map_container .token[data-id='${id}'], [data-darkness='darkness_${id.replaceAll("/", "")}']`).remove();
 		let sceneToken = $(`div.token[data-id='${id}']`)
 
 
