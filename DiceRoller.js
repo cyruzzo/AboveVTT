@@ -623,7 +623,7 @@ class DiceRoller {
                     expression = `2*[${expression}]`
                 }
                 msgdata = {
-                player: diceRoll.name ? diceRoll.name : window.PLAYER_NAME,
+                    player: diceRoll.name ? diceRoll.name : window.PLAYER_NAME,
                   img: diceRoll.avatarUrl ?  diceRoll.avatarUrl : window.PLAYER_IMG,
                   text: `<div class="tss-24rg5g-DiceResultContainer-Flex abovevtt-roll-container ${critClass}" title='${expression}<br>${output}'>
                             <div class="tss-kucurx-Result">
@@ -685,7 +685,7 @@ class DiceRoller {
                     spellSave: spellSave,
                     damageType: damageType
                 }
-                      
+                   
                 msgdata = {
                   player: diceRoll.name ? diceRoll.name : window.PLAYER_NAME,
                   img: diceRoll.avatarUrl ?  diceRoll.avatarUrl : window.PLAYER_IMG,
@@ -698,7 +698,12 @@ class DiceRoller {
                 };
             }
 
-
+            if (!window.EXPERIMENTAL_SETTINGS['rpgRoller'] && !msgdata.rollData.expression.includes('d')) {
+                send_ddb_dice_message(msgdata.rollData.expression, msgdata.player, msgdata.img, msgdata.rollData.rollType, msgdata.rollData.damageType, msgdata.rollData.rollTitle, diceRoll.sendToOverride)
+                self.#resetVariables();
+                self.nextRoll(undefined, critRange, critType)
+                return true;
+            }
             if(is_abovevtt_page() && window.EXPERIMENTAL_SETTINGS['rpgRoller'] == true){
                 setTimeout(function(){
                     window.MB.inject_chat(msgdata);

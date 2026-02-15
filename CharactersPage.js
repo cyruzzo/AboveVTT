@@ -1075,6 +1075,8 @@ async function init_character_sheet_page() {
         .then(async () => {
           window.CAMPAIGN_INFO = await DDBApi.fetchCampaignInfo(window.gameId);
           window.myUser = $('#message-broker-client').attr('data-userid') || Cobalt?.User?.ID;
+          window.MB = new MessageBroker();
+          init_my_dice_details();
         })
     }, 5000)
   }

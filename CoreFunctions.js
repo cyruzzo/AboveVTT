@@ -973,6 +973,231 @@ function add_journal_roll_buttons(target, tokenId=undefined, specificImage=undef
 
   console.groupEnd()
 }
+/**
+ * Posts a message to the chat when a player connected to the server.
+ */
+function report_connection() {
+  if (!is_abovevtt_page())
+    return;
+  let msgdata = {
+    player: window.PLAYER_NAME,
+    img: window.PLAYER_IMG,
+    text: PLAYER_NAME + " has connected to the server!",
+  };
+  window.MB.inject_chat(msgdata);
+}
+/**
+ * Notifie about player joining the game.
+ */
+function notify_player_join() {
+  if (window.DM || !is_abovevtt_page())
+    return;
+  const playerdata = {
+    abovevtt_version: window.AVTT_VERSION,
+    player_id: window.PLAYER_ID,
+    pc: read_pc_object_from_character_sheet(window.PLAYER_ID)
+  };
+
+  console.log("Sending playerjoin msg, abovevtt version: " + playerdata.abovevtt_version + ", sheet ID:" + window.PLAYER_ID);
+  whenAvailable('JOURNAL', function () { window.MB.sendMessage("custom/myVTT/playerjoin", playerdata) });
+}
+
+/**
+ * Load dice configuration from DDB.
+ */
+function init_my_dice_details() {
+  get_cobalt_token(function (token) {
+    window.ajaxQueue.addRequest({
+      type: 'GET',
+      url: "https://dice-service.dndbeyond.com/diceuserconfig/v1/get",
+      contentType: "application/json; charset=utf-8",
+      dataType: 'json', // added data type
+      beforeSend: function (xhr) {
+        xhr.setRequestHeader('Authorization', 'Bearer ' + token);
+      },
+      xhrFields: {
+        withCredentials: true
+      },
+      success: function (res) {
+        window.mydice = res
+      }
+    });
+  });
+}
+/**
+ * Attempts to convert the output of an rpgDiceRoller DiceRoll to the DDB format.
+ * If the conversion is successful, it will be sent over the websocket, and this will return true.
+ * If the conversion fails for any reason, nothing will be sent, and this will return false,
+ * @param {String} expression the dice rolling expression; ex: 1d20+4
+ * @param {Boolean} toSelf    whether this is sent to self or everyone
+ * @returns {Boolean}         true if we were able to convert and send; else false
+ */
+//currently used for flat value rolls
+function send_ddb_dice_message(expression, displayName, imgUrl, rollType = "roll", damageType, actionType = "custom", sendTo = "") {
+
+  let diceRoll = new DiceRoll(expression);
+  diceRoll.action = actionType;
+  diceRoll.rollType = rollType;
+  diceRoll.name = displayName == true ? 'THE DM' : displayName;
+  diceRoll.avatarUrl = imgUrl;
+  // diceRoll.entityId = monster.id;
+  // diceRoll.entityType = monsterData.id;
+
+  console.log("with values", expression, displayName, imgUrl, rollType, damageType, actionType, sendTo)
+
+
+  try {
+    expression = expression.replace(/\s+/g, ''); // remove all whitespace
+
+    const supportedDieTypes = ["d4", "d6", "d8", "d10", "d12", "d20", "d100"];
+
+    let roll = new rpgDiceRoller.DiceRoll(expression);
+
+    // rpgDiceRoller doesn't give us the notation of each roll so we're going to do our best to find and match them as we go
+    let choppedExpression = expression;
+    let notationList = [];
+    for (let i = 0; i < roll.rolls.length; i++) {
+      let currentRoll = roll.rolls[i];
+      if (typeof currentRoll === "string") {
+        let idx = choppedExpression.indexOf(currentRoll);
+        let previousNotation = choppedExpression.slice(0, idx);
+        notationList.push(previousNotation);
+        notationList.push(currentRoll);
+        choppedExpression = choppedExpression.slice(idx + currentRoll.length);
+      }
+    }
+    console.log("chopped expression", choppedExpression)
+    notationList.push(choppedExpression); // our last notation will still be here so add it to the list
+
+    if (roll.rolls.length != notationList.length) {
+      console.warn(`Failed to convert expression to DDB roll; expression ${expression}`);
+      console.groupEnd()
+      return false;
+    }
+
+    let convertedDice = [];       // a list of objects in the format that DDB expects
+    let allValues = [];           // all the rolled values
+    let convertedExpression = []; // a list of strings that we'll concat for a string representation of the final math being done
+    let constantsTotal = 0;       // all the constants added together
+    for (let i = 0; i < roll.rolls.length; i++) {
+      let currentRoll = roll.rolls[i];
+      if (typeof currentRoll === "object") {
+        let currentNotation = notationList[i];
+        let currentDieType = supportedDieTypes.find(dt => currentNotation.includes(dt)); // we do it this way instead of splitting the string so we can easily clean up things like d20kh1, etc. It's less clever, but it avoids any parsing errors
+        if (!supportedDieTypes.includes(currentDieType)) {
+          console.warn(`found an unsupported dieType ${currentNotation}`);
+          console.groupEnd()
+          return false;
+        }
+        if (currentNotation.includes("kh") || currentNotation.includes("kl")) {
+          let cleanerString = currentRoll.toString()
+            .replace("[", "(")    // swap square brackets with parenthesis
+            .replace("]", ")")    // swap square brackets with parenthesis
+            .replace("d", "")     // remove all drop notations
+            .replace(/\s+/g, ''); // remove all whitespace
+          convertedExpression.push(cleanerString);
+        } else {
+          convertedExpression.push(currentRoll.value);
+        }
+        let dice = currentRoll.rolls.map(d => {
+          allValues.push(d.value);
+          console.groupEnd()
+          return { dieType: currentDieType, dieValue: d.value };
+        });
+
+        convertedDice.push({
+          "dice": dice,
+          "count": dice.length,
+          "dieType": currentDieType,
+          "operation": 0
+        })
+      } else if (typeof currentRoll === "string") {
+        convertedExpression.push(currentRoll);
+      } else if (typeof currentRoll === "number") {
+        convertedExpression.push(currentRoll);
+        if (i > 0) {
+          if (convertedExpression[i - 1] == "-") {
+            constantsTotal -= currentRoll;
+          } else if (convertedExpression[i - 1] == "+") {
+            constantsTotal += currentRoll;
+          } else {
+            console.warn(`found an unexpected symbol ${convertedExpression[i - 1]}`);
+            console.groupEnd()
+            return false;
+          }
+        } else {
+          constantsTotal += currentRoll;
+        }
+      }
+    }
+    if(sendTo == ''){
+      sendTo = gamelog_send_to_text().trim().replace('/\s/gi', '');
+    }
+    sendTo = sendTo.toLowerCase();
+    
+    let ddbJson = {
+      id: uuid(),
+      dateTime: `${Date.now()}`,
+      gameId: window.gameId,
+      userId: window.myUser,
+      source: "web",
+      persist: true,
+      messageScope: sendTo === "everyone" ? "gameId" : "userId",
+      messageTarget: sendTo === "everyone" ? `${window.gameId}` : sendTo === "dungeonmaster" ? `${window.CAMPAIGN_INFO.dmId}` : `${window.myUser}`,
+      entityId: window.myUser,
+      entityType: "user",
+      eventType: "dice/roll/fulfilled",
+      data: {
+        action: actionType,
+        setId: window.mydice.data.setId,
+        context: {
+          entityId: window.myUser,
+          entityType: "user",
+          messageScope: sendTo === "everyone" ? "gameId" : "userId",
+          messageTarget: sendTo === "everyone" ? `${window.gameId}` : sendTo === "dungeonmaster" ? `${window.CAMPAIGN_INFO.dmId}` : `${window.myUser}`,
+          name: displayName,
+          avatarUrl: imgUrl
+        },
+        rollId: uuid(),
+        rolls: [
+          {
+            diceNotation: {
+              set: convertedDice,
+              constant: constantsTotal
+            },
+            diceNotationStr: expression,
+            rollType: rollType,
+            rollKind: expression.includes("kh") ? "advantage" : expression.includes("kl") ? "disadvantage" : "",
+            result: {
+              constant: constantsTotal,
+              values: allValues,
+              total: roll.total,
+              text: convertedExpression.join("")
+            }
+          }
+        ]
+      }
+    };
+    if (window.MB.ws.readyState == window.MB.ws.OPEN) {
+      window.MB.ws.send(JSON.stringify(ddbJson));
+      console.groupEnd()
+      return true;
+    } else { // TRY TO RECOVER
+      get_cobalt_token(function (token) {
+        window.MB.loadWS(token, function () {
+          // TODO, CONSIDER ADDING A SYNCMEUP / SCENE PAIR HERE
+          window.MB.ws.send(JSON.stringify(ddbJson));
+        });
+      });
+      console.groupEnd()
+      return true; // we can't guarantee that this actually worked, unfortunately
+    }
+  } catch (error) {
+    console.warn(`failed to send expression as DDB roll; expression = ${expression}`, error);
+    console.groupEnd()
+    return false;
+  }
+}
 
 function general_statblock_formating(input){
   input = input.replace(/&nbsp;/g,' ')
@@ -1015,6 +1240,7 @@ function general_statblock_formating(input){
   return input;
         
 }
+
 function process_monitored_logs() {
   const logs = [...console.concerningLogs, ...console.otherLogs].sort((a, b) => a.timeStamp < b.timeStamp ? 1 : -1);
   let processedLogs = [];
