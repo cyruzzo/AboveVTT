@@ -8491,7 +8491,7 @@ button#changeTokenImage:before{
 .VTTToken:not(.freeform):not(.hasbase) .hpvisualbar:before{
     --mask-size:calc(100% - 7px);
     border-radius: 50%;
-    transform: scale(var(--token-scale)) rotate(var(--token-rotation));
+    transform: scale(var(--token-scale)) rotate(var(--token-rotation)) scaleX(var(--image-flip-x, 1)) scaleY(var(--image-flip-y, 1));
     height: 100%;
     width: 100%;
     top: 0px;

@@ -38,7 +38,10 @@ const availableToAoe = [
 	"underDarkness"
 ];
 
-
+//reused transform definition
+const imageTransform = 'scale(var(--token-scale)) rotate(var(--token-rotation)) scaleX(var(--token-flip-x, 1)) scaleY(var(--token-flip-y, 1))';
+function tokenFlipX(token) { return ((token.options.tokenFlip || 0) & 1) ? -1 : 1; }
+function tokenFlipY(token) { return ((token.options.tokenFlip || 0) & 2) ? -1 : 1; }
 
 const throttleLight = throttle((darknessMoved = false) => {
 	if(window.LOADING){
@@ -641,9 +644,15 @@ class Token {
 		debounceLightChecks();
 		update_pc_token_rows();
 	}
+	isPlayerLocked() {
+		return !window.DM && (this.options.restrictPlayerMove || this.options.locked) && !this.isCurrentPlayer();
+	}
+	isDMLocked() {
+		return window.DM && this.options.locked && !$('#select_locked .ddbc-tab-options__header-heading').hasClass('ddbc-tab-options__header-heading--is-active');
+	}
 	rotate(newRotation) {
-		if (!window.DM && (this.options.restrictPlayerMove || this.options.locked) && !this.isCurrentPlayer()) return; // don't allow rotating if the token is locked
-		if (window.DM && this.options.locked && !$('#select_locked .ddbc-tab-options__header-heading').hasClass('ddbc-tab-options__header-heading--is-active')) return; // don't allow rotating if the token is locked
+		if (this.isPlayerLocked()) return; // don't allow rotating if the token is locked
+		if (this.isDMLocked()) return; // don't allow rotating if the token is locked		
 		this.update_from_page();
 		this.options.rotation = newRotation;
 		// this is copied from the place() function. Rather than calling place() every time the draggable.drag function executes, 
@@ -660,8 +669,17 @@ class Token {
 		let tokenElement = $("#tokens").find(selector).add(`[data-notatoken='notatoken_${this.options.id}']`).add(`[data-darkness='darkness_${this.options.id.replaceAll("/", "")}']`);
 		tokenElement.css("--token-rotation", newRotation + "deg");
 		tokenElement.css("--token-scale", imageScale);
-		tokenElement.find(".token-image").css("transform", `scale(var(--token-scale)) rotate(var(--token-rotation))`);
+		tokenElement.css("--token-flip-x", tokenFlipX(this));		
+		tokenElement.css("--token-flip-y", tokenFlipY(this));		
+		tokenElement.find(".token-image").css("transform", imageTransform);
 		$(`.aura-element-container-clip[id='${this.options.id}'] .aura-element, .aura-element[data-id='${this.options.id}']`).css('--rotation', newRotation + "deg");
+	}
+	flip(newFlip) { //cycles through by default
+		if (this.isPlayerLocked()) return; // don't allow rotating if the token is locked
+		if (this.isDMLocked()) return; // don't allow rotating if the token is locked		
+		if(newFlip == undefined) newFlip = ((this.options.tokenFlip || 0) + 1) % 4;
+		this.options.tokenFlip = newFlip;
+		this.rotate(this.options.rotation); //re-use side effects of rotation code
 	}
 	moveUp() {	
 		let tinyToken = (Math.round(parseFloat(this.options.gridSquares)*2)/2 < 1) || this.isAoe();	
@@ -717,7 +735,7 @@ class Token {
 		let newLeft = `${parseFloat(this.options.left) - addhpps/2-5}px`;
 		let addvpps = (window.CURRENT_SCENE_DATA.gridType && window.CURRENT_SCENE_DATA.gridType != 1) ? window.hexGridSize.height * window.CURRENT_SCENE_DATA.scaleAdjustment.y : (!tinyToken || window.CURRENTLY_SELECTED_TOKENS.length > 1) ? parseFloat(window.CURRENT_SCENE_DATA.vpps) : parseFloat(window.CURRENT_SCENE_DATA.vpps)/2;
 		let newTop = `${parseFloat(this.options.top) + addvpps+5}px`;
-		this.move(newTop, newLeft)	
+		this.move(newTop, newLeft)
 	}
 
 	/**
@@ -727,8 +745,8 @@ class Token {
 	 * @returns void
 	 */
 	move(top, left) {
-		if (!window.DM && (this.options.restrictPlayerMove || this.options.locked) && !this.isCurrentPlayer()) return; // don't allow rotating if the token is locked
-		if (window.DM && this.options.locked && !$('#select_locked .ddbc-tab-options__header-heading').hasClass('ddbc-tab-options__header-heading--is-active')) return; // don't allow rotating if the token is locked
+		if (this.isPlayerLocked()) return; // don't allow rotating if the token is locked
+		if (this.isDMLocked()) return;
 		
 		// Save handle params
 		top = parseFloat(top);
@@ -801,7 +819,9 @@ class Token {
 					'max-height': `var(--token-height)`,
 					'--z-index-diff': old.css('--z-index-diff'),
 					'--token-scale': old.css('--token-scale'),
-    				'--token-rotation': old.css('--token-rotation')
+    					'--token-rotation': old.css('--token-rotation'),
+    					'--token-flip-x': old.css('--token-flip-x'),
+    					'--token-flip-y': old.css('--token-flip-y')										
 				})
 				
 				redraw_drawn_light();
@@ -852,7 +872,10 @@ class Token {
 						'max-height': `var(--token-height)`,
 						'--z-index-diff': old.css('--z-index-diff'),
 						'--token-scale': old.css('--token-scale'),
-	    				'--token-rotation': old.css('--token-rotation'),
+	    					'--token-rotation': old.css('--token-rotation'),
+						'--token-flip-x': old.css('--token-flip-x'),
+						'--token-flip-y': old.css('--token-flip-y'),						
+						
 						'opacity': this.options.hidden ? '0.5' : '1',
 						'--hp-percentage': `${this.hpPercentage}%`,
 						"--token-border-width": tokenBorderWidth,
@@ -2169,10 +2192,12 @@ class Token {
 
 
 				old.find(".token-image").css("transition", "max-height 0.2s linear, max-width 0.2s linear, transform 0.2s linear")
-				old.find(".token-image").css("transform", "scale(var(--token-scale)) rotate(var(--token-rotation))");
+				old.find(".token-image").css("transform", imageTransform);
 				old.css({
 					"--token-scale": imageScale,
 					"--token-rotation": `${rotation}deg`,
+					"--token-flip-x": tokenFlipX(this),
+					"--token-flip-y": tokenFlipY(this),
 					"--offsetX": imageOffsetX != undefined ? `${parseFloat(imageOffsetX) / 90 * this.options.size }px` : '0px',
 					"--offsetY": imageOffsetY != undefined ? `${parseFloat(imageOffsetY) / 90 * this.options.size }px` : '0px',
 					"--image-opacity": `${imageOpacity}`,
@@ -2182,7 +2207,9 @@ class Token {
 				});
 				$(`.isAoe[data-id='${this.options.id}']:not(.token)`).css({
 					'--token-rotation': `${rotation}deg`,
-					'--token-scale': imageScale
+					'--token-scale': imageScale,
+					'--token-flip-x': tokenFlipX(this),
+					'--token-flip-y': tokenFlipY(this)					
 				})
 
 
@@ -2301,11 +2328,11 @@ class Token {
 									
 									let tokenImage;
 									if (this.options.videoToken == true || ['.mp4', '.webm', '.m4v'].some(d => this.options.imgsrc.includes(d))) {
-										tokenImage = $("<video disableRemotePlayback autoplay loop muted style='transform:scale(var(--token-scale)) rotate(var(--token-rotation))' class='" + imgClass + "'/>");
+										tokenImage = $("<video disableRemotePlayback autoplay loop muted style='transform:" + imageTransform + "' class='" + imgClass + "'/>");
 										video = true;
 									}
 									else {
-										tokenImage = $("<div data-div-image='true' style='transform:scale(var(--token-scale)) rotate(var(--token-rotation))' class='" + imgClass + " div-token-image'/>");
+										tokenImage = $("<div data-div-image='true' style='transform:"+imageTransform+"' class='" + imgClass + " div-token-image'/>");
 									}
 									oldImage = tokenImage;
 									old.append(tokenImage);
@@ -2388,11 +2415,11 @@ class Token {
 							
 							let tokenImage;
 							if(this.options.videoToken == true || ['.mp4', '.webm','.m4v'].some(d => this.options.imgsrc.includes(d))){
-								tokenImage = $("<video disableRemotePlayback autoplay loop muted style='transform:scale(var(--token-scale)) rotate(var(--token-rotation))' class='"+imgClass+"'/>");			
+								tokenImage = $("<video disableRemotePlayback autoplay loop muted style='transform:"+imageTransform+"' class='"+imgClass+"'/>");			
 								video = true;
 							} 
 							else{
-								tokenImage = $("<div data-div-image='true' style='transform:scale(var(--token-scale)) rotate(var(--token-rotation))' class='"+imgClass+" div-token-image'/>");
+								tokenImage = $("<div data-div-image='true' style='transform:"+imageTransform+"' class='"+imgClass+" div-token-image'/>");
 							}
 							oldImage = tokenImage;
 							old.append(tokenImage);
@@ -2492,7 +2519,7 @@ class Token {
 					// token is an aoe div that uses styles instead of an image
 					// do something with it maybe?
 					// re-calc the border width incase the token has changed size
-					oldImage.css(`transform:scale(var(--token-scale)) rotate(--token-rotation));`)
+					oldImage.css(`transform:${imageTransform};`)
 
 				}
 
@@ -2577,7 +2604,10 @@ class Token {
 						'max-height': `var(--token-height)`,
 						'--z-index-diff': old.css('--z-index-diff'),
 						'--token-scale': old.css('--token-scale'),
-	    				'--token-rotation': old.css('--token-rotation')
+	    					'--token-rotation': old.css('--token-rotation'),
+	    					'--token-flip-x': old.css('--token-flip-x'),
+	    					'--token-flip-y': old.css('--token-flip-y')												
+						
 					})
 					copyImage.animate({
 							left: parseInt(parseFloat(this.options.left) / window.CURRENT_SCENE_DATA.scale_factor),
@@ -2618,8 +2648,9 @@ class Token {
 								"--token-border-width": tokenBorderWidth,
 								'border-width': old.find('.token-image').css('border-width'),
 			    				"--offsetX": old.css('--offsetX'),
-			    				"--offsetY": old.css('--offsetY'),
-								"--image-opacity": old.css('--image-opacity'),
+			    					"--offsetY": old.css('--offsetY'),
+			    					'--token-flip-x': old.css('--token-flip-x'),
+			    					'--token-flip-y': old.css('--token-flip-y'),																		"--image-opacity": old.css('--image-opacity'),
 								"--view-box": old.css('--view-box'),
 								"--image-zoom": old.css('--image-zoom')
 							})
@@ -2645,7 +2676,9 @@ class Token {
 								'max-height': `var(--token-height)`,
 								'--z-index-diff': old.css('--z-index-diff'),
 								'--token-scale': old.css('--token-scale'),
-			    				'--token-rotation': old.css('--token-rotation'),
+			    					'--token-rotation': old.css('--token-rotation'),
+			    					'--token-flip-x': old.css('--token-flip-x'),
+			    					'--token-flip-y': old.css('--token-flip-y'),																
 								'opacity': this.options.hidden ? '0.5' : '1',
 								'--hp-percentage': `${this.hpPercentage}%`,
 								'--temp-hp-percentage': `${this.tempHpPercentage}%`,
@@ -2828,16 +2861,18 @@ class Token {
 					this.options.imgsrc = update_old_discord_link(this.options.imgsrc) // this might be able to be removed in the future - it's to update maps with tokens already on them
 					let video = false;
 					if(this.options.videoToken == true || ['.mp4', '.webm','.m4v'].some(d => this.options.imgsrc.includes(d))){
-						tokenImage = $("<video disableRemotePlayback autoplay loop muted style='transform:scale(var(--token-scale)) rotate(var(--token-rotation))' class='"+imgClass+"'/>");
+						tokenImage = $("<video disableRemotePlayback autoplay loop muted style='transform:"+imageTransform+"' class='"+imgClass+"'/>");
 						video = true;
 					} 
 					else{
-						tokenImage = $("<div style='transform:scale(var(--token-scale)) rotate(var(--token-rotation))' class='"+imgClass+" div-token-image'/>");
+						tokenImage = $("<div style='transform:"+imageTransform+"' class='"+imgClass+" div-token-image'/>");
 					}
 				
 					tok.css({
 						"--token-scale": imageScale,
 						"--token-rotation": `${rotation}deg`,
+						"--token-flip-x": tokenFlipX(this),
+						"--token-flip-y": tokenFlipY(this),
 						"--offsetX": imageOffsetX != undefined ? `${parseFloat(imageOffsetX) / 90 * this.options.size }px` : '0px',
 						"--offsetY": imageOffsetY != undefined ? `${parseFloat(imageOffsetY) / 90 * this.options.size }px` : '0px',
 						"--image-opacity": `${imageOpacity}`,
@@ -2869,6 +2904,8 @@ class Token {
 					tok.css({
 						"--token-scale": imageScale,
 						"--token-rotation": `${rotation}deg`,
+						"--token-flip-x": tokenFlipX(this),
+						"--token-flip-y": tokenFlipY(this)						
 					});
 					tok.toggleClass("isAoe", true);
 					if(this.isLineAoe()){
@@ -4953,9 +4990,8 @@ function draw_selected_token_bounding_box(){
 // returns center - point
 function grouprotate_create() {
 	let furthest_coord = {}
-	$('.tokenselected').wrap('<div class="grouprotate"></div>');
-
-	
+	//deselect anything locked
+	$('.tokenselected').filter(() => !$(this).isPlayerLocked() && !$(this).isDMLocked()).wrap('<div class="grouprotate"></div>');
 	
 	for (let i = 0; i < window.CURRENTLY_SELECTED_TOKENS.length; i++) {
 

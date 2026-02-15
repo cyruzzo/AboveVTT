@@ -3579,6 +3579,22 @@ function build_adjustments_flyout_menu(tokenIds) {
 		});
 		body.append(imageZoomWrapper);
 
+		let tokFlip = tokens.map(t => t.options?.tokenFlip);
+		let uniqueTokenFlip = [...new Set(tokFlip)];
+		let startingTokenFlip = uniqueTokenFlip.length === 1 && uniqueTokenFlip[0] != undefined ? uniqueTokenFlip[0] : 0;
+		let tokenFlipWrapper = build_token_flip_input(startingTokenFlip, 
+			function (newFlip) {
+				tokens.forEach(token => {
+					token.options.tokenFlip = +newFlip;
+					$(`.VTTToken[data-id='${token.options.id}']`).css({
+						"--token-flip-x": `${((+newFlip || 0) & 1) ? -1 : 1}`,
+						"--token-flip-y": `${((+newFlip || 0) & 2) ? -1 : 1}`					
+					});
+					token.place_sync_persist();
+				});
+			});
+		body.append(tokenFlipWrapper);
+
 		let tokenOpacity = tokens.map(t => t.options.imageOpacity);
 		let uniqueOpacity = [...new Set(tokenOpacity)];
 		let startingOpacity = uniqueOpacity.length === 1 && uniqueOpacity[0] != undefined ? uniqueOpacity[0] : 1;
@@ -4147,6 +4163,21 @@ function build_options_flyout_menu(tokenIds) {
 	});
 	body.append(resetToDefaults);
 	return body;
+}
+
+function build_token_flip_input(value, changeHandler) {
+	const flipOption = {
+		name: "TokenFlip",
+		label: "Flip Token",
+		options: [
+			{ value: 0, label: "None", description: "No Flip" },
+			{ value: 1, label: "Horizontal", description: "Horizontal" },
+			{ value: 2, label: "Vertical", description: "Vertical" },
+			{ value: 3, label: "Both", description: "Horizontal and Vertical" },
+		],
+		defaultValue: 0
+	};
+	return build_dropdown_input(flipOption, value, (name, value) => { changeHandler(value)});
 }
 
 /**
