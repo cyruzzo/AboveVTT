@@ -7737,9 +7737,7 @@ function redraw_light(darknessMoved = false, limitActiveRays = 0) {
 			clipped_light(auraId, window.lightPolygon, playerTokenId, canvasWidth, canvasHeight, darknessBoundarys, selectedIds.length);
 		}
 
-
-
-		
+		combineCtx.clearRect(0, 0, canvasWidth, canvasHeight);
 		combineCtx2.clearRect(0, 0, canvasWidth, canvasHeight);
 		combineCtx2.globalCompositeOperation = "source-over";
 		drawPolygon(combineCtx2, window.lightPolygon, "#FFF", true);
