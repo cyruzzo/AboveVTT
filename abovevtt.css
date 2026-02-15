@@ -944,7 +944,7 @@ select#doorTypeSelectUVTT{
 }
 #groupRotationGrabber,
 #rotationGrabber {
-    scale: max(1, calc(1 / var(--window-zoom)))
+    scale: min(4, max(1, calc(0.5 / var(--window-zoom))))
 }
 #fog_overlay,
 #draw_overlay_under_fog_darkness,
