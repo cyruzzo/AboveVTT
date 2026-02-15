@@ -3442,7 +3442,7 @@ class Token {
 
 							for (let tok of window.dragSelectedTokens){
 								let id = $(tok).attr("data-id");
-								if ((id != self.options.id) && (!window.TOKEN_OBJECTS[id].options.locked || (window.DM && window.TOKEN_OBJECTS[id].options.restrictPlayerMove ||  $('#select_locked .ddbc-tab-options__header-heading').hasClass('ddbc-tab-options__header-heading--is-active')))) {
+								if (id != self.options.id) {
 
 
 									let curr = window.TOKEN_OBJECTS[id];
@@ -4978,16 +4978,26 @@ function draw_selected_token_bounding_box(){
 function grouprotate_create() {
 	function rotate_eligible() {
 		const token = window.TOKEN_OBJECTS[$(this).data('id')];
-		return !token.isPlayerLocked() && !token.isDMLocked();
+		const selectedGroupToken = token.options.groupId && $(`.tokenselected[data-group-id="${token.options.groupId}"]:not(.ui-draggable-disabled)`).length > 0
+		return !token.isPlayerLocked() && !token.isDMLocked() || selectedGroupToken
 	}
 	let furthest_coord = {}
-	$('.tokenselected').filter(rotate_eligible).wrap('<div class="grouprotate"></div>');
+	$('.tokenselected').filter(rotate_eligible).wrap(`<div class="grouprotate"></div>`);
+	const groupRotate = $('.grouprotate');
+	groupRotate.find('.declutterToken').removeClass('declutterToken');
+	const hiddenTokens = groupRotate.find('.tokenselected[style*=" display: none;"]');
+	// set hidden tokens to visibility hidden instead of display none so that we can calculate position if needed
+	hiddenTokens.add(hiddenTokens.find('*')).css({
+		display: '',
+		visibility: 'hidden'
+	});
 	for (let i = 0; i < window.CURRENTLY_SELECTED_TOKENS.length; i++) {
 
 		let id = window.CURRENTLY_SELECTED_TOKENS[i];
 		let token = window.TOKEN_OBJECTS[id];
 		$(`#scene_map_container .token[data-id='${id}'], [data-darkness='darkness_${id.replaceAll("/", "")}']`).remove();
-		
+		const selectedGroupToken = token.options.groupId && $(`.tokenselected[data-group-id="${token.options.groupId}"]:not(.ui-draggable-disabled)`).length > 0
+		if ((token.isPlayerLocked() || token.isDMLocked()) && !selectedGroupToken) continue;
 		
 		let sceneToken = $(`div.token[data-id='${id}']`)
 
@@ -5036,7 +5046,8 @@ function grouprotate_commit(angle) {
 	for (let i = 0; i < window.CURRENTLY_SELECTED_TOKENS.length; i++) {
 		let id = window.CURRENTLY_SELECTED_TOKENS[i];
 		let token = window.TOKEN_OBJECTS[id];
-		if(token.isPlayerLocked() || token.isDMLocked()) continue;
+		const selectedGroupToken = token.options.groupId && $(`.tokenselected[data-group-id="${token.options.groupId}"]:not(.ui-draggable-disabled)`).length > 0
+		if ((token.isPlayerLocked() || token.isDMLocked()) && !selectedGroupToken) continue;
 		let sceneToken = $(`#tokens .token[data-id='${id}']`)
 
 		window.TOKEN_OBJECTS[id].options.rotation = angle + parseFloat(sceneToken.css('--token-rotation'))
@@ -5125,12 +5136,13 @@ async function do_draw_selected_token_bounding_box() {
 			let bottom = undefined;
 			let right = undefined;
 			let left = undefined;
+
 			for (let i = 0; i < window.CURRENTLY_SELECTED_TOKENS.length; i++) {
 				
 				let id = window.CURRENTLY_SELECTED_TOKENS[i];
 				let token = window.TOKEN_OBJECTS[id];
 
-				if(!window.DM && $(`div.token[data-id='${id}']`).css('display') == 'none')
+				if ((!window.DM || token.options.lockRestrictDrop == "declutter") && $(`div.token[data-id='${id}']`).css('display') == 'none')
 					continue;
 				let tokenImageClientPosition = $(`div.token[data-id='${id}']>.token-image`)[0].getBoundingClientRect();
 				let tokenImagePosition = $(`div.token[data-id='${id}']>.token-image`).position();
