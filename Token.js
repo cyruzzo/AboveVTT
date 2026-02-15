@@ -4977,8 +4977,7 @@ function draw_selected_token_bounding_box(){
 // returns center - point
 function grouprotate_create() {
 	let furthest_coord = {}
-	//deselect anything locked
-	$('.tokenselected').filter(() => !$(this).isPlayerLocked() && !$(this).isDMLocked()).wrap('<div class="grouprotate"></div>');
+	$('.tokenselected').wrap('<div class="grouprotate"></div>');
 	
 	for (let i = 0; i < window.CURRENTLY_SELECTED_TOKENS.length; i++) {
 
