@@ -4169,15 +4169,14 @@ function build_token_flip_input(value, changeHandler) {
 	const flipOption = {
 		name: "TokenFlip",
 		label: "Flip Token",
+		type: "toggle",
 		options: [
-			{ value: 0, label: "None", description: "No Flip" },
-			{ value: 1, label: "Horizontal", description: "Horizontal" },
-			{ value: 2, label: "Vertical", description: "Vertical" },
-			{ value: 3, label: "Both", description: "Horizontal and Vertical" },
+			{ value: false, label: "None", description: "No Flip" },
+			{ value: true, label: "Horizontal", description: "Horizontal" }
 		],
-		defaultValue: 0
+		defaultValue: false
 	};
-	return build_dropdown_input(flipOption, value, (name, value) => { changeHandler(value)});
+	return build_toggle_input(flipOption, value ? true : false, (name, value) => { changeHandler(value ? 1 : 0)});
 }
 
 /**

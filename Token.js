@@ -39,9 +39,8 @@ const availableToAoe = [
 ];
 
 //reused transform definition
-const imageTransform = 'scale(var(--token-scale)) rotate(var(--token-rotation)) scaleX(var(--token-flip-x, 1)) scaleY(var(--token-flip-y, 1))';
+const imageTransform = 'scale(var(--token-scale)) rotate(var(--token-rotation)) scaleX(var(--token-flip-x, 1))';
 function tokenFlipX(token) { return ((token.options.tokenFlip || 0) & 1) ? -1 : 1; }
-function tokenFlipY(token) { return ((token.options.tokenFlip || 0) & 2) ? -1 : 1; }
 
 const throttleLight = throttle((darknessMoved = false) => {
 	if(window.LOADING){
@@ -670,14 +669,13 @@ class Token {
 		tokenElement.css("--token-rotation", newRotation + "deg");
 		tokenElement.css("--token-scale", imageScale);
 		tokenElement.css("--token-flip-x", tokenFlipX(this));		
-		tokenElement.css("--token-flip-y", tokenFlipY(this));		
 		tokenElement.find(".token-image").css("transform", imageTransform);
 		$(`.aura-element-container-clip[id='${this.options.id}'] .aura-element, .aura-element[data-id='${this.options.id}']`).css('--rotation', newRotation + "deg");
 	}
 	flip(newFlip) { //cycles through by default
 		if (this.isPlayerLocked()) return; // don't allow rotating if the token is locked
 		if (this.isDMLocked()) return; // don't allow rotating if the token is locked		
-		if(newFlip == undefined) newFlip = ((this.options.tokenFlip || 0) + 1) % 4;
+		if(newFlip == undefined) newFlip = ((this.options.tokenFlip || 0) + 1) % 2;
 		this.options.tokenFlip = newFlip;
 		this.rotate(this.options.rotation); //re-use side effects of rotation code
 	}
@@ -820,8 +818,7 @@ class Token {
 					'--z-index-diff': old.css('--z-index-diff'),
 					'--token-scale': old.css('--token-scale'),
     					'--token-rotation': old.css('--token-rotation'),
-    					'--token-flip-x': old.css('--token-flip-x'),
-    					'--token-flip-y': old.css('--token-flip-y')										
+    					'--token-flip-x': old.css('--token-flip-x')
 				})
 				
 				redraw_drawn_light();
@@ -874,8 +871,6 @@ class Token {
 						'--token-scale': old.css('--token-scale'),
 	    					'--token-rotation': old.css('--token-rotation'),
 						'--token-flip-x': old.css('--token-flip-x'),
-						'--token-flip-y': old.css('--token-flip-y'),						
-						
 						'opacity': this.options.hidden ? '0.5' : '1',
 						'--hp-percentage': `${this.hpPercentage}%`,
 						"--token-border-width": tokenBorderWidth,
@@ -2197,7 +2192,6 @@ class Token {
 					"--token-scale": imageScale,
 					"--token-rotation": `${rotation}deg`,
 					"--token-flip-x": tokenFlipX(this),
-					"--token-flip-y": tokenFlipY(this),
 					"--offsetX": imageOffsetX != undefined ? `${parseFloat(imageOffsetX) / 90 * this.options.size }px` : '0px',
 					"--offsetY": imageOffsetY != undefined ? `${parseFloat(imageOffsetY) / 90 * this.options.size }px` : '0px',
 					"--image-opacity": `${imageOpacity}`,
@@ -2208,8 +2202,7 @@ class Token {
 				$(`.isAoe[data-id='${this.options.id}']:not(.token)`).css({
 					'--token-rotation': `${rotation}deg`,
 					'--token-scale': imageScale,
-					'--token-flip-x': tokenFlipX(this),
-					'--token-flip-y': tokenFlipY(this)					
+					'--token-flip-x': tokenFlipX(this)
 				})
 
 
@@ -2605,9 +2598,7 @@ class Token {
 						'--z-index-diff': old.css('--z-index-diff'),
 						'--token-scale': old.css('--token-scale'),
 	    					'--token-rotation': old.css('--token-rotation'),
-	    					'--token-flip-x': old.css('--token-flip-x'),
-	    					'--token-flip-y': old.css('--token-flip-y')												
-						
+	    					'--token-flip-x': old.css('--token-flip-x')						
 					})
 					copyImage.animate({
 							left: parseInt(parseFloat(this.options.left) / window.CURRENT_SCENE_DATA.scale_factor),
@@ -2650,7 +2641,6 @@ class Token {
 			    				"--offsetX": old.css('--offsetX'),
 			    					"--offsetY": old.css('--offsetY'),
 			    					'--token-flip-x': old.css('--token-flip-x'),
-			    					'--token-flip-y': old.css('--token-flip-y'),																		"--image-opacity": old.css('--image-opacity'),
 								"--view-box": old.css('--view-box'),
 								"--image-zoom": old.css('--image-zoom')
 							})
@@ -2678,7 +2668,6 @@ class Token {
 								'--token-scale': old.css('--token-scale'),
 			    					'--token-rotation': old.css('--token-rotation'),
 			    					'--token-flip-x': old.css('--token-flip-x'),
-			    					'--token-flip-y': old.css('--token-flip-y'),																
 								'opacity': this.options.hidden ? '0.5' : '1',
 								'--hp-percentage': `${this.hpPercentage}%`,
 								'--temp-hp-percentage': `${this.tempHpPercentage}%`,
@@ -2872,7 +2861,6 @@ class Token {
 						"--token-scale": imageScale,
 						"--token-rotation": `${rotation}deg`,
 						"--token-flip-x": tokenFlipX(this),
-						"--token-flip-y": tokenFlipY(this),
 						"--offsetX": imageOffsetX != undefined ? `${parseFloat(imageOffsetX) / 90 * this.options.size }px` : '0px',
 						"--offsetY": imageOffsetY != undefined ? `${parseFloat(imageOffsetY) / 90 * this.options.size }px` : '0px',
 						"--image-opacity": `${imageOpacity}`,
@@ -2905,7 +2893,6 @@ class Token {
 						"--token-scale": imageScale,
 						"--token-rotation": `${rotation}deg`,
 						"--token-flip-x": tokenFlipX(this),
-						"--token-flip-y": tokenFlipY(this)						
 					});
 					tok.toggleClass("isAoe", true);
 					if(this.isLineAoe()){
