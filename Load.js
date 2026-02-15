@@ -36,6 +36,7 @@ if (isPlainCharacterPage) {
 		{ src: "MonsterDice.js" },
 		{ src: "DiceRoller.js" },
 		{ src: "DiceContextMenu/DiceContextMenu.js" },
+		{ src: "ajaxQueue/ajaxQueueIndex.js", type: "module" },
 		{ src: "MessageBroker.js" },
 		{ src: "rpg-dice-roller.bundle.min.js" },
 		// AboveVTT files that execute when loaded

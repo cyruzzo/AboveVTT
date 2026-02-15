@@ -1650,7 +1650,7 @@ class MessageBroker {
 		$('#hidden-scenes-message').remove();
 		if (window.AVTT_CAMPAIGN_INFO?.hidePlayersScene == 1 && !window.DM) {
 			let hiddenMessage;
-			if (window.myUser != window.CAMPAIGN_INFO.dmId && window.myUser != 'THE_DM') {
+			if (window.myUser != window.CAMPAIGN_INFO.dmId) {
 				$('#VTT').toggleClass('hide-players', true);
 				hiddenMessage = `<div id="hidden-scenes-message">The DM currently has the map hidden from players.</div>`;
 			} else {
