@@ -3009,6 +3009,14 @@ function display_aoe_token_configuration_modal(listItem, placedToken = undefined
     });
     inputWrapper.append(imageZoomWrapper);
 
+    let startingTokenFlip = targetOptions.targetFlip || 0;
+    let tokenFlipWrapper = build_token_flip_input(startingTokenFlip, function (tokenFlip) { 
+        customization.setTokenOption("tokenFlip", tokenFlip);
+        persist_token_customization(customization);
+        decorate_modal_images(sidebarPanel, listItem, placedToken);  
+    });
+    inputWrapper.append(tokenFlipWrapper);
+     
     let startingOpacity = targetOptions.imageOpacity || 1;
     let opacityWrapper = build_token_num_input(startingOpacity, tokens,  'Image Opacity', 0, 1, 0.1, function (opacity) {
         customization.setTokenOption("imageOpacity", opacity);

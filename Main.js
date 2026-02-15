@@ -3074,6 +3074,9 @@ function init_help_menu() {
 							<dt>[</dt>&nbsp;<dt>]</dt>&nbsp;<dt>${getShiftKeyName()}+[</dt>&nbsp;<dt>${getShiftKeyName()}+]</dt> 
 							<dd>Rotate Selected Tokens as a Group. Shift rotates in smaller increments</dd>
 						</dl>
+						<dl>
+							<dt>|</dt> <dd> Cycle Through Image Flip for Selected Tokens</dd>
+						</dl>
 
 						<dl>
 							<dt>1-9</dt>

@@ -880,7 +880,16 @@ function handle_undo(){
     }
 
 }
-
+    
+Mousetrap.bind('|', () => { //flip all selected tokens
+    for (let i = 0; i < window.CURRENTLY_SELECTED_TOKENS.length; i++) {
+	let id = window.CURRENTLY_SELECTED_TOKENS[i];
+	let token = window.TOKEN_OBJECTS[id];
+	token.flip()
+	token.place_sync_persist();
+    }
+});
+    
 let key_rotation_done;
 let key_rotation_angle = 0;
 function key_rotation(angle) {
