@@ -4976,9 +4976,12 @@ function draw_selected_token_bounding_box(){
 //used by draggable and keypress handler
 // returns center - point
 function grouprotate_create() {
+	function rotate_eligible() {
+		const token = window.TOKEN_OBJECTS[$(this).data('id')];
+		return !token.isPlayerLocked() && !token.isDMLocked();
+	}
 	let furthest_coord = {}
-	$('.tokenselected').wrap('<div class="grouprotate"></div>');
-	
+	$('.tokenselected').filter(rotate_eligible).wrap('<div class="grouprotate"></div>');
 	for (let i = 0; i < window.CURRENTLY_SELECTED_TOKENS.length; i++) {
 
 		let id = window.CURRENTLY_SELECTED_TOKENS[i];
@@ -5033,7 +5036,7 @@ function grouprotate_commit(angle) {
 	for (let i = 0; i < window.CURRENTLY_SELECTED_TOKENS.length; i++) {
 		let id = window.CURRENTLY_SELECTED_TOKENS[i];
 		let token = window.TOKEN_OBJECTS[id];
-
+		if(token.isPlayerLocked() || token.isDMLocked()) continue;
 		let sceneToken = $(`#tokens .token[data-id='${id}']`)
 
 		window.TOKEN_OBJECTS[id].options.rotation = angle + parseFloat(sceneToken.css('--token-rotation'))
