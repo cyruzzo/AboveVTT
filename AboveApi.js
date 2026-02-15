@@ -78,7 +78,7 @@ class AboveApi {
     return response;
   }
 
-  // Until we store more than {cloud:1} this isn't necessary
+
   static async getCampaignData() {
     const response = await this.fetchJson("getCampaignData");
     console.log("AboveApi.getCampaignData", response);
@@ -88,15 +88,14 @@ class AboveApi {
     return {};
   }
 
-  // Until we store more than {cloud:1} this isn't necessary
-  static async setCampaignData() {
+  static async setCampaignData(bodyExtras = {}) {
     const config = {
       method: 'PUT',
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({cloud:1})
+      body: JSON.stringify({ cloud: 1, ...bodyExtras })
     }
     const url = this.#buildUrl("setCampaignData")
     const request = await fetch(url, config);

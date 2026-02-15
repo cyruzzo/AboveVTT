@@ -910,7 +910,7 @@ function convertToRPGRoller(){
     }
 
     $(`.integrated-dice__container:not('.above-combo-roll'):not('.above-aoe'):not(.avtt-roll-formula-button)`).off('contextmenu.rpg-roller').on('contextmenu.rpg-roller', function(e){
-          if($(this).parent().hasClass('ct-reset-pane__hitdie-manager-dice')) // allow hit dice roll to go through ddb for auto heals - maybe setup our own message by put to https://character-service.dndbeyond.com/character/v5/life/hp/damage-taken later
+          if ($(this).parent().hasClass('ct-reset-pane__hitdie-manager-dice') || $(this).prev().text().trim().match(/^death saves$/gi))// allow hit dice and death saves roll to go through ddb for auto heals - maybe setup our own message by put to https://character-service.dndbeyond.com/character/v5/life/hp/damage-taken later
             return;
           let rollData = {} 
           if($(this).hasClass('avtt-roll-formula-button')){
@@ -950,8 +950,9 @@ function convertToRPGRoller(){
       $(this).toggleClass('disadvantageHover', false)
     })
     $(`.integrated-dice__container:not('.above-combo-roll'):not('.above-aoe'):not(.avtt-roll-formula-button)`).off('click.rpg-roller').on('click.rpg-roller', function(e){
-      if($(this).parent().hasClass('ct-reset-pane__hitdie-manager-dice'))// allow hit dice roll to go through ddb for auto heals - maybe setup our own message by put to https://character-service.dndbeyond.com/character/v5/life/hp/damage-taken later
+      if ($(this).parent().hasClass('ct-reset-pane__hitdie-manager-dice') || $(this).prev().text().trim().match(/^death saves$/gi))// allow hit dice and death saves roll to go through ddb for auto heals - maybe setup our own message by put to https://character-service.dndbeyond.com/character/v5/life/hp/damage-taken later
         return;
+
       let rollData = {} 
       rollData = getRollData(this);
       if(!rollData.expression.match(allDiceRegex) && window.EXPERIMENTAL_SETTINGS['rpgRoller'] != true){
@@ -2875,7 +2876,7 @@ function set_window_name_and_image(callback) {
   }
 
   console.debug("set_window_name_and_image");
-  if (!is_characters_builder_page()){
+  if (!is_characters_builder_page() && is_abovevtt_page()){
     window.document.title = `AVTT ${window.document.title.replace(/^AVTT /, '')}`;
   }
   window.PLAYER_NAME = $(".ddbc-character-tidbits__heading [class*=ddb-character-app], [class*='styles_characterName']").first().text();

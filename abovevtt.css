@@ -83,7 +83,11 @@ canvas.dice-rolling-panel__container{
     max-width: calc(100% - var(--sidebar-width, 340px)) !important;
     z-index: 160000 !important;
 }
-
+.hide-button.active{
+    color: #fff;
+    background-color: #c53131;
+}
+#hidden-scenes-message,
 .abovevttTempMessage{
     display:block;
     position:fixed;
@@ -106,6 +110,14 @@ canvas.dice-rolling-panel__container{
     text-align:center;
     text-transform: uppercase;
     font-weight:bold;
+}
+#hidden-scenes-message{
+    background: #000d;
+    border-radius:5px;
+    width: fit-content;
+    max-width: calc(100% - 600px);
+    min-width: 400px;
+    padding:5px;
 }
 .percentageLoaded{
     height: 10px;
@@ -363,8 +375,8 @@ button .ddbc-tab-options__header-heading .menu-option{
     max-height: 100%;
     border: solid black 1px;
     overflow: hidden auto;
-    height: calc(100% - 100px);
-    max-height: fit-content;
+    height: fit-content;
+    max-height: calc(100% - 100px);
 }
 span.button-text{
     width:fit-content;
@@ -929,6 +941,10 @@ select#doorTypeSelectUVTT{
 .avtt-spectator-sheet #fog_overlay {
     filter: drop-shadow(0px 0px 2px #000) blur(1px); /*fill in fog gaps on player view*/
   
+}
+#groupRotationGrabber,
+#rotationGrabber {
+    scale: max(1, calc(1 / var(--window-zoom)))
 }
 #fog_overlay,
 #draw_overlay_under_fog_darkness,
@@ -14497,6 +14513,12 @@ button#displayedDiceFormulaExit:hover {
 .sidebar-panel-content.avtt-drop-target::after {
     top: 89px;
 }
+
+#VTT.hide-players *{
+    visibility:hidden !important;
+    pointer-events:none !important;
+}
+
 /***** Icon UI *****/
 
 .mobileAVTTUI #VTTWRAPPER ~ div.ddbc-tab-options--layout-pill>button, 
