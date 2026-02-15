@@ -7746,12 +7746,15 @@ function redraw_light(darknessMoved = false, limitActiveRays = 0) {
 		combineCtx2.globalCompositeOperation = "destination-out";
 		drawPolygon(combineCtx2, window.lightPolygon, "#000", false, 10);
 
+
 		if (window.lightAuraClipPolygon[auraId]?.light !== undefined) {
 			combineCtx.globalCompositeOperation = 'lighten';
 			drawCircle(combineCtx, window.lightAuraClipPolygon[auraId].middle.x, window.lightAuraClipPolygon[auraId].middle.y, window.lightAuraClipPolygon[auraId].light2.range, window.lightAuraClipPolygon[auraId].light2.color)
 			drawCircle(combineCtx, window.lightAuraClipPolygon[auraId].middle.x, window.lightAuraClipPolygon[auraId].middle.y, window.lightAuraClipPolygon[auraId].light1.range, window.lightAuraClipPolygon[auraId].light1.color)		
 			combineCtx.globalCompositeOperation = 'destination-in';
 			combineCtx.drawImage(offScreenCombine2, 0, 0);
+			lightInLosContext.globalCompositeOperation = "lighten";
+			lightInLosContext.drawImage(offScreenCombine, 0, 0);
 		}
 
 
@@ -7793,7 +7796,8 @@ function redraw_light(darknessMoved = false, limitActiveRays = 0) {
 				drawCircle(combineCtx, window.lightAuraClipPolygon[auraId].middle.x, window.lightAuraClipPolygon[auraId].middle.y, window.lightAuraClipPolygon[auraId].darkvision, window.lightAuraClipPolygon[auraId].vision.color);
 				combineCtx.globalCompositeOperation = 'destination-in';
 				combineCtx.drawImage(offScreenCombine2, 0, 0);
-
+				lightInLosContext.globalCompositeOperation = "lighten";
+				lightInLosContext.drawImage(offScreenCombine, 0, 0);
 			}
 
 			$(`.aura-element-container-clip[id='${auraId}'] [id*='vision_']`).toggleClass('notVisible', false);
@@ -7804,8 +7808,7 @@ function redraw_light(darknessMoved = false, limitActiveRays = 0) {
 		}
 
 	}
-	lightInLosContext.globalCompositeOperation = "lighten";
-	lightInLosContext.drawImage(offScreenCombine, 0, 0);
+
 
 
 	const tokenObjectValues = Object.values(window.TOKEN_OBJECTS);
