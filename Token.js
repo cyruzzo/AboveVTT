@@ -3442,7 +3442,7 @@ class Token {
 
 							for (let tok of window.dragSelectedTokens){
 								let id = $(tok).attr("data-id");
-								if ((id != self.options.id) && (!window.TOKEN_OBJECTS[id].options.locked || (window.DM && window.TOKEN_OBJECTS[id].options.restrictPlayerMove ||  $('#select_locked .ddbc-tab-options__header-heading').hasClass('ddbc-tab-options__header-heading--is-active')))) {
+								if (id != self.options.id) {
 
 
 									let curr = window.TOKEN_OBJECTS[id];
@@ -4982,8 +4982,11 @@ function grouprotate_create() {
 		return !token.isPlayerLocked() && !token.isDMLocked() || selectedGroupToken
 	}
 	let furthest_coord = {}
-	$('.tokenselected').filter(rotate_eligible).wrap('<div class="grouprotate"></div>');
-	const hiddenTokens = $('.grouprotate').find('.tokenselected[style*=" display: none;"]');
+	$('.tokenselected').filter(rotate_eligible).wrap(`<div class="grouprotate"></div>`);
+	const groupRotate = $('.grouprotate');
+	groupRotate.find('.declutterToken').removeClass('declutterToken');
+	const hiddenTokens = groupRotate.find('.tokenselected[style*=" display: none;"]');
+	// set hidden tokens to visibility hidden instead of display none so that we can calculate position if needed
 	hiddenTokens.add(hiddenTokens.find('*')).css({
 		display: '',
 		visibility: 'hidden'
@@ -5133,12 +5136,13 @@ async function do_draw_selected_token_bounding_box() {
 			let bottom = undefined;
 			let right = undefined;
 			let left = undefined;
+
 			for (let i = 0; i < window.CURRENTLY_SELECTED_TOKENS.length; i++) {
 				
 				let id = window.CURRENTLY_SELECTED_TOKENS[i];
 				let token = window.TOKEN_OBJECTS[id];
 
-				if(!window.DM && $(`div.token[data-id='${id}']`).css('display') == 'none')
+				if ((!window.DM || token.options.lockRestrictDrop == "declutter") && $(`div.token[data-id='${id}']`).css('display') == 'none')
 					continue;
 				let tokenImageClientPosition = $(`div.token[data-id='${id}']>.token-image`)[0].getBoundingClientRect();
 				let tokenImagePosition = $(`div.token[data-id='${id}']>.token-image`).position();
