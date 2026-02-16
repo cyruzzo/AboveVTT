@@ -3579,21 +3579,6 @@ function build_adjustments_flyout_menu(tokenIds) {
 		});
 		body.append(imageZoomWrapper);
 
-		let tokFlip = tokens.map(t => t.options?.tokenFlip);
-		let uniqueTokenFlip = [...new Set(tokFlip)];
-		let startingTokenFlip = uniqueTokenFlip.length === 1 && uniqueTokenFlip[0] != undefined ? uniqueTokenFlip[0] : 0;
-		let tokenFlipWrapper = build_token_flip_input(startingTokenFlip, 
-			function (newFlip) {
-				tokens.forEach(token => {
-					token.options.tokenFlip = +newFlip;
-					$(`.VTTToken[data-id='${token.options.id}']`).css({
-						"--token-flip-x": `${((+newFlip || 0) & 1) ? -1 : 1}`,
-						"--token-flip-y": `${((+newFlip || 0) & 2) ? -1 : 1}`					
-					});
-					token.place_sync_persist();
-				});
-			});
-		body.append(tokenFlipWrapper);
 
 		let tokenOpacity = tokens.map(t => t.options.imageOpacity);
 		let uniqueOpacity = [...new Set(tokenOpacity)];
@@ -3608,6 +3593,21 @@ function build_adjustments_flyout_menu(tokenIds) {
 		});
 		body.append(opacityWrapper);
 
+		let tokFlip = tokens.map(t => t.options?.tokenFlip);
+		let uniqueTokenFlip = [...new Set(tokFlip)];
+		let startingTokenFlip = uniqueTokenFlip.length === 1 && uniqueTokenFlip[0] != undefined ? uniqueTokenFlip[0] : 0;
+		let tokenFlipWrapper = build_token_flip_input(startingTokenFlip,
+			function (newFlip) {
+				tokens.forEach(token => {
+					token.options.tokenFlip = +newFlip;
+					$(`.VTTToken[data-id='${token.options.id}']`).css({
+						"--token-flip-x": `${((+newFlip || 0) & 1) ? -1 : 1}`,
+						"--token-flip-y": `${((+newFlip || 0) & 2) ? -1 : 1}`
+					});
+					token.place_sync_persist();
+				});
+			});
+		body.append(tokenFlipWrapper);
 		//border color selections
 		let tokenBorderColors = tokens.map(t => t.options.color);
 		let initialColor = tokenBorderColors.length === 1 ? tokenBorderColors[0] : random_token_color();
