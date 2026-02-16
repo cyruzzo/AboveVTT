@@ -1191,6 +1191,8 @@ async function fetch_sceneList_and_scenes() {
   }
   if(activeScene)
     window.MB.handleScene(activeScene);
+  else
+    delete window.LOADING
   console.log("fetch_sceneList_and_scenes done");
   return activeScene;
 }
