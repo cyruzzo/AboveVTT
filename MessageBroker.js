@@ -1690,6 +1690,7 @@ class MessageBroker {
 			
 
 			if(isSameScaleAndMaps && !forceRefresh){
+				delete window.LOADING;
 				let scaleFactor = window.CURRENT_SCENE_DATA.scale_factor;
 				let conversion = window.CURRENT_SCENE_DATA.conversion;
 
@@ -2051,6 +2052,8 @@ class MessageBroker {
 		}).catch((error) => {
 			if (window.handleSceneQueue?.length > 0) {
 				setTimeout(window.MB.loadNextScene, 100);
+			} else{
+				delete window.LOADING;
 			}
 			console.error("Failed to download scene", error);
 		});
