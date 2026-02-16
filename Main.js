@@ -3055,11 +3055,11 @@ function init_help_menu() {
 							<dd>Ping/highlight location or token to all players. The DM has a quick toggle (right side) for centering player views on scene ping.</dd>
 						</dl>
 						<dl>
-							<dt>- / ${getCtrlKeyName()}+Mouse Wheel Down</dt>
+							<dt>-</dt> <dt>${getCtrlKeyName()}+Mouse Wheel Down</dt>
 							<dd>Zoom out</dd>
 						</dl>
 						<dl>
-							<dt>= / + / ${getCtrlKeyName()}+Mouse Wheel Up</dt>
+							<dt>=</dt> <dt>+</dt> <dt>${getCtrlKeyName()}+Mouse Wheel Up</dt>
 							<dd>Zoom in</dd>
 						</dl>
 						<dl>
@@ -3072,10 +3072,10 @@ function init_help_menu() {
 						</dl>
 						<dl>
 							<dt>[</dt>&nbsp;<dt>]</dt>&nbsp;<dt>${getShiftKeyName()}+[</dt>&nbsp;<dt>${getShiftKeyName()}+]</dt> 
-							<dd>Rotate Selected Tokens as a Group. Shift rotates in smaller increments</dd>
+							<dd>Rotate selected tokens as a group. Shift rotates in smaller increments</dd>
 						</dl>
 						<dl>
-							<dt>|</dt> <dd> Cycle Through Image Flip for Selected Tokens</dd>
+							<dt>|</dt> <dt>${getShiftKeyName()}+\\</dt><dd>Flip selected tokens images</dd>
 						</dl>
 
 						<dl>
@@ -3090,7 +3090,7 @@ function init_help_menu() {
 							<dd>Subtract from Roll Mod</dd>
 						</dl>
 						<dl>
-							<dt>= / + (with Dice Pool or Mod adjuster visibile)</dt>
+							<dt>=</dt> / <dt>+</dt> (with Dice Pool or Mod adjuster visibile)</dt>
 							<dd>Add to Roll Mod</dd>
 						</dl>
 						<dl>
