@@ -3137,7 +3137,7 @@ class Token {
 						if (get_avtt_setting_value("allowTokenMeasurement")) {
 							$("#temp_overlay").css("z-index", "50");
 						}
-						ctx = window.moveOffscreenContext
+						ctx = window.moveOffscreenCanvasMaskContext
 						window.DRAWFUNCTION = "select"
 						window.DRAGGING = true;
 						if (contextMenuLongPressTimer)

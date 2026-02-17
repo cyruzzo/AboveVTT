@@ -2198,36 +2198,28 @@ function redraw_drawn_light(darknessMoved = false){
 function setVisionLightOffscreenCanvas(){
 	//To Do: look at zeroing these out when no bucket fills, vision are present in scene to save memory
 	const {sceneWidth, sceneHeight} = getSceneMapSize()
-	if (window.bucketFillCanvas == undefined) {
-		window.bucketFillCanvas = new OffscreenCanvas(sceneWidth, sceneHeight);
-		window.bucketFillCtx = window.bucketFillCanvas.getContext('2d');
-	}	
-	else{
-		window.bucketFillCanvas.width = sceneWidth;
-		window.bucketFillCanvas.height = sceneHeight;
+	function create_or_set_offscreen_canvas(name, ctx = true, readFrequently = false){
+		if(name==undefined)
+			return;
+		if(window[name] == undefined){
+			window[name] = new OffscreenCanvas(sceneWidth, sceneHeight);
+			if (ctx)
+				window[`${name}Context`] = window[name].getContext('2d', { willReadFrequently: readFrequently });
+		} else{
+			window[name].width = sceneWidth;
+			window[name].height = sceneHeight;
+		}
 	}
-	if (window.particleOffScreenCombine == undefined) {
-		window.particleOffScreenCombine = new OffscreenCanvas(sceneWidth, sceneHeight);
-	}
-	else {
-		window.particleOffScreenCombine.width = sceneWidth;
-		window.particleOffScreenCombine.height = sceneHeight;
-	}
-	if (window.offScreenCombine == undefined) {
-		window.offScreenCombine = new OffscreenCanvas(sceneWidth, sceneHeight);
-	}
-	else {
-		window.offScreenCombine.width = sceneWidth;
-		window.offScreenCombine.height = sceneHeight;
-	}
-	if (window.lightInLos == undefined) {
-		window.lightInLos = new OffscreenCanvas(sceneWidth, sceneHeight);
-		window.lightInLosContext = window.lightInLos.getContext('2d');
-	}
-	else {
-		window.lightInLos.width = sceneWidth;
-		window.lightInLos.height = sceneHeight;
-	}
+	create_or_set_offscreen_canvas('bucketFillCanvas');
+	create_or_set_offscreen_canvas('particleOffScreenCombine', false);
+	create_or_set_offscreen_canvas('offScreenCombine', false);
+	create_or_set_offscreen_canvas('lightInLos');
+	create_or_set_offscreen_canvas('offscreenCanvasMask');
+	create_or_set_offscreen_canvas('moveOffscreenCanvasMask', true, true);
+	create_or_set_offscreen_canvas('truesightCanvas');
+	create_or_set_offscreen_canvas('tempDarknessCanvas');
+	create_or_set_offscreen_canvas('devilsightCanvas');
+	create_or_set_offscreen_canvas('tempDarkvisionCanvas');
 }
 function redraw_light_walls(clear=true, editingWallPoints = false){
 	let showWallsToggle = $('#show_walls').hasClass('button-enabled');
@@ -5413,7 +5405,7 @@ function bucketFill(ctx, mouseX, mouseY, fogStyle = 'rgba(0,0,0,0)', fogType = 0
 
 	const isBlur = parseInt(blur) > 0;
 	
-	const bucketFillCtx = window.bucketFillCtx;
+	const bucketFillCtx = window.bucketFillCanvasContext;
 	bucketFillCtx.clearRect(0, 0, bucketFillCtx.canvas.width, bucketFillCtx.canvas.height);
 	bucketFillCtx.globalCompositeOperation = "lighten";
 	bucketFillCtx.filter = isBlur ? `blur(${parseInt(blur)}px)` : `none`;
@@ -7462,7 +7454,7 @@ function lineLine(x1, y1, x2, y2, x3, y3, x4, y4) {
 //Checks if a pixel is in line of current line of sight
 function detectInLos(x, y) {
 	let canvas = window.moveOffscreenCanvasMask;
-	let ctx = canvas.getContext("2d", { willReadFrequently: true });
+	let ctx = canvas.getContext("2d");
 	const pixeldata = ctx.getImageData((x-5)/window.CURRENT_SCENE_DATA.scale_factor, (y-5)/window.CURRENT_SCENE_DATA.scale_factor, 10, 10).data;
 
 
@@ -7482,19 +7474,10 @@ function redraw_light(darknessMoved = false, limitActiveRays = 0) {
     if(window.rayContext == undefined){
 		window.rayCanvas = document.getElementById('raycastingCanvas');
 		window.rayContext = window.rayCanvas.getContext('2d');
-
-		window.offscreenCanvasMask = new OffscreenCanvas(canvasWidth, canvasHeight); 
-		window.offscreenContext = window.offscreenCanvasMask.getContext('2d');
-
-		window.moveOffscreenCanvasMask = new OffscreenCanvas(canvasWidth, canvasHeight);  
-		window.moveOffscreenContext = window.moveOffscreenCanvasMask.getContext('2d', { willReadFrequently: true });
 	}
-	
-    const canvas = window.rayCanvas;
+
+
 	const context = window.rayContext;
-
-
-
 	context.clearRect(0, 0, canvasWidth, canvasHeight)
 
 	if(canvasWidth == 0 || canvasHeight == 0 || !window.walls){
@@ -7511,90 +7494,50 @@ function redraw_light(darknessMoved = false, limitActiveRays = 0) {
 
 
 	const offscreenCanvasMask = window.offscreenCanvasMask;
-	const offscreenContext = window.offscreenContext;
-    
-	offscreenCanvasMask.width = canvasWidth;
-	offscreenCanvasMask.height = canvasHeight;
+	const offscreenContext = window.offscreenCanvasMaskContext;
 	offscreenContext.clearRect(0, 0, canvasWidth, canvasHeight);
-
 	
-	const moveOffscreenContext = window.moveOffscreenContext;
-
-	window.moveOffscreenCanvasMask.width = canvasWidth;
-	window.moveOffscreenCanvasMask.height = canvasHeight;
+	const moveOffscreenCanvasMaskContext = window.moveOffscreenCanvasMaskContext;
 
 	window.lightInLosContext.clearRect(0, 0, canvasWidth, canvasHeight);
-
 
 	if(window.CURRENT_SCENE_DATA.disableSceneVision == true){
 		context.fillStyle = "white";
 		context.fillRect(0,0,canvasWidth,canvasHeight);
 
-		moveOffscreenContext.fillStyle = "white";
-		moveOffscreenContext.fillRect(0,0,canvasWidth,canvasHeight);
+		moveOffscreenCanvasMaskContext.fillStyle = "white";
+		moveOffscreenCanvasMaskContext.fillRect(0,0,canvasWidth,canvasHeight);
 		return;
 	}
 
-	if(window.truesightCanvas == undefined){
-		window.truesightCanvas = new OffscreenCanvas(canvasWidth, canvasHeight);
-		window.truesightCanvasContext = window.truesightCanvas.getContext('2d');
-	}
 	const truesightCanvasContext = window.truesightCanvasContext;
-
-	window.truesightCanvas.width = canvasWidth;
-	window.truesightCanvas.height = canvasHeight;
-
 	truesightCanvasContext.clearRect(0,0,canvasWidth,canvasHeight);
 
-	if (window.devilsightCanvas == undefined){
-		window.devilsightCanvas = new OffscreenCanvas(canvasWidth, canvasHeight);
-		window.devilsightCtx = window.devilsightCanvas.getContext('2d');
-	}
- 
+
 	const devilsightCanvas = window.devilsightCanvas;
-	const devilsightCtx = window.devilsightCtx;
+	const devilsightCanvasContext = window.devilsightCanvasContext;
+	devilsightCanvasContext.clearRect(0,0,canvasWidth,canvasHeight);
 
-	devilsightCanvas.width = canvasWidth;
-	devilsightCanvas.height = canvasHeight;
-
-	devilsightCtx.clearRect(0,0,canvasWidth,canvasHeight);
-
-	if (window.tempDarkvisionCanvas == undefined){
-		window.tempDarkvisionCanvas = new OffscreenCanvas(canvasWidth, canvasHeight);
-		window.tempDarkvisionCtx = window.tempDarkvisionCanvas.getContext('2d');
-	}
 	const tempDarkvisionCanvas = window.tempDarkvisionCanvas;
-	const tempDarkvisionCtx = window.tempDarkvisionCtx;
+	const tempDarkvisionCanvasContext = window.tempDarkvisionCanvasContext;
+	tempDarkvisionCanvasContext.clearRect(0,0,canvasWidth,canvasHeight);
 
-	tempDarkvisionCanvas.width = canvasWidth;
-	tempDarkvisionCanvas.height = canvasHeight;
-
-	tempDarkvisionCtx.clearRect(0,0,canvasWidth,canvasHeight);
-
-	if (window.tempDarknessCanvas == undefined) {
-		window.tempDarknessCanvas = new OffscreenCanvas(canvasWidth, canvasHeight);
-		window.tempDarknessCtx = window.tempDarknessCanvas.getContext('2d');
-	}
 	const tempDarknessCanvas = window.tempDarknessCanvas;
-	const tempDarknessCtx = window.tempDarknessCtx;
-
-	tempDarknessCanvas.width = canvasWidth;
-	tempDarknessCanvas.height = canvasHeight;
-
-	tempDarknessCtx.clearRect(0, 0, canvasWidth, canvasHeight);
+	const tempDarknessCanvasContext = window.tempDarknessCanvasContext;
+	tempDarknessCanvasContext.clearRect(0, 0, canvasWidth, canvasHeight);
 
 	let darknessBoundarys = getDarknessBoundarys();
 	
 	if(window.walls?.length <= 4 && window.CURRENT_SCENE_DATA.darkness_filter == 0){
-		moveOffscreenContext.fillStyle = "white";
+		moveOffscreenCanvasMaskContext.fillStyle = "white";
 	}else{
-		moveOffscreenContext.fillStyle = "black";
+		moveOffscreenCanvasMaskContext.fillStyle = "black";
 	}
 
-	moveOffscreenContext.fillRect(0,0,canvasWidth,canvasHeight);
+	moveOffscreenCanvasMaskContext.fillRect(0,0,canvasWidth,canvasHeight);
 
 	if(window.CURRENT_SCENE_DATA.darkness_filter == 0){
-		moveOffscreenContext.fillStyle = "white";
+		moveOffscreenCanvasMaskContext.fillStyle = "white";
 	}
 
 	let light_auras = $(`.light:not([style*='display: none'])>.aura-element.islight:not([style*='visibility: hidden'])`).map(function () {
@@ -7607,7 +7550,6 @@ function redraw_light(darknessMoved = false, limitActiveRays = 0) {
 	let selectedTokens = $('#tokens .tokenselected:not(.isAoe)');
 
 	let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
-
 
 
 	if (selectedTokens.length > 0) {
@@ -7623,7 +7565,6 @@ function redraw_light(darknessMoved = false, limitActiveRays = 0) {
 	}
 	if (selectedIds.length > 0 || selectedTokens.length == 0)
 		check_darkness_value();
-
 
 	const adjustScale = (window.CURRENT_SCENE_DATA.scale_factor != undefined) ? window.CURRENT_SCENE_DATA.scale_factor : 1;
 
@@ -7732,17 +7673,17 @@ function redraw_light(darknessMoved = false, limitActiveRays = 0) {
 
 			if (window.DM !== true || window.SelectedTokenVision === true) {
 				if (window.lightAuraClipPolygon[auraId] != undefined && (window.TOKEN_OBJECTS[auraId].options.sight === 'devilsight' || window.TOKEN_OBJECTS[auraId].options.sight === 'truesight')) {
-					tempDarkvisionCtx.globalCompositeOperation = 'source-over';
-					drawCircle(tempDarkvisionCtx, window.lightAuraClipPolygon[auraId].middle.x, window.lightAuraClipPolygon[auraId].middle.y, window.lightAuraClipPolygon[auraId].darkvision, 'white')
+					tempDarkvisionCanvasContext.globalCompositeOperation = 'source-over';
+					drawCircle(tempDarkvisionCanvasContext, window.lightAuraClipPolygon[auraId].middle.x, window.lightAuraClipPolygon[auraId].middle.y, window.lightAuraClipPolygon[auraId].darkvision, 'white')
 
-					tempDarkvisionCtx.globalCompositeOperation = 'destination-in';
-					drawPolygon(tempDarkvisionCtx, window.noDarknessPolygon, 'rgba(255, 255, 255, 1)', true);
+					tempDarkvisionCanvasContext.globalCompositeOperation = 'destination-in';
+					drawPolygon(tempDarkvisionCanvasContext, window.noDarknessPolygon, 'rgba(255, 255, 255, 1)', true);
 					offscreenContext.globalCompositeOperation = 'source-over';
 					offscreenContext.drawImage(tempDarkvisionCanvas, 0, 0)
 				}
 				if (window.TOKEN_OBJECTS[auraId].options.sight === 'devilsight') {
-					devilsightCtx.globalCompositeOperation = 'source-over';
-					devilsightCtx.drawImage(tempDarkvisionCanvas, 0, 0);
+					devilsightCanvasContext.globalCompositeOperation = 'source-over';
+					devilsightCanvasContext.drawImage(tempDarkvisionCanvas, 0, 0);
 				}
 				if (window.TOKEN_OBJECTS[auraId].options.sight === 'truesight') {
 					truesightCanvasContext.globalCompositeOperation = 'source-over';
@@ -7758,7 +7699,7 @@ function redraw_light(darknessMoved = false, limitActiveRays = 0) {
 			$(`.aura-element-container-clip[id='${auraId}'] [id*='vision_']`).toggleClass('notVisible', false);
 			offscreenContext.globalCompositeOperation = "lighten";
 			drawPolygon(offscreenContext, window.lightPolygon, 'rgba(255, 255, 255, 1)', true, 6, undefined, undefined, undefined, true, true); //draw to offscreen canvas so we don't have to render every draw and use this for a mask	
-			drawPolygon(moveOffscreenContext, window.movePolygon, 'rgba(255, 255, 255, 1)', true, 6, undefined, undefined, undefined, true, true); //draw to offscreen canvas so we don't have to render every draw and use this for a mask
+			drawPolygon(moveOffscreenCanvasMaskContext, window.movePolygon, 'rgba(255, 255, 255, 1)', true, 6, undefined, undefined, undefined, true, true); //draw to offscreen canvas so we don't have to render every draw and use this for a mask
 		}
 		if (drawDarkVision || window.lightAuraClipPolygon[auraId]?.light !== undefined) {
 			combineCtx.clearRect(0, 0, canvasWidth, canvasHeight);
@@ -7773,7 +7714,7 @@ function redraw_light(darknessMoved = false, limitActiveRays = 0) {
 			combineCtx.globalCompositeOperation = 'destination-in';
 			drawPolygon(combineCtx, window.lightPolygon, "#FFF", true);
 			combineCtx.globalCompositeOperation = "destination-out";
-			drawPolygon(combineCtx, window.lightPolygon, "#000", false, 10);
+			drawPolygon(combineCtx, window.lightPolygon, "#000", false, 10);		
 			lightInLosContext.globalCompositeOperation = "lighten";
 			lightInLosContext.drawImage(offScreenCombine, 0, 0);
 		}
@@ -7787,9 +7728,9 @@ function redraw_light(darknessMoved = false, limitActiveRays = 0) {
 	if (aPlayerTokenExists && playerTokenWithVisionEnabled === false && sharedVisionToken === false) {
 		offscreenContext.globalCompositeOperation = "lighten";
 		offscreenContext.fillStyle = "white";
-		moveOffscreenContext.fillStyle = "white";
+		moveOffscreenCanvasMaskContext.fillStyle = "white";
 		offscreenContext.fillRect(0, 0, canvasWidth, canvasHeight);
-		moveOffscreenContext.fillRect(0, 0, canvasWidth, canvasHeight);
+		moveOffscreenCanvasMaskContext.fillRect(0, 0, canvasWidth, canvasHeight);
 	} 
 
 	lightInLosContext.globalCompositeOperation='source-over';
