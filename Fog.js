@@ -2210,16 +2210,13 @@ function setVisionLightOffscreenCanvas(){
 			window[name].height = sceneHeight;
 		}
 	}
-	create_or_set_offscreen_canvas('bucketFillCanvas');
-	create_or_set_offscreen_canvas('particleOffScreenCombine', false);
-	create_or_set_offscreen_canvas('offScreenCombine', false);
+
+	create_or_set_offscreen_canvas('offScreenCombine');
 	create_or_set_offscreen_canvas('lightInLos');
 	create_or_set_offscreen_canvas('offscreenCanvasMask');
 	create_or_set_offscreen_canvas('moveOffscreenCanvasMask', true, true);
-	create_or_set_offscreen_canvas('truesightCanvas');
-	create_or_set_offscreen_canvas('tempDarknessCanvas');
 	create_or_set_offscreen_canvas('devilsightCanvas');
-	create_or_set_offscreen_canvas('tempDarkvisionCanvas');
+	create_or_set_offscreen_canvas('truesightCanvas');
 }
 function redraw_light_walls(clear=true, editingWallPoints = false){
 	let showWallsToggle = $('#show_walls').hasClass('button-enabled');
@@ -5405,7 +5402,7 @@ function bucketFill(ctx, mouseX, mouseY, fogStyle = 'rgba(0,0,0,0)', fogType = 0
 
 	const isBlur = parseInt(blur) > 0;
 	
-	const bucketFillCtx = window.bucketFillCanvasContext;
+	const bucketFillCtx = window.offScreenCombineContext;
 	bucketFillCtx.clearRect(0, 0, bucketFillCtx.canvas.width, bucketFillCtx.canvas.height);
 	bucketFillCtx.globalCompositeOperation = "lighten";
 	bucketFillCtx.filter = isBlur ? `blur(${parseInt(blur)}px)` : `none`;
@@ -5462,7 +5459,7 @@ function bucketFill(ctx, mouseX, mouseY, fogStyle = 'rgba(0,0,0,0)', fogType = 0
 	}
 
 	ctx.globalCompositeOperation = 'lighten';
-	ctx.drawImage(window.bucketFillCanvas, 0, 0);
+	ctx.drawImage(window.offScreenCombine, 0, 0);
 
 
 }
@@ -7369,7 +7366,7 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
 
 
 						const isBlur = parseInt(blur) > 0;
-						combineCtx = window.particleOffScreenCombine.getContext('2d');
+						combineCtx = window.offScreenCombineContext;
 						combineCtx.clearRect(0, 0, canvasWidth, canvasHeight);
 						combineCtx.globalCompositeOperation = "source-over";
 
@@ -7387,7 +7384,7 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
 						drawPolygon(combineCtx, lightPolygon, "#000", false, 10);
 						ctx.save();
 						ctx.globalCompositeOperation = 'lighten';
-						ctx.drawImage(window.particleOffScreenCombine, 0, 0);
+						ctx.drawImage(window.offScreenCombine, 0, 0);
 						ctx.restore();
 						return;
 					}
@@ -7517,14 +7514,6 @@ function redraw_light(darknessMoved = false, limitActiveRays = 0) {
 	const devilsightCanvas = window.devilsightCanvas;
 	const devilsightCanvasContext = window.devilsightCanvasContext;
 	devilsightCanvasContext.clearRect(0,0,canvasWidth,canvasHeight);
-
-	const tempDarkvisionCanvas = window.tempDarkvisionCanvas;
-	const tempDarkvisionCanvasContext = window.tempDarkvisionCanvasContext;
-	tempDarkvisionCanvasContext.clearRect(0,0,canvasWidth,canvasHeight);
-
-	const tempDarknessCanvas = window.tempDarknessCanvas;
-	const tempDarknessCanvasContext = window.tempDarknessCanvasContext;
-	tempDarknessCanvasContext.clearRect(0, 0, canvasWidth, canvasHeight);
 
 	let darknessBoundarys = getDarknessBoundarys();
 	
@@ -7672,22 +7661,25 @@ function redraw_light(darknessMoved = false, limitActiveRays = 0) {
 				continue; //we don't want to draw this tokens vision - go next token.
 
 			if (window.DM !== true || window.SelectedTokenVision === true) {
+				
 				if (window.lightAuraClipPolygon[auraId] != undefined && (window.TOKEN_OBJECTS[auraId].options.sight === 'devilsight' || window.TOKEN_OBJECTS[auraId].options.sight === 'truesight')) {
-					tempDarkvisionCanvasContext.globalCompositeOperation = 'source-over';
-					drawCircle(tempDarkvisionCanvasContext, window.lightAuraClipPolygon[auraId].middle.x, window.lightAuraClipPolygon[auraId].middle.y, window.lightAuraClipPolygon[auraId].darkvision, 'white')
-
-					tempDarkvisionCanvasContext.globalCompositeOperation = 'destination-in';
-					drawPolygon(tempDarkvisionCanvasContext, window.noDarknessPolygon, 'rgba(255, 255, 255, 1)', true);
+					combineCtx.clearRect(0, 0, canvasWidth, canvasHeight);
+					combineCtx.globalCompositeOperation = 'source-over';
+					drawCircle(combineCtx, window.lightAuraClipPolygon[auraId].middle.x, window.lightAuraClipPolygon[auraId].middle.y, window.lightAuraClipPolygon[auraId].darkvision, window.lightAuraClipPolygon[auraId].vision.color)
+					combineCtx.globalCompositeOperation = 'destination-in';
+					drawPolygon(combineCtx, window.noDarknessPolygon, 'rgba(255, 255, 255, 1)', true);
+					combineCtx.globalCompositeOperation = "destination-out";
+					drawPolygon(combineCtx, window.lightPolygon, "#000", false, 10);	
 					offscreenContext.globalCompositeOperation = 'source-over';
-					offscreenContext.drawImage(tempDarkvisionCanvas, 0, 0)
+					offscreenContext.drawImage(offScreenCombine, 0, 0)
 				}
 				if (window.TOKEN_OBJECTS[auraId].options.sight === 'devilsight') {
 					devilsightCanvasContext.globalCompositeOperation = 'source-over';
-					devilsightCanvasContext.drawImage(tempDarkvisionCanvas, 0, 0);
+					devilsightCanvasContext.drawImage(offScreenCombine, 0, 0);
 				}
 				if (window.TOKEN_OBJECTS[auraId].options.sight === 'truesight') {
 					truesightCanvasContext.globalCompositeOperation = 'source-over';
-					truesightCanvasContext.drawImage(tempDarkvisionCanvas, 0, 0);
+					truesightCanvasContext.drawImage(offScreenCombine, 0, 0);
 				}
 
 			}
