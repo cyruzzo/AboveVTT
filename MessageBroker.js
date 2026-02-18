@@ -537,10 +537,10 @@ class MessageBroker {
 				window.nextTurnAudio = document.createElement('audio');
 				window.nextTurnAudio.src = window.EXTENSION_PATH + 'assets/audio/NextTurnIndicator.mp3';
 				window.nextTurnAudio.volume = 0.3;
-				window.nextTurnAudio.preload = 'auto';
+				window.nextTurnAudio.preload = 'metadata';
 				document.body.appendChild(window.nextTurnAudio);
 				// The below must be done to satisfy browser autoplay policy
-				window.nextTurnAudio.play().then(() => {
+				window.nextTurnAudio.load().then(() => {
 					window.nextTurnAudio.pause();
 					window.nextTurnAudio.currentTime = 0;
 				})
