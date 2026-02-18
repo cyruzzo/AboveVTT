@@ -1940,12 +1940,6 @@ class MessageBroker {
         				await set_default_vttwrapper_size();
 						remove_loading_overlay();
 						console.log("LOADING TOKENS!");
-						let teleportedTokenData = {};
-						if (window.TELEPORTER_PASTE_BUFFER != undefined) {
-							for (let id of window.TELEPORTER_PASTE_BUFFER.tokens){
-								teleportedTokenData[id] = {...window.all_token_objects[id]};
-							}
-						}
 
 						let tokensLength = Object.keys(data.tokens).length;
 						let count = 0;
@@ -1970,10 +1964,6 @@ class MessageBroker {
 
 						if (window.TELEPORTER_PASTE_BUFFER != undefined) {
 							try {
-								window.all_token_objects = {
-									...window.all_token_objects,
-									...teleportedTokenData
-								}
 								const teleporterTokenId = window.TELEPORTER_PASTE_BUFFER.targetToken
 								const targetPortal = window.TOKEN_OBJECTS[teleporterTokenId];
 								const top = (parseInt(targetPortal.options.top) + 25) * (window.CURRENT_SCENE_DATA.scale_factor / targetPortal.options.scaleCreated);

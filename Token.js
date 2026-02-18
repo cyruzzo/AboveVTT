@@ -3067,7 +3067,7 @@ class Token {
 				};
 			 	
 				let ctx;
-
+				let dragStopTimer;
 				tok.draggable({
 					stop: function (event) {
 							event.stopPropagation();						
@@ -3078,7 +3078,7 @@ class Token {
 								self.sync($.extend(true, {}, self.options));
 							}
 							
-						let darknessMoved = (self.options.darkness || self.options.tokenWall) ? true : false;
+							let darknessMoved = (self.options.darkness || self.options.tokenWall) ? true : false;
 							if (self.selected ) {
 								for (let tok of window.dragSelectedTokens){
 									let id = $(tok).attr("data-id");	
@@ -3120,13 +3120,11 @@ class Token {
 							window.toggleSnap=false;
 
 							pauseCursorEventListener = false;
-							setTimeout(() => {
-								if(!window.DRAGGING){
-									window.dragSelectedTokens?.removeClass("pause_click")
-									delete window.playerTokenAuraIsLight;
-									delete window.dragSelectedTokens;
-									delete window.orig_zoom;
-								}
+							dragStopTimer = setTimeout(() => {
+								$(".pause_click")?.removeClass("pause_click")
+								delete window.playerTokenAuraIsLight;
+								delete window.dragSelectedTokens;
+								delete window.orig_zoom;
 							}, 200)
 							debounceAudioChecks();
 						},
@@ -3142,6 +3140,8 @@ class Token {
 						window.DRAGGING = true;
 						if (contextMenuLongPressTimer)
 							clearTimeout(contextMenuLongPressTimer);
+						if (dragStopTimer)
+							clearTimeout(dragStopTimer);
 						window.oldTokenPosition = {};
 						
 						self.prepareWalkableArea()
@@ -5516,9 +5516,14 @@ function paste_selected_walls(x, y) {
 }
 function copy_selected_tokens(teleporterTokenId=undefined) {
 	if(teleporterTokenId){
+		const selectedTokens = window.CURRENTLY_SELECTED_TOKENS.slice(0);
+		const tokens = {};
+		for(let id of selectedTokens){
+			tokens[id] = $.extend(true, {}, window.TOKEN_OBJECTS[id])
+		}
 		window.TELEPORTER_PASTE_BUFFER = {
 			'targetToken': teleporterTokenId,
-			'tokens': window.CURRENTLY_SELECTED_TOKENS.slice(0)
+			'tokens': tokens
 		}
 	}
 	else{
@@ -5551,22 +5556,20 @@ function copy_selected_tokens(teleporterTokenId=undefined) {
 	
 }
 
-function paste_selected_tokens(x, y, teleporter=undefined) {
+function paste_selected_tokens(x, y, teleporter = undefined, teleportedTokenData=undefined) {
 	if (!teleporter && !window.DM) return;
 	if (window.TOKEN_PASTE_BUFFER == undefined) {
 		window.TOKEN_PASTE_BUFFER = [];
 	}
 	deselect_all_tokens();
 	if(teleporter){
-		for (let i in window.TELEPORTER_PASTE_BUFFER.tokens) {
-			const id = window.TELEPORTER_PASTE_BUFFER.tokens[i];
-			let token = window.all_token_objects[id];
-			if(token == undefined) continue;
-			let options = $.extend(true, {}, token.options);
+		for (let i in window.TELEPORTER_PASTE_BUFFER.tokens) {	
+			let options = $.extend(true, {}, window.TELEPORTER_PASTE_BUFFER.tokens[i].options);
+			window.all_token_objects[i].options = options;
             const forceSize = true;
 			const animationDuration = 0;
 			place_token_at_map_point(options, x, y, forceSize, animationDuration);	
-			window.TOKEN_OBJECTS[id].selected = true;			
+			window.TOKEN_OBJECTS[i].selected = true;			
 		}
 		window.TELEPORTER_PASTE_BUFFER = undefined;
 	}
