@@ -4098,29 +4098,33 @@ function place_token_at_map_point(tokenObject, x, y, forcePlaceAndSize = false, 
 	}
 
 	if (options.size == undefined || forcePlaceAndSize) {
-		delete options.gridSquares;
-		if (options.tokenSize != undefined && parseFloat(options.tokenSize) != NaN) {
+		
+
+		if (options.gridSquares != undefined && parseFloat(options.gridSquares) != NaN){
+			options.size = window.CURRENT_SCENE_DATA.hpps * parseFloat(options.gridSquares);
+		}
+		else if (options.tokenSize != undefined && parseFloat(options.tokenSize) != NaN) {
 			// tokenSize was specified, convert it to size. tokenSize is the number of squares this token fills
-			options.size = Math.round(window.CURRENT_SCENE_DATA.hpps) * parseFloat(options.tokenSize);
+			options.size = window.CURRENT_SCENE_DATA.hpps * parseFloat(options.tokenSize);
 		} 
 		else if (options.sizeId != undefined) {
 			// sizeId was specified, convert it to size. This is used when adding from the monster pane
 			if (options.sizeId == 2) {
-				options.size = Math.round(window.CURRENT_SCENE_DATA.hpps) * 0.5;
+				options.size = window.CURRENT_SCENE_DATA.hpps * 0.5;
 			} else if (options.sizeId == 5) {
-				options.size = Math.round(window.CURRENT_SCENE_DATA.hpps) * 2;
+				options.size = window.CURRENT_SCENE_DATA.hpps * 2;
 			} else if (options.sizeId == 6) {
-				options.size = Math.round(window.CURRENT_SCENE_DATA.hpps) * 3;
+				options.size = window.CURRENT_SCENE_DATA.hpps * 3;
 			} else if (options.sizeId == 7) {
-				options.size = Math.round(window.CURRENT_SCENE_DATA.hpps) * 4;
+				options.size = window.CURRENT_SCENE_DATA.hpps * 4;
 			} else {
 				// default to small/medium size
-				options.size = Math.round(window.CURRENT_SCENE_DATA.hpps) * 1;
+				options.size = window.CURRENT_SCENE_DATA.hpps * 1;
 			}
 		} 
 		else {
 			// default to small/medium size
-			options.size = Math.round(window.CURRENT_SCENE_DATA.hpps) * 1;
+			options.size = window.CURRENT_SCENE_DATA.hpps * 1;
 		}
 	}
 
@@ -5556,7 +5560,7 @@ function paste_selected_tokens(x, y, teleporter=undefined) {
 	if(teleporter){
 		for (let i in window.TELEPORTER_PASTE_BUFFER.tokens) {
 			const id = window.TELEPORTER_PASTE_BUFFER.tokens[i];
-			let token = window.TOKEN_OBJECTS[id] != undefined ? window.TOKEN_OBJECTS[id] : window.all_token_objects[id];
+			let token = window.all_token_objects[id];
 			if(token == undefined) continue;
 			let options = $.extend(true, {}, token.options);
             const forceSize = true;
