@@ -682,12 +682,21 @@ function is_token_under_light_aura(tokenid, lightContext=undefined){
 	return  false;
 }
 
-function is_token_under_truesight_aura(tokenid, truesightContext=undefined){
-	if(truesightContext == undefined){
-		truesightContext = window.truesightCanvas.getContext('2d');
+function is_token_under_truesight_aura(tokenid, imageData){
+	if (imageData == undefined)
+		return
+	let x = parseInt(window.TOKEN_OBJECTS[tokenid].options.left) / window.CURRENT_SCENE_DATA.scale_factor;
+	let y = parseInt(window.TOKEN_OBJECTS[tokenid].options.top) / window.CURRENT_SCENE_DATA.scale_factor;
+	const right = parseInt(x+(window.TOKEN_OBJECTS[tokenid].sizeWidth() / window.CURRENT_SCENE_DATA.scale_factor));
+	const bottom = parseInt(y+(window.TOKEN_OBJECTS[tokenid].sizeHeight() / window.CURRENT_SCENE_DATA.scale_factor));
+	let pixeldata = []
+	for (; x < right; x++) {
+		for (; y < bottom; y++) {
+			const data = getPixelFromImageData(imageData, x, y)
+			pixeldata = pixeldata.concat(data);
+		}
 	}
 
-	let pixeldata = truesightContext.getImageData(parseInt(window.TOKEN_OBJECTS[tokenid].options.left)/ window.CURRENT_SCENE_DATA.scale_factor, parseInt(window.TOKEN_OBJECTS[tokenid].options.top)/ window.CURRENT_SCENE_DATA.scale_factor, window.TOKEN_OBJECTS[tokenid].sizeWidth()/ window.CURRENT_SCENE_DATA.scale_factor, window.TOKEN_OBJECTS[tokenid].sizeHeight()/ window.CURRENT_SCENE_DATA.scale_factor).data;
 	
 	for(let i=0; i<pixeldata.length; i+=4){
 		if(pixeldata[i]>4 || pixeldata[i+1]>4 || pixeldata[i+2]>4)
@@ -791,7 +800,9 @@ function check_single_token_visibility(id){
 	
 	let inTruesight = false;
 	if(window.TOKEN_OBJECTS[id].conditions.includes('Invisible') && $(`.aura-element-container-clip.truesight`).length>0 ){
-		inTruesight = is_token_under_truesight_aura(id);
+		const truesightContext = window.truesightCanvas.getContext('2d');
+		const truesightData = truesightContext.getImageData(0, 0, window.truesightCanvas.width, window.truesightCanvas.height);
+		inTruesight = is_token_under_truesight_aura(id, truesightData);
 	}
 	if (showThisPlayerToken !== true && (hideThisTokenInFogOrDarkness === true && inVisibleLight !== true || (window.TOKEN_OBJECTS[id].options.hidden === true && inTruesight !== true) || (hideInvisible === true && inTruesight !== true))) {
 		$(selector + "," + auraSelector).hide();
@@ -903,10 +914,11 @@ function do_check_token_visibility() {
 	const truesightAuraExists = $(`.aura-element-container-clip.truesight`).length > 0;
 
 	let truesightContext;
-
+	let truesightData;
 	if (truesightAuraExists){
 		offScreenCtx.drawImage(truesightCanvas, 0, 0);
 		truesightContext = window.truesightCanvas.getContext('2d');
+		truesightData = truesightContext.getImageData(0, 0, window.truesightCanvas.width, window.truesightCanvas.height);
 	}
 
 
@@ -917,7 +929,7 @@ function do_check_token_visibility() {
 
 
 	const offscreenImageData = offScreenCtx.getImageData(0, 0, offScreenCanvas.width, offScreenCanvas.height);
-	
+
 
 	for (let id in window.TOKEN_OBJECTS) {
 		if(window.TOKEN_OBJECTS[id].options.combatGroupToken || window.TOKEN_OBJECTS[id].options.type != undefined)
@@ -944,7 +956,7 @@ function do_check_token_visibility() {
 
 		let inTruesight = false;
 		if(window.TOKEN_OBJECTS[id].conditions.includes('Invisible') && truesightAuraExists){
-			inTruesight = is_token_under_truesight_aura(id, truesightContext);
+			inTruesight = is_token_under_truesight_aura(id, truesightData);
 		}
 
 		if (showThisPlayerToken !== true && ((hideThisTokenInFogOrDarkness === true && inVisibleLight !== true && dmSelected !== true) || (window.TOKEN_OBJECTS[id].options.hidden === true && inTruesight !== true && dmSelected !== true) || (hideInvisible === true && inTruesight !== true))) {
