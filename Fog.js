@@ -613,10 +613,8 @@ function in_fog_or_dark_image_data(tokenid, imageData) {
 	const centerY = (window.TOKEN_OBJECTS[tokenid].options.top.replace('px', '') / window.CURRENT_SCENE_DATA.scale_factor) + (window.TOKEN_OBJECTS[tokenid].sizeHeight() / 2 / window.CURRENT_SCENE_DATA.scale_factor)
 	let pixeldata = getPixelFromImageData(imageData, centerX, centerY);
 
-	for (let i = 0; i < pixeldata.length; i += 4) {
-		if (pixeldata[i] > 4 || pixeldata[i + 1] > 4 || pixeldata[i + 2] > 4) {
-			return true;
-		}
+	if (pixeldata[1] > 4 || pixeldata[0] > 4 || pixeldata[2] > 4) {
+		return true;
 	}
 
 	return false;
@@ -689,21 +687,15 @@ function is_token_under_truesight_aura(tokenid, imageData){
 	let y = parseInt(window.TOKEN_OBJECTS[tokenid].options.top) / window.CURRENT_SCENE_DATA.scale_factor;
 	const right = parseInt(x+(window.TOKEN_OBJECTS[tokenid].sizeWidth() / window.CURRENT_SCENE_DATA.scale_factor));
 	const bottom = parseInt(y+(window.TOKEN_OBJECTS[tokenid].sizeHeight() / window.CURRENT_SCENE_DATA.scale_factor));
-	let pixeldata = []
 	for (; x < right; x++) {
 		for (; y < bottom; y++) {
-			const data = getPixelFromImageData(imageData, x, y)
-			pixeldata = pixeldata.concat(data);
+			const pixeldata = getPixelFromImageData(imageData, x, y)
+			if (pixeldata[0] > 4 || pixeldata[1] > 4 || pixeldata[2] > 4)
+				return true;
 		}
 	}
+	return false;				
 
-	
-	for(let i=0; i<pixeldata.length; i+=4){
-		if(pixeldata[i]>4 || pixeldata[i+1]>4 || pixeldata[i+2]>4)
-			return true;
-	}
-				
-	return  false;
 }
 
 
