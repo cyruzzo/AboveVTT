@@ -285,6 +285,28 @@ class Token {
 		this.update_opacity(tok, false);
 		debounceLightChecks();
 	}
+	moveToTop(){
+		const selfId = this.options.id;
+		$(".token").each(function () {
+			let tokenId = $(this).attr('data-id');
+			let tokenzindexdiff = window.TOKEN_OBJECTS[tokenId].options.zindexdiff;
+			if (tokenzindexdiff >= window.TOKEN_OBJECTS[selfId].options.zindexdiff && tokenId != selfId) {
+				window.TOKEN_OBJECTS[selfId].options.zindexdiff = tokenzindexdiff + 1;
+			}
+		});
+		this.place_sync_persist();
+	}
+	moveToBottom() {
+		const selfId = this.options.id;
+		$(".token").each(function () {
+			let tokenId = $(this).attr('data-id');
+			let tokenzindexdiff = window.TOKEN_OBJECTS[tokenId].options.zindexdiff;
+			if (tokenzindexdiff <= window.TOKEN_OBJECTS[selfId].options.zindexdiff && tokenId != selfId) {
+				window.TOKEN_OBJECTS[selfId].options.zindexdiff = Math.max(tokenzindexdiff - 1, -5000);
+			}	
+		});
+		this.place_sync_persist();
+	}
 
 	isLineAoe() {
 		// 1 being a single square which is usually 5ft

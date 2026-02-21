@@ -3077,7 +3077,12 @@ function init_help_menu() {
 						<dl>
 							<dt>|</dt> <dt>${getShiftKeyName()}+\\</dt><dd>Flip selected tokens images</dd>
 						</dl>
-
+						<dl>
+							<dt>'</dt><dd>Move selected tokens to top of stack</dd>
+						</dl>
+						<dl>
+							<dt>/</dt><dd>Move selected tokens to bottom of stack</dd>
+						</dl>
 						<dl>
 							<dt>1-9</dt>
 							<dd>Add Custom Numkey Dice to Dice Pool</dd>
