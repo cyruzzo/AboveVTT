@@ -4833,6 +4833,7 @@ async function launchFilePicker(selectFunction = false, fileTypes = [], secondar
                 overflow: hidden;
                 text-overflow: ellipsis;
                 white-space: nowrap;
+                overscroll-behavior: auto;
             }
             #avtt-column-headers .avtt-sortable-header {
                 cursor: pointer;
@@ -5041,6 +5042,7 @@ async function launchFilePicker(selectFunction = false, fileTypes = [], secondar
                 overflow: hidden;
                 text-overflow: ellipsis;    
                 white-space: nowrap;
+                overscroll-behavior: auto;
             }
             #file-listing-section tr span.material-symbols-outlined{
                 flex-shrink:0;
