@@ -775,27 +775,13 @@ function token_context_menu_expanded(tokenIds, e) {
 
 		toTopMenuButton.off().on("click", function(tokenIds){
 			tokens.forEach(token => {
-				$(".token").each(function(){	
-					let tokenId = $(this).attr('data-id');	
-					let tokenzindexdiff = window.TOKEN_OBJECTS[tokenId].options.zindexdiff;
-					if (tokenzindexdiff >= window.TOKEN_OBJECTS[token.options.id].options.zindexdiff && tokenId != token.options.id) {
-						window.TOKEN_OBJECTS[token.options.id].options.zindexdiff = tokenzindexdiff + 1;
-					}		
-				});
-				token.place_sync_persist();
+				token.moveToTop();
 			});
 		});
 
 		toBottomMenuButton.off().on("click", function(tokenIds){
 			tokens.forEach(token => {			
-				$(".token").each(function(){	
-					let tokenId = $(this).attr('data-id');	
-					let tokenzindexdiff = window.TOKEN_OBJECTS[tokenId].options.zindexdiff;
-					if (tokenzindexdiff <= window.TOKEN_OBJECTS[token.options.id].options.zindexdiff && tokenId != token.options.id) {
-						window.TOKEN_OBJECTS[token.options.id].options.zindexdiff = Math.max(tokenzindexdiff - 1, -5000);
-					}		
-				});
-				token.place_sync_persist();
+				token.moveToBottom();
 			});
 		});
 		let lockSettings = token_setting_options().filter((d) => d.name == 'lockRestrictDrop')[0];
@@ -1413,27 +1399,13 @@ function token_context_menu_expanded(tokenIds, e) {
 
 	toTopMenuButton.off().on("click", function(tokenIds){
 		tokens.forEach(token => {
-			$(".token").each(function(){	
-				let tokenId = $(this).attr('data-id');	
-				let tokenzindexdiff = window.TOKEN_OBJECTS[tokenId].options.zindexdiff;
-				if (tokenzindexdiff >= window.TOKEN_OBJECTS[token.options.id].options.zindexdiff && tokenId != token.options.id) {
-					window.TOKEN_OBJECTS[token.options.id].options.zindexdiff = tokenzindexdiff + 1;
-				}		
-			});
-			token.place_sync_persist();
+			token.moveToTop();
 		});
 	});
 
 	toBottomMenuButton.off().on("click", function(tokenIds){
 		tokens.forEach(token => {			
-			$(".token").each(function(){	
-				let tokenId = $(this).attr('data-id');	
-				let tokenzindexdiff = window.TOKEN_OBJECTS[tokenId].options.zindexdiff;
-				if (tokenzindexdiff <= window.TOKEN_OBJECTS[token.options.id].options.zindexdiff && tokenId != token.options.id) {
-					window.TOKEN_OBJECTS[token.options.id].options.zindexdiff = Math.max(tokenzindexdiff - 1, -5000);
-				}		
-			});
-			token.place_sync_persist();
+			token.moveToBottom();
 		});
 	});
 
