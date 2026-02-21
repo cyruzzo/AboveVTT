@@ -738,12 +738,6 @@ function check_single_token_visibility(id){
 
 
 
-	if(window.tokenCheckOffscreenCanvas == undefined){
-		window.tokenCheckOffscreenCanvas = new OffscreenCanvas(fogCanvas.width, fogCanvas.height);
-		window.tokenCheckOffscreenContext = window.tokenCheckOffscreenCanvas.getContext('2d');
-	}
-
-
 	const tokenObjectValues = Object.values(window.TOKEN_OBJECTS);
 	const aPlayerToken = tokenObjectValues.some(d => d.options.id.startsWith('/profile'));
 	const playerTokenWithVisionEnabled = aPlayerToken == true && (window.TOKEN_OBJECTS[playerTokenId]?.options?.auraislight === true || (playerTokenId === undefined && tokenObjectValues.some(d => d.options.id.startsWith('/profile') && d.options.auraislight == true)));
@@ -756,10 +750,8 @@ function check_single_token_visibility(id){
 
 
 
-	const offScreenCanvas = window.tokenCheckOffscreenCanvas;
-	offScreenCanvas.width = fogCanvas.width;
-	offScreenCanvas.height = fogCanvas.height;
-	const offScreenCtx = window.tokenCheckOffscreenContext;
+	const offScreenCanvas = window.offScreenCombine;
+	const offScreenCtx = window.offScreenCombineContext;
 
 	if ((window.DM || playerTokenHasVision) && window.CURRENT_SCENE_DATA.disableSceneVision != 1) {
 		offScreenCtx.clearRect(0, 0, offScreenCanvas.width, offScreenCanvas.height);
@@ -887,14 +879,11 @@ function do_check_token_visibility() {
 
 
 	
-	if (window.tokenCheckOffscreenCanvas == undefined) {
-		window.tokenCheckOffscreenCanvas = new OffscreenCanvas(fogCanvas.width, fogCanvas.height);
-		window.tokenCheckOffscreenContext = window.tokenCheckOffscreenCanvas.getContext('2d');
-	}
-	const offScreenCanvas = window.tokenCheckOffscreenCanvas;
-	offScreenCanvas.width = fogCanvas.width;
-	offScreenCanvas.height = fogCanvas.height;
-	const offScreenCtx = window.tokenCheckOffscreenContext;
+
+
+	const offScreenCanvas = window.offScreenCombine;
+	const offScreenCtx = window.offScreenCombineContext;
+	offScreenCtx.globalCompositeOperation = 'source-over';
 	if ((window.DM || playerTokenHasVision) && window.CURRENT_SCENE_DATA.disableSceneVision != 1){
 		offScreenCtx.clearRect(0, 0, offScreenCanvas.width, offScreenCanvas.height);
 		offScreenCtx.drawImage(lightCanvas, 0, 0);	
