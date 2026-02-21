@@ -2204,12 +2204,12 @@ function setVisionLightOffscreenCanvas(){
 		}
 	}
 
-	create_or_set_offscreen_canvas('offScreenCombine');
-	create_or_set_offscreen_canvas('lightInLos');
-	create_or_set_offscreen_canvas('offscreenCanvasMask');
-	create_or_set_offscreen_canvas('moveOffscreenCanvasMask', true, true);
-	create_or_set_offscreen_canvas('devilsightCanvas');
-	create_or_set_offscreen_canvas('truesightCanvas');
+	create_or_set_offscreen_canvas('offScreenCombine'); // general purpose offscreen canvas used for repetative short term things like combining vision circles, line of sight, fog, applying blurs etc. Each usage is contained and clears or fills a rect the size of the canvas
+	create_or_set_offscreen_canvas('lightInLos'); // used to store token and drawn light thats in line of sight, checked against to reveal/hide tokens
+	create_or_set_offscreen_canvas('offscreenCanvasMask'); // used to combine line of sights and drawn to raycastingCanvas after
+	create_or_set_offscreen_canvas('moveOffscreenCanvasMask', true, true); // used to store moveable area that's checked against while moving tokens
+	create_or_set_offscreen_canvas('devilsightCanvas'); //devilsight canvas is used to combine with darkness aoe (or other magical darkness sources if implemented)
+	create_or_set_offscreen_canvas('truesightCanvas'); //this is stored and checked against in vision checks for invisible creatures (also works like devilsight for magical darkness)
 }
 function redraw_light_walls(clear=true, editingWallPoints = false){
 	let showWallsToggle = $('#show_walls').hasClass('button-enabled');
