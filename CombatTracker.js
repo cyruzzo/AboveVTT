@@ -1766,7 +1766,30 @@ function ct_load(data=null){
 		for(let tokenID in window.all_token_objects){
 			if( window.all_token_objects[tokenID].options.ct_show == true || (window.DM && window.all_token_objects[tokenID].options.ct_show !== undefined)) 
 			{		
-				ct_add_token(window.all_token_objects[tokenID],false,true);
+				const token = window.all_token_objects[tokenID];
+				ct_add_token(token,false,true);
+
+				const addLairToken = token?.options?.lairTokenId;
+
+				if(addLairToken) {
+					const id = uuid();
+					const lairToken = new Token({
+						...token.options,
+						name: `${token.options.name} (Lair)`,
+						image: "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/letters/EXCLAMATION.png",
+						imgsrc: "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/letters/EXCLAMATION.png",
+						id: id,
+						init: 20,
+						ct_show: false,
+						revealname: false,
+						hasLair: false, 
+						isLairToken: true,
+					});
+					window.TOKEN_OBJECTS[id] = lairToken
+					window.all_token_objects[id] = lairToken;
+					window.all_token_objects[token.options.id].options.lairTokenId = id;
+					ct_add_token(lairToken, false, true, false, false);
+				}
 			}		
 		}
 		if(data.current){
@@ -1846,16 +1869,24 @@ function ct_load(data=null){
 
 
 function ct_remove_token(token,persist=true) {
-
-	let id = token.options.id;
-	if ($("#combat_area tr[data-target='" + id + "']").length > 0) {
-		if ($("#combat_area tr[data-target='" + id + "']").attr('data-current') == "1") {
-			$("#combat_next_button").click();
+	if(token){
+		let id = token.options.id;
+		if ($("#combat_area tr[data-target='" + id + "']").length > 0) {
+			if ($("#combat_area tr[data-target='" + id + "']").attr('data-current') == "1") {
+				$("#combat_next_button").click();
+			}
+			$("#combat_area tr[data-target='" + id + "']").remove(); // delete token from the combat tracker if it's there
 		}
-		$("#combat_area tr[data-target='" + id + "']").remove(); // delete token from the combat tracker if it's there
-	}
-	ct_update_popout()
-	if (persist) {
-		debounceCombatPersist();
+		if(token?.options.lairTokenId){
+			let lairTokenId = token.options.lairTokenId;
+			ct_remove_token(window.all_token_objects[lairTokenId]);
+			if(window.all_token_objects[lairTokenId]){
+				window.all_token_objects[lairTokenId].delete();
+			}
+		}
+		ct_update_popout()
+		if (persist) {
+			debounceCombatPersist();
+		}
 	}
 }
