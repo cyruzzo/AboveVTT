@@ -762,7 +762,7 @@ function check_single_token_visibility(id){
 		offScreenCtx.fillRect(0, 0, offScreenCanvas.width, offScreenCanvas.height)
 	}
 
-	offScreenCtx.globalCompositeOperation = 'multiply';
+	offScreenCtx.globalCompositeOperation = 'destination-out';
 	offScreenCtx.drawImage(fogCanvas, 0, 0);
 	
 	const offscreenImageData = offScreenCtx.getImageData(0, 0, offScreenCanvas.width, offScreenCanvas.height);
@@ -903,7 +903,7 @@ function do_check_token_visibility() {
 	}
 
 
-	offScreenCtx.globalCompositeOperation = 'multiply';
+	offScreenCtx.globalCompositeOperation = 'destination-out';
 	offScreenCtx.drawImage(fogCanvas, 0, 0);
 
 	
@@ -1631,11 +1631,7 @@ function redraw_fog() {
 		return;
 	let canvas = document.getElementById("fog_overlay");
 	let fogContext = canvas.getContext("2d");
-	let fogStyle;
-	if (window.DM)
-		fogStyle = "rgba(0, 0, 0, 0.5)";
-	else
-		fogStyle = "rgb(0, 0, 0)";
+	let fogStyle = "rgb(0, 0, 0)";
 
 
 	let offscreenDraw = new OffscreenCanvas(canvas.width, canvas.height); 
