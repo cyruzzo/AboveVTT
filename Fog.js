@@ -614,10 +614,10 @@ function in_fog_or_dark_image_data(tokenid, imageData) {
 	let pixeldata = getPixelFromImageData(imageData, centerX, centerY);
 
 	if (pixeldata[1] > 4 || pixeldata[0] > 4 || pixeldata[2] > 4) {
-		return true;
+		return false;
 	}
 
-	return false;
+	return true;
 }
 
 function is_token_in_raycasting_context(tokenid, rayContext=undefined){
@@ -752,13 +752,13 @@ function check_single_token_visibility(id){
 
 	const offScreenCanvas = window.offScreenCombine;
 	const offScreenCtx = window.offScreenCombineContext;
-
+	offScreenCtx.globalCompositeOperation = 'source-over';
 	if ((window.DM || playerTokenHasVision) && window.CURRENT_SCENE_DATA.disableSceneVision != 1) {
 		offScreenCtx.clearRect(0, 0, offScreenCanvas.width, offScreenCanvas.height);
 		if(lightCanvas)
 			offScreenCtx.drawImage(lightCanvas, 0, 0);
 	} else if (aPlayerToken == true || window.CURRENT_SCENE_DATA.disableSceneVision == 1) {
-		offScreenCtx.fillStyle = 'rgba(255, 255, 255 , 1)';
+		offScreenCtx.fillStyle = 'rgba(255, 255, 255, 1)';
 		offScreenCtx.fillRect(0, 0, offScreenCanvas.width, offScreenCanvas.height)
 	}
 
@@ -772,9 +772,8 @@ function check_single_token_visibility(id){
 	const sharedVision = (playerTokenId == id || window.TOKEN_OBJECTS[id].options.share_vision == true || window.TOKEN_OBJECTS[id].options.share_vision == window.myUser || (window.TOKEN_OBJECTS[id].options.share_vision && is_spectator_page()));
 
 	const hideThisTokenInFogOrDarkness = (window.TOKEN_OBJECTS[id].options.revealInFog !== true); //we want to hide this token in fog or darkness
-
-	const inVisibleLight = (sharedVision && (!window.SelectedTokenVision || window.CURRENTLY_SELECTED_TOKENS.length == 0 || isSelected)) || in_fog_or_dark_image_data(id, offscreenImageData) === true; // this token is not in fog or darkness and not the players token
-
+	
+	const inVisibleLight = (sharedVision && (!window.SelectedTokenVision || window.CURRENTLY_SELECTED_TOKENS.length == 0 || isSelected)) || in_fog_or_dark_image_data(id, offscreenImageData) === false; // this token is not in fog or darkness and not the players token
 	const dmSelected = window.DM === true && isSelected;
 
 	const showThisPlayerToken = window.TOKEN_OBJECTS[id].options.itemType === 'pc' && window.DM !== true && playerTokenId === undefined //show this token when logged in as a player without your own token
@@ -875,11 +874,6 @@ function do_check_token_visibility() {
 		playerTokenHasVision = true
 	else
 		playerTokenHasVision = false;
-	
-
-
-	
-
 
 	const offScreenCanvas = window.offScreenCombine;
 	const offScreenCtx = window.offScreenCombineContext;
@@ -902,15 +896,10 @@ function do_check_token_visibility() {
 		truesightData = truesightContext.getImageData(0, 0, window.truesightCanvas.width, window.truesightCanvas.height);
 	}
 
-
 	offScreenCtx.globalCompositeOperation = 'destination-out';
 	offScreenCtx.drawImage(fogCanvas, 0, 0);
 
-	
-
-
 	const offscreenImageData = offScreenCtx.getImageData(0, 0, offScreenCanvas.width, offScreenCanvas.height);
-
 
 	for (let id in window.TOKEN_OBJECTS) {
 		if(window.TOKEN_OBJECTS[id].options.combatGroupToken || window.TOKEN_OBJECTS[id].options.type != undefined)
@@ -926,7 +915,7 @@ function do_check_token_visibility() {
 
 		const hideThisTokenInFogOrDarkness = (window.TOKEN_OBJECTS[id].options.revealInFog !== true); //we want to hide this token in fog or darkness
 		
-		const inVisibleLight = (sharedVision && (!window.SelectedTokenVision || window.CURRENTLY_SELECTED_TOKENS.length == 0 || isSelected)) || in_fog_or_dark_image_data(id, offscreenImageData) === true; // this token is not in fog or darkness and not the players token
+		const inVisibleLight = (sharedVision && (!window.SelectedTokenVision || window.CURRENTLY_SELECTED_TOKENS.length == 0 || isSelected)) || in_fog_or_dark_image_data(id, offscreenImageData) === false; // this token is not in fog or darkness and not the players token
 
 		const dmSelected = window.DM === true && isSelected;
 
@@ -974,10 +963,6 @@ function do_check_token_visibility() {
 
 	showDoors.toggleClass('notVisible', false);
 	hideDoors.toggleClass('notVisible', true);
-	
-
-
-	console.log("finished");
 }
 
 function circle2(a, b) {
