@@ -537,10 +537,10 @@ class MessageBroker {
 				window.nextTurnAudio = document.createElement('audio');
 				window.nextTurnAudio.src = window.EXTENSION_PATH + 'assets/audio/NextTurnIndicator.mp3';
 				window.nextTurnAudio.volume = 0.3;
-				window.nextTurnAudio.preload = 'auto';
+				window.nextTurnAudio.preload = 'metadata';
 				document.body.appendChild(window.nextTurnAudio);
 				// The below must be done to satisfy browser autoplay policy
-				window.nextTurnAudio.play().then(() => {
+				window.nextTurnAudio.load().then(() => {
 					window.nextTurnAudio.pause();
 					window.nextTurnAudio.currentTime = 0;
 				})
@@ -664,6 +664,10 @@ class MessageBroker {
 				if(!window.DM){
 					deleteExploredScene(msg.data.sceneId)
 				}
+			}
+			if (msg.eventType == "custom/myVTT/campaignData"){
+				window.AVTT_CAMPAIGN_INFO = msg.data;
+				window.MB.checkHideSceneFromPlayers();
 			}
 			if(msg.eventType == "custom/myVTT/place-extras-token"){
 				if(window.DM){
@@ -1642,10 +1646,25 @@ class MessageBroker {
 		self.loadAboveWS(notify_player_join);
 
 	}
-
+	checkHideSceneFromPlayers(){
+		$('#hidden-scenes-message').remove();
+		if (window.AVTT_CAMPAIGN_INFO?.hidePlayersScene == 1 && !window.DM) {
+			let hiddenMessage;
+			if (window.myUser != window.CAMPAIGN_INFO.dmId) {
+				$('#VTT').toggleClass('hide-players', true);
+				hiddenMessage = `<div id="hidden-scenes-message">The DM currently has the map hidden from players.</div>`;
+			} else {
+				hiddenMessage = `<div id="hidden-scenes-message">You have scenes hidden from players (DM user can still preview).</div>`;
+			}
+			$('body').append(hiddenMessage);
+		} else {
+			$('#VTT').toggleClass('hide-players', false);	
+		}
+	}
 	async handleScene (msg, forceRefresh=false) {
 		console.debug("handlescene", msg);
 		window.LOADING = true;
+		window.MB.checkHideSceneFromPlayers();
 		try{
 			if(msg.data.scale_factor == undefined || msg.data.scale_factor == ''){
 				msg.data.scale_factor = 1;
@@ -1658,8 +1677,11 @@ class MessageBroker {
 			let scaleFactorEqual = (msg.data.scale_factor/window.CURRENT_SCENE_DATA.conversion == window.CURRENT_SCENE_DATA.scale_factor ||
 																		(msg.data.UVTTFile == 1  && msg.data.scale_factor == window.CURRENT_SCENE_DATA.scale_factor) || 
 																		((msg.data.scale_factor == undefined || msg.data.scale_factor=='') && window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion == 1))
-			let hppsEqual = window.CURRENT_SCENE_DATA.hpps==parseFloat(msg.data.hpps*msg.data.scale_factor)
-			let vppsEqual = window.CURRENT_SCENE_DATA.vpps==parseFloat(msg.data.vpps*msg.data.scale_factor)
+			let hppsEqual = (window.CURRENT_SCENE_DATA.gridType == 2 && window.CURRENT_SCENE_DATA.hpps == parseFloat(msg.data.vpps * msg.data.scale_factor)) || window.CURRENT_SCENE_DATA.hpps==parseFloat(msg.data.hpps*msg.data.scale_factor)
+			let vppsEqual = (window.CURRENT_SCENE_DATA.gridType == 3 && window.CURRENT_SCENE_DATA.vpps == parseFloat(msg.data.hpps * msg.data.scale_factor)) || window.CURRENT_SCENE_DATA.vpps==parseFloat(msg.data.vpps*msg.data.scale_factor)
+			
+			
+			
 			let isVideoEqual = window.CURRENT_SCENE_DATA.player_map_is_video == msg.data.player_map_is_video && window.CURRENT_SCENE_DATA.dm_map_is_video == msg.data.dm_map_is_video
 
 			let isSameScaleAndMaps = isCurrentScene && scaleFactorEqual && hppsEqual && vppsEqual && isVideoEqual && ((window.DM && dmMapEqual && dmMapToggleEqual) || (!window.DM && playerMapEqual))
@@ -1668,6 +1690,7 @@ class MessageBroker {
 			
 
 			if(isSameScaleAndMaps && !forceRefresh){
+				delete window.LOADING;
 				let scaleFactor = window.CURRENT_SCENE_DATA.scale_factor;
 				let conversion = window.CURRENT_SCENE_DATA.conversion;
 
@@ -1823,8 +1846,8 @@ class MessageBroker {
 
 	
 						window.CURRENT_SCENE_DATA.conversion = 1;
-
-						if (!data.is_video && (mapHeight > 2500 || mapWidth > 2500)){
+						
+						if (!data.map?.includes('youtube.com') && (mapHeight > 2500 || mapWidth > 2500)){
 							let conversion = 2;
 							if(mapWidth >= mapHeight){
 								conversion = 1980 / mapWidth;
@@ -1880,26 +1903,11 @@ class MessageBroker {
 						}
 
 
-						if(!window.DM && data.dm_map_usable=="1" && data.UVTTFile != 1 && !data.is_video){
-	
-							$("#scene_map").stop();
-							$("#scene_map").css("opacity","0");
-							console.log("switching back to player map");
-							$("#scene_map").off("load");
-							$("#scene_map").on("load", () => {
-								$("#scene_map").css('opacity', 1)
-								$("#darkness_layer").show();
-							});
-							const url = data.player_map.startsWith(`above-bucket-not-a-url`) ? await getAvttStorageUrl(data.player_map) : await getGoogleDriveAPILink(data.player_map);
-							
-							$("#scene_map").attr('src', url);
-							$('.import-loading-indicator .percentageLoaded').css('width', `20%`);		
-						}
 						await reset_canvas();
         				await set_default_vttwrapper_size();
+						$('.import-loading-indicator .percentageLoaded').css('width', `20%`);	
 						remove_loading_overlay();
 						console.log("LOADING TOKENS!");
-						
 
 						let tokensLength = Object.keys(data.tokens).length;
 						let count = 0;
@@ -1922,8 +1930,8 @@ class MessageBroker {
 			
 						await tokenLoop(data, count, tokensLength);
 
-						if(window.TELEPORTER_PASTE_BUFFER != undefined){
-							try{
+						if (window.TELEPORTER_PASTE_BUFFER != undefined) {
+							try {
 								const teleporterTokenId = window.TELEPORTER_PASTE_BUFFER.targetToken
 								const targetPortal = window.TOKEN_OBJECTS[teleporterTokenId];
 								const top = (parseInt(targetPortal.options.top) + 25) * (window.CURRENT_SCENE_DATA.scale_factor / targetPortal.options.scaleCreated);
@@ -1932,10 +1940,9 @@ class MessageBroker {
 								await paste_selected_tokens(left, top, isTeleporter);
 								window.TOKEN_OBJECTS[teleporterTokenId].highlight();
 							}
-							catch{
+							catch {
 								window.TELEPORTER_PASTE_BUFFER = undefined;
 							}
-							
 						}
 
 
@@ -2011,6 +2018,8 @@ class MessageBroker {
 		}).catch((error) => {
 			if (window.handleSceneQueue?.length > 0) {
 				setTimeout(window.MB.loadNextScene, 100);
+			} else{
+				delete window.LOADING;
 			}
 			console.error("Failed to download scene", error);
 		});

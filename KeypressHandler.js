@@ -7,266 +7,7 @@ var arrowKeysHeld = [0, 0, 0, 0];
 
 const sb_scroll_style = "avtt-scroll-hidden"
 
-function avttIsFilePickerVisible() {
-    const picker = document.getElementById("avtt-file-picker");
-    if (!picker) {
-        return false;
-    }
-    return $(picker).is(":visible");
-}
 
-function avttShouldBypassFilePickerHotkey(targetElement) {
-    const picker = document.getElementById("avtt-file-picker");
-    if (!picker) {
-        return false;
-    }
-    let element = null;
-    if (targetElement && picker.contains(targetElement)) {
-        element = targetElement;
-    } else if (document.activeElement && picker.contains(document.activeElement)) {
-        element = document.activeElement;
-    }
-    if (!element) {
-        return false;
-    }
-
-    const tagName = String(element.tagName || "").toLowerCase();
-    if (tagName === "input" || tagName === "textarea") {
-        return true;
-    }
-    return Boolean(element.isContentEditable);
-}
-
-function avttHandleFilePickerCut(e) {
-    if (!avttIsFilePickerVisible()) {
-        return false;
-    }
-    if (avttShouldBypassFilePickerHotkey(e?.target)) {
-        return false;
-    }
-    if (typeof window.avttCutSelectedFiles === "function") {
-        const didCut = window.avttCutSelectedFiles();
-        if (didCut) {
-            e?.preventDefault?.();
-            return true;
-        }
-    }
-    return false;
-}
-
-async function avttHandleFilePickerPaste(e) {
-    if (!avttIsFilePickerVisible()) {
-        return false;
-    }
-    if (avttShouldBypassFilePickerHotkey(e?.target)) {
-        return false;
-    }
-    if (typeof window.avttPasteFiles === "function") {
-        try {
-            const didPaste = await window.avttPasteFiles();
-            if (didPaste) {
-                e?.preventDefault?.();
-                return true;
-            }
-        } catch (error) {
-            console.error("Failed to paste files from file picker clipboard", error);
-        }
-    }
-    return false;
-}
-
-function hide_scrollbar() {
-    if (!document.getElementById(sb_scroll_style)) {
-        const style = document.createElement("style");
-        style.id = sb_scroll_style
-        style.textContent = `
-    body::-webkit-scrollbar {
-        width: 0px;
-        height: 0px;
-    }
-    body::-webkit-scrollbar-track {
-        background: transparent !important;
-    }
-    body::-webkit-scrollbar-thumb {
-        background-color: transparent;
-        border-radius: 6px;
-        border: none;
-    }
-    body::-webkit-scrollbar-corner {
-        background: transparent;
-    }
-    .sidebar__pane-content {
-        box-shadow: none;
-    }
-    html {
-        scrollbar-width: none;
-    }
-        `;
-        document.head.appendChild(style);
-    }
-}
-function allow_scrollbar() {
-    e = document.getElementById(sb_scroll_style);
-    if(e) e.remove();
-}
-function hide_or_unhide_scrollbar() {
-    if (get_avtt_setting_value("alwaysHideScrollbar")) {
-        hide_scrollbar();
-    } else {
-        allow_scrollbar();        
-    }
-}
-function unhide_interface() {
-    if ($('#hide_interface_button').hasClass('unhidden')) {
-        $('#hide_interface_button').hide().removeClass('unhidden');
-        $('.hideable').show();
-        $(".dice-toolbar").css({'visibility': '', 'pointer-events': ''});
-        hide_or_unhide_scrollbar() 
-    } else {
-        if ($('#hide_rightpanel').hasClass('point-right')) {
-            $('#hide_rightpanel').click();
-        }
-        if (is_characters_page()) {
-            hide_player_sheet();
-        }
-        $(".dice-toolbar").css({'visibility': 'hidden', 'pointer-events': 'none'});
-        $('#hide_interface_button').show().addClass('unhidden');
-        $('.hideable').hide();
-        hide_scrollbar();
-    }
-}
-
-/*
-Adds num key dice rolls together or rolls them if auto roll is set
-Will remove if ctrl/mod is held.
-Simple 1d# rolls are grouped together.
-
-Other rolls are added/subtracted individually such as 2d20kh1. As 4d20kh2 would not always produce the same result. 
-
-To do: Support grouping semi-simple rolls together such as 2d4+4 -> 4d4+8 instead of 2d4+4+2d4+4. 
-Adjusting this from regex adjusting a string to roll groupings in json or an array then building the formula would probably make this easier. 
-*/
-function hotkeyDice(nthDice){
-
-
-    const rollSetting = get_avtt_setting_value('quickRoll')["customDieRoll"+nthDice];
-    const autoRoll = get_avtt_setting_value('quickRoll')['autoRoll'];
-    
-    if(autoRoll == true){
-        const rollData = DiceRoll.fromSlashCommand(`/r ${rollSetting}`);
-        window.diceRoller.roll(rollData); 
-    }
-    else{
-        simpleDice = ['1d4', '1d6', '1d8', '1d100', '1d10', '1d12', '1d20'];
-
-        if(shiftHeld){
-            if(window.numpadRollFormula === undefined){
-                window.numpadRollFormula = ``;
-            }
-            window.numpadRollFormula = window.numpadRollFormula.replace(diceRollCommandRegex, "").match(allowedExpressionCharactersRegex)?.[0]
-        
-            if(simpleDice.includes(rollSetting)){
-                const rollRegex = new RegExp(`([+-][\\d]+)?(${rollSetting.replace('1d', 'd')}($|[+-]))`, "gi");
-                if(window.numpadRollFormula.match(rollRegex) != null){
-                    window.numpadRollFormula = window.numpadRollFormula.replace(rollRegex, function(m, m1, m2, m3){
-                        const newAmount = parseInt(m1) - 1;
-                        if(newAmount != 0){
-                           return `${newAmount > 0 ? `+${newAmount}` : `${newAmount}`}${m2}`;
-                        }
-                        else{
-                           return m3;
-                        }
-                    })
-                }
-                else{
-                    window.numpadRollFormula = `${window.numpadRollFormula}-${rollSetting}`
-                }
-            }
-            else{
-                const rollRegex = new RegExp(`(\\+${rollSetting.replace(/\+/gi, '\\+')})($|[+-])`, "i");
-                
-                if(window.numpadRollFormula.match(rollRegex) != null){
-                    window.numpadRollFormula = window.numpadRollFormula.replace(rollRegex, function(m, m1, m2){
-                        return m2;
-                    })
-                }
-                else{
-                    window.numpadRollFormula = `${window.numpadRollFormula}-${rollSetting}` 
-                }
-            }
-        }
-        else{
-            if(window.numpadRollFormula === undefined){
-                window.numpadRollFormula = ``;
-            } 
-            window.numpadRollFormula = window.numpadRollFormula.replace(diceRollCommandRegex, "").match(allowedExpressionCharactersRegex)?.[0]
-        
-            if(simpleDice.includes(rollSetting)){
-                const rollRegex = new RegExp(`([+-][\\d]+)?(${rollSetting.replace('1d', 'd')}($|[+-]))`, "gi");
-                if(window.numpadRollFormula.match(rollRegex) != null){
-                    window.numpadRollFormula = window.numpadRollFormula.replace(rollRegex, function(m, m1, m2, m3){
-                        const newAmount = parseInt(m1) + 1;
-                        if(newAmount != 0){
-                           return `${newAmount > 0 ? `+${newAmount}` : `${newAmount}`}${m2}`;
-                        }
-                        else{
-                           return m3;
-                        }
-                    })
-                }
-                else{
-                    window.numpadRollFormula = `${window.numpadRollFormula}+${rollSetting}`
-
-                }
-            }
-            else{
-                const rollRegex = new RegExp(`(\\-${rollSetting.replace(/\+/gi, '\\+')})($|[+-])`, "i");
-                
-                if(window.numpadRollFormula.match(rollRegex) != null){
-                    window.numpadRollFormula = window.numpadRollFormula.replace(rollRegex, function(m, m1, m2){
-                        return m2;
-                    });
-                }
-                else{
-                    window.numpadRollFormula = `${window.numpadRollFormula}+${rollSetting}` 
-                }
-            }
-        }
-
-        updateDisplayedDiceFormula();
-    }
-
-   
-}
-
-function updateDisplayedDiceFormula(){
-   
-    let wrapper = $('#displayedDiceFormula')
-    if($('#displayedDiceFormula').length == 0){
-        wrapper = $(`<div id='displayedDiceFormula'>Number key Formula to Roll:<span class='rollFormula'></span></div>`)
-        const exitButton = $(`<button id='displayedDiceFormulaExit'>X</button>`);
-        exitButton.off('click.exitNumDice').on('click.exitNumDice', function(){
-            wrapper.remove();
-            delete window.numpadRollFormulaMod;
-            delete window.numpadRollFormula
-        })
-        wrapper.append(exitButton);
-        $('#VTTWRAPPER').append(wrapper);
-    }
-     if(window.numpadRollFormulaMod == undefined)
-        window.numpadRollFormulaMod = 0;
-    let displayMod = window.numpadRollFormulaMod
-    if(displayMod == 0)
-        displayMod = '';
-    const action = window.numpadRollFormula.replace(diceRollCommandRegex, "").replace(allowedExpressionCharactersRegex, "");
-    const expression = window.numpadRollFormula.replace(diceRollCommandRegex, "").match(allowedExpressionCharactersRegex)?.[0].replace(/\s*([+-])\s*|\s+$/gi, '$1');
-   
-    const displayText = `${expression}${window.numpadRollFormulaMod > 0 ? `+${window.numpadRollFormulaMod}` : window.numpadRollFormulaMod  == 0 ? '' : `${window.numpadRollFormulaMod}`} ${action}`
-    if(displayText == '')
-        $('#displayedDiceFormulaExit').click();
-    else
-        wrapper.find('.rollFormula').text(`${displayText.replace(/^\+/, '')}`)
-}
 
 function init_keypress_handler(){
 
@@ -884,7 +625,29 @@ function handle_undo(){
     }
 
 }
-
+    
+Mousetrap.bind('|', () => { //flip all selected tokens
+    for (let i = 0; i < window.CURRENTLY_SELECTED_TOKENS.length; i++) {
+	let id = window.CURRENTLY_SELECTED_TOKENS[i];
+	let token = window.TOKEN_OBJECTS[id];
+	token.flip()
+	token.place_sync_persist();
+    }
+});
+Mousetrap.bind('/', () => { 
+    for (let i = 0; i < window.CURRENTLY_SELECTED_TOKENS.length; i++) {
+        let id = window.CURRENTLY_SELECTED_TOKENS[i];
+        let token = window.TOKEN_OBJECTS[id];
+        token.moveToBottom();
+    }
+});
+Mousetrap.bind('\'', () => { 
+    for (let i = 0; i < window.CURRENTLY_SELECTED_TOKENS.length; i++) {
+        let id = window.CURRENTLY_SELECTED_TOKENS[i];
+        let token = window.TOKEN_OBJECTS[id];
+        token.moveToTop();
+    }
+});
 let key_rotation_done;
 let key_rotation_angle = 0;
 function key_rotation(angle) {
@@ -947,4 +710,262 @@ window.addEventListener("keyup", async (event) => {
     rotationKeyPresses = [];
 });
 
+}
+/*
+Adds num key dice rolls together or rolls them if auto roll is set
+Will remove if ctrl/mod is held.
+Simple 1d# rolls are grouped together.
+
+Other rolls are added/subtracted individually such as 2d20kh1. As 4d20kh2 would not always produce the same result. 
+
+To do: Support grouping semi-simple rolls together such as 2d4+4 -> 4d4+8 instead of 2d4+4+2d4+4. 
+Adjusting this from regex adjusting a string to roll groupings in json or an array then building the formula would probably make this easier. 
+*/
+function hotkeyDice(nthDice) {
+
+
+    const rollSetting = get_avtt_setting_value('quickRoll')["customDieRoll" + nthDice];
+    const autoRoll = get_avtt_setting_value('quickRoll')['autoRoll'];
+
+    if (autoRoll == true) {
+        const rollData = DiceRoll.fromSlashCommand(`/r ${rollSetting}`);
+        window.diceRoller.roll(rollData);
+    }
+    else {
+        simpleDice = ['1d4', '1d6', '1d8', '1d100', '1d10', '1d12', '1d20'];
+
+        if (shiftHeld) {
+            if (window.numpadRollFormula === undefined) {
+                window.numpadRollFormula = ``;
+            }
+            window.numpadRollFormula = window.numpadRollFormula.replace(diceRollCommandRegex, "").match(allowedExpressionCharactersRegex)?.[0]
+
+            if (simpleDice.includes(rollSetting)) {
+                const rollRegex = new RegExp(`([+-][\\d]+)?(${rollSetting.replace('1d', 'd')}($|[+-]))`, "gi");
+                if (window.numpadRollFormula.match(rollRegex) != null) {
+                    window.numpadRollFormula = window.numpadRollFormula.replace(rollRegex, function (m, m1, m2, m3) {
+                        const newAmount = parseInt(m1) - 1;
+                        if (newAmount != 0) {
+                            return `${newAmount > 0 ? `+${newAmount}` : `${newAmount}`}${m2}`;
+                        }
+                        else {
+                            return m3;
+                        }
+                    })
+                }
+                else {
+                    window.numpadRollFormula = `${window.numpadRollFormula}-${rollSetting}`
+                }
+            }
+            else {
+                const rollRegex = new RegExp(`(\\+${rollSetting.replace(/\+/gi, '\\+')})($|[+-])`, "i");
+
+                if (window.numpadRollFormula.match(rollRegex) != null) {
+                    window.numpadRollFormula = window.numpadRollFormula.replace(rollRegex, function (m, m1, m2) {
+                        return m2;
+                    })
+                }
+                else {
+                    window.numpadRollFormula = `${window.numpadRollFormula}-${rollSetting}`
+                }
+            }
+        }
+        else {
+            if (window.numpadRollFormula === undefined) {
+                window.numpadRollFormula = ``;
+            }
+            window.numpadRollFormula = window.numpadRollFormula.replace(diceRollCommandRegex, "").match(allowedExpressionCharactersRegex)?.[0]
+
+            if (simpleDice.includes(rollSetting)) {
+                const rollRegex = new RegExp(`([+-][\\d]+)?(${rollSetting.replace('1d', 'd')}($|[+-]))`, "gi");
+                if (window.numpadRollFormula.match(rollRegex) != null) {
+                    window.numpadRollFormula = window.numpadRollFormula.replace(rollRegex, function (m, m1, m2, m3) {
+                        const newAmount = parseInt(m1) + 1;
+                        if (newAmount != 0) {
+                            return `${newAmount > 0 ? `+${newAmount}` : `${newAmount}`}${m2}`;
+                        }
+                        else {
+                            return m3;
+                        }
+                    })
+                }
+                else {
+                    window.numpadRollFormula = `${window.numpadRollFormula}+${rollSetting}`
+
+                }
+            }
+            else {
+                const rollRegex = new RegExp(`(\\-${rollSetting.replace(/\+/gi, '\\+')})($|[+-])`, "i");
+
+                if (window.numpadRollFormula.match(rollRegex) != null) {
+                    window.numpadRollFormula = window.numpadRollFormula.replace(rollRegex, function (m, m1, m2) {
+                        return m2;
+                    });
+                }
+                else {
+                    window.numpadRollFormula = `${window.numpadRollFormula}+${rollSetting}`
+                }
+            }
+        }
+
+        updateDisplayedDiceFormula();
+    }
+
+
+}
+
+function updateDisplayedDiceFormula() {
+
+    let wrapper = $('#displayedDiceFormula')
+    if ($('#displayedDiceFormula').length == 0) {
+        wrapper = $(`<div id='displayedDiceFormula'>Number key Formula to Roll:<span class='rollFormula'></span></div>`)
+        const exitButton = $(`<button id='displayedDiceFormulaExit'>X</button>`);
+        exitButton.off('click.exitNumDice').on('click.exitNumDice', function () {
+            wrapper.remove();
+            delete window.numpadRollFormulaMod;
+            delete window.numpadRollFormula
+        })
+        wrapper.append(exitButton);
+        $('#VTTWRAPPER').append(wrapper);
+    }
+    if (window.numpadRollFormulaMod == undefined)
+        window.numpadRollFormulaMod = 0;
+    let displayMod = window.numpadRollFormulaMod
+    if (displayMod == 0)
+        displayMod = '';
+    const action = window.numpadRollFormula.replace(diceRollCommandRegex, "").replace(allowedExpressionCharactersRegex, "");
+    const expression = window.numpadRollFormula.replace(diceRollCommandRegex, "").match(allowedExpressionCharactersRegex)?.[0].replace(/\s*([+-])\s*|\s+$/gi, '$1');
+
+    const displayText = `${expression}${window.numpadRollFormulaMod > 0 ? `+${window.numpadRollFormulaMod}` : window.numpadRollFormulaMod == 0 ? '' : `${window.numpadRollFormulaMod}`} ${action}`
+    if (displayText == '')
+        $('#displayedDiceFormulaExit').click();
+    else
+        wrapper.find('.rollFormula').text(`${displayText.replace(/^\+/, '')}`)
+}
+function hide_scrollbar() {
+    if (!document.getElementById(sb_scroll_style)) {
+        const style = document.createElement("style");
+        style.id = sb_scroll_style
+        style.textContent = `
+    body::-webkit-scrollbar {
+        width: 0px;
+        height: 0px;
+    }
+    body::-webkit-scrollbar-track {
+        background: transparent !important;
+    }
+    body::-webkit-scrollbar-thumb {
+        background-color: transparent;
+        border-radius: 6px;
+        border: none;
+    }
+    body::-webkit-scrollbar-corner {
+        background: transparent;
+    }
+    .sidebar__pane-content {
+        box-shadow: none;
+    }
+    html {
+        scrollbar-width: none;
+    }
+        `;
+        document.head.appendChild(style);
+    }
+}
+function allow_scrollbar() {
+    e = document.getElementById(sb_scroll_style);
+    if (e) e.remove();
+}
+function hide_or_unhide_scrollbar() {
+    if (get_avtt_setting_value("alwaysHideScrollbar")) {
+        hide_scrollbar();
+    } else {
+        allow_scrollbar();
+    }
+}
+function unhide_interface() {
+    if ($('#hide_interface_button').hasClass('unhidden')) {
+        $('#hide_interface_button').hide().removeClass('unhidden');
+        $('.hideable').show();
+        $(".dice-toolbar").css({ 'visibility': '', 'pointer-events': '' });
+        hide_or_unhide_scrollbar()
+    } else {
+        if ($('#hide_rightpanel').hasClass('point-right')) {
+            $('#hide_rightpanel').click();
+        }
+        if (is_characters_page()) {
+            hide_player_sheet();
+        }
+        $(".dice-toolbar").css({ 'visibility': 'hidden', 'pointer-events': 'none' });
+        $('#hide_interface_button').show().addClass('unhidden');
+        $('.hideable').hide();
+        hide_scrollbar();
+    }
+}
+function avttIsFilePickerVisible() {
+    const picker = document.getElementById("avtt-file-picker");
+    if (!picker) {
+        return false;
+    }
+    return $(picker).is(":visible");
+}
+
+function avttShouldBypassFilePickerHotkey(targetElement) {
+    const picker = document.getElementById("avtt-file-picker");
+    if (!picker) {
+        return false;
+    }
+    let element = null;
+    if (targetElement && picker.contains(targetElement)) {
+        element = targetElement;
+    } else if (document.activeElement && picker.contains(document.activeElement)) {
+        element = document.activeElement;
+    }
+    if (!element) {
+        return false;
+    }
+
+    const tagName = String(element.tagName || "").toLowerCase();
+    if (tagName === "input" || tagName === "textarea") {
+        return true;
+    }
+    return Boolean(element.isContentEditable);
+}
+
+function avttHandleFilePickerCut(e) {
+    if (!avttIsFilePickerVisible()) {
+        return false;
+    }
+    if (avttShouldBypassFilePickerHotkey(e?.target)) {
+        return false;
+    }
+    if (typeof window.avttCutSelectedFiles === "function") {
+        const didCut = window.avttCutSelectedFiles();
+        if (didCut) {
+            e?.preventDefault?.();
+            return true;
+        }
+    }
+    return false;
+}
+
+async function avttHandleFilePickerPaste(e) {
+    if (!avttIsFilePickerVisible()) {
+        return false;
+    }
+    if (avttShouldBypassFilePickerHotkey(e?.target)) {
+        return false;
+    }
+    if (typeof window.avttPasteFiles === "function") {
+        try {
+            const didPaste = await window.avttPasteFiles();
+            if (didPaste) {
+                e?.preventDefault?.();
+                return true;
+            }
+        } catch (error) {
+            console.error("Failed to paste files from file picker clipboard", error);
+        }
+    }
+    return false;
 }

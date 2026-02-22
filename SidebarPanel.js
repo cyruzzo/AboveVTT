@@ -2231,7 +2231,7 @@ function did_click_row(clickEvent) {
       }
       else {
         console.log(`Opening open5e monster with id ${clickedItem.monsterData.slug}`);
-        open_monster_item(clickedItem, false);
+        open_monster_item(clickedItem, true);
       }
       break;
     case ItemType.BuiltinToken:

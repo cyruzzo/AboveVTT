@@ -45,6 +45,7 @@ $(function() {
       .then(set_campaign_secret)      // set it to window.CAMPAIGN_SECRET
       .then(async () => {
         window.CAMPAIGN_INFO = await DDBApi.fetchCampaignInfo(window.gameId)
+        window.AVTT_CAMPAIGN_INFO = await AboveApi.getCampaignData();
         return window.CAMPAIGN_INFO.dmId;
       })
       .then((campaignDmId) => {
@@ -1190,6 +1191,8 @@ async function fetch_sceneList_and_scenes() {
   }
   if(activeScene)
     window.MB.handleScene(activeScene);
+  else
+    delete window.LOADING
   console.log("fetch_sceneList_and_scenes done");
   return activeScene;
 }

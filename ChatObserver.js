@@ -82,7 +82,7 @@ class ChatObserver {
         if (didSend === false) {
             // it was too complex so try to send it through rpgDiceRoller
             let expression = text.replace(diceRollCommandRegex, "").match(allowedExpressionCharactersRegex)?.[0];
-            didSend = send_rpg_dice_to_ddb(expression, window.pc?.name, window.pc?.image);
+            didSend = send_ddb_dice_message(expression, window.pc?.name, window.pc?.image);
         }
         return didSend;
     }

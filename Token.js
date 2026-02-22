@@ -38,7 +38,9 @@ const availableToAoe = [
 	"underDarkness"
 ];
 
-
+//reused transform definition
+const imageTransform = 'scale(var(--token-scale)) rotate(var(--token-rotation)) scaleX(var(--token-flip-x, 1))';
+function tokenFlipX(token) { return ((token.options.tokenFlip || 0) & 1) ? -1 : 1; }
 
 const throttleLight = throttle((darknessMoved = false) => {
 	if(window.LOADING){
@@ -282,6 +284,28 @@ class Token {
 		this.doing_highlight = false;
 		this.update_opacity(tok, false);
 		debounceLightChecks();
+	}
+	moveToTop(){
+		const selfId = this.options.id;
+		$(".token").each(function () {
+			let tokenId = $(this).attr('data-id');
+			let tokenzindexdiff = window.TOKEN_OBJECTS[tokenId].options.zindexdiff;
+			if (tokenzindexdiff >= window.TOKEN_OBJECTS[selfId].options.zindexdiff && tokenId != selfId) {
+				window.TOKEN_OBJECTS[selfId].options.zindexdiff = tokenzindexdiff + 1;
+			}
+		});
+		this.place_sync_persist();
+	}
+	moveToBottom() {
+		const selfId = this.options.id;
+		$(".token").each(function () {
+			let tokenId = $(this).attr('data-id');
+			let tokenzindexdiff = window.TOKEN_OBJECTS[tokenId].options.zindexdiff;
+			if (tokenzindexdiff <= window.TOKEN_OBJECTS[selfId].options.zindexdiff && tokenId != selfId) {
+				window.TOKEN_OBJECTS[selfId].options.zindexdiff = Math.max(tokenzindexdiff - 1, -5000);
+			}	
+		});
+		this.place_sync_persist();
 	}
 
 	isLineAoe() {
@@ -643,10 +667,15 @@ class Token {
 	}
 	tinyToken() {
 		return (Math.round(parseFloat(this.options.gridSquares)*2)/2 < 1) || this.isAoe();
+	isPlayerLocked() {
+		return !window.DM && (this.options.restrictPlayerMove || this.options.locked) && !this.isCurrentPlayer();
+	}
+	isDMLocked() {
+		return window.DM && this.options.locked && !$('#select_locked .ddbc-tab-options__header-heading').hasClass('ddbc-tab-options__header-heading--is-active');
 	}
 	rotate(newRotation) {
-		if (!window.DM && (this.options.restrictPlayerMove || this.options.locked) && !this.isCurrentPlayer()) return; // don't allow rotating if the token is locked
-		if (window.DM && this.options.locked && !$('#select_locked .ddbc-tab-options__header-heading').hasClass('ddbc-tab-options__header-heading--is-active')) return; // don't allow rotating if the token is locked
+		if (this.isPlayerLocked()) return; // don't allow rotating if the token is locked
+		if (this.isDMLocked()) return; // don't allow rotating if the token is locked		
 		this.update_from_page();
 		this.options.rotation = newRotation;
 		// this is copied from the place() function. Rather than calling place() every time the draggable.drag function executes, 
@@ -663,7 +692,8 @@ class Token {
 		let tokenElement = $("#tokens").find(selector).add(`[data-notatoken='notatoken_${this.options.id}']`).add(`[data-darkness='darkness_${this.options.id.replaceAll("/", "")}']`);
 		tokenElement.css("--token-rotation", newRotation + "deg");
 		tokenElement.css("--token-scale", imageScale);
-		tokenElement.find(".token-image").css("transform", `scale(var(--token-scale)) rotate(var(--token-rotation))`);
+		tokenElement.css("--token-flip-x", tokenFlipX(this));		
+		tokenElement.find(".token-image").css("transform", imageTransform);
 		$(`.aura-element-container-clip[id='${this.options.id}'] .aura-element, .aura-element[data-id='${this.options.id}']`).css('--rotation', newRotation + "deg");
 	}
 	moveUp()        { this.moveDirection(-1,  0); }
@@ -690,6 +720,12 @@ class Token {
 		tmpx += dx * (grsize[0] / ((this.tinyToken() && gridType == 1) ? 2 : 1));
 		tmpy += dy * (grsize[1] / ((this.tinyToken() && gridType == 1) ? 2 : 1));
 		this.move(tmpy, tmpx)
+	flip(newFlip) { //cycles through by default
+		if (this.isPlayerLocked()) return; // don't allow rotating if the token is locked
+		if (this.isDMLocked()) return; // don't allow rotating if the token is locked		
+		if(newFlip == undefined) newFlip = ((this.options.tokenFlip || 0) + 1) % 2;
+		this.options.tokenFlip = newFlip;
+		this.rotate(this.options.rotation); //re-use side effects of rotation code
 	}
 
 	/**
@@ -699,8 +735,8 @@ class Token {
 	 * @returns void
 	 */
 	move(top, left) {
-		if (!window.DM && (this.options.restrictPlayerMove || this.options.locked) && !this.isCurrentPlayer()) return; // don't allow rotating if the token is locked
-		if (window.DM && this.options.locked && !$('#select_locked .ddbc-tab-options__header-heading').hasClass('ddbc-tab-options__header-heading--is-active')) return; // don't allow rotating if the token is locked
+		if (this.isPlayerLocked()) return; // don't allow rotating if the token is locked
+		if (this.isDMLocked()) return;
 		
 		// Save handle params
 		top = parseFloat(top);
@@ -710,7 +746,6 @@ class Token {
 		
 		let tokenPosition = snap_point_to_grid(left + this.options.size/2, top + this.options.size/2,
 						       true, this.tinyToken(), this.options.size);
-
 		// Stop movement if new position is outside of the scene
 		if (
 			top  < this.walkableArea.top - this.options.size    || 
@@ -719,10 +754,7 @@ class Token {
 			left > this.walkableArea.right + this.options.size 
 		) { return; }
 		let halfWidth = parseFloat(this.options.size)/2;
-		
-		
 		let inLos = this.isAoe() || window.DM ? true : detectInLos(tokenPosition.x + halfWidth, tokenPosition.y + halfWidth); ;
-		
 		
 		const self = this;
 
@@ -737,16 +769,19 @@ class Token {
 				remove_selected_token_bounding_box();
 
 			old.animate({left: this.options.left,top: this.options.top,}, { duration: 0, queue: true, 
-				complete: async function() {
+				complete: async function() {		 
 					const darknessMoved = (self.options.darkness || self.options.tokenWall) ? true : false;
 					if (darknessMoved)
 						redraw_drawn_light(darknessMoved);
-					
-					if(window.EXPERIMENTAL_SETTINGS.dragLight == true)
+
+					if (window.EXPERIMENTAL_SETTINGS.dragLight == true)
 						throttleLight(darknessMoved);
 					else
 						longDebounceLightChecks(darknessMoved)
+					if (window.CURRENT_SCENE_DATA.disableSceneVision == 1 && !window.DM) {
+						check_single_token_visibility(self.options.id);
 					}
+				}
 			});
 			if(!this.options.id.includes('exampleToken') && !this.options.combatGroupToken){
 				setTokenAuras(old, this.options);
@@ -768,7 +803,8 @@ class Token {
 					'max-height': `var(--token-height)`,
 					'--z-index-diff': old.css('--z-index-diff'),
 					'--token-scale': old.css('--token-scale'),
-    				'--token-rotation': old.css('--token-rotation')
+    					'--token-rotation': old.css('--token-rotation'),
+    					'--token-flip-x': old.css('--token-flip-x')
 				})
 				
 				redraw_drawn_light();
@@ -819,7 +855,8 @@ class Token {
 						'max-height': `var(--token-height)`,
 						'--z-index-diff': old.css('--z-index-diff'),
 						'--token-scale': old.css('--token-scale'),
-	    				'--token-rotation': old.css('--token-rotation'),
+	    					'--token-rotation': old.css('--token-rotation'),
+						'--token-flip-x': old.css('--token-flip-x'),
 						'opacity': this.options.hidden ? '0.5' : '1',
 						'--hp-percentage': `${this.hpPercentage}%`,
 						"--token-border-width": tokenBorderWidth,
@@ -2113,10 +2150,11 @@ class Token {
 
 
 				old.find(".token-image").css("transition", "max-height 0.2s linear, max-width 0.2s linear, transform 0.2s linear")
-				old.find(".token-image").css("transform", "scale(var(--token-scale)) rotate(var(--token-rotation))");
+				old.find(".token-image").css("transform", imageTransform);
 				old.css({
 					"--token-scale": imageScale,
 					"--token-rotation": `${rotation}deg`,
+					"--token-flip-x": tokenFlipX(this),
 					"--offsetX": imageOffsetX != undefined ? `${parseFloat(imageOffsetX) / 90 * this.options.size }px` : '0px',
 					"--offsetY": imageOffsetY != undefined ? `${parseFloat(imageOffsetY) / 90 * this.options.size }px` : '0px',
 					"--image-opacity": `${imageOpacity}`,
@@ -2126,7 +2164,8 @@ class Token {
 				});
 				$(`.isAoe[data-id='${this.options.id}']:not(.token)`).css({
 					'--token-rotation': `${rotation}deg`,
-					'--token-scale': imageScale
+					'--token-scale': imageScale,
+					'--token-flip-x': tokenFlipX(this)
 				})
 
 
@@ -2245,11 +2284,11 @@ class Token {
 									
 									let tokenImage;
 									if (this.options.videoToken == true || ['.mp4', '.webm', '.m4v'].some(d => this.options.imgsrc.includes(d))) {
-										tokenImage = $("<video disableRemotePlayback autoplay loop muted style='transform:scale(var(--token-scale)) rotate(var(--token-rotation))' class='" + imgClass + "'/>");
+										tokenImage = $("<video disableRemotePlayback autoplay loop muted style='transform:" + imageTransform + "' class='" + imgClass + "'/>");
 										video = true;
 									}
 									else {
-										tokenImage = $("<div data-div-image='true' style='transform:scale(var(--token-scale)) rotate(var(--token-rotation))' class='" + imgClass + " div-token-image'/>");
+										tokenImage = $("<div data-div-image='true' style='transform:"+imageTransform+"' class='" + imgClass + " div-token-image'/>");
 									}
 									oldImage = tokenImage;
 									old.append(tokenImage);
@@ -2332,11 +2371,11 @@ class Token {
 							
 							let tokenImage;
 							if(this.options.videoToken == true || ['.mp4', '.webm','.m4v'].some(d => this.options.imgsrc.includes(d))){
-								tokenImage = $("<video disableRemotePlayback autoplay loop muted style='transform:scale(var(--token-scale)) rotate(var(--token-rotation))' class='"+imgClass+"'/>");			
+								tokenImage = $("<video disableRemotePlayback autoplay loop muted style='transform:"+imageTransform+"' class='"+imgClass+"'/>");			
 								video = true;
 							} 
 							else{
-								tokenImage = $("<div data-div-image='true' style='transform:scale(var(--token-scale)) rotate(var(--token-rotation))' class='"+imgClass+" div-token-image'/>");
+								tokenImage = $("<div data-div-image='true' style='transform:"+imageTransform+"' class='"+imgClass+" div-token-image'/>");
 							}
 							oldImage = tokenImage;
 							old.append(tokenImage);
@@ -2436,7 +2475,7 @@ class Token {
 					// token is an aoe div that uses styles instead of an image
 					// do something with it maybe?
 					// re-calc the border width incase the token has changed size
-					oldImage.css(`transform:scale(var(--token-scale)) rotate(--token-rotation));`)
+					oldImage.css(`transform:${imageTransform};`)
 
 				}
 
@@ -2521,7 +2560,8 @@ class Token {
 						'max-height': `var(--token-height)`,
 						'--z-index-diff': old.css('--z-index-diff'),
 						'--token-scale': old.css('--token-scale'),
-	    				'--token-rotation': old.css('--token-rotation')
+	    					'--token-rotation': old.css('--token-rotation'),
+	    					'--token-flip-x': old.css('--token-flip-x')						
 					})
 					copyImage.animate({
 							left: parseInt(parseFloat(this.options.left) / window.CURRENT_SCENE_DATA.scale_factor),
@@ -2562,8 +2602,8 @@ class Token {
 								"--token-border-width": tokenBorderWidth,
 								'border-width': old.find('.token-image').css('border-width'),
 			    				"--offsetX": old.css('--offsetX'),
-			    				"--offsetY": old.css('--offsetY'),
-								"--image-opacity": old.css('--image-opacity'),
+			    					"--offsetY": old.css('--offsetY'),
+			    					'--token-flip-x': old.css('--token-flip-x'),
 								"--view-box": old.css('--view-box'),
 								"--image-zoom": old.css('--image-zoom')
 							})
@@ -2589,7 +2629,8 @@ class Token {
 								'max-height': `var(--token-height)`,
 								'--z-index-diff': old.css('--z-index-diff'),
 								'--token-scale': old.css('--token-scale'),
-			    				'--token-rotation': old.css('--token-rotation'),
+			    					'--token-rotation': old.css('--token-rotation'),
+			    					'--token-flip-x': old.css('--token-flip-x'),
 								'opacity': this.options.hidden ? '0.5' : '1',
 								'--hp-percentage': `${this.hpPercentage}%`,
 								'--temp-hp-percentage': `${this.tempHpPercentage}%`,
@@ -2772,16 +2813,17 @@ class Token {
 					this.options.imgsrc = update_old_discord_link(this.options.imgsrc) // this might be able to be removed in the future - it's to update maps with tokens already on them
 					let video = false;
 					if(this.options.videoToken == true || ['.mp4', '.webm','.m4v'].some(d => this.options.imgsrc.includes(d))){
-						tokenImage = $("<video disableRemotePlayback autoplay loop muted style='transform:scale(var(--token-scale)) rotate(var(--token-rotation))' class='"+imgClass+"'/>");
+						tokenImage = $("<video disableRemotePlayback autoplay loop muted style='transform:"+imageTransform+"' class='"+imgClass+"'/>");
 						video = true;
 					} 
 					else{
-						tokenImage = $("<div style='transform:scale(var(--token-scale)) rotate(var(--token-rotation))' class='"+imgClass+" div-token-image'/>");
+						tokenImage = $("<div style='transform:"+imageTransform+"' class='"+imgClass+" div-token-image'/>");
 					}
 				
 					tok.css({
 						"--token-scale": imageScale,
 						"--token-rotation": `${rotation}deg`,
+						"--token-flip-x": tokenFlipX(this),
 						"--offsetX": imageOffsetX != undefined ? `${parseFloat(imageOffsetX) / 90 * this.options.size }px` : '0px',
 						"--offsetY": imageOffsetY != undefined ? `${parseFloat(imageOffsetY) / 90 * this.options.size }px` : '0px',
 						"--image-opacity": `${imageOpacity}`,
@@ -2813,6 +2855,7 @@ class Token {
 					tok.css({
 						"--token-scale": imageScale,
 						"--token-rotation": `${rotation}deg`,
+						"--token-flip-x": tokenFlipX(this),
 					});
 					tok.toggleClass("isAoe", true);
 					if(this.isLineAoe()){
@@ -2987,7 +3030,7 @@ class Token {
 				};
 			 	
 				let ctx;
-
+				let dragStopTimer;
 				tok.draggable({
 					stop: function (event) {
 						        event.stopPropagation();
@@ -2998,8 +3041,10 @@ class Token {
 							if(window.TOKEN_OBJECTS[self.options.id] != undefined){
 								self.sync($.extend(true, {}, self.options));
 							}
-							
-						let darknessMoved = (self.options.darkness || self.options.tokenWall) ? true : false;
+							if (window.CURRENT_SCENE_DATA.disableSceneVision == 1 && !window.DM)
+								check_single_token_visibility(self.options.id);
+
+							let darknessMoved = (self.options.darkness || self.options.tokenWall) ? true : false;
 							if (self.selected ) {
 								for (let tok of window.dragSelectedTokens){
 									let id = $(tok).attr("data-id");	
@@ -3008,10 +3053,11 @@ class Token {
 									let curr = window.TOKEN_OBJECTS[id];
 									if (curr != undefined){
 										curr.sync($.extend(true, {}, curr.options));
-									}
-									
-									if(curr?.options?.darkness === true)
-										darknessMoved = true;
+										if (curr.options?.darkness === true)
+											darknessMoved = true;
+										if (window.CURRENT_SCENE_DATA.disableSceneVision == 1 && !window.DM)
+											check_single_token_visibility(curr.options?.id);
+									}									
 								}												
 							}
 							if(darknessMoved){
@@ -3041,13 +3087,11 @@ class Token {
 							window.toggleSnap=false;
 
 							pauseCursorEventListener = false;
-							setTimeout(() => {
-								if(!window.DRAGGING){
-									window.dragSelectedTokens?.removeClass("pause_click")
-									delete window.playerTokenAuraIsLight;
-									delete window.dragSelectedTokens;
-									delete window.orig_zoom;
-								}
+							dragStopTimer = setTimeout(() => {
+								$(".pause_click")?.removeClass("pause_click")
+								delete window.playerTokenAuraIsLight;
+								delete window.dragSelectedTokens;
+								delete window.orig_zoom;
 							}, 200)
 							debounceAudioChecks();
 						},
@@ -3059,11 +3103,13 @@ class Token {
 						if (get_avtt_setting_value("allowTokenMeasurement")) {
 							$("#temp_overlay").css("z-index", "50");
 						}
-						ctx = window.moveOffscreenContext
+						ctx = window.moveOffscreenCanvasMaskContext
 						window.DRAWFUNCTION = "select"
 						window.DRAGGING = true;
 						if (contextMenuLongPressTimer)
 							clearTimeout(contextMenuLongPressTimer);
+						if (dragStopTimer)
+							clearTimeout(dragStopTimer);
 						window.oldTokenPosition = {};
 						
 						self.prepareWalkableArea()
@@ -3368,7 +3414,7 @@ class Token {
 
 							for (let tok of window.dragSelectedTokens){
 								let id = $(tok).attr("data-id");
-								if ((id != self.options.id) && (!window.TOKEN_OBJECTS[id].options.locked || (window.DM && window.TOKEN_OBJECTS[id].options.restrictPlayerMove ||  $('#select_locked .ddbc-tab-options__header-heading').hasClass('ddbc-tab-options__header-heading--is-active')))) {
+								if (id != self.options.id) {
 
 
 									let curr = window.TOKEN_OBJECTS[id];
@@ -3896,29 +3942,33 @@ function place_token_at_map_point(tokenObject, x, y, forcePlaceAndSize = false, 
 	}
 
 	if (options.size == undefined || forcePlaceAndSize) {
-		delete options.gridSquares;
-		if (options.tokenSize != undefined && parseFloat(options.tokenSize) != NaN) {
+		
+
+		if (options.gridSquares != undefined && parseFloat(options.gridSquares) != NaN){
+			options.size = window.CURRENT_SCENE_DATA.hpps * parseFloat(options.gridSquares);
+		}
+		else if (options.tokenSize != undefined && parseFloat(options.tokenSize) != NaN) {
 			// tokenSize was specified, convert it to size. tokenSize is the number of squares this token fills
-			options.size = Math.round(window.CURRENT_SCENE_DATA.hpps) * parseFloat(options.tokenSize);
+			options.size = window.CURRENT_SCENE_DATA.hpps * parseFloat(options.tokenSize);
 		} 
 		else if (options.sizeId != undefined) {
 			// sizeId was specified, convert it to size. This is used when adding from the monster pane
 			if (options.sizeId == 2) {
-				options.size = Math.round(window.CURRENT_SCENE_DATA.hpps) * 0.5;
+				options.size = window.CURRENT_SCENE_DATA.hpps * 0.5;
 			} else if (options.sizeId == 5) {
-				options.size = Math.round(window.CURRENT_SCENE_DATA.hpps) * 2;
+				options.size = window.CURRENT_SCENE_DATA.hpps * 2;
 			} else if (options.sizeId == 6) {
-				options.size = Math.round(window.CURRENT_SCENE_DATA.hpps) * 3;
+				options.size = window.CURRENT_SCENE_DATA.hpps * 3;
 			} else if (options.sizeId == 7) {
-				options.size = Math.round(window.CURRENT_SCENE_DATA.hpps) * 4;
+				options.size = window.CURRENT_SCENE_DATA.hpps * 4;
 			} else {
 				// default to small/medium size
-				options.size = Math.round(window.CURRENT_SCENE_DATA.hpps) * 1;
+				options.size = window.CURRENT_SCENE_DATA.hpps * 1;
 			}
 		} 
 		else {
 			// default to small/medium size
-			options.size = Math.round(window.CURRENT_SCENE_DATA.hpps) * 1;
+			options.size = window.CURRENT_SCENE_DATA.hpps * 1;
 		}
 	}
 
@@ -4774,18 +4824,29 @@ function draw_selected_token_bounding_box(){
 //used by draggable and keypress handler
 // returns center - point
 function grouprotate_create() {
+	function rotate_eligible() {
+		const token = window.TOKEN_OBJECTS[$(this).data('id')];
+		const selectedGroupToken = token.options.groupId && $(`.tokenselected[data-group-id="${token.options.groupId}"]:not(.ui-draggable-disabled)`).length > 0
+		return !token.isPlayerLocked() && !token.isDMLocked() || selectedGroupToken
+	}
 	let furthest_coord = {}
-	$('.tokenselected').wrap('<div class="grouprotate"></div>');
-
-	
-	
+	$('.tokenselected').filter(rotate_eligible).wrap(`<div class="grouprotate"></div>`);
+	const groupRotate = $('.grouprotate');
+	groupRotate.find('.declutterToken').removeClass('declutterToken');
+	const hiddenTokens = groupRotate.find('.tokenselected[style*=" display: none;"]');
+	// set hidden tokens to visibility hidden instead of display none so that we can calculate position if needed
+	hiddenTokens.add(hiddenTokens.find('*')).css({
+		display: '',
+		visibility: 'hidden'
+	});
 	for (let i = 0; i < window.CURRENTLY_SELECTED_TOKENS.length; i++) {
 
 		let id = window.CURRENTLY_SELECTED_TOKENS[i];
 		let token = window.TOKEN_OBJECTS[id];
+		const selectedGroupToken = token.options.groupId && $(`.tokenselected[data-group-id="${token.options.groupId}"]:not(.ui-draggable-disabled)`).length > 0
+		if ((token.isPlayerLocked() || token.isDMLocked()) && !selectedGroupToken) continue;
+
 		$(`#scene_map_container .token[data-id='${id}'], [data-darkness='darkness_${id.replaceAll("/", "")}']`).remove();
-		
-		
 		let sceneToken = $(`div.token[data-id='${id}']`)
 
 
@@ -4833,7 +4894,8 @@ function grouprotate_commit(angle) {
 	for (let i = 0; i < window.CURRENTLY_SELECTED_TOKENS.length; i++) {
 		let id = window.CURRENTLY_SELECTED_TOKENS[i];
 		let token = window.TOKEN_OBJECTS[id];
-
+		const selectedGroupToken = token.options.groupId && $(`.tokenselected[data-group-id="${token.options.groupId}"]:not(.ui-draggable-disabled)`).length > 0
+		if ((token.isPlayerLocked() || token.isDMLocked()) && !selectedGroupToken) continue;
 		let sceneToken = $(`#tokens .token[data-id='${id}']`)
 
 		window.TOKEN_OBJECTS[id].options.rotation = angle + parseFloat(sceneToken.css('--token-rotation'))
@@ -4922,12 +4984,13 @@ async function do_draw_selected_token_bounding_box() {
 			let bottom = undefined;
 			let right = undefined;
 			let left = undefined;
+
 			for (let i = 0; i < window.CURRENTLY_SELECTED_TOKENS.length; i++) {
 				
 				let id = window.CURRENTLY_SELECTED_TOKENS[i];
 				let token = window.TOKEN_OBJECTS[id];
 
-				if(!window.DM && $(`div.token[data-id='${id}']`).css('display') == 'none')
+				if ((!window.DM || token.options.lockRestrictDrop == "declutter") && $(`div.token[data-id='${id}']`).css('display') == 'none')
 					continue;
 				let tokenImageClientPosition = $(`div.token[data-id='${id}']>.token-image`)[0].getBoundingClientRect();
 				let tokenImagePosition = $(`div.token[data-id='${id}']>.token-image`).position();
@@ -5297,9 +5360,14 @@ function paste_selected_walls(x, y) {
 }
 function copy_selected_tokens(teleporterTokenId=undefined) {
 	if(teleporterTokenId){
+		const selectedTokens = window.CURRENTLY_SELECTED_TOKENS.slice(0);
+		const tokens = {};
+		for(let id of selectedTokens){
+			tokens[id] = $.extend(true, {}, window.TOKEN_OBJECTS[id])
+		}
 		window.TELEPORTER_PASTE_BUFFER = {
 			'targetToken': teleporterTokenId,
-			'tokens': window.CURRENTLY_SELECTED_TOKENS.slice(0)
+			'tokens': tokens
 		}
 	}
 	else{
@@ -5332,22 +5400,20 @@ function copy_selected_tokens(teleporterTokenId=undefined) {
 	
 }
 
-function paste_selected_tokens(x, y, teleporter=undefined) {
+function paste_selected_tokens(x, y, teleporter = undefined, teleportedTokenData=undefined) {
 	if (!teleporter && !window.DM) return;
 	if (window.TOKEN_PASTE_BUFFER == undefined) {
 		window.TOKEN_PASTE_BUFFER = [];
 	}
 	deselect_all_tokens();
 	if(teleporter){
-		for (let i in window.TELEPORTER_PASTE_BUFFER.tokens) {
-			const id = window.TELEPORTER_PASTE_BUFFER.tokens[i];
-			let token = window.TOKEN_OBJECTS[id] != undefined ? window.TOKEN_OBJECTS[id] : window.all_token_objects[id];
-			if(token == undefined) continue;
-			let options = $.extend(true, {}, token.options);
+		for (let i in window.TELEPORTER_PASTE_BUFFER.tokens) {	
+			let options = $.extend(true, {}, window.TELEPORTER_PASTE_BUFFER.tokens[i].options);
+			window.all_token_objects[i].options = options;
             const forceSize = true;
 			const animationDuration = 0;
 			place_token_at_map_point(options, x, y, forceSize, animationDuration);	
-			window.TOKEN_OBJECTS[id].selected = true;			
+			window.TOKEN_OBJECTS[i].selected = true;			
 		}
 		window.TELEPORTER_PASTE_BUFFER = undefined;
 	}

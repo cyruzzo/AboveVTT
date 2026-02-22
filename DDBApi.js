@@ -314,7 +314,7 @@ class DDBApi {
       } 
     }
     let playerUser = window.playerUsers.filter(d=> d.id == window.PLAYER_ID)[0]?.userId;
-    window.myUser = playerUser ? playerUser : 'THE_DM'; 
+    window.myUser = playerUser ? playerUser : window.CAMPAIGN_INFO.dmId; 
     return characterIds;
   }
 

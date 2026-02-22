@@ -775,27 +775,13 @@ function token_context_menu_expanded(tokenIds, e) {
 
 		toTopMenuButton.off().on("click", function(tokenIds){
 			tokens.forEach(token => {
-				$(".token").each(function(){	
-					let tokenId = $(this).attr('data-id');	
-					let tokenzindexdiff = window.TOKEN_OBJECTS[tokenId].options.zindexdiff;
-					if (tokenzindexdiff >= window.TOKEN_OBJECTS[token.options.id].options.zindexdiff && tokenId != token.options.id) {
-						window.TOKEN_OBJECTS[token.options.id].options.zindexdiff = tokenzindexdiff + 1;
-					}		
-				});
-				token.place_sync_persist();
+				token.moveToTop();
 			});
 		});
 
 		toBottomMenuButton.off().on("click", function(tokenIds){
 			tokens.forEach(token => {			
-				$(".token").each(function(){	
-					let tokenId = $(this).attr('data-id');	
-					let tokenzindexdiff = window.TOKEN_OBJECTS[tokenId].options.zindexdiff;
-					if (tokenzindexdiff <= window.TOKEN_OBJECTS[token.options.id].options.zindexdiff && tokenId != token.options.id) {
-						window.TOKEN_OBJECTS[token.options.id].options.zindexdiff = Math.max(tokenzindexdiff - 1, -5000);
-					}		
-				});
-				token.place_sync_persist();
+				token.moveToBottom();
 			});
 		});
 		let lockSettings = token_setting_options().filter((d) => d.name == 'lockRestrictDrop')[0];
@@ -1413,27 +1399,13 @@ function token_context_menu_expanded(tokenIds, e) {
 
 	toTopMenuButton.off().on("click", function(tokenIds){
 		tokens.forEach(token => {
-			$(".token").each(function(){	
-				let tokenId = $(this).attr('data-id');	
-				let tokenzindexdiff = window.TOKEN_OBJECTS[tokenId].options.zindexdiff;
-				if (tokenzindexdiff >= window.TOKEN_OBJECTS[token.options.id].options.zindexdiff && tokenId != token.options.id) {
-					window.TOKEN_OBJECTS[token.options.id].options.zindexdiff = tokenzindexdiff + 1;
-				}		
-			});
-			token.place_sync_persist();
+			token.moveToTop();
 		});
 	});
 
 	toBottomMenuButton.off().on("click", function(tokenIds){
 		tokens.forEach(token => {			
-			$(".token").each(function(){	
-				let tokenId = $(this).attr('data-id');	
-				let tokenzindexdiff = window.TOKEN_OBJECTS[tokenId].options.zindexdiff;
-				if (tokenzindexdiff <= window.TOKEN_OBJECTS[token.options.id].options.zindexdiff && tokenId != token.options.id) {
-					window.TOKEN_OBJECTS[token.options.id].options.zindexdiff = Math.max(tokenzindexdiff - 1, -5000);
-				}		
-			});
-			token.place_sync_persist();
+			token.moveToBottom();
 		});
 	});
 
@@ -3579,6 +3551,7 @@ function build_adjustments_flyout_menu(tokenIds) {
 		});
 		body.append(imageZoomWrapper);
 
+
 		let tokenOpacity = tokens.map(t => t.options.imageOpacity);
 		let uniqueOpacity = [...new Set(tokenOpacity)];
 		let startingOpacity = uniqueOpacity.length === 1 && uniqueOpacity[0] != undefined ? uniqueOpacity[0] : 1;
@@ -3592,6 +3565,21 @@ function build_adjustments_flyout_menu(tokenIds) {
 		});
 		body.append(opacityWrapper);
 
+		let tokFlip = tokens.map(t => t.options?.tokenFlip);
+		let uniqueTokenFlip = [...new Set(tokFlip)];
+		let startingTokenFlip = uniqueTokenFlip.length === 1 && uniqueTokenFlip[0] != undefined ? uniqueTokenFlip[0] : 0;
+		let tokenFlipWrapper = build_token_flip_input(startingTokenFlip,
+			function (newFlip) {
+				tokens.forEach(token => {
+					token.options.tokenFlip = +newFlip;
+					$(`.VTTToken[data-id='${token.options.id}']`).css({
+						"--token-flip-x": `${((+newFlip || 0) & 1) ? -1 : 1}`,
+						"--token-flip-y": `${((+newFlip || 0) & 2) ? -1 : 1}`
+					});
+					token.place_sync_persist();
+				});
+			});
+		body.append(tokenFlipWrapper);
 		//border color selections
 		let tokenBorderColors = tokens.map(t => t.options.color);
 		let initialColor = tokenBorderColors.length === 1 ? tokenBorderColors[0] : random_token_color();
@@ -4147,6 +4135,20 @@ function build_options_flyout_menu(tokenIds) {
 	});
 	body.append(resetToDefaults);
 	return body;
+}
+
+function build_token_flip_input(value, changeHandler) {
+	const flipOption = {
+		name: "TokenFlip",
+		label: "Flip Token",
+		type: "toggle",
+		options: [
+			{ value: false, label: "None", description: "No Flip" },
+			{ value: true, label: "Horizontal", description: "Horizontal" }
+		],
+		defaultValue: false
+	};
+	return build_toggle_input(flipOption, value ? true : false, (name, value) => { changeHandler(value ? 1 : 0)});
 }
 
 /**
