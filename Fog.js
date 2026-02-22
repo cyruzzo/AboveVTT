@@ -1271,10 +1271,10 @@ function draw_svg_grid(type=null, hpps=null, vpps=null, offsetX=null, offsetY=nu
 }
 
 function grid_overlay_update(grid, gridOver) {
-	//grid renders into 2 elements (below darkness and above)
+	//grid renders into 2 elements (below darkness&fog and above)
 	// .grid - global visibility control
 	// .gridOver - grid overlay control:
-	//    0=never 1=always 2=drag guide 3=only show drag guide
+	//    0=never 1=always 2=drag guide (when dragging) 3=only show drag guide (but not under grid)
 	$('#grid_svg_overlay').css('visibility', (grid != 0 && gridOver != 0) ? 'visible' : 'hidden');
 	$("#VTT").css('--grid-overlay-on', gridOver == 1 ? '1' : '0');
 	$('#grid_svg_underlay').css('visibility', (grid != '0' && gridOver != 3) ? 'visible' : 'hidden');
