@@ -1449,13 +1449,14 @@ function edit_scene_dialog(scene_id) {
 			if ($(event.currentTarget).hasClass("rc-switch-checked")) {
 				// it was checked. now it is no longer checked
 				$(event.currentTarget).removeClass("rc-switch-checked");
-				
+				form.find("#gridOver_row").hide()
 			} else {
 				// it was not checked. now it is checked
 				$(event.currentTarget).removeClass("rc-switch-unknown");
 				$(event.currentTarget).addClass("rc-switch-checked");
+				form.find("#gridOver_row").show()				
 			}
-				handle_form_grid_on_change()
+			handle_form_grid_on_change()
 		})
 	)
 	showGridControls.append(gridColor)
@@ -1477,19 +1478,22 @@ function edit_scene_dialog(scene_id) {
 	colorPickers.on('change.spectrum', handle_form_grid_on_change); // commit the changes when the user clicks the submit button
 	colorPickers.on('hide.spectrum', handle_form_grid_on_change);   // the hide event includes the original color so let's change it back when we get it
 
-	const gridOver = $(`<select id='gridOverSelect' name="gridOver" value="${scene["gridOver"] || 0}" >
-<option value=0>Never</option>
-<option value=1>Always</option>
-<option value=2>Drag Assist</option>
-<option value=3>Only Drag Assist</option>
-</select>`)
+	const goVal = scene.gridOver || 0;
+	const gridOver = $(`<select id='gridOverSelect' name="gridOver" >
+<option value='0' ${goVal == 0 ? 'selected' : ''}>Never</option>
+<option value='1' ${goVal == 1 ? 'selected' : ''}>Always</option>
+<option value='2' ${goVal == 2 ? 'selected' : ''}>Drag Assist</option>
+<option value='3' ${goVal == 3 ? 'selected' : ''}>Only Drag Assist</option>
+</select>`);
 	form.append(form_row('gridOver', 'Grid Overlay', gridOver));
 	gridOver.on('change', function() {
 		const gridOverValue = $(this).val();
-		//todo: this is too soon - wait for save
-		window.CURRENT_SCENE_DATA.gridOver = + gridOverValue;
+		//todo: this is too soon - wait for save? or update css vals?
+		window.CURRENT_SCENE_DATA.gridOver = +gridOverValue;
+		grid_overlay_update(window.CURRENT_SCENE_DATA.grid, window.CURRENT_SCENE_DATA.gridOver);
 	});
-	form.find('#gridOver_row').attr('title', 'When to draw the grid overlay.')
+	form.find('#gridOver_row').attr('title', 'When to draw the grid overlay.');
+	if(scene.grid == 0) form.find("#gridOver_row").hide();
 	
 	const playlistSelect = $(`<select id='playlistSceneSelect'><option value='0'>None</option></select>`)
 	const playlists = window.MIXER.playlists();
