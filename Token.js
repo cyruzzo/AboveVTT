@@ -667,6 +667,7 @@ class Token {
 	}
 	tinyToken() {
 		return (Math.round(parseFloat(this.options.gridSquares)*2)/2 < 1) || this.isAoe();
+	}
 	isPlayerLocked() {
 		return !window.DM && (this.options.restrictPlayerMove || this.options.locked) && !this.isCurrentPlayer();
 	}
@@ -720,6 +721,7 @@ class Token {
 		tmpx += dx * (grsize[0] / ((this.tinyToken() && gridType == 1) ? 2 : 1));
 		tmpy += dy * (grsize[1] / ((this.tinyToken() && gridType == 1) ? 2 : 1));
 		this.move(tmpy, tmpx)
+	}
 	flip(newFlip) { //cycles through by default
 		if (this.isPlayerLocked()) return; // don't allow rotating if the token is locked
 		if (this.isDMLocked()) return; // don't allow rotating if the token is locked		
