@@ -776,12 +776,8 @@ class Token {
 		
 		let tinyToken = (Math.round(this.options.gridSquares*2)/2 < 1) || this.isAoe();
 
-
-		
 		let tokenPosition = snap_point_to_grid(left, top, true, tinyToken, this.options.size, true)
 		
-		
-
 		// Stop movement if new position is outside of the scene
 		if (
 			top  < this.walkableArea.top - this.options.size    || 
@@ -790,10 +786,7 @@ class Token {
 			left > this.walkableArea.right + this.options.size 
 		) { return; }
 		let halfWidth = parseFloat(this.options.size)/2;
-		
-		
 		let inLos = this.isAoe() || window.DM ? true : detectInLos(tokenPosition.x + halfWidth, tokenPosition.y + halfWidth); ;
-		
 		
 		const self = this;
 
@@ -808,16 +801,19 @@ class Token {
 				remove_selected_token_bounding_box();
 
 			old.animate({left: this.options.left,top: this.options.top,}, { duration: 0, queue: true, 
-				complete: async function() {
+				complete: async function() {		 
 					const darknessMoved = (self.options.darkness || self.options.tokenWall) ? true : false;
 					if (darknessMoved)
 						redraw_drawn_light(darknessMoved);
-					
-					if(window.EXPERIMENTAL_SETTINGS.dragLight == true)
+
+					if (window.EXPERIMENTAL_SETTINGS.dragLight == true)
 						throttleLight(darknessMoved);
 					else
 						longDebounceLightChecks(darknessMoved)
+					if (window.CURRENT_SCENE_DATA.disableSceneVision == 1 && !window.DM) {
+						check_single_token_visibility(self.options.id);
 					}
+				}
 			});
 			if(!this.options.id.includes('exampleToken') && !this.options.combatGroupToken){
 				setTokenAuras(old, this.options);
@@ -3099,7 +3095,9 @@ class Token {
 							if(window.TOKEN_OBJECTS[self.options.id] != undefined){
 								self.sync($.extend(true, {}, self.options));
 							}
-							
+							if (window.CURRENT_SCENE_DATA.disableSceneVision == 1 && !window.DM)
+								check_single_token_visibility(self.options.id);
+
 							let darknessMoved = (self.options.darkness || self.options.tokenWall) ? true : false;
 							if (self.selected ) {
 								for (let tok of window.dragSelectedTokens){
@@ -3109,10 +3107,11 @@ class Token {
 									let curr = window.TOKEN_OBJECTS[id];
 									if (curr != undefined){
 										curr.sync($.extend(true, {}, curr.options));
-									}
-									
-									if(curr?.options?.darkness === true)
-										darknessMoved = true;
+										if (curr.options?.darkness === true)
+											darknessMoved = true;
+										if (window.CURRENT_SCENE_DATA.disableSceneVision == 1 && !window.DM)
+											check_single_token_visibility(curr.options?.id);
+									}									
 								}												
 							}
 							if(darknessMoved){
