@@ -2149,7 +2149,7 @@ function init_ui() {
 	grid_svg_overlay_container.append(grid);
 	//change the wizbox styling here
 	const wizbox = $(
-`<svg id="main-svg" style="display: block; width: 100%; height: 100%;" xmlns="http://www.w3.org/2000/svg">
+`<svg id="wizbox" style="display: block; width: 100%; height: 100%;" xmlns="http://www.w3.org/2000/svg">
         <style>
             .grid-box {
                 fill: rgba(0, 255, 255, 0.1);

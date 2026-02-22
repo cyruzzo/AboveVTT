@@ -302,6 +302,7 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 				const color = "rgba(255, 0, 0,0.5)";
 				// nulls will take the window.current_scene_data from above
 				window.CURRENT_SCENE_DATA.gridType = $('#gridType input:checked').val();
+				window.CURRENT_SCENE_DATA.gridOver = 1;
 				redraw_grid(null,null,null,null,color,width,null,dash)
 			};
 
