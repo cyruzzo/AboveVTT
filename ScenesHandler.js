@@ -9,7 +9,7 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 		let grid_5 = function() {
 			$("#scene_selector_toggle").show();
 			$("#tokens").show();
-			window.WIZARDING = false;
+			
 			window.CURRENT_SCENE_DATA = {
 				...window.CURRENT_SCENE_DATA,
 				upsq: "ft",
@@ -31,7 +31,7 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 			$("#wizard_popup").empty().append("Do you want me to subdivide the map grid in 2 so you can get correct token size? <button id='grid_divide'>Yes</button> <button id='grid_nodivide'>No</button>");
 
 			$("#grid_divide").click(function() {
-				window.WIZARDING = false;
+				
 				$("#scene_selector_toggle").show();
 				$("#tokens").show();
 				$("#wizard_popup").empty().append("You're good to go! AboveVTT is now super-imposing a grid that divides the original grid map in half. If you want to hide this grid just edit the manual grid data.");
@@ -54,7 +54,7 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 			});
 
 			$("#grid_nodivide").click(function() {
-				window.WIZARDING = false;
+				
 				$("#scene_selector_toggle").show();
 				$("#tokens").show();
 				window.CURRENT_SCENE_DATA= {
@@ -78,7 +78,7 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 		}
 
 		let grid_15 = function() {
-			window.WIZARDING = false;
+			
 			$("#scene_selector_toggle").show();
 			$("#tokens").show();
 			$("#wizard_popup").empty().append("You're good to go! Token will be of the correct scale. We don't currently support overimposing a grid in this scale..'");
@@ -102,7 +102,7 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 
 
 		let grid_20 = function() {
-			window.WIZARDING = false;
+			
 			$("#scene_selector_toggle").show();
 			$("#tokens").show();
 			$("#wizard_popup").empty().append("You're good to go! Token will be of the correct scale.");
@@ -545,6 +545,7 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 		//This is still used for grid wizard loading since we load so many times -- it is not used for other scene loading though. You can find that in message broker handleScene
 		load_scenemap(map_url, map_is_video, window.CURRENT_SCENE_DATA.width, window.CURRENT_SCENE_DATA.height, window.CURRENT_SCENE_DATA.UVTTFile, async function() {
 			$("#scene_map").off("load");
+			delete window.LOADING;
 			await reset_canvas();
 			await set_default_vttwrapper_size()
 			align_grid(false, false, copiedSceneData);
@@ -1050,7 +1051,7 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 				window.MB.sendMessage("custom/myVTT/switch_scene", { sceneId: window.splitPlayerScenes});
 			}, 100)
 		}
-		
+		did_update_scenes();
 		
 	}
 
