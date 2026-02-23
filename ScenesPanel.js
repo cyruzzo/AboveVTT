@@ -55,7 +55,6 @@ async function get_edit_form_data(){
 	})
 	
 	await Promise.all(promises);
-	data['gridOver'] = +$("#gridOverSelect").val();
 	return data;
 	
 }
@@ -1636,6 +1635,8 @@ function edit_scene_dialog(scene_id) {
 		console.log("Saving scene changes")
 
 		const formData = await get_edit_form_data();
+		scene.gridOver = +($("#gridOverSelect").val() || 0);
+		
 		for (key in formData) {
 			scene[key] = formData[key];
 		}
