@@ -1203,10 +1203,11 @@ function edit_scene_dialog(scene_id) {
 			return
 		}
 	
-		const {hpps, vpps, offsetx, offsety, grid_color, grid_line_width, grid_subdivided, grid, grid_above_dark} = await get_edit_form_data()
+		const {hpps, vpps, offsetx, offsety, grid_color, grid_line_width, grid_subdivided, grid} = await get_edit_form_data()
+		const gridOver = +($("#gridOverSelect").val() || 0);
 		// redraw grid with new information
 		window.CURRENT_SCENE_DATA.grid = grid;
-		window.CURRENT_SCENE_DATA.grid_above_dark = grid_above_dark;		
+		window.CURRENT_SCENE_DATA.gridOver = +gridOver;
 		if(grid === "1" && window.CURRENT_SCENE_DATA.scale_check){
 			let conversion = window.CURRENT_SCENE_DATA.scale_factor * window.CURRENT_SCENE_DATA.conversion
 			redraw_grid(parseFloat(hpps*conversion), parseFloat(vpps*conversion), offsetx*conversion, offsety*conversion, grid_color, grid_line_width, grid_subdivided )
@@ -1485,12 +1486,7 @@ function edit_scene_dialog(scene_id) {
 <option value='3' ${goVal == 3 ? 'selected' : ''}>Only Drag Assist</option>
 </select>`);
 	form.append(form_row('gridOver', 'Grid Overlay', gridOver));
-	gridOver.on('change', function() {
-		const gridOverValue = $(this).val();
-		//todo: this is too soon - wait for save? or update css vals?
-		window.CURRENT_SCENE_DATA.gridOver = +gridOverValue;
-		grid_overlay_update(window.CURRENT_SCENE_DATA.grid, window.CURRENT_SCENE_DATA.gridOver);
-	});
+	gridOver.on('change', handle_form_grid_on_change);
 	form.find('#gridOver_row').attr('title', 'When to draw the grid overlay.');
 	if(scene.grid == 0) form.find("#gridOver_row").hide();
 	
