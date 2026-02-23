@@ -442,10 +442,9 @@ function map_load_error_cb(e) {
 			}
 		}
 	}
-	window.LOADING = false
+	delete window.LOADING;
 	remove_loading_overlay();
 	$('.import-loading-indicator').remove();
-	delete window.LOADING;
 	window.MB.loadNextScene();
 	console.groupEnd();
 }
