@@ -285,12 +285,12 @@ function inject_chat_buttons() {
           ourDiceElement.parent().append(`<span class="dice-badge">${diceCount}</span>`);
         }
       })
-      $("[class*='AnchoredPopover_wrapper'] [data-quantity]").each(function () {
+      $("[class*='AnchoredPopover_wrapper'] button[id^='d']").each(function () {
         let dieSize = this.id;
         let ourDiceElement = $(`.dice-roller > div img[alt='${dieSize}']`);
         let diceCountElement = $(this).attr('data-quantity');
         ourDiceElement.parent().find("span").remove();
-        if (diceCountElement.length == 0) {
+        if (diceCountElement == undefined) {
           ourDiceElement.removeAttr("data-count");
         } else {
           let diceCount = parseInt(diceCountElement);
@@ -298,10 +298,13 @@ function inject_chat_buttons() {
           ourDiceElement.parent().append(`<span class="dice-badge">${diceCount}</span>`);
         }
       })
+      if ($("[class*='AnchoredPopover_wrapper']").length>0 && $("[class*='AnchoredPopover_wrapper'] button[id^='d']").length == 0){
+        $('.dice-roller .dice-badge').remove();
+      }
 
       // make sure our roll button is shown/hidden after all animations have completed
       setTimeout(function() {
-        if ($(".dice-toolbar").hasClass("rollable") || $("[class*='DiceContainer_button']").length > 0) {
+        if ($(".dice-toolbar").hasClass("rollable") || $("[class*='DiceContainer_customDiceRollOpen']").length > 0) {
           if(!$(".roll-mod-container").hasClass('show')){
             $(".roll-mod-container").addClass("show");
             $(".roll-mod-container").find('input').val(0);
