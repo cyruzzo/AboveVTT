@@ -1077,6 +1077,10 @@ async function init_character_sheet_page() {
           window.myUser = $('#message-broker-client').attr('data-userid') || Cobalt?.User?.ID;
           window.MB = new MessageBroker();
           init_my_dice_details();
+          $("[class*='DiceContainer_button']").click(); // initialize dice panel so first roll doesn't fail
+          setTimeout(() => {
+            $("[class*='DiceContainer_button']").click();
+          }, 0);
         })
     }, 5000)
   }
