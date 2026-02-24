@@ -854,7 +854,7 @@ class DiceRoller {
             await $(".dice-toolbar__dropdown-die, [class*='DiceContainer_customDiceRollOpen']").click();
         }
         if ($(".dice-toolbar__dropdown, [class*='DiceContainer_button']").length > 0) {
-            if (!$(".dice-toolbar__dropdown").hasClass("dice-toolbar__dropdown-selected") || $("[class*='DiceContainer_button']").length>0) {
+            if (($(".dice-toolbar__dropdown").length>0 && !$(".dice-toolbar__dropdown").hasClass("dice-toolbar__dropdown-selected")) || $("[class*='DiceContainer_button']").length>0) {
                 // make sure it's open
                 await $(".dice-toolbar__dropdown-die, [class*='DiceContainer_button']").click();
             }      
@@ -892,7 +892,7 @@ class DiceRoller {
                 $("[class*='AnchoredPopover_wrapper'] #Everyone").click();
             } else if (diceRoll.sendToOverride === "Self") {
                 // expand the options and click the "Self" button
-                $(".[class*='AnchoredPopover_wrapper'] #Self").click();
+                $("[class*='AnchoredPopover_wrapper'] #Self").click();
             } else if (diceRoll.sendToOverride === "DungeonMaster") {
                 // expand the options and click the "Self" button
                 $("[class*='AnchoredPopover_wrapper'] #DM").click();
