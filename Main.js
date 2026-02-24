@@ -1974,7 +1974,7 @@ function init_character_page_sidebar() {
 
 	if(window.showPanel == undefined || window.showPanel == true)
 		gameLogButton.click()
-	$(".ct-sidebar__control--unlock").click();
+	$(".ct-sidebar__control--unlock, [class*='styles_controls'] [aria-label='Unlocked']").click();
 
 	$("#site-main").css({"display": "block", "visibility": "hidden"});
 	$(".dice-rolling-panel").css({"visibility": "visible"});
@@ -1984,7 +1984,7 @@ function init_character_page_sidebar() {
 	});
 
 	$("div.sidebar").parent().css({"display": "block", "visibility": "visible"});
-	$(".ct-sidebar__control--unlock").click();
+	$(".ct-sidebar__control--unlock, [class*='styles_controls'] [aria-label='Unlocked']").click();
 	$("div.sidebar").parent().css({"display": "block", "visibility": "visible"});
 	$(".ct-sidebar__pane-top").hide();
 	$(".ct-sidebar__pane-bottom").hide();
