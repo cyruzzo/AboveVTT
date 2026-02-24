@@ -241,7 +241,7 @@ function inject_chat_buttons() {
   $(".dice-roller > div img").on("click", async function(e) {
     if ($(".dice-toolbar__dropdown, [class*='DiceContainer_button']").length > 0 && !window.EXPERIMENTAL_SETTINGS['rpgRoller']) {
       // DDB dice are on the screen so let's use those. Ours will synchronize when these change.
-      if (!$(".dice-toolbar__dropdown").hasClass("dice-toolbar__dropdown-selected") || $(`[class*='DiceContainer_button']`)) {
+      if (($(".dice-toolbar__dropdown").length > 0 && !$(".dice-toolbar__dropdown").hasClass("dice-toolbar__dropdown-selected")) || $(`[class*='DiceContainer_button']:not([class*='DiceContainer_customDiceRollOpen'])`).length>0) {
         // make sure it's open
         await $(".dice-toolbar__dropdown-die, [class*='DiceContainer_button']").click();
       }
@@ -293,7 +293,7 @@ function inject_chat_buttons() {
         if (diceCountElement.length == 0) {
           ourDiceElement.removeAttr("data-count");
         } else {
-          let diceCount = parseInt(diceCountElement.text());
+          let diceCount = parseInt(diceCountElement);
           ourDiceElement.attr("data-count", diceCount);
           ourDiceElement.parent().append(`<span class="dice-badge">${diceCount}</span>`);
         }
@@ -320,7 +320,7 @@ function inject_chat_buttons() {
         // do things to your newly added nodes here
         let node = mutation.addedNodes[i]
         if ((node.className == 'dice-rolling-panel' || $('.dice-rolling-panel').length>0)){
-          const mutation_target = $(".dice-toolbar__dropdown, [class*='DiceContainer_button']")[0];
+          const mutation_target = $(".dice-toolbar__dropdown, [class*='AnchoredPopover_wrapper']")[0];
           const mutation_config = { attributes: true, childList: true, characterData: true, subtree: true };
           window.rollButtonObserver.observe(mutation_target, mutation_config);
           watchForDicePanel.disconnect();
