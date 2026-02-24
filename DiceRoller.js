@@ -844,11 +844,12 @@ class DiceRoller {
      * @param diceRoll {DiceRoll} the DiceRoll object to roll
      */
     async clickDiceButtons(diceRoll) {
-
+        
         if (diceRoll === undefined) {
             console.warn("clickDiceButtons was called without a diceRoll object")
             return;
         }
+        $('[data-floating-ui-portal]').css('visibility', 'hidden');
         if ($(".dice-toolbar").hasClass("rollable") || $(`[class*='DiceContainer_customDiceRollOpen']`).length>0) {
             // clear any that are already selected so we don't roll too many dice
             await $(".dice-toolbar__dropdown-die, [class*='DiceContainer_customDiceRollOpen']").click();
@@ -899,8 +900,11 @@ class DiceRoller {
             }        
             await $(`[data-dd-action-name="Roll Dice Popup > Roll Dice"]`).click();
             
-        }
-      
+        }  
+        setTimeout(()=>{
+           $('[data-floating-ui-portal]').css('visibility', '')
+        }, 100)
+
     }
 
     /// PRIVATE FUNCTIONS
