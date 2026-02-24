@@ -238,16 +238,16 @@ function inject_chat_buttons() {
 
   gameLog.append(chatTextWrapper, languageSelect, diceRoller);
 
-  $(".dice-roller > div img").on("click", function(e) {
-    if ($(".dice-toolbar__dropdown").length > 0 && !window.EXPERIMENTAL_SETTINGS['rpgRoller']) {
+  $(".dice-roller > div img").on("click", async function(e) {
+    if ($(".dice-toolbar__dropdown, [class*='DiceContainer_button']").length > 0 && !window.EXPERIMENTAL_SETTINGS['rpgRoller']) {
       // DDB dice are on the screen so let's use those. Ours will synchronize when these change.
-      if (!$(".dice-toolbar__dropdown").hasClass("dice-toolbar__dropdown-selected")) {
+      if (!$(".dice-toolbar__dropdown").hasClass("dice-toolbar__dropdown-selected") || $(`[class*='DiceContainer_button']`)) {
         // make sure it's open
-        $(".dice-toolbar__dropdown-die").click();
+        await $(".dice-toolbar__dropdown-die, [class*='DiceContainer_button']").click();
       }
       // select the DDB dice matching the one that the user just clicked
       let dieSize = $(this).attr("alt");
-      $(`.dice-die-button[data-dice='${dieSize}']`).click();
+      await $(`.dice-die-button[data-dice='${dieSize}'], [class*='AnchoredPopover_wrapper'] #${dieSize}`).click();
     } else {
       // there aren't any DDB dice on the screen so use our own
       const dataCount = $(this).attr("data-count");
@@ -285,11 +285,23 @@ function inject_chat_buttons() {
           ourDiceElement.parent().append(`<span class="dice-badge">${diceCount}</span>`);
         }
       })
-
+      $("[class*='AnchoredPopover_wrapper'] [data-quantity]").each(function () {
+        let dieSize = this.id;
+        let ourDiceElement = $(`.dice-roller > div img[alt='${dieSize}']`);
+        let diceCountElement = $(this).attr('data-quantity');
+        ourDiceElement.parent().find("span").remove();
+        if (diceCountElement.length == 0) {
+          ourDiceElement.removeAttr("data-count");
+        } else {
+          let diceCount = parseInt(diceCountElement.text());
+          ourDiceElement.attr("data-count", diceCount);
+          ourDiceElement.parent().append(`<span class="dice-badge">${diceCount}</span>`);
+        }
+      })
 
       // make sure our roll button is shown/hidden after all animations have completed
       setTimeout(function() {
-        if ($(".dice-toolbar").hasClass("rollable")) {
+        if ($(".dice-toolbar").hasClass("rollable") || $("[class*='DiceContainer_button']").length > 0) {
           if(!$(".roll-mod-container").hasClass('show')){
             $(".roll-mod-container").addClass("show");
             $(".roll-mod-container").find('input').val(0);
@@ -298,7 +310,7 @@ function inject_chat_buttons() {
           $(".roll-mod-container").removeClass("show");
         }
       }, 0);  
-    })
+  })
 
   let watchForDicePanel = new MutationObserver((mutations) => {
    mutations.every((mutation) => {
@@ -308,11 +320,11 @@ function inject_chat_buttons() {
         // do things to your newly added nodes here
         let node = mutation.addedNodes[i]
         if ((node.className == 'dice-rolling-panel' || $('.dice-rolling-panel').length>0)){
-          const mutation_target = $(".dice-toolbar__dropdown")[0];
-      const mutation_config = { attributes: true, childList: true, characterData: true, subtree: true };
-      window.rollButtonObserver.observe(mutation_target, mutation_config);
-      watchForDicePanel.disconnect();
-      return false;
+          const mutation_target = $(".dice-toolbar__dropdown, [class*='DiceContainer_button']")[0];
+          const mutation_config = { attributes: true, childList: true, characterData: true, subtree: true };
+          window.rollButtonObserver.observe(mutation_target, mutation_config);
+          watchForDicePanel.disconnect();
+          return false;
         }
       }
       return true // must return true if doesn't break
@@ -356,12 +368,12 @@ function inject_chat_buttons() {
   $(".dice-roller > div img").on("contextmenu", function(e) {
     e.preventDefault();
 
-    if ($(".dice-toolbar__dropdown").length > 0 && !window.EXPERIMENTAL_SETTINGS['rpgRoller']) {
+    if ($(".dice-toolbar__dropdown, [class*='DiceContainer_button']").length > 0 && !window.EXPERIMENTAL_SETTINGS['rpgRoller']) {
       // There are DDB dice on the screen so update those buttons. Ours will synchronize when these change.
       // the only way I could get this to work was with pure javascript. Everything that I tried with jQuery did nothing
       let dieSize = $(this).attr("alt");
-      let  element = $(`.dice-die-button[data-dice='${dieSize}']`)[0];
-      let  e = element.ownerDocument.createEvent('MouseEvents');
+      let element = $(`.dice-die-button[data-dice='${dieSize}'], #${dieSize}`)[0];
+      let e = element.ownerDocument.createEvent('MouseEvents');
       e.initMouseEvent('contextmenu', true, true,
           element.ownerDocument.defaultView, 1, 0, 0, 0, 0, false,
           false, false, false, 2, null);
@@ -1501,7 +1513,8 @@ function get_cobalt_token(callback) {
 }
 function removeError() {
   $("#above-vtt-error-message").remove();
-  remove_loading_overlay(); // in case there was an error starting up, remove the loading overlay, so they're not completely stuck
+  if(typeof remove_loading_overlay == "function")
+    remove_loading_overlay(); // in case there was an error starting up, remove the loading overlay, so they're not completely stuck
   delete window.logSnapshot;
 }
 
@@ -1952,7 +1965,7 @@ function find_pc_by_player_id(idOrSheet, useDefault = true) {
 
 async function rebuild_window_pcs() {
   const campaignCharacters = await DDBApi.fetchCampaignCharacterDetails(window.gameId);
-  window.pcs = campaignCharacters.map(characterData => {
+  window.pcs = await campaignCharacters.map(characterData => {
     // we are not making a shortcut for `color` because the logic is too complex. See color_from_pc_object for details
     return {
       ...characterData,
