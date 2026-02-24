@@ -2265,7 +2265,7 @@ function observe_character_sheet_changes(documentToObserve) {
                   margin-right: 2px;
                   cursor: pointer;
               }
-              [data-floating-ui-portal],
+              [data-floating-ui-portal].hidden,
               .roll-mod-container.hidden{
                   visibility:hidden;
               }
