@@ -309,10 +309,10 @@ function inject_chat_buttons() {
         let node = mutation.addedNodes[i]
         if ((node.className == 'dice-rolling-panel' || $('.dice-rolling-panel').length>0)){
           const mutation_target = $(".dice-toolbar__dropdown")[0];
-      const mutation_config = { attributes: true, childList: true, characterData: true, subtree: true };
-      window.rollButtonObserver.observe(mutation_target, mutation_config);
-      watchForDicePanel.disconnect();
-      return false;
+          const mutation_config = { attributes: true, childList: true, characterData: true, subtree: true };
+          window.rollButtonObserver.observe(mutation_target, mutation_config);
+          watchForDicePanel.disconnect();
+          return false;
         }
       }
       return true // must return true if doesn't break

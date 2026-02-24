@@ -3374,9 +3374,7 @@ function is_player_sheet_open() {
  * When not on the character page, `open_player_sheet` is used.
  */
 function show_player_sheet() {
-	$("#character-tools-target").css({
-		"display": "",
-	});
+
 	$(".ct-character-sheet__inner, [class*='styles_mobileNav']>div>button[class*='styles_navToggle']").css({
 		"display": "",
 		"z-index": 21000
@@ -3404,9 +3402,7 @@ function show_player_sheet() {
  * When not on the characters page, `close_player_sheet` is used.
  */
 function hide_player_sheet() {
-	$("#character-tools-target").css({
-		"display": "none",
-	});
+
 	$(".ct-character-sheet__inner, [class*='styles_mobileNav']>div>button[class*='styles_navToggle']").css({
 		"display": "none",
 		"z-index": -1
