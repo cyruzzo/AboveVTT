@@ -466,7 +466,7 @@ function getRollData(rollButton){
     }
 }
 class DiceRoller {
-
+    
     timeoutDuration = 15000; // 15 second timeout seems reasonable. If the message gets dropped we don't want to be stuck waiting forever.
 
     /// PRIVATE VARIABLES
@@ -600,8 +600,9 @@ class DiceRoller {
             }
             let critClass = `${critSuccess && critFail ? 'crit-mixed' : critSuccess ? 'crit-success' : critFail ? 'crit-fail' : ''}`
 
+            const ddb3dDiceShareToggle = localStorage.getItem('isShared3dDiceEnabled') !== null ? JSON.parse(localStorage.getItem('isShared3dDiceEnabled')).state?.[window.myUser] : true;
 
-            if(window.EXPERIMENTAL_SETTINGS['rpgRoller'] == true){
+            if (window.EXPERIMENTAL_SETTINGS['rpgRoller'] == true || ((is_abovevtt_page() || window.sendToTab != undefined) && !ddb3dDiceShareToggle)){
                 if(spellSave == undefined && this.#pendingSpellSave != undefined){
                     spellSave = this.#pendingSpellSave;
                 }
@@ -623,7 +624,7 @@ class DiceRoller {
                     expression = `2*[${expression}]`
                 }
                 msgdata = {
-                    player: diceRoll.name ? diceRoll.name : window.PLAYER_NAME,
+                  player: diceRoll.name ? diceRoll.name : window.PLAYER_NAME,
                   img: diceRoll.avatarUrl ?  diceRoll.avatarUrl : window.PLAYER_IMG,
                   text: `<div class="tss-24rg5g-DiceResultContainer-Flex abovevtt-roll-container ${critClass}" title='${expression}<br>${output}'>
                             <div class="tss-kucurx-Result">
@@ -698,14 +699,17 @@ class DiceRoller {
                 };
             }
 
-            if (!window.EXPERIMENTAL_SETTINGS['rpgRoller'] && !msgdata.rollData.expression.includes('d')) {
+            if (ddb3dDiceShareToggle && !window.EXPERIMENTAL_SETTINGS['rpgRoller'] && !msgdata?.rollData?.expression?.includes('d')) {
                 send_ddb_dice_message(msgdata.rollData.expression, msgdata.player, msgdata.img, msgdata.rollData.rollType, msgdata.rollData.damageType, msgdata.rollData.rollTitle, diceRoll.sendToOverride)
                 self.#resetVariables();
                 self.nextRoll(undefined, critRange, critType)
                 return true;
             }
-            if(is_abovevtt_page() && window.EXPERIMENTAL_SETTINGS['rpgRoller'] == true){
+            if (is_abovevtt_page() && (window.EXPERIMENTAL_SETTINGS['rpgRoller'] == true || !ddb3dDiceShareToggle)){
                 setTimeout(function(){
+                    if(!ddb3dDiceShareToggle){
+                        $('DiceContainer_customDiceRollOpen').click()
+                    }
                     window.MB.inject_chat(msgdata);
                     self.#resetVariables();
                     self.nextRoll(undefined, critRange, critType)      
@@ -715,8 +719,8 @@ class DiceRoller {
             else if ((!is_abovevtt_page() && window.sendToTab != undefined) || is_gamelog_popout() ){
                 if(window.sendToTab == undefined)
                     window.sendToTab = isNaN(Number(window.PLAYER_ID)) ? false : Number(window.PLAYER_ID);
-                setTimeout(function(){
-                    tabCommunicationChannel.postMessage({
+                    setTimeout(function(){
+                        tabCommunicationChannel.postMessage({
                           msgType: 'roll',
                           msg: msgdata,
                           multiroll: multiroll,
@@ -727,7 +731,12 @@ class DiceRoller {
                     self.nextRoll(undefined, critRange, critType)
                 }, 200)
                 return true;
-            }               
+            } else if (!is_abovevtt_page() && !ddb3dDiceShareToggle){
+                send_ddb_dice_message(msgdata.rollData.expression, msgdata.player, msgdata.img, msgdata.rollData.rollType, msgdata.rollData.damageType, msgdata.rollData.rollTitle, diceRoll.sendToOverride)
+                self.#resetVariables();
+                self.nextRoll(undefined, critRange, critType)
+                return true;
+            }             
 
             console.group("DiceRoller.parseAndRoll");
             console.log("attempting to parse diceRoll", diceRoll);
