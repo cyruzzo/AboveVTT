@@ -1079,7 +1079,7 @@ async function init_character_sheet_page() {
           init_my_dice_details();
           $("[class*='DiceContainer_button']").click(); // initialize dice panel so first roll doesn't fail
           setTimeout(() => {
-            $("[class*='DiceContainer_button']").click();
+            $("[class*='DiceContainer_button']").click();//close dice panel
           }, 0);
         })
     }, 5000)
@@ -2264,6 +2264,10 @@ function observe_character_sheet_changes(documentToObserve) {
                   font-size:16px;
                   margin-right: 2px;
                   cursor: pointer;
+              }
+              [data-floating-ui-portal],
+              .roll-mod-container.hidden{
+                  visibility:hidden;
               }
               #avtt-buff-options span.material-symbols-outlined.enabled {
                   opacity: 1;
