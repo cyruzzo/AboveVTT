@@ -866,7 +866,8 @@ class DiceRoller {
             if (($(".dice-toolbar__dropdown").length>0 && !$(".dice-toolbar__dropdown").hasClass("dice-toolbar__dropdown-selected")) || $("[class*='DiceContainer_button']").length>0) {
                 // make sure it's open
                 await $(".dice-toolbar__dropdown-die, [class*='DiceContainer_button']").click();
-            }      
+                await $("#shared3dDiceToggleSwitch[aria-checked=false]").click();
+            }
             for (let diceType in diceRoll.diceToRoll) {
                 let numberOfDice = diceRoll.diceToRoll[diceType];
                 for (let i = 0; i < numberOfDice; i++) {
