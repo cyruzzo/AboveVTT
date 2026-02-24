@@ -1952,7 +1952,7 @@ function find_pc_by_player_id(idOrSheet, useDefault = true) {
 
 async function rebuild_window_pcs() {
   const campaignCharacters = await DDBApi.fetchCampaignCharacterDetails(window.gameId);
-  window.pcs = campaignCharacters.map(characterData => {
+  window.pcs = await campaignCharacters.map(characterData => {
     // we are not making a shortcut for `color` because the logic is too complex. See color_from_pc_object for details
     return {
       ...characterData,
