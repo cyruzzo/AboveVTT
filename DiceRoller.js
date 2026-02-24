@@ -778,20 +778,28 @@ class DiceRoller {
                     for (let j=0; j<roll.diceNotation.set.length; j++){
                         for(let k=0; k<roll.diceNotation.set[j].dice.length; k++){
                             let reduceCrit = 0;
-                            if(parseInt(roll.diceNotation.set[j].dice[k].options.dieType.replace('d', '')) == 20)
+                            const dieType = roll.diceNotation.set[j].dice[k]?.options?.dieType != undefined ? roll.diceNotation.set[j].dice[k]?.options?.dieType : roll.diceNotation.set[j].dice[k]?.dieType
+                            const value = roll.diceNotation.set[j].dice[k].faceValue != undefined ? roll.diceNotation.set[j].dice[k].faceValue : roll.diceNotation.set[j].dice[k].dieValue 
+                            if (parseInt(dieType.replace('d', '')) == 20)
                                 reduceCrit = 20 - critRange
                             else
                                 continue;
-                            if(roll.diceNotation.set[j].dice[k].faceValue >= parseInt(roll.diceNotation.set[j].dice[k].options.dieType.replace('d', ''))-reduceCrit && roll.result.values.includes(roll.diceNotation.set[j].dice[k].faceValue)){
+                            if (value >= parseInt(dieType.replace('d', ''))-reduceCrit && roll.result.values.includes(value)){
+                                const value1 = roll.diceNotation.set[j].dice[k - 1]?.faceValue != undefined ? roll.diceNotation.set[j].dice[k - 1]?.faceValue : roll.diceNotation.set[j].dice[k - 1]?.dieValue
+                                const value2 = roll.diceNotation.set[j].dice[k + 1]?.faceValue != undefined ? roll.diceNotation.set[j].dice[k + 1]?.faceValue : roll.diceNotation.set[j].dice[k + 1]?.dieValue
+                                const value3 = roll.diceNotation.set[j].dice[1]?.faceValue != undefined ? roll.diceNotation.set[j].dice[1]?.faceValue : roll.diceNotation.set[j].dice[1]?.dieValue
+                                const value4 = roll.diceNotation.set[j].dice[0]?.faceValue != undefined ? roll.diceNotation.set[j].dice[0]?.faceValue : roll.diceNotation.set[j].dice[0]?.dieValue
+
                                 if(roll.rollKind == 'advantage'){
-                                    if(k>0 && roll.diceNotation.set[j].dice[k-1].faceValue <= roll.diceNotation.set[j].dice[k].faceValue){
+
+                                    if (k > 0 && value1 <= value){
                                         critSuccess[i] = true;
                                     }
-                                    else if(k==0 && roll.diceNotation.set[j].dice[k+1].faceValue <= roll.diceNotation.set[j].dice[k].faceValue){
+                                    else if (k == 0 && value2 <= value){
                                         critSuccess[i] = true;
                                     }
                                 }
-                                else if(roll.rollKind == 'disadvantage' && roll.diceNotation.set[j].dice[1].faceValue == roll.diceNotation.set[j].dice[0].faceValue){
+                                else if (roll.rollKind == 'disadvantage' && value3 == value4){
                                     critSuccess[i] = true;
                                 }
                                 else if(roll.rollKind != 'disadvantage'){
