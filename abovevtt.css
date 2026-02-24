@@ -11117,7 +11117,8 @@ float: right;
     display: flex;
 }
 
-.dice-rolling-panel .dice-toolbar{
+.dice-rolling-panel .dice-toolbar,
+.dice-rolling-panel [class*='DiceContainer_button']{
     bottom: 35px !important;
 }
 
