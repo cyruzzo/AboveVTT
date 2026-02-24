@@ -849,21 +849,19 @@ class DiceRoller {
             console.warn("clickDiceButtons was called without a diceRoll object")
             return;
         }
-
-        if ($(".dice-toolbar").hasClass("rollable")) {
+        if ($(".dice-toolbar").hasClass("rollable") || $(`[class*='DiceContainer_customDiceRollOpen']`).length>0) {
             // clear any that are already selected so we don't roll too many dice
-            await $(".dice-toolbar__dropdown-die").click();
+            await $(".dice-toolbar__dropdown-die, [class*='DiceContainer_customDiceRollOpen']").click();
         }
-
-        if ($(".dice-toolbar__dropdown").length > 0) {
-            if (!$(".dice-toolbar__dropdown").hasClass("dice-toolbar__dropdown-selected")) {
+        if ($(".dice-toolbar__dropdown, [class*='DiceContainer_button']").length > 0) {
+            if (($(".dice-toolbar__dropdown").length>0 && !$(".dice-toolbar__dropdown").hasClass("dice-toolbar__dropdown-selected")) || $("[class*='DiceContainer_button']").length>0) {
                 // make sure it's open
-                await $(".dice-toolbar__dropdown-die").click();
-            }
-            for(let diceType in diceRoll.diceToRoll) {
+                await $(".dice-toolbar__dropdown-die, [class*='DiceContainer_button']").click();
+            }      
+            for (let diceType in diceRoll.diceToRoll) {
                 let numberOfDice = diceRoll.diceToRoll[diceType];
                 for (let i = 0; i < numberOfDice; i++) {
-                    await $(`.dice-die-button[data-dice='${diceType}']`).click();
+                   await $(`.dice-die-button[data-dice='${diceType}'], [class*='AnchoredPopover_wrapper'] #${diceType}`).click();
                 }
             }
         }
@@ -887,6 +885,22 @@ class DiceRoller {
                 await $(".dice-toolbar__target").children().first().click();
             }
         }
+        if ($(`[class*='DiceContainer_button']`).length>0) {
+            console.log("diceRoll.sendToOverride", diceRoll.sendToOverride)
+            if (diceRoll.sendToOverride === "Everyone") {
+                // expand the options and click the "Everyone" button
+                $("[class*='AnchoredPopover_wrapper'] #Everyone").click();
+            } else if (diceRoll.sendToOverride === "Self") {
+                // expand the options and click the "Self" button
+                $("[class*='AnchoredPopover_wrapper'] #Self").click();
+            } else if (diceRoll.sendToOverride === "DungeonMaster") {
+                // expand the options and click the "Self" button
+                $("[class*='AnchoredPopover_wrapper'] #DM").click();
+            }        
+            await $(`[data-dd-action-name="Roll Dice Popup > Roll Dice"]`).click();
+            
+        }
+      
     }
 
     /// PRIVATE FUNCTIONS
@@ -952,7 +966,7 @@ class DiceRoller {
                 }
                 this.ddbDispatch(ddbMessage);
             }
-        } else if (message.eventType === "dice/roll/pending") {
+        } else if (message.eventType === "dice/roll/pending" || message.eventType == 'dice/roll/deferred') {
             if(message.source == 'Beyond20'){
                 this.ddbDispatch(message);
                 return;

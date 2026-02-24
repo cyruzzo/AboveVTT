@@ -85,9 +85,11 @@ div#hide_interface_button [data-name]:after {
     right: 40px;
     top: 15px;
 }
-canvas.dice-rolling-panel__container{
+canvas.dice-rolling-panel__container,
+#character-tools-target>canvas{
     max-width: calc(100% - var(--sidebar-width, 340px)) !important;
     z-index: 160000 !important;
+    visibility: visible;
 }
 .hide-button.active{
     color: #fff;
@@ -11121,7 +11123,8 @@ float: right;
     display: flex;
 }
 
-.dice-rolling-panel .dice-toolbar{
+.dice-rolling-panel .dice-toolbar,
+.dice-rolling-panel [class*='DiceContainer_button']{
     bottom: 35px !important;
 }
 

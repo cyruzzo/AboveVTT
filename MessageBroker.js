@@ -1665,6 +1665,10 @@ class MessageBroker {
 		console.debug("handlescene", msg);
 		window.LOADING = true;
 		window.MB.checkHideSceneFromPlayers();
+		if(window.WIZARDING){
+			forceRefresh = true;
+			delete window.WIZARDING;
+		}
 		try{
 			if(msg.data.scale_factor == undefined || msg.data.scale_factor == ''){
 				msg.data.scale_factor = 1;
