@@ -65,7 +65,7 @@ class DiceRoll {
     #sendTo;     // "Self", "Everyone", undefined.
     get sendToOverride() { return this.#sendTo }
     set sendToOverride(newValue) {
-        if (["Self", "Everyone", "DungeonMaster"].includes(newValue)) {
+        if (["Self", "Everyone", "DungeonMaster", "DM"].includes(newValue)) {
             this.#sendTo = newValue;
         } else {
             this.#sendTo = undefined;
@@ -644,7 +644,7 @@ class DiceRoller {
 
                         </div>
                         `,
-                  whisper: (diceRoll.sendToOverride == "DungeonMaster") ? dm_id : ((gamelog_send_to_text() != "Everyone" && diceRoll.sendToOverride != "Everyone") || diceRoll.sendToOverride == "Self") ? window.PLAYER_NAME :  ``,
+                    whisper: (diceRoll.sendToOverride == "DungeonMaster" || diceRoll.sendToOverride == "DM") ? dm_id : ((gamelog_send_to_text() != "Everyone" && diceRoll.sendToOverride != "Everyone") || diceRoll.sendToOverride == "Self") ? window.PLAYER_NAME :  ``,
                   rollType: rollType,
                   rollTitle: rollTitle,
                   result: doubleCrit == true  ? 2*roll.total : roll.total,
@@ -690,7 +690,7 @@ class DiceRoller {
                 msgdata = {
                   player: diceRoll.name ? diceRoll.name : window.PLAYER_NAME,
                   img: diceRoll.avatarUrl ?  diceRoll.avatarUrl : window.PLAYER_IMG,
-                  whisper: (diceRoll.sendToOverride == "DungeonMaster") ? "DungeonMaster" : ((gamelog_send_to_text() != "Everyone" && diceRoll.sendToOverride != "Everyone") || diceRoll.sendToOverride == "Self") ? window.PLAYER_NAME :  ``,
+                  whisper: (diceRoll.sendToOverride == "DungeonMaster" || diceRoll.sendToOverride == "DM") ? "DungeonMaster" : ((gamelog_send_to_text() != "Everyone" && diceRoll.sendToOverride != "Everyone") || diceRoll.sendToOverride == "Self") ? window.PLAYER_NAME :  ``,
                   playerId: window.PLAYER_ID,
                   rollData: rollData,
                   sendTo: window.sendToTab,
@@ -706,10 +706,10 @@ class DiceRoller {
                 return true;
             }
             if (is_abovevtt_page() && (window.EXPERIMENTAL_SETTINGS['rpgRoller'] == true || !ddb3dDiceShareToggle)){
+                if (!ddb3dDiceShareToggle) {
+                    $('[class*="DiceContainer_customDiceRollOpen"]').click()
+                }
                 setTimeout(function(){
-                    if(!ddb3dDiceShareToggle){
-                        $('DiceContainer_customDiceRollOpen').click()
-                    }
                     window.MB.inject_chat(msgdata);
                     self.#resetVariables();
                     self.nextRoll(undefined, critRange, critType)      
@@ -909,15 +909,11 @@ class DiceRoller {
             if (diceRoll.sendToOverride === "Everyone") {
                 // expand the options and click the "Everyone" button
                 $("[class*='AnchoredPopover_wrapper'] #Everyone").click();
-            } else if (diceRoll.sendToOverride === "Self") {
+            } else if (diceRoll.sendToOverride === "Self" || diceRoll.sendToOverride === "DungeonMaster" || diceRoll.sendToOverride === "DM") {
                 // expand the options and click the "Self" button
                 $("[class*='AnchoredPopover_wrapper'] #Self").click();
-            } else if (diceRoll.sendToOverride === "DungeonMaster") {
-                // expand the options and click the "Self" button
-                $("[class*='AnchoredPopover_wrapper'] #DM").click();
-            }        
+            }       
             await $(`[data-dd-action-name="Roll Dice Popup > Roll Dice"]`).click();
-            
         }  
         setTimeout(()=>{
            $('[data-floating-ui-portal]').css('visibility', '')

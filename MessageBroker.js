@@ -1066,7 +1066,7 @@ class MessageBroker {
 						streamid: diceplayer_id
 					});		
 				}
-				else if(sendToText == "Dungeon Master"){
+				else if (sendToText == "Dungeon Master" || sendToText == "DM"){
 					window.MB.sendMessage("custom/myVTT/showonlytodmdicestream",{
 						streamid: diceplayer_id
 					});

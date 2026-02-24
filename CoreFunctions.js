@@ -1048,8 +1048,8 @@ function init_my_dice_details() {
  * @returns {Boolean}         true if we were able to convert and send; else false
  */
 //currently used for flat value rolls
-function send_ddb_dice_message(expression, displayName, imgUrl, rollType = "roll", damageType, actionType = "custom", sendTo = "") {
 
+function send_ddb_dice_message(expression, displayName, imgUrl, rollType = "roll", damageType, actionType = "custom", sendTo = "") {
   let diceRoll = new DiceRoll(expression);
   diceRoll.action = actionType;
   diceRoll.rollType = rollType;
@@ -1158,7 +1158,7 @@ function send_ddb_dice_message(expression, displayName, imgUrl, rollType = "roll
       source: "web",
       persist: true,
       messageScope: sendTo === "everyone" ? "gameId" : "userId",
-      messageTarget: sendTo === "everyone" ? `${window.gameId}` : sendTo === "dungeonmaster" ? `${window.CAMPAIGN_INFO.dmId}` : `${window.myUser}`,
+      messageTarget: sendTo === "everyone" ? `${window.gameId}` : sendTo === "dungeonmaster" || sendTo === "dm" ? `${window.CAMPAIGN_INFO.dmId}` : `${window.myUser}`,
       entityId: window.myUser,
       entityType: "user",
       eventType: "dice/roll/fulfilled",
@@ -1169,7 +1169,7 @@ function send_ddb_dice_message(expression, displayName, imgUrl, rollType = "roll
           entityId: window.myUser,
           entityType: "user",
           messageScope: sendTo === "everyone" ? "gameId" : "userId",
-          messageTarget: sendTo === "everyone" ? `${window.gameId}` : sendTo === "dungeonmaster" ? `${window.CAMPAIGN_INFO.dmId}` : `${window.myUser}`,
+          messageTarget: sendTo === "everyone" ? `${window.gameId}` : sendTo === "dungeonmaster" || sendTo === "dm"  ? `${window.CAMPAIGN_INFO.dmId}` : `${window.myUser}`,
           name: displayName,
           avatarUrl: imgUrl
         },
