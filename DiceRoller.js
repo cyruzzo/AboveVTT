@@ -65,7 +65,7 @@ class DiceRoll {
     #sendTo;     // "Self", "Everyone", undefined.
     get sendToOverride() { return this.#sendTo }
     set sendToOverride(newValue) {
-        if (["Self", "Everyone", "DungeonMaster"].includes(newValue)) {
+        if (["Self", "Everyone", "DungeonMaster", "DM"].includes(newValue)) {
             this.#sendTo = newValue;
         } else {
             this.#sendTo = undefined;
@@ -466,7 +466,7 @@ function getRollData(rollButton){
     }
 }
 class DiceRoller {
-
+    
     timeoutDuration = 15000; // 15 second timeout seems reasonable. If the message gets dropped we don't want to be stuck waiting forever.
 
     /// PRIVATE VARIABLES
@@ -600,8 +600,9 @@ class DiceRoller {
             }
             let critClass = `${critSuccess && critFail ? 'crit-mixed' : critSuccess ? 'crit-success' : critFail ? 'crit-fail' : ''}`
 
+            const ddb3dDiceShareToggle = localStorage.getItem('isShared3dDiceEnabled') !== null ? JSON.parse(localStorage.getItem('isShared3dDiceEnabled')).state?.[window.myUser] : true;
 
-            if(window.EXPERIMENTAL_SETTINGS['rpgRoller'] == true){
+            if (window.EXPERIMENTAL_SETTINGS['rpgRoller'] == true || ((is_abovevtt_page() || window.sendToTab != undefined) && !ddb3dDiceShareToggle)){
                 if(spellSave == undefined && this.#pendingSpellSave != undefined){
                     spellSave = this.#pendingSpellSave;
                 }
@@ -623,7 +624,7 @@ class DiceRoller {
                     expression = `2*[${expression}]`
                 }
                 msgdata = {
-                    player: diceRoll.name ? diceRoll.name : window.PLAYER_NAME,
+                  player: diceRoll.name ? diceRoll.name : window.PLAYER_NAME,
                   img: diceRoll.avatarUrl ?  diceRoll.avatarUrl : window.PLAYER_IMG,
                   text: `<div class="tss-24rg5g-DiceResultContainer-Flex abovevtt-roll-container ${critClass}" title='${expression}<br>${output}'>
                             <div class="tss-kucurx-Result">
@@ -643,7 +644,7 @@ class DiceRoller {
 
                         </div>
                         `,
-                  whisper: (diceRoll.sendToOverride == "DungeonMaster") ? dm_id : ((gamelog_send_to_text() != "Everyone" && diceRoll.sendToOverride != "Everyone") || diceRoll.sendToOverride == "Self") ? window.PLAYER_NAME :  ``,
+                    whisper: (diceRoll.sendToOverride == "DungeonMaster" || diceRoll.sendToOverride == "DM") ? dm_id : ((gamelog_send_to_text() != "Everyone" && diceRoll.sendToOverride != "Everyone") || diceRoll.sendToOverride == "Self") ? window.PLAYER_NAME :  ``,
                   rollType: rollType,
                   rollTitle: rollTitle,
                   result: doubleCrit == true  ? 2*roll.total : roll.total,
@@ -689,7 +690,7 @@ class DiceRoller {
                 msgdata = {
                   player: diceRoll.name ? diceRoll.name : window.PLAYER_NAME,
                   img: diceRoll.avatarUrl ?  diceRoll.avatarUrl : window.PLAYER_IMG,
-                  whisper: (diceRoll.sendToOverride == "DungeonMaster") ? "DungeonMaster" : ((gamelog_send_to_text() != "Everyone" && diceRoll.sendToOverride != "Everyone") || diceRoll.sendToOverride == "Self") ? window.PLAYER_NAME :  ``,
+                  whisper: (diceRoll.sendToOverride == "DungeonMaster" || diceRoll.sendToOverride == "DM") ? "DungeonMaster" : ((gamelog_send_to_text() != "Everyone" && diceRoll.sendToOverride != "Everyone") || diceRoll.sendToOverride == "Self") ? window.PLAYER_NAME :  ``,
                   playerId: window.PLAYER_ID,
                   rollData: rollData,
                   sendTo: window.sendToTab,
@@ -698,13 +699,16 @@ class DiceRoller {
                 };
             }
 
-            if (!window.EXPERIMENTAL_SETTINGS['rpgRoller'] && !msgdata.rollData.expression.includes('d')) {
+            if (ddb3dDiceShareToggle && !window.EXPERIMENTAL_SETTINGS['rpgRoller'] && !msgdata?.rollData?.expression?.includes('d')) {
                 send_ddb_dice_message(msgdata.rollData.expression, msgdata.player, msgdata.img, msgdata.rollData.rollType, msgdata.rollData.damageType, msgdata.rollData.rollTitle, diceRoll.sendToOverride)
                 self.#resetVariables();
                 self.nextRoll(undefined, critRange, critType)
                 return true;
             }
-            if(is_abovevtt_page() && window.EXPERIMENTAL_SETTINGS['rpgRoller'] == true){
+            if (is_abovevtt_page() && (window.EXPERIMENTAL_SETTINGS['rpgRoller'] == true || !ddb3dDiceShareToggle)){
+                if (!ddb3dDiceShareToggle) {
+                    $('[class*="DiceContainer_customDiceRollOpen"]').click()
+                }
                 setTimeout(function(){
                     window.MB.inject_chat(msgdata);
                     self.#resetVariables();
@@ -715,8 +719,8 @@ class DiceRoller {
             else if ((!is_abovevtt_page() && window.sendToTab != undefined) || is_gamelog_popout() ){
                 if(window.sendToTab == undefined)
                     window.sendToTab = isNaN(Number(window.PLAYER_ID)) ? false : Number(window.PLAYER_ID);
-                setTimeout(function(){
-                    tabCommunicationChannel.postMessage({
+                    setTimeout(function(){
+                        tabCommunicationChannel.postMessage({
                           msgType: 'roll',
                           msg: msgdata,
                           multiroll: multiroll,
@@ -727,7 +731,12 @@ class DiceRoller {
                     self.nextRoll(undefined, critRange, critType)
                 }, 200)
                 return true;
-            }               
+            } else if (!is_abovevtt_page() && !ddb3dDiceShareToggle){
+                send_ddb_dice_message(msgdata.rollData.expression, msgdata.player, msgdata.img, msgdata.rollData.rollType, msgdata.rollData.damageType, msgdata.rollData.rollTitle, diceRoll.sendToOverride)
+                self.#resetVariables();
+                self.nextRoll(undefined, critRange, critType)
+                return true;
+            }             
 
             console.group("DiceRoller.parseAndRoll");
             console.log("attempting to parse diceRoll", diceRoll);
@@ -778,20 +787,28 @@ class DiceRoller {
                     for (let j=0; j<roll.diceNotation.set.length; j++){
                         for(let k=0; k<roll.diceNotation.set[j].dice.length; k++){
                             let reduceCrit = 0;
-                            if(parseInt(roll.diceNotation.set[j].dice[k].options.dieType.replace('d', '')) == 20)
+                            const dieType = roll.diceNotation.set[j].dice[k]?.options?.dieType != undefined ? roll.diceNotation.set[j].dice[k]?.options?.dieType : roll.diceNotation.set[j].dice[k]?.dieType
+                            const value = roll.diceNotation.set[j].dice[k].faceValue != undefined ? roll.diceNotation.set[j].dice[k].faceValue : roll.diceNotation.set[j].dice[k].dieValue 
+                            if (parseInt(dieType.replace('d', '')) == 20)
                                 reduceCrit = 20 - critRange
                             else
                                 continue;
-                            if(roll.diceNotation.set[j].dice[k].faceValue >= parseInt(roll.diceNotation.set[j].dice[k].options.dieType.replace('d', ''))-reduceCrit && roll.result.values.includes(roll.diceNotation.set[j].dice[k].faceValue)){
+                            if (value >= parseInt(dieType.replace('d', ''))-reduceCrit && roll.result.values.includes(value)){
+                                const value1 = roll.diceNotation.set[j].dice[k - 1]?.faceValue != undefined ? roll.diceNotation.set[j].dice[k - 1]?.faceValue : roll.diceNotation.set[j].dice[k - 1]?.dieValue
+                                const value2 = roll.diceNotation.set[j].dice[k + 1]?.faceValue != undefined ? roll.diceNotation.set[j].dice[k + 1]?.faceValue : roll.diceNotation.set[j].dice[k + 1]?.dieValue
+                                const value3 = roll.diceNotation.set[j].dice[1]?.faceValue != undefined ? roll.diceNotation.set[j].dice[1]?.faceValue : roll.diceNotation.set[j].dice[1]?.dieValue
+                                const value4 = roll.diceNotation.set[j].dice[0]?.faceValue != undefined ? roll.diceNotation.set[j].dice[0]?.faceValue : roll.diceNotation.set[j].dice[0]?.dieValue
+
                                 if(roll.rollKind == 'advantage'){
-                                    if(k>0 && roll.diceNotation.set[j].dice[k-1].faceValue <= roll.diceNotation.set[j].dice[k].faceValue){
+
+                                    if (k > 0 && value1 <= value){
                                         critSuccess[i] = true;
                                     }
-                                    else if(k==0 && roll.diceNotation.set[j].dice[k+1].faceValue <= roll.diceNotation.set[j].dice[k].faceValue){
+                                    else if (k == 0 && value2 <= value){
                                         critSuccess[i] = true;
                                     }
                                 }
-                                else if(roll.rollKind == 'disadvantage' && roll.diceNotation.set[j].dice[1].faceValue == roll.diceNotation.set[j].dice[0].faceValue){
+                                else if (roll.rollKind == 'disadvantage' && value3 == value4){
                                     critSuccess[i] = true;
                                 }
                                 else if(roll.rollKind != 'disadvantage'){
@@ -844,11 +861,12 @@ class DiceRoller {
      * @param diceRoll {DiceRoll} the DiceRoll object to roll
      */
     async clickDiceButtons(diceRoll) {
-
+        
         if (diceRoll === undefined) {
             console.warn("clickDiceButtons was called without a diceRoll object")
             return;
         }
+        $('[data-floating-ui-portal], .roll-mod-container').addClass('hidden');
         if ($(".dice-toolbar").hasClass("rollable") || $(`[class*='DiceContainer_customDiceRollOpen']`).length>0) {
             // clear any that are already selected so we don't roll too many dice
             await $(".dice-toolbar__dropdown-die, [class*='DiceContainer_customDiceRollOpen']").click();
@@ -857,7 +875,8 @@ class DiceRoller {
             if (($(".dice-toolbar__dropdown").length>0 && !$(".dice-toolbar__dropdown").hasClass("dice-toolbar__dropdown-selected")) || $("[class*='DiceContainer_button']").length>0) {
                 // make sure it's open
                 await $(".dice-toolbar__dropdown-die, [class*='DiceContainer_button']").click();
-            }      
+                await $("#shared3dDiceToggleSwitch[aria-checked=false]").click();
+            }
             for (let diceType in diceRoll.diceToRoll) {
                 let numberOfDice = diceRoll.diceToRoll[diceType];
                 for (let i = 0; i < numberOfDice; i++) {
@@ -890,17 +909,16 @@ class DiceRoller {
             if (diceRoll.sendToOverride === "Everyone") {
                 // expand the options and click the "Everyone" button
                 $("[class*='AnchoredPopover_wrapper'] #Everyone").click();
-            } else if (diceRoll.sendToOverride === "Self") {
+            } else if (diceRoll.sendToOverride === "Self" || diceRoll.sendToOverride === "DungeonMaster" || diceRoll.sendToOverride === "DM") {
                 // expand the options and click the "Self" button
                 $("[class*='AnchoredPopover_wrapper'] #Self").click();
-            } else if (diceRoll.sendToOverride === "DungeonMaster") {
-                // expand the options and click the "Self" button
-                $("[class*='AnchoredPopover_wrapper'] #DM").click();
-            }        
+            }       
             await $(`[data-dd-action-name="Roll Dice Popup > Roll Dice"]`).click();
-            
-        }
-      
+        }  
+        setTimeout(()=>{
+            $('[data-floating-ui-portal], .roll-mod-container').removeClass('hidden');
+        }, 200)
+
     }
 
     /// PRIVATE FUNCTIONS

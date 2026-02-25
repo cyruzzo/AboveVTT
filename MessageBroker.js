@@ -546,8 +546,11 @@ class MessageBroker {
 				})
 			}
 		};
-		document.addEventListener('click', initNextTurnAudio, { once: true });
-		document.addEventListener('keydown', initNextTurnAudio, { once: true });
+		if(is_abovevtt_page()){
+			document.addEventListener('click', initNextTurnAudio, { once: true });
+			document.addEventListener('keydown', initNextTurnAudio, { once: true });
+		}
+
 		
 
 		this.onmessage = async function(event,tries=0) {
@@ -1063,7 +1066,7 @@ class MessageBroker {
 						streamid: diceplayer_id
 					});		
 				}
-				else if(sendToText == "Dungeon Master"){
+				else if (sendToText == "Dungeon Master" || sendToText == "DM"){
 					window.MB.sendMessage("custom/myVTT/showonlytodmdicestream",{
 						streamid: diceplayer_id
 					});

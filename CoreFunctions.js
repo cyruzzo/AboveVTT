@@ -285,12 +285,12 @@ function inject_chat_buttons() {
           ourDiceElement.parent().append(`<span class="dice-badge">${diceCount}</span>`);
         }
       })
-      $("[class*='AnchoredPopover_wrapper'] [data-quantity]").each(function () {
+      $("[class*='AnchoredPopover_wrapper'] button[id^='d']").each(function () {
         let dieSize = this.id;
         let ourDiceElement = $(`.dice-roller > div img[alt='${dieSize}']`);
         let diceCountElement = $(this).attr('data-quantity');
         ourDiceElement.parent().find("span").remove();
-        if (diceCountElement.length == 0) {
+        if (diceCountElement == undefined) {
           ourDiceElement.removeAttr("data-count");
         } else {
           let diceCount = parseInt(diceCountElement);
@@ -298,10 +298,13 @@ function inject_chat_buttons() {
           ourDiceElement.parent().append(`<span class="dice-badge">${diceCount}</span>`);
         }
       })
+      if ($("[class*='AnchoredPopover_wrapper']").length>0 && $("[class*='AnchoredPopover_wrapper'] button[id^='d']").length == 0){
+        $('.dice-roller .dice-badge').remove();
+      }
 
       // make sure our roll button is shown/hidden after all animations have completed
       setTimeout(function() {
-        if ($(".dice-toolbar").hasClass("rollable") || $("[class*='DiceContainer_button']").length > 0) {
+        if ($(".dice-toolbar").hasClass("rollable") || $("[class*='DiceContainer_customDiceRollOpen']").length > 0) {
           if(!$(".roll-mod-container").hasClass('show')){
             $(".roll-mod-container").addClass("show");
             $(".roll-mod-container").find('input').val(0);
@@ -1045,8 +1048,8 @@ function init_my_dice_details() {
  * @returns {Boolean}         true if we were able to convert and send; else false
  */
 //currently used for flat value rolls
-function send_ddb_dice_message(expression, displayName, imgUrl, rollType = "roll", damageType, actionType = "custom", sendTo = "") {
 
+function send_ddb_dice_message(expression, displayName, imgUrl, rollType = "roll", damageType, actionType = "custom", sendTo = "") {
   let diceRoll = new DiceRoll(expression);
   diceRoll.action = actionType;
   diceRoll.rollType = rollType;
@@ -1155,7 +1158,7 @@ function send_ddb_dice_message(expression, displayName, imgUrl, rollType = "roll
       source: "web",
       persist: true,
       messageScope: sendTo === "everyone" ? "gameId" : "userId",
-      messageTarget: sendTo === "everyone" ? `${window.gameId}` : sendTo === "dungeonmaster" ? `${window.CAMPAIGN_INFO.dmId}` : `${window.myUser}`,
+      messageTarget: sendTo === "everyone" ? `${window.gameId}` : sendTo === "dungeonmaster" || sendTo === "dm" ? `${window.CAMPAIGN_INFO.dmId}` : `${window.myUser}`,
       entityId: window.myUser,
       entityType: "user",
       eventType: "dice/roll/fulfilled",
@@ -1166,7 +1169,7 @@ function send_ddb_dice_message(expression, displayName, imgUrl, rollType = "roll
           entityId: window.myUser,
           entityType: "user",
           messageScope: sendTo === "everyone" ? "gameId" : "userId",
-          messageTarget: sendTo === "everyone" ? `${window.gameId}` : sendTo === "dungeonmaster" ? `${window.CAMPAIGN_INFO.dmId}` : `${window.myUser}`,
+          messageTarget: sendTo === "everyone" ? `${window.gameId}` : sendTo === "dungeonmaster" || sendTo === "dm"  ? `${window.CAMPAIGN_INFO.dmId}` : `${window.myUser}`,
           name: displayName,
           avatarUrl: imgUrl
         },
@@ -2129,7 +2132,10 @@ async function harvest_game_id() {
     // we didn't find it on the page so hit the DDB API, and try to pull it from there
     const characterId = window.location.pathname.split("/").pop();
     window.characterData = await DDBApi.fetchCharacter(characterId);
-    return window.characterData.campaign.id.toString();
+    if (!window.characterData?.campaign){
+      return false;
+    }
+    return window.characterData?.campaign?.id?.toString();
   }
 
   throw new Error(`harvest_game_id failed to find gameId on ${window.location.href}`);
@@ -2140,7 +2146,11 @@ function set_game_id(gameId) {
 }
 
 async function harvest_campaign_secret() {
+
   if (typeof window.gameId !== "string" || window.gameId.length <= 1) {
+    if (window.gameId === false){
+      return
+    }
     throw new Error("harvest_campaign_secret requires gameId to be set. Make sure you call harvest_game_id first");
   }
 

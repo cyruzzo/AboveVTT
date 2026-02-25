@@ -1591,7 +1591,7 @@ function update_dice_streaming_feature(enabled, sendToText=gamelog_send_to_text(
 						streamid: diceplayer_id
 					});
 				}
-				else if($(this).text() == "Dungeon Master"){
+				else if ($(this).text() == "Dungeon Master" || $(this).text() == "DM"){
 					window.MB.sendMessage("custom/myVTT/showonlytodmdicestream",{
 						streamid: diceplayer_id
 					});
@@ -1609,7 +1609,7 @@ function update_dice_streaming_feature(enabled, sendToText=gamelog_send_to_text(
 
 			joinDiceRoom();
 			setTimeout(function(){
-				if(sendToText == "Dungeon Master"){
+				if (sendToText == "Dungeon Master" || sendToText == "DM"){
 					window.MB.sendMessage("custom/myVTT/showonlytodmdicestream",{
 						streamid: diceplayer_id
 					});
