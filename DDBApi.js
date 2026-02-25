@@ -223,6 +223,8 @@ class DDBApi {
   }
 
   static async fetchCampaignInfo(campaignId) {
+    if(!campaignId)
+      return;
     console.log("DDBApi.fetchCampaignInfo");
     const url = `https://www.dndbeyond.com/api/campaign/stt/active-campaigns/${campaignId}`;
     const response = await DDBApi.fetchJsonWithToken(url);

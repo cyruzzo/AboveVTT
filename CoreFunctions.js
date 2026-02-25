@@ -2132,7 +2132,10 @@ async function harvest_game_id() {
     // we didn't find it on the page so hit the DDB API, and try to pull it from there
     const characterId = window.location.pathname.split("/").pop();
     window.characterData = await DDBApi.fetchCharacter(characterId);
-    return window.characterData.campaign.id.toString();
+    if (!window.characterData?.campaign){
+      return false;
+    }
+    return window.characterData?.campaign?.id?.toString();
   }
 
   throw new Error(`harvest_game_id failed to find gameId on ${window.location.href}`);
@@ -2143,7 +2146,11 @@ function set_game_id(gameId) {
 }
 
 async function harvest_campaign_secret() {
+
   if (typeof window.gameId !== "string" || window.gameId.length <= 1) {
+    if (window.gameId === false){
+      return
+    }
     throw new Error("harvest_campaign_secret requires gameId to be set. Make sure you call harvest_game_id first");
   }
 
