@@ -3366,6 +3366,10 @@ function drawing_mousemove(e) {
 
 	const isFilled = window.DRAWTYPE === "filled" || window.DRAWTYPE === "light";
 	const mouseMoveFps = Math.round((1000.0 / 24.0));
+	if (window.DRAWFUNCTION === "select" && e.which == 1){
+		//change cursor for "fullyInside" select mode
+		$("#temp_overlay").css('cursor', (window.BEGIN_MOUSEY < mouseY) ? 'crosshair' : 'cell');
+	}
 
 
 	window.MOUSEMOVEWAIT = true;
@@ -4594,6 +4598,11 @@ function drawing_mouseup(e) {
 	else if (window.DRAWFUNCTION == "select") {
 		// FIND TOKENS INSIDE THE AREA
 		let c = 0;
+		const fullyInside = (window.BEGIN_MOUSEY > mouseY);
+		const y0 = Math.min(window.BEGIN_MOUSEY, mouseY);
+		const y1 = Math.max(window.BEGIN_MOUSEY, mouseY);
+		const x0 = Math.min(window.BEGIN_MOUSEX, mouseX);
+		const x1 = Math.max(window.BEGIN_MOUSEX, mouseX);
 		for (let id in window.TOKEN_OBJECTS) {
 			if(window.TOKEN_OBJECTS[id].options.type == 'door' || window.TOKEN_OBJECTS[id].options.combatGroupToken){
 				continue;
@@ -4614,13 +4623,17 @@ function drawing_mouseup(e) {
 				scaledRemainderTop = 0;
 				scaledRemainderLeft = 0;
 			}
-			if (Math.min(window.BEGIN_MOUSEY, mouseY, tokbottom-scaledRemainderTop) == tokbottom-scaledRemainderTop || Math.max(window.BEGIN_MOUSEY, mouseY, toktop+scaledRemainderTop) == toktop+scaledRemainderTop)
+			if(fullyInside) {
+				if(!(tokleft >= x0 && tokright <= x1 && toktop >= y0 && tokbottom <= y1)) continue;
+			} else {
+				if (Math.min(y0, tokbottom-scaledRemainderTop) == tokbottom-scaledRemainderTop || Math.max(y1, toktop+scaledRemainderTop) == toktop+scaledRemainderTop)
 				continue;
-			if (Math.min(window.BEGIN_MOUSEX, mouseX, tokright-scaledRemainderLeft) == tokright-scaledRemainderLeft || Math.max(window.BEGIN_MOUSEX, mouseX, tokleft+scaledRemainderLeft) == tokleft+scaledRemainderLeft)
-				continue;
+				if (Math.min(x0, tokright-scaledRemainderLeft) == tokright-scaledRemainderLeft || Math.max(x1, tokleft+scaledRemainderLeft) == tokleft+scaledRemainderLeft)
+					continue;
+			}
 
 			c++;
-			// TOKEN IS INSIDE THE SELECTION
+			// TOKEN IS INSIDE/OVERLAPS THE SELECTION
 			if (window.DM || !curr.options.hidden) {
 				let tokenDiv = curr.isLineAoe() ? $(`#tokens>div[data-id='${curr.options.id}'] [data-img]`) : $(`#tokens>div[data-id='${curr.options.id}']`)
 				if(tokenDiv.css("pointer-events")!="none" && tokenDiv.css("display")!="none" && !tokenDiv.hasClass("ui-draggable-disabled")) {
