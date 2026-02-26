@@ -349,12 +349,14 @@ class MessageBroker {
 			console.log("ALREADY LOADING A WS");
 			return;
 		}
-		this.loadingWS = true;
-
 		let self = this;
 		let url = this.url;
 		let userid = this.userid;
 		let gameid = this.gameid;
+		if (!gameid) 
+			return;
+		
+		this.loadingWS = true;
 
 		console.log("STARTING MB WITH TOKEN");
 
@@ -2480,7 +2482,7 @@ class MessageBroker {
 		if (message.data.injected_data?.img?.startsWith('above-bucket-not-a-url')) {
 			message.data.injected_data.img = await getAvttStorageUrl(message.data.injected_data.img);
 		}
-		if (this.ws.readyState == this.ws.OPEN) {
+		if (this.ws?.readyState != undefined && this.ws.readyState == this.ws.OPEN) {
 			this.ws.send(JSON.stringify(message));
 		}
 

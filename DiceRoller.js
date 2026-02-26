@@ -530,6 +530,13 @@ class DiceRoller {
         window.diceRoller.setPendingDamageType(damageTypeText);
       return damageTypeText;
     }
+    setWaitingForRoll(){
+        const self = this;
+        self.#timeoutId = setTimeout(function () {
+            console.warn("DiceRoller timed out after 15 seconds!");
+            self.#resetVariables();
+        }, self.timeoutDuration);
+    }
     getWaitingForRoll(){
         return this.#waitingForRoll;
     }
@@ -734,7 +741,7 @@ class DiceRoller {
                     self.nextRoll(undefined, critRange, critType)
                 }, 200)
                 return true;
-            } else if (!is_abovevtt_page() && !ddb3dDiceShareToggle){
+            } else if (!is_abovevtt_page() && !ddb3dDiceShareToggle && window.MB?.ws != undefined){
                 send_ddb_dice_message(msgdata.rollData.expression, msgdata.player, msgdata.img, msgdata.rollData.rollType, msgdata.rollData.damageType, msgdata.rollData.rollTitle, diceRoll.sendToOverride)
                 self.#resetVariables();
                 self.nextRoll(undefined, critRange, critType)
