@@ -1824,12 +1824,16 @@ class MessageBroker {
 					}
 				}
 				else{
+					if (window.DM && data.dm_map && data.dm_map_usable) {
+						data.map = data.dm_map;
+					}
+					else {
+						data.map = data.player_map;
+					}
 					await build_import_loading_indicator(`Loading ${window.DM ? data.title : 'Scene'}`);		
 				}
 				$('.import-loading-indicator .percentageLoaded').css('width', `0%`);
 				if(msg.data.id == window.CURRENT_SCENE_DATA.id){ // incase another map was loaded before we get uvtt data back
-
-
 					if (data.fog_of_war == 1) {
 						window.FOG_OF_WAR = true;
 						window.REVEALED = data.reveals;
@@ -1845,8 +1849,8 @@ class MessageBroker {
 					else {
 						window.DRAWINGS = [];
 					}
+
 					if(!window.DM && (data.player_map_is_video == '1' || data.player_map?.includes('youtube.com') || data.player_map?.includes("youtu.be") || data.is_video == '1')){
-						data.map = data.player_map;
 						data.is_video = data.player_map_is_video;
 					}
 
