@@ -1529,6 +1529,29 @@ function observe_character_sheet_changes(documentToObserve) {
   if (window.character_sheet_observer) {
     window.character_sheet_observer.disconnect();
   }
+  window.sendToDefaultObserver = new MutationObserver(function () {
+    localStorage.setItem(`${window.gameId != undefined ? window.gameId : window.myUser}-sendToDefault`, gamelog_send_to_text());
+  })
+
+
+  let gamelogObserver = new MutationObserver((mutations) => {
+    mutations.every((mutation) => {
+      if (!mutation.addedNodes) return
+      for (let i = 0; i < mutation.addedNodes.length; i++) {
+        // do things to your newly added nodes here
+        let node = mutation.addedNodes[i]
+        if ($(node).attr('class')?.includes('-SendToLabel') || $('.glc-game-log [class*="-SendToLabel"] ~ button').length > 0) {
+          const sendto_mutation_target = $(".glc-game-log [class*='-SendToLabel'] ~ button")[0];
+          const sendto_mutation_config = { attributes: true, childList: true, characterData: true, subtree: true };
+          window.sendToDefaultObserver.observe(sendto_mutation_target, sendto_mutation_config);
+          return false;
+        }
+      }
+      return true // must return true if doesn't break
+    })
+  });
+
+  gamelogObserver.observe(document.body, { childList: true, subtree: true, attributes: false, characterData: false });
 
   window.character_sheet_observer = new MutationObserver(function(mutationList, observer) {
     if(window.DRAGGING || (typeof arrowKeysHeld !== 'undefined' && (arrowKeysHeld[0] || arrowKeysHeld[1] || arrowKeysHeld[2] || arrowKeysHeld[3])))
@@ -2670,7 +2693,7 @@ function observe_character_sheet_changes(documentToObserve) {
             return;
           }
         }
-        const menu = $("ul[role='menu']:has([value='Everyone']):not(:has([value='trueSelf']))")
+        const menu = $("ul[role='menu']:has([value='DM']):not(:has([value='trueSelf'])))")
         if (menu.length > 0) {
           const selfLi = $(`<li class="MuiButtonBase-root MuiMenuItem-root tss-3a46y9-menuItemRoot MuiMenuItem-root tss-3a46y9-menuItemRoot ddb-character-app-1e9xnb1" tabindex="-1" role="menuitem" value="trueSelf">
                     <div class="MuiListItemIcon-root tss-67466g-listItemIconRoot ddb-character-app-17lvc79">
@@ -2683,6 +2706,22 @@ function observe_character_sheet_changes(documentToObserve) {
                     </div>
                   </li>`);
           menu.append(selfLi);
+          const button = $('[class*="-SendToLabel"]~button');
+          const storedLastSendTo = localStorage.getItem(`${window.gameId != undefined ? window.gameId : window.myUser}-sendToDefault`);
+          const sendTo = storedLastSendTo != null ? storedLastSendTo : gamelog_send_to_text();
+          button.empty();
+          const row = menu.find(`li:contains(${sendTo})`);
+          const svg = row.find('div:first-of-type>svg')[0];
+          const newHtml = `<span class="MuiButton-icon MuiButton-startIcon MuiButton-iconSizeMedium ddb-character-app-1l6c7y9">
+              ${svg.outerHTML}
+            </span>
+            ${row.text()}
+            <span class="MuiButton-icon MuiButton-endIcon MuiButton-iconSizeMedium ddb-character-app-pt151d">
+              <svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium ddb-character-app-vubbuv" focusable="false" aria-hidden="true" viewBox="0 0 24 24">
+                <path d="M7 10L12 15L17 10H7Z" fill="currentColor"></path>
+              </svg>
+            </span>`
+          button.html(newHtml); 
           menu.off('click.selectSendTo').on('click.selectSendTo', 'li', function(e){
             e.preventDefault();
             e.stopPropagation();
@@ -2701,7 +2740,8 @@ function observe_character_sheet_changes(documentToObserve) {
             </span>`
             button.html(newHtml); 
             const checkbox = menu.find('[d="M9.00016 16.17L4.83016 12L3.41016 13.41L9.00016 19L21.0002 7.00003L19.5902 5.59003L9.00016 16.17Z"]').closest('svg')
-            self.find('div:last-of-type').append(checkbox)
+            self.find('div:last-of-type').append(checkbox);
+            setTimeout(() => {self.closest('[role="presentation"]').find('[class*="MuiBackdrop-invisible"]').click()}, 250);
           })
         }
         

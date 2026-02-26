@@ -530,7 +530,9 @@ class DiceRoller {
         window.diceRoller.setPendingDamageType(damageTypeText);
       return damageTypeText;
     }
-
+    getWaitingForRoll(){
+        return this.#waitingForRoll;
+    }
     /**
      * Attempts to parse the expression, and roll DDB dice.
      * If dice are rolled, the results will be processed to make sure the expression is properly calculated.
@@ -944,9 +946,10 @@ class DiceRoller {
         if(this.#waitingForRoll && message.source == 'Beyond20'){
             return;
         }
-
+        if (window.deferredRolls?.[message.data?.rollId] != undefined) {
+            return;
+        }
         if (!this.#waitingForRoll) {
-
             if(message.source == 'Beyond20'){
                 this.ddbDispatch(message);
                 return;

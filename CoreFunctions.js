@@ -335,7 +335,7 @@ function inject_chat_buttons() {
   });
 
   window.sendToDefaultObserver = new MutationObserver(function() {
-      localStorage.setItem(`${gameId}-sendToDefault`, gamelog_send_to_text());
+    localStorage.setItem(`${window.gameId != undefined ? window.gameId : window.myUser}-sendToDefault`, gamelog_send_to_text());
   })
 
 

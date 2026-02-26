@@ -5,6 +5,11 @@ function gamelog_send_to_text() {
     if (expectedButtonText !== undefined && expectedButtonText.length > 0) {
         return expectedButtonText.replace(/\s+/g, '');
     }
+    const lastSendToDefault = localStorage.getItem(`${window.gameId != undefined ? window.gameId : window.myUser}-sendToDefault`);
+
+    if (lastSendToDefault != null) {
+        return lastSendToDefault;
+    }
     if (is_characters_page()) {
         return "Everyone"
     }
