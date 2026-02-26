@@ -2339,7 +2339,6 @@ function init_ui() {
 
 	init_controls();
 	init_sheet();
-	init_my_dice_details();
 	
 	window.WaypointManager = new WaypointManagerClass();
 

@@ -5,6 +5,11 @@ function gamelog_send_to_text() {
     if (expectedButtonText !== undefined && expectedButtonText.length > 0) {
         return expectedButtonText.replace(/\s+/g, '');
     }
+    const lastSendToDefault = localStorage.getItem(`${window.gameId != undefined ? window.gameId : window.myUser}-sendToDefault`);
+
+    if (lastSendToDefault != null) {
+        return lastSendToDefault;
+    }
     if (is_characters_page()) {
         return "Everyone"
     }
@@ -169,8 +174,7 @@ class DiceContextMenu {
         let sendToText = gamelog_send_to_text();
         return this.section("SEND TO:", s => {
             s.row("Everyone", svg_everyone(), sendToText === "Everyone");
-            if (window.CAMPAIGN_INFO && window.myUser == window.CAMPAIGN_INFO.dmId)
-                 s.row("Self", svg_self(), sendToText === "Self");
+            s.row("Self", svg_self(), sendToText === "Self");
             if (!window.DM && window.CAMPAIGN_INFO && (window.CAMPAIGN_INFO.dmId != window.myUser || window.EXPERIMENTAL_SETTINGS['rpgRoller'] == true)) {
                 s.row("Dungeon Master", svg_dm(), sendToText === "Dungeon Master");
             }

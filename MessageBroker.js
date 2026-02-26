@@ -1307,6 +1307,10 @@ class MessageBroker {
 			if (msg.eventType == "dice/roll/fulfilled") {
 				notify_gamelog();
 				const gamelogItem = $(`ol[class*='-GameLogEntries'] li`).first(); 
+				if(window.tempStoreMessages?.[msg.data?.rollId] != undefined){
+					//prevent ddb double messages due to new dice sending fulfilled messages from other open streams
+					msg = window.tempStoreMessages[msg.data.rollId];
+				}
 				if (msg.avttExpression !== undefined && msg.avttExpressionResult !== undefined) {	
 					gamelogItem.attr("data-avtt-expression", msg.avttExpression);
 					gamelogItem.attr("data-avtt-expression-result", msg.avttExpressionResult);
@@ -1591,7 +1595,18 @@ class MessageBroker {
 				}
 				
 			}
-			
+			if(msg.eventType == "dice/roll/deferred"){
+				if (!window.diceRoller?.getWaitingForRoll()){
+					if (window.deferredRolls == undefined) {
+						window.deferredRolls = {};
+					}
+					window.deferredRolls[msg.data?.rollId] = 1; // store this so  we can check against  it to prevent streamed rolls from sending new fulfilled events
+					setTimeout(() => {
+						delete window.deferredRolls[msg.data?.rollId];
+					}, 30000)
+				}
+				}
+
 			if (msg.eventType === "custom/myVTT/peerReady") {
 				window.PeerManager.receivedPeerReady(msg);
 			}

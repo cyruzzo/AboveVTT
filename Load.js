@@ -29,7 +29,8 @@ if (isPlainCharacterPage) {
 	window.scripts = [
 		// External Dependencies
 		{ src: "jquery-3.6.0.min.js" },
-		{ src: "jquery.contextMenu.js" },		
+		{ src: "jquery.contextMenu.js" },	
+		{ src: "purify.min.js" },	
 		// AboveVTT Files
 		{ src: "CoreFunctions.js" }, // Make sure CoreFunctions executes first
 		{ src: "DDBApi.js" },

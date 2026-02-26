@@ -3560,7 +3560,7 @@ function drawing_mousemove(e) {
 			}else{
 				let lineWidth = window.LINEWIDTH
 				if(window.DRAWFUNCTION == 'wall' || window.DRAWFUNCTION == 'wall-door' || window.DRAWFUNCTION == 'wall-window')
-					lineWidth = Math.min(window.LINEWIDTH, Math.max(window.LINEWIDTH/window.ZOOM/window.CURRENT_SCENE_DATA.scale_factor, window.LINEWIDTH/2));
+					lineWidth = Math.min(window.LINEWIDTH, Math.max(window.LINEWIDTH/window.ZOOM/window.CURRENT_SCENE_DATA.scale_factor, 1));
 		
 				drawLine(window.temp_context,
 					window.BEGIN_MOUSEX,
@@ -3573,7 +3573,7 @@ function drawing_mousemove(e) {
 			if(window.DRAWFUNCTION == 'wall' || window.DRAWFUNCTION == 'wall-door' || window.DRAWFUNCTION == 'wall-window'){
 				window.wallToStore = [window.BEGIN_MOUSEX,window.BEGIN_MOUSEY, mouseX, mouseY];
 				if(window.StoredWalls != undefined){
-					const lineWidth = Math.min(window.LINEWIDTH, Math.max(window.LINEWIDTH/window.ZOOM/window.CURRENT_SCENE_DATA.scale_factor, window.LINEWIDTH/2));
+					const lineWidth = Math.min(window.LINEWIDTH, Math.max(window.LINEWIDTH/window.ZOOM/window.CURRENT_SCENE_DATA.scale_factor, 1));
 		
 					for(let wall in window.StoredWalls){
 						drawLine(window.temp_context,
