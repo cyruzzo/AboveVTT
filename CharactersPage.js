@@ -2693,7 +2693,7 @@ function observe_character_sheet_changes(documentToObserve) {
             return;
           }
         }
-        const menu = $("ul[role='menu']:has([value='DM']):not(:has([value='trueSelf'])))")
+        const menu = $("ul[role='menu']:has(div:contains('DM')):not(:has([value='trueSelf']))");
         if (menu.length > 0) {
           const selfLi = $(`<li class="MuiButtonBase-root MuiMenuItem-root tss-3a46y9-menuItemRoot MuiMenuItem-root tss-3a46y9-menuItemRoot ddb-character-app-1e9xnb1" tabindex="-1" role="menuitem" value="trueSelf">
                     <div class="MuiListItemIcon-root tss-67466g-listItemIconRoot ddb-character-app-17lvc79">
@@ -2706,11 +2706,13 @@ function observe_character_sheet_changes(documentToObserve) {
                     </div>
                   </li>`);
           menu.append(selfLi);
-          const button = $('[class*="-SendToLabel"]~button');
           const storedLastSendTo = localStorage.getItem(`${window.gameId != undefined ? window.gameId : window.myUser}-sendToDefault`);
           const sendTo = storedLastSendTo != null ? storedLastSendTo : gamelog_send_to_text();
-          button.empty();
           const row = menu.find(`li:contains(${sendTo})`);
+          const checkbox = menu.find('[d="M9.00016 16.17L4.83016 12L3.41016 13.41L9.00016 19L21.0002 7.00003L19.5902 5.59003L9.00016 16.17Z"]').closest('svg')
+          row.find('div:last-of-type').append(checkbox);
+          const button = $('[class*="-SendToLabel"]~button');
+          button.empty();
           const svg = row.find('div:first-of-type>svg')[0];
           const newHtml = `<span class="MuiButton-icon MuiButton-startIcon MuiButton-iconSizeMedium ddb-character-app-1l6c7y9">
               ${svg.outerHTML}
