@@ -1853,7 +1853,9 @@ class MessageBroker {
 					if(!window.DM && (data.player_map_is_video == '1' || data.player_map?.includes('youtube.com') || data.player_map?.includes("youtu.be") || data.is_video == '1')){
 						data.is_video = data.player_map_is_video;
 					}
-
+					if (!window.CURRENT_SCENE_DATA.fpsq || window.CURRENT_SCENE_DATA.fpsq == "" ){
+						window.CURRENT_SCENE_DATA.fpsq = 5;
+					}
 					load_scenemap(data.map, data.is_video, data.width, data.height, data.UVTTFile, async function() {
 						
 						console.group("load_scenemap callback")
