@@ -1686,12 +1686,12 @@ class MessageBroker {
 																		((msg.data.scale_factor == undefined || msg.data.scale_factor=='') && window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion == 1))
 			let hppsEqual = (window.CURRENT_SCENE_DATA.gridType == 2 && window.CURRENT_SCENE_DATA.hpps == parseFloat(msg.data.vpps * msg.data.scale_factor)) || window.CURRENT_SCENE_DATA.hpps==parseFloat(msg.data.hpps*msg.data.scale_factor)
 			let vppsEqual = (window.CURRENT_SCENE_DATA.gridType == 3 && window.CURRENT_SCENE_DATA.vpps == parseFloat(msg.data.hpps * msg.data.scale_factor)) || window.CURRENT_SCENE_DATA.vpps==parseFloat(msg.data.vpps*msg.data.scale_factor)
-			
+			let fpsqEqual = (window.CURRENT_SCENE_DATA.fpsq == msg.data.fpsq)
 			
 			
 			let isVideoEqual = window.CURRENT_SCENE_DATA.player_map_is_video == msg.data.player_map_is_video && window.CURRENT_SCENE_DATA.dm_map_is_video == msg.data.dm_map_is_video
 
-			let isSameScaleAndMaps = isCurrentScene && scaleFactorEqual && hppsEqual && vppsEqual && isVideoEqual && ((window.DM && dmMapEqual && dmMapToggleEqual) || (!window.DM && playerMapEqual))
+			let isSameScaleAndMaps = isCurrentScene && scaleFactorEqual && hppsEqual && vppsEqual && fpsqEqual && isVideoEqual && ((window.DM && dmMapEqual && dmMapToggleEqual) || (!window.DM && playerMapEqual))
 			
 			const isSameTokenLight = window.CURRENT_SCENE_DATA.disableSceneVision == msg.data.disableSceneVision;																		
 			
@@ -1853,7 +1853,9 @@ class MessageBroker {
 					if(!window.DM && (data.player_map_is_video == '1' || data.player_map?.includes('youtube.com') || data.player_map?.includes("youtu.be") || data.is_video == '1')){
 						data.is_video = data.player_map_is_video;
 					}
-
+					if (!window.CURRENT_SCENE_DATA.fpsq || window.CURRENT_SCENE_DATA.fpsq == "" ){
+						window.CURRENT_SCENE_DATA.fpsq = 5;
+					}
 					load_scenemap(data.map, data.is_video, data.width, data.height, data.UVTTFile, async function() {
 						
 						console.group("load_scenemap callback")
