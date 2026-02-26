@@ -1060,8 +1060,12 @@ async function start_above_vtt_for_players() {
     $("[class*='DiceContainer_button']").click();//close dice panel
     setTimeout(() => {
       $('[data-floating-ui-portal], .roll-mod-container').removeClass('hidden');
+      $('[data-floating-ui-portal]').off('click.waiting').on('click.waiting', `[data-dd-action-name="Roll Dice Popup > Roll Dice"]`, function () {
+        window.diceRoller.setWaitingForRoll();
+      })
     }, 200)
   }, 5);
+  
   $(window).off("resize").on("resize", function() {
     if (window.showPanel === undefined) {
       window.showPanel = is_sidebar_visible();

@@ -530,6 +530,13 @@ class DiceRoller {
         window.diceRoller.setPendingDamageType(damageTypeText);
       return damageTypeText;
     }
+    setWaitingForRoll(){
+        const self = this;
+        self.#timeoutId = setTimeout(function () {
+            console.warn("DiceRoller timed out after 15 seconds!");
+            self.#resetVariables();
+        }, self.timeoutDuration);
+    }
     getWaitingForRoll(){
         return this.#waitingForRoll;
     }

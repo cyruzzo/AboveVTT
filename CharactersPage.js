@@ -1083,6 +1083,9 @@ async function init_character_sheet_page() {
             $("[class*='DiceContainer_button']").click();//close dice panel
             setTimeout(()=> {
               $('[data-floating-ui-portal], .roll-mod-container').removeClass('hidden');
+              $('[data-floating-ui-portal]').off('click.waiting').on('click.waiting', `[data-dd-action-name="Roll Dice Popup > Roll Dice"]`, function () {
+                window.diceRoller.setWaitingForRoll();
+              })
             }, 200)
           }, 5);
         })
