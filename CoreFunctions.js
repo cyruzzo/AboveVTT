@@ -335,7 +335,7 @@ function inject_chat_buttons() {
   });
 
   window.sendToDefaultObserver = new MutationObserver(function() {
-      localStorage.setItem(`${gameId}-sendToDefault`, gamelog_send_to_text());
+    localStorage.setItem(`${window.gameId != undefined ? window.gameId : window.myUser}-sendToDefault`, gamelog_send_to_text());
   })
 
 
@@ -1193,7 +1193,7 @@ function send_ddb_dice_message(expression, displayName, imgUrl, rollType = "roll
         ]
       }
     };
-    if (window.MB.ws.readyState == window.MB.ws.OPEN) {
+    if (window.MB?.ws?.readyState && window.MB.ws.readyState == window.MB.ws.OPEN) {
       window.MB.ws.send(JSON.stringify(ddbJson));
       console.groupEnd()
       return true;

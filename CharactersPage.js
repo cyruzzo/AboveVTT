@@ -994,7 +994,7 @@ const debounceObserverSetup = mydebounce(function(){
 /** actions to take on the character sheet when AboveVTT is NOT running */
 async function init_character_sheet_page() {
   if (!is_characters_page()) return;
-
+  init_my_dice_details();
   // check for name and image
   set_window_name_and_image(function() {
     observe_character_sheet_changes($('#site-main, .ct-sidebar__portal'));
@@ -1076,11 +1076,18 @@ async function init_character_sheet_page() {
           window.CAMPAIGN_INFO = await DDBApi.fetchCampaignInfo(window.gameId);
           window.myUser = $('#message-broker-client').attr('data-userid') || Cobalt?.User?.ID;
           window.MB = new MessageBroker();
-          init_my_dice_details();
-          $("[class*='DiceContainer_button']").click(); // initialize dice panel so first roll doesn't fail
+
+          $('[data-floating-ui-portal], .roll-mod-container').addClass('hidden');
+          await $("[class*='DiceContainer_button']").click(); // initialize dice panel so first roll doesn't fail
           setTimeout(() => {
             $("[class*='DiceContainer_button']").click();//close dice panel
-          }, 0);
+            setTimeout(()=> {
+              $('[data-floating-ui-portal], .roll-mod-container').removeClass('hidden');
+              $('[data-floating-ui-portal]').off('click.waiting').on('click.waiting', `[data-dd-action-name="Roll Dice Popup > Roll Dice"]`, function () {
+                window.diceRoller.setWaitingForRoll();
+              })
+            }, 200)
+          }, 5);
         })
     }, 5000)
   }
@@ -1525,6 +1532,29 @@ function observe_character_sheet_changes(documentToObserve) {
   if (window.character_sheet_observer) {
     window.character_sheet_observer.disconnect();
   }
+  window.sendToDefaultObserver = new MutationObserver(function () {
+    localStorage.setItem(`${window.gameId != undefined ? window.gameId : window.myUser}-sendToDefault`, gamelog_send_to_text());
+  })
+
+
+  let gamelogObserver = new MutationObserver((mutations) => {
+    mutations.every((mutation) => {
+      if (!mutation.addedNodes) return
+      for (let i = 0; i < mutation.addedNodes.length; i++) {
+        // do things to your newly added nodes here
+        let node = mutation.addedNodes[i]
+        if ($(node).attr('class')?.includes('-SendToLabel') || $('.glc-game-log [class*="-SendToLabel"] ~ button').length > 0) {
+          const sendto_mutation_target = $(".glc-game-log [class*='-SendToLabel'] ~ button")[0];
+          const sendto_mutation_config = { attributes: true, childList: true, characterData: true, subtree: true };
+          window.sendToDefaultObserver.observe(sendto_mutation_target, sendto_mutation_config);
+          return false;
+        }
+      }
+      return true // must return true if doesn't break
+    })
+  });
+
+  gamelogObserver.observe(document.body, { childList: true, subtree: true, attributes: false, characterData: false });
 
   window.character_sheet_observer = new MutationObserver(function(mutationList, observer) {
     if(window.DRAGGING || (typeof arrowKeysHeld !== 'undefined' && (arrowKeysHeld[0] || arrowKeysHeld[1] || arrowKeysHeld[2] || arrowKeysHeld[3])))
@@ -2666,6 +2696,60 @@ function observe_character_sheet_changes(documentToObserve) {
             return;
           }
         }
+        const menu = $("ul[role='menu']:has(div:contains('DM')):not(:has([value='trueSelf']))");
+        if (menu.length > 0) {
+          const selfLi = $(`<li class="MuiButtonBase-root MuiMenuItem-root tss-3a46y9-menuItemRoot MuiMenuItem-root tss-3a46y9-menuItemRoot ddb-character-app-1e9xnb1" tabindex="-1" role="menuitem" value="trueSelf">
+                    <div class="MuiListItemIcon-root tss-67466g-listItemIconRoot ddb-character-app-17lvc79">
+                        <svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium ddb-character-app-vubbuv" focusable="false" aria-hidden="true" viewBox="0 0 24 24">
+                          <path d="M12 5.9C13.16 5.9 14.1 6.84 14.1 8C14.1 9.16 13.16 10.1 12 10.1C10.84 10.1 9.9 9.16 9.9 8C9.9 6.84 10.84 5.9 12 5.9ZM12 14.9C14.97 14.9 18.1 16.36 18.1 17V18.1H5.9V17C5.9 16.36 9.03 14.9 12 14.9ZM12 4C9.79 4 8 5.79 8 8C8 10.21 9.79 12 12 12C14.21 12 16 10.21 16 8C16 5.79 14.21 4 12 4ZM12 13C9.33 13 4 14.34 4 17V20H20V17C20 14.34 14.67 13 12 13Z" fill="currentColor"></path>
+                        </svg>
+                    </div>
+                    <div class="MuiListItemText-root tss-1us1e8t-listItemTextRoot ddb-character-app-1tsvksn">Self</div>
+                    <div class="MuiListItemIcon-root tss-67466g-listItemIconRoot ddb-character-app-17lvc79">
+                    </div>
+                  </li>`);
+          menu.append(selfLi);
+          const storedLastSendTo = localStorage.getItem(`${window.gameId != undefined ? window.gameId : window.myUser}-sendToDefault`);
+          const sendTo = storedLastSendTo != null ? storedLastSendTo : gamelog_send_to_text();
+          const row = menu.find(`li:contains(${sendTo})`);
+          const checkbox = menu.find('[d="M9.00016 16.17L4.83016 12L3.41016 13.41L9.00016 19L21.0002 7.00003L19.5902 5.59003L9.00016 16.17Z"]').closest('svg')
+          row.find('div:last-of-type').append(checkbox);
+          const button = $('[class*="-SendToLabel"]~button');
+          button.empty();
+          const svg = row.find('div:first-of-type>svg')[0];
+          const newHtml = `<span class="MuiButton-icon MuiButton-startIcon MuiButton-iconSizeMedium ddb-character-app-1l6c7y9">
+              ${svg.outerHTML}
+            </span>
+            ${row.text()}
+            <span class="MuiButton-icon MuiButton-endIcon MuiButton-iconSizeMedium ddb-character-app-pt151d">
+              <svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium ddb-character-app-vubbuv" focusable="false" aria-hidden="true" viewBox="0 0 24 24">
+                <path d="M7 10L12 15L17 10H7Z" fill="currentColor"></path>
+              </svg>
+            </span>`
+          button.html(newHtml); 
+          menu.off('click.selectSendTo').on('click.selectSendTo', 'li', function(e){
+            e.preventDefault();
+            e.stopPropagation();
+            const self = $(this);
+            const button = $('[class*="-SendToLabel"]~button');
+            button.empty();
+            const svg = self.find('div:first-of-type>svg')[0];
+            const newHtml = `<span class="MuiButton-icon MuiButton-startIcon MuiButton-iconSizeMedium ddb-character-app-1l6c7y9">
+              ${svg.outerHTML}
+            </span>
+            ${self.text()}
+            <span class="MuiButton-icon MuiButton-endIcon MuiButton-iconSizeMedium ddb-character-app-pt151d">
+              <svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium ddb-character-app-vubbuv" focusable="false" aria-hidden="true" viewBox="0 0 24 24">
+                <path d="M7 10L12 15L17 10H7Z" fill="currentColor"></path>
+              </svg>
+            </span>`
+            button.html(newHtml); 
+            const checkbox = menu.find('[d="M9.00016 16.17L4.83016 12L3.41016 13.41L9.00016 19L21.0002 7.00003L19.5902 5.59003L9.00016 16.17Z"]').closest('svg')
+            self.find('div:last-of-type').append(checkbox);
+            setTimeout(() => {self.closest('[role="presentation"]').find('[class*="MuiBackdrop-invisible"]').click()}, 250);
+          })
+        }
+        
          
 
         if(is_abovevtt_page()){
@@ -2795,7 +2879,8 @@ function observe_character_sheet_changes(documentToObserve) {
               }
               else if (mutationTarget.closest(".ct-subsection--senses").length>0) {
                 send_senses();
-              } 
+                
+              }
             if (typeof mutation.target.data === "string") {
               if (mutation.target.data.match(multiDiceRollCommandRegex)?.[0]) {
                 try {

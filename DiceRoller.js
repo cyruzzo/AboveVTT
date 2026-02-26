@@ -176,7 +176,7 @@ class DiceRoll {
 
         this.action = action;
         this.rollType = rollType;
-        this.sendToOverride = sendToOverride == undefined && window.DM ? gamelog_send_to_text() : sendToOverride;
+        this.sendToOverride = sendToOverride || gamelog_send_to_text();
         this.damageType = damageType;
         if (name) this.name = name;
         if (avatarUrl) this.avatarUrl = avatarUrl;
@@ -481,6 +481,7 @@ class DiceRoller {
     #pendingSpellSave = undefined;
     #pendingDamageType = undefined;
     #pendingCrit = undefined;
+    #pendingSendTo = undefined;
 
     /** @returns {boolean} true if a roll has been or will be initiated, and we're actively waiting for DDB messages to come in so we can parse them */
     get #waitingForRoll() {
@@ -529,7 +530,18 @@ class DiceRoller {
         window.diceRoller.setPendingDamageType(damageTypeText);
       return damageTypeText;
     }
+    setWaitingForRoll(){
+        const self = this;
+        clearTimeout(self.#timeoutId);
+        self.#timeoutId = setTimeout(function () {
+            console.warn("DiceRoller timed out after 15 seconds!");
+            self.#resetVariables();
+        }, self.timeoutDuration);
+    }
 
+    getWaitingForRoll(){
+        return this.#waitingForRoll;
+    }
     /**
      * Attempts to parse the expression, and roll DDB dice.
      * If dice are rolled, the results will be processed to make sure the expression is properly calculated.
@@ -553,6 +565,7 @@ class DiceRoller {
                 return;
             }
             let self = this;
+            clearTimeout(this.#timeoutId);
             this.#timeoutId = setTimeout(function () {
                 console.warn("DiceRoller timed out after 15 seconds!");
                 self.#resetVariables();
@@ -731,7 +744,7 @@ class DiceRoller {
                     self.nextRoll(undefined, critRange, critType)
                 }, 200)
                 return true;
-            } else if (!is_abovevtt_page() && !ddb3dDiceShareToggle){
+            } else if (!is_abovevtt_page() && !ddb3dDiceShareToggle && window.MB?.ws != undefined){
                 send_ddb_dice_message(msgdata.rollData.expression, msgdata.player, msgdata.img, msgdata.rollData.rollType, msgdata.rollData.damageType, msgdata.rollData.rollTitle, diceRoll.sendToOverride)
                 self.#resetVariables();
                 self.nextRoll(undefined, critRange, critType)
@@ -742,10 +755,8 @@ class DiceRoller {
             console.log("attempting to parse diceRoll", diceRoll);
 
             this.#resetVariables();
-
             // we're about to roll dice so we need to know if we should capture DDB messages.
             // This also blocks other attempts to roll until we've finished processing
-       
             this.#timeoutId = setTimeout(function () {
                 console.warn("DiceRoller timed out after 15 seconds!");
                 self.#resetVariables();
@@ -758,6 +769,7 @@ class DiceRoller {
             this.#pendingSpellSave = spellSave;
             this.#pendingDamageType = damageType;
             this.#pendingCrit = forceCritType;
+            this.#pendingSendTo = diceRoll.sendToOverride;
             this.clickDiceButtons(diceRoll);
             console.groupEnd();
             return true;
@@ -933,7 +945,7 @@ class DiceRoller {
         this.#pendingSpellSave = undefined;
         this.#pendingDamageType = undefined;
         this.#pendingCrit = undefined;
-                
+        this.#pendingSendTo = undefined;
     }
 
     /** wraps all messages that are sent by DDB, and processes any that we need to process, else passes it along as-is */
@@ -942,9 +954,12 @@ class DiceRoller {
         if(this.#waitingForRoll && message.source == 'Beyond20'){
             return;
         }
+        if (window.deferredRolls?.[message.data?.rollId] != undefined) {
+            return;
+        }
+        const ddb3dDiceShareToggle = localStorage.getItem('isShared3dDiceEnabled') !== null ? JSON.parse(localStorage.getItem('isShared3dDiceEnabled')).state?.[window.myUser] : true;
 
-        if (!this.#waitingForRoll) {
-
+        if (!this.#waitingForRoll || (message.eventType === "dice/roll/fulfilled" && !ddb3dDiceShareToggle)) {
             if(message.source == 'Beyond20'){
                 this.ddbDispatch(message);
                 return;
@@ -983,6 +998,7 @@ class DiceRoller {
                     delete window.modifiySendToDDBDiceClicked;
                 }
                 this.ddbDispatch(ddbMessage);
+                await this.#resetVariables();
             }
         } else if (message.eventType === "dice/roll/pending" || message.eventType == 'dice/roll/deferred') {
             if(message.source == 'Beyond20'){
@@ -1014,7 +1030,7 @@ class DiceRoller {
             this.ddbDispatch(alteredMessage);
             await this.#resetVariables();
             this.nextRoll(message, this.#pendingCritRange, this.#pendingCritType, this.#pendingDamageType);
-        }
+        } 
         console.groupEnd();
     }
 
@@ -1210,6 +1226,15 @@ class DiceRoller {
         }      
         if (isValid(this.#pendingDiceRoll?.name)) {
             ddbMessage.data.context.name = this.#pendingDiceRoll.name;
+        }
+        if (this.#pendingSendTo != undefined) {
+            const sendTo = this.#pendingSendTo.toLowerCase();
+            const scope = sendTo === "everyone" ? "gameId" : "userId";
+            const target = sendTo === "everyone" ? `${window.gameId}` : sendTo === "dungeonmaster" || sendTo === "dm" ? `${window.CAMPAIGN_INFO.dmId}` : `${window.myUser}`;
+            ddbMessage.messageScope = scope
+            ddbMessage.data.context.messageScope = scope;
+            ddbMessage.messageTarget = target;
+            ddbMessage.data.context.messageTarget = target;
         }
     }
 }

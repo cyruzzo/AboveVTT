@@ -349,12 +349,14 @@ class MessageBroker {
 			console.log("ALREADY LOADING A WS");
 			return;
 		}
-		this.loadingWS = true;
-
 		let self = this;
 		let url = this.url;
 		let userid = this.userid;
 		let gameid = this.gameid;
+		if (!gameid) 
+			return;
+		
+		this.loadingWS = true;
 
 		console.log("STARTING MB WITH TOKEN");
 
@@ -1307,6 +1309,10 @@ class MessageBroker {
 			if (msg.eventType == "dice/roll/fulfilled") {
 				notify_gamelog();
 				const gamelogItem = $(`ol[class*='-GameLogEntries'] li`).first(); 
+				if(window.tempStoreMessages?.[msg.data?.rollId] != undefined){
+					//prevent ddb double messages due to new dice sending fulfilled messages from other open streams
+					msg = window.tempStoreMessages[msg.data.rollId];
+				}
 				if (msg.avttExpression !== undefined && msg.avttExpressionResult !== undefined) {	
 					gamelogItem.attr("data-avtt-expression", msg.avttExpression);
 					gamelogItem.attr("data-avtt-expression-result", msg.avttExpressionResult);
@@ -1591,7 +1597,18 @@ class MessageBroker {
 				}
 				
 			}
-			
+			if(msg.eventType == "dice/roll/deferred"){
+				if (!window.diceRoller?.getWaitingForRoll()){
+					if (window.deferredRolls == undefined) {
+						window.deferredRolls = {};
+					}
+					window.deferredRolls[msg.data?.rollId] = 1; // store this so  we can check against  it to prevent streamed rolls from sending new fulfilled events
+					setTimeout(() => {
+						delete window.deferredRolls[msg.data?.rollId];
+					}, 30000)
+				}
+				}
+
 			if (msg.eventType === "custom/myVTT/peerReady") {
 				window.PeerManager.receivedPeerReady(msg);
 			}
@@ -1686,12 +1703,12 @@ class MessageBroker {
 																		((msg.data.scale_factor == undefined || msg.data.scale_factor=='') && window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion == 1))
 			let hppsEqual = (window.CURRENT_SCENE_DATA.gridType == 2 && window.CURRENT_SCENE_DATA.hpps == parseFloat(msg.data.vpps * msg.data.scale_factor)) || window.CURRENT_SCENE_DATA.hpps==parseFloat(msg.data.hpps*msg.data.scale_factor)
 			let vppsEqual = (window.CURRENT_SCENE_DATA.gridType == 3 && window.CURRENT_SCENE_DATA.vpps == parseFloat(msg.data.hpps * msg.data.scale_factor)) || window.CURRENT_SCENE_DATA.vpps==parseFloat(msg.data.vpps*msg.data.scale_factor)
-			
+			let fpsqEqual = (window.CURRENT_SCENE_DATA.fpsq == msg.data.fpsq)
 			
 			
 			let isVideoEqual = window.CURRENT_SCENE_DATA.player_map_is_video == msg.data.player_map_is_video && window.CURRENT_SCENE_DATA.dm_map_is_video == msg.data.dm_map_is_video
 
-			let isSameScaleAndMaps = isCurrentScene && scaleFactorEqual && hppsEqual && vppsEqual && isVideoEqual && ((window.DM && dmMapEqual && dmMapToggleEqual) || (!window.DM && playerMapEqual))
+			let isSameScaleAndMaps = isCurrentScene && scaleFactorEqual && hppsEqual && vppsEqual && fpsqEqual && isVideoEqual && ((window.DM && dmMapEqual && dmMapToggleEqual) || (!window.DM && playerMapEqual))
 			
 			const isSameTokenLight = window.CURRENT_SCENE_DATA.disableSceneVision == msg.data.disableSceneVision;																		
 			
@@ -1815,12 +1832,16 @@ class MessageBroker {
 					}
 				}
 				else{
+					if (window.DM && data.dm_map && data.dm_map_usable) {
+						data.map = data.dm_map;
+					}
+					else {
+						data.map = data.player_map;
+					}
 					await build_import_loading_indicator(`Loading ${window.DM ? data.title : 'Scene'}`);		
 				}
 				$('.import-loading-indicator .percentageLoaded').css('width', `0%`);
 				if(msg.data.id == window.CURRENT_SCENE_DATA.id){ // incase another map was loaded before we get uvtt data back
-
-
 					if (data.fog_of_war == 1) {
 						window.FOG_OF_WAR = true;
 						window.REVEALED = data.reveals;
@@ -1836,11 +1857,13 @@ class MessageBroker {
 					else {
 						window.DRAWINGS = [];
 					}
+
 					if(!window.DM && (data.player_map_is_video == '1' || data.player_map?.includes('youtube.com') || data.player_map?.includes("youtu.be") || data.is_video == '1')){
-						data.map = data.player_map;
 						data.is_video = data.player_map_is_video;
 					}
-
+					if (!window.CURRENT_SCENE_DATA.fpsq || window.CURRENT_SCENE_DATA.fpsq == "" ){
+						window.CURRENT_SCENE_DATA.fpsq = 5;
+					}
 					load_scenemap(data.map, data.is_video, data.width, data.height, data.UVTTFile, async function() {
 						
 						console.group("load_scenemap callback")
@@ -2441,7 +2464,7 @@ class MessageBroker {
 		if (message.data.injected_data?.img?.startsWith('above-bucket-not-a-url')) {
 			message.data.injected_data.img = await getAvttStorageUrl(message.data.injected_data.img);
 		}
-		if (this.ws.readyState == this.ws.OPEN) {
+		if (this.ws?.readyState != undefined && this.ws.readyState == this.ws.OPEN) {
 			this.ws.send(JSON.stringify(message));
 		}
 
