@@ -4608,28 +4608,24 @@ function drawing_mouseup(e) {
 				continue;
 			}
 
-			let curr = window.TOKEN_OBJECTS[id];
+			const curr = window.TOKEN_OBJECTS[id];
+			
 
-
-			let tokenImageRect = $("#tokens>div[data-id='" + curr.options.id + "'] .token-image")[0].getBoundingClientRect();	
-			let size = window.TOKEN_OBJECTS[curr.options.id].options.size;	
-			let toktop = (parseInt(tokenImageRect.top) + window.scrollY - window.VTTMargin) * (1.0 / window.ZOOM);
-			let tokleft = (parseInt(tokenImageRect.left)  + window.scrollX - window.VTTMargin) * (1.0 / window.ZOOM);
-			let tokright = (parseInt(tokenImageRect.right) + window.scrollX - window.VTTMargin) * (1.0 / window.ZOOM);
-			let tokbottom = (parseInt(tokenImageRect.bottom) + window.scrollY - window.VTTMargin) * (1.0 / window.ZOOM);
-			let scaledRemainderTop = (tokbottom-toktop-size)/2;
-			let scaledRemainderLeft = (tokright-tokleft-size)/2;
-			if(window.TOKEN_OBJECTS[curr.options.id].options.tokenStyleSelect == 'circle' || window.TOKEN_OBJECTS[curr.options.id].options.tokenStyleSelect == 'square' || $("#tokens>div[data-id='" + curr.options.id + "']").hasClass("isAoe")){
-				scaledRemainderTop = 0;
-				scaledRemainderLeft = 0;
-			}
+			const tokenImageRect = $("#tokens>div[data-id='" + curr.options.id + "'] .token-image")[0].getBoundingClientRect();	
+			const size = window.TOKEN_OBJECTS[curr.options.id].options.size;	
+			const toktop = (parseInt(tokenImageRect.top) + window.scrollY - window.VTTMargin) * (1.0 / window.ZOOM);
+			const tokleft = (parseInt(tokenImageRect.left)  + window.scrollX - window.VTTMargin) * (1.0 / window.ZOOM);
+			const tokright = (parseInt(tokenImageRect.right) + window.scrollX - window.VTTMargin) * (1.0 / window.ZOOM);
+			const tokbottom = (parseInt(tokenImageRect.bottom) + window.scrollY - window.VTTMargin) * (1.0 / window.ZOOM);
+			const useRemainder = !(window.TOKEN_OBJECTS[curr.options.id].options.tokenStyleSelect == 'circle' || window.TOKEN_OBJECTS[curr.options.id].options.tokenStyleSelect == 'square' || $("#tokens>div[data-id='" + curr.options.id + "']").hasClass("isAoe"));
+			const scaledRemainderTop = useRemainder ? (tokbottom-toktop-size)/2 : 0;
+			const scaledRemainderLeft = useRemainder ? (tokright-tokleft-size)/2 : 0;
 			if(fullyInside) {
-				if(!(tokleft >= x0 && tokright <= x1 && toktop >= y0 && tokbottom <= y1)) continue;
+				if(!(tokleft+scaledRemainderLeft >= x0 && tokright-scaledRemainderLeft <= x1 &&
+				     toktop+scaledRemainderTop >= y0 && tokbottom-scaledRemainderTop <= y1)) continue;
 			} else {
-				if (Math.min(y0, tokbottom-scaledRemainderTop) == tokbottom-scaledRemainderTop || Math.max(y1, toktop+scaledRemainderTop) == toktop+scaledRemainderTop)
-				continue;
-				if (Math.min(x0, tokright-scaledRemainderLeft) == tokright-scaledRemainderLeft || Math.max(x1, tokleft+scaledRemainderLeft) == tokleft+scaledRemainderLeft)
-					continue;
+				if (y0 >= tokbottom-scaledRemainderTop || y1 <= toktop+scaledRemainderTop) continue;
+				if (x0 >= tokright-scaledRemainderLeft || x1 <= tokleft+scaledRemainderLeft) continue;
 			}
 
 			c++;
