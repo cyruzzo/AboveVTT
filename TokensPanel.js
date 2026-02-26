@@ -897,7 +897,7 @@ async function enable_draggable_token_creation(html, specificImage = undefined) 
                     if (ui.helper.attr("data-shape") && ui.helper.attr("data-style")) {
                         src = build_aoe_img_name(ui.helper.attr("data-style"), ui.helper.attr("data-shape"));
                     }
-                    create_and_place_token(draggedItem, hidden, src, event.pageX, event.pageY, true);
+                    create_and_place_token(draggedItem, hidden, src, event.pageX, event.pageY, true, undefined, undefined, undefined, true);
                 }
                 else{
                     const listItemArray = [];
@@ -1106,7 +1106,7 @@ function update_pc_token_rows() {
  */
 
 
-async function create_and_place_token(listItem, hidden = undefined, specificImage= undefined, eventPageX = undefined, eventPageY = undefined, disableSnap = false, nameOverride = "", mapPoint=false, extraOptions=undefined) {
+async function create_and_place_token(listItem, hidden = undefined, specificImage= undefined, eventPageX = undefined, eventPageY = undefined, disableSnap = false, nameOverride = "", mapPoint=false, extraOptions=undefined, ignoreOffset=false) {
 
 
     if (listItem === undefined) {
@@ -1681,12 +1681,12 @@ async function create_and_place_token(listItem, hidden = undefined, specificImag
     // TODO: figure out if we still need to do this, and where they are coming from
     delete options.undefined;
     delete options[""];
-    console.log("create_and_place_token about to place token with options", options, hidden);
+    console.log("create_and_place_token about to place token with options", options, hidden, mapPoint, eventPageX, eventPageY, disableSnap);
 
     if (eventPageX === undefined || eventPageY === undefined) {
         place_token_in_center_of_view(options);
     } else if(mapPoint==false){
-        let mapPosition = convert_point_from_view_to_map(eventPageX, eventPageY, disableSnap);
+        let mapPosition = convert_point_from_view_to_map(eventPageX, eventPageY, disableSnap, ignoreOffset);
         place_token_at_map_point(options, mapPosition.x, mapPosition.y);
     }
     else{
