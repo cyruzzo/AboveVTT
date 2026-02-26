@@ -1193,7 +1193,7 @@ function send_ddb_dice_message(expression, displayName, imgUrl, rollType = "roll
         ]
       }
     };
-    if (window.MB.ws.readyState == window.MB.ws.OPEN) {
+    if (window.MB?.ws?.readyState && window.MB.ws.readyState == window.MB.ws.OPEN) {
       window.MB.ws.send(JSON.stringify(ddbJson));
       console.groupEnd()
       return true;

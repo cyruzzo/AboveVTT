@@ -176,7 +176,7 @@ class DiceRoll {
 
         this.action = action;
         this.rollType = rollType;
-        this.sendToOverride = sendToOverride == undefined && window.DM ? gamelog_send_to_text() : sendToOverride;
+        this.sendToOverride = sendToOverride || gamelog_send_to_text();
         this.damageType = damageType;
         if (name) this.name = name;
         if (avatarUrl) this.avatarUrl = avatarUrl;
@@ -481,6 +481,7 @@ class DiceRoller {
     #pendingSpellSave = undefined;
     #pendingDamageType = undefined;
     #pendingCrit = undefined;
+    #pendingSendTo = undefined;
 
     /** @returns {boolean} true if a roll has been or will be initiated, and we're actively waiting for DDB messages to come in so we can parse them */
     get #waitingForRoll() {
@@ -758,6 +759,7 @@ class DiceRoller {
             this.#pendingSpellSave = spellSave;
             this.#pendingDamageType = damageType;
             this.#pendingCrit = forceCritType;
+            this.#pendingSendTo = diceRoll.sendToOverride;
             this.clickDiceButtons(diceRoll);
             console.groupEnd();
             return true;
@@ -933,7 +935,7 @@ class DiceRoller {
         this.#pendingSpellSave = undefined;
         this.#pendingDamageType = undefined;
         this.#pendingCrit = undefined;
-                
+        this.#pendingSendTo = undefined;
     }
 
     /** wraps all messages that are sent by DDB, and processes any that we need to process, else passes it along as-is */
@@ -1210,6 +1212,15 @@ class DiceRoller {
         }      
         if (isValid(this.#pendingDiceRoll?.name)) {
             ddbMessage.data.context.name = this.#pendingDiceRoll.name;
+        }
+        if (this.#pendingSendTo != undefined) {
+            const sendTo = this.#pendingSendTo.toLowerCase();
+            const scope = sendTo === "everyone" ? "gameId" : "userId";
+            const target = sendTo === "everyone" ? `${window.gameId}` : sendTo === "dungeonmaster" || sendTo === "dm" ? `${window.CAMPAIGN_INFO.dmId}` : `${window.myUser}`;
+            ddbMessage.messageScope = scope
+            ddbMessage.data.context.messageScope = scope;
+            ddbMessage.messageTarget = target;
+            ddbMessage.data.context.messageTarget = target;
         }
     }
 }
