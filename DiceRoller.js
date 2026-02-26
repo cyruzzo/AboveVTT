@@ -532,6 +532,7 @@ class DiceRoller {
     }
     setWaitingForRoll(){
         const self = this;
+        clearTimeout(self.#timeoutId);
         self.#timeoutId = setTimeout(function () {
             console.warn("DiceRoller timed out after 15 seconds!");
             self.#resetVariables();
@@ -564,6 +565,7 @@ class DiceRoller {
                 return;
             }
             let self = this;
+            clearTimeout(this.#timeoutId);
             this.#timeoutId = setTimeout(function () {
                 console.warn("DiceRoller timed out after 15 seconds!");
                 self.#resetVariables();
@@ -753,10 +755,8 @@ class DiceRoller {
             console.log("attempting to parse diceRoll", diceRoll);
 
             this.#resetVariables();
-
             // we're about to roll dice so we need to know if we should capture DDB messages.
             // This also blocks other attempts to roll until we've finished processing
-       
             this.#timeoutId = setTimeout(function () {
                 console.warn("DiceRoller timed out after 15 seconds!");
                 self.#resetVariables();
@@ -998,6 +998,7 @@ class DiceRoller {
                     delete window.modifiySendToDDBDiceClicked;
                 }
                 this.ddbDispatch(ddbMessage);
+                await this.#resetVariables();
             }
         } else if (message.eventType === "dice/roll/pending" || message.eventType == 'dice/roll/deferred') {
             if(message.source == 'Beyond20'){
