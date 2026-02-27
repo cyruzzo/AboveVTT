@@ -1607,7 +1607,7 @@ class MessageBroker {
 						delete window.deferredRolls[msg.data?.rollId];
 					}, 30000)
 				}
-				}
+			}
 
 			if (msg.eventType === "custom/myVTT/peerReady") {
 				window.PeerManager.receivedPeerReady(msg);

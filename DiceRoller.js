@@ -550,6 +550,7 @@ class DiceRoller {
      */
     roll(diceRoll, multiroll = false, critRange = 20, critType = 2, spellSave = undefined, damageType = undefined, forceCritType = undefined) {
         try {
+
             if (diceRoll === undefined || diceRoll.expression === undefined || diceRoll.expression.length === 0) {
                 console.warn("DiceRoller.parseAndRoll received an invalid diceRoll object", diceRoll);
                 return false;
@@ -565,11 +566,8 @@ class DiceRoller {
                 return;
             }
             let self = this;
-            clearTimeout(this.#timeoutId);
-            this.#timeoutId = setTimeout(function () {
-                console.warn("DiceRoller timed out after 15 seconds!");
-                self.#resetVariables();
-            }, this.timeoutDuration);
+            this.setWaitingForRoll();
+           
             let msgdata = {}
             diceRoll.expression = diceRoll.expression.replaceAll(/$\+0|\+0(\D)/gi, '$1')
             let roll = new rpgDiceRoller.DiceRoll(diceRoll.expression); 
@@ -757,12 +755,8 @@ class DiceRoller {
             this.#resetVariables();
             // we're about to roll dice so we need to know if we should capture DDB messages.
             // This also blocks other attempts to roll until we've finished processing
-            this.#timeoutId = setTimeout(function () {
-                console.warn("DiceRoller timed out after 15 seconds!");
-                self.#resetVariables();
-            }, this.timeoutDuration);
-
             // don't hold a reference to the object we were given in case it gets altered while we're waiting.
+            this.setWaitingForRoll();
             this.#pendingDiceRoll = new DiceRoll(diceRoll.expression, diceRoll.action, diceRoll.rollType, diceRoll.name, diceRoll.avatarUrl, diceRoll.entityType, diceRoll.entityId);
             this.#pendingCritRange = critRange;
             this.#pendingCritType = critType;
@@ -1018,6 +1012,7 @@ class DiceRoller {
         } else if (message.eventType === "dice/roll/fulfilled" && this.#pendingMessage?.data?.rollId === message.data.rollId) {
             if(message.source == 'Beyond20'){
                 this.ddbDispatch(message);
+                await this.#resetVariables();
                 return;
             }
 
