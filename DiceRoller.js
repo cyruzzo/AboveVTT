@@ -948,9 +948,9 @@ class DiceRoller {
         if(this.#waitingForRoll && message.source == 'Beyond20'){
             return;
         }
-        if (window.deferredRolls?.[message.data?.rollId] != undefined) {
+        if (message.deferredSentFrom !== undefined && message.deferredSentFrom !== window.PLAYER_ID)
             return;
-        }
+        
         const ddb3dDiceShareToggle = localStorage.getItem('isShared3dDiceEnabled') !== null ? JSON.parse(localStorage.getItem('isShared3dDiceEnabled')).state?.[window.myUser] : true;
 
         if (!this.#waitingForRoll || (message.eventType === "dice/roll/fulfilled" && !ddb3dDiceShareToggle)) {
@@ -1006,6 +1006,9 @@ class DiceRoller {
             await this.#swapDiceRollMetadata(ddbMessage);
             if (ddbMessage.data?.context?.avatarUrl?.startsWith("above-bucket-not-a-url")) {
                 ddbMessage.data.context.avatarUrl = await getAvttStorageUrl(ddbMessage.data.context.avatarUrl, true)
+            }
+            if(message.eventType == 'dice/roll/deferred'){
+                ddbMessage.deferredSentFrom = window.PLAYER_ID;
             }
             this.#pendingMessage = ddbMessage;
             this.ddbDispatch(ddbMessage);
