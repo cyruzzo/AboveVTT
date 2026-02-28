@@ -2960,7 +2960,7 @@ function register_scene_row_context_menu() {
 							build_import_loading_indicator('Preparing Scenes Export File');
 							const listItemArray = [];
 							for (let i = 0; i < selectedItems.length; i++) {
-								let selectedRow = $(selectedItems[i]);s
+								let selectedRow = $(selectedItems[i]);
 								let selectedItem = find_sidebar_list_item(selectedRow);
 								if (selectedItem.isTypeScene())
 									listItemArray.push(selectedItem);
