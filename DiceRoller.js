@@ -948,9 +948,9 @@ class DiceRoller {
         if(this.#waitingForRoll && message.source == 'Beyond20'){
             return;
         }
-
         if (message.eventType === "dice/roll/fulfilled" && this.#pendingMessages[message.data.rollId] == undefined)
             return;
+        
         const ddb3dDiceShareToggle = localStorage.getItem('isShared3dDiceEnabled') !== null ? JSON.parse(localStorage.getItem('isShared3dDiceEnabled')).state?.[window.myUser] : true;
 
         if (!this.#waitingForRoll || (message.eventType === "dice/roll/fulfilled" && !ddb3dDiceShareToggle)) {
@@ -968,7 +968,8 @@ class DiceRoller {
                 if (alteredMessage.data?.context?.avatarUrl?.startsWith("above-bucket-not-a-url")) {
                     alteredMessage.data.context.avatarUrl = await getAvttStorageUrl(alteredMessage.data.context.avatarUrl, true)
                 }
-                console.log("altered fulfilled message: ", alteredMessage);
+                console.log("altered fulfilled message: ", alteredMessage);          
+                alteredMessage.dateTime = this.#pendingMessages[message.data.rollId]?.ddbMessage?.dateTime || Date.now();
                 this.ddbDispatch(alteredMessage);
                 this.#pendingMessages[message.data.rollId] = null;
                 delete this.#pendingMessages[message.data.rollId];
@@ -1040,7 +1041,11 @@ class DiceRoller {
             if(newDice){
                 await this.#resetVariables();
                 const self = this;
-                self.nextRoll(self.#pendingMessages[ddbMessage.data.rollId].ddbMessage, self.#pendingMessages[ddbMessage.data.rollId].pendingCritRange, self.#pendingMessages[ddbMessage.data.rollId].pendingCritType, self.#pendingMessages[ddbMessage.data.rollId].pendingDamageType);
+                clearTimeout(this.nextRollTimeout);
+                this.nextRollTimeout = setTimeout(function(){
+                    self.nextRoll(self.#pendingMessages[ddbMessage.data.rollId].ddbMessage, self.#pendingMessages[ddbMessage.data.rollId].pendingCritRange, self.#pendingMessages[ddbMessage.data.rollId].pendingCritType, self.#pendingMessages[ddbMessage.data.rollId].pendingDamageType);
+                }, 60)
+
             }
 
         } else if (!newDice && message.eventType === "dice/roll/fulfilled" && this.#pendingMessages[message.data.rollId] !== undefined) {
