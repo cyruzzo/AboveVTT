@@ -1538,7 +1538,8 @@ function observe_character_sheet_changes(documentToObserve) {
             await $("[class*='DiceContainer_button']").click(); // initialize dice panel so first roll doesn't fail
             setTimeout(() => {
               $("[class*='DiceContainer_button']").click();//close dice panel
-              setTimeout(() => {
+              clearTimeout(window.diceRoller.diceRollButtonHide);
+              window.diceRoller.diceRollButtonHide = setTimeout(() => {
                 $('[data-floating-ui-portal], .roll-mod-container').removeClass('hidden');
                 $('[data-floating-ui-portal]').off('click.waiting').on('click.waiting', `[data-dd-action-name="Roll Dice Popup > Roll Dice"]`, function () {
                   window.diceRoller.setWaitingForRoll();
