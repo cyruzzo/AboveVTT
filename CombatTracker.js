@@ -1304,7 +1304,7 @@ function ct_add_token(token,persist=true,disablerolling=false, adv=false, dis=fa
 		
 	hp=$("<div class='hp'/>");
 	let hp_input = $("<input class='hp'>");
-	if(token.isPlayer()){
+	if(window.DM && token.isPlayer() && !window.EXPERIMENTAL_SETTINGS['sheetPCSync'] ){
 		hp_input.prop("disabled", true);
 	}
 	hp_input.val(token.hp);
@@ -1357,9 +1357,21 @@ function ct_add_token(token,persist=true,disablerolling=false, adv=false, dis=fa
 			if ($(this).val().trim().startsWith("+") || $(this).val().trim().startsWith("-")) {
 				$(this).val(Math.max(0, parseInt(token.hp) + parseInt($(this).val())));
 			}
-
-			old.find(".hp").val($(this).val().trim());	
-
+			const newHP = $(this).val().trim();
+			old.find(".hp").val(newHP);
+			//also update character sheet if synced style
+			if(window.DM && token.options.statBlock) {
+				const customStatBlock = window.JOURNAL.notes[token.options.statBlock].text;
+				const pcLinkedURL = $(customStatBlock).find('.custom-pc-sheet.custom-stat.custom-pc-sheet-linked').text();
+				if(pcLinkedURL) {					
+					const characterid = parseInt(pcLinkedURL.split("/").pop(),10);
+					if(characterid) {
+						console.log("Attempt NPC update", pcLinkedURL);
+						DDBApi.putCharacterHP(characterid, parseInt(newHP,10))
+					}
+				}
+			}
+				
 			if(window.all_token_objects[token.options.id] != undefined){
 				window.all_token_objects[token.options.id].hp = $(this).val();
 			}			
@@ -1393,10 +1405,26 @@ function ct_add_token(token,persist=true,disablerolling=false, adv=false, dis=fa
 		});
 	}
 	else {
-		hp.off('click.message').on('click.message', function(){
-			showTempMessage('Player HP must be adjusted on the character sheet.')
-		})
-		hp_input.keydown(function(e) { if (e.keyCode == '13') token.update_from_page(); e.preventDefault(); }); // DISABLE WITHOUT MAKING IT LOOK UGLY
+		if(window.DM && window.EXPERIMENTAL_SETTINGS['sheetPCSync']) {
+			hp_input.css("pointer-events", "auto");
+			hp_input.change(function(e) {
+				let selector = "div[data-id='" + token.options.id + "']";
+				let old = $("#tokens").find(selector);
+				const characterid = token.options.id.split("/").pop();
+				if ($(this).val().trim().startsWith("+") || $(this).val().trim().startsWith("-")) {
+					$(this).val(Math.max(0, parseInt(token.hp) + parseInt($(this).val())));
+				}
+				console.log("Update player", characterid, old.find(".hp"), old.find(".hp")?.val());
+				DDBApi.putCharacterHP(characterid, parseInt($(this).val().trim(),10))
+			});
+			hp_input.click(function(e) {
+				$(e.target).select();
+			});
+		} else {
+			hp.off('click.message').on('click.message', function(){
+				showTempMessage('Player HP must be adjusted on the character sheet.')
+				hp_input.keydown(function(e) { if (e.keyCode == '13') token.update_from_page(); e.preventDefault(); }); // DISABLE WITHOUT MAKING IT LOOK UGLY
+		})}
 		maxhp_input.keydown(function(e) { if (e.keyCode == '13') token.update_from_page(); e.preventDefault(); });
 	}
 	

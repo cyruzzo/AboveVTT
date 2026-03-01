@@ -258,7 +258,29 @@ class DDBApi {
     return await DDBApi.fetchCharacterDetails(characterIds);
   }
 
-
+  static async putCharacterHP(characterId, hp) {
+    //have to fetch first: use tmp first to reduce or for addition beyond max
+    const prev = (await DDBApi.fetchCharacterDetails([characterId]))?.[0];
+    const snd = { characterId, temporaryHitPoints: 0, removedHitPoints: 0 };
+    //heuristic: use tmp points first in a damage
+    if(prev?.hitPointInfo) {
+      if(hp > prev.hitPointInfo.current) { //heal
+        snd.removedHitPoints = prev.hitPointInfo.maximum - hp - prev.hitPointInfo.temp;
+      } else if(hp < prev?.hitPointInfo.current) { //damage
+        const tmp = hp - prev.hitPointInfo.maximum;
+        if(tmp > 0) {
+          snd.temporaryHitPoints = tmp;
+        } else if(tmp < 0) {
+          snd.removedHitPoints = -tmp;          
+        } else {
+          return; 
+        }
+      } else { //nothing
+        return;
+      }
+      return DDBApi.putJsonWithToken(`https://character-service.dndbeyond.com/character/v5/life/hp/damage-taken`, snd);
+    } //else silent fail
+  }
 
   static async fetchCharacterDetails(characterIds) {
     if (!Array.isArray(characterIds) || characterIds.length === 0) {
