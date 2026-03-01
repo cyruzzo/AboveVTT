@@ -903,7 +903,6 @@ const debounceRemoveRPGRoller =  mydebounce(() => {
 
 
 function convertToRPGRoller(){
-
     let urlSplit = window.location.href.split("/");
     if(urlSplit.length > 0 && !is_abovevtt_page()) {
       window.PLAYER_ID = urlSplit[urlSplit.length - 1].split('?')[0];
@@ -1076,18 +1075,6 @@ async function init_character_sheet_page() {
           window.CAMPAIGN_INFO = await DDBApi.fetchCampaignInfo(window.gameId);
           window.myUser = $('#message-broker-client').attr('data-userid') || Cobalt?.User?.ID;
           window.MB = new MessageBroker();
-
-          $('[data-floating-ui-portal], .roll-mod-container').addClass('hidden');
-          await $("[class*='DiceContainer_button']").click(); // initialize dice panel so first roll doesn't fail
-          setTimeout(() => {
-            $("[class*='DiceContainer_button']").click();//close dice panel
-            setTimeout(()=> {
-              $('[data-floating-ui-portal], .roll-mod-container').removeClass('hidden');
-              $('[data-floating-ui-portal]').off('click.waiting').on('click.waiting', `[data-dd-action-name="Roll Dice Popup > Roll Dice"]`, function () {
-                window.diceRoller.setWaitingForRoll();
-              })
-            }, 200)
-          }, 5);
         })
     }, 5000)
   }
@@ -1535,8 +1522,40 @@ function observe_character_sheet_changes(documentToObserve) {
   window.sendToDefaultObserver = new MutationObserver(function () {
     localStorage.setItem(`${window.gameId != undefined ? window.gameId : window.myUser}-sendToDefault`, gamelog_send_to_text());
   })
+  let watchForNewDicePanel = new MutationObserver((mutations) => {
+    mutations.every(async (mutation) => {
+      if (!mutation.addedNodes) return
 
+      for (let i = 0; i < mutation.addedNodes.length; i++) {
+        if (watchForNewDicePanel.done)
+          continue;
+        let node = mutation.addedNodes[i]
+        if ((node.className == 'dice-rolling-panel' || $('.dice-rolling-panel').length > 0)) {
+          if ($('[data-floating-ui-portal]').length>0){
+            watchForNewDicePanel.done = 1;
+            watchForNewDicePanel.disconnect();
+            $('[data-floating-ui-portal], .roll-mod-container').addClass('hidden');
+            await $("[class*='DiceContainer_button']").click(); // initialize dice panel so first roll doesn't fail
+            setTimeout(() => {
+              $("[class*='DiceContainer_button']").click();//close dice panel
+              clearTimeout(window.diceRoller.diceRollButtonHide);
+              window.diceRoller.diceRollButtonHide = setTimeout(() => {
+                $('[data-floating-ui-portal], .roll-mod-container').removeClass('hidden');
+                $('[data-floating-ui-portal]').off('click.waiting').on('click.waiting', `[data-dd-action-name="Roll Dice Popup > Roll Dice"]`, function () {
+                  window.diceRoller.setWaitingForRoll();
+                })
+              }, 200)
+            }, 200);
+            watchForNewDicePanel.disconnect();
+            return false;
+          }
 
+        }
+      }
+      return true // must return true if doesn't break
+    })
+  });
+  watchForNewDicePanel.observe(document.body, { childList: true, subtree: true, attributes: false, characterData: false });
   let gamelogObserver = new MutationObserver((mutations) => {
     mutations.every((mutation) => {
       if (!mutation.addedNodes) return

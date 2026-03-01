@@ -8495,6 +8495,9 @@ button#changeTokenImage:before{
 .sidebar-modal{
     overscroll-behavior: contain;
 }
+[class*='styles_gameLogPane'] *{
+    overscroll-behavior: auto;
+}
 .VTTToken:not(.freeform) .hpvisualbar:before{
     display: var(--token-hpbar-display);
     transition: none;
