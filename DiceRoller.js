@@ -1035,8 +1035,8 @@ class DiceRoller {
             if (ddbMessage.data?.context?.avatarUrl?.startsWith("above-bucket-not-a-url")) {
                 ddbMessage.data.context.avatarUrl = await getAvttStorageUrl(ddbMessage.data.context.avatarUrl, true)
             }
-
-            ddbMessage = await this.#swapRollData(ddbMessage)
+            if(newDice)
+                ddbMessage = await this.#swapRollData(ddbMessage)
             this.ddbDispatch(ddbMessage);
             if(newDice){
                 await this.#resetVariables();
