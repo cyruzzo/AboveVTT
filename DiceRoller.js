@@ -566,8 +566,11 @@ class DiceRoller {
                 return;
             }
             let self = this;
+            // we're about to roll dice so we need to know if we should capture DDB messages.
+            // This also blocks other attempts to roll until we've finished processing
+            // don't hold a reference to the object we were given in case it gets altered while we're waiting.
+            this.#resetVariables();
             this.setWaitingForRoll();
-           
             let msgdata = {}
             diceRoll.expression = diceRoll.expression.replaceAll(/$\+0|\+0(\D)/gi, '$1')
             let roll = new rpgDiceRoller.DiceRoll(diceRoll.expression); 
@@ -752,11 +755,7 @@ class DiceRoller {
             console.group("DiceRoller.parseAndRoll");
             console.log("attempting to parse diceRoll", diceRoll);
 
-            this.#resetVariables();
-            // we're about to roll dice so we need to know if we should capture DDB messages.
-            // This also blocks other attempts to roll until we've finished processing
-            // don't hold a reference to the object we were given in case it gets altered while we're waiting.
-            this.setWaitingForRoll();
+
             this.#pendingDiceRoll = new DiceRoll(diceRoll.expression, diceRoll.action, diceRoll.rollType, diceRoll.name, diceRoll.avatarUrl, diceRoll.entityType, diceRoll.entityId);
             this.#pendingCritRange = critRange;
             this.#pendingCritType = critType;
