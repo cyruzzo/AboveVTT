@@ -1538,7 +1538,7 @@ function observe_character_sheet_changes(documentToObserve) {
             await $("[class*='DiceContainer_button']").click(); // initialize dice panel so first roll doesn't fail
             setTimeout(() => {
               $("[class*='DiceContainer_button']").click();//close dice panel
-              clearTimeout(window.diceRoller.diceRollButtonHide);
+              clearTimeout(window.diceRoller?.diceRollButtonHide);
               window.diceRoller.diceRollButtonHide = setTimeout(() => {
                 $('[data-floating-ui-portal], .roll-mod-container').removeClass('hidden');
                 $('[data-floating-ui-portal]').off('click.waiting').on('click.waiting', `[data-dd-action-name="Roll Dice Popup > Roll Dice"]`, function () {
@@ -2769,7 +2769,12 @@ function observe_character_sheet_changes(documentToObserve) {
           })
         }
         
-         
+        if (mutationTarget.is('.ct-sidebar__inner') || $(mutation.addedNodes[0]).hasClass('ct-sidebar__pane-default') || $(mutation.addedNodes[0]).hasClass('ct-reset-pane') || $(mutation.addedNodes[0]).is("[class*='styles_gameLogPane']")) {
+          if (is_abovevtt_page()) {
+            inject_chat_buttons();
+          }
+          window.MB.reprocess_chat_message_history();
+        }
 
         if(is_abovevtt_page()){
            
@@ -2777,11 +2782,6 @@ function observe_character_sheet_changes(documentToObserve) {
           if (mutationTarget.is('.ct-sidebar__pane-content, .ct-sidebar__inner [class*="styles_content"]>div')){
              // The user clicked on something that shows details. Open the sidebar and show it
             show_sidebar(false); 
-          }
-            
-          if ($(mutation.addedNodes[0]).hasClass('ct-sidebar__pane-default') || $(mutation.addedNodes[0]).hasClass('ct-reset-pane') || $(mutation.addedNodes[0]).is("[class*='styles_gameLogPane']")) {
-            inject_chat_buttons();
-            window.MB.reprocess_chat_message_history();
           }
 
         
@@ -2947,8 +2947,8 @@ function observe_non_sheet_changes(documentToObserve) {
             }
             gameLogButton.click();
           }
-          if(abovePage)
-           window.MB.reprocess_chat_message_history();
+          
+          window.MB.reprocess_chat_message_history();
         }
       }
       catch{

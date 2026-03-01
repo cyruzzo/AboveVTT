@@ -666,7 +666,8 @@ class DiceRoller {
                   playerId: window.PLAYER_ID,
                   sendTo: window.sendToTab,
                   entityType: diceRoll.entityType,
-                  entityId: diceRoll.entityId
+                  entityId: diceRoll.entityId,
+                  disableDDBDice: !ddb3dDiceShareToggle
                 };
                 if(rollType == 'attack' || rollType == 'to hit' || rollType == 'tohit'){     
                     if(critSuccess == true){
