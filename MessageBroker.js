@@ -1308,15 +1308,6 @@ class MessageBroker {
 			if (msg.eventType == "dice/roll/fulfilled") {
 				notify_gamelog();
 				const gamelogItem = $(`ol[class*='-GameLogEntries'] li`).first();
-				if (window.tempStoreMessages?.[msg.data?.rollId] != undefined) {
-					//prevent ddb double messages due to new dice sending fulfilled messages from other open streams
-					msg = window.tempStoreMessages[msg.data.rollId];
-				}
-				if (msg.avttExpression !== undefined && msg.avttExpressionResult !== undefined) {
-					gamelogItem.attr("data-avtt-expression", msg.avttExpression);
-					gamelogItem.attr("data-avtt-expression-result", msg.avttExpressionResult);
-					replace_gamelog_message_expressions(gamelogItem);
-				}
 
 
 				if (msg.data.rolls != undefined) {
@@ -1398,6 +1389,12 @@ class MessageBroker {
 							}
 						}
 						if (target != undefined) {
+							if (msg.avttExpression !== undefined && msg.avttExpressionResult !== undefined) {
+								target.attr("data-avtt-expression", msg.avttExpression);
+								target.attr("data-avtt-expression-result", msg.avttExpressionResult);
+								replace_gamelog_message_expressions(target);
+							}
+
 							let allRollsTotal = 0;
 							for (let i = 0; i < msg.data.rolls.length; i++) {
 								let row = i

@@ -1045,7 +1045,6 @@ class DiceRoller {
                 this.nextRollTimeout = setTimeout(function(){
                     self.nextRoll(self.#pendingMessages[ddbMessage.data.rollId].ddbMessage, self.#pendingMessages[ddbMessage.data.rollId].pendingCritRange, self.#pendingMessages[ddbMessage.data.rollId].pendingCritType, self.#pendingMessages[ddbMessage.data.rollId].pendingDamageType);
                 }, 60)
-
             }
 
         } else if (!newDice && message.eventType === "dice/roll/fulfilled" && this.#pendingMessages[message.data.rollId] !== undefined) {
