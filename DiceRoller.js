@@ -472,6 +472,7 @@ class DiceRoller {
     /// PRIVATE VARIABLES
     #pendingDiceRoll = undefined;
     #pendingMessages = {};
+    #orderedPendingIds = [];
     #timeoutId = undefined;
     #multirollTimeout = undefined;
     #multiRollArray = [];
@@ -940,7 +941,26 @@ class DiceRoller {
         this.#pendingCrit = undefined;
         this.#pendingSendTo = undefined;
     }
-
+    async sendFulfilled() {
+        if (this.#orderedPendingIds.length == 0)
+            return;
+        const firstPending = this.#orderedPendingIds.shift(); // we don't use current fulfilled messages as they dont always come in in order due to time it take dice to roll, modify the deferred message in order instead
+        const newId = uuid();
+        const message = { ...this.#pendingMessages[firstPending].ddbMessage, eventType: "dice/roll/fulfilled", id: newId };
+        console.log("capturing fulfilled message: ", message)
+        let alteredMessage = await this.#swapRollData(message);
+        if (alteredMessage.data?.context?.avatarUrl?.startsWith("above-bucket-not-a-url")) {
+            alteredMessage.data.context.avatarUrl = await getAvttStorageUrl(alteredMessage.data.context.avatarUrl, true)
+        }
+        console.log("altered fulfilled message: ", alteredMessage);
+        alteredMessage.dateTime = this.#pendingMessages[firstPending]?.ddbMessage?.dateTime || Date.now();
+        this.ddbDispatch(alteredMessage);
+        this.#pendingMessages[firstPending] = null;
+        delete this.#pendingMessages[firstPending];
+        if (this.#orderedPendingIds.length > 0) {
+            this.sendFulfilled();
+        }
+    }
     /** wraps all messages that are sent by DDB, and processes any that we need to process, else passes it along as-is */
     async #wrappedDispatch(message) {
         const newDice = $("[class*='DiceContainer_button']").length > 0
@@ -963,16 +983,7 @@ class DiceRoller {
                     this.ddbDispatch(message);
                     return;
                 }
-                console.log("capturing fulfilled message: ", message)
-                let alteredMessage = await this.#swapRollData(message);
-                if (alteredMessage.data?.context?.avatarUrl?.startsWith("above-bucket-not-a-url")) {
-                    alteredMessage.data.context.avatarUrl = await getAvttStorageUrl(alteredMessage.data.context.avatarUrl, true)
-                }
-                console.log("altered fulfilled message: ", alteredMessage);          
-                alteredMessage.dateTime = this.#pendingMessages[message.data.rollId]?.ddbMessage?.dateTime || Date.now();
-                this.ddbDispatch(alteredMessage);
-                this.#pendingMessages[message.data.rollId] = null;
-                delete this.#pendingMessages[message.data.rollId];
+                this.sendFulfilled();           
             } else{
                console.debug("swap image only, not capturing: ", message);
                let ddbMessage = { ...message };
@@ -1031,6 +1042,7 @@ class DiceRoller {
                 pendingCritRange: this.#pendingCritRange,
                 pendingCritType: this.#pendingCritType
             };
+            this.#orderedPendingIds.push(ddbMessage.data.rollId);
             await this.#swapDiceRollMetadata(ddbMessage);
             if (ddbMessage.data?.context?.avatarUrl?.startsWith("above-bucket-not-a-url")) {
                 ddbMessage.data.context.avatarUrl = await getAvttStorageUrl(ddbMessage.data.context.avatarUrl, true)
