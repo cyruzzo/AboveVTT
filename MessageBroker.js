@@ -1305,136 +1305,135 @@ class MessageBroker {
 				peer.setRemoteDescription(msg.data.answer);
 				console.log("fatto setRemoteDescription");
 			}
-			
 			if (msg.eventType == "dice/roll/fulfilled") {
 				notify_gamelog();
-				const gamelogItem = $(`ol[class*='-GameLogEntries'] li`).first(); 
-				if(window.tempStoreMessages?.[msg.data?.rollId] != undefined){
+				const gamelogItem = $(`ol[class*='-GameLogEntries'] li`).first();
+				if (window.tempStoreMessages?.[msg.data?.rollId] != undefined) {
 					//prevent ddb double messages due to new dice sending fulfilled messages from other open streams
 					msg = window.tempStoreMessages[msg.data.rollId];
 				}
-				if (msg.avttExpression !== undefined && msg.avttExpressionResult !== undefined) {	
+				if (msg.avttExpression !== undefined && msg.avttExpressionResult !== undefined) {
 					gamelogItem.attr("data-avtt-expression", msg.avttExpression);
 					gamelogItem.attr("data-avtt-expression-result", msg.avttExpressionResult);
 					replace_gamelog_message_expressions(gamelogItem);
 				}
 
 
-				if(msg.data.rolls != undefined){
+				if (msg.data.rolls != undefined) {
 					let critSuccess = {};
 					let critFail = {};
 
 
-					for(let i=0; i<msg.data.rolls.length; i++){
+					for (let i = 0; i < msg.data.rolls.length; i++) {
 						let roll = msg.data.rolls[i];
 						critSuccess[i] = false;
 						critFail[i] = false;
 
-						for (let j=0; j<roll.diceNotation.set.length; j++){
-							for(let k=0; k<roll.diceNotation.set[j].dice.length; k++){
+						for (let j = 0; j < roll.diceNotation.set.length; j++) {
+							for (let k = 0; k < roll.diceNotation.set[j].dice.length; k++) {
 								let reduceCrit = 0;
-								if(parseInt(roll.diceNotation.set[j].dice[k].dieType.replace('d', '')) == 20){
-                  					reduceCrit = 20 - msg.data.critRange;
+								if (parseInt(roll.diceNotation.set[j].dice[k].dieType.replace('d', '')) == 20) {
+									reduceCrit = 20 - msg.data.critRange;
 								}
-								else if(msg.data.rolls[0].rollType == 'attack' || msg.data.rolls[0].rollType == 'to hit' || msg.data.rolls[0].rollType == 'tohit' ){
+								else if (msg.data.rolls[0].rollType == 'attack' || msg.data.rolls[0].rollType == 'to hit' || msg.data.rolls[0].rollType == 'tohit') {
 									continue;
 								}
-								if(roll.diceNotation.set[j].dice[k].dieValue >= parseInt(roll.diceNotation.set[j].dice[k].dieType.replace('d', ''))-reduceCrit && roll.result.values.includes(roll.diceNotation.set[j].dice[k].dieValue)){
-									if(roll.rollKind == 'advantage'){
-										if(k>0 && roll.diceNotation.set[j].dice[k-1].dieValue <= roll.diceNotation.set[j].dice[k].dieValue){
+								if (roll.diceNotation.set[j].dice[k].dieValue >= parseInt(roll.diceNotation.set[j].dice[k].dieType.replace('d', '')) - reduceCrit && roll.result.values.includes(roll.diceNotation.set[j].dice[k].dieValue)) {
+									if (roll.rollKind == 'advantage') {
+										if (k > 0 && roll.diceNotation.set[j].dice[k - 1].dieValue <= roll.diceNotation.set[j].dice[k].dieValue) {
 											critSuccess[i] = true;
 										}
-										else if(k==0 && roll.diceNotation.set[j].dice[k+1].dieValue <= roll.diceNotation.set[j].dice[k].dieValue){
+										else if (k == 0 && roll.diceNotation.set[j].dice[k + 1].dieValue <= roll.diceNotation.set[j].dice[k].dieValue) {
 											critSuccess[i] = true;
 										}
 									}
-									else if(roll.rollKind == 'disadvantage' && roll.diceNotation.set[j].dice[1].dieValue == roll.diceNotation.set[j].dice[0].dieValue){
+									else if (roll.rollKind == 'disadvantage' && roll.diceNotation.set[j].dice[1].dieValue == roll.diceNotation.set[j].dice[0].dieValue) {
 										critSuccess[i] = true;
 									}
-									else if(roll.rollKind != 'disadvantage'){
+									else if (roll.rollKind != 'disadvantage') {
 										critSuccess[i] = true;
-									}		
+									}
 								}
-								else if(roll.diceNotation.set[j].dice[k].dieValue == 1 && roll.result.values.includes(roll.diceNotation.set[j].dice[k].dieValue)){
-									if(roll.rollKind == 'disadvantage'){
-										if(k>0 && roll.diceNotation.set[j].dice[k-1].dieValue >= roll.diceNotation.set[j].dice[k].dieValue){
+								else if (roll.diceNotation.set[j].dice[k].dieValue == 1 && roll.result.values.includes(roll.diceNotation.set[j].dice[k].dieValue)) {
+									if (roll.rollKind == 'disadvantage') {
+										if (k > 0 && roll.diceNotation.set[j].dice[k - 1].dieValue >= roll.diceNotation.set[j].dice[k].dieValue) {
 											critFail[i] = true;
 										}
-										else if(k==0 && roll.diceNotation.set[j].dice[k+1].dieValue >= roll.diceNotation.set[j].dice[k].dieValue){
+										else if (k == 0 && roll.diceNotation.set[j].dice[k + 1].dieValue >= roll.diceNotation.set[j].dice[k].dieValue) {
 											critFail[i] = true;
 										}
 									}
-									else if(roll.rollKind == 'advantage' && roll.diceNotation.set[j].dice[1].dieValue == roll.diceNotation.set[j].dice[0].dieValue){
+									else if (roll.rollKind == 'advantage' && roll.diceNotation.set[j].dice[1].dieValue == roll.diceNotation.set[j].dice[0].dieValue) {
 										critFail[i] = true;
 									}
-									else if(roll.rollKind != 'advantage'){
+									else if (roll.rollKind != 'advantage') {
 										critFail[i] = true;
-									}		
+									}
 								}
 							}
 						}
 					}
 
 
-					setTimeout(function(){
+					setTimeout(function () {
 						let target;
 						let listItems = $(`ol>li[class*='GameLogEntry']`);
-						for(let i = 0; i<listItems.length; i++){
-							if($(listItems[i]).find('[class*="Pending"]').length > 0)
+						for (let i = 0; i < listItems.length; i++) {
+							if ($(listItems[i]).find('[class*="Pending"]').length > 0)
 								continue;
-							if(target != undefined)
+							if (target != undefined)
 								break;
-							for(let j = 0; j < msg.data.rolls.length; j++){
-								if(target != undefined)
-										break;
+							for (let j = 0; j < msg.data.rolls.length; j++) {
+								if (target != undefined)
+									break;
 								let totals = $(listItems[i]).find(`[class*='TotalContainer-Flex']>div[class*='Total-']`);
-								if(totals.length == msg.data.rolls.length){
-									for(let k = 0; k<totals.length; k++){
-											if(parseInt($(totals[k]).find('span').text()) != msg.data.rolls[k].result.total)
-												break;
-											target = $(listItems[i]);
+								if (totals.length == msg.data.rolls.length) {
+									for (let k = 0; k < totals.length; k++) {
+										if (parseInt($(totals[k]).find('span').text()) != msg.data.rolls[k].result.total)
+											break;
+										target = $(listItems[i]);
 									}
-									
+
 								}
-							}		
+							}
 						}
-						if(target != undefined){
+						if (target != undefined) {
 							let allRollsTotal = 0;
-							for(let i = 0; i<msg.data.rolls.length; i++){
+							for (let i = 0; i < msg.data.rolls.length; i++) {
 								let row = i
-								if(!target.attr('class').includes('-Collapsed-ref')){
-									row = row*2+1
-								}else{
+								if (!target.attr('class').includes('-Collapsed-ref')) {
+									row = row * 2 + 1
+								} else {
 									row++;
 								}
 								target.find(`[class*='DiceResultContainer']:nth-of-type(${row})`).toggleClass(`${critSuccess[i] && critFail[i] ? 'crit-mixed' : critSuccess[i] ? 'crit-success' : critFail[i] ? 'crit-fail' : ''}`, true)
-								if(msg.avttSpellSave !== undefined){
-							
+								if (msg.avttSpellSave !== undefined) {
+
 									let totalContainer = target.find(`[class*='DiceResultContainer']:nth-of-type(${row}) [class*='TotalContainer-Flex']`);
-							    if (totalContainer.length > 0) {
-							        let spellSave = msg.avttSpellSave;
-							        if (spellSave !== undefined && spellSave.length > 0) {
-							            totalContainer.append(`${spellSave != undefined ? `<div class='custom-spell-save-text'><span class='data-spellSave' data-avtt-spellSave='${spellSave}'>${spellSave}</span></div>` : ''}`);
-							        }
-							    }
+									if (totalContainer.length > 0) {
+										let spellSave = msg.avttSpellSave;
+										if (spellSave !== undefined && spellSave.length > 0) {
+											totalContainer.append(`${spellSave != undefined ? `<div class='custom-spell-save-text'><span class='data-spellSave' data-avtt-spellSave='${spellSave}'>${spellSave}</span></div>` : ''}`);
+										}
+									}
 								}
-								if(msg.avttDamageType !== undefined){
-							
+								if (msg.avttDamageType !== undefined) {
+
 									let damageContainer = target.find(`[class*='DiceResultContainer']:nth-of-type(${row}) [class*='Line-Title']>[class*='-RollType']`);
-							    if (damageContainer.length > 0) {
-							        let damageType = msg.avttDamageType;
-							        if (damageType !== undefined && damageType.length > 0) {
-							            damageContainer.text(`${damageType} ${damageContainer.text()}`)
-							        }
-							    }
+									if (damageContainer.length > 0) {
+										let damageType = msg.avttDamageType;
+										if (damageType !== undefined && damageType.length > 0) {
+											damageContainer.text(`${damageType} ${damageContainer.text()}`)
+										}
+									}
 								}
 								allRollsTotal += msg.data.rolls[i].result.total;
 							}
 
-							if(window.DM){
+							if (window.DM) {
 								let rollType = msg.data.rolls[0].rollType.toLowerCase();
 								let rollAction = msg.data.action.toLowerCase();
-								if(rollType != undefined && rollAction != 'initiative' && rollType != "tohit" && rollType != "attack" && rollType != "to hit" && rollType != "save" && rollType != "skill" && rollType != "check" && window.DM){
+								if (rollType != undefined && rollAction != 'initiative' && rollType != "tohit" && rollType != "attack" && rollType != "to hit" && rollType != "save" && rollType != "skill" && rollType != "check" && window.DM) {
 									let damageButtonContainer = $(`<div class='damageButtonsContainer'></div>`);
 									let damageSVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" class="ddbc-svg ddbc-combat-attack__icon-img--weapon-melee ddbc-attack-type-icon ddbc-attack-type-icon--1-1"><path class="prefix__st0" d="M237.9 515.1s-.1-.1 0 0c2-2.7 4.3-5.8 5.3-8.4 0 0-3.8 2.4-7.8 6.1.5.6 1.8 1.7 2.5 2.3zM231.4 517.8c-.2-.2-1.5-1.6-1.5-1.6l-1.6 1 2.4 2.6-3.7 4.6 1 1 3.7-4.3 1.1.9c.4-.5.8-.9 1.2-1.4l.2-.2c-1-.8-1.9-1.7-2.8-2.6zM0 0s6.1 5.8 12.2 11.5l1.4-2.2 1.8 1.3-2.9 2.5 3.7 4.6-1 1-3.7-4.3-2.8 2.5-1.3-1 2-1.6C9.4 14.2 2.2 5.6 0 0z"></path></svg>`
 									let healSVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" class="ddbc-svg ddbc-attunement-svg ddbc-healing-icon__icon"><path d="M9.2,2.9c3.4-6.9,13.8,0,6.9,6.9c-6.9,6.9-6.9,10.4-6.9,10.4s0-3.5-6.9-10.4C-4.6,2.9,5.8-4,9.2,2.9"></path></svg>`
@@ -1445,65 +1444,65 @@ class MessageBroker {
 									let healDamage = $(`<button class='applyDamageButton heal'>${healSVG}</button>`);
 
 
-									damageButtonContainer.off('click.damage').on('click.damage', 'button', function(e){
+									damageButtonContainer.off('click.damage').on('click.damage', 'button', function (e) {
 										const clicked = $(e.currentTarget);
 
 										let damage = allRollsTotal;
-										if(clicked.hasClass('resist')){
-											damage = Math.max(1, Math.floor(damage/2));
+										if (clicked.hasClass('resist')) {
+											damage = Math.max(1, Math.floor(damage / 2));
 										}
 										else if (clicked.hasClass('resist-save')) {
 											damage = Math.max(1, Math.floor(damage / 4));
 										}
-										else if(clicked.hasClass('vulnerable')){
-											damage = damage*2;
+										else if (clicked.hasClass('vulnerable')) {
+											damage = damage * 2;
 										}
-										else if(clicked.hasClass('heal')){
-											damage = -1*damage;
+										else if (clicked.hasClass('heal')) {
+											damage = -1 * damage;
 										}
 
-										if(is_gamelog_popout()){
+										if (is_gamelog_popout()) {
 											tabCommunicationChannel.postMessage({
 												msgType: 'gamelogDamageButtons',
 												damage: damage
 											});
 											return;
 										}
-										if($(`.tokenselected:not([data-id*='profile'])`).length == 0){
+										if ($(`.tokenselected:not([data-id*='profile'])`).length == 0) {
 											showTempMessage('No non-player tokens selected');
 										}
-										for(let i=0; i<window.CURRENTLY_SELECTED_TOKENS.length; i++){
+										for (let i = 0; i < window.CURRENTLY_SELECTED_TOKENS.length; i++) {
 
 											let id = window.CURRENTLY_SELECTED_TOKENS[i];
 											let token = window.TOKEN_OBJECTS[id];
-											if(token.isPlayer() || token.isAoe())
+											if (token.isPlayer() || token.isAoe())
 												continue;
 											let newHp = Math.max(0, parseInt(token.hp) - parseInt(damage));
 
-											if(window.all_token_objects[id] != undefined){
+											if (window.all_token_objects[id] != undefined) {
 												window.all_token_objects[id].hp = newHp;
-											}			
-											if(token != undefined){		
+											}
+											if (token != undefined) {
 												token.hp = newHp;
 												token.place_sync_persist()
-												addFloatingCombatText(id, damage, damage<0);
-											}		
+												addFloatingCombatText(id, damage, damage < 0);
+											}
 										}
 
 									})
-									if(rollType == 'damage'){
+									if (rollType == 'damage') {
 										damageButtonContainer.append(damageButton, halfDamage, quarterDamage, doubleDamage);
 									}
-									else if(rollType == 'heal'){
+									else if (rollType == 'heal') {
 										damageButtonContainer.append(healDamage);
 									}
-									else{
+									else {
 										damageButtonContainer.append(damageButton, halfDamage, quarterDamage, doubleDamage, healDamage);
 									}
-								
+
 									target.find(`[class*='MessageContainer-Flex']`).append(damageButtonContainer);
-									
-									
+
+
 								}
 								// CHECK FOR SELF ROLLS ADD SEND TO EVERYONE BUTTON
 								if (msg.messageScope === "userId" && target.find(".gamelog-to-everyone-button").length === 0) {
@@ -1522,58 +1521,57 @@ class MessageBroker {
 							}
 
 						}
-						
+
 					}, 100)
 				}
-				
-				
+
+
 				if (!window.DM)
 					return;
-				
+
 				// CHECK FOR INIT ROLLS (auto add to combat tracker)
 				if (msg.data.action.toLowerCase() == "initiative") {
 					console.log(msg.data);
 					let total = parseFloat(msg.data.rolls[0].result.total);
 					let entityid = msg.data.context.entityId;
-					
+
 					let monsterTokenExists = window.TOKEN_OBJECTS[entityid] != undefined;
-					let playerExists = window.pcs.filter(d=> d.characterId == entityid).length>0;
-					if(monsterTokenExists || playerExists){
-						if(msg.data.context?.entityType == 'monster'){
+					let playerExists = window.pcs.filter(d => d.characterId == entityid).length > 0;
+					if (monsterTokenExists || playerExists) {
+						if (msg.data.context?.entityType == 'monster') {
 							let monsterid = window.TOKEN_OBJECTS[entityid]?.options?.monster
-							if(monsterid =='open5e')
-							{
-								window.StatHandler.getStat(monsterid, function(data) {
-									total = parseFloat(total + data.stats[1].value/100).toFixed(2);
+							if (monsterid == 'open5e') {
+								window.StatHandler.getStat(monsterid, function (data) {
+									total = parseFloat(total + data.stats[1].value / 100).toFixed(2);
 								}, window.TOKEN_OBJECTS[entityid]?.options?.itemId);
 							}
-							else if(monsterid =='customStat'){
-								let decimalAdd = (window.TOKEN_OBJECTS[entityid]?.options?.customInit != undefined || (window.TOKEN_OBJECTS[entityid]?.options?.customStat != undefined && window.TOKEN_OBJECTS[entityid]?.options?.customStat[1]?.mod != undefined)) ? ((window.TOKEN_OBJECTS[entityid]?.options?.customStat[1]?.mod*2)+10)/100 : 0
+							else if (monsterid == 'customStat') {
+								let decimalAdd = (window.TOKEN_OBJECTS[entityid]?.options?.customInit != undefined || (window.TOKEN_OBJECTS[entityid]?.options?.customStat != undefined && window.TOKEN_OBJECTS[entityid]?.options?.customStat[1]?.mod != undefined)) ? ((window.TOKEN_OBJECTS[entityid]?.options?.customStat[1]?.mod * 2) + 10) / 100 : 0
 								total = parseFloat(total + decimalAdd).toFixed(2);
 							}
-							else{
-								window.StatHandler.getStat(monsterid, function(stat) {
-										total = parseFloat(total + stat.data.stats[1].value/100).toFixed(2);
+							else {
+								window.StatHandler.getStat(monsterid, function (stat) {
+									total = parseFloat(total + stat.data.stats[1].value / 100).toFixed(2);
 								}, window.TOKEN_OBJECTS[entityid]?.options?.itemId);
 							}
 						}
-						else{
-							let dexScore = window.pcs.filter(d=> d.characterId == entityid)[0].abilities[1].score;		
-							if(dexScore){
-								total = parseFloat(total + dexScore/100).toFixed(2);
+						else {
+							let dexScore = window.pcs.filter(d => d.characterId == entityid)[0].abilities[1].score;
+							if (dexScore) {
+								total = parseFloat(total + dexScore / 100).toFixed(2);
 							}
 						}
-						
+
 						let combatSettingData = getCombatTrackerSettings();
-						if(combatSettingData['tie_breaker'] !='1'){
+						if (combatSettingData['tie_breaker'] != '1') {
 							total = parseInt(total);
 						}
 
-						
+
 						$("#tokens .VTTToken").each(
-							function(){
+							function () {
 								let converted = $(this).attr('data-id').replace(/^.*\/([0-9]*)$/, "$1"); // profiles/ciccio/1234 -> 1234
-								if(converted==entityid){
+								if (converted == entityid) {
 									ct_add_token(window.TOKEN_OBJECTS[$(this).attr('data-id')]);
 									window.all_token_objects[$(this).attr('data-id')].options.init = total;
 									window.TOKEN_OBJECTS[$(this).attr('data-id')].options.init = total;
@@ -1582,7 +1580,7 @@ class MessageBroker {
 							}
 						);
 
-						$("#combat_area tr").each(function() {
+						$("#combat_area tr").each(function () {
 							let converted = $(this).attr('data-target').replace(/^.*\/([0-9]*)$/, "$1"); // profiles/ciccio/1234 -> 1234
 							if (converted == entityid) {
 								$(this).find(".init").val(total);
@@ -1593,10 +1591,11 @@ class MessageBroker {
 						});
 						debounceCombatReorder(true);
 					}
-					
+
 				}
-				
+
 			}
+
 
 			if (msg.eventType === "custom/myVTT/peerReady") {
 				window.PeerManager.receivedPeerReady(msg);
