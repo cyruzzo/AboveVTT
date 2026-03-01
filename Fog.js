@@ -4602,29 +4602,33 @@ function drawing_mouseup(e) {
 			let curr = window.TOKEN_OBJECTS[id];
 
 
-			let tokenImageRect = $("#tokens>div[data-id='" + curr.options.id + "'] .token-image")[0].getBoundingClientRect();	
-			let size = window.TOKEN_OBJECTS[curr.options.id].options.size;	
-			let toktop = (parseInt(tokenImageRect.top) + window.scrollY - window.VTTMargin) * (1.0 / window.ZOOM);
-			let tokleft = (parseInt(tokenImageRect.left)  + window.scrollX - window.VTTMargin) * (1.0 / window.ZOOM);
-			let tokright = (parseInt(tokenImageRect.right) + window.scrollX - window.VTTMargin) * (1.0 / window.ZOOM);
-			let tokbottom = (parseInt(tokenImageRect.bottom) + window.scrollY - window.VTTMargin) * (1.0 / window.ZOOM);
-			let scaledRemainderTop = (tokbottom-toktop-size)/2;
-			let scaledRemainderLeft = (tokright-tokleft-size)/2;
-			if(window.TOKEN_OBJECTS[curr.options.id].options.tokenStyleSelect == 'circle' || window.TOKEN_OBJECTS[curr.options.id].options.tokenStyleSelect == 'square' || $("#tokens>div[data-id='" + curr.options.id + "']").hasClass("isAoe")){
-				scaledRemainderTop = 0;
-				scaledRemainderLeft = 0;
-			}
-			if (Math.min(window.BEGIN_MOUSEY, mouseY, tokbottom-scaledRemainderTop) == tokbottom-scaledRemainderTop || Math.max(window.BEGIN_MOUSEY, mouseY, toktop+scaledRemainderTop) == toktop+scaledRemainderTop)
-				continue;
-			if (Math.min(window.BEGIN_MOUSEX, mouseX, tokright-scaledRemainderLeft) == tokright-scaledRemainderLeft || Math.max(window.BEGIN_MOUSEX, mouseX, tokleft+scaledRemainderLeft) == tokleft+scaledRemainderLeft)
-				continue;
+			// Optional chaining and condition implemented to stop errors with lair tokens, as lair tokens are 'created' in window.TOKEN_OBJECTS,
+			// but not placed on the map, and thus do not have a token image element to get the bounding rect of.
+			let tokenImageRect = $("#tokens>div[data-id='" + curr.options.id + "'] .token-image")[0]?.getBoundingClientRect();	
+			if(tokenImageRect){
+				let size = window.TOKEN_OBJECTS[curr.options.id].options.size;	
+				let toktop = (parseInt(tokenImageRect.top) + window.scrollY - window.VTTMargin) * (1.0 / window.ZOOM);
+				let tokleft = (parseInt(tokenImageRect.left)  + window.scrollX - window.VTTMargin) * (1.0 / window.ZOOM);
+				let tokright = (parseInt(tokenImageRect.right) + window.scrollX - window.VTTMargin) * (1.0 / window.ZOOM);
+				let tokbottom = (parseInt(tokenImageRect.bottom) + window.scrollY - window.VTTMargin) * (1.0 / window.ZOOM);
+				let scaledRemainderTop = (tokbottom-toktop-size)/2;
+				let scaledRemainderLeft = (tokright-tokleft-size)/2;
+				if(window.TOKEN_OBJECTS[curr.options.id].options.tokenStyleSelect == 'circle' || window.TOKEN_OBJECTS[curr.options.id].options.tokenStyleSelect == 'square' || $("#tokens>div[data-id='" + curr.options.id + "']").hasClass("isAoe")){
+					scaledRemainderTop = 0;
+					scaledRemainderLeft = 0;
+				}
+				if (Math.min(window.BEGIN_MOUSEY, mouseY, tokbottom-scaledRemainderTop) == tokbottom-scaledRemainderTop || Math.max(window.BEGIN_MOUSEY, mouseY, toktop+scaledRemainderTop) == toktop+scaledRemainderTop)
+					continue;
+				if (Math.min(window.BEGIN_MOUSEX, mouseX, tokright-scaledRemainderLeft) == tokright-scaledRemainderLeft || Math.max(window.BEGIN_MOUSEX, mouseX, tokleft+scaledRemainderLeft) == tokleft+scaledRemainderLeft)
+					continue;
 
-			c++;
-			// TOKEN IS INSIDE THE SELECTION
-			if (window.DM || !curr.options.hidden) {
-				let tokenDiv = curr.isLineAoe() ? $(`#tokens>div[data-id='${curr.options.id}'] [data-img]`) : $(`#tokens>div[data-id='${curr.options.id}']`)
-				if(tokenDiv.css("pointer-events")!="none" && tokenDiv.css("display")!="none" && !tokenDiv.hasClass("ui-draggable-disabled")) {
-					curr.selected = true;
+				c++;
+				// TOKEN IS INSIDE THE SELECTION
+				if (window.DM || !curr.options.hidden) {
+					let tokenDiv = curr.isLineAoe() ? $(`#tokens>div[data-id='${curr.options.id}'] [data-img]`) : $(`#tokens>div[data-id='${curr.options.id}']`)
+					if(tokenDiv.css("pointer-events")!="none" && tokenDiv.css("display")!="none" && !tokenDiv.hasClass("ui-draggable-disabled")) {
+						curr.selected = true;
+					}
 				}
 			}
 
