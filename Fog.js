@@ -1299,6 +1299,18 @@ function redraw_grid(hpps=null, vpps=null, offsetX=null, offsetY=null, color=nul
 	draw_svg_grid(null, hpps, vpps, offsetX, offsetY, color, lineWidth, subdivide, dash);	
 }
 
+function draw_select_box(x0, y0, w, h, inside=false) {
+	const sf = window.CURRENT_SCENE_DATA.scale_factor || 1.0;	
+	const rect = document.getElementById('dragbox-rect')
+	rect.setAttribute('transform', `translate(${x0 / sf}, ${y0 / sf}) scale(${w / sf}, ${h / sf})`);
+	document.getElementById('dragbox-inside')?.setAttribute('visibility', inside ? 'visible' : 'hidden');				
+	rect.setAttribute('visibility', 'visible');				
+}
+function hide_select_box() {
+	document.getElementById('dragbox-rect')?.setAttribute('visibility', 'hidden');
+	document.getElementById('dragbox-inside')?.setAttribute('visibility', 'hidden');			
+}
+		
 function hide_wizarding_box() {
 	const grid = document.getElementById('wizbox-grid');
 	const hex = document.getElementById('wizbox-hex');	
@@ -1359,7 +1371,7 @@ function reset_canvas(apply_zoom=true) {
 	$("#scene_map_container").css({"width": sceneMapWidth, "height": sceneMapHeight});
 	// grid overlay css tiling needs a container to fill that matches map
 	$("#grid_svg_overlay_container").css({"width": sceneMapWidth, "height": sceneMapHeight});
-	
+	$("#dragbox").css({"width": sceneMapWidth, "height": sceneMapHeight});	
 	ctxScale('peer_overlay', sceneMapWidth, sceneMapHeight);
 	ctxScale('temp_overlay', sceneMapWidth, sceneMapHeight);
 	ctxScale('draw_overlay_under_fog_darkness', sceneMapWidth, sceneMapHeight, true);
@@ -3335,14 +3347,23 @@ function drawing_mousemove(e) {
 				redraw_light_walls(true, true);
 			}
 			else{
-				drawRect(window.temp_context,
-						window.BEGIN_MOUSEX,
-						window.BEGIN_MOUSEY,
-						width,
-						height,
-						window.DRAWCOLOR,
-						isFilled,
-						window.LINEWIDTH);
+				if (window.DRAWFUNCTION === "select" && e.originalEvent?.buttons == 1){
+					const selInside = (window.BEGIN_MOUSEY > mouseY)
+					$("#temp_overlay").css('cursor', selInside ? 'crosshair' : 'cell');
+					draw_select_box(window.BEGIN_MOUSEX,
+							window.BEGIN_MOUSEY,
+							width,
+							height, selInside);
+				} else {
+					drawRect(window.temp_context,
+						 window.BEGIN_MOUSEX,
+						 window.BEGIN_MOUSEY,
+						 width,
+						 height,
+						 window.DRAWCOLOR,
+						 isFilled,
+						 window.LINEWIDTH);
+				}
 			}
 		}
 		if (window.DRAWSHAPE === "text_erase") {
@@ -3584,6 +3605,7 @@ function isRotatedSquareInsideRect(rect, cx, cy, w, angle) {
  */
 function drawing_mouseup(e) {
 	$("#VTT").css('--grid-overlay-on-tmp', '0');
+	hide_select_box();
 	
 	// ignore this if we're dragging a token
 	if ($(".ui-draggable-dragging:not([data-clone-id])").length > 0) {
