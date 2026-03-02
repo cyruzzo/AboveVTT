@@ -2957,7 +2957,7 @@ function find_or_create_generic_draggable_window(id, titleBarText, addLoadingInd
     minHeight: 200
   });
 
-  container.on('mousedown', function(event) {
+  container.on('pointerdown', function(event) {
     frame_z_index_when_click($(event.currentTarget));
   });
 
@@ -3019,7 +3019,7 @@ function find_or_create_generic_draggable_window(id, titleBarText, addLoadingInd
 function close_and_cleanup_generic_draggable_window(id) {
   const container = id.startsWith("#") ? $(id) : $(`#${id}`);
   container.off('dblclick');
-  container.off('mousedown');
+  container.off('pointerdown');
   container.draggable('destroy');
   container.resizable('destroy');
   container.find('.title_bar_close_button').off('click');

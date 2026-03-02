@@ -497,8 +497,8 @@ function init_combat_tracker(){
 		minWidth: 215,
 		minHeight: 200
 	});
-	
-	$("#combat_tracker_inside").mousedown(function() {
+
+	$("#combat_tracker_inside").on("pointerdown", function() {
 		frame_z_index_when_click($(this));
 	});
 

@@ -3332,7 +3332,7 @@ function adjust_create_import_edit_container(content='', empty=true, title='', w
 			}
 		});
 		frame_z_index_when_click(mainContainer);
-		mainContainer.on('mousedown', function(){frame_z_index_when_click(mainContainer)})
+		mainContainer.on('pointerdown', function(){frame_z_index_when_click(mainContainer)})
 		$(document.body).append(mainContainer);
 	}
 	$(`#sources-import-main-container`).css({

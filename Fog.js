@@ -2792,9 +2792,9 @@ function stop_drawing() {
 	window.MOUSEDOWN = false;
 	let target = $("#temp_overlay, #fog_overlay, #VTT, #black_layer");
 	target.css('cursor', '');
-	target.off('mousedown touchstart', drawing_mousedown);
-	target.off('mouseup touchend', drawing_mouseup);
-	target.off('mousemove touchmove', drawing_mousemove);
+	target.off('pointerdown', drawing_mousedown);
+	target.off('pointerup', drawing_mouseup);
+	target.off('pointermove', drawing_mousemove);
 	target.off('contextmenu', drawing_contextmenu);
 	window.StoredWalls = [];
 	window.wallToStore = [];
@@ -2899,6 +2899,11 @@ function drawing_mousedown(e) {
 		clientY: (e.touches) ? e.touches[0].clientY : e.clientY,
 		pageY: (e.touches) ? e.touches[0].pageY : e.pageY
 	}
+
+	try {
+		e.target.setPointerCapture(e.pointerId);
+	} catch { /*ignore if old browser*/ }
+	
 	// always draw unbaked drawings to the temp overlay
 	let canvas = document.getElementById("temp_overlay");
 	let context = canvas.getContext("2d");
@@ -2988,7 +2993,7 @@ function drawing_mousedown(e) {
 	else if (window.DRAWFUNCTION === "select"){
 		window.DRAWCOLOR = "rgba(255, 255, 255, 1)"
 		context.setLineDash([10, 5])
-		if (e.which == 1) {
+		if (e.originalEvent?.buttons == 1) {
 			$("#temp_overlay").css('cursor', 'crosshair');
 			$("#temp_overlay").css('z-index', '50');
 		}		
@@ -3376,7 +3381,7 @@ function drawing_mousemove(e) {
 		}
 		else if (window.DRAWSHAPE == "line") {
 			if(window.DRAWFUNCTION === "measure"){
-				if(e.which === 1 || e.touches){					
+				if(e.originalEvent?.buttons === 1){					
 					WaypointManager.cancelFadeout(true);
 					WaypointManager.setCanvas(window.temp_canvas);
 					WaypointManager.registerMouseMove(mouseX, mouseY);
@@ -3616,13 +3621,14 @@ function drawing_mouseup(e) {
 		window.DRAWFUNCTION === "select" || 
 		window.DRAWFUNCTION == "elev" || 
 		window.DRAWFUNCTION == "audio-polygon" ||
-		window.DRAWFUNCTION == "token-wall-polygon") && e.which !== 1 && !e.touches)
+	        window.DRAWFUNCTION == "token-wall-polygon") &&
+	        e.button !== 0)
 	{
 		return;
 	}
 
 	// ignore middle-mouse clicks
-	if(e.which == 2)
+	if(e.button === 1)
 	{
 		return;
 	}
@@ -4768,9 +4774,9 @@ function handle_drawing_button_click() {
 		window.DRAWSHAPE = window.drawAudioPolygon || window.drawTokenWallPolygon ? 'polygon' : drawData.shape;
 		window.DRAWFUNCTION = window.drawAudioPolygon ? 'audio-polygon' : window.drawTokenWallPolygon ? 'token-wall-polygon' : drawData.function;
 
-		target.on('mousedown touchstart', data, drawing_mousedown);
-		target.on('mouseup touchend',  data, drawing_mouseup);
-		target.on('mousemove touchmove', data, drawing_mousemove);
+		target.on('pointerdown', data, drawing_mousedown);
+		target.on('pointerup',  data, drawing_mouseup);
+		target.on('pointermove', data, drawing_mousemove);
 		target.on('contextmenu', data, drawing_contextmenu);
 		
 	})

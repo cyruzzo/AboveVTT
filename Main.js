@@ -1071,7 +1071,7 @@ function build_draggable_monster_window(tokenId) {
 		minHeight: 200
 	});
 
-	$("#resizeDragMon").mousedown(function() {
+	$("#resizeDragMon").on("pointerdown", function() {
 		frame_z_index_when_click($(this));
 	});
 	$("#resizeDragMon").draggable({
@@ -1667,7 +1667,7 @@ function  init_sheet() {
 			minHeight: 200
 		});
 	
-		$("#sheet").mousedown(function(){
+		$("#sheet").on("pointerdown", function(){
 			frame_z_index_when_click($(this));
 		});
 		$("#sheet").draggable({
@@ -2236,7 +2236,7 @@ function init_ui() {
 	//	if(!$("#select-button").hasClass("button-enabled"))
 		//	deselect_all_tokens();
 	});*/
-	fog.on("mousedown", function(e) {
+	fog.on("pointerdown", function(e) {
 		if (e.button == 0 && shiftHeld == false) {
 			deselect_all_tokens();
 		}
@@ -2413,18 +2413,18 @@ function init_ui() {
 	// do token dragging operations with measure paths
 	window.disable_window_mouse_handlers = function () {
 
-		$(window.document).off("mousemove.mouseHandler", mousemove);
-		$(window.document).off("mousedown.mouseHandler", mousedown);
-		$(window.document).off("mouseup.mouseHandler", mouseup);
+		$(window.document).off("pointermove.mouseHandler", mousemove);
+		$(window.document).off("pointerdown.mouseHandler", mousedown);
+		$(window.document).off("pointerup.mouseHandler", mouseup);
 	}
 
 	// Helper function to enable mouse handlers, required when we
 	// do token dragging operations with measure paths
 	window.enable_window_mouse_handlers = function () {
 
-		$(window.document).on("mousemove.mouseHandler", mousemove);
-		$(window.document).on("mousedown.mouseHandler", mousedown);
-		$(window.document).on("mouseup.mouseHandler", mouseup);
+		$(window.document).on("pointermove.mouseHandler", mousemove);
+		$(window.document).on("pointerdown.mouseHandler", mousedown);
+		$(window.document).on("pointerup.mouseHandler", mouseup);
 	}
 
 	window.enable_window_mouse_handlers();
