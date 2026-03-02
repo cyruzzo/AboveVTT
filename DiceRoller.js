@@ -985,11 +985,11 @@ class DiceRoller {
         if(this.#waitingForRoll && message.source == 'Beyond20'){
             return;
         }
-        if (message.eventType === "dice/roll/fulfilled" && this.#pendingMessages[message.data.rollId] == undefined)
-            return;
-        
         const ddb3dDiceShareToggle = localStorage.getItem('isShared3dDiceEnabled') !== null ? JSON.parse(localStorage.getItem('isShared3dDiceEnabled')).state?.[window.myUser] : true;
 
+        if (message.eventType === "dice/roll/fulfilled" && (newDice && ddb3dDiceShareToggle && this.#pendingMessages[message.data.rollId] == undefined))
+            return;
+        
         if (!this.#waitingForRoll || (message.eventType === "dice/roll/fulfilled" && !ddb3dDiceShareToggle)) {
             if(message.source == 'Beyond20'){
                 this.ddbDispatch(message);
@@ -1079,7 +1079,9 @@ class DiceRoller {
             }, 60)
         } else if (message.eventType === "dice/roll/fulfilled" && this.#pendingMessages[message.data.rollId] !== undefined) {
             this.handleOldFulfilled(message);
-        } 
+        } else if (message.eventType === "dice/roll/fulfilled"){
+            this.ddbDispatch(message);
+        }
         console.groupEnd();
     }
 
