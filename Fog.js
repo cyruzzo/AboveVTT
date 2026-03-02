@@ -4657,7 +4657,6 @@ function drawing_mouseup(e) {
 			const isCircle = curr.options.tokenStyleSelect == 'circle'
 			const size = curr.options.size * ((isCircle || curr.options.tokenStyleSelect == 'square' || $("#tokens>div[data-id='" + id + "']").hasClass("isAoe")) ? (curr.options.imageSize || 1) : 1);
 			const R = (isCircle ? 0 : curr.options.rotation) || 0;
-			console.log("RRRRRR", curr.options.size, fullyInside, x0, y0, x1, y1, CX, CY, size, R);
 			if(! (fullyInside ? isRotatedSquareInsideRect : intersectsRotatedSquare) (
 				{x:x0, y:y0, width:x1-x0, height: y1-y0}, CX, CY, size, R)) continue;
 			c++;
@@ -4673,8 +4672,6 @@ function drawing_mouseup(e) {
 		$("#temp_overlay").css('z-index', '25');
 		window.MULTIPLE_TOKEN_SELECTED = (c > 1);
 		draw_selected_token_bounding_box();
-		
-
 		console.log("READY");
 	}
 	else if (window.DRAWFUNCTION == "measure") {
