@@ -1676,7 +1676,6 @@ function export_current_scene(){
 		journalchapters: [],
 		soundpads: {}
 	};
-	delete DataFile.scenes[0].itemType;
 	delete DataFile.scenes[0].map;
 	for(tokenID in window.TOKEN_OBJECTS){
 		let statBlockID = window.TOKEN_OBJECTS[tokenID].options.statBlock
@@ -1712,7 +1711,6 @@ async function export_scene_context(sceneId){
 		journalchapters: [],
 		soundpads: {}
 	};
-	delete DataFile.scenes[0].itemType;
 	let tokensObject = {}
 	for(let token in scene.data.tokens){
 
