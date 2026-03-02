@@ -120,7 +120,7 @@ $(function() {
           if(event.data.msgType == 'CharacterData' && !find_pc_by_player_id(event.data.characterId, false))
             return;
           if(event.data.msgType == 'roll'){
-            if(window.EXPERIMENTAL_SETTINGS['rpgRoller'] == true && event.data.msg.sendTo == window.PLAYER_ID){
+            if (window.EXPERIMENTAL_SETTINGS['rpgRoller'] == true || event.data.msg.disableDDBDice && event.data.msg.sendTo == window.PLAYER_ID){
                window.MB.inject_chat(event.data.msg);
             }
             else{
@@ -1054,17 +1054,7 @@ async function start_above_vtt_for_players() {
   reposition_player_sheet();
   hide_player_sheet();
   $("#loading_overlay").css("z-index", 0); // Allow them to see their character sheets, etc even if the DM isn't online yet
-  $('[data-floating-ui-portal], .roll-mod-container').addClass('hidden');
-  await $("[class*='DiceContainer_button']").click(); // initialize dice panel so first roll doesn't fail
-  setTimeout(() => {
-    $("[class*='DiceContainer_button']").click();//close dice panel
-    setTimeout(() => {
-      $('[data-floating-ui-portal], .roll-mod-container').removeClass('hidden');
-      $('[data-floating-ui-portal]').off('click.waiting').on('click.waiting', `[data-dd-action-name="Roll Dice Popup > Roll Dice"]`, function () {
-        window.diceRoller.setWaitingForRoll();
-      })
-    }, 200)
-  }, 5);
+  
   
   $(window).off("resize").on("resize", function() {
     if (window.showPanel === undefined) {

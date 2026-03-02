@@ -316,7 +316,7 @@ function inject_chat_buttons() {
   })
 
   let watchForDicePanel = new MutationObserver((mutations) => {
-   mutations.every((mutation) => {
+   mutations.every(async (mutation) => {
       if (!mutation.addedNodes) return
 
       for (let i = 0; i < mutation.addedNodes.length; i++) {
