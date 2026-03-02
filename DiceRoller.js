@@ -537,7 +537,10 @@ class DiceRoller {
         self.#timeoutId = setTimeout(function () {
             clearTimeout(self.#timeoutId);
             self.#timeoutId = undefined;
-            console.warn("DiceRoller timed out after 5 seconds!");
+            const newDice = $("[class*='DiceContainer_button']").length > 0
+            if(newDice)
+                sendNewFulfilled()
+            console.warn("DiceRoller timed out after 5 seconds! Sending message");
         }, self.timeoutDuration);
     }
 
@@ -987,7 +990,7 @@ class DiceRoller {
         }
         const ddb3dDiceShareToggle = localStorage.getItem('isShared3dDiceEnabled') !== null ? JSON.parse(localStorage.getItem('isShared3dDiceEnabled')).state?.[window.myUser] : true;
 
-        if (message.eventType === "dice/roll/fulfilled" && (newDice && ddb3dDiceShareToggle && this.#pendingMessages[message.data.rollId] == undefined))
+        if (message.eventType === "dice/roll/fulfilled" && newDice && ddb3dDiceShareToggle && this.#pendingMessages[message.data.rollId] == undefined)
             return;
         
         if (!this.#waitingForRoll || (message.eventType === "dice/roll/fulfilled" && !ddb3dDiceShareToggle)) {
@@ -1004,6 +1007,7 @@ class DiceRoller {
                     this.handleOldFulfilled(message);
                     return;
                 }   
+                clearTimeout(this.backupSendTimeout)
                 this.sendNewFulfilled();           
             } else{
                console.debug("swap image only, not capturing: ", message);
@@ -1077,6 +1081,12 @@ class DiceRoller {
                     self.nextRoll(self.#pendingMessages[ddbMessage.data.rollId].ddbMessage, self.#pendingMessages[ddbMessage.data.rollId].pendingCritRange, self.#pendingMessages[ddbMessage.data.rollId].pendingCritType, self.#pendingMessages[ddbMessage.data.rollId].pendingDamageType);
                 }
             }, 60)
+            if(newDice){
+                clearTimeout(this.backupSendTimeout)
+                this.backupSendTimeout = setTimeout(() => { // if dice are slow to roll display result early
+                    this.sendNewFulfilled();
+                }, 1000)
+            }
         } else if (message.eventType === "dice/roll/fulfilled" && this.#pendingMessages[message.data.rollId] !== undefined) {
             this.handleOldFulfilled(message);
         } else if (message.eventType === "dice/roll/fulfilled"){
