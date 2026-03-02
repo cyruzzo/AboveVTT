@@ -1089,7 +1089,8 @@ class DiceRoller {
         try {
             let alteredMessage = { ...ddbMessage };
             const { pendingDiceRoll, pendingSpellSave, pendingDamageType, pendingCrit, pendingSendTo, critAttackAction, pendingCritRange, pendingCritType } = this.#pendingMessages[ddbMessage.data.rollId];
-
+            if(!pendingDiceRoll)
+                return alteredMessage;
             alteredMessage.data.rolls.forEach(r => {
 
                 // so we need to parse r.diceNotationStr to figure out the order of the results
@@ -1240,7 +1241,8 @@ class DiceRoller {
 
     #swapDiceRollMetadata(ddbMessage) {
         const { pendingDiceRoll, pendingSpellSave, pendingDamageType, pendingCrit, pendingSendTo, critAttackAction, pendingCritRange, pendingCritType } = this.#pendingMessages[ddbMessage.data.rollId];
-
+        if(!pendingDiceRoll)
+            return ddbMessage;
         if (pendingDiceRoll?.isComplex()) {
             // We manipulated this enough that DDB won't properly display the formula.
             // We'll look for this later to know that we should swap some HTML after this render
@@ -1256,11 +1258,11 @@ class DiceRoller {
         if(ddbMessage.data.rolls.some(d=> d.rollType.includes('damage')))
             ddbMessage.avttDamageType = pendingDamageType;
 
-        if (["character", "monster"].includes(pendingDiceRoll?.entityType)) {
+        if (["character", "monster"].includes(pendingDiceRoll.entityType)) {
             ddbMessage.entityType = pendingDiceRoll.entityType;
             ddbMessage.data.context.entityType = pendingDiceRoll.entityType;
         }
-        if (pendingDiceRoll?.entityId !== undefined) {
+        if (pendingDiceRoll.entityId !== undefined) {
             ddbMessage.entityId = pendingDiceRoll.entityId;
             ddbMessage.data.context.entityId = pendingDiceRoll.entityId;
         }
@@ -1268,7 +1270,7 @@ class DiceRoller {
         if (isValid(pendingDiceRoll?.action)) {
             ddbMessage.data.action = pendingDiceRoll.action;
         }
-        if (isValid(pendingDiceRoll?.avatarUrl)) {
+        if (isValid(pendingDiceRoll.avatarUrl)) {
             ddbMessage.data.context.avatarUrl = pendingDiceRoll.avatarUrl;
         } 
         else if(window.CAMPAIGN_INFO?.dmId == ddbMessage.entityId || ddbMessage.entityId == 'false'){
@@ -1276,7 +1278,7 @@ class DiceRoller {
         } else if(window.pcs?.filter(d => d.characterId == ddbMessage.entityId)?.length>0){
             ddbMessage.data.context.avatarUrl = window.pcs?.filter(d => d.characterId == ddbMessage.entityId)[0].image
         }      
-        if (isValid(pendingDiceRoll?.name)) {
+        if (isValid(pendingDiceRoll.name)) {
             ddbMessage.data.context.name = pendingDiceRoll.name;
         }
         if (pendingSendTo != undefined) {
