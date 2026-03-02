@@ -3774,6 +3774,50 @@ function drawing_mousemove(e) {
 	
 }
 
+function intersectsRotatedSquare(rect, cx, cy, w, angle) {
+    const rad = -angle * (Math.PI / 180);
+    const rectCX = rect.x + rect.width / 2;
+    const rectCY = rect.y + rect.height / 2;
+    const dx = rectCX - cx;
+    const dy = rectCY - cy;
+    const localRectX = dx * Math.cos(rad) - dy * Math.sin(rad);
+    const localRectY = dx * Math.sin(rad) + dy * Math.cos(rad);
+    const cos = Math.abs(Math.cos(rad));
+    const sin = Math.abs(Math.sin(rad));
+    const localRectW = rect.width * cos + rect.height * sin;
+    const localRectH = rect.width * sin + rect.height * cos;
+    const halfW = w / 2;
+    const halfRectW = localRectW / 2;
+    const halfRectH = localRectH / 2;
+    return Math.abs(localRectX) <= (halfW + halfRectW) &&
+           Math.abs(localRectY) <= (halfW + halfRectH);
+}
+function isRotatedSquareInsideRect(rect, cx, cy, w, angle) {
+    const rad = angle * (Math.PI / 180);
+    const halfW = w / 2;
+    const _cos = Math.cos(rad);
+    const _sin = Math.sin(rad);
+    const corners = [
+        { x: -halfW, y: -halfW },
+        { x:  halfW, y: -halfW },
+        { x:  halfW, y:  halfW },
+        { x: -halfW, y:  halfW }
+    ];
+    const rectRight = rect.x + rect.width;
+    const rectBottom = rect.y + rect.height;
+    for (let i = 0; i < corners.length; i++) {
+        const rotatedX = corners[i].x * _cos - corners[i].y * _sin;
+        const rotatedY = corners[i].x * _sin + corners[i].y * _cos;
+        const worldX = rotatedX + cx;
+        const worldY = rotatedY + cy;
+        if (worldX < rect.x || worldX > rectRight || 
+            worldY < rect.y || worldY > rectBottom) {
+            return false; // point outside
+        }
+    }
+    return true;
+}
+
 /**
  * Drawing finished (most of the time) set the final shape into window.DRAWING/windo.REVEAL
  * then call redraw functions and sync functions
@@ -4606,29 +4650,16 @@ function drawing_mouseup(e) {
 		for (let id in window.TOKEN_OBJECTS) {
 			const curr = window.TOKEN_OBJECTS[id];
 			if(curr.options.type == 'door' || curr.options.combatGroupToken) continue;
-			const tokenImageRect = $("#tokens>div[data-id='" + id + "'] .token-image")[0].getBoundingClientRect();
-			const isCircle = curr.options.tokenStyleSelect == 'circle';
-			const R = curr.options.rotation || 0;
-			const size = curr.options.size;	
-			const toktop = (parseInt(tokenImageRect.top) + window.scrollY - window.VTTMargin) * (1.0 / window.ZOOM);
-			const tokleft = (parseInt(tokenImageRect.left)  + window.scrollX - window.VTTMargin) * (1.0 / window.ZOOM);
-			const tokright = (parseInt(tokenImageRect.right) + window.scrollX - window.VTTMargin) * (1.0 / window.ZOOM);
-			const tokbottom = (parseInt(tokenImageRect.bottom) + window.scrollY - window.VTTMargin) * (1.0 / window.ZOOM);
-			const useRemainder = !(isCircle || curr.options.tokenStyleSelect == 'square' || $("#tokens>div[data-id='" + id + "']").hasClass("isAoe"));
-			const scaledRemainderTop = useRemainder ? (tokbottom-toktop-size)/2 : 0;
-			const scaledRemainderLeft = useRemainder ? (tokright-tokleft-size)/2 : 0;
-			//adjustment for a rotated circle that has a wider bounding box
-			const W = tokright-tokleft; //only matters for circle
-			const rotAdj = isCircle ? 0.5*W*(1.0 - 1.0/(Math.abs(Math.sin(R)) + Math.abs(Math.cos(R)))) : 0;
 			
-			if(fullyInside) {
-				if(!(tokleft+scaledRemainderLeft+rotAdj >= x0 && tokright-scaledRemainderLeft-rotAdj <= x1 &&
-				     toktop+scaledRemainderTop+rotAdj >= y0 && tokbottom-scaledRemainderTop-rotAdj <= y1)) continue;
-			} else {
-				if (y0 >= tokbottom-scaledRemainderTop-rotAdj || y1 <= toktop+scaledRemainderTop+rotAdj) continue;
-				if (x0 >= tokright-scaledRemainderLeft-rotAdj || x1 <= tokleft+scaledRemainderLeft+rotAdj) continue;
-			}
-
+			const tokenImageRect = $("#tokens>div[data-id='" + id + "'] .token-image")[0].getBoundingClientRect();
+			const CX = ((parseInt(tokenImageRect.left) + parseInt(tokenImageRect.right))/2 + window.scrollX - window.VTTMargin) / window.ZOOM;			
+			const CY = ((parseInt(tokenImageRect.top) + parseInt(tokenImageRect.bottom))/2 + window.scrollY - window.VTTMargin) / window.ZOOM;
+			const isCircle = curr.options.tokenStyleSelect == 'circle'
+			const size = curr.options.size * ((isCircle || curr.options.tokenStyleSelect == 'square' || $("#tokens>div[data-id='" + id + "']").hasClass("isAoe")) ? (curr.options.imageSize || 1) : 1);
+			const R = (isCircle ? 0 : curr.options.rotation) || 0;
+			console.log("RRRRRR", curr.options.size, fullyInside, x0, y0, x1, y1, CX, CY, size, R);
+			if(! (fullyInside ? isRotatedSquareInsideRect : intersectsRotatedSquare) (
+				{x:x0, y:y0, width:x1-x0, height: y1-y0}, CX, CY, size, R)) continue;
 			c++;
 			// TOKEN IS INSIDE/OVERLAPS THE SELECTION
 			if (window.DM || !curr.options.hidden) {
