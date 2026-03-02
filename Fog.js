@@ -3366,6 +3366,10 @@ function drawing_mousemove(e) {
 
 	const isFilled = window.DRAWTYPE === "filled" || window.DRAWTYPE === "light";
 	const mouseMoveFps = Math.round((1000.0 / 24.0));
+	if (window.DRAWFUNCTION === "select" && e.which == 1){
+		//change cursor for "fullyInside" select mode
+		$("#temp_overlay").css('cursor', (window.BEGIN_MOUSEY < mouseY) ? 'crosshair' : 'cell');
+	}
 
 
 	window.MOUSEMOVEWAIT = true;
@@ -3768,6 +3772,50 @@ function drawing_mousemove(e) {
 
 	
 	
+}
+
+function intersectsRotatedSquare(rect, cx, cy, w, angle) {
+    const rad = -angle * (Math.PI / 180);
+    const rectCX = rect.x + rect.width / 2;
+    const rectCY = rect.y + rect.height / 2;
+    const dx = rectCX - cx;
+    const dy = rectCY - cy;
+    const localRectX = dx * Math.cos(rad) - dy * Math.sin(rad);
+    const localRectY = dx * Math.sin(rad) + dy * Math.cos(rad);
+    const cos = Math.abs(Math.cos(rad));
+    const sin = Math.abs(Math.sin(rad));
+    const localRectW = rect.width * cos + rect.height * sin;
+    const localRectH = rect.width * sin + rect.height * cos;
+    const halfW = w / 2;
+    const halfRectW = localRectW / 2;
+    const halfRectH = localRectH / 2;
+    return Math.abs(localRectX) <= (halfW + halfRectW) &&
+           Math.abs(localRectY) <= (halfW + halfRectH);
+}
+function isRotatedSquareInsideRect(rect, cx, cy, w, angle) {
+    const rad = angle * (Math.PI / 180);
+    const halfW = w / 2;
+    const _cos = Math.cos(rad);
+    const _sin = Math.sin(rad);
+    const corners = [
+        { x: -halfW, y: -halfW },
+        { x:  halfW, y: -halfW },
+        { x:  halfW, y:  halfW },
+        { x: -halfW, y:  halfW }
+    ];
+    const rectRight = rect.x + rect.width;
+    const rectBottom = rect.y + rect.height;
+    for (let i = 0; i < corners.length; i++) {
+        const rotatedX = corners[i].x * _cos - corners[i].y * _sin;
+        const rotatedY = corners[i].x * _sin + corners[i].y * _cos;
+        const worldX = rotatedX + cx;
+        const worldY = rotatedY + cy;
+        if (worldX < rect.x || worldX > rectRight || 
+            worldY < rect.y || worldY > rectBottom) {
+            return false; // point outside
+        }
+    }
+    return true;
 }
 
 /**
@@ -4594,35 +4642,27 @@ function drawing_mouseup(e) {
 	else if (window.DRAWFUNCTION == "select") {
 		// FIND TOKENS INSIDE THE AREA
 		let c = 0;
+		const fullyInside = (window.BEGIN_MOUSEY > mouseY);
+		const y0 = Math.min(window.BEGIN_MOUSEY, mouseY);
+		const y1 = Math.max(window.BEGIN_MOUSEY, mouseY);
+		const x0 = Math.min(window.BEGIN_MOUSEX, mouseX);
+		const x1 = Math.max(window.BEGIN_MOUSEX, mouseX);
 		for (let id in window.TOKEN_OBJECTS) {
-			if(window.TOKEN_OBJECTS[id].options.type == 'door' || window.TOKEN_OBJECTS[id].options.combatGroupToken){
-				continue;
-			}
-
-			let curr = window.TOKEN_OBJECTS[id];
-
-
-			let tokenImageRect = $("#tokens>div[data-id='" + curr.options.id + "'] .token-image")[0].getBoundingClientRect();	
-			let size = window.TOKEN_OBJECTS[curr.options.id].options.size;	
-			let toktop = (parseInt(tokenImageRect.top) + window.scrollY - window.VTTMargin) * (1.0 / window.ZOOM);
-			let tokleft = (parseInt(tokenImageRect.left)  + window.scrollX - window.VTTMargin) * (1.0 / window.ZOOM);
-			let tokright = (parseInt(tokenImageRect.right) + window.scrollX - window.VTTMargin) * (1.0 / window.ZOOM);
-			let tokbottom = (parseInt(tokenImageRect.bottom) + window.scrollY - window.VTTMargin) * (1.0 / window.ZOOM);
-			let scaledRemainderTop = (tokbottom-toktop-size)/2;
-			let scaledRemainderLeft = (tokright-tokleft-size)/2;
-			if(window.TOKEN_OBJECTS[curr.options.id].options.tokenStyleSelect == 'circle' || window.TOKEN_OBJECTS[curr.options.id].options.tokenStyleSelect == 'square' || $("#tokens>div[data-id='" + curr.options.id + "']").hasClass("isAoe")){
-				scaledRemainderTop = 0;
-				scaledRemainderLeft = 0;
-			}
-			if (Math.min(window.BEGIN_MOUSEY, mouseY, tokbottom-scaledRemainderTop) == tokbottom-scaledRemainderTop || Math.max(window.BEGIN_MOUSEY, mouseY, toktop+scaledRemainderTop) == toktop+scaledRemainderTop)
-				continue;
-			if (Math.min(window.BEGIN_MOUSEX, mouseX, tokright-scaledRemainderLeft) == tokright-scaledRemainderLeft || Math.max(window.BEGIN_MOUSEX, mouseX, tokleft+scaledRemainderLeft) == tokleft+scaledRemainderLeft)
-				continue;
-
+			const curr = window.TOKEN_OBJECTS[id];
+			if(curr.options.type == 'door' || curr.options.combatGroupToken) continue;
+			
+			const tokenImageRect = $("#tokens>div[data-id='" + id + "'] .token-image")[0].getBoundingClientRect();
+			const CX = ((parseInt(tokenImageRect.left) + parseInt(tokenImageRect.right))/2 + window.scrollX - window.VTTMargin) / window.ZOOM;			
+			const CY = ((parseInt(tokenImageRect.top) + parseInt(tokenImageRect.bottom))/2 + window.scrollY - window.VTTMargin) / window.ZOOM;
+			const isCircle = curr.options.tokenStyleSelect == 'circle'
+			const size = curr.options.size * ((isCircle || curr.options.tokenStyleSelect == 'square' || $("#tokens>div[data-id='" + id + "']").hasClass("isAoe")) ? (curr.options.imageSize || 1) : 1);
+			const R = (isCircle ? 0 : curr.options.rotation) || 0;
+			if(! (fullyInside ? isRotatedSquareInsideRect : intersectsRotatedSquare) (
+				{x:x0, y:y0, width:x1-x0, height: y1-y0}, CX, CY, size, R)) continue;
 			c++;
-			// TOKEN IS INSIDE THE SELECTION
+			// TOKEN IS INSIDE/OVERLAPS THE SELECTION
 			if (window.DM || !curr.options.hidden) {
-				let tokenDiv = curr.isLineAoe() ? $(`#tokens>div[data-id='${curr.options.id}'] [data-img]`) : $(`#tokens>div[data-id='${curr.options.id}']`)
+				let tokenDiv = curr.isLineAoe() ? $(`#tokens>div[data-id='${id}'] [data-img]`) : $(`#tokens>div[data-id='${id}']`)
 				if(tokenDiv.css("pointer-events")!="none" && tokenDiv.css("display")!="none" && !tokenDiv.hasClass("ui-draggable-disabled")) {
 					curr.selected = true;
 				}
@@ -4632,8 +4672,6 @@ function drawing_mouseup(e) {
 		$("#temp_overlay").css('z-index', '25');
 		window.MULTIPLE_TOKEN_SELECTED = (c > 1);
 		draw_selected_token_bounding_box();
-		
-
 		console.log("READY");
 	}
 	else if (window.DRAWFUNCTION == "measure") {
