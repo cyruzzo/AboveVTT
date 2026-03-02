@@ -2148,7 +2148,7 @@ function init_ui() {
 	grid_svg_overlay_container.append(grid);
 	//change the wizbox styling here
 	const wizbox = $(
-`<svg id="wizbox" style="display: block; width: 100%; height: 100%;" xmlns="http://www.w3.org/2000/svg">
+`<svg id="wizbox" class="TLA" style="display: block; width: 100%; height: 100%;" xmlns="http://www.w3.org/2000/svg">
         <style>
             .grid-box {
                 fill: rgba(0, 255, 255, 0.1);
@@ -2172,6 +2172,31 @@ function init_ui() {
 `
 	);
 	wizbox.css("z-index", "19");
+
+	const dragSelectBox = $(
+`<svg id="dragbox" class="TLA" style="display: block;" xmlns="http://www.w3.org/2000/svg">
+        <style>
+            .drag-box {
+                fill: rgba(0, 255, 255, 0.1);
+                stroke: white;
+                stroke-width: calc(1px / var(--scene-scale));
+                stroke-dasharray: calc(4px / var(--scene-scale)) calc(2px / var(--scene-scale));
+                stroke-linecap: square;
+                vector-effect: non-scaling-stroke;
+                transition: fill 0.2s;
+            }
+        </style>
+        <g id="dragbox-rect" visibility="hidden">
+            <path class="drag-box" d="M 0 0 L 0 1 L 1 1 L 1 0 L 0 0"/>
+            <path id="dragbox-inside" visibility="hidden" stroke-dasharray="2" class="drag-box" d="M 0.01 0.01 L 0.01 0.99 L 0.99 0.99 L 0.99 0.01 L 0.01 0.01"/>
+        </g>
+    </svg>`
+	);
+	dragSelectBox.css({'z-index':'50',
+			   'transform-origin': 'top left',
+			   'transform': 'scale(var(--scene-scale))',
+			   'pointer-events': 'none'
+			  });
 	
 	const walls = $("<canvas id='walls_layer' class='TLA'/>");
 	walls.css("z-index", "19");
@@ -2263,6 +2288,7 @@ function init_ui() {
 	VTT.append(drawOverlay);
 	VTT.append(textDiv);
 	VTT.append(tempOverlay);
+	VTT.append(dragSelectBox);
 	VTT.append(walls);
 	VTT.append(elev);
 	VTT.append(weather);
