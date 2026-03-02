@@ -467,7 +467,7 @@ function getRollData(rollButton){
 }
 class DiceRoller {
     
-    timeoutDuration = 15000; // 15 second timeout seems reasonable. If the message gets dropped we don't want to be stuck waiting forever.
+    timeoutDuration = 5000; // 5 second timeout seems reasonable. If the message gets dropped we don't want to be stuck waiting forever.
 
     /// PRIVATE VARIABLES
     #pendingDiceRoll = undefined;
@@ -535,8 +535,9 @@ class DiceRoller {
         const self = this;
         clearTimeout(self.#timeoutId);
         self.#timeoutId = setTimeout(function () {
-            console.warn("DiceRoller timed out after 15 seconds!");
-            self.#resetVariables();
+            clearTimeout(self.#timeoutId);
+            self.#timeoutId = undefined;
+            console.warn("DiceRoller timed out after 5 seconds!");
         }, self.timeoutDuration);
     }
 
@@ -666,7 +667,8 @@ class DiceRoller {
                   playerId: window.PLAYER_ID,
                   sendTo: window.sendToTab,
                   entityType: diceRoll.entityType,
-                  entityId: diceRoll.entityId
+                  entityId: diceRoll.entityId,
+                  disableDDBDice: !ddb3dDiceShareToggle
                 };
                 if(rollType == 'attack' || rollType == 'to hit' || rollType == 'tohit'){     
                     if(critSuccess == true){
@@ -931,17 +933,32 @@ class DiceRoller {
     /// PRIVATE FUNCTIONS
 
     /** reset all variables back to their default values */
-    #resetVariables() {
+    #resetVariables(resetTimer = true) {
         console.log("resetting local variables");
-        clearTimeout(this.#timeoutId);
-        this.#timeoutId = undefined;
+        if (resetTimer){
+            clearTimeout(this.#timeoutId);
+            this.#timeoutId = undefined;
+        }
         this.#pendingDiceRoll = undefined;
         this.#pendingSpellSave = undefined;
         this.#pendingDamageType = undefined;
         this.#pendingCrit = undefined;
         this.#pendingSendTo = undefined;
     }
-    async sendFulfilled() {
+    async handleOldFulfilled(message) {
+        console.log("capturing fulfilled message: ", message)
+        let alteredMessage = await this.#swapRollData(message);
+        if (alteredMessage.data?.context?.avatarUrl?.startsWith("above-bucket-not-a-url")) {
+            alteredMessage.data.context.avatarUrl = await getAvttStorageUrl(alteredMessage.data.context.avatarUrl, true)
+        }
+        console.log("altered fulfilled message: ", alteredMessage);
+        this.ddbDispatch(alteredMessage);
+        await this.#resetVariables();
+        this.nextRoll(this.#pendingMessages[message.data.rollId].ddbMessage, this.#pendingMessages[message.data.rollId].pendingCritRange, this.#pendingMessages[message.data.rollId].pendingCritType, this.#pendingMessages[message.data.rollId].pendingDamageType);
+        this.#pendingMessages[message.data.rollId] = null;
+        delete this.#pendingMessages[message.data.rollId];  
+    }
+    async sendNewFulfilled() {
         if (this.#orderedPendingIds.length == 0)
             return;
         const firstPending = this.#orderedPendingIds.shift(); // we don't use current fulfilled messages as they dont always come in in order due to time it take dice to roll, modify the deferred message in order instead
@@ -958,7 +975,7 @@ class DiceRoller {
         this.#pendingMessages[firstPending] = null;
         delete this.#pendingMessages[firstPending];
         if (this.#orderedPendingIds.length > 0) {
-            this.sendFulfilled();
+            this.sendNewFulfilled();
         }
     }
     /** wraps all messages that are sent by DDB, and processes any that we need to process, else passes it along as-is */
@@ -978,12 +995,16 @@ class DiceRoller {
                 this.ddbDispatch(message);
                 return;
             }
-            if (newDice && message.eventType === "dice/roll/fulfilled" && this.#pendingMessages[message.data.rollId] !== undefined) {
+            if (message.eventType === "dice/roll/fulfilled" && this.#pendingMessages[message.data.rollId] !== undefined) {
                 if (message.source == 'Beyond20') {
                     this.ddbDispatch(message);
                     return;
                 }
-                this.sendFulfilled();           
+                if(!newDice){
+                    this.handleOldFulfilled(message);
+                    return;
+                }   
+                this.sendNewFulfilled();           
             } else{
                console.debug("swap image only, not capturing: ", message);
                let ddbMessage = { ...message };
@@ -1008,8 +1029,6 @@ class DiceRoller {
                }
                else {
                    if (window.DM && window.modifiySendToDDBDiceClicked == true) {
-
-
                        if (gamelog_send_to_text() == 'Self') {
                            ddbMessage.messageScope = "userId";
                            ddbMessage.messageTarget = `${window.CAMPAIGN_INFO.dmId}`;
@@ -1042,7 +1061,8 @@ class DiceRoller {
                 pendingCritRange: this.#pendingCritRange,
                 pendingCritType: this.#pendingCritType
             };
-            this.#orderedPendingIds.push(ddbMessage.data.rollId);
+            if(newDice)
+                this.#orderedPendingIds.push(ddbMessage.data.rollId);
             await this.#swapDiceRollMetadata(ddbMessage);
             if (ddbMessage.data?.context?.avatarUrl?.startsWith("above-bucket-not-a-url")) {
                 ddbMessage.data.context.avatarUrl = await getAvttStorageUrl(ddbMessage.data.context.avatarUrl, true)
@@ -1050,35 +1070,16 @@ class DiceRoller {
             if(newDice)
                 ddbMessage = await this.#swapRollData(ddbMessage)
             this.ddbDispatch(ddbMessage);
-            if(newDice){
-                await this.#resetVariables();
-                const self = this;
-                clearTimeout(this.nextRollTimeout);
-                this.nextRollTimeout = setTimeout(function(){
+            this.#resetVariables(newDice);
+            const self = this; 
+            setTimeout(function() {
+                if (newDice){
                     self.nextRoll(self.#pendingMessages[ddbMessage.data.rollId].ddbMessage, self.#pendingMessages[ddbMessage.data.rollId].pendingCritRange, self.#pendingMessages[ddbMessage.data.rollId].pendingCritType, self.#pendingMessages[ddbMessage.data.rollId].pendingDamageType);
-                }, 60)
-            }
-
-        } else if (!newDice && message.eventType === "dice/roll/fulfilled" && this.#pendingMessages[message.data.rollId] !== undefined) {
-            if (message.source == 'Beyond20') {
-                this.ddbDispatch(message);
-                return;
-            }
-            console.log("capturing fulfilled message: ", message)
-            let alteredMessage = await this.#swapRollData(message);
-            if (alteredMessage.data?.context?.avatarUrl?.startsWith("above-bucket-not-a-url")) {
-                alteredMessage.data.context.avatarUrl = await getAvttStorageUrl(alteredMessage.data.context.avatarUrl, true)
-            }
-            console.log("altered fulfilled message: ", alteredMessage);
-            this.ddbDispatch(alteredMessage);
-            await this.#resetVariables();
-            const self = this;
-            setTimeout(function () {
-                self.nextRoll(self.#pendingMessages[message.data.rollId].ddbMessage, self.#pendingMessages[message.data.rollId].pendingCritRange, self.#pendingMessages[message.data.rollId].pendingCritType, self.#pendingMessages[message.data.rollId].pendingDamageType);
-                this.#pendingMessages[message.data.rollId] = null;
-                delete this.#pendingMessages[message.data.rollId];
+                }
             }, 60)
-        }
+        } else if (message.eventType === "dice/roll/fulfilled" && this.#pendingMessages[message.data.rollId] !== undefined) {
+            this.handleOldFulfilled(message);
+        } 
         console.groupEnd();
     }
 

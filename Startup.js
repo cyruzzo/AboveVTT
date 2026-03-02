@@ -120,7 +120,7 @@ $(function() {
           if(event.data.msgType == 'CharacterData' && !find_pc_by_player_id(event.data.characterId, false))
             return;
           if(event.data.msgType == 'roll'){
-            if(window.EXPERIMENTAL_SETTINGS['rpgRoller'] == true && event.data.msg.sendTo == window.PLAYER_ID){
+            if (window.EXPERIMENTAL_SETTINGS['rpgRoller'] == true || event.data.msg.disableDDBDice && event.data.msg.sendTo == window.PLAYER_ID){
                window.MB.inject_chat(event.data.msg);
             }
             else{
