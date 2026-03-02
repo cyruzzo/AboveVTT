@@ -1536,14 +1536,19 @@ function observe_character_sheet_changes(documentToObserve) {
             watchForNewDicePanel.disconnect();
             $('[data-floating-ui-portal], .roll-mod-container').addClass('hidden');
             await $("[class*='DiceContainer_button']").click(); // initialize dice panel so first roll doesn't fail
-            setTimeout(() => {
+            setTimeout(async () => {
               $("[class*='DiceContainer_button']").click();//close dice panel
-              clearTimeout(window.diceRoller?.diceRollButtonHide);
-              window.diceRoller.diceRollButtonHide = setTimeout(() => {
+
+              setTimeout(() => {
                 $('[data-floating-ui-portal], .roll-mod-container').removeClass('hidden');
                 $('[data-floating-ui-portal]').off('click.waiting').on('click.waiting', `[data-dd-action-name="Roll Dice Popup > Roll Dice"]`, function () {
                   window.diceRoller.setWaitingForRoll();
                 })
+                $("[class*='DiceContainer_button']").off('click.toggle').on('click.toggle', async function () {
+                  const ddb3dDiceShareToggle = localStorage.getItem('isShared3dDiceEnabled') !== null ? JSON.parse(localStorage.getItem('isShared3dDiceEnabled')).state?.[window.myUser] : true;
+                  setTimeout(() => {$(`#shared3dDiceToggleSwitch[aria-checked='${!ddb3dDiceShareToggle}']`).click()}, 60);
+                })
+
               }, 200)
             }, 200);
             watchForNewDicePanel.disconnect();

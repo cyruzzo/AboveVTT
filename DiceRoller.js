@@ -985,11 +985,11 @@ class DiceRoller {
         if(this.#waitingForRoll && message.source == 'Beyond20'){
             return;
         }
-        if (message.eventType === "dice/roll/fulfilled" && this.#pendingMessages[message.data.rollId] == undefined)
-            return;
-        
         const ddb3dDiceShareToggle = localStorage.getItem('isShared3dDiceEnabled') !== null ? JSON.parse(localStorage.getItem('isShared3dDiceEnabled')).state?.[window.myUser] : true;
 
+        if (message.eventType === "dice/roll/fulfilled" && (newDice && ddb3dDiceShareToggle && this.#pendingMessages[message.data.rollId] == undefined))
+            return;
+        
         if (!this.#waitingForRoll || (message.eventType === "dice/roll/fulfilled" && !ddb3dDiceShareToggle)) {
             if(message.source == 'Beyond20'){
                 this.ddbDispatch(message);
@@ -1079,7 +1079,9 @@ class DiceRoller {
             }, 60)
         } else if (message.eventType === "dice/roll/fulfilled" && this.#pendingMessages[message.data.rollId] !== undefined) {
             this.handleOldFulfilled(message);
-        } 
+        } else if (message.eventType === "dice/roll/fulfilled"){
+            this.ddbDispatch(message);
+        }
         console.groupEnd();
     }
 
@@ -1089,7 +1091,8 @@ class DiceRoller {
         try {
             let alteredMessage = { ...ddbMessage };
             const { pendingDiceRoll, pendingSpellSave, pendingDamageType, pendingCrit, pendingSendTo, critAttackAction, pendingCritRange, pendingCritType } = this.#pendingMessages[ddbMessage.data.rollId];
-
+            if(!pendingDiceRoll)
+                return alteredMessage;
             alteredMessage.data.rolls.forEach(r => {
 
                 // so we need to parse r.diceNotationStr to figure out the order of the results
@@ -1240,7 +1243,8 @@ class DiceRoller {
 
     #swapDiceRollMetadata(ddbMessage) {
         const { pendingDiceRoll, pendingSpellSave, pendingDamageType, pendingCrit, pendingSendTo, critAttackAction, pendingCritRange, pendingCritType } = this.#pendingMessages[ddbMessage.data.rollId];
-
+        if(!pendingDiceRoll)
+            return ddbMessage;
         if (pendingDiceRoll?.isComplex()) {
             // We manipulated this enough that DDB won't properly display the formula.
             // We'll look for this later to know that we should swap some HTML after this render
@@ -1256,11 +1260,11 @@ class DiceRoller {
         if(ddbMessage.data.rolls.some(d=> d.rollType.includes('damage')))
             ddbMessage.avttDamageType = pendingDamageType;
 
-        if (["character", "monster"].includes(pendingDiceRoll?.entityType)) {
+        if (["character", "monster"].includes(pendingDiceRoll.entityType)) {
             ddbMessage.entityType = pendingDiceRoll.entityType;
             ddbMessage.data.context.entityType = pendingDiceRoll.entityType;
         }
-        if (pendingDiceRoll?.entityId !== undefined) {
+        if (pendingDiceRoll.entityId !== undefined) {
             ddbMessage.entityId = pendingDiceRoll.entityId;
             ddbMessage.data.context.entityId = pendingDiceRoll.entityId;
         }
@@ -1268,7 +1272,7 @@ class DiceRoller {
         if (isValid(pendingDiceRoll?.action)) {
             ddbMessage.data.action = pendingDiceRoll.action;
         }
-        if (isValid(pendingDiceRoll?.avatarUrl)) {
+        if (isValid(pendingDiceRoll.avatarUrl)) {
             ddbMessage.data.context.avatarUrl = pendingDiceRoll.avatarUrl;
         } 
         else if(window.CAMPAIGN_INFO?.dmId == ddbMessage.entityId || ddbMessage.entityId == 'false'){
@@ -1276,7 +1280,7 @@ class DiceRoller {
         } else if(window.pcs?.filter(d => d.characterId == ddbMessage.entityId)?.length>0){
             ddbMessage.data.context.avatarUrl = window.pcs?.filter(d => d.characterId == ddbMessage.entityId)[0].image
         }      
-        if (isValid(pendingDiceRoll?.name)) {
+        if (isValid(pendingDiceRoll.name)) {
             ddbMessage.data.context.name = pendingDiceRoll.name;
         }
         if (pendingSendTo != undefined) {
