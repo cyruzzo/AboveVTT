@@ -4604,34 +4604,35 @@ function drawing_mouseup(e) {
 		const x0 = Math.min(window.BEGIN_MOUSEX, mouseX);
 		const x1 = Math.max(window.BEGIN_MOUSEX, mouseX);
 		for (let id in window.TOKEN_OBJECTS) {
-			if(window.TOKEN_OBJECTS[id].options.type == 'door' || window.TOKEN_OBJECTS[id].options.combatGroupToken){
-				continue;
-			}
-
 			const curr = window.TOKEN_OBJECTS[id];
-			
-
-			const tokenImageRect = $("#tokens>div[data-id='" + curr.options.id + "'] .token-image")[0].getBoundingClientRect();	
-			const size = window.TOKEN_OBJECTS[curr.options.id].options.size;	
+			if(curr.options.type == 'door' || curr.options.combatGroupToken) continue;
+			const tokenImageRect = $("#tokens>div[data-id='" + id + "'] .token-image")[0].getBoundingClientRect();
+			const isCircle = curr.options.tokenStyleSelect == 'circle';
+			const R = curr.options.rotation || 0;
+			const size = curr.options.size;	
 			const toktop = (parseInt(tokenImageRect.top) + window.scrollY - window.VTTMargin) * (1.0 / window.ZOOM);
 			const tokleft = (parseInt(tokenImageRect.left)  + window.scrollX - window.VTTMargin) * (1.0 / window.ZOOM);
 			const tokright = (parseInt(tokenImageRect.right) + window.scrollX - window.VTTMargin) * (1.0 / window.ZOOM);
 			const tokbottom = (parseInt(tokenImageRect.bottom) + window.scrollY - window.VTTMargin) * (1.0 / window.ZOOM);
-			const useRemainder = !(window.TOKEN_OBJECTS[curr.options.id].options.tokenStyleSelect == 'circle' || window.TOKEN_OBJECTS[curr.options.id].options.tokenStyleSelect == 'square' || $("#tokens>div[data-id='" + curr.options.id + "']").hasClass("isAoe"));
+			const useRemainder = !(isCircle || curr.options.tokenStyleSelect == 'square' || $("#tokens>div[data-id='" + id + "']").hasClass("isAoe"));
 			const scaledRemainderTop = useRemainder ? (tokbottom-toktop-size)/2 : 0;
 			const scaledRemainderLeft = useRemainder ? (tokright-tokleft-size)/2 : 0;
+			//adjustment for a rotated circle that has a wider bounding box
+			const W = tokright-tokleft; //only matters for circle
+			const rotAdj = isCircle ? 0.5*W*(1.0 - 1.0/(Math.abs(Math.sin(R)) + Math.abs(Math.cos(R)))) : 0;
+			
 			if(fullyInside) {
-				if(!(tokleft+scaledRemainderLeft >= x0 && tokright-scaledRemainderLeft <= x1 &&
-				     toktop+scaledRemainderTop >= y0 && tokbottom-scaledRemainderTop <= y1)) continue;
+				if(!(tokleft+scaledRemainderLeft+rotAdj >= x0 && tokright-scaledRemainderLeft-rotAdj <= x1 &&
+				     toktop+scaledRemainderTop+rotAdj >= y0 && tokbottom-scaledRemainderTop-rotAdj <= y1)) continue;
 			} else {
-				if (y0 >= tokbottom-scaledRemainderTop || y1 <= toktop+scaledRemainderTop) continue;
-				if (x0 >= tokright-scaledRemainderLeft || x1 <= tokleft+scaledRemainderLeft) continue;
+				if (y0 >= tokbottom-scaledRemainderTop-rotAdj || y1 <= toktop+scaledRemainderTop+rotAdj) continue;
+				if (x0 >= tokright-scaledRemainderLeft-rotAdj || x1 <= tokleft+scaledRemainderLeft+rotAdj) continue;
 			}
 
 			c++;
 			// TOKEN IS INSIDE/OVERLAPS THE SELECTION
 			if (window.DM || !curr.options.hidden) {
-				let tokenDiv = curr.isLineAoe() ? $(`#tokens>div[data-id='${curr.options.id}'] [data-img]`) : $(`#tokens>div[data-id='${curr.options.id}']`)
+				let tokenDiv = curr.isLineAoe() ? $(`#tokens>div[data-id='${id}'] [data-img]`) : $(`#tokens>div[data-id='${id}']`)
 				if(tokenDiv.css("pointer-events")!="none" && tokenDiv.css("display")!="none" && !tokenDiv.hasClass("ui-draggable-disabled")) {
 					curr.selected = true;
 				}
