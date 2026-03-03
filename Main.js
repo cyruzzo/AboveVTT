@@ -2173,22 +2173,24 @@ function init_ui() {
 	);
 	wizbox.css("z-index", "19");
 
+	//mix-blend improves visibility on mixed color bg
 	const dragSelectBox = $(
-`<svg id="dragbox" class="TLA" style="display: block;" xmlns="http://www.w3.org/2000/svg">
+`<svg id="dragbox" class="TLA" style="display: block; mix-blend-mode: difference;" xmlns="http://www.w3.org/2000/svg">
         <style>
             .drag-box {
                 fill: rgba(0, 255, 255, 0.1);
                 stroke: white;
-                stroke-width: calc(1px / var(--scene-scale));
-                stroke-dasharray: calc(4px / var(--scene-scale)) calc(2px / var(--scene-scale));
+                stroke-width: calc(1.5px / var(--scene-scale) / var(--window-zoom));
+                stroke-dasharray: calc(4px / var(--scene-scale) / var(--window-zoom)) calc(2px / var(--scene-scale) / var(--window-zoom));
                 stroke-linecap: square;
                 vector-effect: non-scaling-stroke;
-                transition: fill 0.2s;
+                transition: fill 0.2s;                
             }
         </style>
         <g id="dragbox-rect" visibility="hidden">
-            <path class="drag-box" d="M 0 0 L 0 1 L 1 1 L 1 0 L 0 0"/>
-            <path id="dragbox-inside" visibility="hidden" stroke-dasharray="2" class="drag-box" d="M 0.01 0.01 L 0.01 0.99 L 0.99 0.99 L 0.99 0.01 L 0.01 0.01"/>
+            <path class="drag-box" d="M 0 0 L 0 1 M 1 0 L 1 1 M 0 0 L 1 0 M 0 1 L 1 1"/>
+            <path id="dragbox-inside" visibility="hidden" stroke-dasharray="2" class="drag-box"
+             d="M 0.01 0.01 L 0.01 0.80 M 0.01 0.01 L 0.80 0.01 M 0.99 0.99 L 0.99 0.20 M 0.99 0.99 L 0.20 0.99 "/>
         </g>
     </svg>`
 	);
