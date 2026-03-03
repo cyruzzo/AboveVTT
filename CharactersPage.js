@@ -1064,7 +1064,7 @@ async function init_character_sheet_page() {
     window.diceRoller = new DiceRoller(); 
     if(!window.ddbConfigJson)
       window.ddbConfigJson = await DDBApi.fetchConfigJson();
-
+    window.myUser = $('#message-broker-client').attr('data-userid') || Cobalt?.User?.ID;
     setTimeout(function(){    
       harvest_game_id()                 // find our campaign id
         .then(set_game_id)              // set it to window.gameId
@@ -1073,7 +1073,8 @@ async function init_character_sheet_page() {
         .then(store_campaign_info)      // store gameId and campaign secret in localStorage for use on other pages     
         .then(async () => {
           window.CAMPAIGN_INFO = await DDBApi.fetchCampaignInfo(window.gameId);
-          window.myUser = $('#message-broker-client').attr('data-userid') || Cobalt?.User?.ID;
+          if (window.myUser == undefined)
+            window.myUser = $('#message-broker-client').attr('data-userid') || Cobalt?.User?.ID;
           window.MB = new MessageBroker();
         })
     }, 5000)
@@ -1545,7 +1546,7 @@ function observe_character_sheet_changes(documentToObserve) {
                   window.diceRoller.setWaitingForRoll();
                 })
                 $("[class*='DiceContainer_button']").off('click.toggle').on('click.toggle', async function () {
-                  const ddb3dDiceShareToggle = localStorage.getItem('isShared3dDiceEnabled') !== null ? JSON.parse(localStorage.getItem('isShared3dDiceEnabled')).state?.[window.myUser] : true;
+                  const ddb3dDiceShareToggle = localStorage.getItem('isShared3dDiceEnabled') !== null && window.myUser != undefined ? JSON.parse(localStorage.getItem('isShared3dDiceEnabled')).state?.[window.myUser] : true;
                   setTimeout(() => {$(`#shared3dDiceToggleSwitch[aria-checked='${!ddb3dDiceShareToggle}']`).click()}, 60);
                 })
 
