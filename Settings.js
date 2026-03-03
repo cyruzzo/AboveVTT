@@ -366,7 +366,7 @@ function avtt_settings() {
 			class: 'ui',
 			global: 1
 		},
-		{
+	/*	{
 			name: 'streamDiceRolls',
 			label: 'Stream Dice Rolls',
 			type: 'toggle',
@@ -376,7 +376,7 @@ function avtt_settings() {
 			],
 			defaultValue: false,
 			class: 'stream'
-		},
+		},*/
 		{
 			name: 'iframeStatBlocks',
 			label: 'Fallback Monster Statblocks',

@@ -27,6 +27,7 @@ $(function() {
         const campaignSettings = JSON.parse(localStorage.getItem(`ExperimentalSettings${window.gameId}`)) || {};
         const globalSettings = JSON.parse(localStorage.getItem(`ExperimentalSettingsGlobal`)) || {}; ;
         window.EXPERIMENTAL_SETTINGS = {...campaignSettings, ...globalSettings};
+        delete window.EXPERIMENTAL_SETTINGS.streamDiceRolls;
         if (is_release_build()) {
           // in case someone left this on during beta testing, we should not allow it here
           set_avtt_setting_value("aggressiveErrorMessages", false);
@@ -104,7 +105,7 @@ $(function() {
 
         window.STREAMPEERS = {};
         window.MYSTREAMID = uuid();
-        window.JOINTHEDICESTREAM = window.EXPERIMENTAL_SETTINGS['streamDiceRolls'];
+        window.JOINTHEDICESTREAM = false; //window.EXPERIMENTAL_SETTINGS['streamDiceRolls'];
         
         const allDiceRegex = /\d+d(?:100|20|12|10|8|6|4)((?:kh|kl|ro(<|<=|>|>=|=)|min)\d+)*/gi; // ([numbers]d[diceTypes]kh[numbers] or [numbers]d[diceTypes]kl[numbers]) or [numbers]d[diceTypes]
         const validExpressionRegex = /^[dkhlro<=>\s\d+\-\(\)]*$/gi; // any of these [d, kh, kl, spaces, numbers, +, -] // Should we support [*, /] ?
