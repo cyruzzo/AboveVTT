@@ -1958,7 +1958,7 @@ function find_pc_by_player_id(idOrSheet, useDefault = true) {
   const regex = new RegExp(regexStr, 'gi');
   const pc = window.pcs.find(pc => pc.sheet.match(regex) || pc.sheet == idOrSheet);
   if (pc) {
-    const unusedPlayerData = ['image', 'attacks', 'attunedItems', 'campaign', 'campaignSetting', 'castingInfo', 'classes', 'deathSaveInfo', 'decorations', 'extras', 'immunities', 'level', 'passiveInsight', 'passiveInvestigation', 'passivePerception', 'proficiencyBonus', 'proficiencyGroups', 'race', 'readOnlyUrl', 'resistances', 'senses', 'skills', 'speeds', 'vulnerabilities'];
+    const unusedPlayerData = ['image', 'attacks', 'attunedItems', 'campaign', 'campaignSetting', 'castingInfo', 'classes', 'deathSaveInfo', 'decorations', 'extras', 'immunities', 'level', 'passiveInsight', 'passiveInvestigation', 'passivePerception', 'proficiencyBonus', 'race', 'readOnlyUrl', 'resistances', 'senses', 'skills', 'speeds', 'vulnerabilities'];
     for (let i = 0; i < unusedPlayerData.length; i++) {
       delete pc[unusedPlayerData[i]];
     }
