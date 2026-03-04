@@ -201,7 +201,19 @@ const buffsDebuffs = {
     "replaceType": {
       "damage": 'button' 
     },
-    "newRoll": '$1ro<2',//reroll 1 & 2
+    "newRoll": '$1ro<2',//reroll 1
+    "type": "feat",
+  },
+  "Healer (2024) reroll 1's": {
+    "tohit": "0",
+    "dmg": "0",
+    "save": "0",
+    "check": "0",
+    "replace": /(\d+d\d+)/gi,
+    "replaceType": {
+      "heal": 'button'
+    },
+    "newRoll": '$1ro<2',//reroll 1
     "type": "feat",
   },
   "Call the Hunt": {

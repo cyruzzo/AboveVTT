@@ -571,11 +571,7 @@ class DiceRoller {
                 return;
             }
             let self = this;
-            // we're about to roll dice so we need to know if we should capture DDB messages.
-            // This also blocks other attempts to roll until we've finished processing
-            // don't hold a reference to the object we were given in case it gets altered while we're waiting.
-            this.#resetVariables();
-            this.setWaitingForRoll();
+
             let msgdata = {}
             diceRoll.expression = diceRoll.expression.replaceAll(/$\+0|\+0(\D)/gi, '$1')
             let roll = new rpgDiceRoller.DiceRoll(diceRoll.expression); 
@@ -663,7 +659,7 @@ class DiceRoller {
 
                         </div>
                         `,
-                    whisper: (diceRoll.sendToOverride == "DungeonMaster" || diceRoll.sendToOverride == "DM") ? dm_id : ((gamelog_send_to_text() != "Everyone" && diceRoll.sendToOverride != "Everyone") || diceRoll.sendToOverride == "Self") ? window.PLAYER_NAME :  ``,
+                  whisper: (diceRoll.sendToOverride == "DungeonMaster" || diceRoll.sendToOverride == "DM") ? dm_id : ((gamelog_send_to_text() != "Everyone" && diceRoll.sendToOverride != "Everyone") || diceRoll.sendToOverride == "Self") ? window.PLAYER_NAME :  ``,
                   rollType: rollType,
                   rollTitle: rollTitle,
                   result: doubleCrit == true  ? 2*roll.total : roll.total,
@@ -718,7 +714,11 @@ class DiceRoller {
                   entityId: diceRoll.entityId
                 };
             }
-
+            // we're about to roll dice so we need to know if we should capture DDB messages.
+            // This also blocks other attempts to roll until we've finished processing
+            // don't hold a reference to the object we were given in case it gets altered while we're waiting.
+            this.#resetVariables();
+            this.setWaitingForRoll();
             if (ddb3dDiceShareToggle && !window.EXPERIMENTAL_SETTINGS['rpgRoller'] && !msgdata?.rollData?.expression?.includes('d')) {
                 send_ddb_dice_message(msgdata.rollData.expression, msgdata.player, msgdata.img, msgdata.rollData.rollType, msgdata.rollData.damageType, msgdata.rollData.rollTitle, diceRoll.sendToOverride)
                 self.#resetVariables();
@@ -968,7 +968,7 @@ class DiceRoller {
         const newId = uuid();
         const message = { ...this.#pendingMessages[firstPending].ddbMessage, eventType: "dice/roll/fulfilled", id: newId };
         console.log("capturing fulfilled message: ", message)
-        let alteredMessage = await this.#swapRollData(message);
+        let alteredMessage = message;
         if (alteredMessage.data?.context?.avatarUrl?.startsWith("above-bucket-not-a-url")) {
             alteredMessage.data.context.avatarUrl = await getAvttStorageUrl(alteredMessage.data.context.avatarUrl, true)
         }
@@ -1067,12 +1067,18 @@ class DiceRoller {
             };
             if(newDice)
                 this.#orderedPendingIds.push(ddbMessage.data.rollId);
-            await this.#swapDiceRollMetadata(ddbMessage);
+            
             if (ddbMessage.data?.context?.avatarUrl?.startsWith("above-bucket-not-a-url")) {
                 ddbMessage.data.context.avatarUrl = await getAvttStorageUrl(ddbMessage.data.context.avatarUrl, true)
             }
-            if(newDice)
+            if(!newDice){
+                await this.#swapDiceRollMetadata(ddbMessage);
+            }
+            else{
                 ddbMessage = await this.#swapRollData(ddbMessage)
+            }
+                
+
             this.ddbDispatch(ddbMessage);
             this.#resetVariables(newDice);
             const self = this; 
@@ -1302,6 +1308,8 @@ class DiceRoller {
             ddbMessage.messageTarget = target;
             ddbMessage.data.context.messageTarget = target;
         }
+        if (this.#pendingMessages[ddbMessage.data.rollId])
+            this.#pendingMessages[ddbMessage.data.rollId].ddbMessage = ddbMessage;
     }
 }
 
