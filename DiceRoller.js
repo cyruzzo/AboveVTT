@@ -561,14 +561,10 @@ class DiceRoller {
                 return false;
             }
 
-            if (this.#waitingForRoll && !multiroll) {
-                console.warn("parseAndRoll called while we were waiting for another roll to finish up");
-                return false;
-            }
-            else if(this.#waitingForRoll && multiroll){
+            if(this.#waitingForRoll){
                 diceRoll.damageType = damageType;
                 this.#multiRollArray.push(diceRoll);
-                return;
+                return true; // return true so chat rolls recognize it's sent instead of shake error
             }
             let self = this;
 
