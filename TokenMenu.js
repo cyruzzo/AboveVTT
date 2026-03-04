@@ -3565,6 +3565,19 @@ function build_adjustments_flyout_menu(tokenIds) {
 		});
 		body.append(opacityWrapper);
 
+		let tokenHeading = tokens.map(t => t.options.imageHeading);
+		let uniqueHeading = [...new Set(tokenHeading)];
+		let startingHeading = uniqueHeading.length === 1 && uniqueHeading[0] != undefined ? uniqueHeading[0] : 0;
+		let headingWrapper = build_token_num_input(startingHeading, tokens,  'Image Heading', 0, 360, 1, function (heading, persist=false) {
+			tokens.forEach(token => {
+				token.options.imageHeading = heading; //currently only takes effect on "rotating towards"
+				$(`.VTTToken[data-id='${token.options.id}']`).css("--token-heading", heading + "deg");
+				if(persist)
+					token.place_sync_persist();
+			});
+		});
+		body.append(headingWrapper);
+
 		let tokFlip = tokens.map(t => t.options?.tokenFlip);
 		let uniqueTokenFlip = [...new Set(tokFlip)];
 		let startingTokenFlip = uniqueTokenFlip.length === 1 && uniqueTokenFlip[0] != undefined ? uniqueTokenFlip[0] : 0;

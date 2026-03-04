@@ -4296,7 +4296,7 @@ div.token-image {
 }
 
 .token:before{
-    transform: rotate(var(--token-rotation));
+    transform: rotate(calc(var(--token-rotation) + var(--token-heading)));
 }
 
 .markers-icon:before,
@@ -8553,7 +8553,7 @@ button#changeTokenImage:before{
 .VTTToken:not(.freeform):not(.hasbase) .hpvisualbar:before{
     --mask-size:calc(100% - 7px);
     border-radius: 50%;
-    transform: scale(var(--token-scale)) rotate(var(--token-rotation)) scaleX(var(--image-flip-x, 1));
+    transform: scale(var(--token-scale)) rotate(calc(var(--token-rotation) + var(--token-heading))) scaleX(var(--image-flip-x, 1));
     height: 100%;
     width: 100%;
     top: 0px;
@@ -9185,7 +9185,7 @@ body:not(.body-rpgcampaign) .site-bar{
     z-index: 20 !important;
 }
 [data-darkness]{
-    transform: rotate(var(--token-rotation));
+    transform: rotate(calc(var(--token-rotation) + var(--token-heading)));
     z-index:16 !important;
     opacity: 1 !important;
 }
