@@ -542,7 +542,7 @@ class MessageBroker {
 				window.nextTurnAudio.preload = 'metadata';
 				document.body.appendChild(window.nextTurnAudio);
 				// The below must be done to satisfy browser autoplay policy
-				window.nextTurnAudio.load().then(() => {
+				window.nextTurnAudio?.load()?.then(() => {
 					window.nextTurnAudio.pause();
 					window.nextTurnAudio.currentTime = 0;
 				})
