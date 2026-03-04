@@ -1004,7 +1004,7 @@ const debounceObserverSetup = mydebounce(function(){
 
 /** actions to take on the character sheet when AboveVTT is NOT running */
 async function init_character_sheet_page() {
-  if (!is_characters_page()) return;
+  if (!is_characters_page() || is_characters_builder_page()) return;
   init_my_dice_details();
   // check for name and image
   set_window_name_and_image(function() {
@@ -1132,7 +1132,7 @@ function init_character_list_page_without_avtt() {
         }
       
       }
-      else if (!is_characters_list_page()) {
+      else if (!is_characters_list_page() && !is_characters_builder_page()) {
         console.log("Detected location change from", oldHref, "to", document.location.href);
         window.oldHref = document.location.href;
         init_characters_pages();
