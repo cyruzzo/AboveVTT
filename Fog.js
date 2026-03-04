@@ -2295,13 +2295,8 @@ function redraw_light_walls(clear=true, editingWallPoints = false){
 							}
 							else if(tokenObject?.options?.teleporterCoords != undefined){
 
-							
-								for(let i=0; i<window.CURRENTLY_SELECTED_TOKENS.length; i++){
-
-									let curr = window.TOKEN_OBJECTS[window.CURRENTLY_SELECTED_TOKENS[i]];
-									if(!window.DM && (curr.options.restrictPlayerMove || curr.options.locked) && !curr.isCurrentPlayer() && curr.options.groupId == undefined){
-										continue;
-									}
+								forSelTokens((curr) => {
+									if(!window.DM && (curr.options.restrictPlayerMove || curr.options.locked) && !curr.isCurrentPlayer() && curr.options.groupId == undefined) return
 										
 									const scaleCoversion = window.CURRENT_SCENE_DATA.scale_factor != undefined ? window.CURRENT_SCENE_DATA.scale_factor / tokenObject.options.teleporterCoords.scale : 1 / tokenObject.options.teleporterCoords.scale;
 									curr.options.left = `${tokenObject.options.teleporterCoords.left*scaleCoversion - curr.options.size/2}px`;
@@ -2322,8 +2317,7 @@ function redraw_light_walls(clear=true, editingWallPoints = false){
 										curr.highlight();
 									}
 									curr.sync(optionsClone);
-								
-								}
+								})
 							}
 							return;
 						}

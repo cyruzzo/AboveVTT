@@ -774,21 +774,13 @@ function should_use_iframes_for_monsters() {
 }
 
 async function popout_all_selected_token_stat(){
-	const selectedTokens = window.CURRENTLY_SELECTED_TOKENS;
-	if(!selectedTokens || selectedTokens.length < 1)
-		return;
-	for(let id of selectedTokens){
+	forSelTokensAsync(async (token) => {
 		let container;
-		const token = window.TOKEN_OBJECTS[id];
-		if(token.isPlayer()){
-			continue;
-		}
+		if(token.isPlayer()) return;
 		if (token.options.statBlock) {
 			let customStatBlock = window.JOURNAL.notes[token.options.statBlock].text;
 			let pcURL = $(customStatBlock).find('.custom-pc-sheet.custom-stat').text();
-			if (pcURL) {
-				continue;
-			} 
+			if (pcURL) return;
 			container = await load_monster_stat(undefined, token.options.id, customStatBlock);
 		}
 		else if(token.options.monster){
@@ -813,7 +805,7 @@ async function popout_all_selected_token_stat(){
 			$(".dcm-backdrop").remove();
 		});
 		close_player_monster_stat_block();
-	}
+	});
 }
 function open_selected_token_stat() {
 	const selectedTokens = window.CURRENTLY_SELECTED_TOKENS;
