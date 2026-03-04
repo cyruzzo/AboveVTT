@@ -539,7 +539,7 @@ class DiceRoller {
             self.#timeoutId = undefined;
             const newDice = $("[class*='DiceContainer_button']").length > 0
             if(newDice)
-                sendNewFulfilled()
+                this.sendNewFulfilled()
             console.warn("DiceRoller timed out after 5 seconds! Sending message");
         }, self.timeoutDuration);
     }
