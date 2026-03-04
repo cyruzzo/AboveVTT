@@ -1808,7 +1808,7 @@ class MessageBroker {
 				if(data.UVTTFile == 1){
 					build_import_loading_indicator("Loading UVTT Map");
 					try{
-						if(window.DM && data.dm_map && data.dm_map_usable){
+						if (window.DM && data.dm_map && data.dm_map_usable == '1'){
 							data.map = await get_map_from_uvtt_file(data.map)
 						}
 						else{
@@ -1817,7 +1817,7 @@ class MessageBroker {
 					}
 					catch{
 						console.log('non-UVTT file found for map')
-						if(window.DM && data.dm_map && data.dm_map_usable){
+						if (window.DM && data.dm_map && data.dm_map_usable == '1'){
 							data.map = data.dm_map;
 						}
 						else{
@@ -1826,7 +1826,7 @@ class MessageBroker {
 					}
 				}
 				else{
-					if (window.DM && data.dm_map && data.dm_map_usable) {
+					if (window.DM && data.dm_map && data.dm_map_usable == '1') {
 						data.map = data.dm_map;
 					}
 					else {
