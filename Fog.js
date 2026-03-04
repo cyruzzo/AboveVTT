@@ -4457,8 +4457,7 @@ function drawing_mouseup(e) {
 		const x1 = Math.max(window.BEGIN_MOUSEX, mouseX);
 		for (let id in window.TOKEN_OBJECTS) {
 			const curr = window.TOKEN_OBJECTS[id];
-			if(curr.options.type == 'door' || curr.options.combatGroupToken) continue;
-			
+			if(!curr.isSelectable()) continue;
 			const tokenImageRect = $("#tokens>div[data-id='" + id + "'] .token-image")[0].getBoundingClientRect();
 			const CX = ((parseInt(tokenImageRect.left) + parseInt(tokenImageRect.right))/2 + window.scrollX - window.VTTMargin) / window.ZOOM;			
 			const CY = ((parseInt(tokenImageRect.top) + parseInt(tokenImageRect.bottom))/2 + window.scrollY - window.VTTMargin) / window.ZOOM;
@@ -4467,15 +4466,10 @@ function drawing_mouseup(e) {
 			const R = (isCircle ? 0 : curr.options.rotation) || 0;
 			if(! (fullyInside ? isRotatedSquareInsideRect : intersectsRotatedSquare) (
 				{x:x0, y:y0, width:x1-x0, height: y1-y0}, CX, CY, size, R)) continue;
-			c++;
+			
 			// TOKEN IS INSIDE/OVERLAPS THE SELECTION
-			if (window.DM || !curr.options.hidden) {
-				let tokenDiv = curr.isLineAoe() ? $(`#tokens>div[data-id='${id}'] [data-img]`) : $(`#tokens>div[data-id='${id}']`)
-				if(tokenDiv.css("pointer-events")!="none" && tokenDiv.css("display")!="none" && !tokenDiv.hasClass("ui-draggable-disabled")) {
-					curr.selected = true;
-				}
-			}
-
+			c++;
+			curr.selected = true;
 		}
 		$("#temp_overlay").css('z-index', '25');
 		window.MULTIPLE_TOKEN_SELECTED = (c > 1);

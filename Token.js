@@ -674,6 +674,11 @@ class Token {
 	isDMLocked() {
 		return window.DM && this.options.locked && !$('#select_locked .ddbc-tab-options__header-heading').hasClass('ddbc-tab-options__header-heading--is-active');
 	}
+	isSelectable() {
+		if ((!window.DM && this.options.hidden) || this.options.type == 'door' || this.options.combatGroupToken) return false;
+		const tokenDiv = this.isLineAoe() ? $(`#tokens>div[data-id='${this.id}'] [data-img]`) : $(`#tokens>div[data-id='${this.id}']`);
+		return tokenDiv.css("pointer-events") != "none" && tokenDiv.css("display") != "none" && !tokenDiv.hasClass("ui-draggable-disabled");
+	}
 	rotate(newRotation) {
 		if (this.isPlayerLocked()) return; // don't allow rotating if the token is locked
 		if (this.isDMLocked()) return; // don't allow rotating if the token is locked		
@@ -4159,14 +4164,33 @@ function token_menu() {
 		return;
 }
 
+//general purpose token iterators
+const forTokens = (callback, selected=false) => {
+	let cnt = 0;
+	for (const token of Object.values(window.TOKEN_OBJECTS)) {
+		if (callback(token)) cnt++; 
+	}
+	return cnt;
+}
+const forSelTokens = (callback) => {
+	let cnt = 0;
+	for (const id of window.CURRENTLY_SELECTED_TOKENS) {
+		const token = window.TOKEN_OBJECTS[id];
+		if (token && callback(token)) cnt++; 
+	}
+	return cnt;
+}
+
+function select_all_tokens() {
+	const cnt = forTokens((token) => token.isSelectable() && (token.selected = true));
+	window.MULTIPLE_TOKEN_SELECTED = (cnt > 1);
+	draw_selected_token_bounding_box();
+	return cnt;
+}
+
 function deselect_all_tokens(ignoreVisionUpdate = false) {
 	window.MULTIPLE_TOKEN_SELECTED = false;
-	for (let id in window.TOKEN_OBJECTS) {
-		let curr = window.TOKEN_OBJECTS[id];
-		if (curr.selected) {
-			curr.selected = false;
-		}
-	}
+	forSelTokens((token) => (token.selected = false));
 	$(`.token`).toggleClass('tokenselected', false);
 	$(`:is(#combat_area, #combat_area_carousel) tr`).toggleClass('selected-token', false);
 	remove_selected_token_bounding_box();
@@ -4832,7 +4856,7 @@ function draw_selected_token_bounding_box(){
 	debounceDrawSelectedToken();
 }
 
-//used by draggable and keypress handler
+//used by draggable/map_drag and keypress handler
 // returns center - point
 function grouprotate_create() {
 	function rotate_eligible() {
@@ -5053,8 +5077,9 @@ async function do_draw_selected_token_bounding_box() {
 }
 
 
-//a map aware dragger that we control (should be made robust to panning and zoom)
+// a map aware dragger that we control (should be robust to panning and zoom)
 // provide up/down/move callbacks that receive the dragger object
+// todo: test with mouse zoom wheel
 function install_map_dragger(element, callbacks) {
 	const dragger = {
 		isDragging: false,
