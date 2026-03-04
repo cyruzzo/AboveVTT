@@ -1670,6 +1670,7 @@ function observe_character_sheet_changes(documentToObserve) {
           { src: "mousetrap.1.6.5.min.js" },
           { src: "peerjs.min.js" },
           { src: "fuse.min.js" },
+          { src: "ajaxQueue/ajaxQueueIndex.js", type: "module" },
           // AboveVTT Files
           { src: "environment.js" },
           { src: "CoreFunctions.js" }, // Make sure CoreFunctions executes before anything else
@@ -1702,7 +1703,6 @@ function observe_character_sheet_changes(documentToObserve) {
           { src: "PeerCommunication.js" },
           { src: "peerVideo.js" },
           { src: "peerDice.js" },
-          { src: "ajaxQueue/ajaxQueueIndex.js", type: "module" },
           { src: "DiceRoller.js" },
           { src: "DMScreen.js" },
           { src: "Main.js" },
