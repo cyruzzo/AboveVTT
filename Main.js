@@ -1718,6 +1718,7 @@ function open_player_sheet(sheet_url, closeIfOpen = true, playerName = '') {
 		    // External Dependencies
 		    { src: "jquery-3.6.0.min.js" },
 		    { src: "jquery.contextMenu.js" },
+			{ src: "ajaxQueue/ajaxQueueIndex.js", type: "module" },
 		    // AboveVTT Files
 		    { src: "CoreFunctions.js" }, // Make sure CoreFunctions executes first
 		    { src: "DDBApi.js" },

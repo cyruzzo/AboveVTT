@@ -1958,6 +1958,10 @@ function find_pc_by_player_id(idOrSheet, useDefault = true) {
   const regex = new RegExp(regexStr, 'gi');
   const pc = window.pcs.find(pc => pc.sheet.match(regex) || pc.sheet == idOrSheet);
   if (pc) {
+    const unusedPlayerData = ['attacks', 'attunedItems', 'campaign', 'campaignSetting', 'classes'];
+    for (let i = 0; i < unusedPlayerData.length; i++) {
+      delete pc[unusedPlayerData[i]];
+    }
     return pc;
   }
   if (useDefault) {
