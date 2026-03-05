@@ -63,7 +63,7 @@
 			"AjaxQueueModule.js",
 			"CoreFunctions.js",
 			"CampaignPage.js",
-			"Startup.js",
+			"Startup.mjs",
 			"CharactersPage.js",
 			"EncounterHandler.js",
 			"SidebarPanel.js",
