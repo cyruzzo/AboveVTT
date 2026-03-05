@@ -678,7 +678,7 @@ class Token {
 		if (this.isPlayerLocked()) return; // don't allow rotating if the token is locked
 		if (this.isDMLocked()) return; // don't allow rotating if the token is locked		
 		this.update_from_page();
-		this.options.rotation = newRotation;
+		this.options.rotation = newRotation % 360;
 		// this is copied from the place() function. Rather than calling place() every time the draggable.drag function executes, 
 		// this just rotates locally to help with performance.
 		// draggable.stop will call place_sync_persist to finalize the rotation. 

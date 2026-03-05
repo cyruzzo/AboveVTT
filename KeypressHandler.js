@@ -18,9 +18,7 @@ Mousetrap.bind('c', function () {       //combat tracker
 
 
 Mousetrap.bind('d', function () {       //draw menu
-    if (window.DM){
-        $('#draw_button').click()
-    }
+    $('#draw_button').click()
 });
 
 Mousetrap.bind('t', function () {       //draw menu

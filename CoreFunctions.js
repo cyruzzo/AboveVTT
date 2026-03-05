@@ -19,7 +19,8 @@ $(function() {
   $("head").append('<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />');
   if (is_encounters_page()) {
     window.DM = true; // the DM plays from the encounters page
-    dmAvatarUrl = $('#site-bar').attr('user-avatar') != undefined ? $('#site-bar').attr('user-avatar') : $('.site-bar .user-interactions-profile-img').attr('src');
+    dmAvatarUrl = $('#site-bar').attr('user-avatar') != undefined ? $('#site-bar').attr('user-avatar') : $('.site-bar .user-interactions-profile-img').attr('src') != undefined ? $('.site-bar .user-interactions-profile-img').attr('src') : $('img[class*="avatarImage"]').attr('src');
+    dmAvatarUrl = dmAvatarUrl || defaultAvatarUrl;
   } else if (is_campaign_page() && !is_spectator_page()) {
     // The owner of the campaign (the DM) is the only one with private notes on the campaign page
     window.DM = $(".ddb-campaigns-detail-body-dm-notes-private").length === 1;
@@ -994,12 +995,14 @@ function add_journal_roll_buttons(target, tokenId=undefined, specificImage=undef
 function report_connection() {
   if (!is_abovevtt_page())
     return;
-  let msgdata = {
-    player: window.PLAYER_NAME,
-    img: window.PLAYER_IMG,
-    text: PLAYER_NAME + " has connected to the server!",
-  };
-  window.MB.inject_chat(msgdata);
+  setTimeout(() => {
+    let msgdata = {
+      player: window.PLAYER_NAME,
+      img: window.PLAYER_IMG,
+      text: PLAYER_NAME + " has connected to the server!",
+    };
+    window.MB.inject_chat(msgdata);
+  }, 5000)
 }
 /**
  * Notifie about player joining the game.
@@ -1153,20 +1156,20 @@ function send_ddb_dice_message(expression, displayName, imgUrl, rollType = "roll
     let ddbJson = {
       id: uuid(),
       dateTime: `${Date.now()}`,
-      gameId: window.gameId,
-      userId: window.myUser,
+      gameId: `${window.gameId}`,
+      userId: `${window.myUser}`,
       source: "web",
       persist: true,
       messageScope: sendTo === "everyone" ? "gameId" : "userId",
       messageTarget: sendTo === "everyone" ? `${window.gameId}` : sendTo === "dungeonmaster" || sendTo === "dm" ? `${window.CAMPAIGN_INFO.dmId}` : `${window.myUser}`,
-      entityId: window.myUser,
+      entityId: `${window.myUser}`,
       entityType: "user",
       eventType: "dice/roll/fulfilled",
       data: {
         action: actionType,
         setId: window.mydice.data.setId,
         context: {
-          entityId: window.myUser,
+          entityId: `${window.myUser}`,
           entityType: "user",
           messageScope: sendTo === "everyone" ? "gameId" : "userId",
           messageTarget: sendTo === "everyone" ? `${window.gameId}` : sendTo === "dungeonmaster" || sendTo === "dm"  ? `${window.CAMPAIGN_INFO.dmId}` : `${window.myUser}`,
@@ -1958,6 +1961,10 @@ function find_pc_by_player_id(idOrSheet, useDefault = true) {
   const regex = new RegExp(regexStr, 'gi');
   const pc = window.pcs.find(pc => pc.sheet.match(regex) || pc.sheet == idOrSheet);
   if (pc) {
+    const unusedPlayerData = ['attacks', 'attunedItems', 'campaign', 'campaignSetting', 'classes'];
+    for (let i = 0; i < unusedPlayerData.length; i++) {
+      delete pc[unusedPlayerData[i]];
+    }
     return pc;
   }
   if (useDefault) {

@@ -201,7 +201,19 @@ const buffsDebuffs = {
     "replaceType": {
       "damage": 'button' 
     },
-    "newRoll": '$1ro<2',//reroll 1 & 2
+    "newRoll": '$1ro<2',//reroll 1
+    "type": "feat",
+  },
+  "Healer (2024) reroll 1's": {
+    "tohit": "0",
+    "dmg": "0",
+    "save": "0",
+    "check": "0",
+    "replace": /(\d+d\d+)/gi,
+    "replaceType": {
+      "heal": 'button'
+    },
+    "newRoll": '$1ro<2',//reroll 1
     "type": "feat",
   },
   "Call the Hunt": {
@@ -992,7 +1004,7 @@ const debounceObserverSetup = mydebounce(function(){
 
 /** actions to take on the character sheet when AboveVTT is NOT running */
 async function init_character_sheet_page() {
-  if (!is_characters_page()) return;
+  if (!is_characters_page() || is_characters_builder_page()) return;
   init_my_dice_details();
   // check for name and image
   set_window_name_and_image(function() {
@@ -1064,7 +1076,7 @@ async function init_character_sheet_page() {
     window.diceRoller = new DiceRoller(); 
     if(!window.ddbConfigJson)
       window.ddbConfigJson = await DDBApi.fetchConfigJson();
-
+    window.myUser = $('#message-broker-client').attr('data-userid') || Cobalt?.User?.ID;
     setTimeout(function(){    
       harvest_game_id()                 // find our campaign id
         .then(set_game_id)              // set it to window.gameId
@@ -1073,7 +1085,8 @@ async function init_character_sheet_page() {
         .then(store_campaign_info)      // store gameId and campaign secret in localStorage for use on other pages     
         .then(async () => {
           window.CAMPAIGN_INFO = await DDBApi.fetchCampaignInfo(window.gameId);
-          window.myUser = $('#message-broker-client').attr('data-userid') || Cobalt?.User?.ID;
+          if (window.myUser == undefined)
+            window.myUser = $('#message-broker-client').attr('data-userid') || Cobalt?.User?.ID;
           window.MB = new MessageBroker();
         })
     }, 5000)
@@ -1119,7 +1132,7 @@ function init_character_list_page_without_avtt() {
         }
       
       }
-      else if (!is_characters_list_page()) {
+      else if (!is_characters_list_page() && !is_characters_builder_page()) {
         console.log("Detected location change from", oldHref, "to", document.location.href);
         window.oldHref = document.location.href;
         init_characters_pages();
@@ -1545,7 +1558,7 @@ function observe_character_sheet_changes(documentToObserve) {
                   window.diceRoller.setWaitingForRoll();
                 })
                 $("[class*='DiceContainer_button']").off('click.toggle').on('click.toggle', async function () {
-                  const ddb3dDiceShareToggle = localStorage.getItem('isShared3dDiceEnabled') !== null ? JSON.parse(localStorage.getItem('isShared3dDiceEnabled')).state?.[window.myUser] : true;
+                  const ddb3dDiceShareToggle = localStorage.getItem('isShared3dDiceEnabled') !== null && window.myUser != undefined ? JSON.parse(localStorage.getItem('isShared3dDiceEnabled')).state?.[window.myUser] : true;
                   setTimeout(() => {$(`#shared3dDiceToggleSwitch[aria-checked='${!ddb3dDiceShareToggle}']`).click()}, 60);
                 })
 
@@ -1657,6 +1670,7 @@ function observe_character_sheet_changes(documentToObserve) {
           { src: "mousetrap.1.6.5.min.js" },
           { src: "peerjs.min.js" },
           { src: "fuse.min.js" },
+          { src: "ajaxQueue/ajaxQueueIndex.js", type: "module" },
           // AboveVTT Files
           { src: "environment.js" },
           { src: "CoreFunctions.js" }, // Make sure CoreFunctions executes before anything else
@@ -1689,7 +1703,6 @@ function observe_character_sheet_changes(documentToObserve) {
           { src: "PeerCommunication.js" },
           { src: "peerVideo.js" },
           { src: "peerDice.js" },
-          { src: "ajaxQueue/ajaxQueueIndex.js", type: "module" },
           { src: "DiceRoller.js" },
           { src: "DMScreen.js" },
           { src: "Main.js" },

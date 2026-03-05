@@ -1,7 +1,7 @@
 /** DiceRoller.js - DDB dice rolling functions */
 
-const allDiceRegex = /\d+d(?:100|20|12|10|8|6|4)((?:kh|kl|ro(<|<=|>|>=|=)|min)\d+)*|^\d+$/gi; // ([numbers]d[diceTypes]kh[numbers] or [numbers]d[diceTypes]kl[numbers]) or [numbers]d[diceTypes]
-const rpgDiceRegex = /\d+d(?:\d+)((?:kh|kl|ro(<|<=|>|>=|=)|min)\d+)*|^\d+$/gi; 
+const allDiceRegex = /\d+d(?:100|20|12|10|8|6|4)((?:kh|kl|ro(<|<=|>|>=|=)|min)\d+)*|^\d+|^-?\d+[+-]\d+$/gi; // ([numbers]d[diceTypes]kh[numbers] or [numbers]d[diceTypes]kl[numbers]) or [numbers]d[diceTypes]
+const rpgDiceRegex = /\d+d(?:\d+)((?:kh|kl|ro(<|<=|>|>=|=)|min)\d+)*|^\d+|^-?\d+[+-]\d+$/gi; 
 const validExpressionRegex = /^[dkhlromin<=>\s\d+\-\(\)]*$/gi; // any of these [d, kh, kl, spaces, numbers, +, -] // Should we support [*, /] ?
 const validModifierSubstitutions = /(?<!\w)(str|dex|con|int|wis|cha|pb)(?!\w)/gi // case-insensitive shorthand for stat modifiers as long as there are no letters before or after the match. For example `int` and `STR` would match, but `mint` or `strong` would not match.
 const diceRollCommandRegex = /^\/(r|roll|save|hit|dmg|skill|heal)\s/gi; // matches only the slash command. EG: `/r 1d20` would only match `/r`
@@ -539,7 +539,7 @@ class DiceRoller {
             self.#timeoutId = undefined;
             const newDice = $("[class*='DiceContainer_button']").length > 0
             if(newDice)
-                sendNewFulfilled()
+                self.sendNewFulfilled()
             console.warn("DiceRoller timed out after 5 seconds! Sending message");
         }, self.timeoutDuration);
     }
@@ -561,21 +561,13 @@ class DiceRoller {
                 return false;
             }
 
-            if (this.#waitingForRoll && !multiroll) {
-                console.warn("parseAndRoll called while we were waiting for another roll to finish up");
-                return false;
-            }
-            else if(this.#waitingForRoll && multiroll){
+            if(this.#waitingForRoll){
                 diceRoll.damageType = damageType;
                 this.#multiRollArray.push(diceRoll);
-                return;
+                return true; // return true so chat rolls recognize it's sent instead of shake error
             }
             let self = this;
-            // we're about to roll dice so we need to know if we should capture DDB messages.
-            // This also blocks other attempts to roll until we've finished processing
-            // don't hold a reference to the object we were given in case it gets altered while we're waiting.
-            this.#resetVariables();
-            this.setWaitingForRoll();
+
             let msgdata = {}
             diceRoll.expression = diceRoll.expression.replaceAll(/$\+0|\+0(\D)/gi, '$1')
             let roll = new rpgDiceRoller.DiceRoll(diceRoll.expression); 
@@ -663,7 +655,7 @@ class DiceRoller {
 
                         </div>
                         `,
-                    whisper: (diceRoll.sendToOverride == "DungeonMaster" || diceRoll.sendToOverride == "DM") ? dm_id : ((gamelog_send_to_text() != "Everyone" && diceRoll.sendToOverride != "Everyone") || diceRoll.sendToOverride == "Self") ? window.PLAYER_NAME :  ``,
+                  whisper: (diceRoll.sendToOverride == "DungeonMaster" || diceRoll.sendToOverride == "DM") ? dm_id : ((gamelog_send_to_text() != "Everyone" && diceRoll.sendToOverride != "Everyone") || diceRoll.sendToOverride == "Self") ? window.PLAYER_NAME :  ``,
                   rollType: rollType,
                   rollTitle: rollTitle,
                   result: doubleCrit == true  ? 2*roll.total : roll.total,
@@ -718,7 +710,11 @@ class DiceRoller {
                   entityId: diceRoll.entityId
                 };
             }
-
+            // we're about to roll dice so we need to know if we should capture DDB messages.
+            // This also blocks other attempts to roll until we've finished processing
+            // don't hold a reference to the object we were given in case it gets altered while we're waiting.
+            this.#resetVariables();
+            this.setWaitingForRoll();
             if (ddb3dDiceShareToggle && !window.EXPERIMENTAL_SETTINGS['rpgRoller'] && !msgdata?.rollData?.expression?.includes('d')) {
                 send_ddb_dice_message(msgdata.rollData.expression, msgdata.player, msgdata.img, msgdata.rollData.rollType, msgdata.rollData.damageType, msgdata.rollData.rollTitle, diceRoll.sendToOverride)
                 self.#resetVariables();
@@ -929,7 +925,7 @@ class DiceRoller {
         clearTimeout(this.diceRollButtonHide);
         this.diceRollButtonHide = setTimeout(()=>{
             $('[data-floating-ui-portal], .roll-mod-container').removeClass('hidden');
-        }, 200)
+        }, 500)
 
     }
 
@@ -968,7 +964,7 @@ class DiceRoller {
         const newId = uuid();
         const message = { ...this.#pendingMessages[firstPending].ddbMessage, eventType: "dice/roll/fulfilled", id: newId };
         console.log("capturing fulfilled message: ", message)
-        let alteredMessage = await this.#swapRollData(message);
+        let alteredMessage = message;
         if (alteredMessage.data?.context?.avatarUrl?.startsWith("above-bucket-not-a-url")) {
             alteredMessage.data.context.avatarUrl = await getAvttStorageUrl(alteredMessage.data.context.avatarUrl, true)
         }
@@ -1067,12 +1063,18 @@ class DiceRoller {
             };
             if(newDice)
                 this.#orderedPendingIds.push(ddbMessage.data.rollId);
-            await this.#swapDiceRollMetadata(ddbMessage);
+            
             if (ddbMessage.data?.context?.avatarUrl?.startsWith("above-bucket-not-a-url")) {
                 ddbMessage.data.context.avatarUrl = await getAvttStorageUrl(ddbMessage.data.context.avatarUrl, true)
             }
-            if(newDice)
+            if(!newDice){
+                await this.#swapDiceRollMetadata(ddbMessage);
+            }
+            else{
                 ddbMessage = await this.#swapRollData(ddbMessage)
+            }
+                
+
             this.ddbDispatch(ddbMessage);
             this.#resetVariables(newDice);
             const self = this; 
@@ -1302,6 +1304,8 @@ class DiceRoller {
             ddbMessage.messageTarget = target;
             ddbMessage.data.context.messageTarget = target;
         }
+        if (this.#pendingMessages[ddbMessage.data.rollId])
+            this.#pendingMessages[ddbMessage.data.rollId].ddbMessage = ddbMessage;
     }
 }
 
