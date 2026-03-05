@@ -104,7 +104,7 @@ class ChatObserver {
 
         };
 
-        if(data.img.startsWith('above-bucket-not-a-url')){
+        if(data.img?.startsWith('above-bucket-not-a-url')){
             data.img = await getAvttStorageUrl(data.img, true);
         }
 
