@@ -20,6 +20,7 @@ $(function() {
   if (is_encounters_page()) {
     window.DM = true; // the DM plays from the encounters page
     dmAvatarUrl = $('#site-bar').attr('user-avatar') != undefined ? $('#site-bar').attr('user-avatar') : $('.site-bar .user-interactions-profile-img').attr('src') != undefined ? $('.site-bar .user-interactions-profile-img').attr('src') : $('img[class*="avatarImage"]').attr('src');
+    dmAvatarUrl = dmAvatarUrl || defaultAvatarUrl;
   } else if (is_campaign_page() && !is_spectator_page()) {
     // The owner of the campaign (the DM) is the only one with private notes on the campaign page
     window.DM = $(".ddb-campaigns-detail-body-dm-notes-private").length === 1;
@@ -994,12 +995,14 @@ function add_journal_roll_buttons(target, tokenId=undefined, specificImage=undef
 function report_connection() {
   if (!is_abovevtt_page())
     return;
-  let msgdata = {
-    player: window.PLAYER_NAME,
-    img: window.PLAYER_IMG,
-    text: PLAYER_NAME + " has connected to the server!",
-  };
-  window.MB.inject_chat(msgdata);
+  setTimeout(() => {
+    let msgdata = {
+      player: window.PLAYER_NAME,
+      img: window.PLAYER_IMG,
+      text: PLAYER_NAME + " has connected to the server!",
+    };
+    window.MB.inject_chat(msgdata);
+  }, 5000)
 }
 /**
  * Notifie about player joining the game.
