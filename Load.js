@@ -182,25 +182,18 @@ if(isVttGamePage) {
 }
 async function injectScripts(scriptsToLoad) {
     for (const script of scriptsToLoad) {
-//        try {
-            await new Promise((resolve, reject) => {
-                const s = document.createElement('script');
-                s.src = getExtURL(script);
-                if(script.endsWith(".mjs")) s.type = "module";
-                s.onload = resolve;
-                s.onerror = () => reject(new Error(`Could not find or load: ${script}`));
-                addChild(s, true);
-            });
-            console.log(`✅ Loaded: ${script}`);
-//        } catch (err) {
-//            //this won't catch everything in web extensions
-//            console.error(`Critical error injecting ${script}:`, err);
-//            throw(err);
-//        }
+        await new Promise((resolve, reject) => {
+            const s = document.createElement('script');
+            s.src = getExtURL(script);
+            if(script.endsWith(".mjs")) s.type = "module";
+            s.onload = resolve;
+            s.onerror = () => reject(new Error(`Could not find or load: ${script}`));
+            addChild(s, true);
+        });
+        console.log(`✅ Loaded: ${script}`);
+        //could catch errors here - but it doesn't help much in web extensions
     }
-    console.log("🏁 AVTT: done Loading");
 }
-    
-injectScripts(scripts);
-
+await injectScripts(scripts);
+console.log("🏁 AVTT: done Loading");
 }());
