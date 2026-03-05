@@ -4443,7 +4443,6 @@ function drawing_mouseup(e) {
 
 	else if (window.DRAWFUNCTION == "select") {
 		// FIND TOKENS INSIDE THE AREA
-		let c = 0;
 		const fullyInside = (window.BEGIN_MOUSEY > mouseY);
 		const y0 = Math.min(window.BEGIN_MOUSEY, mouseY);
 		const y1 = Math.max(window.BEGIN_MOUSEY, mouseY);
@@ -4466,7 +4465,6 @@ function drawing_mouseup(e) {
 			curr.selected = true;
 		}
 		$("#temp_overlay").css('z-index', '25');
-		window.MULTIPLE_TOKEN_SELECTED = (c > 1);
 		draw_selected_token_bounding_box();
 		console.log("READY");
 	}

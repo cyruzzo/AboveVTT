@@ -2342,7 +2342,6 @@ class Token {
 									let tokID = parentToken.attr('data-id');
 									let groupID = parentToken.attr('data-group-id');
 									let thisSelected = !(parentToken.hasClass('tokenselected'));
-									let count = 0;
 									if (shiftHeld == false) {
 										deselect_all_tokens(true);
 									}
@@ -2356,14 +2355,6 @@ class Token {
 									}
 
 									window.TOKEN_OBJECTS[tokID].selected = thisSelected;
-
-									for (let id in window.TOKEN_OBJECTS) {
-										if (id.selected == true) {
-											count++;
-										}
-									}
-
-									window.MULTIPLE_TOKEN_SELECTED = (count > 1);
 
 									if (window.DM) {
 										$("[id^='light_']").css('visibility', "visible");
@@ -2423,7 +2414,6 @@ class Token {
 							let tokID = parentToken.attr('data-id');
 							let groupID = parentToken.attr('data-group-id');
 							let thisSelected = !(parentToken.hasClass('tokenselected'));
-							let count = 0;
 							if (shiftHeld == false) {
 								deselect_all_tokens(true);
 							}
@@ -2437,14 +2427,6 @@ class Token {
 							}				
 
 							window.TOKEN_OBJECTS[tokID].selected = thisSelected;
-
-							for (let id in window.TOKEN_OBJECTS) {
-								if (id.selected == true) {
-									count++;
-								}			
-							}
-
-							window.MULTIPLE_TOKEN_SELECTED = (count > 1);
 					
 							if(window.DM){
 						   		$("[id^='light_']").css('visibility', "visible");
@@ -3597,7 +3579,6 @@ class Token {
 					let tokID = parentToken.attr('data-id');
 					let groupID = parentToken.attr('data-group-id');
 					let thisSelected = !(parentToken.hasClass('tokenselected'));
-					let count = 0;
 					if (shiftHeld == false) {
 						deselect_all_tokens(true);
 					}
@@ -3612,14 +3593,6 @@ class Token {
 
 					window.TOKEN_OBJECTS[tokID].selected = thisSelected;
 
-					for (let id in window.TOKEN_OBJECTS) {
-						if (id.selected == true) {
-							count++;
-						}			
-					}
-
-					window.MULTIPLE_TOKEN_SELECTED = (count > 1);
-			
 					if(window.DM){
 				   		$("[id^='light_']").css('visibility', "visible");
 				   	}
