@@ -2402,7 +2402,14 @@ async function redraw_scene_list(searchTerm) {
 										right: '350px',
 										width: '400px'
 									})
+									let flyoutTop = e.clientY;
+									let flyoutHeight = flyout.height() + 25;
+									let bottom = (e.clientY + flyoutHeight);
 
+									if (bottom > window.innerHeight) {
+										flyoutTop = flyoutTop - (bottom - window.innerHeight) - 25;
+									}
+									flyout.css('top', flyoutTop);
 									const buttonFooter = $("<div></div>");
 									buttonFooter.css({
 										height: "40px",
