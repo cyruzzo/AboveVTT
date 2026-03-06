@@ -1,7 +1,7 @@
 /** DiceRoller.js - DDB dice rolling functions */
 
-const allDiceRegex = /\d+d(?:100|20|12|10|8|6|4)((?:kh|kl|ro(<|<=|>|>=|=)|min)\d+)*|^\d+|^-?\d+[+-]\d+$/gi; // ([numbers]d[diceTypes]kh[numbers] or [numbers]d[diceTypes]kl[numbers]) or [numbers]d[diceTypes]
-const rpgDiceRegex = /\d+d(?:\d+)((?:kh|kl|ro(<|<=|>|>=|=)|min)\d+)*|^\d+|^-?\d+[+-]\d+$/gi; 
+const allDiceRegex = /\d+d(?:100|20|12|10|8|6|4)((?:kh|kl|ro(<|<=|>|>=|=)|min)\d+)*|^\d+|^[-+]?\d+[+-]\d+$/gi; // ([numbers]d[diceTypes]kh[numbers] or [numbers]d[diceTypes]kl[numbers]) or [numbers]d[diceTypes]
+const rpgDiceRegex = /\d+d(?:\d+)((?:kh|kl|ro(<|<=|>|>=|=)|min)\d+)*|^\d+|^[-+]?\d+[+-]\d+$/gi; 
 const validExpressionRegex = /^[dkhlromin<=>\s\d+\-\(\)]*$/gi; // any of these [d, kh, kl, spaces, numbers, +, -] // Should we support [*, /] ?
 const validModifierSubstitutions = /(?<!\w)(str|dex|con|int|wis|cha|pb)(?!\w)/gi // case-insensitive shorthand for stat modifiers as long as there are no letters before or after the match. For example `int` and `STR` would match, but `mint` or `strong` would not match.
 const diceRollCommandRegex = /^\/(r|roll|save|hit|dmg|skill|heal)\s/gi; // matches only the slash command. EG: `/r 1d20` would only match `/r`
@@ -776,6 +776,8 @@ class DiceRoller {
         }
     }
     nextRoll(msg = undefined, critRange = 20, critType = 2){
+
+
         if(this.#multiRollArray.length == 0){
             this.#critAttackAction = undefined;
             return;
@@ -961,7 +963,11 @@ class DiceRoller {
         if (this.#orderedPendingIds.length == 0)
             return;
         const firstPending = this.#orderedPendingIds.shift(); // we don't use current fulfilled messages as they dont always come in in order due to time it take dice to roll, modify the deferred message in order instead
+        if (this.#pendingMessages[firstPending] == undefined){
+            return;
+        }
         const newId = uuid();
+        
         const message = { ...this.#pendingMessages[firstPending].ddbMessage, eventType: "dice/roll/fulfilled", id: newId };
         console.log("capturing fulfilled message: ", message)
         let alteredMessage = message;
@@ -971,6 +977,17 @@ class DiceRoller {
         console.log("altered fulfilled message: ", alteredMessage);
         alteredMessage.dateTime = this.#pendingMessages[firstPending]?.ddbMessage?.dateTime || Date.now();
         this.ddbDispatch(alteredMessage);
+        if(this.#multiRollArray.length>0){
+            const self = this;
+            const nextCritRange = self.#pendingMessages[ddbMessage.data.rollId].pendingCritRange;
+            const nextCritType = self.#pendingMessages[ddbMessage.data.rollId].pendingCritType;
+            const nextDamageType = self.#pendingMessages[ddbMessage.data.rollId].pendingDamageType;
+            setTimeout(function () {
+                if (newDice) {
+                    self.nextRoll(alteredMessage, nextCritRange, nextCritType, nextDamageType);
+                }
+            }, 60)
+        }
         this.#pendingMessages[firstPending] = null;
         delete this.#pendingMessages[firstPending];
         if (this.#orderedPendingIds.length > 0) {
@@ -980,7 +997,7 @@ class DiceRoller {
     /** wraps all messages that are sent by DDB, and processes any that we need to process, else passes it along as-is */
     async #wrappedDispatch(message) {
         const newDice = $("[class*='DiceContainer_button']").length > 0
-        console.group("DiceRoller.#wrappedDispatch");
+
         if(this.#waitingForRoll && message.source == 'Beyond20'){
             return;
         }
@@ -1074,7 +1091,6 @@ class DiceRoller {
                 ddbMessage = await this.#swapRollData(ddbMessage)
             }
                 
-
             this.ddbDispatch(ddbMessage);
             this.#resetVariables(newDice);
             const self = this; 
@@ -1090,11 +1106,14 @@ class DiceRoller {
                 }, 1000)
             }
         } else if (message.eventType === "dice/roll/fulfilled" && this.#pendingMessages[message.data.rollId] !== undefined) {
-            this.handleOldFulfilled(message);
+            if (!newDice)
+                this.handleOldFulfilled(message);
+            else
+                this.sendNewFulfilled()
         } else if (message.eventType === "dice/roll/fulfilled"){
             this.ddbDispatch(message);
         }
-        console.groupEnd();
+        
     }
 
     /** iterates over the rolls of a DDB message, calculates #pendingDiceRoll.expression, and swaps any data necessary to make the message match the expression result */
