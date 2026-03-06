@@ -1310,7 +1310,6 @@ function draw_select_box(x0, y0, w, h, inside=false, selbox=false, group=false) 
 	const rg1 = document.getElementById('rot-grab');
 	const rg2 = document.getElementById('group-rot-grab');
 	rect.setAttribute('transform', `translate(${x0 / sf}, ${y0 / sf}) scale(${w / sf}, ${h / sf})`);
-	console.log("trans", `translate(${x0 / sf}, ${y0 / sf}) scale(${w / sf}, ${h / sf})`);
 	document.getElementById('dragbox-inside')?.setAttribute('visibility', inside ? 'visible' : 'hidden');
 	document.getElementById('dragbox-rect')?.setAttribute('visibility', !selbox ? 'visible' : 'hidden');
 	document.getElementById('selbox-rect')?.setAttribute('visibility', selbox ? 'visible' : 'hidden');

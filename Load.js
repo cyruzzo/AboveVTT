@@ -1,46 +1,63 @@
 (async function() { //don't leave clutter after load
 
     const runtime = (chrome || browser).runtime; //detect extension context
-    const isVttGamePage = window.location.search.includes("abovevtt=true");
-    //match campaign page exactly in case other pages ever get added like campaigns/join that we want to exclude    
-    const isCampaignPage = !!window.location.pathname.match(/\/campaigns\/[0-9]+$/gi);
-    const isPlayerPage = !!window.location.pathname.match("/characters");
-    const isPlainCharacterPage = !isVttGamePage && isPlayerPage //character, builder, or listing
 
-    //we need Loaders later for character frames so we need cleverness here:
-    if(runtime) { //we are in the extension loader - decide whether to bail quickly        
-        console.log("🎲 AVTT: extension", isVttGamePage ? "VTT":"", isPlainCharacterPage ? "CHAR":"", isCampaignPage ? "CMPGN":"");    
-        if(!isPlainCharacterPage && !isCampaignPage && !isVttGamePage) {
-            console.log("⛔  AVTT: no loading here.")
+    function pageType(w) { // page type from window: [char, gamelog, campaign, vtt-player, vtt-dm, null]
+        //match campaign page exactly in case other pages ever get added like campaigns/join that we want to exclude    
+        const isCampaignPage = w.location.pathname.match(/\/campaigns\/[0-9]+$/gi);
+        const isVttGamePage = w.location.search.includes("abovevtt=true");
+        const isPlayerPage = w.location.pathname.match("/characters");
+        const isPlainCharacterPage = !isVttGamePage && isPlayerPage //character, builder, or listing
+        const isDM = isCampaignPage && w.location.search.includes("dm=true");
+        const isPopoutGameLog = w.location.search.includes("popoutgamelog=true");
+        if(isPlainCharacterPage) return "char";
+        if(isPopoutGameLog && !isDM) return "gamelog";
+        if(isCampaignPage && !isVttGamePage) return "campaign";
+        if(isVttGamePage) return "vtt-" + ((isPlayerPage && !isDM) ? "player" : "dm");
+        return null;
+    }
+    
+    const pgType = pageType(window); //only relevant in extension context;
+    if(runtime) { //we are in the extension loader - decide whether to bail quickly
+        //with this scheme we should never load in iframes from here
+        const isIframe = window.self !== window.top;
+        console.log("🎲 AVTT extension: ", pgType, (isIframe && window.parent) ? ("parent: " + pageType(window.parent)) : "");
+        if(!pgType) {
+            console.log("⛔  AVTT: no extension loading here.")
             return; //don't load anything
         }
     }
-    
+
+    //setup to work in both contexts
     const getExtURL = runtime ? ((url) => runtime.getURL(url))
           : ((url) => document.querySelector("#extensionpath").dataset.path + url);
-    const addChild = (c, head=false, e=document) => (e[head ? "head" : "body"] || e.documentElement).appendChild(c);
-    function loadingOverlay(element, isPlayer) {
-        const loadingOverlay = element.createElement('div');
+    const getExtVersion = runtime ? (() => (chrome||browser).runtime?.getManifest()?.version)
+          : ((url) => document.querySelector("#avttversion").dataset.path);
+    
+    const addChild = (c, where, head=false) => (where[head ? "head" : "body"] || where.documentElement).appendChild(c);
+    
+    function loadingOverlay(where, isPlayer) {
+        const loadingOverlay = where.createElement('div');
         loadingOverlay.id = "loading_overlay";
-        const loadingBg = element.createElement('div');
+        const loadingBg = where.createElement('div');
         loadingBg.id = "loading_overlay_bg";
         loadingBg.className = isPlayer ? "player" : "dm";
         loadingOverlay.appendChild(loadingBg);
-        addChild(loadingOverlay); // Add to DOM last to avoid multiple repaints
+        addChild(loadingOverlay, where);
     }
-    function install_divs(element) {
-        const l = element.createElement('div');
+    function installDivs(where) {
+        const l = where.createElement('div');
         l.id = "extensionpath"
         l.style.display = "none";
         l.setAttribute("data-path", getExtURL("/"));
-        addChild(l);
-        const avttVersion = element.createElement('div');
+        addChild(l, where);
+        const avttVersion = where.createElement('div');
         avttVersion.id = "avttversion";
         avttVersion.style.display = "none";
-        avttVersion.setAttribute("data-version", (chrome||browser).runtime.getManifest().version);
-        addChild(avttVersion);
+        avttVersion.setAttribute("data-version", getExtVersion());
+        addChild(avttVersion, where);
     }
-    //These are also necessary for character iframe injection
+    
     const avttScripts = [
 	// External Dependencies
 	"jquery-3.6.0.min.js",
@@ -101,6 +118,7 @@
     	"WeatherOverlay.js"
     ]
     const avttCharacterScripts = [
+        "Load.js", //load Loader on character sheets to support DBB Character Overhaul Extension
         // External Dependencies
         "jquery-3.6.0.min.js",
         "jquery.contextMenu.js",	
@@ -114,7 +132,7 @@
         "DiceContextMenu/DiceContextMenu.js",
         "MessageBroker.js",
         "rpg-dice-roller.bundle.min.js",
-        // AboveVTT files that execute when loaded
+        // AboveVTT files that execute when loaded        
         "CharactersPage.js" // Make sure CharactersPage executes last
     ];
     const avttStyles = [
@@ -130,46 +148,39 @@
     const simpleAvttStyles = [
         "DiceContextMenu/DiceContextMenu.css", "jquery.contextMenu.css"
     ]
-    function loadStyles(styles, e = document) {
+    function loadStyles(styles, where) {
         for(const value of styles) {       
-            const l = e.createElement('link');
+            const l = where.createElement('link');
             l.href = getExtURL(value);
             l.rel = "stylesheet";
             console.log(`🎨 Loading Style ${value}`);
-            addChild(l, true, e);
+            addChild(l, where, true);
         }
     }
-    async function injectScripts(scriptsToLoad) {
+    async function injectScripts(scriptsToLoad, where) {
         for (const script of scriptsToLoad) {
             await new Promise((resolve, reject) => {
-                const s = document.createElement('script');
+                const s = where.createElement('script');
                 s.src = getExtURL(script);
                 if(script.endsWith(".mjs")) s.type = "module";
                 s.onload = resolve;
                 s.onerror = () => reject(new Error(`Could not find or load: ${script}`));
-                addChild(s, true);
+                addChild(s, where, true);
             });
             console.log(`✅ Loaded: ${script}`);
             //could catch errors here - but it doesn't help much in web extensions
         }
     }
     
-    if(runtime) { //extension loader    
-        console.log("⌛ AVTT Loading...")
-        const isDM = isCampaignPage && window.location.search.includes("dm=true");
-        const isPopoutGameLog = window.location.search.includes("popoutgamelog=true");
-        if (isVttGamePage && !isPlainCharacterPage) {
-            loadingOverlay(document, isPlayerPage);
-        }
-        install_divs(document);
-        loadStyles(isPlainCharacterPage ? simpleAvttStyles : avttStyles);
-    
-        // Variants of Scripts to load:
-        // PlainCharacter, NonDMPlayer, NonDMPopout, CampaignOnly, NormalScene
-        //  Then run Startup if VTTPage
-        const scripts = isPlainCharacterPage ?
+    async function inject(pgType, where) {
+        console.log("⌛ AVTT Loading", pgType)
+        console.log("WHERE=", where);
+        if(pgType.startsWith("vtt-")) loadingOverlay(where, pgType.endsWith("-player"));
+        installDivs(where);
+        loadStyles(pgType === "char" ? simpleAvttStyles : avttStyles, where);
+        const scripts = pgType === "char" ?
               avttCharacterScripts
-              : (isPopoutGameLog && !isDM) ? [
+              : pgType === "gamelog" ? [
                   "jquery.magnific-popup.min.js",
                   "purify.min.js",
                   "environment.js",
@@ -185,41 +196,25 @@
                   "MonsterStatBlock.js",
                   "MonsterDice.js",
                   "CampaignPage.js"
-              ] : (isCampaignPage && !isVttGamePage) ? [      
+              ] : pgType === "campaign" ? [      
                   "environment.js",
                   "CoreFunctions.js", 		
                   "DDBApi.js", 
                   "Settings.js",
                   "CampaignPage.js"
               ] : [...avttScripts,
-                   "Load.js", //load Loader on VTT full pages
-                   (isPlayerPage && !isDM) ? "CharactersPage.js" : "SceneData.js"] //player vs DM mode
-        
-        if(isVttGamePage) {
-            // Startup must be the last file to execute. This is what actually loads the app.
-            // It requires all the previous files to be loaded first
-            scripts.push("Startup.mjs");
-        }
-        await injectScripts(scripts);
-        console.log("🏁 AVTT: done Loading");
+                   "Load.js", //load Loader on VTT full pages (for iframe inject - see below)
+                   (pgType.endsWith("-dm") ? "SceneData.js" : "CharactersPage.js"),
+                  ];
+        if(pgType.startsWith("vtt-")) scripts.push("Startup.mjs");        
+        await injectScripts(scripts, where);
+        console.log("🏁 AVTT: done loading",pgType);
+    }
+    
+    if(runtime) { //extension loader context
+        await inject(pgType, document);
     } else {
-        //in page context install loaders for later
-        window.AVTT_CHARACTER_SCRIPTS_INJECT = (element) => {
-            console.log("Injecting Character Scripts", element);
-            loadStyles(simpleAvttStyles, element);    
-            injectScripts(avttCharacterScripts, element);    
-        }
-        //keep a frame injector around for later:
-        window.AVTT_FULL_INJECT = (element, isDM) => {
-            console.log("Injecting Full VTT on Character", element);       
-            loadingOverlay(element, true);
-            install_divx(element);
-            loadStyles(avttStyles, element);
-            const scripts = [...avttScripts, "CharactersPage.js"];
-            //for some reason that code injects both Character and SceneData for DM
-            if(isDM) scripts.push("SceneData.js");
-            scripts.push("Startup.mjs");
-            injectScripts(scripts, element);
-        }
+        //in page context install loader on window for iframe injects later
+        window.AVTT_INJECT = inject;
     }
 }());

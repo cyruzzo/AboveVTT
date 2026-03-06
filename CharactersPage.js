@@ -1617,7 +1617,7 @@ function observe_character_sheet_changes(documentToObserve) {
         clearTimeout(iframeTimeout);
         iframe.toggleClass('abovevtt-visited', true)
         // use installer set up by Load.js
-        window.AVTT_FULL_INJECT(contents?.[0], dm);
+        window.AVTT_INJECT(dm ? "vtt-dm" : "vtt-player", contents?.[0]);
 
       }, 1000);
 

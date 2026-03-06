@@ -1715,7 +1715,7 @@ function open_player_sheet(sheet_url, closeIfOpen = true, playerName = '') {
 		console.log("fixing up the character sheet");
 		const where = $(event.target)[0].contentDocument;
 
-		window.AVTT_CHARACTER_SCRIPTS_INJECT(where);
+		window.AVTT_INJECT("char", where);
 
 		$(event.target).contents().find("head").append(`
 			<style>
@@ -1790,7 +1790,6 @@ function open_player_sheet(sheet_url, closeIfOpen = true, playerName = '') {
 			</style>
 		`);
 		console.log("removing headers");
-		$(event.target).contents().find("body").append(`<div id='extensionpath' data-path='${window.EXTENSION_PATH}'></div>`)
 
 		if (window.JOINTHEDICESTREAM) {
 			joinDiceRoom();
