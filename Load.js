@@ -100,6 +100,23 @@
 	"audio/index.mjs",
     	"WeatherOverlay.js"
     ]
+    const avttCharacterScripts = [
+        // External Dependencies
+        "jquery-3.6.0.min.js",
+        "jquery.contextMenu.js",	
+        "purify.min.js",	
+        "ajaxQueue/ajaxQueueIndex.mjs",
+        // AboveVTT Files
+        "CoreFunctions.js", // Make sure CoreFunctions executes first
+        "DDBApi.js",
+        "MonsterDice.js",
+        "DiceRoller.js",
+        "DiceContextMenu/DiceContextMenu.js",
+        "MessageBroker.js",
+        "rpg-dice-roller.bundle.min.js",
+        // AboveVTT files that execute when loaded
+        "CharactersPage.js" // Make sure CharactersPage executes last
+    ];
     const avttStyles = [
         "abovevtt.css",
         "jquery-ui.min.css",
@@ -150,47 +167,33 @@
         // Variants of Scripts to load:
         // PlainCharacter, NonDMPlayer, NonDMPopout, CampaignOnly, NormalScene
         //  Then run Startup if VTTPage
-        const scripts = isPlainCharacterPage ? [
-            // External Dependencies
-            "jquery-3.6.0.min.js",
-            "jquery.contextMenu.js",	
-            "purify.min.js",	
-            "ajaxQueue/ajaxQueueIndex.js",
-            // AboveVTT Files
-            "CoreFunctions.js", // Make sure CoreFunctions executes first
-            "DDBApi.js",
-            "MonsterDice.js",
-            "DiceRoller.js",
-            "DiceContextMenu/DiceContextMenu.js",
-            "MessageBroker.js",
-            "rpg-dice-roller.bundle.min.js",
-            // AboveVTT files that execute when loaded
-            "CharactersPage.js" // Make sure CharactersPage executes last
-        ] : (isPopoutGameLog && !isDM) ? [
-            "jquery.magnific-popup.min.js",
-            "purify.min.js",
-            "environment.js",
-            "CoreFunctions.js", 	
-            "rpg-dice-roller.bundle.min.js",
-            "DiceContextMenu/DiceContextMenu.js",
-            "DiceRoller.js",	
-            "DDBApi.js", 
-            "Settings.js",
-            "MessageBroker.js",
-            "Journal.js",
-            "ChatObserver.js",
-            "MonsterStatBlock.js",
-            "MonsterDice.js",
-            "CampaignPage.js"
-        ] : (isCampaignPage && !isVttGamePage) ? [      
-            "environment.js",
-            "CoreFunctions.js", 		
-            "DDBApi.js", 
-            "Settings.js",
-            "CampaignPage.js"
-        ] : [...avttScripts,
-             "Load.js", //load Loader on VTT full pages
-             (isPlayerPage && !isDM) ? "CharactersPage.js" : "SceneData.js"] //player vs DM mode
+        const scripts = isPlainCharacterPage ?
+              avttCharacterScripts
+              : (isPopoutGameLog && !isDM) ? [
+                  "jquery.magnific-popup.min.js",
+                  "purify.min.js",
+                  "environment.js",
+                  "CoreFunctions.js", 	
+                  "rpg-dice-roller.bundle.min.js",
+                  "DiceContextMenu/DiceContextMenu.js",
+                  "DiceRoller.js",	
+                  "DDBApi.js", 
+                  "Settings.js",
+                  "MessageBroker.js",
+                  "Journal.js",
+                  "ChatObserver.js",
+                  "MonsterStatBlock.js",
+                  "MonsterDice.js",
+                  "CampaignPage.js"
+              ] : (isCampaignPage && !isVttGamePage) ? [      
+                  "environment.js",
+                  "CoreFunctions.js", 		
+                  "DDBApi.js", 
+                  "Settings.js",
+                  "CampaignPage.js"
+              ] : [...avttScripts,
+                   "Load.js", //load Loader on VTT full pages
+                   (isPlayerPage && !isDM) ? "CharactersPage.js" : "SceneData.js"] //player vs DM mode
         
         if(isVttGamePage) {
             // Startup must be the last file to execute. This is what actually loads the app.
@@ -208,7 +211,7 @@
         }
         //keep a frame injector around for later:
         window.AVTT_FULL_INJECT = (element, isDM) => {
-            console.log("Injecting Character Page", element);       
+            console.log("Injecting Full VTT on Character", element);       
             loadingOverlay(element, true);
             install_divx(element);
             loadStyles(avttStyles, element);
