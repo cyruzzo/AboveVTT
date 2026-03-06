@@ -2,14 +2,14 @@
 
     const runtime = (chrome || browser).runtime; //detect extension context
 
-    function pageType(w) { // page type from window: [char, gamelog, campaign, vtt-player, vtt-dm, null]
+    function pageType(location) { // page type from location: [char, gamelog, campaign, vtt-player, vtt-dm, null]
         //match campaign page exactly in case other pages ever get added like campaigns/join that we want to exclude    
-        const isCampaignPage = w.location.pathname.match(/\/campaigns\/[0-9]+$/gi);
-        const isVttGamePage = w.location.search.includes("abovevtt=true");
-        const isPlayerPage = w.location.pathname.match("/characters");
+        const isCampaignPage = location.pathname.match(/\/campaigns\/[0-9]+$/gi);
+        const isVttGamePage = location.search.includes("abovevtt=true");
+        const isPlayerPage = location.pathname.match("/characters");
         const isPlainCharacterPage = !isVttGamePage && isPlayerPage //character, builder, or listing
-        const isDM = isCampaignPage && w.location.search.includes("dm=true");
-        const isPopoutGameLog = w.location.search.includes("popoutgamelog=true");
+        const isDM = isCampaignPage && location.search.includes("dm=true");
+        const isPopoutGameLog = location.search.includes("popoutgamelog=true");
         if(isPlainCharacterPage) return "char";
         if(isPopoutGameLog && !isDM) return "gamelog";
         if(isCampaignPage && !isVttGamePage) return "campaign";
@@ -17,12 +17,12 @@
         return null;
     }
     
-    const pgType = pageType(window); //only relevant in extension context;
-    if(runtime) { //we are in the extension loader - decide whether to bail quickly
+    const pgType = pageType(window.location); //only relevant in extension context;
+    const isIframe = window.self !== window.top;
+    if(runtime) { //we are in the extension context - decide whether to bail quickly
         //with this scheme we should never load in iframes from here
-        const isIframe = window.self !== window.top;
-        console.log("🎲 AVTT extension: ", pgType, (isIframe && window.parent) ? ("parent: " + pageType(window.parent)) : "");
-        if(!pgType) {
+        console.log("🎲 AVTT extension: ", pgType);
+        if(!pgType || isIframe) { //block iFrame extension loading (eg older Safari) until we want it
             console.log("⛔  AVTT: no extension loading here.")
             return; //don't load anything
         }
@@ -44,18 +44,6 @@
         loadingBg.className = isPlayer ? "player" : "dm";
         loadingOverlay.appendChild(loadingBg);
         addChild(loadingOverlay, where);
-    }
-    function installDivs(where) {
-        const l = where.createElement('div');
-        l.id = "extensionpath"
-        l.style.display = "none";
-        l.setAttribute("data-path", getExtURL("/"));
-        addChild(l, where);
-        const avttVersion = where.createElement('div');
-        avttVersion.id = "avttversion";
-        avttVersion.style.display = "none";
-        avttVersion.setAttribute("data-version", getExtVersion());
-        addChild(avttVersion, where);
     }
     
     const avttScripts = [
@@ -148,7 +136,8 @@
     const simpleAvttStyles = [
         "DiceContextMenu/DiceContextMenu.css", "jquery.contextMenu.css"
     ]
-    function loadStyles(styles, where) {
+    
+    function injectStyles(styles, where) {
         for(const value of styles) {       
             const l = where.createElement('link');
             l.href = getExtURL(value);
@@ -173,11 +162,28 @@
     }
     
     async function inject(pgType, where) {
-        console.log("⌛ AVTT Loading", pgType)
-        console.log("WHERE=", where);
-        if(pgType.startsWith("vtt-")) loadingOverlay(where, pgType.endsWith("-player"));
-        installDivs(where);
-        loadStyles(pgType === "char" ? simpleAvttStyles : avttStyles, where);
+        console.log("⌛ AVTT Loading", pgType, (isIframe && window.parent) ? ("parent: " + pageType(window.parent.location)) : "");        
+        if(pgType.startsWith("vtt-")) {
+            const loadingOverlay = where.createElement('div');
+            loadingOverlay.id = "loading_overlay";
+            const loadingBg = where.createElement('div');
+            loadingBg.id = "loading_overlay_bg";
+            loadingBg.className = pgType.endsWith("-dm") ? "dm" : "player";
+            loadingOverlay.appendChild(loadingBg);
+            addChild(loadingOverlay, where);
+        }
+        const l = where.createElement('div');
+        l.id = "extensionpath"
+        l.style.display = "none";
+        l.setAttribute("data-path", getExtURL("/"));
+        addChild(l, where);
+        const avttVersion = where.createElement('div');
+        avttVersion.id = "avttversion";
+        avttVersion.style.display = "none";
+        avttVersion.setAttribute("data-version", getExtVersion());
+        addChild(avttVersion, where);
+        
+        injectStyles(pgType === "char" ? simpleAvttStyles : avttStyles, where);
         const scripts = pgType === "char" ?
               avttCharacterScripts
               : pgType === "gamelog" ? [
