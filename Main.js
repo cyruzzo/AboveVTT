@@ -1713,48 +1713,10 @@ function open_player_sheet(sheet_url, closeIfOpen = true, playerName = '') {
 	window.MB.sendMessage("custom/myVTT/lock", { player_sheet: sheet_url });
 	iframe.off("load").on("load", function(event) {
 		console.log("fixing up the character sheet");
+		const where = $(event.target)[0].contentDocument;
 
-		let scripts = [
-		    // External Dependencies
-		    { src: "jquery-3.6.0.min.js" },
-		    { src: "jquery.contextMenu.js" },
-			{ src: "ajaxQueue/ajaxQueueIndex.js", type: "module" },
-		    // AboveVTT Files
-		    { src: "CoreFunctions.js" }, // Make sure CoreFunctions executes first
-		    { src: "DDBApi.js" },
-		    { src: "MonsterDice.js" },
-		    { src: "DiceRoller.js" },
-		    { src: "DiceContextMenu/DiceContextMenu.js" },
-		    { src: "MessageBroker.js" },
-		    { src: "rpg-dice-roller.bundle.min.js" },
-		    // AboveVTT files that execute when loaded
-		    { src: "CharactersPage.js" } // Make sure CharactersPage executes last
-		]
+		window.AVTT_CHARACTER_SCRIPTS_INJECT(where);
 
-		// Too many of our scripts depend on each other.
-		// This ensures that they are loaded sequentially to avoid any race conditions.
-		let injectScript = function () {
-		    if (scripts.length === 0) {
-		        return;
-		    }
-		    let nextScript = scripts.shift();
-		    let s = $(event.target)[0].contentDocument.createElement('script');
-		    s.src = `${window.EXTENSION_PATH}${nextScript.src}`;
-		    if (nextScript.type !== undefined) {
-		        s.setAttribute('type', nextScript.type);
-		    }
-		    console.log(`attempting to append ${nextScript.src}`);
-		    s.onload = function() {
-		        console.log(`finished injecting ${nextScript.src}`);
-		        injectScript();
-		    };
-		    ($(event.target)[0].contentDocument.head || $(event.target)[0].contentDocument.documentElement).appendChild(s);
-		}
-		injectScript();
-		
-		
-		$(event.target).contents().find("head").append($(`<link type="text/css" rel="Stylesheet" href="${window.EXTENSION_PATH}DiceContextMenu/DiceContextMenu.css" />`));
-		$(event.target).contents().find("head").append($(`<link type="text/css" rel="Stylesheet" href="${window.EXTENSION_PATH}jquery.contextMenu.css" />`));
 		$(event.target).contents().find("head").append(`
 			<style>
 			button.avtt-roll-button,

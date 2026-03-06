@@ -103,7 +103,8 @@
 			"WeatherOverlay.js",
 			"iframe.html",
 			"avttS3Upload.js",
-			"loadFrame.js"
+			"loadFrame.js",
+			"Load.js"	
 			],
 			"matches": [ "*://*.dndbeyond.com/*" ]	
 		}
