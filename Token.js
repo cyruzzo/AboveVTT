@@ -1745,10 +1745,18 @@ class Token {
 					            if(flyoutLeft + 400 > window.innerWidth){
 					            	flyoutLeft = window.innerWidth - 420
 					            }
-					            flyout.css({
-					            	left: flyoutLeft,
-					            	width: '400px'
-					            })
+								flyout.css({
+									left: flyoutLeft,
+									width: '400px'
+								})
+								let flyoutTop = e.clientY;
+								let flyoutHeight = flyout.height() + 50;
+								let bottom = (e.clientY + flyoutHeight);
+
+								if (bottom > window.innerHeight) {
+									flyoutTop = flyoutTop - (bottom - window.innerHeight) - 50;
+								}
+								flyout.css('top', flyoutTop);
 
 					            const buttonFooter = $("<div></div>");
 					            buttonFooter.css({
@@ -1889,10 +1897,18 @@ class Token {
 						            if(flyoutLeft + 400 > window.innerWidth){
 						            	flyoutLeft = window.innerWidth - 420
 						            }
-						            flyout.css({
-						            	left: flyoutLeft,
-						            	width: '400px'
-						            })
+									flyout.css({
+										left: flyoutLeft,
+										width: '400px'
+									})
+									let flyoutTop = e.clientY;
+									let flyoutHeight = flyout.height() + 25;
+									let bottom = (e.clientY + flyoutHeight);
+
+									if (bottom > window.innerHeight) {
+										flyoutTop = flyoutTop - (bottom - window.innerHeight) - 25;
+									}
+									flyout.css('top', flyoutTop);
 	
 						            const buttonFooter = $("<div></div>");
 						            buttonFooter.css({
@@ -1995,11 +2011,19 @@ class Token {
 					            if(flyoutLeft + 400 > window.innerWidth){
 					            	flyoutLeft = window.innerWidth - 420
 					            }
-					            flyout.css({
-					            	left: flyoutLeft,
-					            	width: '400px'
-					            })
 
+								flyout.css({
+									left: flyoutLeft,
+									width: '400px'
+								})
+								let flyoutTop = e.clientY;
+								let flyoutHeight = flyout.height() + 25;
+								let bottom = (e.clientY + flyoutHeight);
+
+								if (bottom > window.innerHeight) {
+									flyoutTop = flyoutTop - (bottom - window.innerHeight) - 25;
+								}
+								flyout.css('top', flyoutTop);
 					            const buttonFooter = $("<div></div>");
 					            buttonFooter.css({
 					                height: "40px",

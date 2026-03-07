@@ -2445,7 +2445,7 @@ padding-top:10px;
     background: #F58231;
 }
 
-:is(.token, .folder-item-list) .note-condition.condition-img {
+:is(.token, .folder) .note-condition.condition-img {
     background: #e4c700;
 }
 

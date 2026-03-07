@@ -388,7 +388,7 @@ async function start_above_vtt_common() {
   
   startup_step("Fetching token customizations");
   fetch_token_customizations();
-
+  
   startup_step("Creating StatHandler, PeerManager, and MessageBroker");
   window.StatHandler = new StatHandler();
   window.PeerManager = new PeerManager();

@@ -2359,9 +2359,6 @@ async function redraw_scene_list(searchTerm) {
 						window.JOURNAL.display_note(item.id);
 					})
 
-					
-
-
 
 					const noteId = item.id;
 					let hoverNoteTimer;
@@ -2370,7 +2367,7 @@ async function redraw_scene_list(searchTerm) {
 						'mouseover': function (e) {
 							hoverNoteTimer = setTimeout(function () {
 								build_and_display_sidebar_flyout(e.clientY, async function (flyout) {
-									let noteHover = `<div>
+									let noteHover = `<div style="max-height: calc(100vh - 60px);height: fit-content;">
 										<div class="tooltip-header">
 											<div class="tooltip-header-icon">
 											
@@ -2382,7 +2379,7 @@ async function redraw_scene_list(searchTerm) {
 											Note
 											</div>
 										</div>
-										<div class="tooltip-body note-text" style="max-height:calc(100vH - 100px)">
+										<div class="tooltip-body note-text" style="max-height:calc(100vh - 130px); height: fit-content;">
 											<div class="tooltip-body-description">
 												<div class="tooltip-body-description-text note-text">
 													${window.JOURNAL.notes[item.id].text}
@@ -2392,7 +2389,6 @@ async function redraw_scene_list(searchTerm) {
 									</div>`
 									flyout.addClass("prevent-sidebar-modal-close"); // clicking inside the tooltip should not close the sidebar modal that opened it
 									flyout.addClass('note-flyout');
-									flyout.css('max-height', 'calc(100vH - 50px)')
 									const tooltipHtml = $(noteHover);
 									await window.JOURNAL.translateHtmlAndBlocks(tooltipHtml, noteId);
 									add_journal_roll_buttons(tooltipHtml);
@@ -2415,7 +2411,14 @@ async function redraw_scene_list(searchTerm) {
 										right: '350px',
 										width: '400px'
 									})
+									let flyoutTop = e.clientY;
+									let flyoutHeight = flyout.height() + 25;
+									let bottom = (e.clientY + flyoutHeight);
 
+									if (bottom > window.innerHeight) {
+										flyoutTop = flyoutTop - (bottom - window.innerHeight) - 25;
+									}
+									flyout.css('top', flyoutTop);
 									const buttonFooter = $("<div></div>");
 									buttonFooter.css({
 										height: "40px",
