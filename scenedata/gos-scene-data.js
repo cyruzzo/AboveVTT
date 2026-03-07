@@ -84071,7 +84071,7 @@ export const get_scene_data_gos = {
 			}
 		}
 	},
-		"dnd/gos/salvage-operation/map41emperorofthewaves": {
+	"dnd/gos/salvage-operation/map41emperorofthewaves": {
 		"vpps": "45.5",
 		"title": "Map 4.1: Emperor of the Waves ",
 		"drawings": [
@@ -90789,6 +90789,13249 @@ export const get_scene_data_gos = {
 				"title": "Altar to Lolth",
 				"text": "<h4 id=\"2AltartoLolth\" class=\"compendium-hr heading-anchor\" data-content-chunk-id=\"e4c54d99-6ea0-4ecd-9a9f-e0254026f52b\">Altar to Lolth</h4>\n<aside class=\"text--quote-box\">\n<p data-content-chunk-id=\"f1921bc9-3d8f-40f5-8a58-9fe138439d9a\">A rough stone altar dominates this cabin. Strange markings cover its surface, dried mud cakes the floor around it, and humanoid skulls ring the wall above, each mounted on a wooden spike. The corners of this room are piled with garbage and debris — crudely cut wooden logs, smashed furniture, torn sacks, shattered crates, and small piles of dried palm fronds. A staircase descends from the southeast corner, and an acrid odor fills the air.</p>\n</aside>\n<p data-content-chunk-id=\"d38cb4d8-7bf9-4a06-a854-c724f96c3916\">This chamber was once the captain’s cabin. Now it’s a shrine to Lolth, the demon queen of spiders. The skulls are cracked, weathered, and obviously old.</p>\n<p data-content-chunk-id=\"42c9b5c8-f3ed-4315-988a-36174b028f07\">Lurking under the garbage and debris is a host of vermin held sacred by the cultists of Lolth — spiders of every size and type. If anyone other than the druid Krell spends more than a few moments in this room, one&nbsp;<a class=\"tooltip-hover monster-tooltip\" href=\"https://www.dndbeyond.com/monsters/16895-giant-spider\" data-tooltip-href=\"//www.dndbeyond.com/monsters/16895-tooltip?disable-webm=1&amp;disable-webm=1\">giant spider</a>&nbsp;bursts from the webs on the port side, while an&nbsp;<a class=\"tooltip-hover monster-tooltip\" href=\"https://www.dndbeyond.com/monsters/16859-ettercap\" data-tooltip-href=\"//www.dndbeyond.com/monsters/16859-tooltip?disable-webm=1&amp;disable-webm=1\">ettercap</a>&nbsp;emerges from the starboard side of the room. At the same time, four&nbsp;<a class=\"tooltip-hover monster-tooltip\" href=\"https://www.dndbeyond.com/monsters/301414-swarm-of-insects-spiders\" data-tooltip-href=\"//www.dndbeyond.com/monsters/301414-tooltip?disable-webm=1&amp;disable-webm=1\">swarms of insects (spiders)</a>&nbsp;crawl through the deck from below. Any character who has a passive Perception score of 14 or lower is surprised. (In tight quarters, remember that a swarm can occupy the same space as another creature.)</p>\n<p data-content-chunk-id=\"b20fed3c-018d-4433-a5bd-1fab942ee18c\"><strong><em>Captain’s Log.</em></strong>&nbsp;A character who searches through the debris in the room and succeeds on a DC 15 Wisdom (<a class=\"tooltip-hover skill-tooltip\" href=\"https://www.dndbeyond.com/sources/dnd/free-rules/playing-the-game#Skills\" data-tooltip-href=\"//www.dndbeyond.com/skills/14-tooltip?disable-webm=1&amp;disable-webm=1\">Perception</a>) check finds the ship’s ledger and the captain’s log, both written in Common.</p>\n<p data-content-chunk-id=\"285d1aab-ccdb-40a6-a721-b531e0d4a050\">The log details the ship’s last voyage, including an account of the terrible storm that threw&nbsp;<em>Emperor of the Waves</em>&nbsp;off course and separated it from its escort. Running low on food and drinkable water, the ship was forced to drop anchor off an uncharted island. The last entry describes an attack by orcs that fought alongside goblins and monstrous vermin. Though the crew fended off this initial attack, they suffered heavy casualties. The final entry records the captain’s fear that this attack might have been the precursor to an even larger assault.</p>\n<p data-content-chunk-id=\"f3b7b528-10f3-447e-bfcc-6aa0b124d516\"><strong><em>Treasure.</em></strong>&nbsp;A minor offering to Lolth is concealed by the mud and litter on the deck. A search of the cabin uncovers a small sack containing ten red rubies (100 gp each).</p>",
 				"plain": "Altar to LolthA rough stone altar dominates this cabin. Strange markings cover its surface, dried mud cakes the floor around it, and humanoid skulls ring the wall above, each mounted on a wooden spike. The corners of this room are piled with garbage and debris — crudely cut wooden logs, smashed furniture, torn sacks, shattered crates, and small piles of dried palm fronds. A staircase descends from the southeast corner, and an acrid odor fills the air.This chamber was once the captain’s cabin. Now it’s a shrine to Lolth, the demon queen of spiders. The skulls are cracked, weathered, and obviously old.Lurking under the garbage and debris is a host of vermin held sacred by the cultists of Lolth — spiders of every size and type. If anyone other than the druid Krell spends more than a few moments in this room, one giant spider bursts from the webs on the port side, while an ettercap emerges from the starboard side of the room. At the same time, four swarms of insects (spiders) crawl through the deck from below. Any character who has a passive Perception score of 14 or lower is surprised. (In tight quarters, remember that a swarm can occupy the same space as another creature.)Captain’s Log. A character who searches through the debris in the room and succeeds on a DC 15 Wisdom (Perception) check finds the ship’s ledger and the captain’s log, both written in Common.The log details the ship’s last voyage, including an account of the terrible storm that threw Emperor of the Waves off course and separated it from its escort. Running low on food and drinkable water, the ship was forced to drop anchor off an uncharted island. The last entry describes an attack by orcs that fought alongside goblins and monstrous vermin. Though the crew fended off this initial attack, they suffered heavy casualties. The final entry records the captain’s fear that this attack might have been the precursor to an even larger assault.Treasure. A minor offering to Lolth is concealed by the mud and litter on the deck. A search of the cabin uncovers a small sack containing ten red rubies (100 gp each).",
+				"player": false,
+				"statBlock": false
+			}
+		}
+	},
+	"dnd/gos/of-ships-and-the-sea/mapa7warthalkeelruins": {
+		"vpps": "60",
+		"title": "Map A.7: Warthalkeel Ruins ",
+		"drawings": [
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				394,
+				568,
+				394,
+				508,
+				6,
+				1,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				394,
+				508,
+				462,
+				505,
+				6,
+				1,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				462,
+				505,
+				472,
+				548,
+				6,
+				1,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				454,
+				568,
+				391,
+				565,
+				6,
+				1,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				470,
+				544,
+				707,
+				548,
+				6,
+				1,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				707,
+				548,
+				704,
+				192,
+				6,
+				1,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				704,
+				192,
+				1229,
+				205,
+				6,
+				1,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				471,
+				979,
+				462,
+				1024,
+				6,
+				1,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				462,
+				1024,
+				407,
+				1029,
+				6,
+				1,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				407,
+				1029,
+				406,
+				973,
+				6,
+				1,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				406,
+				973,
+				449,
+				943,
+				6,
+				1,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				449,
+				943,
+				454,
+				568,
+				6,
+				1,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				967,
+				555,
+				1072,
+				556,
+				6,
+				1,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				705,
+				544,
+				835,
+				550,
+				6,
+				1,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				381,
+				38,
+				460,
+				41,
+				6,
+				1,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				416,
+				5,
+				419,
+				83,
+				6,
+				1,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				415,
+				1430,
+				416,
+				1535,
+				6,
+				1,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				366,
+				1478,
+				466,
+				1481,
+				6,
+				1,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				416,
+				1905,
+				416,
+				2007,
+				6,
+				1,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				465,
+				1960,
+				374,
+				1960,
+				6,
+				1,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				844,
+				2437,
+				950,
+				2444,
+				6,
+				1,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				895,
+				2392,
+				899,
+				2494,
+				6,
+				1,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1378,
+				2400,
+				1382,
+				2499,
+				6,
+				1,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1328,
+				2439,
+				1426,
+				2441,
+				6,
+				1,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				398,
+				2485,
+				455,
+				2412,
+				6,
+				1,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				369,
+				2443,
+				474,
+				2436,
+				6,
+				1,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2857,
+				248,
+				2892,
+				124,
+				6,
+				1,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2494,
+				209,
+				2500,
+				382,
+				6,
+				1,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2500,
+				382,
+				2765,
+				372,
+				6,
+				1,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2765,
+				372,
+				2857,
+				248,
+				6,
+				1,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				3707,
+				316,
+				3701,
+				353,
+				6,
+				1,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				3703,
+				485,
+				3614,
+				485,
+				6,
+				1,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				3614,
+				485,
+				3620,
+				570,
+				6,
+				1,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				3620,
+				570,
+				3742,
+				552,
+				6,
+				1,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				3742,
+				552,
+				3841,
+				611,
+				6,
+				1,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				3841,
+				611,
+				3984,
+				599,
+				6,
+				1,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				3984,
+				599,
+				4095,
+				520,
+				6,
+				1,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				4095,
+				520,
+				4119,
+				391,
+				6,
+				1,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				4119,
+				391,
+				4079,
+				268,
+				6,
+				1,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				4079,
+				268,
+				3950,
+				194,
+				6,
+				1,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				3950,
+				194,
+				3804,
+				210,
+				6,
+				1,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				3804,
+				210,
+				3733,
+				254,
+				6,
+				1,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				3733,
+				254,
+				3623,
+				248,
+				6,
+				1,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				3623,
+				248,
+				3619,
+				317,
+				6,
+				1,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				3619,
+				317,
+				3707,
+				316,
+				6,
+				1,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				3497,
+				1648,
+				3508,
+				2027,
+				6,
+				1,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				3506,
+				1881,
+				3646,
+				1879,
+				6,
+				1,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				3497,
+				2130,
+				3556,
+				2116,
+				6,
+				1,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				3633,
+				2115,
+				3713,
+				2127,
+				6,
+				1,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				3967,
+				2118,
+				3961,
+				1916,
+				6,
+				1,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				3837,
+				2124,
+				3967,
+				2118,
+				6,
+				1,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				3993,
+				2808,
+				3990,
+				2606,
+				6,
+				1,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				3990,
+				2606,
+				3458,
+				2605,
+				6,
+				1,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				3477,
+				3381,
+				3736,
+				3358,
+				6,
+				1,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				3740,
+				2562,
+				3807,
+				2561,
+				6,
+				1,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				3807,
+				2561,
+				3808,
+				2605,
+				6,
+				1,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				3744,
+				2562,
+				3732,
+				2607,
+				6,
+				1,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2601,
+				599,
+				2761,
+				583,
+				6,
+				1,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2761,
+				583,
+				2891,
+				804,
+				6,
+				1,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				3024,
+				1904,
+				3017,
+				1184,
+				6,
+				1,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2263,
+				1175,
+				2278,
+				1671,
+				6,
+				1,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2269,
+				2148,
+				2934,
+				2153,
+				6,
+				1,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2265,
+				1888,
+				2269,
+				2148,
+				6,
+				1,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				3021,
+				1890,
+				3021,
+				2091,
+				6,
+				1,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2777,
+				3597,
+				1898,
+				3594,
+				6,
+				1,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1657,
+				3269,
+				1661,
+				3199,
+				6,
+				1,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1661,
+				3199,
+				1908,
+				3203,
+				6,
+				1,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1908,
+				3203,
+				1902,
+				2762,
+				6,
+				1,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1902,
+				2762,
+				1668,
+				2755,
+				6,
+				1,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1668,
+				2755,
+				1669,
+				2482,
+				6,
+				1,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1669,
+				2482,
+				1915,
+				2489,
+				6,
+				1,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1915,
+				2489,
+				2037,
+				2402,
+				6,
+				1,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2037,
+				2402,
+				2160,
+				2375,
+				6,
+				1,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2291,
+				2376,
+				2389,
+				2398,
+				6,
+				1,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2389,
+				2398,
+				2500,
+				2485,
+				6,
+				1,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2500,
+				2485,
+				2767,
+				2492,
+				6,
+				1,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2767,
+				2492,
+				2767,
+				2756,
+				6,
+				1,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2767,
+				2756,
+				2537,
+				2756,
+				6,
+				1,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2537,
+				2756,
+				2546,
+				3201,
+				6,
+				1,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2546,
+				3201,
+				2776,
+				3206,
+				6,
+				1,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2776,
+				3206,
+				2777,
+				3597,
+				6,
+				1,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2043,
+				3097,
+				1908,
+				3096,
+				6,
+				1,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1907,
+				3200,
+				1919,
+				3224,
+				6,
+				1,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2046,
+				3221,
+				2043,
+				3097,
+				6,
+				1,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2036,
+				3348,
+				2038,
+				3595,
+				6,
+				1,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1920,
+				3349,
+				2036,
+				3348,
+				6,
+				1,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2399,
+				3598,
+				2396,
+				3346,
+				6,
+				1,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2396,
+				3346,
+				2524,
+				3347,
+				6,
+				1,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2398,
+				3099,
+				2546,
+				3099,
+				6,
+				1,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2398,
+				3224,
+				2398,
+				3099,
+				6,
+				1,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2519,
+				3218,
+				2558,
+				3194,
+				6,
+				1,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2525,
+				2768,
+				2536,
+				2768,
+				6,
+				1,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2768,
+				2624,
+				2518,
+				2620,
+				6,
+				1,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1665,
+				2615,
+				1921,
+				2618,
+				6,
+				1,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2097,
+				2539,
+				2098,
+				2586,
+				6,
+				1,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2073,
+				2560,
+				2124,
+				2560,
+				6,
+				1,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2332,
+				2537,
+				2338,
+				2586,
+				6,
+				1,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2307,
+				2560,
+				2360,
+				2559,
+				6,
+				1,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2097,
+				2768,
+				2098,
+				2835,
+				6,
+				1,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2066,
+				2801,
+				2135,
+				2799,
+				6,
+				1,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2335,
+				2762,
+				2344,
+				2827,
+				6,
+				1,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2311,
+				2799,
+				2370,
+				2799,
+				6,
+				1,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2097,
+				3026,
+				2097,
+				3083,
+				6,
+				1,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2065,
+				3049,
+				2130,
+				3049,
+				6,
+				1,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2339,
+				3023,
+				2338,
+				3080,
+				6,
+				1,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2312,
+				3055,
+				2364,
+				3049,
+				6,
+				1,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				3687,
+				4319,
+				3710,
+				4342,
+				6,
+				1,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				3852,
+				4527,
+				3853,
+				4810,
+				6,
+				1,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				3853,
+				4810,
+				3217,
+				4792,
+				6,
+				1,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				3217,
+				4792,
+				3221,
+				4409,
+				6,
+				1,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				3221,
+				4409,
+				3306,
+				4347,
+				6,
+				1,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				3306,
+				4347,
+				3459,
+				4301,
+				6,
+				1,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				3459,
+				4301,
+				3572,
+				4289,
+				6,
+				1,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				3572,
+				4289,
+				3687,
+				4319,
+				6,
+				1,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				3005,
+				5131,
+				3123,
+				5133,
+				6,
+				1,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2996,
+				5151,
+				3005,
+				5131,
+				6,
+				1,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				3374,
+				5131,
+				3375,
+				5280,
+				6,
+				1,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				3220,
+				5124,
+				3374,
+				5131,
+				6,
+				1,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				3366,
+				5372,
+				3361,
+				5425,
+				6,
+				1,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				3708,
+				5522,
+				3854,
+				5514,
+				6,
+				1,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				3703,
+				5374,
+				3708,
+				5522,
+				6,
+				1,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				4100,
+				5518,
+				4099,
+				5370,
+				6,
+				1,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				3952,
+				5518,
+				4100,
+				5518,
+				6,
+				1,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				3701,
+				5125,
+				3860,
+				5126,
+				6,
+				1,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				3704,
+				5280,
+				3701,
+				5125,
+				6,
+				1,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				4098,
+				5129,
+				4091,
+				5275,
+				6,
+				1,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				3952,
+				5127,
+				4098,
+				5129,
+				6,
+				1,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2569,
+				4578,
+				2520,
+				4534,
+				6,
+				1,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2266,
+				5522,
+				2672,
+				5524,
+				6,
+				1,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2672,
+				5524,
+				2665,
+				5129,
+				6,
+				1,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2665,
+				5129,
+				2415,
+				5124,
+				6,
+				1,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2415,
+				5124,
+				2425,
+				4674,
+				6,
+				1,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2425,
+				4674,
+				2585,
+				4674,
+				6,
+				1,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2585,
+				4674,
+				2569,
+				4578,
+				6,
+				1,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1729,
+				4438,
+				1884,
+				4336,
+				6,
+				1,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1744,
+				5119,
+				1784,
+				5116,
+				6,
+				1,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1784,
+				5116,
+				1779,
+				4683,
+				6,
+				1,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1779,
+				4683,
+				1619,
+				4674,
+				6,
+				1,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1619,
+				4674,
+				1646,
+				4574,
+				6,
+				1,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1646,
+				4574,
+				1729,
+				4438,
+				6,
+				1,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1941,
+				4303,
+				2049,
+				4285,
+				6,
+				1,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2146,
+				4281,
+				2259,
+				4320,
+				6,
+				1,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				3602,
+				4658,
+				3603,
+				4804,
+				6,
+				1,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				3477,
+				4664,
+				3477,
+				4803,
+				6,
+				1,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2512,
+				5124,
+				2519,
+				5382,
+				6,
+				1,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2162,
+				4658,
+				2161,
+				4833,
+				6,
+				1,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2036,
+				4903,
+				2037,
+				4656,
+				6,
+				1,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2037,
+				4656,
+				2162,
+				4658,
+				6,
+				1,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2226,
+				4708,
+				2226,
+				4754,
+				6,
+				1,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2201,
+				4729,
+				2244,
+				4729,
+				6,
+				1,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1974,
+				4694,
+				1976,
+				4756,
+				6,
+				1,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1941,
+				4721,
+				2002,
+				4723,
+				6,
+				1,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1972,
+				4931,
+				1976,
+				4984,
+				6,
+				1,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1939,
+				4956,
+				2002,
+				4956,
+				6,
+				1,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				356,
+				4399,
+				438,
+				4346,
+				6,
+				1,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				98,
+				5124,
+				346,
+				5127,
+				6,
+				1,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				346,
+				5127,
+				335,
+				4688,
+				6,
+				1,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				335,
+				4688,
+				107,
+				4688,
+				6,
+				1,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				107,
+				4688,
+				100,
+				4396,
+				6,
+				1,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				100,
+				4396,
+				356,
+				4399,
+				6,
+				1,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				960,
+				4403,
+				888,
+				4356,
+				6,
+				1,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				105,
+				4538,
+				361,
+				4544,
+				6,
+				1,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1221,
+				4673,
+				1216,
+				4398,
+				6,
+				1,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1216,
+				4398,
+				960,
+				4403,
+				6,
+				1,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				368,
+				4664,
+				332,
+				4691,
+				6,
+				1,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				956,
+				4541,
+				1216,
+				4541,
+				6,
+				1,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				505,
+				4311,
+				605,
+				4291,
+				6,
+				1,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				705,
+				4285,
+				821,
+				4318,
+				6,
+				1,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				366,
+				5151,
+				525,
+				5146,
+				6,
+				1,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				343,
+				5126,
+				366,
+				5151,
+				6,
+				1,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				483,
+				5147,
+				483,
+				5246,
+				6,
+				1,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				735,
+				5137,
+				965,
+				5139,
+				6,
+				1,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1221,
+				5524,
+				501,
+				5519,
+				6,
+				1,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				976,
+				4669,
+				983,
+				5126,
+				6,
+				1,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				983,
+				5126,
+				1216,
+				5124,
+				6,
+				1,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1216,
+				5124,
+				1221,
+				5524,
+				6,
+				1,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				985,
+				5114,
+				955,
+				5137,
+				6,
+				1,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1083,
+				5387,
+				1226,
+				5384,
+				6,
+				1,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				955,
+				5262,
+				1079,
+				5266,
+				6,
+				1,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1079,
+				5266,
+				1083,
+				5387,
+				6,
+				1,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				535,
+				4709,
+				533,
+				4758,
+				6,
+				1,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				505,
+				4729,
+				560,
+				4734,
+				6,
+				1,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				776,
+				4714,
+				776,
+				4759,
+				6,
+				1,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				751,
+				4736,
+				795,
+				4738,
+				6,
+				1,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				536,
+				4943,
+				535,
+				4998,
+				6,
+				1,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				508,
+				4963,
+				556,
+				4966,
+				6,
+				1,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				788,
+				4941,
+				788,
+				4994,
+				6,
+				1,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				766,
+				4964,
+				806,
+				4964,
+				6,
+				1,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(25, 25, 180, 1)",
+				128,
+				4429,
+				232,
+				4528,
+				12,
+				1,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(25, 25, 180, 1)",
+				1079,
+				4553,
+				1191,
+				4648,
+				12,
+				1,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(25, 25, 180, 1)",
+				1089,
+				5159,
+				1184,
+				5274,
+				12,
+				1,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(25, 25, 180, 1)",
+				2046,
+				4664,
+				2156,
+				4774,
+				12,
+				1,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(25, 25, 180, 1)",
+				2539,
+				5476,
+				2615,
+				5476,
+				12,
+				1,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(25, 25, 180, 1)",
+				1734,
+				2680,
+				1744,
+				2680,
+				12,
+				1,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(25, 25, 180, 1)",
+				2695,
+				2560,
+				2705,
+				2560,
+				12,
+				1,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(25, 25, 180, 1)",
+				2574,
+				5202,
+				2584,
+				5202,
+				12,
+				1,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(25, 25, 180, 1)",
+				4011,
+				5461,
+				4021,
+				5461,
+				12,
+				1,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(25, 25, 180, 1)",
+				3533,
+				4718,
+				3543,
+				4718,
+				12,
+				1,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2511,
+				813,
+				2661,
+				816.90625,
+				6,
+				1,
+				0,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2895,
+				823,
+				2749,
+				819.1979166666666,
+				6,
+				1,
+				0,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(255, 100, 255, 1)",
+				2661,
+				816.90625,
+				2749,
+				819.1979166666666,
+				12,
+				1,
+				0,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2514,
+				704,
+				2511.670588235294,
+				956,
+				6,
+				1,
+				0,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(255, 100, 255, 1)",
+				2510.773949579832,
+				1053,
+				2511.670588235294,
+				956,
+				12,
+				1,
+				0,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2263,
+				1175,
+				2640,
+				1179.5,
+				6,
+				1,
+				0,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(255, 100, 255, 1)",
+				2640,
+				1179.5,
+				2755,
+				1180.8726790450928,
+				12,
+				1,
+				0,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2755,
+				1180.8726790450928,
+				2926,
+				1182.9137931034484,
+				6,
+				1,
+				0,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				3017,
+				1184,
+				2983,
+				1183.5941644562333,
+				6,
+				1,
+				0,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2880,
+				1904,
+				2905,
+				1904,
+				6,
+				1,
+				0,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				3024,
+				1904,
+				2979,
+				1904,
+				6,
+				1,
+				0,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2880,
+				1904,
+				2881.36,
+				1768,
+				6,
+				1,
+				0,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2880,
+				1659,
+				2745,
+				1661.6910299003323,
+				6,
+				1,
+				0,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(255, 100, 255, 1)",
+				2649,
+				1663.6046511627908,
+				2745,
+				1661.6910299003323,
+				12,
+				1,
+				0,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2265,
+				1888,
+				2410,
+				1891.6554621848738,
+				6,
+				1,
+				0,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2503,
+				1894,
+				2476,
+				1893.3193277310925,
+				6,
+				1,
+				0,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(255, 100, 255, 1)",
+				2410,
+				1891.6554621848738,
+				2476,
+				1893.3193277310925,
+				12,
+				1,
+				0,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2278,
+				1671,
+				2405,
+				1668.468438538206,
+				6,
+				1,
+				0,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2649,
+				1663.6046511627908,
+				2471,
+				1667.1528239202657,
+				6,
+				1,
+				0,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(255, 100, 255, 1)",
+				2405,
+				1668.468438538206,
+				2471,
+				1667.1528239202657,
+				12,
+				1,
+				0,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2510.773949579832,
+				1053,
+				2508.333613445378,
+				1317,
+				6,
+				1,
+				0,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2503,
+				1894,
+				2507.418487394958,
+				1416,
+				6,
+				1,
+				0,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(255, 100, 255, 1)",
+				2507.418487394958,
+				1416,
+				2508.333613445378,
+				1317,
+				12,
+				1,
+				0,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1229,
+				205,
+				1229,
+				477.99999999999994,
+				6,
+				1,
+				0,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1229,
+				984,
+				1229,
+				571,
+				6,
+				1,
+				0,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(255, 100, 255, 1)",
+				1229,
+				571,
+				1229,
+				477.99999999999994,
+				12,
+				1,
+				0,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				471,
+				979,
+				866,
+				981.6055408970976,
+				6,
+				1,
+				0,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1229,
+				984,
+				947,
+				982.1398416886543,
+				6,
+				1,
+				0,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(255, 100, 255, 1)",
+				866,
+				981.6055408970976,
+				947,
+				982.1398416886543,
+				12,
+				1,
+				0,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				835,
+				550,
+				835.6627634660422,
+				833,
+				6,
+				1,
+				0,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				836,
+				977,
+				835.8969555035129,
+				933,
+				6,
+				1,
+				0,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2160,
+				2375,
+				2166,
+				2375.0458015267177,
+				6,
+				1,
+				0,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2291,
+				2376,
+				2278,
+				2375.9007633587785,
+				6,
+				1,
+				0,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(255, 100, 255, 1)",
+				2166,
+				2375.0458015267177,
+				2278,
+				2375.9007633587785,
+				12,
+				1,
+				0,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2518,
+				2620,
+				2519.3716216216217,
+				2649,
+				6,
+				1,
+				0,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2525,
+				2768,
+				2522.4932432432433,
+				2715,
+				6,
+				1,
+				0,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(255, 100, 255, 1)",
+				2522.4932432432433,
+				2715,
+				2519.3716216216217,
+				2649,
+				12,
+				1,
+				0,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1915,
+				2484,
+				1917.1492537313434,
+				2532,
+				6,
+				1,
+				0,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1921,
+				2618,
+				1920.0597014925372,
+				2597,
+				6,
+				1,
+				0,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(255, 100, 255, 1)",
+				1920.0597014925372,
+				2597,
+				1917.1492537313434,
+				2532,
+				12,
+				1,
+				0,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2041,
+				3223,
+				2183,
+				3222.116182572614,
+				6,
+				1,
+				0,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(255, 100, 255, 1)",
+				2183,
+				3222.116182572614,
+				2269,
+				3221.5809128630704,
+				12,
+				1,
+				0,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1919,
+				3224,
+				1936,
+				3223.5984251968503,
+				6,
+				1,
+				0,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2046,
+				3221,
+				2022,
+				3221.566929133858,
+				6,
+				1,
+				0,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(255, 100, 255, 1)",
+				1936,
+				3223.5984251968503,
+				2022,
+				3221.566929133858,
+				12,
+				1,
+				0,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1918,
+				3219,
+				1918.4769230769232,
+				3250,
+				6,
+				1,
+				0,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1920,
+				3349,
+				1919.6,
+				3323,
+				6,
+				1,
+				0,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(255, 100, 255, 1)",
+				1919.6,
+				3323,
+				1918.4769230769232,
+				3250,
+				12,
+				1,
+				0,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2269,
+				3221.5809128630704,
+				2413,
+				3220.6846473029045,
+				6,
+				1,
+				0,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2523,
+				3220,
+				2497,
+				3220.161825726141,
+				6,
+				1,
+				0,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(255, 100, 255, 1)",
+				2413,
+				3220.6846473029045,
+				2497,
+				3220.161825726141,
+				12,
+				1,
+				0,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2523,
+				3213,
+				2523.2462686567164,
+				3246,
+				6,
+				1,
+				0,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2524,
+				3347,
+				2523.8507462686566,
+				3327,
+				6,
+				1,
+				0,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(255, 100, 255, 1)",
+				2523.8507462686566,
+				3327,
+				2523.2462686567164,
+				3246,
+				12,
+				1,
+				0,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				3750,
+				2607,
+				3744.798934753662,
+				2886,
+				6,
+				1,
+				0,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				3736,
+				3358,
+				3743.1770972037284,
+				2973,
+				6,
+				1,
+				0,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(255, 100, 255, 1)",
+				3743.1770972037284,
+				2973,
+				3744.798934753662,
+				2886,
+				12,
+				1,
+				0,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				3458,
+				2605,
+				3470.4626288659792,
+				3114,
+				6,
+				1,
+				0,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				3477,
+				3381,
+				3472.8376288659792,
+				3211,
+				6,
+				1,
+				0,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				361,
+				4674,
+				604,
+				4673.717441860465,
+				6,
+				1,
+				0,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1221,
+				4673,
+				720,
+				4673.582558139535,
+				6,
+				1,
+				0,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(255, 100, 255, 1)",
+				604,
+				4673.717441860465,
+				720,
+				4673.582558139535,
+				12,
+				1,
+				0,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				361,
+				4544,
+				361,
+				4571,
+				6,
+				1,
+				0,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				361,
+				4674,
+				361,
+				4647,
+				6,
+				1,
+				0,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(255, 100, 255, 1)",
+				361,
+				4647,
+				361,
+				4571,
+				12,
+				1,
+				0,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				956,
+				4394,
+				956,
+				4459,
+				6,
+				1,
+				0,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				956,
+				4541,
+				956,
+				4516,
+				6,
+				1,
+				0,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(255, 100, 255, 1)",
+				956,
+				4516,
+				956,
+				4459,
+				12,
+				1,
+				0,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				831,
+				5139,
+				834.3603133159269,
+				5282,
+				6,
+				1,
+				0,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				840,
+				5522,
+				836.4516971279373,
+				5371,
+				6,
+				1,
+				0,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(255, 100, 255, 1)",
+				836.4516971279373,
+				5371,
+				834.3603133159269,
+				5282,
+				12,
+				1,
+				0,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				3701,
+				337,
+				3701.3783783783783,
+				365,
+				6,
+				1,
+				0,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				3703,
+				485,
+				3702.364864864865,
+				438,
+				6,
+				1,
+				0,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(255, 100, 255, 1)",
+				3702.364864864865,
+				438,
+				3701.3783783783783,
+				365,
+				12,
+				1,
+				0,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(150, 50, 150, 1)",
+				835,
+				933,
+				835,
+				833,
+				12,
+				1,
+				0,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(150, 150, 0, 1)",
+				2814,
+				825,
+				2815,
+				1188,
+				12,
+				1,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2891,
+				804,
+				2886,
+				1304,
+				6,
+				1,
+				0,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2882.2,
+				1684,
+				2884.96,
+				1408,
+				6,
+				1,
+				0,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(150, 50, 150, 1)",
+				2884.96,
+				1408,
+				2886,
+				1304,
+				12,
+				1,
+				0,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(150, 50, 150, 1)",
+				2926,
+				1182,
+				2983,
+				1183,
+				12,
+				1,
+				0,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(150, 50, 150, 1)",
+				2881,
+				1768,
+				2882,
+				1684,
+				12,
+				1,
+				0,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(150, 50, 150, 1)",
+				2905,
+				1904,
+				2979,
+				1904,
+				12,
+				1,
+				0,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1378,
+				4189,
+				1378,
+				4189,
+				6,
+				1,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				-2,
+				4181,
+				1378,
+				4189,
+				6,
+				1,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1373,
+				4189,
+				1384,
+				5705,
+				6,
+				1,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2818,
+				4177,
+				2821,
+				5697,
+				6,
+				1,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1375,
+				4188,
+				2821,
+				4183,
+				6,
+				1,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				4196,
+				4175,
+				4196,
+				4175,
+				6,
+				1,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2818,
+				4181,
+				4196,
+				4175,
+				6,
+				1,
+				false,
+				"",
+				""
+			],
+			[
+				"polygon",
+				"elev",
+				"50",
+				[
+					{
+						"x": 2,
+						"y": 762
+					},
+					{
+						"x": 68,
+						"y": 804
+					},
+					{
+						"x": 84,
+						"y": 854
+					},
+					{
+						"x": 99,
+						"y": 883
+					},
+					{
+						"x": 130,
+						"y": 914
+					},
+					{
+						"x": 146,
+						"y": 968
+					},
+					{
+						"x": 183,
+						"y": 997
+					},
+					{
+						"x": 208,
+						"y": 998
+					},
+					{
+						"x": 255,
+						"y": 1058
+					},
+					{
+						"x": 279,
+						"y": 1064
+					},
+					{
+						"x": 353,
+						"y": 1170
+					},
+					{
+						"x": 353,
+						"y": 1178
+					},
+					{
+						"x": 353,
+						"y": 1271
+					},
+					{
+						"x": 335,
+						"y": 1309
+					},
+					{
+						"x": 312,
+						"y": 1330
+					},
+					{
+						"x": 292,
+						"y": 1375
+					},
+					{
+						"x": 251,
+						"y": 1409
+					},
+					{
+						"x": 246,
+						"y": 1456
+					},
+					{
+						"x": 259,
+						"y": 1522
+					},
+					{
+						"x": 284,
+						"y": 1550
+					},
+					{
+						"x": 273,
+						"y": 1637
+					},
+					{
+						"x": 236,
+						"y": 1734
+					},
+					{
+						"x": 248,
+						"y": 1793
+					},
+					{
+						"x": 233,
+						"y": 1853
+					},
+					{
+						"x": 188,
+						"y": 1886
+					},
+					{
+						"x": 162,
+						"y": 1958
+					},
+					{
+						"x": 178,
+						"y": 2022
+					},
+					{
+						"x": 166,
+						"y": 2105
+					},
+					{
+						"x": 202,
+						"y": 2230
+					},
+					{
+						"x": 220,
+						"y": 2274
+					},
+					{
+						"x": 232,
+						"y": 2337
+					},
+					{
+						"x": 268,
+						"y": 2381
+					},
+					{
+						"x": 320,
+						"y": 2411
+					},
+					{
+						"x": 338,
+						"y": 2472
+					},
+					{
+						"x": 378,
+						"y": 2514
+					},
+					{
+						"x": 428,
+						"y": 2527
+					},
+					{
+						"x": 454,
+						"y": 2526
+					},
+					{
+						"x": 516,
+						"y": 2564
+					},
+					{
+						"x": 543,
+						"y": 2606
+					},
+					{
+						"x": 578,
+						"y": 2629
+					},
+					{
+						"x": 610,
+						"y": 2692
+					},
+					{
+						"x": 635,
+						"y": 2701
+					},
+					{
+						"x": 652,
+						"y": 2755
+					},
+					{
+						"x": 678,
+						"y": 2767
+					},
+					{
+						"x": 699,
+						"y": 2811
+					},
+					{
+						"x": 701,
+						"y": 2869
+					},
+					{
+						"x": 725,
+						"y": 2936
+					},
+					{
+						"x": 725,
+						"y": 3053
+					},
+					{
+						"x": 764,
+						"y": 3140
+					},
+					{
+						"x": 753,
+						"y": 3143
+					},
+					{
+						"x": 734,
+						"y": 3205
+					},
+					{
+						"x": 759,
+						"y": 3288
+					},
+					{
+						"x": 764,
+						"y": 3356
+					},
+					{
+						"x": 754,
+						"y": 3402
+					},
+					{
+						"x": 724,
+						"y": 3462
+					},
+					{
+						"x": 730,
+						"y": 3529
+					},
+					{
+						"x": 685,
+						"y": 3668
+					},
+					{
+						"x": 722,
+						"y": 3725
+					},
+					{
+						"x": 710,
+						"y": 3825
+					},
+					{
+						"x": 717,
+						"y": 3872
+					},
+					{
+						"x": 734,
+						"y": 3895
+					},
+					{
+						"x": 761,
+						"y": 3933
+					},
+					{
+						"x": 763,
+						"y": 3968
+					},
+					{
+						"x": 731,
+						"y": 4005
+					},
+					{
+						"x": 735,
+						"y": 4070
+					},
+					{
+						"x": 724,
+						"y": 4126
+					},
+					{
+						"x": 722,
+						"y": 4181
+					},
+					{
+						"x": -3,
+						"y": 4183
+					}
+				],
+				null,
+				null,
+				null,
+				null,
+				1
+			],
+			[
+				"polygon",
+				"elev",
+				"40",
+				[
+					{
+						"x": 760,
+						"y": 3136
+					},
+					{
+						"x": 794,
+						"y": 3197
+					},
+					{
+						"x": 805,
+						"y": 3237
+					},
+					{
+						"x": 796,
+						"y": 3278
+					},
+					{
+						"x": 851,
+						"y": 3403
+					},
+					{
+						"x": 831,
+						"y": 3501
+					},
+					{
+						"x": 821,
+						"y": 3594
+					},
+					{
+						"x": 794,
+						"y": 3655
+					},
+					{
+						"x": 718,
+						"y": 3721
+					},
+					{
+						"x": 684,
+						"y": 3673
+					},
+					{
+						"x": 728,
+						"y": 3546
+					},
+					{
+						"x": 727,
+						"y": 3456
+					},
+					{
+						"x": 763,
+						"y": 3363
+					},
+					{
+						"x": 754,
+						"y": 3259
+					},
+					{
+						"x": 734,
+						"y": 3197
+					}
+				],
+				null,
+				null,
+				null,
+				null,
+				1
+			],
+			[
+				"polygon",
+				"elev",
+				"25",
+				[
+					{
+						"x": 234,
+						"y": 1851
+					},
+					{
+						"x": 242,
+						"y": 1934
+					},
+					{
+						"x": 250,
+						"y": 1976
+					},
+					{
+						"x": 237,
+						"y": 2014
+					},
+					{
+						"x": 255,
+						"y": 2112
+					},
+					{
+						"x": 308,
+						"y": 2198
+					},
+					{
+						"x": 301,
+						"y": 2289
+					},
+					{
+						"x": 307,
+						"y": 2339
+					},
+					{
+						"x": 328,
+						"y": 2414
+					},
+					{
+						"x": 248,
+						"y": 2368
+					},
+					{
+						"x": 222,
+						"y": 2295
+					},
+					{
+						"x": 214,
+						"y": 2244
+					},
+					{
+						"x": 169,
+						"y": 2139
+					},
+					{
+						"x": 169,
+						"y": 2057
+					},
+					{
+						"x": 176,
+						"y": 2020
+					},
+					{
+						"x": 162,
+						"y": 1955
+					},
+					{
+						"x": 181,
+						"y": 1906
+					}
+				],
+				null,
+				null,
+				null,
+				null,
+				1
+			],
+			[
+				"polygon",
+				"elev",
+				"15",
+				[
+					{
+						"x": 628,
+						"y": 2694
+					},
+					{
+						"x": 702,
+						"y": 2715
+					},
+					{
+						"x": 771,
+						"y": 2724
+					},
+					{
+						"x": 818,
+						"y": 2767
+					},
+					{
+						"x": 849,
+						"y": 2840
+					},
+					{
+						"x": 849,
+						"y": 2919
+					},
+					{
+						"x": 813,
+						"y": 2975
+					},
+					{
+						"x": 837,
+						"y": 3015
+					},
+					{
+						"x": 841,
+						"y": 3104
+					},
+					{
+						"x": 870,
+						"y": 3143
+					},
+					{
+						"x": 888,
+						"y": 3255
+					},
+					{
+						"x": 896,
+						"y": 3315
+					},
+					{
+						"x": 850,
+						"y": 3405
+					},
+					{
+						"x": 797,
+						"y": 3281
+					},
+					{
+						"x": 807,
+						"y": 3227
+					},
+					{
+						"x": 761,
+						"y": 3132
+					},
+					{
+						"x": 723,
+						"y": 3048
+					},
+					{
+						"x": 727,
+						"y": 2931
+					},
+					{
+						"x": 701,
+						"y": 2873
+					},
+					{
+						"x": 700,
+						"y": 2807
+					},
+					{
+						"x": 675,
+						"y": 2764
+					},
+					{
+						"x": 653,
+						"y": 2751
+					}
+				],
+				null,
+				null,
+				null,
+				null,
+				1
+			],
+			[
+				"polygon",
+				"elev",
+				"5",
+				[
+					{
+						"x": 3846,
+						"y": 4173
+					},
+					{
+						"x": 3839,
+						"y": 4083
+					},
+					{
+						"x": 3820,
+						"y": 4053
+					},
+					{
+						"x": 3822,
+						"y": 3981
+					},
+					{
+						"x": 3855,
+						"y": 3936
+					},
+					{
+						"x": 3929,
+						"y": 3873
+					},
+					{
+						"x": 3938,
+						"y": 3832
+					},
+					{
+						"x": 3956,
+						"y": 3809
+					},
+					{
+						"x": 3959,
+						"y": 3746
+					},
+					{
+						"x": 4015,
+						"y": 3710
+					},
+					{
+						"x": 4078,
+						"y": 3711
+					},
+					{
+						"x": 4107,
+						"y": 3679
+					},
+					{
+						"x": 4233,
+						"y": 3667
+					},
+					{
+						"x": 4228,
+						"y": 4177
+					}
+				],
+				null,
+				null,
+				null,
+				null,
+				1
+			],
+			[
+				"polygon",
+				"elev",
+				"-10",
+				[
+					{
+						"x": 3850,
+						"y": 4180
+					},
+					{
+						"x": 3357,
+						"y": 4184
+					},
+					{
+						"x": 3368,
+						"y": 4149
+					},
+					{
+						"x": 3429,
+						"y": 4104
+					},
+					{
+						"x": 3486,
+						"y": 4047
+					},
+					{
+						"x": 3496,
+						"y": 3901
+					},
+					{
+						"x": 3519,
+						"y": 3841
+					},
+					{
+						"x": 3557,
+						"y": 3821
+					},
+					{
+						"x": 3613,
+						"y": 3758
+					},
+					{
+						"x": 3627,
+						"y": 3684
+					},
+					{
+						"x": 3717,
+						"y": 3635
+					},
+					{
+						"x": 3793,
+						"y": 3633
+					},
+					{
+						"x": 3866,
+						"y": 3582
+					},
+					{
+						"x": 3914,
+						"y": 3578
+					},
+					{
+						"x": 4010,
+						"y": 3536
+					},
+					{
+						"x": 4057,
+						"y": 3511
+					},
+					{
+						"x": 4092,
+						"y": 3460
+					},
+					{
+						"x": 4209,
+						"y": 3468
+					},
+					{
+						"x": 4204,
+						"y": 3673
+					},
+					{
+						"x": 4110,
+						"y": 3680
+					},
+					{
+						"x": 4057,
+						"y": 3720
+					},
+					{
+						"x": 4000,
+						"y": 3711
+					},
+					{
+						"x": 3965,
+						"y": 3746
+					},
+					{
+						"x": 3954,
+						"y": 3815
+					},
+					{
+						"x": 3939,
+						"y": 3835
+					},
+					{
+						"x": 3932,
+						"y": 3872
+					},
+					{
+						"x": 3849,
+						"y": 3943
+					},
+					{
+						"x": 3820,
+						"y": 3995
+					},
+					{
+						"x": 3819,
+						"y": 4053
+					},
+					{
+						"x": 3844,
+						"y": 4097
+					}
+				],
+				null,
+				null,
+				null,
+				null,
+				1
+			],
+			[
+				"polygon",
+				"elev",
+				"-40",
+				[
+					{
+						"x": 3907,
+						"y": 3575
+					},
+					{
+						"x": 3903,
+						"y": 3515
+					},
+					{
+						"x": 3970,
+						"y": 3416
+					},
+					{
+						"x": 4025,
+						"y": 3391
+					},
+					{
+						"x": 4111,
+						"y": 3379
+					},
+					{
+						"x": 4148,
+						"y": 3333
+					},
+					{
+						"x": 4205,
+						"y": 3314
+					},
+					{
+						"x": 4235,
+						"y": 3473
+					},
+					{
+						"x": 4158,
+						"y": 3471
+					},
+					{
+						"x": 4083,
+						"y": 3468
+					},
+					{
+						"x": 4050,
+						"y": 3516
+					},
+					{
+						"x": 3961,
+						"y": 3553
+					}
+				],
+				null,
+				null,
+				null,
+				null,
+				1
+			],
+			[
+				"polygon",
+				"elev",
+				"-80",
+				[
+					{
+						"x": 1694,
+						"y": 885
+					}
+				],
+				null,
+				null,
+				null,
+				null,
+				1
+			],
+			[
+				"polygon",
+				"elev",
+				"-110",
+				[
+					{
+						"x": -115,
+						"y": 774
+					},
+					{
+						"x": -12,
+						"y": 754
+					},
+					{
+						"x": 55,
+						"y": 796
+					},
+					{
+						"x": 108,
+						"y": 894
+					},
+					{
+						"x": 169,
+						"y": 989
+					},
+					{
+						"x": 226,
+						"y": 1017
+					},
+					{
+						"x": 268,
+						"y": 1057
+					},
+					{
+						"x": 351,
+						"y": 1165
+					},
+					{
+						"x": 354,
+						"y": 1274
+					},
+					{
+						"x": 314,
+						"y": 1331
+					},
+					{
+						"x": 285,
+						"y": 1396
+					},
+					{
+						"x": 238,
+						"y": 1434
+					},
+					{
+						"x": 262,
+						"y": 1522
+					},
+					{
+						"x": 289,
+						"y": 1557
+					},
+					{
+						"x": 268,
+						"y": 1653
+					},
+					{
+						"x": 235,
+						"y": 1745
+					},
+					{
+						"x": 240,
+						"y": 1880
+					},
+					{
+						"x": 251,
+						"y": 1962
+					},
+					{
+						"x": 238,
+						"y": 2025
+					},
+					{
+						"x": 265,
+						"y": 2130
+					},
+					{
+						"x": 312,
+						"y": 2214
+					},
+					{
+						"x": 309,
+						"y": 2263
+					},
+					{
+						"x": 300,
+						"y": 2302
+					},
+					{
+						"x": 312,
+						"y": 2348
+					},
+					{
+						"x": 329,
+						"y": 2397
+					},
+					{
+						"x": 329,
+						"y": 2430
+					},
+					{
+						"x": 348,
+						"y": 2485
+					},
+					{
+						"x": 383,
+						"y": 2513
+					},
+					{
+						"x": 448,
+						"y": 2523
+					},
+					{
+						"x": 523,
+						"y": 2567
+					},
+					{
+						"x": 551,
+						"y": 2607
+					},
+					{
+						"x": 595,
+						"y": 2647
+					},
+					{
+						"x": 614,
+						"y": 2694
+					},
+					{
+						"x": 714,
+						"y": 2722
+					},
+					{
+						"x": 776,
+						"y": 2722
+					},
+					{
+						"x": 828,
+						"y": 2784
+					},
+					{
+						"x": 843,
+						"y": 2822
+					},
+					{
+						"x": 851,
+						"y": 2899
+					},
+					{
+						"x": 828,
+						"y": 2951
+					},
+					{
+						"x": 817,
+						"y": 2988
+					},
+					{
+						"x": 842,
+						"y": 3030
+					},
+					{
+						"x": 840,
+						"y": 3100
+					},
+					{
+						"x": 876,
+						"y": 3157
+					},
+					{
+						"x": 891,
+						"y": 3307
+					},
+					{
+						"x": 839,
+						"y": 3431
+					},
+					{
+						"x": 817,
+						"y": 3617
+					},
+					{
+						"x": 723,
+						"y": 3728
+					},
+					{
+						"x": 712,
+						"y": 3874
+					},
+					{
+						"x": 762,
+						"y": 3930
+					},
+					{
+						"x": 757,
+						"y": 3987
+					},
+					{
+						"x": 729,
+						"y": 4005
+					},
+					{
+						"x": 722,
+						"y": 4182
+					},
+					{
+						"x": 2577,
+						"y": 4182
+					},
+					{
+						"x": 3350,
+						"y": 4174
+					},
+					{
+						"x": 3408,
+						"y": 4110
+					},
+					{
+						"x": 3457,
+						"y": 4084
+					},
+					{
+						"x": 3487,
+						"y": 4025
+					},
+					{
+						"x": 3504,
+						"y": 3861
+					},
+					{
+						"x": 3599,
+						"y": 3767
+					},
+					{
+						"x": 3633,
+						"y": 3679
+					},
+					{
+						"x": 3694,
+						"y": 3628
+					},
+					{
+						"x": 3785,
+						"y": 3628
+					},
+					{
+						"x": 3873,
+						"y": 3574
+					},
+					{
+						"x": 3907,
+						"y": 3567
+					},
+					{
+						"x": 3898,
+						"y": 3521
+					},
+					{
+						"x": 3961,
+						"y": 3425
+					},
+					{
+						"x": 4110,
+						"y": 3370
+					},
+					{
+						"x": 4130,
+						"y": 3341
+					},
+					{
+						"x": 4208,
+						"y": 3310
+					},
+					{
+						"x": 4276,
+						"y": 2608
+					},
+					{
+						"x": 4204,
+						"y": 15
+					},
+					{
+						"x": 4184,
+						"y": -86
+					},
+					{
+						"x": 1891,
+						"y": -131
+					},
+					{
+						"x": -57,
+						"y": -68
+					},
+					{
+						"x": -12,
+						"y": -17
+					},
+					{
+						"x": -20,
+						"y": -32
+					},
+					{
+						"x": -37,
+						"y": -40
+					},
+					{
+						"x": -74,
+						"y": 726
+					}
+				],
+				null,
+				null,
+				null,
+				null,
+				1
+			],
+			[
+				"polygon",
+				"elev",
+				"-90",
+				[
+					{
+						"x": 1879,
+						"y": 475
+					},
+					{
+						"x": 1813,
+						"y": 515
+					},
+					{
+						"x": 1763,
+						"y": 568
+					},
+					{
+						"x": 1705,
+						"y": 585
+					},
+					{
+						"x": 1662,
+						"y": 649
+					},
+					{
+						"x": 1651,
+						"y": 708
+					},
+					{
+						"x": 1623,
+						"y": 743
+					},
+					{
+						"x": 1608,
+						"y": 803
+					},
+					{
+						"x": 1483,
+						"y": 902
+					},
+					{
+						"x": 1463,
+						"y": 1009
+					},
+					{
+						"x": 1345,
+						"y": 1112
+					},
+					{
+						"x": 1280,
+						"y": 1268
+					},
+					{
+						"x": 1336,
+						"y": 1380
+					},
+					{
+						"x": 1366,
+						"y": 1476
+					},
+					{
+						"x": 1405,
+						"y": 1502
+					},
+					{
+						"x": 1459,
+						"y": 1569
+					},
+					{
+						"x": 1554,
+						"y": 1606
+					},
+					{
+						"x": 1760,
+						"y": 1599
+					},
+					{
+						"x": 1805,
+						"y": 1557
+					},
+					{
+						"x": 1805,
+						"y": 1503
+					},
+					{
+						"x": 1837,
+						"y": 1474
+					},
+					{
+						"x": 1897,
+						"y": 1351
+					},
+					{
+						"x": 2040,
+						"y": 1282
+					},
+					{
+						"x": 2148,
+						"y": 1205
+					},
+					{
+						"x": 2131,
+						"y": 1151
+					},
+					{
+						"x": 2154,
+						"y": 1077
+					},
+					{
+						"x": 2220,
+						"y": 1022
+					},
+					{
+						"x": 2296,
+						"y": 983
+					},
+					{
+						"x": 2345,
+						"y": 899
+					},
+					{
+						"x": 2337,
+						"y": 729
+					},
+					{
+						"x": 2288,
+						"y": 657
+					},
+					{
+						"x": 2213,
+						"y": 575
+					},
+					{
+						"x": 2191,
+						"y": 502
+					},
+					{
+						"x": 2120,
+						"y": 459
+					},
+					{
+						"x": 1982,
+						"y": 454
+					}
+				],
+				null,
+				null,
+				null,
+				null,
+				1
+			],
+			[
+				"polygon",
+				"elev",
+				"-80",
+				[
+					{
+						"x": 1699,
+						"y": 880
+					}
+				],
+				null,
+				null,
+				null,
+				null,
+				1
+			],
+			[
+				"polygon",
+				"elev",
+				"-80",
+				[
+					{
+						"x": 1783,
+						"y": 889
+					},
+					{
+						"x": 1705,
+						"y": 877
+					},
+					{
+						"x": 1668,
+						"y": 916
+					},
+					{
+						"x": 1653,
+						"y": 982
+					},
+					{
+						"x": 1496,
+						"y": 1119
+					},
+					{
+						"x": 1442,
+						"y": 1260
+					},
+					{
+						"x": 1539,
+						"y": 1451
+					},
+					{
+						"x": 1663,
+						"y": 1471
+					},
+					{
+						"x": 1709,
+						"y": 1440
+					},
+					{
+						"x": 1706,
+						"y": 1360
+					},
+					{
+						"x": 1770,
+						"y": 1277
+					},
+					{
+						"x": 1890,
+						"y": 1200
+					},
+					{
+						"x": 1882,
+						"y": 1156
+					},
+					{
+						"x": 1843,
+						"y": 1069
+					},
+					{
+						"x": 1871,
+						"y": 977
+					},
+					{
+						"x": 1839,
+						"y": 911
+					}
+				],
+				null,
+				null,
+				null,
+				null,
+				1
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1522,
+				1146,
+				1489,
+				1260,
+				6,
+				1,
+				null,
+				"",
+				"-80"
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1488,
+				1251,
+				1556,
+				1416,
+				6,
+				1,
+				false,
+				"",
+				"-80"
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1556,
+				1416,
+				1676,
+				1425,
+				6,
+				1,
+				false,
+				"",
+				"-80"
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1676,
+				1425,
+				1702,
+				1317,
+				6,
+				1,
+				false,
+				"",
+				"-80"
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1702,
+				1317,
+				1860,
+				1189,
+				6,
+				1,
+				false,
+				"",
+				"-80"
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1860,
+				1189,
+				1823,
+				1088,
+				6,
+				1,
+				false,
+				"",
+				"-80"
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1823,
+				1088,
+				1839,
+				951,
+				6,
+				1,
+				false,
+				"",
+				"-80"
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1839,
+				951,
+				1751,
+				906,
+				6,
+				1,
+				false,
+				"",
+				"-80"
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1751,
+				906,
+				1693,
+				934,
+				6,
+				1,
+				false,
+				"",
+				"-80"
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1693,
+				934,
+				1683,
+				1005,
+				6,
+				1,
+				false,
+				"",
+				"-80"
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1683,
+				1005,
+				1551,
+				1134,
+				6,
+				1,
+				false,
+				"",
+				"-80"
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1551,
+				1134,
+				1522,
+				1146,
+				6,
+				1,
+				false,
+				"",
+				"-80"
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2168,
+				523,
+				1991,
+				480,
+				6,
+				1,
+				null,
+				"",
+				"-90"
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1996,
+				480,
+				1853,
+				508,
+				6,
+				1,
+				false,
+				"",
+				"-90"
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1853,
+				508,
+				1782,
+				611,
+				6,
+				1,
+				false,
+				"",
+				"-90"
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1782,
+				611,
+				1713,
+				623,
+				6,
+				1,
+				false,
+				"",
+				"-90"
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1713,
+				623,
+				1666,
+				746,
+				6,
+				1,
+				false,
+				"",
+				"-90"
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1666,
+				746,
+				1640,
+				834,
+				6,
+				1,
+				false,
+				"",
+				"-90"
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1640,
+				834,
+				1513,
+				920,
+				6,
+				1,
+				false,
+				"",
+				"-90"
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1513,
+				920,
+				1485,
+				1023,
+				6,
+				1,
+				false,
+				"",
+				"-90"
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1485,
+				1023,
+				1374,
+				1145,
+				6,
+				1,
+				false,
+				"",
+				"-90"
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1374,
+				1145,
+				1326,
+				1248,
+				6,
+				1,
+				false,
+				"",
+				"-90"
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1326,
+				1248,
+				1360,
+				1363,
+				6,
+				1,
+				false,
+				"",
+				"-90"
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1360,
+				1363,
+				1413,
+				1468,
+				6,
+				1,
+				false,
+				"",
+				"-90"
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1413,
+				1468,
+				1476,
+				1559,
+				6,
+				1,
+				false,
+				"",
+				"-90"
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1476,
+				1559,
+				1737,
+				1576,
+				6,
+				1,
+				false,
+				"",
+				"-90"
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1737,
+				1576,
+				1805,
+				1454,
+				6,
+				1,
+				false,
+				"",
+				"-90"
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1805,
+				1454,
+				1880,
+				1319,
+				6,
+				1,
+				false,
+				"",
+				"-90"
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1880,
+				1319,
+				2103,
+				1200,
+				6,
+				1,
+				false,
+				"",
+				"-90"
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2103,
+				1200,
+				2128,
+				1065,
+				6,
+				1,
+				false,
+				"",
+				"-90"
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2128,
+				1065,
+				2279,
+				945,
+				6,
+				1,
+				false,
+				"",
+				"-90"
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2279,
+				945,
+				2302,
+				728,
+				6,
+				1,
+				false,
+				"",
+				"-90"
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2302,
+				728,
+				2197,
+				628,
+				6,
+				1,
+				false,
+				"",
+				"-90"
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2197,
+				628,
+				2168,
+				523,
+				6,
+				1,
+				false,
+				"",
+				"-90"
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1112,
+				1480,
+				1112,
+				1480,
+				6,
+				1,
+				null,
+				"",
+				"-90"
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				286,
+				2368,
+				279,
+				2457,
+				6,
+				1,
+				null,
+				"",
+				"25"
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				180,
+				1805,
+				217,
+				1940,
+				6,
+				1,
+				false,
+				"",
+				"25"
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				217,
+				1940,
+				223,
+				2131,
+				6,
+				1,
+				false,
+				"",
+				"25"
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				223,
+				2131,
+				280,
+				2206,
+				6,
+				1,
+				false,
+				"",
+				"25"
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				280,
+				2206,
+				286,
+				2368,
+				6,
+				1,
+				false,
+				"",
+				"25"
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				839,
+				3357,
+				814,
+				3401,
+				6,
+				1,
+				null,
+				"",
+				"15"
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				605,
+				2734,
+				665,
+				2731,
+				6,
+				1,
+				false,
+				"",
+				"15"
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				665,
+				2731,
+				791,
+				2791,
+				6,
+				1,
+				false,
+				"",
+				"15"
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				791,
+				2791,
+				800,
+				2927,
+				6,
+				1,
+				false,
+				"",
+				"15"
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				800,
+				2927,
+				777,
+				3004,
+				6,
+				1,
+				false,
+				"",
+				"15"
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				777,
+				3004,
+				811,
+				3033,
+				6,
+				1,
+				false,
+				"",
+				"15"
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				811,
+				3033,
+				806,
+				3097,
+				6,
+				1,
+				false,
+				"",
+				"15"
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				806,
+				3097,
+				845,
+				3170,
+				6,
+				1,
+				false,
+				"",
+				"15"
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				845,
+				3170,
+				852,
+				3304,
+				6,
+				1,
+				false,
+				"",
+				"15"
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				852,
+				3304,
+				839,
+				3357,
+				6,
+				1,
+				false,
+				"",
+				"15"
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				709,
+				3696,
+				679,
+				3734,
+				6,
+				1,
+				null,
+				"",
+				"40"
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				717,
+				3147,
+				762,
+				3180,
+				6,
+				1,
+				false,
+				"",
+				"40"
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				762,
+				3180,
+				779,
+				3268,
+				6,
+				1,
+				false,
+				"",
+				"40"
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				779,
+				3268,
+				780,
+				3319,
+				6,
+				1,
+				false,
+				"",
+				"40"
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				780,
+				3319,
+				817,
+				3399,
+				6,
+				1,
+				false,
+				"",
+				"40"
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				817,
+				3399,
+				800,
+				3468,
+				6,
+				1,
+				false,
+				"",
+				"40"
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				800,
+				3468,
+				791,
+				3554,
+				6,
+				1,
+				false,
+				"",
+				"40"
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				791,
+				3554,
+				709,
+				3696,
+				6,
+				1,
+				false,
+				"",
+				"40"
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				675,
+				4085,
+				691,
+				4184,
+				6,
+				1,
+				null,
+				"",
+				"50"
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				-28,
+				816,
+				49,
+				859,
+				6,
+				1,
+				false,
+				"",
+				"50"
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				49,
+				859,
+				106,
+				988,
+				6,
+				1,
+				false,
+				"",
+				"50"
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				106,
+				988,
+				151,
+				1051,
+				6,
+				1,
+				false,
+				"",
+				"50"
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				151,
+				1051,
+				243,
+				1091,
+				6,
+				1,
+				false,
+				"",
+				"50"
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				243,
+				1091,
+				285,
+				1254,
+				6,
+				1,
+				false,
+				"",
+				"50"
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				285,
+				1254,
+				202,
+				1396,
+				6,
+				1,
+				false,
+				"",
+				"50"
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				202,
+				1396,
+				195,
+				1506,
+				6,
+				1,
+				false,
+				"",
+				"50"
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				195,
+				1506,
+				229,
+				1609,
+				6,
+				1,
+				false,
+				"",
+				"50"
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				229,
+				1609,
+				178,
+				1693,
+				6,
+				1,
+				false,
+				"",
+				"50"
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				178,
+				1693,
+				182,
+				1811,
+				6,
+				1,
+				false,
+				"",
+				"50"
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				182,
+				1811,
+				126,
+				1891,
+				6,
+				1,
+				false,
+				"",
+				"50"
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				126,
+				1891,
+				131,
+				2102,
+				6,
+				1,
+				false,
+				"",
+				"50"
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				131,
+				2102,
+				158,
+				2217,
+				6,
+				1,
+				false,
+				"",
+				"50"
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				158,
+				2217,
+				192,
+				2316,
+				6,
+				1,
+				false,
+				"",
+				"50"
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				192,
+				2316,
+				217,
+				2383,
+				6,
+				1,
+				false,
+				"",
+				"50"
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				217,
+				2383,
+				337,
+				2525,
+				6,
+				1,
+				false,
+				"",
+				"50"
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				337,
+				2525,
+				486,
+				2591,
+				6,
+				1,
+				false,
+				"",
+				"50"
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				486,
+				2591,
+				608,
+				2736,
+				6,
+				1,
+				false,
+				"",
+				"50"
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				608,
+				2736,
+				655,
+				2804,
+				6,
+				1,
+				false,
+				"",
+				"50"
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				655,
+				2804,
+				675,
+				3048,
+				6,
+				1,
+				false,
+				"",
+				"50"
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				675,
+				3048,
+				723,
+				3159,
+				6,
+				1,
+				false,
+				"",
+				"50"
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				723,
+				3159,
+				709,
+				3262,
+				6,
+				1,
+				false,
+				"",
+				"50"
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				709,
+				3262,
+				743,
+				3356,
+				6,
+				1,
+				false,
+				"",
+				"50"
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				743,
+				3356,
+				659,
+				3647,
+				6,
+				1,
+				false,
+				"",
+				"50"
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				659,
+				3647,
+				660,
+				3704,
+				6,
+				1,
+				false,
+				"",
+				"50"
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				660,
+				3704,
+				695,
+				3744,
+				6,
+				1,
+				false,
+				"",
+				"50"
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				695,
+				3744,
+				662,
+				3802,
+				6,
+				1,
+				false,
+				"",
+				"50"
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				662,
+				3802,
+				700,
+				3905,
+				6,
+				1,
+				false,
+				"",
+				"50"
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				700,
+				3905,
+				717,
+				3974,
+				6,
+				1,
+				false,
+				"",
+				"50"
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				717,
+				3974,
+				675,
+				4085,
+				6,
+				1,
+				false,
+				"",
+				"50"
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				4016,
+				3754,
+				4207,
+				3721,
+				6,
+				1,
+				null,
+				"",
+				"5"
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				3881,
+				4165,
+				3874,
+				4054,
+				6,
+				1,
+				false,
+				"",
+				"5"
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				3874,
+				4054,
+				3898,
+				3947,
+				6,
+				1,
+				false,
+				"",
+				"5"
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				3898,
+				3947,
+				3984,
+				3861,
+				6,
+				1,
+				false,
+				"",
+				"5"
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				3984,
+				3861,
+				4016,
+				3754,
+				6,
+				1,
+				false,
+				"",
+				"5"
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				4131,
+				3397,
+				4213,
+				3339,
+				6,
+				1,
+				null,
+				"",
+				"-40"
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				3939,
+				3601,
+				3930,
+				3519,
+				6,
+				1,
+				false,
+				"",
+				"-40"
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				3930,
+				3519,
+				4005,
+				3427,
+				6,
+				1,
+				false,
+				"",
+				"-40"
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				4005,
+				3427,
+				4131,
+				3397,
+				6,
+				1,
+				false,
+				"",
+				"-40"
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				4102,
+				3505,
+				4233,
+				3499,
+				6,
+				1,
+				null,
+				"",
+				"-10"
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				3394,
+				4176,
+				3485,
+				4121,
+				6,
+				1,
+				false,
+				"",
+				"-10"
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				3485,
+				4121,
+				3530,
+				4062,
+				6,
+				1,
+				false,
+				"",
+				"-10"
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				3530,
+				4062,
+				3537,
+				3916,
+				6,
+				1,
+				false,
+				"",
+				"-10"
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				3537,
+				3916,
+				3613,
+				3811,
+				6,
+				1,
+				false,
+				"",
+				"-10"
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				3613,
+				3811,
+				3659,
+				3730,
+				6,
+				1,
+				false,
+				"",
+				"-10"
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				3659,
+				3730,
+				3734,
+				3668,
+				6,
+				1,
+				false,
+				"",
+				"-10"
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				3734,
+				3668,
+				3856,
+				3639,
+				6,
+				1,
+				false,
+				"",
+				"-10"
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				3856,
+				3639,
+				3951,
+				3594,
+				6,
+				1,
+				false,
+				"",
+				"-10"
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				3951,
+				3594,
+				4081,
+				3548,
+				6,
+				1,
+				false,
+				"",
+				"-10"
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				4081,
+				3548,
+				4102,
+				3505,
+				6,
+				1,
+				false,
+				"",
+				"-10"
+			],
+			[
+				"line",
+				"wall",
+				"rgba(255, 100, 255, 1)",
+				3472.8376288659792,
+				3211,
+				3470.4626288659792,
+				3114,
+				12,
+				1,
+				0,
+				"",
+				""
+			]
+		],
+		"tokens": {
+			"08abbcaf-7d65-4376-b38d-ccfb998fae99": {
+				"disablestat": true,
+				"gridSquares": 1,
+				"custom_conditions": [],
+				"hp": 0,
+				"folderPath": "/Numbers",
+				"armorClass": 0,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "08abbcaf-7d65-4376-b38d-ccfb998fae99",
+				"imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/1.png",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 0
+				},
+				"image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/1.png",
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "labelToken",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 60
+				},
+				"itemId": "_AboveVTT_Tokens_Numbers_01",
+				"square": true,
+				"healthauratype": "aura",
+				"placeType": "count",
+				"size": 60,
+				"left": "238px",
+				"name": "Warthalkeel Cliffs",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": false,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"itemType": "builtinToken",
+				"color": "#1A6AFF",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": false,
+				"max_hp": 0,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/AboveVTT Tokens/Numbers/01",
+				"top": "3400px",
+				"hidehpbar": false,
+				"hitPointInfo": {
+					"maximum": 0,
+					"current": 0,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"scaleCreated": 2.8787878787878785,
+				"tokenSize": 1,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"0e9b3a95-8c81-4ff0-978e-287d7521a97f": {
+				"disablestat": true,
+				"gridSquares": 1,
+				"custom_conditions": [],
+				"hp": 0,
+				"folderPath": "/Letters",
+				"armorClass": 0,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "0e9b3a95-8c81-4ff0-978e-287d7521a97f",
+				"imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/letters/C.png",
+				"locked": false,
+				"selected": true,
+				"light2": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 0
+				},
+				"image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/letters/C.png",
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "labelToken",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 60
+				},
+				"itemId": "_AboveVTT_Tokens_Letters_C",
+				"square": true,
+				"healthauratype": "aura",
+				"placeType": "count",
+				"size": 60,
+				"left": "2215px",
+				"name": "Meditation Chamber",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": false,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"itemType": "builtinToken",
+				"color": "#1A6AFF",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": false,
+				"max_hp": 0,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/AboveVTT Tokens/Letters/C",
+				"top": "3567px",
+				"hidehpbar": false,
+				"hitPointInfo": {
+					"maximum": 0,
+					"current": 0,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"scaleCreated": 2.8787878787878785,
+				"tokenSize": 1,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"10794553119146486f837390-6f87-4071-9667-7f206de16ca3": {
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"color": "#400040",
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"hitPointInfo": {
+					"maximum": 0,
+					"current": 0,
+					"temp": 0
+				},
+				"custom_conditions": [],
+				"type": "door",
+				"mapElev": 0,
+				"scaleCreated": 2.8787878787878785,
+				"teleporterCoords": {
+					"top": 2560,
+					"left": 2700,
+					"scale": 2.8787878787878785
+				},
+				"vision": {
+					"color": "rgba(0, 0, 0, 0)",
+					"feet": 0
+				},
+				"top": "4575px",
+				"size": 50,
+				"armorClass": 0,
+				"left": "1110px",
+				"name": "",
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "10794553119146486f837390-6f87-4071-9667-7f206de16ca3",
+				"auraislight": true,
+				"conditions": [],
+				"imgsrc": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=",
+				"light2": {
+					"color": "rgba(142, 142, 142, 1)",
+					"feet": "0"
+				}
+			},
+			"10895159118452746f837390-6f87-4071-9667-7f206de16ca3": {
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"color": "#E000E0",
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"hitPointInfo": {
+					"maximum": 0,
+					"current": 0,
+					"temp": 0
+				},
+				"custom_conditions": [],
+				"type": "door",
+				"mapElev": 0,
+				"scaleCreated": 2.8787878787878785,
+				"teleporterCoords": {
+					"top": 5202,
+					"left": 2579,
+					"scale": 2.8787878787878785
+				},
+				"vision": {
+					"color": "rgba(0, 0, 0, 0)",
+					"feet": 0
+				},
+				"top": "5191px",
+				"size": 50,
+				"armorClass": 0,
+				"left": "1111px",
+				"name": "",
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "10895159118452746f837390-6f87-4071-9667-7f206de16ca3",
+				"auraislight": true,
+				"conditions": [],
+				"imgsrc": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=",
+				"light2": {
+					"color": "rgba(142, 142, 142, 1)",
+					"feet": "0"
+				}
+			},
+			"128442923245286f837390-6f87-4071-9667-7f206de16ca3": {
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"color": "#00E000",
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"hitPointInfo": {
+					"maximum": 0,
+					"current": 0,
+					"temp": 0
+				},
+				"custom_conditions": [],
+				"type": "door",
+				"mapElev": 0,
+				"scaleCreated": 2.8787878787878785,
+				"teleporterCoords": {
+					"top": 2680,
+					"left": 1739,
+					"scale": 2.8787878787878785
+				},
+				"vision": {
+					"color": "rgba(0, 0, 0, 0)",
+					"feet": 0
+				},
+				"top": "4453px",
+				"size": 50,
+				"armorClass": 0,
+				"left": "155px",
+				"name": "",
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "128442923245286f837390-6f87-4071-9667-7f206de16ca3",
+				"auraislight": true,
+				"conditions": [],
+				"imgsrc": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=",
+				"light2": {
+					"color": "rgba(142, 142, 142, 1)",
+					"feet": "0"
+				}
+			},
+			"165e2924-101f-44d1-9c3b-e7f676450173": {
+				"disablestat": false,
+				"gridSquares": 1,
+				"custom_conditions": [],
+				"armorClass": 13,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "165e2924-101f-44d1-9c3b-e7f676450173",
+				"imgsrc": "https://www.dndbeyond.com/avatars/18/275/636379781034987252.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 0
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "square",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": "60"
+				},
+				"itemId": 17031,
+				"square": true,
+				"healthauratype": "aura",
+				"placeType": "count",
+				"size": 60,
+				"left": "2638px",
+				"elev": "-100",
+				"name": "Swarm of Quippers",
+				"defaultmaxhptype": "average",
+				"disableborder": false,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#1A6AFF",
+				"hidden": false,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Swarm of Quippers",
+				"top": "1300px",
+				"hidehpbar": false,
+				"stat": 17031,
+				"hitPointInfo": {
+					"maximum": 28,
+					"current": 28,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 17031,
+				"scaleCreated": 2.8787878787878785,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"17342680174426806f837390-6f87-4071-9667-7f206de16ca3": {
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"color": "#800000",
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"hitPointInfo": {
+					"maximum": 0,
+					"current": 0,
+					"temp": 0
+				},
+				"custom_conditions": [],
+				"type": "door",
+				"scaleCreated": 2.8787878787878785,
+				"teleporterCoords": {
+					"top": 4478,
+					"left": 180,
+					"scale": 2.8787878787878785
+				},
+				"vision": {
+					"color": "rgba(0, 0, 0, 0)",
+					"feet": 0
+				},
+				"top": "2655px",
+				"size": 50,
+				"armorClass": 0,
+				"left": "1714px",
+				"name": "",
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "17342680174426806f837390-6f87-4071-9667-7f206de16ca3",
+				"auraislight": true,
+				"conditions": [],
+				"imgsrc": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=",
+				"light2": {
+					"color": "rgba(142, 142, 142, 1)",
+					"feet": "0"
+				}
+			},
+			"18a61c6a-681e-45fd-99c0-31eb9e43e2ee": {
+				"disablestat": true,
+				"gridSquares": 1,
+				"custom_conditions": [],
+				"hp": 0,
+				"folderPath": "/Letters",
+				"armorClass": 0,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "18a61c6a-681e-45fd-99c0-31eb9e43e2ee",
+				"imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/letters/H.png",
+				"locked": false,
+				"selected": true,
+				"light2": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 0
+				},
+				"image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/letters/H.png",
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "labelToken",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 60
+				},
+				"itemId": "_AboveVTT_Tokens_Letters_H",
+				"square": true,
+				"healthauratype": "aura",
+				"placeType": "count",
+				"size": 60,
+				"left": "1738px",
+				"name": "Ballroom",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": false,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"itemType": "builtinToken",
+				"color": "#1A6AFF",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": false,
+				"max_hp": 0,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/AboveVTT Tokens/Letters/H",
+				"top": "4660px",
+				"hidehpbar": false,
+				"hitPointInfo": {
+					"maximum": 0,
+					"current": 0,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"scaleCreated": 2.8787878787878785,
+				"tokenSize": 1,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"19181709-a1fb-4812-8832-60dfa081907a": {
+				"disablestat": true,
+				"gridSquares": 1,
+				"custom_conditions": [],
+				"hp": 0,
+				"folderPath": "/Letters",
+				"armorClass": 0,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "19181709-a1fb-4812-8832-60dfa081907a",
+				"imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/letters/B.png",
+				"locked": false,
+				"selected": true,
+				"light2": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 0
+				},
+				"image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/letters/B.png",
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "labelToken",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 60
+				},
+				"itemId": "_AboveVTT_Tokens_Letters_B",
+				"square": true,
+				"healthauratype": "aura",
+				"placeType": "count",
+				"size": 60,
+				"left": "2518px",
+				"name": "Supply Closets",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": false,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"itemType": "builtinToken",
+				"color": "#1A6AFF",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": false,
+				"max_hp": 0,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/AboveVTT Tokens/Letters/B",
+				"top": "3100px",
+				"hidehpbar": false,
+				"hitPointInfo": {
+					"maximum": 0,
+					"current": 0,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"scaleCreated": 2.8787878787878785,
+				"tokenSize": 1,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"1bf9939b-d121-4e3a-b0ab-d60ec692fde8": {
+				"disablestat": false,
+				"gridSquares": 1,
+				"custom_conditions": [],
+				"armorClass": 12,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "1bf9939b-d121-4e3a-b0ab-d60ec692fde8",
+				"imgsrc": "https://www.dndbeyond.com/avatars/9/920/636334602448642265.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 0
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": "30"
+				},
+				"itemId": 16968,
+				"square": false,
+				"healthauratype": "aura",
+				"placeType": "count",
+				"size": 60,
+				"left": "2458px",
+				"elev": "-110",
+				"name": "Octopus 20",
+				"defaultmaxhptype": "average",
+				"disableborder": false,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 3,
+				"itemType": "monster",
+				"color": "#0000C0",
+				"hidden": false,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Octopus",
+				"top": "2860px",
+				"hidehpbar": false,
+				"stat": 16968,
+				"hitPointInfo": {
+					"maximum": 3,
+					"current": 3,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 16968,
+				"scaleCreated": 2.8787878787878785,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"1d5057fc-5bf7-4c80-bf6d-5ae0a469d7bd": {
+				"disablestat": false,
+				"gridSquares": 1,
+				"custom_conditions": [],
+				"armorClass": 12,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "1d5057fc-5bf7-4c80-bf6d-5ae0a469d7bd",
+				"imgsrc": "https://www.dndbeyond.com/avatars/9/920/636334602448642265.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 0
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": "30"
+				},
+				"itemId": 16968,
+				"square": false,
+				"healthauratype": "aura",
+				"placeType": "count",
+				"size": 60,
+				"left": "2338px",
+				"elev": "-100",
+				"name": "Octopus 10",
+				"defaultmaxhptype": "average",
+				"disableborder": false,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 3,
+				"itemType": "monster",
+				"color": "#911EB4",
+				"hidden": false,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Octopus",
+				"top": "2440px",
+				"hidehpbar": false,
+				"stat": 16968,
+				"hitPointInfo": {
+					"maximum": 3,
+					"current": 3,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 16968,
+				"scaleCreated": 2.8787878787878785,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"20464664215647746f837390-6f87-4071-9667-7f206de16ca3": {
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"color": "#000020",
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"hitPointInfo": {
+					"maximum": 0,
+					"current": 0,
+					"temp": 0
+				},
+				"custom_conditions": [],
+				"type": "door",
+				"mapElev": 0,
+				"scaleCreated": 2.8787878787878785,
+				"teleporterCoords": {
+					"top": 4718,
+					"left": 3538,
+					"scale": 2.8787878787878785
+				},
+				"vision": {
+					"color": "rgba(0, 0, 0, 0)",
+					"feet": 0
+				},
+				"top": "4694px",
+				"size": 50,
+				"armorClass": 0,
+				"left": "2076px",
+				"name": "",
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "20464664215647746f837390-6f87-4071-9667-7f206de16ca3",
+				"auraislight": true,
+				"conditions": [],
+				"imgsrc": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=",
+				"light2": {
+					"color": "rgba(142, 142, 142, 1)",
+					"feet": "0"
+				}
+			},
+			"20879353-d1d0-41c5-aea8-d48a2075fda9": {
+				"disablestat": false,
+				"gridSquares": 1,
+				"custom_conditions": [],
+				"hp": 75,
+				"armorClass": 15,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "20879353-d1d0-41c5-aea8-d48a2075fda9",
+				"imgsrc": "https://www.dndbeyond.com/avatars/25746/484/637880557756091541.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 0
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": "0"
+				},
+				"itemId": 2560858,
+				"square": false,
+				"healthauratype": "aura",
+				"placeType": "count",
+				"size": 60,
+				"left": "2758px",
+				"name": "Kraken Priest 2",
+				"defaultmaxhptype": "average",
+				"disableborder": false,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#FF7433",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 75,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Kraken Priest",
+				"top": "1900px",
+				"hidehpbar": false,
+				"stat": 2560858,
+				"hitPointInfo": {
+					"maximum": 75,
+					"current": 75,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 2560858,
+				"scaleCreated": 2.8787878787878785,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"21b0172e-c710-4f4c-8b52-d7820879107c": {
+				"disablestat": false,
+				"gridSquares": 1,
+				"custom_conditions": [],
+				"hp": 75,
+				"armorClass": 10,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "21b0172e-c710-4f4c-8b52-d7820879107c",
+				"imgsrc": "https://www.dndbeyond.com/avatars/9/855/636332918109593968.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 0
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": "0"
+				},
+				"itemId": 17336,
+				"square": false,
+				"healthauratype": "aura",
+				"placeType": "count",
+				"size": 60,
+				"left": "2038px",
+				"name": "Kraken Priest 2",
+				"defaultmaxhptype": "average",
+				"disableborder": false,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#FF7433",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 75,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Kraken Priest",
+				"top": "4480px",
+				"hidehpbar": false,
+				"stat": 17336,
+				"hitPointInfo": {
+					"maximum": 75,
+					"current": 75,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 17336,
+				"scaleCreated": 2.8787878787878785,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"25395476261554766f837390-6f87-4071-9667-7f206de16ca3": {
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"color": "#00A0A0",
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"hitPointInfo": {
+					"maximum": 0,
+					"current": 0,
+					"temp": 0
+				},
+				"custom_conditions": [],
+				"type": "door",
+				"mapElev": 0,
+				"scaleCreated": 2.8787878787878785,
+				"teleporterCoords": {
+					"top": 5461,
+					"left": 4016,
+					"scale": 2.8787878787878785
+				},
+				"vision": {
+					"color": "rgba(0, 0, 0, 0)",
+					"feet": 0
+				},
+				"top": "5451px",
+				"size": 50,
+				"armorClass": 0,
+				"left": "2552px",
+				"name": "",
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "25395476261554766f837390-6f87-4071-9667-7f206de16ca3",
+				"auraislight": true,
+				"conditions": [],
+				"imgsrc": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=",
+				"light2": {
+					"color": "rgba(142, 142, 142, 1)",
+					"feet": "0"
+				}
+			},
+			"25745202258452026f837390-6f87-4071-9667-7f206de16ca3": {
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"color": "#400040",
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"hitPointInfo": {
+					"maximum": 0,
+					"current": 0,
+					"temp": 0
+				},
+				"custom_conditions": [],
+				"type": "door",
+				"scaleCreated": 2.8787878787878785,
+				"teleporterCoords": {
+					"top": 5216,
+					"left": 1136,
+					"scale": 2.8787878787878785
+				},
+				"vision": {
+					"color": "rgba(0, 0, 0, 0)",
+					"feet": 0
+				},
+				"top": "5177px",
+				"size": 50,
+				"armorClass": 0,
+				"left": "2554px",
+				"name": "",
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "25745202258452026f837390-6f87-4071-9667-7f206de16ca3",
+				"auraislight": true,
+				"conditions": [],
+				"imgsrc": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=",
+				"light2": {
+					"color": "rgba(142, 142, 142, 1)",
+					"feet": "0"
+				}
+			},
+			"26952560270525606f837390-6f87-4071-9667-7f206de16ca3": {
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"color": "#1A6AFF",
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"hitPointInfo": {
+					"maximum": 0,
+					"current": 0,
+					"temp": 0
+				},
+				"custom_conditions": [],
+				"type": "door",
+				"scaleCreated": 2.8787878787878785,
+				"teleporterCoords": {
+					"top": 4600,
+					"left": 1135,
+					"scale": 2.8787878787878785
+				},
+				"vision": {
+					"color": "rgba(0, 0, 0, 0)",
+					"feet": 0
+				},
+				"top": "2535px",
+				"size": 50,
+				"armorClass": 0,
+				"left": "2675px",
+				"name": "",
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "26952560270525606f837390-6f87-4071-9667-7f206de16ca3",
+				"auraislight": true,
+				"conditions": [],
+				"imgsrc": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=",
+				"light2": {
+					"color": "rgba(142, 142, 142, 1)",
+					"feet": "0"
+				}
+			},
+			"2814825281511886f837390-6f87-4071-9667-7f206de16ca3": {
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"color": "#00E000",
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"hitPointInfo": {
+					"maximum": 0,
+					"current": 0,
+					"temp": 0
+				},
+				"custom_conditions": [],
+				"type": "door",
+				"mapElev": 0,
+				"scaleCreated": 2.8787878787878785,
+				"vision": {
+					"color": "rgba(0, 0, 0, 0)",
+					"feet": 0
+				},
+				"top": "981.0000000000001px",
+				"size": 50,
+				"armorClass": 0,
+				"left": "2789px",
+				"name": "",
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "2814825281511886f837390-6f87-4071-9667-7f206de16ca3",
+				"auraislight": true,
+				"conditions": [],
+				"imgsrc": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=",
+				"light2": {
+					"color": "rgba(142, 142, 142, 1)",
+					"feet": "0"
+				}
+			},
+			"28813617682882216846f837390-6f87-4071-9667-7f206de16ca3": {
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"color": "#404040",
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"hitPointInfo": {
+					"maximum": 0,
+					"current": 0,
+					"temp": 0
+				},
+				"custom_conditions": [],
+				"type": "door",
+				"scaleCreated": 2.8787878787878785,
+				"vision": {
+					"color": "rgba(0, 0, 0, 0)",
+					"feet": 0
+				},
+				"top": "1701px",
+				"size": 50,
+				"armorClass": 0,
+				"left": "2856px",
+				"name": "",
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "28813617682882216846f837390-6f87-4071-9667-7f206de16ca3",
+				"auraislight": true,
+				"conditions": [],
+				"imgsrc": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=",
+				"light2": {
+					"color": "rgba(142, 142, 142, 1)",
+					"feet": "0"
+				}
+			},
+			"29051904297919046f837390-6f87-4071-9667-7f206de16ca3": {
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"color": "#600000",
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"hitPointInfo": {
+					"maximum": 0,
+					"current": 0,
+					"temp": 0
+				},
+				"custom_conditions": [],
+				"type": "door",
+				"scaleCreated": 2.8787878787878785,
+				"vision": {
+					"color": "rgba(0, 0, 0, 0)",
+					"feet": 0
+				},
+				"top": "1879.0000000000002px",
+				"size": 50,
+				"armorClass": 0,
+				"left": "2917px",
+				"name": "",
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "29051904297919046f837390-6f87-4071-9667-7f206de16ca3",
+				"auraislight": true,
+				"conditions": [],
+				"imgsrc": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=",
+				"light2": {
+					"color": "rgba(142, 142, 142, 1)",
+					"feet": "0"
+				}
+			},
+			"2926118291379310344842983118359416445623336f837390-6f87-4071-9667-7f206de16ca3": {
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"color": "#5F0404",
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"hitPointInfo": {
+					"maximum": 0,
+					"current": 0,
+					"temp": 0
+				},
+				"custom_conditions": [],
+				"type": "door",
+				"scaleCreated": 2.8787878787878785,
+				"vision": {
+					"color": "rgba(0, 0, 0, 0)",
+					"feet": 0
+				},
+				"top": "1158px",
+				"size": 50,
+				"armorClass": 0,
+				"left": "2929.0000000000005px",
+				"name": "",
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "2926118291379310344842983118359416445623336f837390-6f87-4071-9667-7f206de16ca3",
+				"auraislight": true,
+				"conditions": [],
+				"imgsrc": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=",
+				"light2": {
+					"color": "rgba(142, 142, 142, 1)",
+					"feet": "0"
+				}
+			},
+			"2a3650d9-c31d-4d41-a4ad-9313c4c6c5fc": {
+				"disablestat": true,
+				"gridSquares": 1,
+				"custom_conditions": [],
+				"hp": 0,
+				"folderPath": "/Letters",
+				"armorClass": 0,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "2a3650d9-c31d-4d41-a4ad-9313c4c6c5fc",
+				"imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/letters/J.png",
+				"locked": false,
+				"selected": true,
+				"light2": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 0
+				},
+				"image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/letters/J.png",
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "labelToken",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 60
+				},
+				"itemId": "_AboveVTT_Tokens_Letters_J",
+				"square": true,
+				"healthauratype": "aura",
+				"placeType": "count",
+				"size": 60,
+				"left": "4060px",
+				"name": "Tower Roof",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": false,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"itemType": "builtinToken",
+				"color": "#1A6AFF",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": false,
+				"max_hp": 0,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/AboveVTT Tokens/Letters/J",
+				"top": "5095px",
+				"hidehpbar": false,
+				"hitPointInfo": {
+					"maximum": 0,
+					"current": 0,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"scaleCreated": 2.8787878787878785,
+				"tokenSize": 1,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"2cf32670-319d-45cd-8691-a8b2f228ddff": {
+				"disablestat": true,
+				"gridSquares": 1,
+				"custom_conditions": [],
+				"hp": 0,
+				"folderPath": "/Numbers",
+				"armorClass": 0,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "2cf32670-319d-45cd-8691-a8b2f228ddff",
+				"imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/5.png",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 0
+				},
+				"image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/5.png",
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "labelToken",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 60
+				},
+				"itemId": "_AboveVTT_Tokens_Numbers_05",
+				"square": true,
+				"healthauratype": "aura",
+				"placeType": "count",
+				"size": 60,
+				"left": "658px",
+				"name": "Kraken’s Vault",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": false,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"itemType": "builtinToken",
+				"color": "#1A6AFF",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": false,
+				"max_hp": 0,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/AboveVTT Tokens/Numbers/05",
+				"top": "520px",
+				"hidehpbar": false,
+				"hitPointInfo": {
+					"maximum": 0,
+					"current": 0,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"scaleCreated": 2.8787878787878785,
+				"tokenSize": 1,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"2e73364f-bfd7-410e-8564-abc2fc00adc5": {
+				"disablestat": true,
+				"gridSquares": 1,
+				"custom_conditions": [],
+				"hp": 0,
+				"folderPath": "/Letters",
+				"armorClass": 0,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "2e73364f-bfd7-410e-8564-abc2fc00adc5",
+				"imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/letters/A.png",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 0
+				},
+				"image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/letters/A.png",
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "labelToken",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 60
+				},
+				"itemId": "_AboveVTT_Tokens_Letters_A",
+				"square": true,
+				"healthauratype": "aura",
+				"placeType": "count",
+				"size": 60,
+				"left": "1018px",
+				"name": "Guard Post",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": false,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"itemType": "builtinToken",
+				"color": "#1A6AFF",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": false,
+				"max_hp": 0,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/AboveVTT Tokens/Letters/A",
+				"top": "400px",
+				"hidehpbar": false,
+				"hitPointInfo": {
+					"maximum": 0,
+					"current": 0,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"scaleCreated": 2.8787878787878785,
+				"tokenSize": 1,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"35334718354347186f837390-6f87-4071-9667-7f206de16ca3": {
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"color": "#006060",
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"hitPointInfo": {
+					"maximum": 0,
+					"current": 0,
+					"temp": 0
+				},
+				"custom_conditions": [],
+				"type": "door",
+				"scaleCreated": 2.8787878787878785,
+				"teleporterCoords": {
+					"top": 4719,
+					"left": 2101,
+					"scale": 2.8787878787878785
+				},
+				"vision": {
+					"color": "rgba(0, 0, 0, 0)",
+					"feet": 0
+				},
+				"top": "4693px",
+				"size": 50,
+				"armorClass": 0,
+				"left": "3513px",
+				"name": "",
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "35334718354347186f837390-6f87-4071-9667-7f206de16ca3",
+				"auraislight": true,
+				"conditions": [],
+				"imgsrc": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=",
+				"light2": {
+					"color": "rgba(142, 142, 142, 1)",
+					"feet": "0"
+				}
+			},
+			"384aba33-b5b1-4776-8b8a-784489151ec7": {
+				"disablestat": false,
+				"gridSquares": 1,
+				"custom_conditions": [],
+				"armorClass": 12,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "384aba33-b5b1-4776-8b8a-784489151ec7",
+				"imgsrc": "https://www.dndbeyond.com/avatars/9/920/636334602448642265.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 0
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": "30"
+				},
+				"itemId": 16968,
+				"square": false,
+				"healthauratype": "aura",
+				"placeType": "count",
+				"size": 60,
+				"left": "2038px",
+				"elev": "-100",
+				"name": "Octopus 16",
+				"defaultmaxhptype": "average",
+				"disableborder": false,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 3,
+				"itemType": "monster",
+				"color": "#008080",
+				"hidden": false,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Octopus",
+				"top": "2440px",
+				"hidehpbar": false,
+				"stat": 16968,
+				"hitPointInfo": {
+					"maximum": 3,
+					"current": 3,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 16968,
+				"scaleCreated": 2.8787878787878785,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"3dce602a-b865-44da-9182-62a5f0f2b6b2": {
+				"disablestat": false,
+				"gridSquares": 1,
+				"custom_conditions": [],
+				"armorClass": 12,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "3dce602a-b865-44da-9182-62a5f0f2b6b2",
+				"imgsrc": "https://www.dndbeyond.com/avatars/9/920/636334602448642265.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 0
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": "30"
+				},
+				"itemId": 16968,
+				"square": false,
+				"healthauratype": "aura",
+				"placeType": "count",
+				"size": 60,
+				"left": "1918px",
+				"elev": "-100",
+				"name": "Octopus 7",
+				"defaultmaxhptype": "average",
+				"disableborder": false,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 3,
+				"itemType": "monster",
+				"color": "#00E5FF",
+				"hidden": false,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Octopus",
+				"top": "2500px",
+				"hidehpbar": false,
+				"stat": 16968,
+				"hitPointInfo": {
+					"maximum": 3,
+					"current": 3,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 16968,
+				"scaleCreated": 2.8787878787878785,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"3ea1eacc-f7f0-4c4a-a87f-2370fb4d67ab": {
+				"disablestat": false,
+				"gridSquares": 1,
+				"custom_conditions": [],
+				"armorClass": 12,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "3ea1eacc-f7f0-4c4a-a87f-2370fb4d67ab",
+				"imgsrc": "https://www.dndbeyond.com/avatars/9/920/636334602448642265.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 0
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": "30"
+				},
+				"itemId": 16968,
+				"square": false,
+				"healthauratype": "aura",
+				"placeType": "count",
+				"size": 60,
+				"left": "2098px",
+				"elev": "-100",
+				"name": "Octopus 12",
+				"defaultmaxhptype": "average",
+				"disableborder": false,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 3,
+				"itemType": "monster",
+				"color": "#008000",
+				"hidden": false,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Octopus",
+				"top": "2620px",
+				"hidehpbar": false,
+				"stat": 16968,
+				"hitPointInfo": {
+					"maximum": 3,
+					"current": 3,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 16968,
+				"scaleCreated": 2.8787878787878785,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"40115461402154616f837390-6f87-4071-9667-7f206de16ca3": {
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"color": "#000080",
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"hitPointInfo": {
+					"maximum": 0,
+					"current": 0,
+					"temp": 0
+				},
+				"custom_conditions": [],
+				"type": "door",
+				"scaleCreated": 2.8787878787878785,
+				"teleporterCoords": {
+					"top": 5476,
+					"left": 2577,
+					"scale": 2.8787878787878785
+				},
+				"vision": {
+					"color": "rgba(0, 0, 0, 0)",
+					"feet": 0
+				},
+				"top": "5436px",
+				"size": 50,
+				"armorClass": 0,
+				"left": "3991px",
+				"name": "",
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "40115461402154616f837390-6f87-4071-9667-7f206de16ca3",
+				"auraislight": true,
+				"conditions": [],
+				"imgsrc": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=",
+				"light2": {
+					"color": "rgba(142, 142, 142, 1)",
+					"feet": "0"
+				}
+			},
+			"511b8333-3787-453e-86cc-335c7d92c6d0": {
+				"disablestat": true,
+				"gridSquares": 1,
+				"custom_conditions": [],
+				"hp": 0,
+				"folderPath": "/Letters",
+				"armorClass": 0,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "511b8333-3787-453e-86cc-335c7d92c6d0",
+				"imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/letters/D.png",
+				"locked": false,
+				"selected": true,
+				"light2": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 0
+				},
+				"image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/letters/D.png",
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "labelToken",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 60
+				},
+				"itemId": "_AboveVTT_Tokens_Letters_D",
+				"square": true,
+				"healthauratype": "aura",
+				"placeType": "count",
+				"size": 60,
+				"left": "2245px",
+				"name": "Priest’s Room",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": false,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"itemType": "builtinToken",
+				"color": "#1A6AFF",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": false,
+				"max_hp": 0,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/AboveVTT Tokens/Letters/D",
+				"top": "1607px",
+				"hidehpbar": false,
+				"hitPointInfo": {
+					"maximum": 0,
+					"current": 0,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"scaleCreated": 2.8787878787878785,
+				"tokenSize": 1,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"53f2c012-e958-4ad1-9b9f-82169b06a8b9": {
+				"disablestat": true,
+				"gridSquares": 1,
+				"custom_conditions": [],
+				"hp": 0,
+				"folderPath": "/Letters",
+				"armorClass": 0,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "53f2c012-e958-4ad1-9b9f-82169b06a8b9",
+				"imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/letters/E.png",
+				"locked": false,
+				"selected": true,
+				"light2": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 0
+				},
+				"image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/letters/E.png",
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "labelToken",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 60
+				},
+				"itemId": "_AboveVTT_Tokens_Letters_E",
+				"square": true,
+				"healthauratype": "aura",
+				"placeType": "count",
+				"size": 60,
+				"left": "728px",
+				"name": "Balcony",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": false,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"itemType": "builtinToken",
+				"color": "#1A6AFF",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": false,
+				"max_hp": 0,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/AboveVTT Tokens/Letters/E",
+				"top": "4279px",
+				"hidehpbar": false,
+				"hitPointInfo": {
+					"maximum": 0,
+					"current": 0,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"scaleCreated": 2.8787878787878785,
+				"tokenSize": 1,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"5548605d-923d-4433-87de-28ca67ab9ce3": {
+				"disablestat": true,
+				"gridSquares": 1,
+				"custom_conditions": [],
+				"hp": 0,
+				"folderPath": "/Letters",
+				"armorClass": 0,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "5548605d-923d-4433-87de-28ca67ab9ce3",
+				"imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/letters/B.png",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 0
+				},
+				"image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/letters/B.png",
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "labelToken",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 60
+				},
+				"itemId": "_AboveVTT_Tokens_Letters_B",
+				"square": true,
+				"healthauratype": "aura",
+				"placeType": "count",
+				"size": 60,
+				"left": "718px",
+				"name": "Vault",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": false,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"itemType": "builtinToken",
+				"color": "#1A6AFF",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": false,
+				"max_hp": 0,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/AboveVTT Tokens/Letters/B",
+				"top": "700px",
+				"hidehpbar": false,
+				"hitPointInfo": {
+					"maximum": 0,
+					"current": 0,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"scaleCreated": 2.8787878787878785,
+				"tokenSize": 1,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"5937baad-0a8c-4403-9c57-0295d768e098": {
+				"disablestat": false,
+				"gridSquares": 0.5,
+				"custom_conditions": [],
+				"hp": 22,
+				"armorClass": 19,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "5937baad-0a8c-4403-9c57-0295d768e098",
+				"imgsrc": "https://www.dndbeyond.com/avatars/16/584/636376363762607243.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 0
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": "120"
+				},
+				"itemId": 17060,
+				"square": false,
+				"healthauratype": "aura",
+				"placeType": "count",
+				"size": 30,
+				"left": "3808px",
+				"name": "Will-o'-Wisp",
+				"defaultmaxhptype": "average",
+				"disableborder": false,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 2,
+				"itemType": "monster",
+				"color": "#1A6AFF",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 22,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Will-o'-Wisp",
+				"top": "310px",
+				"hidehpbar": false,
+				"stat": 17060,
+				"hitPointInfo": {
+					"maximum": 22,
+					"current": 22,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 17060,
+				"scaleCreated": 2.8787878787878785,
+				"maxAge": false,
+				"zindexdiff": 34,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"61a8a3ba-4c91-46f5-9b5a-26571f25c180": {
+				"disablestat": false,
+				"gridSquares": 1,
+				"custom_conditions": [],
+				"hp": 75,
+				"armorClass": 10,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "61a8a3ba-4c91-46f5-9b5a-26571f25c180",
+				"imgsrc": "https://www.dndbeyond.com/avatars/9/855/636332918109593968.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 0
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": "0"
+				},
+				"itemId": 17336,
+				"square": false,
+				"healthauratype": "aura",
+				"placeType": "count",
+				"size": 60,
+				"left": "2038px",
+				"name": "Kraken Priest",
+				"defaultmaxhptype": "average",
+				"disableborder": false,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#1A6AFF",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 75,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Kraken Priest",
+				"top": "4360px",
+				"hidehpbar": false,
+				"stat": 17336,
+				"hitPointInfo": {
+					"maximum": 75,
+					"current": 75,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 17336,
+				"scaleCreated": 2.8787878787878785,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"61c722df-a9ed-44dd-8abb-4baa9d35bbe0": {
+				"disablestat": false,
+				"gridSquares": 1,
+				"custom_conditions": [],
+				"armorClass": 12,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "61c722df-a9ed-44dd-8abb-4baa9d35bbe0",
+				"imgsrc": "https://www.dndbeyond.com/avatars/9/920/636334602448642265.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 0
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": "30"
+				},
+				"itemId": 16968,
+				"square": false,
+				"healthauratype": "aura",
+				"placeType": "count",
+				"size": 60,
+				"left": "2398px",
+				"elev": "-110",
+				"name": "Octopus 18",
+				"defaultmaxhptype": "average",
+				"disableborder": false,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 3,
+				"itemType": "monster",
+				"color": "#C00000",
+				"hidden": false,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Octopus",
+				"top": "2500px",
+				"hidehpbar": false,
+				"stat": 16968,
+				"hitPointInfo": {
+					"maximum": 3,
+					"current": 3,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 16968,
+				"scaleCreated": 2.8787878787878785,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"62be8663-2d17-4276-b441-6c6932f1d6fa": {
+				"disablestat": true,
+				"gridSquares": 1,
+				"custom_conditions": [],
+				"hp": 0,
+				"folderPath": "/Letters",
+				"armorClass": 0,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "62be8663-2d17-4276-b441-6c6932f1d6fa",
+				"imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/letters/B.png",
+				"locked": false,
+				"selected": true,
+				"light2": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 0
+				},
+				"image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/letters/B.png",
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "labelToken",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 60
+				},
+				"itemId": "_AboveVTT_Tokens_Letters_B",
+				"square": true,
+				"healthauratype": "aura",
+				"placeType": "count",
+				"size": 60,
+				"left": "1858px",
+				"name": "Supply Closets",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": false,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"itemType": "builtinToken",
+				"color": "#1A6AFF",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": false,
+				"max_hp": 0,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/AboveVTT Tokens/Letters/B",
+				"top": "3100px",
+				"hidehpbar": false,
+				"hitPointInfo": {
+					"maximum": 0,
+					"current": 0,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"scaleCreated": 2.8787878787878785,
+				"tokenSize": 1,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"6799bfc0-2ff3-459b-9449-82ace48495b4": {
+				"disablestat": false,
+				"gridSquares": 1,
+				"custom_conditions": [],
+				"armorClass": 16,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"alternativeImagesCustomizations": {},
+				"id": "6799bfc0-2ff3-459b-9449-82ace48495b4",
+				"imgsrc": "https://www.dndbeyond.com/avatars/4675/680/636747837998336262.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": "0"
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": "120"
+				},
+				"itemId": 311757,
+				"square": false,
+				"healthauratype": "aura",
+				"placeType": "count",
+				"size": 60,
+				"left": "2158px",
+				"name": "Yalaga Maladwyn",
+				"defaultmaxhptype": "average",
+				"disableborder": false,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#FF7433",
+				"hidden": false,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": "-110",
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Yalaga Maladwyn",
+				"top": "3340px",
+				"hidehpbar": false,
+				"imageSize": 1,
+				"stat": 311757,
+				"alternativeImages": [],
+				"imageZoom": 0,
+				"hitPointInfo": {
+					"maximum": 71,
+					"current": 71,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 311757,
+				"scaleCreated": 2.8787878787878785,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"6a56ae95-e55b-4259-99b1-c90ef90aa161": {
+				"disablestat": false,
+				"gridSquares": 0.5,
+				"custom_conditions": [],
+				"hp": 22,
+				"armorClass": 19,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "6a56ae95-e55b-4259-99b1-c90ef90aa161",
+				"imgsrc": "https://www.dndbeyond.com/avatars/16/584/636376363762607243.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 0
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": "120"
+				},
+				"itemId": 17060,
+				"square": false,
+				"healthauratype": "aura",
+				"placeType": "count",
+				"size": 30,
+				"left": "3778px",
+				"name": "Will-o'-Wisp 2",
+				"defaultmaxhptype": "average",
+				"disableborder": false,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 2,
+				"itemType": "monster",
+				"color": "#FF7433",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 22,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Will-o'-Wisp",
+				"top": "460px",
+				"hidehpbar": false,
+				"stat": 17060,
+				"hitPointInfo": {
+					"maximum": 22,
+					"current": 22,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 17060,
+				"scaleCreated": 2.8787878787878785,
+				"maxAge": false,
+				"zindexdiff": 34,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"6aa3e354-fcde-4c2e-95d8-160140e89f46": {
+				"disablestat": false,
+				"gridSquares": 2,
+				"custom_conditions": [],
+				"armorClass": 11,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "6aa3e354-fcde-4c2e-95d8-160140e89f46",
+				"imgsrc": "https://www.dndbeyond.com/avatars/9/897/636334288002966654.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 0
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": "60"
+				},
+				"itemId": 16888,
+				"square": false,
+				"healthauratype": "aura",
+				"placeType": "count",
+				"size": 120,
+				"left": "1078px",
+				"name": "Giant Octopus",
+				"defaultmaxhptype": "average",
+				"disableborder": false,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 5,
+				"itemType": "monster",
+				"color": "#1A6AFF",
+				"hidden": false,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Giant Octopus",
+				"top": "5380px",
+				"hidehpbar": false,
+				"stat": 16888,
+				"hitPointInfo": {
+					"maximum": 52,
+					"current": 52,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 16888,
+				"scaleCreated": 2.8787878787878785,
+				"maxAge": false,
+				"zindexdiff": 9,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"7267bb5a-3681-4306-97d4-8f0aaf260846": {
+				"disablestat": true,
+				"gridSquares": 1,
+				"custom_conditions": [],
+				"hp": 0,
+				"folderPath": "/Letters",
+				"armorClass": 0,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "7267bb5a-3681-4306-97d4-8f0aaf260846",
+				"imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/letters/F.png",
+				"locked": false,
+				"selected": true,
+				"light2": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 0
+				},
+				"image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/letters/F.png",
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "labelToken",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 60
+				},
+				"itemId": "_AboveVTT_Tokens_Letters_F",
+				"square": true,
+				"healthauratype": "aura",
+				"placeType": "count",
+				"size": 60,
+				"left": "499px",
+				"name": "Crumbling Hall",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": false,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"itemType": "builtinToken",
+				"color": "#1A6AFF",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": false,
+				"max_hp": 0,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/AboveVTT Tokens/Letters/F",
+				"top": "4944px",
+				"hidehpbar": false,
+				"hitPointInfo": {
+					"maximum": 0,
+					"current": 0,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"scaleCreated": 2.8787878787878785,
+				"tokenSize": 1,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"73db942a-d14d-4857-af2f-6630b77d3b6e": {
+				"disablestat": true,
+				"gridSquares": 1,
+				"custom_conditions": [],
+				"hp": 0,
+				"folderPath": "/Numbers",
+				"armorClass": 0,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "73db942a-d14d-4857-af2f-6630b77d3b6e",
+				"imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/7.png",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 0
+				},
+				"image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/7.png",
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "labelToken",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 60
+				},
+				"itemId": "_AboveVTT_Tokens_Numbers_07",
+				"square": true,
+				"healthauratype": "aura",
+				"placeType": "count",
+				"size": 60,
+				"left": "2508px",
+				"name": "Temple of Vaalastroth",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": false,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"itemType": "builtinToken",
+				"color": "#1A6AFF",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": false,
+				"max_hp": 0,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/AboveVTT Tokens/Numbers/07",
+				"top": "2797px",
+				"hidehpbar": false,
+				"hitPointInfo": {
+					"maximum": 0,
+					"current": 0,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"scaleCreated": 2.8787878787878785,
+				"tokenSize": 1,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"74cf1459-6521-4fd6-b2d2-f2fd95201727": {
+				"disablestat": true,
+				"gridSquares": 1,
+				"custom_conditions": [],
+				"hp": 0,
+				"folderPath": "/Letters",
+				"armorClass": 0,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "74cf1459-6521-4fd6-b2d2-f2fd95201727",
+				"imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/letters/C.png",
+				"locked": false,
+				"selected": true,
+				"light2": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 0
+				},
+				"image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/letters/C.png",
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "labelToken",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 60
+				},
+				"itemId": "_AboveVTT_Tokens_Letters_C",
+				"square": true,
+				"healthauratype": "aura",
+				"placeType": "count",
+				"size": 60,
+				"left": "2818px",
+				"name": "Priest’s Office",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": false,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"itemType": "builtinToken",
+				"color": "#1A6AFF",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": false,
+				"max_hp": 0,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/AboveVTT Tokens/Letters/C",
+				"top": "1420px",
+				"hidehpbar": false,
+				"hitPointInfo": {
+					"maximum": 0,
+					"current": 0,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"scaleCreated": 2.8787878787878785,
+				"tokenSize": 1,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"7e3ebd22-9714-4382-9231-8995aaaa59d4": {
+				"disablestat": true,
+				"gridSquares": 1,
+				"custom_conditions": [],
+				"hp": 0,
+				"folderPath": "/Letters",
+				"armorClass": 0,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "7e3ebd22-9714-4382-9231-8995aaaa59d4",
+				"imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/letters/A.png",
+				"locked": false,
+				"selected": true,
+				"light2": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 0
+				},
+				"image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/letters/A.png",
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "labelToken",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 60
+				},
+				"itemId": "_AboveVTT_Tokens_Letters_A",
+				"square": true,
+				"healthauratype": "aura",
+				"placeType": "count",
+				"size": 60,
+				"left": "2758px",
+				"name": "Chamber of Prayer",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": false,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"itemType": "builtinToken",
+				"color": "#1A6AFF",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": false,
+				"max_hp": 0,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/AboveVTT Tokens/Letters/A",
+				"top": "580px",
+				"hidehpbar": false,
+				"hitPointInfo": {
+					"maximum": 0,
+					"current": 0,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"scaleCreated": 2.8787878787878785,
+				"tokenSize": 1,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"81d1350e-c1ec-4564-bf57-9b5448292096": {
+				"disablestat": true,
+				"gridSquares": 1,
+				"custom_conditions": [],
+				"hp": 0,
+				"folderPath": "/Letters",
+				"armorClass": 0,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "81d1350e-c1ec-4564-bf57-9b5448292096",
+				"imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/letters/B.png",
+				"locked": false,
+				"selected": true,
+				"light2": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 0
+				},
+				"image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/letters/B.png",
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "labelToken",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 60
+				},
+				"itemId": "_AboveVTT_Tokens_Letters_B",
+				"square": true,
+				"healthauratype": "aura",
+				"placeType": "count",
+				"size": 60,
+				"left": "1198px",
+				"name": "Supply Closets",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": false,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"itemType": "builtinToken",
+				"color": "#1A6AFF",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": false,
+				"max_hp": 0,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/AboveVTT Tokens/Letters/B",
+				"top": "4420px",
+				"hidehpbar": false,
+				"hitPointInfo": {
+					"maximum": 0,
+					"current": 0,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"scaleCreated": 2.8787878787878785,
+				"tokenSize": 1,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"835896955503512993383566276346604228336f837390-6f87-4071-9667-7f206de16ca3": {
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"color": "#0000E0",
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"hitPointInfo": {
+					"maximum": 0,
+					"current": 0,
+					"temp": 0
+				},
+				"custom_conditions": [],
+				"type": "door",
+				"scaleCreated": 2.8787878787878785,
+				"vision": {
+					"color": "rgba(0, 0, 0, 0)",
+					"feet": 0
+				},
+				"top": "858.0000000000001px",
+				"size": 50,
+				"armorClass": 0,
+				"left": "810px",
+				"name": "",
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "835896955503512993383566276346604228336f837390-6f87-4071-9667-7f206de16ca3",
+				"auraislight": true,
+				"conditions": [],
+				"imgsrc": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=",
+				"light2": {
+					"color": "rgba(142, 142, 142, 1)",
+					"feet": "0"
+				}
+			},
+			"84e2da39-5c79-40de-997b-268b40861d6e": {
+				"disablestat": false,
+				"gridSquares": 1,
+				"custom_conditions": [],
+				"armorClass": 12,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "84e2da39-5c79-40de-997b-268b40861d6e",
+				"imgsrc": "https://www.dndbeyond.com/avatars/9/920/636334602448642265.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 0
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": "30"
+				},
+				"itemId": 16968,
+				"square": false,
+				"healthauratype": "aura",
+				"placeType": "count",
+				"size": 60,
+				"left": "2458px",
+				"elev": "-100",
+				"name": "Octopus 8",
+				"defaultmaxhptype": "average",
+				"disableborder": false,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 3,
+				"itemType": "monster",
+				"color": "#000000",
+				"hidden": false,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Octopus",
+				"top": "2980px",
+				"hidehpbar": false,
+				"stat": 16968,
+				"hitPointInfo": {
+					"maximum": 3,
+					"current": 3,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 16968,
+				"scaleCreated": 2.8787878787878785,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"8a443d9d-0a09-4770-b9b8-3fcab4c10edc": {
+				"disablestat": true,
+				"gridSquares": 1,
+				"custom_conditions": [],
+				"hp": 0,
+				"folderPath": "/Letters",
+				"armorClass": 0,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "8a443d9d-0a09-4770-b9b8-3fcab4c10edc",
+				"imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/letters/B.png",
+				"locked": false,
+				"selected": true,
+				"light2": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 0
+				},
+				"image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/letters/B.png",
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "labelToken",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 60
+				},
+				"itemId": "_AboveVTT_Tokens_Letters_B",
+				"square": true,
+				"healthauratype": "aura",
+				"placeType": "count",
+				"size": 60,
+				"left": "2860px",
+				"name": "Reflection Chamber",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": false,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"itemType": "builtinToken",
+				"color": "#1A6AFF",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": false,
+				"max_hp": 0,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/AboveVTT Tokens/Letters/B",
+				"top": "869px",
+				"hidehpbar": false,
+				"hitPointInfo": {
+					"maximum": 0,
+					"current": 0,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"scaleCreated": 2.8787878787878785,
+				"tokenSize": 1,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"8ac6e750-6175-46b9-b499-292120d52c4d": {
+				"disablestat": true,
+				"gridSquares": 1,
+				"custom_conditions": [],
+				"hp": 0,
+				"folderPath": "/Letters",
+				"armorClass": 0,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "8ac6e750-6175-46b9-b499-292120d52c4d",
+				"imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/letters/G.png",
+				"locked": false,
+				"selected": true,
+				"light2": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 0
+				},
+				"image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/letters/G.png",
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "labelToken",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 60
+				},
+				"itemId": "_AboveVTT_Tokens_Letters_G",
+				"square": true,
+				"healthauratype": "aura",
+				"placeType": "count",
+				"size": 60,
+				"left": "1018px",
+				"name": "Grand Staircase",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": false,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"itemType": "builtinToken",
+				"color": "#1A6AFF",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": false,
+				"max_hp": 0,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/AboveVTT Tokens/Letters/G",
+				"top": "5500px",
+				"hidehpbar": false,
+				"hitPointInfo": {
+					"maximum": 0,
+					"current": 0,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"scaleCreated": 2.8787878787878785,
+				"tokenSize": 1,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"8c033629-653b-4b64-8cbc-57254384d8e0": {
+				"disablestat": false,
+				"gridSquares": 1,
+				"custom_conditions": [],
+				"armorClass": 12,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "8c033629-653b-4b64-8cbc-57254384d8e0",
+				"imgsrc": "https://www.dndbeyond.com/avatars/9/920/636334602448642265.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 0
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": "30"
+				},
+				"itemId": 16968,
+				"square": false,
+				"healthauratype": "aura",
+				"placeType": "count",
+				"size": 60,
+				"left": "1918px",
+				"elev": "-105",
+				"name": "Octopus 19",
+				"defaultmaxhptype": "average",
+				"disableborder": false,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 3,
+				"itemType": "monster",
+				"color": "#00C000",
+				"hidden": false,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Octopus",
+				"top": "2920px",
+				"hidehpbar": false,
+				"stat": 16968,
+				"hitPointInfo": {
+					"maximum": 3,
+					"current": 3,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 16968,
+				"scaleCreated": 2.8787878787878785,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"8f72d37a-f440-409c-b220-a86924767720": {
+				"disablestat": false,
+				"gridSquares": 1,
+				"custom_conditions": [],
+				"armorClass": 12,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "8f72d37a-f440-409c-b220-a86924767720",
+				"imgsrc": "https://www.dndbeyond.com/avatars/9/920/636334602448642265.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 0
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": "30"
+				},
+				"itemId": 16968,
+				"square": false,
+				"healthauratype": "aura",
+				"placeType": "count",
+				"size": 60,
+				"left": "2278px",
+				"elev": "-110",
+				"name": "Octopus 13",
+				"defaultmaxhptype": "average",
+				"disableborder": false,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 3,
+				"itemType": "monster",
+				"color": "#000080",
+				"hidden": false,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Octopus",
+				"top": "2980px",
+				"hidehpbar": false,
+				"stat": 16968,
+				"hitPointInfo": {
+					"maximum": 3,
+					"current": 3,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 16968,
+				"scaleCreated": 2.8787878787878785,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"8fb6b1a9-fc28-4d0c-834e-33e641abed19": {
+				"disablestat": true,
+				"gridSquares": 1,
+				"custom_conditions": [],
+				"hp": 0,
+				"folderPath": "/Numbers",
+				"armorClass": 0,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "8fb6b1a9-fc28-4d0c-834e-33e641abed19",
+				"imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/4.png",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 0
+				},
+				"image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/4.png",
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "labelToken",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 60
+				},
+				"itemId": "_AboveVTT_Tokens_Numbers_04",
+				"square": true,
+				"healthauratype": "aura",
+				"placeType": "count",
+				"size": 60,
+				"left": "3658px",
+				"name": "Windmill",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": false,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"itemType": "builtinToken",
+				"color": "#1A6AFF",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": false,
+				"max_hp": 0,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/AboveVTT Tokens/Numbers/04",
+				"top": "520px",
+				"hidehpbar": false,
+				"hitPointInfo": {
+					"maximum": 0,
+					"current": 0,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"scaleCreated": 2.8787878787878785,
+				"tokenSize": 1,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"94d13a3c-6754-44f4-8ebd-21b6c36ea419": {
+				"disablestat": false,
+				"gridSquares": 1,
+				"custom_conditions": [],
+				"armorClass": 12,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "94d13a3c-6754-44f4-8ebd-21b6c36ea419",
+				"imgsrc": "https://www.dndbeyond.com/avatars/9/920/636334602448642265.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 0
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": "30"
+				},
+				"itemId": 16968,
+				"square": false,
+				"healthauratype": "aura",
+				"placeType": "count",
+				"size": 60,
+				"left": "1918px",
+				"elev": "-110",
+				"name": "Octopus 4",
+				"defaultmaxhptype": "average",
+				"disableborder": false,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 3,
+				"itemType": "monster",
+				"color": "#884DFF",
+				"hidden": false,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Octopus",
+				"top": "2800px",
+				"hidehpbar": false,
+				"stat": 16968,
+				"hitPointInfo": {
+					"maximum": 3,
+					"current": 3,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 16968,
+				"scaleCreated": 2.8787878787878785,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"9d0046f3-9c4f-4c12-91c7-84e689f55cdc": {
+				"disablestat": true,
+				"gridSquares": 1,
+				"custom_conditions": [],
+				"hp": 0,
+				"folderPath": "/Numbers",
+				"armorClass": 0,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "9d0046f3-9c4f-4c12-91c7-84e689f55cdc",
+				"imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/6.png",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 0
+				},
+				"image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/6.png",
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "labelToken",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 60
+				},
+				"itemId": "_AboveVTT_Tokens_Numbers_06",
+				"square": true,
+				"healthauratype": "aura",
+				"placeType": "count",
+				"size": 60,
+				"left": "2471px",
+				"name": "House of Procan",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": false,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"itemType": "builtinToken",
+				"color": "#1A6AFF",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": false,
+				"max_hp": 0,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/AboveVTT Tokens/Numbers/06",
+				"top": "1145px",
+				"hidehpbar": false,
+				"hitPointInfo": {
+					"maximum": 0,
+					"current": 0,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"scaleCreated": 2.8787878787878785,
+				"tokenSize": 1,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"a84b423a-672a-4181-99df-b206bf3c6a6b": {
+				"disablestat": false,
+				"gridSquares": 1,
+				"custom_conditions": [],
+				"hp": 75,
+				"armorClass": 10,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "a84b423a-672a-4181-99df-b206bf3c6a6b",
+				"imgsrc": "https://www.dndbeyond.com/avatars/9/855/636332918109593968.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 0
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": "0"
+				},
+				"itemId": 17336,
+				"square": false,
+				"healthauratype": "aura",
+				"placeType": "count",
+				"size": 60,
+				"left": "2098px",
+				"name": "Kraken Priest 3",
+				"defaultmaxhptype": "average",
+				"disableborder": false,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#FFD433",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 75,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Kraken Priest",
+				"top": "4420px",
+				"hidehpbar": false,
+				"stat": 17336,
+				"hitPointInfo": {
+					"maximum": 75,
+					"current": 75,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 17336,
+				"scaleCreated": 2.8787878787878785,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"a8b80b82-3024-4ca5-9983-3262b2a53de1": {
+				"disablestat": true,
+				"gridSquares": 1,
+				"custom_conditions": [],
+				"hp": 0,
+				"folderPath": "/Letters",
+				"armorClass": 0,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "a8b80b82-3024-4ca5-9983-3262b2a53de1",
+				"imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/letters/B.png",
+				"locked": false,
+				"selected": true,
+				"light2": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 0
+				},
+				"image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/letters/B.png",
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "labelToken",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 60
+				},
+				"itemId": "_AboveVTT_Tokens_Letters_B",
+				"square": true,
+				"healthauratype": "aura",
+				"placeType": "count",
+				"size": 60,
+				"left": "1863px",
+				"name": "Supply Closets",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": false,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"itemType": "builtinToken",
+				"color": "#1A6AFF",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": false,
+				"max_hp": 0,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/AboveVTT Tokens/Letters/B",
+				"top": "2457px",
+				"hidehpbar": false,
+				"hitPointInfo": {
+					"maximum": 0,
+					"current": 0,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"scaleCreated": 2.8787878787878785,
+				"tokenSize": 1,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"a97a6e45-d624-4a0a-a4b9-3e7b410d00e6": {
+				"disablestat": false,
+				"gridSquares": 3,
+				"custom_conditions": [],
+				"hp": 230,
+				"armorClass": 12,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "a97a6e45-d624-4a0a-a4b9-3e7b410d00e6",
+				"imgsrc": "https://www.dndbeyond.com/avatars/9/670/636330346803505597.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 0
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": "60"
+				},
+				"itemId": 17256,
+				"square": false,
+				"healthauratype": "aura",
+				"placeType": "count",
+				"size": 180,
+				"left": "2218px",
+				"name": "Storm Giant Quintessent",
+				"defaultmaxhptype": "average",
+				"disableborder": false,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 6,
+				"itemType": "monster",
+				"color": "#1A6AFF",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 230,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Storm Giant Quintessent",
+				"top": "4480px",
+				"hidehpbar": false,
+				"stat": 17256,
+				"hitPointInfo": {
+					"maximum": 230,
+					"current": 230,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 17256,
+				"scaleCreated": 2.8787878787878785,
+				"maxAge": false,
+				"zindexdiff": 4,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"aa560ad8-5c6a-4177-9f5f-073107ec5a2b": {
+				"disablestat": false,
+				"gridSquares": 1,
+				"custom_conditions": [],
+				"armorClass": 12,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "aa560ad8-5c6a-4177-9f5f-073107ec5a2b",
+				"imgsrc": "https://www.dndbeyond.com/avatars/9/920/636334602448642265.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 0
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": "30"
+				},
+				"itemId": 16968,
+				"square": false,
+				"healthauratype": "aura",
+				"placeType": "count",
+				"size": 60,
+				"left": "2338px",
+				"elev": "-110",
+				"name": "Octopus 17",
+				"defaultmaxhptype": "average",
+				"disableborder": false,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 3,
+				"itemType": "monster",
+				"color": "#808080",
+				"hidden": false,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Octopus",
+				"top": "2860px",
+				"hidehpbar": false,
+				"stat": 16968,
+				"hitPointInfo": {
+					"maximum": 3,
+					"current": 3,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 16968,
+				"scaleCreated": 2.8787878787878785,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"aab30919-30ff-4d6c-8dbf-af308e9834a5": {
+				"disablestat": false,
+				"gridSquares": 1,
+				"custom_conditions": [],
+				"armorClass": 12,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "aab30919-30ff-4d6c-8dbf-af308e9834a5",
+				"imgsrc": "https://www.dndbeyond.com/avatars/9/920/636334602448642265.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 0
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": "30"
+				},
+				"itemId": 16968,
+				"square": false,
+				"healthauratype": "aura",
+				"placeType": "count",
+				"size": 60,
+				"left": "2158px",
+				"elev": "-100",
+				"name": "Octopus 2",
+				"defaultmaxhptype": "average",
+				"disableborder": false,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 3,
+				"itemType": "monster",
+				"color": "#FF7433",
+				"hidden": false,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Octopus",
+				"top": "2440px",
+				"hidehpbar": false,
+				"stat": 16968,
+				"hitPointInfo": {
+					"maximum": 3,
+					"current": 3,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 16968,
+				"scaleCreated": 2.8787878787878785,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"b2b1e31a-0f2e-4dd9-a1ef-ca6bafe17af1": {
+				"disablestat": false,
+				"gridSquares": 1,
+				"custom_conditions": [],
+				"armorClass": 12,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "b2b1e31a-0f2e-4dd9-a1ef-ca6bafe17af1",
+				"imgsrc": "https://www.dndbeyond.com/avatars/9/920/636334602448642265.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 0
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": "30"
+				},
+				"itemId": 16968,
+				"square": false,
+				"healthauratype": "aura",
+				"placeType": "count",
+				"size": 60,
+				"left": "1978px",
+				"elev": "-105",
+				"name": "Octopus",
+				"defaultmaxhptype": "average",
+				"disableborder": false,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 3,
+				"itemType": "monster",
+				"color": "#1A6AFF",
+				"hidden": false,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Octopus",
+				"top": "2680px",
+				"hidehpbar": false,
+				"stat": 16968,
+				"hitPointInfo": {
+					"maximum": 3,
+					"current": 3,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 16968,
+				"scaleCreated": 2.8787878787878785,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"b46927bb-6f18-4750-8094-713fffbe8604": {
+				"disablestat": false,
+				"gridSquares": 1,
+				"custom_conditions": [],
+				"armorClass": 12,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "b46927bb-6f18-4750-8094-713fffbe8604",
+				"imgsrc": "https://www.dndbeyond.com/avatars/9/920/636334602448642265.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 0
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": "30"
+				},
+				"itemId": 16968,
+				"square": false,
+				"healthauratype": "aura",
+				"placeType": "count",
+				"size": 60,
+				"left": "2038px",
+				"elev": "-110",
+				"name": "Octopus 6",
+				"defaultmaxhptype": "average",
+				"disableborder": false,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 3,
+				"itemType": "monster",
+				"color": "#EC8AFF",
+				"hidden": false,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Octopus",
+				"top": "3160px",
+				"hidehpbar": false,
+				"stat": 16968,
+				"hitPointInfo": {
+					"maximum": 3,
+					"current": 3,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 16968,
+				"scaleCreated": 2.8787878787878785,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"b5fa7cbe-b70b-450b-9200-01bccd2205d2": {
+				"disablestat": false,
+				"gridSquares": 1,
+				"custom_conditions": [],
+				"armorClass": 12,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "b5fa7cbe-b70b-450b-9200-01bccd2205d2",
+				"imgsrc": "https://www.dndbeyond.com/avatars/9/920/636334602448642265.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 0
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": "30"
+				},
+				"itemId": 16968,
+				"square": false,
+				"healthauratype": "aura",
+				"placeType": "count",
+				"size": 60,
+				"left": "2098px",
+				"elev": "-110",
+				"name": "Octopus 9",
+				"defaultmaxhptype": "average",
+				"disableborder": false,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 3,
+				"itemType": "monster",
+				"color": "#F032E6",
+				"hidden": false,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Octopus",
+				"top": "2860px",
+				"hidehpbar": false,
+				"stat": 16968,
+				"hitPointInfo": {
+					"maximum": 3,
+					"current": 3,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 16968,
+				"scaleCreated": 2.8787878787878785,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"b6b0d016-d5be-4b42-b32b-1078a7e1028c": {
+				"disablestat": false,
+				"gridSquares": 1,
+				"custom_conditions": [],
+				"armorClass": 12,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "b6b0d016-d5be-4b42-b32b-1078a7e1028c",
+				"imgsrc": "https://www.dndbeyond.com/avatars/9/920/636334602448642265.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 0
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": "30"
+				},
+				"itemId": 16968,
+				"square": false,
+				"healthauratype": "aura",
+				"placeType": "count",
+				"size": 60,
+				"left": "2458px",
+				"elev": "-105",
+				"name": "Octopus 5",
+				"defaultmaxhptype": "average",
+				"disableborder": false,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 3,
+				"itemType": "monster",
+				"color": "#5F0404",
+				"hidden": false,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Octopus",
+				"top": "2740px",
+				"hidehpbar": false,
+				"stat": 16968,
+				"hitPointInfo": {
+					"maximum": 3,
+					"current": 3,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 16968,
+				"scaleCreated": 2.8787878787878785,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"bdb098d2-c249-418e-973d-3b17cf888b77": {
+				"disablestat": false,
+				"gridSquares": 4,
+				"custom_conditions": [],
+				"hp": 472,
+				"armorClass": 18,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "bdb098d2-c249-418e-973d-3b17cf888b77",
+				"imgsrc": "https://www.dndbeyond.com/avatars/0/380/636252780679531110.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 0
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": "120"
+				},
+				"itemId": 16940,
+				"square": false,
+				"healthauratype": "aura",
+				"placeType": "count",
+				"size": 240,
+				"left": "3658px",
+				"name": "Kraken",
+				"defaultmaxhptype": "average",
+				"disableborder": false,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 7,
+				"itemType": "monster",
+				"color": "#1A6AFF",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 472,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Kraken",
+				"top": "1000px",
+				"hidehpbar": false,
+				"stat": 16940,
+				"hitPointInfo": {
+					"maximum": 472,
+					"current": 472,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 16940,
+				"scaleCreated": 2.8787878787878785,
+				"maxAge": false,
+				"zindexdiff": 4,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"c0fb5c84-08b0-4bf5-9d58-32c7b38bc1d0": {
+				"disablestat": true,
+				"gridSquares": 1,
+				"custom_conditions": [],
+				"hp": 0,
+				"folderPath": "/Letters",
+				"armorClass": 0,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "c0fb5c84-08b0-4bf5-9d58-32c7b38bc1d0",
+				"imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/letters/B.png",
+				"locked": false,
+				"selected": true,
+				"light2": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 0
+				},
+				"image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/letters/B.png",
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "labelToken",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 60
+				},
+				"itemId": "_AboveVTT_Tokens_Letters_B",
+				"square": true,
+				"healthauratype": "aura",
+				"placeType": "count",
+				"size": 60,
+				"left": "2684px",
+				"name": "Supply Closets",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": false,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"itemType": "builtinToken",
+				"color": "#1A6AFF",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": false,
+				"max_hp": 0,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/AboveVTT Tokens/Letters/B",
+				"top": "2733px",
+				"hidehpbar": false,
+				"hitPointInfo": {
+					"maximum": 0,
+					"current": 0,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"scaleCreated": 2.8787878787878785,
+				"tokenSize": 1,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"c2952c21-de64-4be7-b1df-6420fc2e035a": {
+				"disablestat": true,
+				"gridSquares": 1,
+				"custom_conditions": [],
+				"hp": 0,
+				"folderPath": "/Letters",
+				"armorClass": 0,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "c2952c21-de64-4be7-b1df-6420fc2e035a",
+				"imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/letters/B.png",
+				"locked": false,
+				"selected": true,
+				"light2": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 0
+				},
+				"image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/letters/B.png",
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "labelToken",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 60
+				},
+				"itemId": "_AboveVTT_Tokens_Letters_B",
+				"square": true,
+				"healthauratype": "aura",
+				"placeType": "count",
+				"size": 60,
+				"left": "118px",
+				"name": "Supply Closets",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": false,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"itemType": "builtinToken",
+				"color": "#1A6AFF",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": false,
+				"max_hp": 0,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/AboveVTT Tokens/Letters/B",
+				"top": "4660px",
+				"hidehpbar": false,
+				"hitPointInfo": {
+					"maximum": 0,
+					"current": 0,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"scaleCreated": 2.8787878787878785,
+				"tokenSize": 1,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"c7f14314-9793-440f-98b5-76bd40062f83": {
+				"disablestat": false,
+				"gridSquares": 1,
+				"custom_conditions": [],
+				"hp": 75,
+				"armorClass": 15,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "c7f14314-9793-440f-98b5-76bd40062f83",
+				"imgsrc": "https://www.dndbeyond.com/avatars/25746/484/637880557756091541.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 0
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": "0"
+				},
+				"itemId": 2560858,
+				"square": false,
+				"healthauratype": "aura",
+				"placeType": "count",
+				"size": 60,
+				"left": "2578px",
+				"name": "Kraken Priest",
+				"defaultmaxhptype": "average",
+				"disableborder": false,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#1A6AFF",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 75,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Kraken Priest",
+				"top": "1960px",
+				"hidehpbar": false,
+				"stat": 2560858,
+				"hitPointInfo": {
+					"maximum": 75,
+					"current": 75,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 2560858,
+				"scaleCreated": 2.8787878787878785,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"cda47576-3555-4d06-bd9b-671049e4913c": {
+				"disablestat": true,
+				"gridSquares": 1,
+				"custom_conditions": [],
+				"hp": 0,
+				"folderPath": "/Numbers",
+				"armorClass": 0,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "cda47576-3555-4d06-bd9b-671049e4913c",
+				"imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/3.png",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 0
+				},
+				"image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/3.png",
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "labelToken",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 60
+				},
+				"itemId": "_AboveVTT_Tokens_Numbers_03",
+				"square": true,
+				"healthauratype": "aura",
+				"placeType": "count",
+				"size": 60,
+				"left": "3538px",
+				"name": "Ruined Buildings",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": false,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"itemType": "builtinToken",
+				"color": "#1A6AFF",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": false,
+				"max_hp": 0,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/AboveVTT Tokens/Numbers/03",
+				"top": "1840px",
+				"hidehpbar": false,
+				"hitPointInfo": {
+					"maximum": 0,
+					"current": 0,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"scaleCreated": 2.8787878787878785,
+				"tokenSize": 1,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"cea4185b-e8c0-4540-a878-44fde0a20cb2": {
+				"disablestat": false,
+				"gridSquares": 1,
+				"custom_conditions": [],
+				"hp": 67,
+				"armorClass": 11,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "cea4185b-e8c0-4540-a878-44fde0a20cb2",
+				"imgsrc": "https://www.dndbeyond.com/avatars/9/614/636329600292978986.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 0
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": "120"
+				},
+				"itemId": 17233,
+				"square": false,
+				"healthauratype": "aura",
+				"placeType": "count",
+				"size": 60,
+				"left": "2638px",
+				"name": "Deep Scion",
+				"defaultmaxhptype": "average",
+				"disableborder": false,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#1A6AFF",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 67,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Deep Scion",
+				"top": "1900px",
+				"hidehpbar": false,
+				"stat": 17233,
+				"hitPointInfo": {
+					"maximum": 67,
+					"current": 67,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 17233,
+				"scaleCreated": 2.8787878787878785,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"d577e37e-c1a5-4719-91cf-4bc2a1aaa6dc": {
+				"disablestat": false,
+				"gridSquares": 1,
+				"custom_conditions": [],
+				"hp": 27,
+				"armorClass": 11,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "d577e37e-c1a5-4719-91cf-4bc2a1aaa6dc",
+				"imgsrc": "https://www.dndbeyond.com/avatars/18/296/636379807087803741.jpeg",
+				"locked": false,
+				"selected": true,
+				"light2": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 0
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": "60"
+				},
+				"itemId": 17173,
+				"square": false,
+				"healthauratype": "aura",
+				"placeType": "count",
+				"size": 60,
+				"left": "658px",
+				"name": "Mud Mephit",
+				"defaultmaxhptype": "average",
+				"disableborder": false,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 3,
+				"itemType": "monster",
+				"color": "#1A6AFF",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 27,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Mud Mephit",
+				"top": "4900px",
+				"hidehpbar": false,
+				"stat": 17173,
+				"hitPointInfo": {
+					"maximum": 27,
+					"current": 27,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 17173,
+				"scaleCreated": 2.8787878787878785,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"d701e52c-4422-4b7c-bc57-3de51b892455": {
+				"disablestat": false,
+				"gridSquares": 1,
+				"custom_conditions": [],
+				"armorClass": 12,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "d701e52c-4422-4b7c-bc57-3de51b892455",
+				"imgsrc": "https://www.dndbeyond.com/avatars/9/920/636334602448642265.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 0
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": "30"
+				},
+				"itemId": 16968,
+				"square": false,
+				"healthauratype": "aura",
+				"placeType": "count",
+				"size": 60,
+				"left": "2218px",
+				"elev": "-105",
+				"name": "Octopus 11",
+				"defaultmaxhptype": "average",
+				"disableborder": false,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 3,
+				"itemType": "monster",
+				"color": "#800000",
+				"hidden": false,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Octopus",
+				"top": "2500px",
+				"hidehpbar": false,
+				"stat": 16968,
+				"hitPointInfo": {
+					"maximum": 3,
+					"current": 3,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 16968,
+				"scaleCreated": 2.8787878787878785,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"e185d067-a208-4ec0-9981-5ff964d2faa2": {
+				"disablestat": false,
+				"gridSquares": 1,
+				"custom_conditions": [],
+				"armorClass": 12,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "e185d067-a208-4ec0-9981-5ff964d2faa2",
+				"imgsrc": "https://www.dndbeyond.com/avatars/9/920/636334602448642265.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 0
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": "30"
+				},
+				"itemId": 16968,
+				"square": false,
+				"healthauratype": "aura",
+				"placeType": "count",
+				"size": 60,
+				"left": "2038px",
+				"elev": "-105",
+				"name": "Octopus 14",
+				"defaultmaxhptype": "average",
+				"disableborder": false,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 3,
+				"itemType": "monster",
+				"color": "#808000",
+				"hidden": false,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Octopus",
+				"top": "2920px",
+				"hidehpbar": false,
+				"stat": 16968,
+				"hitPointInfo": {
+					"maximum": 3,
+					"current": 3,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 16968,
+				"scaleCreated": 2.8787878787878785,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"e9c57021-f639-442a-970d-2913d472ddfa": {
+				"disablestat": false,
+				"gridSquares": 1,
+				"custom_conditions": [],
+				"hp": 0,
+				"folderPath": "/Letters",
+				"armorClass": 0,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "e9c57021-f639-442a-970d-2913d472ddfa",
+				"imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/letters/A.png",
+				"locked": false,
+				"selected": true,
+				"light2": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 0
+				},
+				"image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/letters/A.png",
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 60
+				},
+				"itemId": "_AboveVTT_Tokens_Letters_A",
+				"square": false,
+				"healthauratype": "aura",
+				"placeType": "count",
+				"size": 60,
+				"left": "2312px",
+				"name": "Entry Chapel",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": false,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"itemType": "builtinToken",
+				"color": "#1A6AFF",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"max_hp": 0,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/AboveVTT Tokens/Letters/A",
+				"top": "2765px",
+				"hidehpbar": false,
+				"hitPointInfo": {
+					"maximum": 0,
+					"current": 0,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"scaleCreated": 2.8787878787878785,
+				"tokenSize": 1,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"eab92c34-94df-4cf6-9d61-e16caccb5fb7": {
+				"disablestat": false,
+				"gridSquares": 1,
+				"custom_conditions": [],
+				"armorClass": 12,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "eab92c34-94df-4cf6-9d61-e16caccb5fb7",
+				"imgsrc": "https://www.dndbeyond.com/avatars/9/920/636334602448642265.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 0
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": "30"
+				},
+				"itemId": 16968,
+				"square": false,
+				"healthauratype": "aura",
+				"placeType": "count",
+				"size": 60,
+				"left": "2158px",
+				"elev": "-110",
+				"name": "Octopus 3",
+				"defaultmaxhptype": "average",
+				"disableborder": false,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 3,
+				"itemType": "monster",
+				"color": "#FFD433",
+				"hidden": false,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Octopus",
+				"top": "2680px",
+				"hidehpbar": false,
+				"stat": 16968,
+				"hitPointInfo": {
+					"maximum": 3,
+					"current": 3,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 16968,
+				"scaleCreated": 2.8787878787878785,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"ed5e4d1c-f5f1-454e-b1a4-80ba8fe59cc5": {
+				"disablestat": true,
+				"gridSquares": 1,
+				"custom_conditions": [],
+				"hp": 0,
+				"folderPath": "/Numbers",
+				"armorClass": 0,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "ed5e4d1c-f5f1-454e-b1a4-80ba8fe59cc5",
+				"imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/3.png",
+				"locked": false,
+				"selected": true,
+				"light2": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 0
+				},
+				"image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/3.png",
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "labelToken",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 60
+				},
+				"itemId": "_AboveVTT_Tokens_Numbers_03",
+				"square": true,
+				"healthauratype": "aura",
+				"placeType": "count",
+				"size": 60,
+				"left": "3718px",
+				"name": "Ruined Buildings",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": false,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"itemType": "builtinToken",
+				"color": "#1A6AFF",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": false,
+				"max_hp": 0,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/AboveVTT Tokens/Numbers/03",
+				"top": "2560px",
+				"hidehpbar": false,
+				"hitPointInfo": {
+					"maximum": 0,
+					"current": 0,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"scaleCreated": 2.8787878787878785,
+				"tokenSize": 1,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"edf565b9-c6be-4bde-b4d3-ac42aecb6937": {
+				"disablestat": false,
+				"gridSquares": 1,
+				"custom_conditions": [],
+				"hp": 13,
+				"armorClass": 15,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"alternativeImagesCustomizations": {},
+				"id": "edf565b9-c6be-4bde-b4d3-ac42aecb6937",
+				"imgsrc": "https://www.dndbeyond.com/avatars/4675/664/636747837303835953.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": "0"
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": "30"
+				},
+				"itemId": 16879,
+				"square": false,
+				"healthauratype": "aura",
+				"placeType": "count",
+				"size": 60,
+				"left": "2818px",
+				"name": "Giant Crab",
+				"defaultmaxhptype": "average",
+				"disableborder": false,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#FF7433",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": "-110",
+				"max_hp": 13,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Giant Crab",
+				"top": "940px",
+				"hidehpbar": false,
+				"stat": 16879,
+				"alternativeImages": [],
+				"imageZoom": 0,
+				"hitPointInfo": {
+					"maximum": 13,
+					"current": 13,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 16879,
+				"scaleCreated": 2.8787878787878785,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"ee04c853-1ac9-41f1-b745-700f8d67a1a3": {
+				"disablestat": true,
+				"gridSquares": 1,
+				"custom_conditions": [],
+				"hp": 0,
+				"folderPath": "/Letters",
+				"armorClass": 0,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "ee04c853-1ac9-41f1-b745-700f8d67a1a3",
+				"imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/letters/I.png",
+				"locked": false,
+				"selected": true,
+				"light2": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 0
+				},
+				"image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/letters/I.png",
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "labelToken",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 60
+				},
+				"itemId": "_AboveVTT_Tokens_Letters_I",
+				"square": true,
+				"healthauratype": "aura",
+				"placeType": "count",
+				"size": 60,
+				"left": "3358px",
+				"name": "Private Room",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": false,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"itemType": "builtinToken",
+				"color": "#1A6AFF",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": false,
+				"max_hp": 0,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/AboveVTT Tokens/Letters/I",
+				"top": "4300px",
+				"hidehpbar": false,
+				"hitPointInfo": {
+					"maximum": 0,
+					"current": 0,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"scaleCreated": 2.8787878787878785,
+				"tokenSize": 1,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"ee4362de-aad1-4acf-95d8-9fc03fc38862": {
+				"disablestat": true,
+				"gridSquares": 1,
+				"custom_conditions": [],
+				"hp": 0,
+				"folderPath": "/Numbers",
+				"armorClass": 0,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "ee4362de-aad1-4acf-95d8-9fc03fc38862",
+				"imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/2.png",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 0
+				},
+				"image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/2.png",
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "labelToken",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 60
+				},
+				"itemId": "_AboveVTT_Tokens_Numbers_02",
+				"square": true,
+				"healthauratype": "aura",
+				"placeType": "count",
+				"size": 60,
+				"left": "3598px",
+				"name": "Vaalastroth Trench",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": false,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"itemType": "builtinToken",
+				"color": "#1A6AFF",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": false,
+				"max_hp": 0,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/AboveVTT Tokens/Numbers/02",
+				"top": "880px",
+				"hidehpbar": false,
+				"hitPointInfo": {
+					"maximum": 0,
+					"current": 0,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"scaleCreated": 2.8787878787878785,
+				"tokenSize": 1,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"f155ee67-1ac5-4f8c-9038-0b8ed7b67387": {
+				"disablestat": false,
+				"gridSquares": 1,
+				"custom_conditions": [],
+				"hp": 11,
+				"armorClass": 11,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "f155ee67-1ac5-4f8c-9038-0b8ed7b67387",
+				"imgsrc": "https://www.dndbeyond.com/avatars/0/196/636252763840672778.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 0
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": "0"
+				},
+				"itemId": 16955,
+				"square": false,
+				"healthauratype": "aura",
+				"placeType": "count",
+				"size": 60,
+				"left": "3718px",
+				"name": "Gali",
+				"defaultmaxhptype": "average",
+				"disableborder": false,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#1A6AFF",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 11,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Merfolk",
+				"top": "2020px",
+				"hidehpbar": false,
+				"imageSize": 0.7,
+				"stat": 16955,
+				"hitPointInfo": {
+					"maximum": 11,
+					"current": 11,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 16955,
+				"scaleCreated": 2.8787878787878785,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"f25e21e4-1b4e-4473-a4a2-0cc32c9caafa": {
+				"disablestat": true,
+				"gridSquares": 1,
+				"custom_conditions": [],
+				"hp": 0,
+				"folderPath": "/Letters",
+				"armorClass": 0,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "f25e21e4-1b4e-4473-a4a2-0cc32c9caafa",
+				"imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/letters/E.png",
+				"locked": false,
+				"selected": true,
+				"light2": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 0
+				},
+				"image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/letters/E.png",
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "labelToken",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 60
+				},
+				"itemId": "_AboveVTT_Tokens_Letters_E",
+				"square": true,
+				"healthauratype": "aura",
+				"placeType": "count",
+				"size": 60,
+				"left": "2998px",
+				"name": "Shrine to Erythnul",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": false,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"itemType": "builtinToken",
+				"color": "#1A6AFF",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": false,
+				"max_hp": 0,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/AboveVTT Tokens/Letters/E",
+				"top": "1420px",
+				"hidehpbar": false,
+				"hitPointInfo": {
+					"maximum": 0,
+					"current": 0,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"scaleCreated": 2.8787878787878785,
+				"tokenSize": 1,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"f565c1a0-1a0a-4e4d-961b-56c56c6a9164": {
+				"disablestat": false,
+				"gridSquares": 1,
+				"custom_conditions": [],
+				"armorClass": 12,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "f565c1a0-1a0a-4e4d-961b-56c56c6a9164",
+				"imgsrc": "https://www.dndbeyond.com/avatars/9/920/636334602448642265.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 0
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": "30"
+				},
+				"itemId": 16968,
+				"square": false,
+				"healthauratype": "aura",
+				"placeType": "count",
+				"size": 60,
+				"left": "2338px",
+				"elev": "-105",
+				"name": "Octopus 15",
+				"defaultmaxhptype": "average",
+				"disableborder": false,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 3,
+				"itemType": "monster",
+				"color": "#800080",
+				"hidden": false,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Octopus",
+				"top": "2620px",
+				"hidehpbar": false,
+				"stat": 16968,
+				"hitPointInfo": {
+					"maximum": 3,
+					"current": 3,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 16968,
+				"scaleCreated": 2.8787878787878785,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"faa64603-e265-4631-adc9-4122e9c7ef1d": {
+				"disablestat": true,
+				"gridSquares": 1,
+				"custom_conditions": [],
+				"hp": 0,
+				"folderPath": "/Letters",
+				"armorClass": 0,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "faa64603-e265-4631-adc9-4122e9c7ef1d",
+				"imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/letters/F.png",
+				"locked": false,
+				"selected": true,
+				"light2": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 0
+				},
+				"image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/letters/F.png",
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "labelToken",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 60
+				},
+				"itemId": "_AboveVTT_Tokens_Letters_F",
+				"square": true,
+				"healthauratype": "aura",
+				"placeType": "count",
+				"size": 60,
+				"left": "2997px",
+				"name": "Shrine to Procan",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": false,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"itemType": "builtinToken",
+				"color": "#1A6AFF",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": false,
+				"max_hp": 0,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/AboveVTT Tokens/Letters/F",
+				"top": "1951px",
+				"hidehpbar": false,
+				"hitPointInfo": {
+					"maximum": 0,
+					"current": 0,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"scaleCreated": 2.8787878787878785,
+				"tokenSize": 1,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"fdab41d7-5cab-48ff-b18b-fdaf809c5301": {
+				"disablestat": true,
+				"gridSquares": 1,
+				"custom_conditions": [],
+				"hp": 0,
+				"folderPath": "/Letters",
+				"armorClass": 0,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "fdab41d7-5cab-48ff-b18b-fdaf809c5301",
+				"imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/letters/D.png",
+				"locked": false,
+				"selected": true,
+				"light2": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 0
+				},
+				"image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/letters/D.png",
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "labelToken",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 60
+				},
+				"itemId": "_AboveVTT_Tokens_Letters_D",
+				"square": true,
+				"healthauratype": "aura",
+				"placeType": "count",
+				"size": 60,
+				"left": "2758px",
+				"name": "High Priest’s Chambers",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": false,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"itemType": "builtinToken",
+				"color": "#1A6AFF",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": false,
+				"max_hp": 0,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/AboveVTT Tokens/Letters/D",
+				"top": "3280px",
+				"hidehpbar": false,
+				"hitPointInfo": {
+					"maximum": 0,
+					"current": 0,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"scaleCreated": 2.8787878787878785,
+				"tokenSize": 1,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"ff93dd3a-c831-4555-97e1-745cd339d3de": {
+				"disablestat": false,
+				"gridSquares": 1,
+				"custom_conditions": [],
+				"hp": 75,
+				"armorClass": 10,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "ff93dd3a-c831-4555-97e1-745cd339d3de",
+				"imgsrc": "https://www.dndbeyond.com/avatars/9/855/636332918109593968.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 0
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": "0"
+				},
+				"itemId": 17336,
+				"square": false,
+				"healthauratype": "aura",
+				"placeType": "count",
+				"size": 60,
+				"left": "1978px",
+				"name": "Kraken Priest 4",
+				"defaultmaxhptype": "average",
+				"disableborder": false,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#884DFF",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 75,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Kraken Priest",
+				"top": "4420px",
+				"hidehpbar": false,
+				"stat": 17336,
+				"hitPointInfo": {
+					"maximum": 75,
+					"current": 75,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 17336,
+				"scaleCreated": 2.8787878787878785,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			}
+		},
+		"darkness_filter": "0",
+		"offsetx": "-2",
+		"dm_map_usable": "1",
+		"offsety": "-20",
+		"grid": "1",
+		"hpps": "60",
+		"notes": {
+			"08abbcaf-7d65-4376-b38d-ccfb998fae99": {
+				"title": "Warthalkeel Cliffs",
+				"text": "<h5 id=\"W1WarthalkeelCliffs\" class=\"compendium-hr heading-anchor\" data-content-chunk-id=\"0921a546-cc0a-4811-9063-c3ace10a9957\">Warthalkeel Cliffs</h5>\n<p data-content-chunk-id=\"333a5695-ff35-4bd9-b3ed-7f9dc379b5ab\">These cliffs once held the town of Warthalkeel. Climbing the walls of the cliffs without equipment requires a DC 15 Strength (<a class=\"tooltip-hover skill-tooltip\" href=\"https://www.dndbeyond.com/sources/dnd/free-rules/playing-the-game#Skills\" data-tooltip-href=\"//www.dndbeyond.com/skills/2-tooltip?disable-webm=1&amp;disable-webm=1\">Athletics</a>) check.</p>",
+				"plain": "Warthalkeel CliffsThese cliffs once held the town of Warthalkeel. Climbing the walls of the cliffs without equipment requires a DC 15 Strength (Athletics) check.",
+				"player": false,
+				"statBlock": false
+			},
+			"0e9b3a95-8c81-4ff0-978e-287d7521a97f": {
+				"title": "Meditation Chamber",
+				"text": "<p id=\"W7cMeditationChamber\" data-content-chunk-id=\"ffc724be-12b6-4c6f-bc77-0f6216fbc93f\"><strong><em>Meditation Chamber.</em></strong>&nbsp;Tattered tapestries and cold, rusty braziers decorate this chamber.&nbsp;<a class=\"tooltip-hover monster-tooltip\" href=\"https://www.dndbeyond.com/monsters/311757-yalaga-maladwyn\" data-tooltip-href=\"//www.dndbeyond.com/monsters/311757-tooltip?disable-webm=1&amp;disable-webm=1\">Yalaga Maladwyn</a>&nbsp;sits cross-legged in the center of the room. She is a&nbsp;<a class=\"tooltip-hover monster-tooltip\" href=\"https://www.dndbeyond.com/monsters/17136-drow-priestess-of-lolth\" data-tooltip-href=\"//www.dndbeyond.com/monsters/17136-tooltip?disable-webm=1&amp;disable-webm=1\">drow priestess of Lolth</a>, with the following changes:</p>\n<ul data-content-chunk-id=\"a9eeea80-7548-4a3f-a022-8a457ecd6bfe\">\n<li data-content-chunk-id=\"0f826672-48f3-4660-9bec-0ea5b693d84e\">Yalaga is undead.</li>\n<li data-content-chunk-id=\"029870e6-97d6-43c5-ae49-feece66bad30\">She doesn&rsquo;t have the Fey Ancestry trait or the Summon Demon action option.</li>\n</ul>\n<p data-content-chunk-id=\"5d48e1e6-5cf7-43c0-8f25-a99da28f7109\">Yalaga was a loyal priestess of Vaalastroth until the end of her life and continues to be so in undeath. She meditates in this chamber trying to hear the voice of Vaalastroth, which has been silent for her since Warthalkeel&rsquo;s destruction.</p>\n<p data-content-chunk-id=\"be3a468d-a317-4cec-8c08-c66da87d0dac\">If she notices the characters, Yalaga immediately begins asking why they have come to Warthalkeel. A character who succeeds on a DC 14 Charisma (<a class=\"tooltip-hover skill-tooltip\" href=\"https://www.dndbeyond.com/sources/dnd/free-rules/playing-the-game#Skills\" data-tooltip-href=\"//www.dndbeyond.com/skills/16-tooltip?disable-webm=1&amp;disable-webm=1\">Deception</a>&nbsp;or&nbsp;<a class=\"tooltip-hover skill-tooltip\" href=\"https://www.dndbeyond.com/sources/dnd/free-rules/playing-the-game#Skills\" data-tooltip-href=\"//www.dndbeyond.com/skills/19-tooltip?disable-webm=1&amp;disable-webm=1\">Persuasion</a>) check convinces her they mean no harm. If convinced, Yalaga shares Warthalkeel&rsquo;s history and allows the characters to explore the temple as long as she can escort them.</p>\n<p data-content-chunk-id=\"caf042a7-cf82-43c1-9f0b-c7dbc9095c1c\">If the characters can&rsquo;t convince Yalaga they mean no harm, or if she catches them stealing or defacing any property in the temple, she attacks and fights to the death (though she doesn&rsquo;t leave the temple to follow the characters if they flee).</p>",
+				"plain": "Meditation Chamber. Tattered tapestries and cold, rusty braziers decorate this chamber. Yalaga Maladwyn sits cross-legged in the center of the room. She is a drow priestess of Lolth, with the following changes:Yalaga is undead.She doesn’t have the Fey Ancestry trait or the Summon Demon action option.Yalaga was a loyal priestess of Vaalastroth until the end of her life and continues to be so in undeath. She meditates in this chamber trying to hear the voice of Vaalastroth, which has been silent for her since Warthalkeel’s destruction.If she notices the characters, Yalaga immediately begins asking why they have come to Warthalkeel. A character who succeeds on a DC 14 Charisma (Deception or Persuasion) check convinces her they mean no harm. If convinced, Yalaga shares Warthalkeel’s history and allows the characters to explore the temple as long as she can escort them.If the characters can’t convince Yalaga they mean no harm, or if she catches them stealing or defacing any property in the temple, she attacks and fights to the death (though she doesn’t leave the temple to follow the characters if they flee).",
+				"player": false,
+				"statBlock": false
+			},
+			"18a61c6a-681e-45fd-99c0-31eb9e43e2ee": {
+				"title": "Ballroom",
+				"text": "<p><strong><em>Ballroom.</em></strong>&nbsp;The ballroom once hosted grand celebrations in honor of Vaalastroth. A 10-foot-diameter, 200-pound crystal chandelier shaped like a kraken (750 gp) hangs from the ceiling. A character who succeeds on a DC 15 Dexterity check using mason&rsquo;s tools can safely remove the chandelier from the ceiling. The chandelier is fragile. If takes any damage, it becomes worthless.</p>",
+				"plain": "Ballroom. The ballroom once hosted grand celebrations in honor of Vaalastroth. A 10-foot-diameter, 200-pound crystal chandelier shaped like a kraken (750 gp) hangs from the ceiling. A character who succeeds on a DC 15 Dexterity check using mason’s tools can safely remove the chandelier from the ceiling. The chandelier is fragile. If takes any damage, it becomes worthless.",
+				"player": false,
+				"statBlock": false
+			},
+			"19181709-a1fb-4812-8832-60dfa081907a": {
+				"title": "Supply Closets",
+				"text": "<p><strong><em>Supply Closets.</em></strong>&nbsp;These supply closets held food and liturgical materials that were lost to or broken by the sea. A closet has a 25 percent chance of containing a hungry quipper and a 10 percent chance of containing an object from the 25 gp&nbsp;<a href=\"https://www.dndbeyond.com/sources/dmg/treasure#ArtObjects\" data-content-chunk-id=\"bdd7f0b2-deff-4a43-8c0a-f1594680042a\">Art Objects table</a>&nbsp;in chapter 7 of the&nbsp;<a class=\"sourcebook\" href=\"https://www.dndbeyond.com/sources/dmg\" data-content-chunk-id=\"4fa8b387-a5b9-4408-811a-aa828703bd18\">Dungeon Master&rsquo;s Guide</a>.</p>",
+				"plain": "Supply Closets. These supply closets held food and liturgical materials that were lost to or broken by the sea. A closet has a 25 percent chance of containing a hungry quipper and a 10 percent chance of containing an object from the 25 gp Art Objects table in chapter 7 of the Dungeon Master’s Guide.",
+				"player": false,
+				"statBlock": false
+			},
+			"20879353-d1d0-41c5-aea8-d48a2075fda9": {
+				"title": "Kraken Priest 2",
+				"text": "<p>For&nbsp;Release the Kraken</p>",
+				"plain": "For Release the Kraken",
+				"player": false,
+				"statBlock": false
+			},
+			"21b0172e-c710-4f4c-8b52-d7820879107c": {
+				"title": "Kraken Priest 2",
+				"text": "<p>For&nbsp;Release the Kraken</p>",
+				"plain": "For Release the Kraken",
+				"player": false,
+				"statBlock": false
+			},
+			"2a3650d9-c31d-4d41-a4ad-9313c4c6c5fc": {
+				"title": "Tower Roof",
+				"text": "<p><strong><em>Tower Roof.</em></strong>&nbsp;The top of this tower holds an indentation of one of Vaalastroth&rsquo;s tentacles, marking where the kraken touched the building to bless it. A creature that touches the indentation feels an overwhelming desire to pray to the kraken. If a creature offers a prayer to Vaalastroth, the creature must make a DC 15 Wisdom saving throw. On a successful save, the creature gains a&nbsp;<em>charm of animal conjuring</em>&nbsp;(see &ldquo;<a href=\"https://www.dndbeyond.com/sources/dmg/other-rewards\" data-content-chunk-id=\"51becd22-50c9-4509-ae72-a2e7c2b9696d\">Charms</a>&rdquo; in chapter 7 of the&nbsp;<a class=\"sourcebook\" href=\"https://www.dndbeyond.com/sources/dmg\" data-content-chunk-id=\"15405ab3-caa5-4281-80fb-0a1ed80eb8cc\">Dungeon Master&rsquo;s Guide</a>), but can conjure only&nbsp;<a class=\"tooltip-hover monster-tooltip\" href=\"https://www.dndbeyond.com/monsters/16968-octopus\" data-tooltip-href=\"//www.dndbeyond.com/monsters/16968-tooltip?disable-webm=1&amp;disable-webm=1\">octopuses</a>&nbsp;and&nbsp;<a class=\"tooltip-hover monster-tooltip\" href=\"https://www.dndbeyond.com/monsters/16888-giant-octopus\" data-tooltip-href=\"//www.dndbeyond.com/monsters/16888-tooltip?disable-webm=1&amp;disable-webm=1\">giant octopuses</a>. On a failed save, the creature takes 16 (3d10) psychic damage.</p>",
+				"plain": "Tower Roof. The top of this tower holds an indentation of one of Vaalastroth’s tentacles, marking where the kraken touched the building to bless it. A creature that touches the indentation feels an overwhelming desire to pray to the kraken. If a creature offers a prayer to Vaalastroth, the creature must make a DC 15 Wisdom saving throw. On a successful save, the creature gains a charm of animal conjuring (see “Charms” in chapter 7 of the Dungeon Master’s Guide), but can conjure only octopuses and giant octopuses. On a failed save, the creature takes 16 (3d10) psychic damage.",
+				"player": false,
+				"statBlock": false
+			},
+			"2cf32670-319d-45cd-8691-a8b2f228ddff": {
+				"title": "Kraken’s Vault",
+				"text": "<h5 id=\"W5KrakensVault\" class=\"compendium-hr heading-anchor\" data-content-chunk-id=\"c67c6b3b-316e-48b4-828f-9d6dcf518e4e\">Kraken&rsquo;s Vault</h5>\n<p data-content-chunk-id=\"76d271bd-f6c2-436f-8f61-5895dfede487\">The people of Warthalkeel built a vault to store the treasures earmarked for Vaalastroth.</p>",
+				"plain": "Kraken’s VaultThe people of Warthalkeel built a vault to store the treasures earmarked for Vaalastroth.",
+				"player": false,
+				"statBlock": false
+			},
+			"2e73364f-bfd7-410e-8564-abc2fc00adc5": {
+				"title": "Guard Post",
+				"text": "<p><strong><em>Guard Post.</em></strong>&nbsp;Stone benches line the walls, and a stone counter stands before the vault doors. Three human skeletons in rusted chainmail lie on the floor.</p>",
+				"plain": "Guard Post. Stone benches line the walls, and a stone counter stands before the vault doors. Three human skeletons in rusted chainmail lie on the floor.",
+				"player": false,
+				"statBlock": false
+			},
+			"511b8333-3787-453e-86cc-335c7d92c6d0": {
+				"title": "Priest’s Room",
+				"text": "<p data-content-chunk-id=\"ebfc48f8-84d7-4ef8-8a33-139fb53aa23f\"><strong><em>Priest&rsquo;s Room.</em></strong>&nbsp;Broken wood furniture and rusty mattress springs cover the floor.</p>\n<p data-content-chunk-id=\"e4d2ff7c-9812-4377-b100-406ded0b3646\">A character notices the outline of a secret compartment in the wall with a successful DC 15 Wisdom (<a class=\"tooltip-hover skill-tooltip\" href=\"https://www.dndbeyond.com/sources/dnd/free-rules/playing-the-game#Skills\" data-tooltip-href=\"//www.dndbeyond.com/skills/14-tooltip?disable-webm=1&amp;disable-webm=1\">Perception</a>) check. The compartment holds an iron holy symbol of Erythnul.</p>",
+				"plain": "Priest’s Room. Broken wood furniture and rusty mattress springs cover the floor.A character notices the outline of a secret compartment in the wall with a successful DC 15 Wisdom (Perception) check. The compartment holds an iron holy symbol of Erythnul.",
+				"player": false,
+				"statBlock": false
+			},
+			"53f2c012-e958-4ad1-9b9f-82169b06a8b9": {
+				"title": "Balcony",
+				"text": "<p><strong><em>Balcony.</em></strong>&nbsp;The balcony is 10 feet above the seafloor. The tops of the 3-foot-high parapets are carved to look like tentacles.</p>",
+				"plain": "Balcony. The balcony is 10 feet above the seafloor. The tops of the 3-foot-high parapets are carved to look like tentacles.",
+				"player": false,
+				"statBlock": false
+			},
+			"5548605d-923d-4433-87de-28ca67ab9ce3": {
+				"title": "Vault",
+				"text": "<p data-content-chunk-id=\"8f137dd3-9870-460a-836a-50bed526a7d6\"><strong><em>Vault.</em></strong>&nbsp;The door to the vault is locked with an&nbsp;<a class=\"tooltip-hover spell-tooltip\" href=\"https://www.dndbeyond.com/spells/2003-arcane-lock\" data-tooltip-href=\"//www.dndbeyond.com/spells/2003-tooltip?disable-webm=1&amp;disable-webm=1\">arcane lock</a>&nbsp;spell. A character can pick the lock with a successful DC 25 Dexterity check using thieves&rsquo; tool or force the door open with a successful DC 30 Strength check. Touching the door with a bone from the high priest&rsquo;s skeleton (in&nbsp;<a href=\"https://www.dndbeyond.com/sources/dnd/gos/of-ships-and-the-sea#W7dHighPriestsChambers\" data-content-chunk-id=\"75ff8457-96f8-4aa8-80e0-c504f7d7a002\">area W7d</a>) unlocks the door.</p>\n<p data-content-chunk-id=\"fd95d923-dc4c-4d0b-bfd0-4c14aa4a5bc6\">If a creature touches or attacks the door while it is locked, the door produces a spectral tendril that makes an attack against the creature with a +7 bonus. If the tendril hits, it deals 11 (2d6 + 4) psychic damage.</p>\n<p data-content-chunk-id=\"95a73099-f9a9-4b40-8fc5-0cd98ef388a4\">Most of the vault&rsquo;s treasures were removed from the vault when Warthalkeel&rsquo;s citizens converted to the worship of Procan, but a stone chest in the vault contains 1,232 gp and 213 pp.</p>",
+				"plain": "Vault. The door to the vault is locked with an arcane lock spell. A character can pick the lock with a successful DC 25 Dexterity check using thieves’ tool or force the door open with a successful DC 30 Strength check. Touching the door with a bone from the high priest’s skeleton (in area W7d) unlocks the door.If a creature touches or attacks the door while it is locked, the door produces a spectral tendril that makes an attack against the creature with a +7 bonus. If the tendril hits, it deals 11 (2d6 + 4) psychic damage.Most of the vault’s treasures were removed from the vault when Warthalkeel’s citizens converted to the worship of Procan, but a stone chest in the vault contains 1,232 gp and 213 pp.",
+				"player": false,
+				"statBlock": false
+			},
+			"61a8a3ba-4c91-46f5-9b5a-26571f25c180": {
+				"title": "Kraken Priest",
+				"text": "<p>For&nbsp;Release the Kraken</p>",
+				"plain": "For Release the Kraken",
+				"player": false,
+				"statBlock": false
+			},
+			"62be8663-2d17-4276-b441-6c6932f1d6fa": {
+				"title": "Supply Closets",
+				"text": "<p><strong><em>Supply Closets.</em></strong>&nbsp;These supply closets held food and liturgical materials that were lost to or broken by the sea. A closet has a 25 percent chance of containing a hungry quipper and a 10 percent chance of containing an object from the 25 gp&nbsp;<a href=\"https://www.dndbeyond.com/sources/dmg/treasure#ArtObjects\" data-content-chunk-id=\"bdd7f0b2-deff-4a43-8c0a-f1594680042a\">Art Objects table</a>&nbsp;in chapter 7 of the&nbsp;<a class=\"sourcebook\" href=\"https://www.dndbeyond.com/sources/dmg\" data-content-chunk-id=\"4fa8b387-a5b9-4408-811a-aa828703bd18\">Dungeon Master&rsquo;s Guide</a>.</p>",
+				"plain": "Supply Closets. These supply closets held food and liturgical materials that were lost to or broken by the sea. A closet has a 25 percent chance of containing a hungry quipper and a 10 percent chance of containing an object from the 25 gp Art Objects table in chapter 7 of the Dungeon Master’s Guide.",
+				"player": false,
+				"statBlock": false
+			},
+			"7267bb5a-3681-4306-97d4-8f0aaf260846": {
+				"title": "Crumbling Hall",
+				"text": "<p><strong><em>Crumbling Hall.</em></strong>&nbsp;A crumbling mosaic depicts a kraken devouring an entire planet on the ceiling of this chamber. A creature that touches the walls, floor, or ceiling of this chamber must succeed on a DC 12 Dexterity saving throw or take 3 (1d6) damage from falling debris.</p>",
+				"plain": "Crumbling Hall. A crumbling mosaic depicts a kraken devouring an entire planet on the ceiling of this chamber. A creature that touches the walls, floor, or ceiling of this chamber must succeed on a DC 12 Dexterity saving throw or take 3 (1d6) damage from falling debris.",
+				"player": false,
+				"statBlock": false
+			},
+			"73db942a-d14d-4857-af2f-6630b77d3b6e": {
+				"title": "Temple of Vaalastroth",
+				"text": "<h5 id=\"W7TempleofVaalastroth\" class=\"compendium-hr heading-anchor\" data-content-chunk-id=\"2b0cb29d-14a4-4465-997b-317f0c3ea388\">Temple of Vaalastroth</h5>\n<p data-content-chunk-id=\"d6fe4057-f52a-456e-810c-c1311f3e1003\">A four-story temple honoring Vaalastroth served as Warthalkeel&rsquo;s house of worship and seat of government for years. After Malek Trandence converted most of the townspeople to the worship of Procan, a few priests loyal to the kraken remained in the temple, preaching Vaalastroth&rsquo;s word only to each other.</p>",
+				"plain": "Temple of VaalastrothA four-story temple honoring Vaalastroth served as Warthalkeel’s house of worship and seat of government for years. After Malek Trandence converted most of the townspeople to the worship of Procan, a few priests loyal to the kraken remained in the temple, preaching Vaalastroth’s word only to each other.",
+				"player": false,
+				"statBlock": false
+			},
+			"74cf1459-6521-4fd6-b2d2-f2fd95201727": {
+				"title": "Priest’s Office",
+				"text": "<p data-content-chunk-id=\"fe3c29b0-027b-4c11-a9de-e7706685b063\"><strong><em>Priest&rsquo;s Office.</em></strong>&nbsp;Broken wood furniture lies on the cracked floor. A 2-foot-diameter hole in the ceiling allows light from outside to enter and provides entry and exit to the&nbsp;<a class=\"tooltip-hover monster-tooltip\" href=\"https://www.dndbeyond.com/monsters/17031-swarm-of-quippers\" data-tooltip-href=\"//www.dndbeyond.com/monsters/17031-tooltip?disable-webm=1&amp;disable-webm=1\">swarm of quippers</a>&nbsp;that lives here.</p>\n<p data-content-chunk-id=\"e98a4eac-b9ba-41eb-ba8f-ceb291ed7833\">A character who searches through the debris on the floor finds a gold holy symbol of Procan (15 gp).</p>",
+				"plain": "Priest’s Office. Broken wood furniture lies on the cracked floor. A 2-foot-diameter hole in the ceiling allows light from outside to enter and provides entry and exit to the swarm of quippers that lives here.A character who searches through the debris on the floor finds a gold holy symbol of Procan (15 gp).",
+				"player": false,
+				"statBlock": false
+			},
+			"7e3ebd22-9714-4382-9231-8995aaaa59d4": {
+				"title": "Chamber of Prayer",
+				"text": "<p><strong><em>Chamber of Prayer.</em></strong>&nbsp;A chipped statue of Procan holding a trident in one hand and a piece of coral in the other stands on the east wall. A human skeleton lies at the feet of the statue.</p>",
+				"plain": "Chamber of Prayer. A chipped statue of Procan holding a trident in one hand and a piece of coral in the other stands on the east wall. A human skeleton lies at the feet of the statue.",
+				"player": false,
+				"statBlock": false
+			},
+			"81d1350e-c1ec-4564-bf57-9b5448292096": {
+				"title": "Supply Closets",
+				"text": "<p><strong><em>Supply Closets.</em></strong>&nbsp;These supply closets held food and liturgical materials that were lost to or broken by the sea. A closet has a 25 percent chance of containing a hungry quipper and a 10 percent chance of containing an object from the 25 gp&nbsp;<a href=\"https://www.dndbeyond.com/sources/dmg/treasure#ArtObjects\" data-content-chunk-id=\"bdd7f0b2-deff-4a43-8c0a-f1594680042a\">Art Objects table</a>&nbsp;in chapter 7 of the&nbsp;<a class=\"sourcebook\" href=\"https://www.dndbeyond.com/sources/dmg\" data-content-chunk-id=\"4fa8b387-a5b9-4408-811a-aa828703bd18\">Dungeon Master&rsquo;s Guide</a>.</p>",
+				"plain": "Supply Closets. These supply closets held food and liturgical materials that were lost to or broken by the sea. A closet has a 25 percent chance of containing a hungry quipper and a 10 percent chance of containing an object from the 25 gp Art Objects table in chapter 7 of the Dungeon Master’s Guide.",
+				"player": false,
+				"statBlock": false
+			},
+			"8a443d9d-0a09-4770-b9b8-3fcab4c10edc": {
+				"title": "Reflection Chamber",
+				"text": "<p><strong><em>Reflection Chamber.</em></strong>&nbsp;A glass fish tank overgrown with kelp stands on the east wall, and a mosaic of Procan&rsquo;s coral trident holy symbol is built into the ceiling. A&nbsp;<a class=\"tooltip-hover monster-tooltip\" href=\"https://www.dndbeyond.com/monsters/16879-giant-crab\" data-tooltip-href=\"//www.dndbeyond.com/monsters/16879-tooltip?disable-webm=1&amp;disable-webm=1\">giant crab</a>&nbsp;hides in the kelp and attacks any creature that disturbs it.</p>",
+				"plain": "Reflection Chamber. A glass fish tank overgrown with kelp stands on the east wall, and a mosaic of Procan’s coral trident holy symbol is built into the ceiling. A giant crab hides in the kelp and attacks any creature that disturbs it.",
+				"player": false,
+				"statBlock": false
+			},
+			"8ac6e750-6175-46b9-b499-292120d52c4d": {
+				"title": "Grand Staircase",
+				"text": "<p data-content-chunk-id=\"a74715cb-3572-45af-85fd-c5aaeab1c024\"><strong><em>Grand Staircase.</em></strong>&nbsp;This staircase&rsquo;s stone railing is carved to look like a long tentacle. A&nbsp;<a class=\"tooltip-hover monster-tooltip\" href=\"https://www.dndbeyond.com/monsters/16888-giant-octopus\" data-tooltip-href=\"//www.dndbeyond.com/monsters/16888-tooltip?disable-webm=1&amp;disable-webm=1\">giant octopus</a>&nbsp;lives under the stairs and attacks only if disturbed.&nbsp;<a class=\"tooltip-hover monster-tooltip\" href=\"https://www.dndbeyond.com/monsters/311757-yalaga-maladwyn\" data-tooltip-href=\"//www.dndbeyond.com/monsters/311757-tooltip?disable-webm=1&amp;disable-webm=1\">Yalaga Maladwyn</a>&nbsp;(see&nbsp;<a href=\"https://www.dndbeyond.com/sources/dnd/gos/of-ships-and-the-sea#W7cMeditationChamber\" data-content-chunk-id=\"ded7d5d5-7572-452a-be7d-938329e75244\">area W7c</a>) feeds this octopus and considers it a friend. A character can peacefully coax the octopus from its nest with a successful DC 15 Wisdom (<a class=\"tooltip-hover skill-tooltip\" href=\"https://www.dndbeyond.com/sources/dnd/free-rules/playing-the-game#Skills\" data-tooltip-href=\"//www.dndbeyond.com/skills/11-tooltip?disable-webm=1&amp;disable-webm=1\">Animal Handling</a>) check.</p>\n<p data-content-chunk-id=\"75a2d95f-0f2b-488c-a51c-a9bca9dc56f6\">A gold kraken statuette (100 gp) lies amid the waste in the octopus&rsquo;s nest.</p>",
+				"plain": "Grand Staircase. This staircase’s stone railing is carved to look like a long tentacle. A giant octopus lives under the stairs and attacks only if disturbed. Yalaga Maladwyn (see area W7c) feeds this octopus and considers it a friend. A character can peacefully coax the octopus from its nest with a successful DC 15 Wisdom (Animal Handling) check.A gold kraken statuette (100 gp) lies amid the waste in the octopus’s nest.",
+				"player": false,
+				"statBlock": false
+			},
+			"8fb6b1a9-fc28-4d0c-834e-33e641abed19": {
+				"title": "Windmill",
+				"text": "<h5 id=\"W4Windmill\" class=\"compendium-hr heading-anchor\" data-content-chunk-id=\"2c97546d-aee4-4e49-a23d-e3e562a4e1b8\">Windmill</h5>\n<p data-content-chunk-id=\"97051879-461a-4bcf-ba17-d045755f43dc\">The wood blades of the windmill are gone, and the inside of the mill is covered in rubble from the grinding wheel that broke apart when the building was submerged. Two human skeletons lie among the rubble.</p>\n<p data-content-chunk-id=\"dc4b700c-8bbc-4a80-bcc6-d6b23a0b09a8\">Two&nbsp;<a class=\"tooltip-hover monster-tooltip\" href=\"https://www.dndbeyond.com/monsters/17060-will-o-wisp\" data-tooltip-href=\"//www.dndbeyond.com/monsters/17060-tooltip?disable-webm=1&amp;disable-webm=1\">will-o&rsquo;-wisps</a>&nbsp;occupy the mill. When a creature enters the building, the undead attempt to lead the creature into Vaalastroth Trench (<a href=\"https://www.dndbeyond.com/sources/dnd/gos/of-ships-and-the-sea#W2VaalastrothTrench\" data-content-chunk-id=\"88fbb083-2c6d-4078-afbe-8ac0b2784fe7\">area W2</a>), whispering promises of treasure.</p>",
+				"plain": "WindmillThe wood blades of the windmill are gone, and the inside of the mill is covered in rubble from the grinding wheel that broke apart when the building was submerged. Two human skeletons lie among the rubble.Two will-o’-wisps occupy the mill. When a creature enters the building, the undead attempt to lead the creature into Vaalastroth Trench (area W2), whispering promises of treasure.",
+				"player": false,
+				"statBlock": false
+			},
+			"9d0046f3-9c4f-4c12-91c7-84e689f55cdc": {
+				"title": "House of Procan",
+				"text": "<h5 id=\"W6HouseofProcan\" class=\"compendium-hr heading-anchor\" data-content-chunk-id=\"4a0b9250-38f3-4ffc-af04-074873dd9865\">House of Procan</h5>\n<p data-content-chunk-id=\"7b9f3747-3085-4fba-a1ed-a871126fa1bc\">The house of Procan was erected to replace the Temple of Vaalastroth (<a href=\"https://www.dndbeyond.com/sources/dnd/gos/of-ships-and-the-sea#W7TempleofVaalastroth\" data-content-chunk-id=\"83c0d7cd-3b0f-47d8-badb-6b0f74e3bb72\">area W7</a>).</p>\n<p data-content-chunk-id=\"665564cf-3f49-4159-a5d3-8cb8e57c5db0\">Malek Trandence secretly worshiped Erythnul, the god of slaughter. He knew that converting Warthalkeel to a new religion would bring down the kraken&rsquo;s wrath, pleasing his true god.</p>",
+				"plain": "House of ProcanThe house of Procan was erected to replace the Temple of Vaalastroth (area W7).Malek Trandence secretly worshiped Erythnul, the god of slaughter. He knew that converting Warthalkeel to a new religion would bring down the kraken’s wrath, pleasing his true god.",
+				"player": false,
+				"statBlock": false
+			},
+			"a84b423a-672a-4181-99df-b206bf3c6a6b": {
+				"title": "Kraken Priest 3",
+				"text": "<p>For&nbsp;Release the Kraken</p>",
+				"plain": "For Release the Kraken",
+				"player": false,
+				"statBlock": false
+			},
+			"a8b80b82-3024-4ca5-9983-3262b2a53de1": {
+				"title": "Supply Closets",
+				"text": "<p><strong><em>Supply Closets.</em></strong>&nbsp;These supply closets held food and liturgical materials that were lost to or broken by the sea. A closet has a 25 percent chance of containing a hungry quipper and a 10 percent chance of containing an object from the 25 gp&nbsp;<a href=\"https://www.dndbeyond.com/sources/dmg/treasure#ArtObjects\" data-content-chunk-id=\"bdd7f0b2-deff-4a43-8c0a-f1594680042a\">Art Objects table</a>&nbsp;in chapter 7 of the&nbsp;<a class=\"sourcebook\" href=\"https://www.dndbeyond.com/sources/dmg\" data-content-chunk-id=\"4fa8b387-a5b9-4408-811a-aa828703bd18\">Dungeon Master&rsquo;s Guide</a>.</p>",
+				"plain": "Supply Closets. These supply closets held food and liturgical materials that were lost to or broken by the sea. A closet has a 25 percent chance of containing a hungry quipper and a 10 percent chance of containing an object from the 25 gp Art Objects table in chapter 7 of the Dungeon Master’s Guide.",
+				"player": false,
+				"statBlock": false
+			},
+			"a97a6e45-d624-4a0a-a4b9-3e7b410d00e6": {
+				"title": "Storm Giant Quintessent",
+				"text": "<p>For Extended Life</p>",
+				"plain": "For Extended Life",
+				"player": false,
+				"statBlock": false
+			},
+			"bdb098d2-c249-418e-973d-3b17cf888b77": {
+				"title": "Kraken",
+				"text": "<p>For&nbsp;Release the Kraken</p>",
+				"plain": "For Release the Kraken",
+				"player": false,
+				"statBlock": false
+			},
+			"c0fb5c84-08b0-4bf5-9d58-32c7b38bc1d0": {
+				"title": "Supply Closets",
+				"text": "<p><strong><em>Supply Closets.</em></strong>&nbsp;These supply closets held food and liturgical materials that were lost to or broken by the sea. A closet has a 25 percent chance of containing a hungry quipper and a 10 percent chance of containing an object from the 25 gp&nbsp;<a href=\"https://www.dndbeyond.com/sources/dmg/treasure#ArtObjects\" data-content-chunk-id=\"bdd7f0b2-deff-4a43-8c0a-f1594680042a\">Art Objects table</a>&nbsp;in chapter 7 of the&nbsp;<a class=\"sourcebook\" href=\"https://www.dndbeyond.com/sources/dmg\" data-content-chunk-id=\"4fa8b387-a5b9-4408-811a-aa828703bd18\">Dungeon Master&rsquo;s Guide</a>.</p>",
+				"plain": "Supply Closets. These supply closets held food and liturgical materials that were lost to or broken by the sea. A closet has a 25 percent chance of containing a hungry quipper and a 10 percent chance of containing an object from the 25 gp Art Objects table in chapter 7 of the Dungeon Master’s Guide.",
+				"player": false,
+				"statBlock": false
+			},
+			"c2952c21-de64-4be7-b1df-6420fc2e035a": {
+				"title": "Supply Closets",
+				"text": "<p><strong><em>Supply Closets.</em></strong>&nbsp;These supply closets held food and liturgical materials that were lost to or broken by the sea. A closet has a 25 percent chance of containing a hungry quipper and a 10 percent chance of containing an object from the 25 gp&nbsp;<a href=\"https://www.dndbeyond.com/sources/dmg/treasure#ArtObjects\" data-content-chunk-id=\"bdd7f0b2-deff-4a43-8c0a-f1594680042a\">Art Objects table</a>&nbsp;in chapter 7 of the&nbsp;<a class=\"sourcebook\" href=\"https://www.dndbeyond.com/sources/dmg\" data-content-chunk-id=\"4fa8b387-a5b9-4408-811a-aa828703bd18\">Dungeon Master&rsquo;s Guide</a>.</p>",
+				"plain": "Supply Closets. These supply closets held food and liturgical materials that were lost to or broken by the sea. A closet has a 25 percent chance of containing a hungry quipper and a 10 percent chance of containing an object from the 25 gp Art Objects table in chapter 7 of the Dungeon Master’s Guide.",
+				"player": false,
+				"statBlock": false
+			},
+			"c7f14314-9793-440f-98b5-76bd40062f83": {
+				"title": "Kraken Priest",
+				"text": "<p>For Release the Kraken</p>",
+				"plain": "For Release the Kraken",
+				"player": false,
+				"statBlock": false
+			},
+			"cda47576-3555-4d06-bd9b-671049e4913c": {
+				"title": "Ruined Buildings",
+				"text": "<h5 id=\"W3RuinedBuildings\" class=\"compendium-hr heading-anchor\" data-content-chunk-id=\"95a682e9-5d23-4a11-947f-4f469c8d217f\">Ruined Buildings</h5>\n<p data-content-chunk-id=\"7db55f8e-9655-4d38-a7d7-a695fbbf75cc\">These buildings are so utterly demolished that it is impossible to know what purpose they served. Swarming around each ruin are 3d10 fish of various species and 2d4&nbsp;<a class=\"tooltip-hover monster-tooltip\" href=\"https://www.dndbeyond.com/monsters/16833-crab\" data-tooltip-href=\"//www.dndbeyond.com/monsters/16833-tooltip?disable-webm=1&amp;disable-webm=1\">crabs</a>. Each fish has the statistics of a&nbsp;<a class=\"tooltip-hover monster-tooltip\" href=\"https://www.dndbeyond.com/monsters/16989-quipper\" data-tooltip-href=\"//www.dndbeyond.com/monsters/16989-tooltip?disable-webm=1&amp;disable-webm=1\">quipper</a>, but it doesn&rsquo;t have the Blood Frenzy feature and can&rsquo;t make attacks.</p>\n<p data-content-chunk-id=\"f2c010d1-64c4-452b-93b5-4f6989034336\">Characters who dig through the rubble of a ruined building for 10 minutes find an object on the Ruin Objects table.</p>\n<div class=\"table-overflow-wrapper\">\n<table class=\"table-compendium table--generic-dice\" data-content-chunk-id=\"702401d4-0869-4bf2-9a66-2d1fe224b759\"><caption>\n<h5 id=\"RuinObjects\" class=\"compendium-hr heading-anchor\">Ruin Objects</h5>\n</caption>\n<thead>\n<tr>\n<th>d10</th>\n<th>Object</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>1</td>\n<td>Human bones</td>\n</tr>\n<tr>\n<td>2</td>\n<td>An iron holy symbol of Procan</td>\n</tr>\n<tr>\n<td>3</td>\n<td>A tin toy kraken</td>\n</tr>\n<tr>\n<td>4</td>\n<td>A rusted blade engraved with a tentacle</td>\n</tr>\n<tr>\n<td>5</td>\n<td>The cover of a book of hymns to Procan</td>\n</tr>\n<tr>\n<td>6</td>\n<td>A rusty tool, weapon, or armor</td>\n</tr>\n<tr>\n<td>7</td>\n<td>An engraving, sculpture, or other work of art depicting a kraken</td>\n</tr>\n<tr>\n<td>8</td>\n<td>An engraving, sculpture, or other work of art depicting Procan</td>\n</tr>\n<tr>\n<td>9</td>\n<td>A broken piece of a boat</td>\n</tr>\n<tr>\n<td>10</td>\n<td>A stuffed and preserved octopus corpse</td>\n</tr>\n</tbody>\n</table>\n</div>",
+				"plain": "Ruined BuildingsThese buildings are so utterly demolished that it is impossible to know what purpose they served. Swarming around each ruin are 3d10 fish of various species and 2d4 crabs. Each fish has the statistics of a quipper, but it doesn’t have the Blood Frenzy feature and can’t make attacks.Characters who dig through the rubble of a ruined building for 10 minutes find an object on the Ruin Objects table.Ruin Objectsd10Object1Human bones2An iron holy symbol of Procan3A tin toy kraken4A rusted blade engraved with a tentacle5The cover of a book of hymns to Procan6A rusty tool, weapon, or armor7An engraving, sculpture, or other work of art depicting a kraken8An engraving, sculpture, or other work of art depicting Procan9A broken piece of a boat10A stuffed and preserved octopus corpse",
+				"player": false,
+				"statBlock": false
+			},
+			"cea4185b-e8c0-4540-a878-44fde0a20cb2": {
+				"title": "Deep Scion",
+				"text": "<p>For&nbsp;Release the Kraken</p>",
+				"plain": "For Release the Kraken",
+				"player": false,
+				"statBlock": false
+			},
+			"d577e37e-c1a5-4719-91cf-4bc2a1aaa6dc": {
+				"title": "Mud Mephit",
+				"text": "<p>For Meohit Mischief (copy and paste as needed)</p>",
+				"plain": "For Meohit Mischief (copy and paste as needed)",
+				"player": false,
+				"statBlock": false
+			},
+			"e9c57021-f639-442a-970d-2913d472ddfa": {
+				"title": "Entry Chapel",
+				"text": "<p data-content-chunk-id=\"8fa576dd-37b3-4e1e-bbe2-8a076f05bae5\"><strong><em>Entry Chapel.</em></strong>&nbsp;The chapel&rsquo;s floor, walls, ceiling, and columns are painted with a mosaic of a kraken reaching its tentacles up into a stormy sky. An altar shaped like a kraken&rsquo;s head stands in the center of the room.</p>\n<p data-content-chunk-id=\"b858ca76-fa31-4b7b-9190-5a354f7981ba\">Twenty&nbsp;<a class=\"tooltip-hover monster-tooltip\" href=\"https://www.dndbeyond.com/monsters/16968-octopus\" data-tooltip-href=\"//www.dndbeyond.com/monsters/16968-tooltip?disable-webm=1&amp;disable-webm=1\">octopuses</a>&nbsp;swim in place around the room. They attack only to defend themselves.</p>",
+				"plain": "Entry Chapel. The chapel’s floor, walls, ceiling, and columns are painted with a mosaic of a kraken reaching its tentacles up into a stormy sky. An altar shaped like a kraken’s head stands in the center of the room.Twenty octopuses swim in place around the room. They attack only to defend themselves.",
+				"player": false,
+				"statBlock": false
+			},
+			"ed5e4d1c-f5f1-454e-b1a4-80ba8fe59cc5": {
+				"title": "Ruined Buildings",
+				"text": "<h5 id=\"W3RuinedBuildings\" class=\"compendium-hr heading-anchor\" data-content-chunk-id=\"95a682e9-5d23-4a11-947f-4f469c8d217f\">Ruined Buildings</h5>\n<p data-content-chunk-id=\"7db55f8e-9655-4d38-a7d7-a695fbbf75cc\">These buildings are so utterly demolished that it is impossible to know what purpose they served. Swarming around each ruin are 3d10 fish of various species and 2d4&nbsp;<a class=\"tooltip-hover monster-tooltip\" href=\"https://www.dndbeyond.com/monsters/16833-crab\" data-tooltip-href=\"//www.dndbeyond.com/monsters/16833-tooltip?disable-webm=1&amp;disable-webm=1\">crabs</a>. Each fish has the statistics of a&nbsp;<a class=\"tooltip-hover monster-tooltip\" href=\"https://www.dndbeyond.com/monsters/16989-quipper\" data-tooltip-href=\"//www.dndbeyond.com/monsters/16989-tooltip?disable-webm=1&amp;disable-webm=1\">quipper</a>, but it doesn&rsquo;t have the Blood Frenzy feature and can&rsquo;t make attacks.</p>\n<p data-content-chunk-id=\"f2c010d1-64c4-452b-93b5-4f6989034336\">Characters who dig through the rubble of a ruined building for 10 minutes find an object on the Ruin Objects table.</p>\n<div class=\"table-overflow-wrapper\">\n<table class=\"table-compendium table--generic-dice\" data-content-chunk-id=\"702401d4-0869-4bf2-9a66-2d1fe224b759\"><caption>\n<h5 id=\"RuinObjects\" class=\"compendium-hr heading-anchor\">Ruin Objects</h5>\n</caption>\n<thead>\n<tr>\n<th>d10</th>\n<th>Object</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>1</td>\n<td>Human bones</td>\n</tr>\n<tr>\n<td>2</td>\n<td>An iron holy symbol of Procan</td>\n</tr>\n<tr>\n<td>3</td>\n<td>A tin toy kraken</td>\n</tr>\n<tr>\n<td>4</td>\n<td>A rusted blade engraved with a tentacle</td>\n</tr>\n<tr>\n<td>5</td>\n<td>The cover of a book of hymns to Procan</td>\n</tr>\n<tr>\n<td>6</td>\n<td>A rusty tool, weapon, or armor</td>\n</tr>\n<tr>\n<td>7</td>\n<td>An engraving, sculpture, or other work of art depicting a kraken</td>\n</tr>\n<tr>\n<td>8</td>\n<td>An engraving, sculpture, or other work of art depicting Procan</td>\n</tr>\n<tr>\n<td>9</td>\n<td>A broken piece of a boat</td>\n</tr>\n<tr>\n<td>10</td>\n<td>A stuffed and preserved octopus corpse</td>\n</tr>\n</tbody>\n</table>\n</div>",
+				"plain": "Ruined BuildingsThese buildings are so utterly demolished that it is impossible to know what purpose they served. Swarming around each ruin are 3d10 fish of various species and 2d4 crabs. Each fish has the statistics of a quipper, but it doesn’t have the Blood Frenzy feature and can’t make attacks.Characters who dig through the rubble of a ruined building for 10 minutes find an object on the Ruin Objects table.Ruin Objectsd10Object1Human bones2An iron holy symbol of Procan3A tin toy kraken4A rusted blade engraved with a tentacle5The cover of a book of hymns to Procan6A rusty tool, weapon, or armor7An engraving, sculpture, or other work of art depicting a kraken8An engraving, sculpture, or other work of art depicting Procan9A broken piece of a boat10A stuffed and preserved octopus corpse",
+				"player": false,
+				"statBlock": false
+			},
+			"ee04c853-1ac9-41f1-b745-700f8d67a1a3": {
+				"title": "Private Room",
+				"text": "<p><strong><em>Private Room.</em></strong>&nbsp;This room offered privacy to important ballroom guests. A stone table shaped like a kraken sits in one corner. A long prayer to Vaalastroth is carved into its surface.</p>",
+				"plain": "Private Room. This room offered privacy to important ballroom guests. A stone table shaped like a kraken sits in one corner. A long prayer to Vaalastroth is carved into its surface.",
+				"player": false,
+				"statBlock": false
+			},
+			"ee4362de-aad1-4acf-95d8-9fc03fc38862": {
+				"title": "Vaalastroth Trench",
+				"text": "<h5 id=\"W2VaalastrothTrench\" class=\"compendium-hr heading-anchor\" data-content-chunk-id=\"133e7a0f-8cbb-4678-8518-bb48c41bcc84\">Vaalastroth Trench</h5>\n<p data-content-chunk-id=\"bd1abaea-3d61-4de7-972e-172bf1aedf72\">The floor of the trench is at a depth of 10,000 feet. An entrance to the kraken&rsquo;s lair lies somewhere in the deepest part of the trench.</p>",
+				"plain": "Vaalastroth TrenchThe floor of the trench is at a depth of 10,000 feet. An entrance to the kraken’s lair lies somewhere in the deepest part of the trench.",
+				"player": false,
+				"statBlock": false
+			},
+			"f155ee67-1ac5-4f8c-9038-0b8ed7b67387": {
+				"title": "Gali",
+				"text": "<p>For Meohit Mischief</p>",
+				"plain": "For Meohit Mischief",
+				"player": false,
+				"statBlock": false
+			},
+			"f25e21e4-1b4e-4473-a4a2-0cc32c9caafa": {
+				"title": "Shrine to Erythnul",
+				"text": "<p data-content-chunk-id=\"11a3dbd4-61db-4bfd-bb0e-a9fe6942e013\"><strong><em>Shrine to Erythnul.</em></strong>&nbsp;All doors to this area are locked. A character can pick the lock with a successful DC 15 Dexterity check using thieves&rsquo; tool or force the door open with a successful DC 20 Strength check.</p>\n<p data-content-chunk-id=\"46220712-f53f-480e-b31b-0b01f8c2ebdd\">The skeletal remains of several beasts litter the floor, and an altar to Erythnul made of bones stands on the east wall. A magic morningstar lies on the altar. This weapon has the Curse property of a&nbsp;<a class=\"tooltip-hover magic-item-tooltip\" href=\"https://www.dndbeyond.com/magic-items/5382-berserker-axe\" data-tooltip-href=\"//www.dndbeyond.com/magic-items/5382-tooltip?disable-webm=1&amp;disable-webm=1\">berserker axe</a>&nbsp;and no other magical properties.</p>",
+				"plain": "Shrine to Erythnul. All doors to this area are locked. A character can pick the lock with a successful DC 15 Dexterity check using thieves’ tool or force the door open with a successful DC 20 Strength check.The skeletal remains of several beasts litter the floor, and an altar to Erythnul made of bones stands on the east wall. A magic morningstar lies on the altar. This weapon has the Curse property of a berserker axe and no other magical properties.",
+				"player": false,
+				"statBlock": false
+			},
+			"faa64603-e265-4631-adc9-4122e9c7ef1d": {
+				"title": "Shrine to Procan",
+				"text": "<p><strong><em>Shrine to Procan.</em></strong>&nbsp;Six cracked stone benches line a path leading up to a stone altar of Procan on a 2-foot-high dais at the south end of the room. Four human skeletons lie on the floor.</p>",
+				"plain": "Shrine to Procan. Six cracked stone benches line a path leading up to a stone altar of Procan on a 2-foot-high dais at the south end of the room. Four human skeletons lie on the floor.",
+				"player": false,
+				"statBlock": false
+			},
+			"fdab41d7-5cab-48ff-b18b-fdaf809c5301": {
+				"title": "High Priest’s Chambers",
+				"text": "<p id=\"W7dHighPriestsChambers\" data-content-chunk-id=\"681933bb-1486-45b2-8fff-9bc0893ced5e\"><strong><em>High Priest&rsquo;s Chambers.</em></strong>&nbsp;The door to these chambers is locked. A character can pick the door&rsquo;s lock with a successful DC 15 Dexterity check using thieves&rsquo; tool or force the door open with a successful DC 20 Strength check.</p>\n<p data-content-chunk-id=\"c30bb903-8605-4d87-8f2d-5e51bb79b5e2\">Halkal Kyrith, the high priest of Vaalastroth, died cowering in his chambers for failing to defend the worship of the kraken. The high priest&rsquo;s skeleton lies in rotting robes amid debris on the floor, clutching a&nbsp;<a class=\"tooltip-hover magic-item-tooltip\" href=\"https://www.dndbeyond.com/magic-items/5408-tentacle-rod\" data-tooltip-href=\"//www.dndbeyond.com/magic-items/5408-tooltip?disable-webm=1&amp;disable-webm=1\">tentacle rod</a>.</p>",
+				"plain": "High Priest’s Chambers. The door to these chambers is locked. A character can pick the door’s lock with a successful DC 15 Dexterity check using thieves’ tool or force the door open with a successful DC 20 Strength check.Halkal Kyrith, the high priest of Vaalastroth, died cowering in his chambers for failing to defend the worship of the kraken. The high priest’s skeleton lies in rotting robes amid debris on the floor, clutching a tentacle rod.",
+				"player": false,
+				"statBlock": false
+			},
+			"ff93dd3a-c831-4555-97e1-745cd339d3de": {
+				"title": "Kraken Priest 4",
+				"text": "<p>For&nbsp;Release the Kraken</p>",
+				"plain": "For Release the Kraken",
 				"player": false,
 				"statBlock": false
 			}
