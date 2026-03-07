@@ -4944,7 +4944,8 @@ function grouprotate_commit(angle) {
 		token.options.top = `${newCoords.y}px`;
 	});
 	$(`.grouprotate`).remove();
-	forSelTokens((token) => (token.selected = true && token.place_sync_persist(0)));
+	//not sure why it re-sets selected to true here (should already be true?)
+	forSelTokens((token) => ((token.selected = true) && token.place_sync_persist(0)));
 }
 
 
@@ -4958,7 +4959,7 @@ async function do_draw_selected_token_bounding_box() {
 	let groupIDs = [];
 	forTokens((token, id) => {
 		if(!token.selected) return;
-		let selector = "div[data-id='" + id + "']";
+		const selector = "div[data-id='" + id + "']";
 		promises.push(new Promise((resolve) => {
 			toggle_player_selectable(token, $("#tokens").find(selector)); 
 			resolve();
