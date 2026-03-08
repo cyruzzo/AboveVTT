@@ -611,7 +611,7 @@ class DiceRoller {
             }
             let critClass = `${critSuccess && critFail ? 'crit-mixed' : critSuccess ? 'crit-success' : critFail ? 'crit-fail' : ''}`
 
-            const ddb3dDiceShareToggle = localStorage.getItem('isShared3dDiceEnabled') !== null ? JSON.parse(localStorage.getItem('isShared3dDiceEnabled')).state?.[window.myUser] : true;
+            const ddb3dDiceShareToggle = localStorage.getItem('isShared3dDiceEnabled') !== null ? Object.values(JSON.parse(localStorage.getItem('isShared3dDiceEnabled')).state)?.[0] : true;
 
             if (window.EXPERIMENTAL_SETTINGS['rpgRoller'] == true || ((is_abovevtt_page() || window.sendToTab != undefined) && !ddb3dDiceShareToggle)){
                 if(spellSave == undefined && this.#pendingSpellSave != undefined){
@@ -1001,7 +1001,7 @@ class DiceRoller {
         if(this.#waitingForRoll && message.source == 'Beyond20'){
             return;
         }
-        const ddb3dDiceShareToggle = localStorage.getItem('isShared3dDiceEnabled') !== null ? JSON.parse(localStorage.getItem('isShared3dDiceEnabled')).state?.[window.myUser] : true;
+        const ddb3dDiceShareToggle = localStorage.getItem('isShared3dDiceEnabled') !== null ? Object.values(JSON.parse(localStorage.getItem('isShared3dDiceEnabled')).state)?.[0] : true;
 
         if (message.eventType === "dice/roll/fulfilled" && newDice && ddb3dDiceShareToggle && this.#pendingMessages[message.data.rollId] == undefined)
             return;
