@@ -1615,9 +1615,11 @@ function redraw_fog() {
  				}
 				else{
 					ctx.fillStyle = "#000"
+					ctx.scale(window.CURRENT_SCENE_DATA.scaleAdjustment.x, window.CURRENT_SCENE_DATA.scaleAdjustment.y)
 	 				for(let i=0; i<d[0].length; i++){
 	 					drawHexagon(ctx, d[0][i][0], d[0][i][1])
 	 				}
+					ctx.setTransform(1, 0, 0, 1, 0, 0);
 	 			}
 			
 
@@ -1673,9 +1675,11 @@ function redraw_fog() {
 				else{
 					ctx.globalCompositeOperation = 'destination-out';
 	 				ctx.fillStyle = "#000000";
+					ctx.scale(window.CURRENT_SCENE_DATA.scaleAdjustment.x, window.CURRENT_SCENE_DATA.scaleAdjustment.y)
 	 				for(let i=0; i<d[0].length; i++){
 	 					drawHexagon(ctx, d[0][i][0], d[0][i][1])
 	 				}
+					ctx.setTransform(1, 0, 0, 1, 0, 0);
 	 			}				
 
 				ctx.globalCompositeOperation = 'source-over';
@@ -1687,9 +1691,11 @@ function redraw_fog() {
 					}
 				}
 				else{
+					ctx.scale(window.CURRENT_SCENE_DATA.scaleAdjustment.x, window.CURRENT_SCENE_DATA.scaleAdjustment.y)
 	 				for(let i=0; i<d[0].length; i++){
 	 					drawHexagon(ctx, d[0][i][0], d[0][i][1])
 	 				}
+					ctx.setTransform(1, 0, 0, 1, 0, 0);
 	 			}
 			}
 		}
@@ -3070,11 +3076,10 @@ function drawing_mousedown(e) {
 		window.temp_context.fillStyle = window.DRAWCOLOR;
 		const hpps = window.CURRENT_SCENE_DATA.gridType == 2 ? window.CURRENT_SCENE_DATA.vpps : window.CURRENT_SCENE_DATA.hpps;
 
-
-		let { x, y } = snap_point_to_grid(window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, true);
-		window.BRUSHPOINTS.push([Math.round(x), Math.round(y)]);
-		window.BRUSHPOINTS = Array.from(new Set(window.BRUSHPOINTS.map(JSON.stringify)), JSON.parse);	
-		window.offScreenCombineContext.clearRect(0, 0, window.offScreenCombineContext.canvas.width, window.offScreenCombineContext.canvas.height);
+		clear_temp_canvas()
+		let { x, y } = snap_point_to_grid(window.BEGIN_MOUSEX / window.CURRENT_SCENE_DATA.scale_factor, window.BEGIN_MOUSEY / window.CURRENT_SCENE_DATA.scale_factor, true);
+		window.BRUSHPOINTS.push([Math.round(x), Math.round(y)])
+		window.BRUSHPOINTS = Array.from(new Set(window.BRUSHPOINTS.map(JSON.stringify)), JSON.parse)		
 		if(window.CURRENT_SCENE_DATA.gridType == '1'){
 			for(let i in window.BRUSHPOINTS){
 				drawRect(window.offScreenCombineContext, window.BRUSHPOINTS[i][0], window.BRUSHPOINTS[i][1], window.CURRENT_SCENE_DATA.hpps, window.CURRENT_SCENE_DATA.vpps, window.DRAWCOLOR, true, window.DRAWTYPE);
@@ -4814,32 +4819,29 @@ function drawCircle(ctx, centerX, centerY, radius, style, fill=true, lineWidth =
 
 
 function drawHexagon(ctx, x, y) {
-	const scale = window.CURRENT_SCENE_DATA.scale_factor;
-	const adjx = window.CURRENT_SCENE_DATA.scaleAdjustment.x || 1;
-	const adjy = window.CURRENT_SCENE_DATA.scaleAdjustment.y || 1;
-	const hexSize = window.CURRENT_SCENE_DATA.hpps / 1.5 / scale;
-	x = x/scale;
-	y = y/scale;
-	if(window.CURRENT_SCENE_DATA.gridType == 3){ //todo: collapse both loops simpler code
+	const hpps = window.CURRENT_SCENE_DATA.gridType == 2 ? window.CURRENT_SCENE_DATA.vpps : window.CURRENT_SCENE_DATA.hpps;
+
+	const hexSize = hpps / 1.5 / window.CURRENT_SCENE_DATA.scale_factor || window.CURRENT_SCENE_DATA.hpps / 1.5 / window.CURRENT_SCENE_DATA.scale_factor;
+
+	if (window.CURRENT_SCENE_DATA.gridType == 3) {
 		ctx.beginPath();
-		ctx.moveTo(x + hexSize * adjx, y);
+		ctx.moveTo(x + hexSize, y);
 		for (let i = 1; i <= 6; i++) {
-			//todo: a lot of slow math for constants...
 			let angle = i * Math.PI / 3;
-			let dx = hexSize * Math.cos(angle) * adjx;
-			let dy = hexSize * Math.sin(angle) * adjy;
+			let dx = hexSize * Math.cos(angle);
+			let dy = hexSize * Math.sin(angle);
 			ctx.lineTo(x + dx, y + dy);
 		}
 		ctx.closePath();
 		ctx.fill();
 	}
-	else{
+	else {
 		ctx.beginPath();
-		ctx.moveTo(x, y + hexSize * adjy);
+		ctx.moveTo(x, y + hexSize);
 		for (let i = 1; i <= 6; i++) {
 			let angle = i * Math.PI / 3;
-			let dx = hexSize * Math.sin(angle) * adjx;
-			let dy = hexSize * Math.cos(angle) * adjy;
+			let dx = hexSize * Math.sin(angle);
+			let dy = hexSize * Math.cos(angle);
 			ctx.lineTo(x + dx, y + dy);
 		}
 		ctx.closePath();
