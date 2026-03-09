@@ -1,230 +1,226 @@
-const isVttGamePage = window.location.search.includes("abovevtt=true");
-const isDM = window.location.pathname.match(/\/campaigns\/[0-9]+$/gi) && window.location.search.includes("dm=true");
-const isPlayerPage = window.location.pathname.match("/characters");
-const isPlainCharacterPage = !isVttGamePage && isPlayerPage //character, builder, or listing
-const isCampaignPage = window.location.pathname.match(/\/campaigns\/[0-9]+$/gi); //match campaign page exactly in case other pages ever get added like campaigns/join that we want to exclude
-const isPopoutGameLog = window.location.search.includes("popoutgamelog=true");
+(async function() { //don't leave clutter after load
 
-console.log("Load.js is executing", isVttGamePage, isPlainCharacterPage, isCampaignPage);
-function getExtURL(url) {
-	return (chrome || browser).runtime.getURL(url);
-}
-var loadStyle = [];
-window.scripts = []; // in case it ever loads on a non-matching page
-if (isPlainCharacterPage) {
-	let l = document.createElement('div');
-	l.setAttribute("style", "display:none;");
-	l.setAttribute("id", "extensionpath");
-	l.setAttribute("data-path", getExtURL("/"));
-	(document.body || document.documentElement).appendChild(l);
-	let avttVersion = document.createElement('div');
-	avttVersion.setAttribute("style", "display:none;");
-	avttVersion.setAttribute("id", "avttversion");
-	avttVersion.setAttribute("data-version", (chrome || browser).runtime.getManifest().version);
-	(document.body || document.documentElement).appendChild(avttVersion);
-	loadStyle = [
-		"DiceContextMenu/DiceContextMenu.css",
-		"jquery.contextMenu.css"
-	];
-	window.scripts = [
-		// External Dependencies
-		{ src: "jquery-3.6.0.min.js" },
-		{ src: "jquery.contextMenu.js" },	
-		{ src: "purify.min.js" },	
-		{ src: "ajaxQueue/ajaxQueueIndex.js", type: "module" },
-		// AboveVTT Files
-		{ src: "CoreFunctions.js" }, // Make sure CoreFunctions executes first
-		{ src: "DDBApi.js" },
-		{ src: "MonsterDice.js" },
-		{ src: "DiceRoller.js" },
-		{ src: "DiceContextMenu/DiceContextMenu.js" },
-		{ src: "MessageBroker.js" },
-		{ src: "rpg-dice-roller.bundle.min.js" },
-		// AboveVTT files that execute when loaded
-		{ src: "CharactersPage.js" } // Make sure CharactersPage executes last
-	]
-	
-} else if(isCampaignPage || isVttGamePage) {
-	
-	if(isVttGamePage) {
-		let loadingOverlay = document.createElement('div');
-		loadingOverlay.setAttribute("id", "loading_overlay");
-		(document.body || document.documentElement).appendChild(loadingOverlay);
+    const runtime = (chrome || browser).runtime; //detect extension context
 
-		let loadingBg = document.createElement('div');
-		loadingBg.setAttribute("id", "loading_overlay_bg");
-		loadingOverlay.appendChild(loadingBg);
-		if (!isPlayerPage) {
-			loadingBg.setAttribute("class", "dm");
-		} else if (isPlayerPage) {
-			loadingBg.setAttribute("class", "player");
-		}
+    function pageType(location) { // page type from location: [char, gamelog, campaign, vtt-player, vtt-dm, null]
+        //match campaign page exactly in case other pages ever get added like campaigns/join that we want to exclude    
+        const isCampaignPage = location.pathname.match(/\/campaigns\/[0-9]+$/gi);
+        const isVttGamePage = location.search.includes("abovevtt=true");
+        const isPlayerPage = location.pathname.match("/characters");
+        const isPlainCharacterPage = !isVttGamePage && isPlayerPage //character, builder, or listing
+        const isDM = isCampaignPage && location.search.includes("dm=true");
+        const isPopoutGameLog = location.search.includes("popoutgamelog=true");
+        if(isPlainCharacterPage) return "char";
+        if(isPopoutGameLog && !isDM) return "gamelog";
+        if(isCampaignPage && !isVttGamePage) return "campaign";
+        if(isVttGamePage) return "vtt-" + ((isPlayerPage && !isDM) ? "player" : "dm");
+        return null;
+    }
+    
+    const pgType = pageType(window.location); //only relevant in extension context;
+    const isIframe = window.self !== window.top;
+    if(runtime) { //we are in the extension context - decide whether to bail quickly
+        //with this scheme we should never load in iframes from here
+        console.log("🎲 AVTT extension: ", pgType);
+        if(!pgType || isIframe) { //block iFrame extension loading (eg older Safari) until we want it
+            console.log("⛔  AVTT: no extension loading here.")
+            return; //don't load anything
+        }
+    }
 
-	}
-
-	let l = document.createElement('div');
-	l.setAttribute("style", "display:none;");
-	l.setAttribute("id", "extensionpath");
-	l.setAttribute("data-path", getExtURL("/"));
-	(document.body || document.documentElement).appendChild(l);
-
-	console.log("avtt: create version div....");	
-	let avttVersion = document.createElement('div');
-	avttVersion.setAttribute("style", "display:none;");
-	avttVersion.setAttribute("id", "avttversion");
-	avttVersion.setAttribute("data-version", (chrome||browser).runtime.getManifest().version);
-	(document.body || document.documentElement).appendChild(avttVersion);
-
-	// load stylesheets
-	loadStyle = [
-		"abovevtt.css",
-		"jquery-ui.min.css",
-		"jquery.ui.theme.min.css",
-		"jquery.contextMenu.css",
-		"color-picker.min.css",
-		"spectrum-2.0.8.min.css",
-		"magnific-popup.css",
-		"DiceContextMenu/DiceContextMenu.css"
-	]
-	window.scripts = [
-		// External Dependencies
-		{ src: "jquery-3.6.0.min.js" },
-		{ src: "jquery-ui.min.js" },
-		{ src: "jquery.csv.js" },
-		//{ src: "jquery.ui.widget.min.js" },
-		//{ src: "jquery.ui.mouse.min.js" },
-		{ src: "jquery.ui.touch-punch.js" },
-		{ src: "jquery.contextMenu.js" },
-		{ src: "jquery.magnific-popup.min.js" },
-		{ src: "spectrum-2.0.8.min.js" },
-		// { src: "jquery.ajax.queue.js" },
-		{ src: "purify.min.js" },
-		{ src: "rpg-dice-roller.bundle.min.js" },
-		{ src: "color-picker.js" },
-		{ src: "mousetrap.1.6.5.min.js" },
-		{ src: "peerjs.min.js" },
-		{ src: "fuse.min.js" },
-		{ src: "ajaxQueue/ajaxQueueIndex.js", type: "module" },
-		// AboveVTT Files
-		{ src: "environment.js" },
-		{ src: "CoreFunctions.js" }, // Make sure CoreFunctions executes before anything else
-		{ src: "avttS3Upload.js" },
-		{ src: "AboveApi.js" },
-		{ src: "DDBApi.js" },
-		{ src: "AOETemplates.js" },
-		{ src: "Text.js" },
-		{ src: "CombatTracker.js" },
-		{ src: "EncounterHandler.js" },
-		{ src: "Fog.js" },
-		{ src: "Journal.js" },
-		{ src: "KeypressHandler.js" },
-		{ src: "MessageBroker.js" },
-		{ src: "MonsterDice.js" },
-		{ src: "PlayerPanel.js" },
-		{ src: "ScenesHandler.js" },
-		{ src: "ScenesPanel.js" },
-		{ src: "Settings.js" },
-		{ src: "SidebarPanel.js" },
-		{ src: "StatHandler.js" },
-		{ src: "Token.js" },
-		{ src: "constants/names.js" },
-		{ src: "TokenMenu.js" },
-		{ src: "ChatObserver.js" },
-		{ src: "DiceContextMenu/DiceContextMenu.js" },
-		{ src: "TokensPanel.js" },
-		{ src: "TokenCustomization.js" },
-		{ src: "built-in-tokens.js" },
-		{ src: "PeerManager.js" },
-		{ src: "PeerCommunication.js" },
-		{ src: "peerVideo.js"},
-		{ src: "peerDice.js"},		
-		{ src: "DiceRoller.js" },
-		{ src: "DMScreen.js" },
-		{ src: "Main.js" },
-		{ src: "MonsterStatBlock.js" },
-		// AboveVTT files that execute when loaded	
-		{ src: "onedrive/onedrivemsal.js" },
-		{ src: "onedrive/onedrivepicker.js" },
-		{ src: "audio/index.js", type: "module" },
-		{ src: "WeatherOverlay.js" }
-	]
-	//Do not load characterPage.js for DM or on campaign page
-	if(isPlayerPage && !isDM){ 
-		window.scripts.push(
-			{ src: "CharactersPage.js" }
-		)
-	}
-	else if(isPopoutGameLog && !isDM){
-		window.scripts = [
-			{ src: "jquery.magnific-popup.min.js" },
-			{ src: "purify.min.js" },
-			{ src: "environment.js" },
-			{ src: "CoreFunctions.js" }, 	
-			{ src: "rpg-dice-roller.bundle.min.js" },
-			{ src: "DiceContextMenu/DiceContextMenu.js" },
-			{ src: "DiceRoller.js" },	
-			{ src: "DDBApi.js" }, 
-			{ src: "Settings.js" },
-			{ src: "MessageBroker.js" },
-			{ src: "Journal.js" },
-			{ src: "ChatObserver.js" },
-			{ src: "MonsterStatBlock.js" },
-			{ src: "MonsterDice.js" },
-			{ src: "CampaignPage.js" }
-		]
-	}
-	else if(isCampaignPage && !isVttGamePage){
-
-		window.scripts = [
-			{ src: "environment.js" },
-			{ src: "CoreFunctions.js" }, 		
-			{ src: "DDBApi.js" }, 
-			{ src: "Settings.js" },
-			{ src: "CampaignPage.js" }
-		]
-
-	}
-	else{//dm
-  		window.scripts.push(
-	  		{ src: "SceneData.js" }
-		)
-	}
-	if(isVttGamePage) {
-		// Startup must be the last file to execute. This is what actually loads the app. It requires all the previous files to be loaded first
-		window.scripts.push({ src: "Startup.js", type: "module" })
-	}
-}
-
-
-loadStyle.forEach(function(value, index, array) {
-	let l = document.createElement('link');
-	l.href = getExtURL(value);
-	l.rel = "stylesheet";
-	console.log(`attempting to append ${value}`);
-	(document.head || document.documentElement).appendChild(l);
-});
-
-// Too many of our scripts depend on each other.
-// This ensures that they are loaded sequentially to avoid any race conditions.
-function injectScript() {
-	if (window.scripts.length === 0) {
-		delete window.scripts;
-		console.log("avtt: done injecting");
-		return;
-	}
-	let nextScript = window.scripts.shift();
-	let s = document.createElement('script');
-	s.src = getExtURL(nextScript.src);
-	if (nextScript.type !== undefined) {
-		s.setAttribute('type', nextScript.type);
-	}
-	console.log(`attempting to append ${nextScript.src}`);
-	s.onload = function() {
-		console.log(`finished injecting ${nextScript.src}`);
-		injectScript();
-	};
-	(document.head || document.documentElement).appendChild(s);
-}
-
-injectScript();
-
+    //setup to work in both contexts
+    const getExtURL = runtime ? ((url) => runtime.getURL(url))
+          : ((url) => document.querySelector("#extensionpath").dataset.path + url);
+    const getExtVersion = runtime ? (() => (chrome||browser).runtime?.getManifest()?.version)
+          : ((url) => document.querySelector("#avttversion").dataset.path);
+    
+    const addChild = (c, where, head=false) => (where[head ? "head" : "body"] || where.documentElement).appendChild(c);
+    
+    function loadingOverlay(where, isPlayer) {
+        const loadingOverlay = where.createElement('div');
+        loadingOverlay.id = "loading_overlay";
+        const loadingBg = where.createElement('div');
+        loadingBg.id = "loading_overlay_bg";
+        loadingBg.className = isPlayer ? "player" : "dm";
+        loadingOverlay.appendChild(loadingBg);
+        addChild(loadingOverlay, where);
+    }
+    
+    const avttScripts = [
+	// External Dependencies
+	"jquery-3.6.0.min.js",
+	"jquery-ui.min.js",
+	"jquery.csv.js",
+	"jquery.ui.touch-punch.js",
+	"jquery.contextMenu.js",
+	"jquery.magnific-popup.min.js",
+	"spectrum-2.0.8.min.js",
+	"purify.min.js",
+	"rpg-dice-roller.bundle.min.js",
+	"color-picker.js",
+	"mousetrap.1.6.5.min.js",
+	"peerjs.min.js",
+	"fuse.min.js",
+	"ajaxQueue/ajaxQueueIndex.mjs",            
+	// AboveVTT Files
+	"environment.js",
+	"CoreFunctions.js", // Make sure CoreFunctions executes before anything else
+	"avttS3Upload.js",
+	"AboveApi.js",
+	"DDBApi.js",
+	"AOETemplates.js",
+	"Text.js",
+	"CombatTracker.js",
+	"EncounterHandler.js",
+	"Fog.js",
+	"Journal.js",
+	"KeypressHandler.js",
+	"MessageBroker.js",
+	"MonsterDice.js",
+	"PlayerPanel.js",
+	"ScenesHandler.js",
+	"ScenesPanel.js",
+	"Settings.js",
+	"SidebarPanel.js",
+	"StatHandler.js",
+	"Token.js",
+	"constants/names.js",
+	"TokenMenu.js",
+	"ChatObserver.js",
+	"DiceContextMenu/DiceContextMenu.js",
+	"TokensPanel.js",
+	"TokenCustomization.js",
+	"built-in-tokens.js",
+	"PeerManager.js",
+	"PeerCommunication.js",
+	"peerVideo.js",
+	"peerDice.js",		
+	"DiceRoller.js",
+	"DMScreen.js",
+	"Main.js",
+	"MonsterStatBlock.js",
+	// AboveVTT files that execute when loaded	
+	"onedrive/onedrivemsal.js",
+	"onedrive/onedrivepicker.js",
+	"audio/index.mjs",
+    	"WeatherOverlay.js"
+    ]
+    const avttCharacterScripts = [
+        "Load.js", //load Loader on character sheets to support DBB Character Overhaul Extension
+        // External Dependencies
+        "jquery-3.6.0.min.js",
+        "jquery.contextMenu.js",	
+        "purify.min.js",	
+        "ajaxQueue/ajaxQueueIndex.mjs",
+        // AboveVTT Files
+        "CoreFunctions.js", // Make sure CoreFunctions executes first
+        "DDBApi.js",
+        "MonsterDice.js",
+        "DiceRoller.js",
+        "DiceContextMenu/DiceContextMenu.js",
+        "MessageBroker.js",
+        "rpg-dice-roller.bundle.min.js",
+        // AboveVTT files that execute when loaded        
+        "CharactersPage.js" // Make sure CharactersPage executes last
+    ];
+    const avttStyles = [
+        "abovevtt.css",
+        "jquery-ui.min.css",
+        "jquery.ui.theme.min.css",
+        "jquery.contextMenu.css",
+        "color-picker.min.css",
+        "spectrum-2.0.8.min.css",
+        "magnific-popup.css",
+        "DiceContextMenu/DiceContextMenu.css"
+    ];
+    const simpleAvttStyles = [
+        "DiceContextMenu/DiceContextMenu.css", "jquery.contextMenu.css"
+    ]
+    
+    function injectStyles(styles, where) {
+        for(const value of styles) {       
+            const l = where.createElement('link');
+            l.href = getExtURL(value);
+            l.rel = "stylesheet";
+            console.log(`🎨 Loading Style ${value}`);
+            addChild(l, where, true);
+        }
+    }
+    async function injectScripts(scriptsToLoad, where) {
+        for (const script of scriptsToLoad) {
+            await new Promise((resolve, reject) => {
+                const s = where.createElement('script');
+                s.src = getExtURL(script);
+                if(script.endsWith(".mjs")) s.type = "module";
+                s.onload = resolve;
+                s.onerror = () => reject(new Error(`Could not find or load: ${script}`));
+                addChild(s, where, true);
+            });
+            console.log(`✅ Loaded: ${script}`);
+            //could catch errors here - but it doesn't help much in web extensions
+        }
+    }
+    
+    async function inject(pgType, where) {
+        console.log("⌛ AVTT Loading", pgType, (isIframe && window.parent) ? ("parent: " + pageType(window.parent.location)) : "");        
+        if(pgType.startsWith("vtt-")) {
+            const loadingOverlay = where.createElement('div');
+            loadingOverlay.id = "loading_overlay";
+            const loadingBg = where.createElement('div');
+            loadingBg.id = "loading_overlay_bg";
+            loadingBg.className = pgType.endsWith("-dm") ? "dm" : "player";
+            loadingOverlay.appendChild(loadingBg);
+            addChild(loadingOverlay, where);
+        }
+        const l = where.createElement('div');
+        l.id = "extensionpath"
+        l.style.display = "none";
+        l.setAttribute("data-path", getExtURL("/"));
+        addChild(l, where);
+        const avttVersion = where.createElement('div');
+        avttVersion.id = "avttversion";
+        avttVersion.style.display = "none";
+        avttVersion.setAttribute("data-version", getExtVersion());
+        addChild(avttVersion, where);
+        
+        injectStyles(pgType === "char" ? simpleAvttStyles : avttStyles, where);
+        const scripts = pgType === "char" ?
+              avttCharacterScripts
+              : pgType === "gamelog" ? [
+                  "jquery.magnific-popup.min.js",
+                  "purify.min.js",
+                  "environment.js",
+                  "CoreFunctions.js", 	
+                  "rpg-dice-roller.bundle.min.js",
+                  "DiceContextMenu/DiceContextMenu.js",
+                  "DiceRoller.js",	
+                  "DDBApi.js", 
+                  "Settings.js",
+                  "MessageBroker.js",
+                  "Journal.js",
+                  "ChatObserver.js",
+                  "MonsterStatBlock.js",
+                  "MonsterDice.js",
+                  "CampaignPage.js"
+              ] : pgType === "campaign" ? [      
+                  "environment.js",
+                  "CoreFunctions.js", 		
+                  "DDBApi.js", 
+                  "Settings.js",
+                  "CampaignPage.js"
+              ] : [...avttScripts,
+                   "Load.js", //load Loader on VTT full pages (for iframe inject - see below)
+                   (pgType.endsWith("-dm") ? "SceneData.js" : "CharactersPage.js"),
+                  ];
+        if(pgType.startsWith("vtt-")) scripts.push("Startup.mjs");        
+        await injectScripts(scripts, where);
+        console.log("🏁 AVTT: done loading",pgType);
+    }
+    
+    if(runtime) { //extension loader context
+        await inject(pgType, document);
+    } else {
+        //in page context install loader on window for iframe injects later
+        window.AVTT_INJECT = inject;
+    }
+}());

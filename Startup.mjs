@@ -2,7 +2,7 @@
  * This is not injected on the Character sheet unless abovevtt=true is in the query
  * So if you need anything to execute on the Character sheet when abovevtt is not running, do that in CharacterPage.js
  */
-import { init_audio_mixer } from './audio/index.js'
+import { init_audio_mixer } from './audio/index.mjs'
 
 /** The first time the window loads, start doing all the things */
 $(function() {
@@ -166,13 +166,8 @@ $(function() {
             if($(`.tokenselected:not([data-id*='profile'])`).length == 0){
               showTempMessage('No non-player tokens selected');
             }
-                
-            for(let i=0; i<window.CURRENTLY_SELECTED_TOKENS.length; i++){
-
-              let id = window.CURRENTLY_SELECTED_TOKENS[i];
-              let token = window.TOKEN_OBJECTS[id];
-              if(token.isPlayer() || token.isAoe())
-                continue;
+            forSelTokens((token, id) => {    
+              if(token.isPlayer() || token.isAoe()) return;
               let newHp = Math.max(0, parseInt(token.hp) - parseInt(event.data.damage));
 
               if(window.all_token_objects[id] != undefined){
@@ -183,7 +178,7 @@ $(function() {
                 token.place_sync_persist()
                 addFloatingCombatText(id, event.data.damage, event.data.damage<0);
               }   
-            }
+            })
           }
           if(event.data.msgType=='DMOpenAlready' && window.DM && window.location.href.includes(event.data.url)){  
             window.close();
