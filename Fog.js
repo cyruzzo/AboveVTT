@@ -3076,9 +3076,15 @@ function drawing_mousedown(e) {
 
 		clear_temp_canvas()
 		let { x, y } = snap_point_to_grid(window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, true);
-		const scaleX = window.CURRENT_SCENE_DATA.scaleAdjustment?.x != undefined ? window.CURRENT_SCENE_DATA.scaleAdjustment.x : 1;
-		const scaleY = window.CURRENT_SCENE_DATA.scaleAdjustment?.y != undefined ? window.CURRENT_SCENE_DATA.scaleAdjustment.y : 1;
-		window.BRUSHPOINTS.push([Math.round(x / scaleX), Math.round(y / scaleY)])
+		if (window.CURRENT_SCENE_DATA.gridType == 1) {
+			window.BRUSHPOINTS.push([Math.round(x), Math.round(y)])
+		}
+		else {
+			const scaleX = window.CURRENT_SCENE_DATA.scaleAdjustment?.x != undefined ? window.CURRENT_SCENE_DATA.scaleAdjustment.x : 1;
+			const scaleY = window.CURRENT_SCENE_DATA.scaleAdjustment?.y != undefined ? window.CURRENT_SCENE_DATA.scaleAdjustment.y : 1;
+			const scale = window.CURRENT_SCENE_DATA.scale_factor || 1;
+			window.BRUSHPOINTS.push([Math.round(x / scaleX / scale), Math.round(y / scaleY / scale)])
+		} 
 		window.BRUSHPOINTS = Array.from(new Set(window.BRUSHPOINTS.map(JSON.stringify)), JSON.parse)		
 		
 
@@ -3488,9 +3494,17 @@ function drawing_mousemove(e) {
 	
 			clear_temp_canvas()
 			let { x, y } = snap_point_to_grid(mouseX, mouseY, true);
-			const scaleX = window.CURRENT_SCENE_DATA.scaleAdjustment?.x != undefined ? window.CURRENT_SCENE_DATA.scaleAdjustment.x : 1;
-			const scaleY = window.CURRENT_SCENE_DATA.scaleAdjustment?.y != undefined ? window.CURRENT_SCENE_DATA.scaleAdjustment.y : 1;
-			window.BRUSHPOINTS.push([Math.round(x / scaleX), Math.round(y / scaleY)])
+			
+			if (window.CURRENT_SCENE_DATA.gridType == 1){
+				window.BRUSHPOINTS.push([Math.round(x), Math.round(y)])
+
+			}
+			else{
+				const scaleX = window.CURRENT_SCENE_DATA.scaleAdjustment?.x != undefined ? window.CURRENT_SCENE_DATA.scaleAdjustment.x : 1;
+				const scaleY = window.CURRENT_SCENE_DATA.scaleAdjustment?.y != undefined ? window.CURRENT_SCENE_DATA.scaleAdjustment.y : 1;
+				const scale = window.CURRENT_SCENE_DATA.scale_factor || 1;
+				window.BRUSHPOINTS.push([Math.round(x / scaleX / scale), Math.round(y / scaleY / scale)])
+			}
 			window.BRUSHPOINTS = Array.from(new Set(window.BRUSHPOINTS.map(JSON.stringify)), JSON.parse)
 
 			if (window.CURRENT_SCENE_DATA.gridType == '1') {
@@ -5227,8 +5241,8 @@ function bucketFill(ctx, mouseX, mouseY, fogStyle = 'rgba(0,0,0,0)', fogType = 0
 
 	const isBlur = parseInt(blur) > 0;
 	
-	const bucketFillCtx = window.offScreenCombineContext;
 	bucketFillCtx.clearRect(0, 0, bucketFillCtx.canvas.width, bucketFillCtx.canvas.height);
+	const bucketFillCtx = window.offScreenCombineContext;
 	bucketFillCtx.globalCompositeOperation = "lighten";
 	bucketFillCtx.filter = isBlur ? `blur(${parseInt(blur)}px)` : `none`;
 
