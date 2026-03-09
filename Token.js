@@ -3059,8 +3059,8 @@ class Token {
 				let dragStopTimer;
 				tok.draggable({
 					stop: function (event) {
-						        event.stopPropagation();
-						        $("#VTT").css('--grid-overlay-on-tmp', '0');						
+							event.stopPropagation();
+							//$("#VTT").css('--grid-overlay-on-tmp', '0');						
 							window.DRAGGING = false;
 							window.enable_window_mouse_handlers();
 		
@@ -3071,7 +3071,7 @@ class Token {
 								check_single_token_visibility(self.options.id);
 
 							let darknessMoved = (self.options.darkness || self.options.tokenWall) ? true : false;
-							if (self.selected ) {
+							if (self.selected && window.dragSelectedTokens.length > 1) {
 								for (let tok of window.dragSelectedTokens){
 									let id = $(tok).attr("data-id");	
 									if (id == self.options.id)
@@ -3123,7 +3123,7 @@ class Token {
 						},
 					start: function (event) {
 						event.stopPropagation();
-						$("#VTT").css('--grid-overlay-on-tmp', '1');
+						//$("#VTT").css('--grid-overlay-on-tmp', '1');
 						window.disable_window_mouse_handlers();
 						pauseCursorEventListener = true; // we're going to send events from drag, so we don't need the eventListener sending events, too
 						if (get_avtt_setting_value("allowTokenMeasurement")) {
@@ -3174,7 +3174,7 @@ class Token {
 						
 						if(!shiftHeld){
 							$(`.token[data-group-id='${self.options.groupId}']:not([style*=' display: none;'])`).toggleClass('tokenselected', true); // set grouped tokens as selected
-						}
+					}
 						
 
 						window.playerTokenAuraIsLight = (window.CURRENT_SCENE_DATA.disableSceneVision == '1') ? false : (playerTokenId == undefined) ? true : window.TOKEN_OBJECTS[playerTokenId].options.auraislight; // used in drag to know if we should check for wall/LoS collision.
@@ -3879,7 +3879,6 @@ function snap_point_to_grid(mapX, mapY, forceSnap = false, tinyToken = false, to
 		}
 		const currentGridX = (mapX - offsetx) / gridWidth;
 		const currentGridY = (mapY - offsety) / gridHeight;
-		console.log("mapX", mapX, mapY, offsetx, offsety, gridWidth, gridHeight, currentGridX, currentGridY);
 		return {
 			//todo not sure what ceil is for here
 			x: Math.floor(currentGridX) * gridWidth + offsetx,
