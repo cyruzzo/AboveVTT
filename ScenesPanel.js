@@ -368,9 +368,10 @@ function create_full_scene_from_uvtt(data, url, doorType, doorHidden){ //this se
 
 }
 
-function open_grid_wizard_controls(scene_id, aligner1, aligner2, regrid=function(){}, copiedSceneData = window.CURRENT_SCENE_DATA) {
+function open_grid_wizard_controls(scene_id, aligner1, aligner2, regrid = function () { }, copiedSceneData = $.extend(true, {}, window.CURRENT_SCENE_DATA)) {
 	let scene = window.ScenesHandler.scenes[scene_id];
 	window.WIZARDING = true;
+	window.CURRENT_SCENE_DATA.grid = "1";
 	window.CURRENT_SCENE_DATA.gridOver = "1";
 	function form_toggle(name, hoverText, defaultOn, callback){
 		const toggle = $(
@@ -702,7 +703,9 @@ function open_grid_wizard_controls(scene_id, aligner1, aligner2, regrid=function
 				...window.CURRENT_SCENE_DATA,
 				upsq: $('input[name="upsq"]').val(),
 				fpsq: subDivided != 0 ? '5' : gridMeasurement,
-				grid_subdivided: subDivided
+				grid_subdivided: subDivided,
+				grid: copiedSceneData.grid,
+				gridOver: copiedSceneData.gridOver
 			}
 			if (subDivided != 0){
 				window.CURRENT_SCENE_DATA.hpps = window.CURRENT_SCENE_DATA.hpps/(gridMeasurement/5)
@@ -1410,8 +1413,11 @@ Tbh I feel like these overcomplicate things
 		const max = parseFloat($(this).attr('max'));
 		const percentage = Math.round((val - min) / (max - min) * 100);
 		particleCount.text(percentage + '%');
-		window.CURRENT_SCENE_DATA.weatherIntensity = val;
-		set_weather();
+		if (window.CURRENT_SCENE_DATA.id == scene.id){
+			window.CURRENT_SCENE_DATA.weatherIntensity = val;
+			set_weather();
+		}
+
 	});
 
 	weatherSelect.on('change', function() {
@@ -1427,9 +1433,11 @@ Tbh I feel like these overcomplicate things
 			particleCount.text(percentage + '%');
 			intensityRow.show();
 		}
-		window.CURRENT_SCENE_DATA.weather = selectedWeather;
-		window.CURRENT_SCENE_DATA.weatherIntensity = intensitySlider.val();
-		set_weather();
+		if (window.CURRENT_SCENE_DATA.id == scene.id) {
+			window.CURRENT_SCENE_DATA.weather = selectedWeather;
+			window.CURRENT_SCENE_DATA.weatherIntensity = intensitySlider.val();
+			set_weather();
+		}
 	});
 
 	if (weatherValue === 0 || weatherValue === '0') {
@@ -1897,6 +1905,7 @@ async function build_scene_data_payload(parentId, fullPath, sceneName = "New Sce
 		title: candidate,
 		player_map: mapUrl || "",
 		parentId,
+		...get_custom_scene_settings()
 	};
 
 	const normalizedFullPath = sanitize_folder_path(sanitizedFullPath);
