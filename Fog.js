@@ -1187,31 +1187,30 @@ function closestHexVertex(type, size, x, y, offsetx = 0, offsety = 0, allowCente
 }
 
 function getCurrentClosestHex(x, y, vertex=false, allowCenter=false) {
-	const sd = window.CURRENT_SCENE_DATA;
-	const hexSize = sd.hpps / 1.5; // long radius; hpps = vpps by avtt convention
+	const scene = window.CURRENT_SCENE_DATA;
+	const hexSize = scene.hpps / 1.5; // long radius; hpps = vpps by avtt convention
 	//subtle: adjust x before and after finding points
-	const adjx = sd.scaleAdjustment?.x || 1;
-	const adjy = sd.scaleAdjustment?.y || 1;
-	const ret = (vertex ? closestHexVertex : closestHexCenter) (sd.gridType, hexSize,
-								    x/adjx, y/adjy, sd.offsetx, sd.offsety,
+	const adjx = scene.scaleAdjustment?.x || 1;
+	const adjy = scene.scaleAdjustment?.y || 1;
+	const ret = (vertex ? closestHexVertex : closestHexCenter) (scene.gridType, hexSize,
+								    x/adjx, y/adjy, scene.offsetx, scene.offsety,
 								    allowCenter);
 	return [ret[0]*adjx,ret[1]*adjy];
 }
 
 // make a tile grid suitable for a CSS background pattern
 function svg_tile(type = '1', xs = 100, ys = 100, color = 'black', lineWidth = 5, dash = []) {
-	//todo: check dash
-	const strokeAttr = `fill="none" stroke="${color}" stroke-width="${lineWidth}" vector-effect="non-scaling-stroke" ${dash ? 'stroke-dasharray="' + dash.join(',')+ '"': ''}`;
-    const svg = ((type === '1') ? // Rectangular Grid
+	const strokeAttr = `fill="none" stroke="${color}" stroke-width="${lineWidth}" vector-effect="non-scaling-stroke" stroke-linecap="square" stroke-linejoin="bevel" ${dash ? 'stroke-dasharray="' + dash.join(',')+ '"': ''}`;
+	const svg = ((type == '1') ? // Rectangular Grid
         `<svg xmlns="http://www.w3.org/2000/svg" width="${xs}" height="${ys}" overflow="visible">
             <path d="M ${xs} 0 L 0 0 0 ${ys}" ${strokeAttr}/>
         </svg>` 
-        : (type === '2') ? // (Pointy Top, Vertical Sides)
-        `<svg xmlns="http://www.w3.org/2000/svg" width="${xs}" height="${ys*1.5}" overflow="visible">
+        : (type == '2') ? // (Pointy Top, Vertical Sides)
+			`<svg xmlns="http://www.w3.org/2000/svg" width="${xs}" height="${ys*1.5}" overflow="visible">
             <path d="M ${xs} ${ys/4} L ${xs/2} 0 L 0 ${ys/4} L 0 ${ys*3/4} L ${xs/2} ${ys} L ${xs} ${ys*3/4} L ${xs} ${ys/4} M ${xs/2} ${ys} L ${xs/2} ${ys*1.5} Z" ${strokeAttr}/>
         </svg>` 
         : // (Flat Top, Pointy Sides)
-        `<svg xmlns="http://www.w3.org/2000/svg" width="${xs*1.5}" height="${ys}" overflow="visible">
+			`<svg xmlns="http://www.w3.org/2000/svg" width="${xs*1.5}" height="${ys}" overflow="visible">
             <path d="M ${xs/4} ${ys} L 0 ${ys/2} L ${xs/4} 0 L ${xs*3/4} 0 L ${xs} ${ys/2} L ${xs*3/4} ${ys} L ${xs/4} ${ys} M ${xs} ${ys/2} L ${xs*1.5} ${ys/2} Z" ${strokeAttr}/>
         </svg>`
 		).replace(/\s+/g, ' ').trim();
@@ -1219,83 +1218,83 @@ function svg_tile(type = '1', xs = 100, ys = 100, color = 'black', lineWidth = 5
 }
 
 function draw_svg_grid(type=null, hpps=null, vpps=null, offsetX=null, offsetY=null, color=null, lineWidth=null, subdivide=null, dash=[]) {
-	const sd = window.CURRENT_SCENE_DATA;
-	const grc = $('#grid_svg_underlay');
-	const grc2 = $('#grid_svg_overlay');	
+	const scene = window.CURRENT_SCENE_DATA;
+	const gridUnder = $('#grid_svg_underlay');
+	const gridOver = $('#grid_svg_overlay');	
 	if(type === "0") { //hack for clear grid
-		grc.css('visibility', 'hidden');
-		grc2.css('visibility', 'hidden');
+		gridUnder.css('display', 'none');
+		$("#VTT").css('--grid-overlay-on', 'none');
 		return;
 	}
-	const gridType = sd.gridType;
-	const scale = sd.scale_factor
+	const gridType = scene.gridType;
+	const scale = scene.scale_factor
 	//pps for hex - hex radius is (pps / 1.5)
-	hpps = hpps || sd.hpps;
-	vpps = vpps || sd.vpps;	
-	const adjx = gridType == 1 ? 1 : (sd.scaleAdjustment?.x || 1);
-	const adjy = gridType == 1 ? 1 : (sd.scaleAdjustment?.y || 1);
-	let startX = (offsetX || sd.offsetx) * adjx / scale;
-	let startY = (offsetY || sd.offsety) * adjy / scale;
-	// Warning: global side effects of drawing right here!!!
-	// the draw function makes h/vpps 1:1 (this is how old code worked)
-	// todo: would love to remove this as it's confusing in a drawing routine
+	hpps = hpps || scene.hpps;
+	vpps = vpps || scene.vpps;	
+	const adjx = gridType == 1 ? 1 : (scene.scaleAdjustment?.x || 1);
+	const adjy = gridType == 1 ? 1 : (scene.scaleAdjustment?.y || 1);
+	let startX = (offsetX || scene.offsetx) * adjx / scale;
+	let startY = (offsetY || scene.offsety) * adjy / scale;
 	if(gridType == 2) {
-		sd.hpps = hpps = vpps;
+		scene.hpps = hpps = vpps;  //hpps and vpps need to be set correctly one the scene for most other things we can't remove this
 	} else if(gridType == 3) {
-		sd.vpps = vpps = hpps;
+		scene.vpps = vpps = hpps;
 	}
+	
 	const xs = hpps / ((gridType == 1) ? 1 : 0.75) * (gridType == 2 ? (sr3/2) : 1) * adjx / scale;
 	const ys = vpps / ((gridType == 1) ? 1 : 0.75) * (gridType == 3 ? (sr3/2) : 1) * adjy / scale;
-	var submult = 1;
+	let submult = 1;
 	if(gridType != 1) {
 		startX -= xs/2;
 		startY -= ys/2;
 	} else {
-		if(!subdivide) subdivide = sd.grid_subdivided;
-		if(subdivide && subdivide !== '0') submult = parseInt(subdivide)+1
+		if(!subdivide) subdivide = scene.grid_subdivided;
+		if(subdivide && subdivide !== '0') submult = parseInt(window.CURRENT_SCENE_DATA.fpsq) / 5; // we divide into 5 ft squares
 	}
-	const gr = svg_tile(gridType, xs*submult, ys*submult,
-			    color || sd.grid_color,
-			    lineWidth || sd.grid_line_width, dash);
+	let strokeWidth = lineWidth || scene.grid_line_width;
+	strokeWidth = Math.max(strokeWidth / window.ZOOM / scale, strokeWidth); // fix disappearing lines on zoom due rendering pixel averages
+	const gridImage = svg_tile(gridType, xs*submult, ys*submult,
+			    color || scene.grid_color,
+		        strokeWidth, dash);
+
 	const tilex = gridType == 3 ? 1.5 : 1;
 	const tiley = gridType == 2 ? 1.5 : 1; //adjust for next row/col extra hex fill line
+
 	const bk = {
-		'background-image': "url("+gr+")",
+		'background-image': "url(" + gridImage +")",
 		'background-size': `${xs * tilex}px ${ys * tiley}px`,
-		'background-position-x': Math.round(startX), //todo? Round or not?
-		'background-position-y': Math.round(startY)
+		'background-position-x': startX,
+		'background-position-y': startY
 	}
-	grc2.css(bk);
-	grc.css(bk);
-	grid_overlay_update(sd.grid, sd.gridOver);
+	gridOver.css(bk);
+	gridUnder.css(bk);
+	grid_overlay_update(scene.grid, scene.gridOver);
 }
 
 function grid_overlay_update(grid, gridOver) {
 	//grid renders into 2 elements (below darkness&fog and above)
 	// .grid - global visibility control
 	// .gridOver - grid overlay control:
-	//    0=never 1=always 2=drag guide (when dragging) 3=only show drag guide (but not under grid)
-	$('#grid_svg_overlay').css('visibility', (grid != 0 && gridOver != 0) ? 'visible' : 'hidden');
-	$("#VTT").css('--grid-overlay-on', gridOver == 1 ? '1' : '0');
-	$('#grid_svg_underlay').css('visibility', (grid != '0' && gridOver != 3) ? 'visible' : 'hidden');
+	// 0=under darkness/fog grid 1=over darkness/fog grid 
+	$('#grid_svg_underlay').css('display', (grid != '0' && gridOver == 0) ? 'block' : 'none');
+	$("#VTT").css('--grid-overlay-on', grid != '0' && gridOver == 1 ? 'block' : 'none');
 }
 
 //returns current [width,height] of grid (including hex)
 function grid_size(scaled = false, adjusted = false) {
-	const sd = window.CURRENT_SCENE_DATA;
+	const scene = window.CURRENT_SCENE_DATA;
 	const hexadj_constant = sr3 / 1.5; //1.155...
-	const xhex = (sd.gridType == 2) ? hexadj_constant : 1;
-	const yhex = (sd.gridType == 3) ? hexadj_constant : 1;
-	const scale = scaled ? sd.scale_factor : 1;
-	const adjx = ((adjusted ? sd.scaleAdjustment?.x : 1) || 1) / scale * xhex;
-	const adjy = ((adjusted ? sd.scaleAdjustment?.y : 1) || 1) / scale * yhex;
-	return [sd.hpps * adjx, sd.vpps * adjy];
+	const xhex = (scene.gridType == 2) ? hexadj_constant : 1;
+	const yhex = (scene.gridType == 3) ? hexadj_constant : 1;
+	const scale = scaled ? scene.scale_factor : 1;
+	const adjx = ((adjusted ? scene.scaleAdjustment?.x : 1) || 1) / scale * xhex;
+	const adjy = ((adjusted ? scene.scaleAdjustment?.y : 1) || 1) / scale * yhex;
+	return [scene.hpps * adjx, scene.vpps * adjy];
 }
 
 function redraw_grid(hpps=null, vpps=null, offsetX=null, offsetY=null, color=null, lineWidth=null, subdivide=null, dash=[]){
 	hide_wizarding_box();
 	clear_grid();
-	$("#VTT").css('--grid-overlay-on', !!window.CURRENT_SCENE_DATA.grid_above_dark);
 	draw_svg_grid(null, hpps, vpps, offsetX, offsetY, color, lineWidth, subdivide, dash);	
 }
 
@@ -1342,17 +1341,17 @@ function hide_wizarding_box() {
 	if(hex) hex.setAttribute('visibility', 'hidden');
 }
 function draw_wizarding_box() {
-	const sd = window.CURRENT_SCENE_DATA;
+	const scene = window.CURRENT_SCENE_DATA;
 	const svg = document.getElementById("wizbox");
 	if(!svg) return;
 	let al1 = {
-		x: (parseInt($("#aligner1").css("left")) + 29)/sd.scale_factor,
-		y: (parseInt($("#aligner1").css("top")) + 29)/sd.scale_factor,
+		x: (parseInt($("#aligner1").css("left")) + 29)/scene.scale_factor,
+		y: (parseInt($("#aligner1").css("top")) + 29)/scene.scale_factor,
 	};
 
 	let al2 = {
-		x: (parseInt($("#aligner2").css("left")) + 29)/sd.scale_factor,
-		y: (parseInt($("#aligner2").css("top")) + 29)/sd.scale_factor,
+		x: (parseInt($("#aligner2").css("left")) + 29)/scene.scale_factor,
+		y: (parseInt($("#aligner2").css("top")) + 29)/scene.scale_factor,
 	};
 	const grid = document.getElementById('wizbox-grid');
 	const hex = document.getElementById('wizbox-hex');	
@@ -1365,8 +1364,8 @@ function draw_wizarding_box() {
 	} else {
 		const hexedge = Math.abs(al2.y - al1.y) / 3;
 		const rotate = $('#gridType input:checked').val() == 3 ? 90 : 0;
-		const adjx = sd.scaleAdjustment?.x || 1.0;
-		const adjy = sd.scaleAdjustment?.y || 1.0;
+		const adjx = scene.scaleAdjustment?.x || 1.0;
+		const adjy = scene.scaleAdjustment?.y || 1.0;
 		//todo deal with translate for adjx/adjy
 		grid.setAttribute('visibility', 'hidden');
 		hex.setAttribute('transform', `translate(${al1.x * adjx}, ${al1.y * adjy}) scale(${hexedge*adjx}, ${hexedge*adjy}) rotate(${rotate})`);
@@ -1652,9 +1651,11 @@ function redraw_fog() {
  				}
 				else{
 					ctx.fillStyle = "#000"
+					ctx.scale(window.CURRENT_SCENE_DATA.scaleAdjustment.x, window.CURRENT_SCENE_DATA.scaleAdjustment.y)
 	 				for(let i=0; i<d[0].length; i++){
 	 					drawHexagon(ctx, d[0][i][0], d[0][i][1])
 	 				}
+					ctx.setTransform(1, 0, 0, 1, 0, 0);
 	 			}
 			
 
@@ -1710,9 +1711,11 @@ function redraw_fog() {
 				else{
 					ctx.globalCompositeOperation = 'destination-out';
 	 				ctx.fillStyle = "#000000";
+					ctx.scale(window.CURRENT_SCENE_DATA.scaleAdjustment.x, window.CURRENT_SCENE_DATA.scaleAdjustment.y)
 	 				for(let i=0; i<d[0].length; i++){
 	 					drawHexagon(ctx, d[0][i][0], d[0][i][1])
 	 				}
+					ctx.setTransform(1, 0, 0, 1, 0, 0);
 	 			}				
 
 				ctx.globalCompositeOperation = 'source-over';
@@ -1724,9 +1727,11 @@ function redraw_fog() {
 					}
 				}
 				else{
+					ctx.scale(window.CURRENT_SCENE_DATA.scaleAdjustment.x, window.CURRENT_SCENE_DATA.scaleAdjustment.y)
 	 				for(let i=0; i<d[0].length; i++){
 	 					drawHexagon(ctx, d[0][i][0], d[0][i][1])
 	 				}
+					ctx.setTransform(1, 0, 0, 1, 0, 0);
 	 			}
 			}
 		}
@@ -2951,9 +2956,10 @@ function drawing_mousedown(e) {
 	// select modifies this line but never resets it, so reset it here
 	// otherwise all drawings are dashed
 
+	/*	commented out as it's not consistent and is confusing can reasses if we enable other options for grid over
 	if(window.DRAWFUNCTION === 'measure') {
 		$("#VTT").css('--grid-overlay-on-tmp', '1');
-	}
+	}*/
 	
 	// these are generic values used by most drawing functionality
 	window.LINEWIDTH = data.draw_line_width
@@ -3101,23 +3107,35 @@ function drawing_mousedown(e) {
 		window.BRUSHWAIT = false;
 		window.BRUSHPOINTS = [];
 		window.DRAWCOLOR = 'rgba(255,0,0,0.6)'
-
 		window.temp_context.fillStyle = window.DRAWCOLOR;
-		const hpps = window.CURRENT_SCENE_DATA.gridType == 2 ? window.CURRENT_SCENE_DATA.vpps : window.CURRENT_SCENE_DATA.hpps;
 
 		clear_temp_canvas()
 		let { x, y } = snap_point_to_grid(window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, true);
-		window.BRUSHPOINTS.push([Math.round(x), Math.round(y)])
+		if (window.CURRENT_SCENE_DATA.gridType == 1) {
+			window.BRUSHPOINTS.push([Math.round(x), Math.round(y)])
+		}
+		else {
+			const scaleX = window.CURRENT_SCENE_DATA.scaleAdjustment?.x != undefined ? window.CURRENT_SCENE_DATA.scaleAdjustment.x : 1;
+			const scaleY = window.CURRENT_SCENE_DATA.scaleAdjustment?.y != undefined ? window.CURRENT_SCENE_DATA.scaleAdjustment.y : 1;
+			const scale = window.CURRENT_SCENE_DATA.scale_factor || 1;
+			window.BRUSHPOINTS.push([Math.round(x / scaleX / scale), Math.round(y / scaleY / scale)])
+		} 
 		window.BRUSHPOINTS = Array.from(new Set(window.BRUSHPOINTS.map(JSON.stringify)), JSON.parse)		
+		
+
 		if(window.CURRENT_SCENE_DATA.gridType == '1'){
 			for(let i in window.BRUSHPOINTS){
 				drawRect(window.temp_context, window.BRUSHPOINTS[i][0], window.BRUSHPOINTS[i][1], window.CURRENT_SCENE_DATA.hpps, window.CURRENT_SCENE_DATA.vpps, window.DRAWCOLOR, true, window.DRAWTYPE);
 			}
 		} else {
-			for(let i in window.BRUSHPOINTS){
+			window.temp_context.scale(window.CURRENT_SCENE_DATA.scaleAdjustment.x, window.CURRENT_SCENE_DATA.scaleAdjustment.y)
+			for (let i in window.BRUSHPOINTS) {
 				drawHexagon(window.temp_context, window.BRUSHPOINTS[i][0], window.BRUSHPOINTS[i][1])
 			}
+			window.temp_context.setTransform(1, 0, 0, 1, 0, 0);
 		}
+		
+
 	}
 	else if (window.DRAWSHAPE === "polygon") {
 		if (window.BEGIN_MOUSEX && window.BEGIN_MOUSEX.length > 0) {
@@ -3516,23 +3534,34 @@ function drawing_mousemove(e) {
 			}
 		}
 		else if (window.DRAWSHAPE == "grid-brush"){
-			
 			window.temp_context.fillStyle = window.DRAWCOLOR;
+	
 			clear_temp_canvas()
 			let { x, y } = snap_point_to_grid(mouseX, mouseY, true);
-			window.BRUSHPOINTS.push([Math.round(x), Math.round(y)])
-			window.BRUSHPOINTS = Array.from(new Set(window.BRUSHPOINTS.map(JSON.stringify)), JSON.parse)
 			
-			if(window.CURRENT_SCENE_DATA.gridType == '1'){
-				for(let i in window.BRUSHPOINTS){
-					drawRect(window.temp_context, window.BRUSHPOINTS[i][0], window.BRUSHPOINTS[i][1], window.CURRENT_SCENE_DATA.hpps, window.CURRENT_SCENE_DATA.vpps, window.DRAWCOLOR, true, window.DRAWTYPE);
-				}
+			if (window.CURRENT_SCENE_DATA.gridType == 1){
+				window.BRUSHPOINTS.push([Math.round(x), Math.round(y)])
+
 			}
 			else{
- 				for(let i in window.BRUSHPOINTS){
- 					drawHexagon(window.temp_context, window.BRUSHPOINTS[i][0], window.BRUSHPOINTS[i][1])
- 				}
- 			}
+				const scaleX = window.CURRENT_SCENE_DATA.scaleAdjustment?.x != undefined ? window.CURRENT_SCENE_DATA.scaleAdjustment.x : 1;
+				const scaleY = window.CURRENT_SCENE_DATA.scaleAdjustment?.y != undefined ? window.CURRENT_SCENE_DATA.scaleAdjustment.y : 1;
+				const scale = window.CURRENT_SCENE_DATA.scale_factor || 1;
+				window.BRUSHPOINTS.push([Math.round(x / scaleX / scale), Math.round(y / scaleY / scale)])
+			}
+			window.BRUSHPOINTS = Array.from(new Set(window.BRUSHPOINTS.map(JSON.stringify)), JSON.parse)
+
+			if (window.CURRENT_SCENE_DATA.gridType == '1') {
+				for (let i in window.BRUSHPOINTS) {
+					drawRect(window.temp_context, window.BRUSHPOINTS[i][0], window.BRUSHPOINTS[i][1], window.CURRENT_SCENE_DATA.hpps, window.CURRENT_SCENE_DATA.vpps, window.DRAWCOLOR, true, window.DRAWTYPE);
+				}
+			} else {
+				window.temp_context.scale(window.CURRENT_SCENE_DATA.scaleAdjustment.x, window.CURRENT_SCENE_DATA.scaleAdjustment.y)
+				for (let i in window.BRUSHPOINTS) {
+					drawHexagon(window.temp_context, window.BRUSHPOINTS[i][0], window.BRUSHPOINTS[i][1])
+				}
+				window.temp_context.setTransform(1, 0, 0, 1, 0, 0);
+			}
 		}
 	}
 			
@@ -3630,8 +3659,8 @@ function isRotatedSquareInsideRect(rect, cx, cy, w, angle) {
  * @returns
  */
 function drawing_mouseup(e) {
-	$("#VTT").css('--grid-overlay-on-tmp', '0');
 	hide_select_box();
+	//$("#VTT").css('--grid-overlay-on-tmp', '0');	commented out as it's not consistent and is confusing can reasses if we enable other options for grid over
 	
 	// ignore this if we're dragging a token
 	if ($(".ui-draggable-dragging:not([data-clone-id])").length > 0) {
@@ -4845,32 +4874,29 @@ function drawCircle(ctx, centerX, centerY, radius, style, fill=true, lineWidth =
 
 
 function drawHexagon(ctx, x, y) {
-	const scale = window.CURRENT_SCENE_DATA.scale_factor;
-	const adjx = window.CURRENT_SCENE_DATA.scaleAdjustment.x || 1;
-	const adjy = window.CURRENT_SCENE_DATA.scaleAdjustment.y || 1;
-	const hexSize = window.CURRENT_SCENE_DATA.hpps / 1.5 / scale;
-	x = x/scale;
-	y = y/scale;
-	if(window.CURRENT_SCENE_DATA.gridType == 3){ //todo: collapse both loops simpler code
+	const hpps = window.CURRENT_SCENE_DATA.gridType == 2 ? window.CURRENT_SCENE_DATA.vpps : window.CURRENT_SCENE_DATA.hpps;
+
+	const hexSize = hpps / 1.5 / window.CURRENT_SCENE_DATA.scale_factor || window.CURRENT_SCENE_DATA.hpps / 1.5 / window.CURRENT_SCENE_DATA.scale_factor;
+
+	if (window.CURRENT_SCENE_DATA.gridType == 3) {
 		ctx.beginPath();
-		ctx.moveTo(x + hexSize * adjx, y);
+		ctx.moveTo(x + hexSize, y);
 		for (let i = 1; i <= 6; i++) {
-			//todo: a lot of slow math for constants...
 			let angle = i * Math.PI / 3;
-			let dx = hexSize * Math.cos(angle) * adjx;
-			let dy = hexSize * Math.sin(angle) * adjy;
+			let dx = hexSize * Math.cos(angle);
+			let dy = hexSize * Math.sin(angle);
 			ctx.lineTo(x + dx, y + dy);
 		}
 		ctx.closePath();
 		ctx.fill();
 	}
-	else{
+	else {
 		ctx.beginPath();
-		ctx.moveTo(x, y + hexSize * adjy);
+		ctx.moveTo(x, y + hexSize);
 		for (let i = 1; i <= 6; i++) {
 			let angle = i * Math.PI / 3;
-			let dx = hexSize * Math.sin(angle) * adjx;
-			let dy = hexSize * Math.cos(angle) * adjy;
+			let dx = hexSize * Math.sin(angle);
+			let dy = hexSize * Math.cos(angle);
 			ctx.lineTo(x + dx, y + dy);
 		}
 		ctx.closePath();
@@ -5248,8 +5274,8 @@ function bucketFill(ctx, mouseX, mouseY, fogStyle = 'rgba(0,0,0,0)', fogType = 0
 
 	const isBlur = parseInt(blur) > 0;
 	
-	const bucketFillCtx = window.offScreenCombineContext;
 	bucketFillCtx.clearRect(0, 0, bucketFillCtx.canvas.width, bucketFillCtx.canvas.height);
+	const bucketFillCtx = window.offScreenCombineContext;
 	bucketFillCtx.globalCompositeOperation = "lighten";
 	bucketFillCtx.filter = isBlur ? `blur(${parseInt(blur)}px)` : `none`;
 

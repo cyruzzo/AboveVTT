@@ -1,14 +1,6 @@
 
 function consider_upscaling(target){
-		if(target.hpps < 60 && target.hpps > 25  && target.vpps < 60 && target.vpps > 25){
-			target.scale_factor=2;
-		}
-		else if(target.hpps <=25 || target.vpps <=25){
-			target.scale_factor=4;
-		}
-		else{
-			target.scale_factor=1;
-		}
+	target.scale_factor = Math.max(1, Math.ceil(60 / target.hpps), Math.ceil(60 / target.vpps));	
 }
 
 function handle_basic_form_toggle_click(event){
@@ -376,33 +368,11 @@ function create_full_scene_from_uvtt(data, url, doorType, doorHidden){ //this se
 
 }
 
-function open_grid_wizard_controls(scene_id, aligner1, aligner2, regrid=function(){}, copiedSceneData = window.CURRENT_SCENE_DATA) {
+function open_grid_wizard_controls(scene_id, aligner1, aligner2, regrid = function () { }, copiedSceneData = $.extend(true, {}, window.CURRENT_SCENE_DATA)) {
 	let scene = window.ScenesHandler.scenes[scene_id];
 	window.WIZARDING = true;
-	function form_row(name, title, inputOverride=null, imageValidation=false) {
-		const row = $(`<div style='width:100%;' id='${name}_row'/>`);
-		const rowLabel = $("<div style='display: inline-block; width:30%'>" + title + "</div>");
-		rowLabel.css("font-weight", "bold");
-		const rowInputWrapper = $("<div style='display:inline-block; width:60%; padding-right:8px' />");
-		let rowInput
-		if(!inputOverride){
-			if (imageValidation){
-				rowInput = $(`<input type="text" onClick="this.select();" name=${name} style='width:100%' autocomplete="off" value="${scene[name] || "" }" />`);
-			}else{
-				rowInput = $(`<input type="text" name=${name} style='width:100%' autocomplete="off" value="${scene[name] || ""}" />`);
-			}
-			 
-		}
-		else{
-			rowInput = inputOverride
-		}
-		
-		rowInputWrapper.append(rowInput);
-		row.append(rowLabel);
-		row.append(rowInputWrapper);
-		return row
-	};
-
+	window.CURRENT_SCENE_DATA.grid = "1";
+	window.CURRENT_SCENE_DATA.gridOver = "1";
 	function form_toggle(name, hoverText, defaultOn, callback){
 		const toggle = $(
 			`<button id="${name}_toggle" name=${name} type="button" role="switch" data-hover="${hoverText}"
@@ -415,27 +385,6 @@ function open_grid_wizard_controls(scene_id, aligner1, aligner2, regrid=function
 		return toggle
 	}
 
-	async function handle_form_grid_on_change(){
-		// not editting this scene, don't show live updates to grid
-		if (scene.id !== window.CURRENT_SCENE_DATA.id){
-			return
-		}
-	
-		const {hpps, vpps, offsetx, offsety, grid_color, grid_line_width, grid_subdivided, grid} = await get_edit_form_data()
-		// redraw grid with new information
-		if(grid === "1" && window.CURRENT_SCENE_DATA.scale_check){
-			let conversion = window.CURRENT_SCENE_DATA.scale_factor * window.CURRENT_SCENE_DATA.conversion
-			redraw_grid(parseFloat(hpps*conversion), parseFloat(vpps*conversion), offsetx*conversion, offsety*conversion, grid_color, grid_line_width, grid_subdivided )
-		}
-		else if(grid === "1"){
-			redraw_grid(parseFloat(hpps), parseFloat(vpps), offsetx, offsety, grid_color, grid_line_width, grid_subdivided )
-		}
-		// redraw grid using current scene data
-		else if(grid === "0"){
-			clear_grid()
-		}
-	}
-
 	$("#edit_dialog").remove();
 
 	scene.fog_of_war = "1"; // ALWAYS ON since 0.0.18
@@ -444,13 +393,8 @@ function open_grid_wizard_controls(scene_id, aligner1, aligner2, regrid=function
 	const dialog = $(`<div id='edit_dialog' data-scene-id='${scene.id}'></div>`);
 	dialog.css('background', "url('/content/1-0-1487-0/skins/waterdeep/images/mon-summary/paper-texture.png')");
 
-
-
-
 	scene_properties = $('<div id="scene_properties"/>');
 	dialog.append(scene_properties);
-
-
 
 	adjust_create_import_edit_container(dialog, undefined, undefined, window.innerWidth-340, 340);
 
@@ -464,9 +408,6 @@ function open_grid_wizard_controls(scene_id, aligner1, aligner2, regrid=function
 	let uuid_hidden = $("<input name='uuid' type='hidden'/>");
 	uuid_hidden.val(scene['uuid']);
 	form.append(uuid_hidden);
-
-	let grid_buttons = $("<div/>");
-
 	let gridType = $(`
 		<div id="gridType">
 			<fieldset>
@@ -520,8 +461,6 @@ function open_grid_wizard_controls(scene_id, aligner1, aligner2, regrid=function
 		}
 		regrid();
 	})
-
-
 
 	let verticalMinorAdjustment = $(`<div id="verticalMinorAdjustment">
 			<label for="verticalMinorAdjustmentInput">Minor Vertical Adjustment</label>
@@ -581,7 +520,7 @@ function open_grid_wizard_controls(scene_id, aligner1, aligner2, regrid=function
 	manual.append($(`
 			<div id='linkAligners' title='Locks the draggable grid aligners to 1:1 aspect ratio' class='hideHex'><div style='display:inline-block; width:40%'>Link Aligners 1:1</div><input style='display: none;' type='number' min='0' max='1' step='1' name='alignersLinked'></div></div>
 			<div title='The size the ruler will measure a side of a square.'><div style='display:inline-block; width:40%'>Measurement:</div><div style='display:inline-block; width:60'%'><input type='number' name='fpsq' placeholder='5' value='${window.CURRENT_SCENE_DATA.fpsq}'> <input name='upsq' placeholder='ft' value='${window.CURRENT_SCENE_DATA.upsq}'></div></div>
-			<div id='gridSubdividedRow' class='hideHex' style='display: ${(window.CURRENT_SCENE_DATA.fpsq == 10 || window.CURRENT_SCENE_DATA.fpsq == 15 || window.CURRENT_SCENE_DATA.fpsq == 20) ? 'block' : 'none'}' title='Split grid into 5ft sections'><div style='display:inline-block; width:40%'>Split into 5ft squares</div><div style='display:inline-block; width:60'%'><input style='display: none;' type='number' min='0' max='1' step='1' name='grid_subdivided'></div></div>
+			<div id='gridSubdividedRow' class='hideHex' style='display: ${(window.CURRENT_SCENE_DATA.fpsq % 5 == 0 && window.CURRENT_SCENE_DATA.fpsq>5) ? 'block' : 'none'}' title='Split grid into 5ft sections'><div style='display:inline-block; width:40%'>Split into 5ft squares</div><div style='display:inline-block; width:60'%'><input style='display: none;' type='number' min='0' max='1' step='1' name='grid_subdivided'></div></div>
 			<div id='additionalGridInfo' class='closed'>Additional Grid Info / Manual Settings</div>
 			<div title='Number of grid squares Width x Height.'><div style='display:inline-block; width:30%'>Grid size</div><div style='display:inline-block;width:70%;'><input id='squaresWide' class='hideHorizontalHex' type='number' min='1' step='any' value='${$("#scene_map").width() / window.CURRENT_SCENE_DATA.hpps}'><span style='display: inline' class='squaresWide hideHorizontalHex'> squares wide</span><br class='hideHorizontalHex'/><input type='number' id='squaresTall' class='hideVerticalHex' value='${$("#scene_map").height() / window.CURRENT_SCENE_DATA.vpps}' min='1' step="any"><span style='display: inline' class='squaresTall hideVerticalHex'> squares tall</span></div></div>
 			<div title='Grid offset from the sides of the map in pixels. From top left corner of square and from middle of hex.'>
@@ -614,7 +553,7 @@ function open_grid_wizard_controls(scene_id, aligner1, aligner2, regrid=function
 	}));
 
 	manual.find('input[name="fpsq"]').on('change blur', function(){
-		if(window.CURRENT_SCENE_DATA.gridType == 1 && $(this).val() == 10 || $(this).val() == 15 || $(this).val() == 20){
+		if (window.CURRENT_SCENE_DATA.gridType == 1 && $(this).val() % 5 == 0 && $(this).val() > 5){
 			$('#gridSubdividedRow').css('display', 'block');
 			$('#gridInstructions').text(`Select a 3x3 square using the selectors to align your grid. To change the grid to be appropriately sized for medium creatures enable split grid.`)
 		}
@@ -684,7 +623,7 @@ function open_grid_wizard_controls(scene_id, aligner1, aligner2, regrid=function
 		else
 			width = 1;
 		const dash = [30, 5]
-		const color = "rgba(255, 0, 0,0.5)";
+		const color = "rgba(255, 0, 0,1)";
 		window.CURRENT_SCENE_DATA.gridType = gridType;
 		if(manual.find('input[name="offsety"]').val()== undefined || manual.find('input[name="offsetx"]').val()==undefined || (manual.find('#squaresTall').val()==undefined || manual.find('#squaresWide').val()==undefined ))
 			return;
@@ -724,12 +663,9 @@ function open_grid_wizard_controls(scene_id, aligner1, aligner2, regrid=function
 				$('input[name="offsetx"]').attr('data-prev-value', window.CURRENT_SCENE_DATA.offsetx);
 				$('input[name="offsety"]').attr('data-prev-value', window.CURRENT_SCENE_DATA.offsety);			
 			}
-		
-			
-
 		}
+		//to do: move the grid aligners to match the input settings for hex
 		redraw_grid(null,null,null,null,color,width,null,dash);		
-		//to do: move the grid aligners to match the input settings.
 	}			
 
 
@@ -759,112 +695,37 @@ function open_grid_wizard_controls(scene_id, aligner1, aligner2, regrid=function
 				delete window.CURRENT_SCENE_DATA.scaleAdjustment;
 			}
 			let gridMeasurement = $('input[name="fpsq"]').val();
-			if(gridMeasurement == 5){
-				grid_5();
-			}else if(gridMeasurement == 10){
-				grid_10();
-			}else if(gridMeasurement == 15){
-				grid_15();
-			}else if(gridMeasurement == 20){
-				grid_20();
-			}else{
-				$("#scene_selector_toggle").show();
-				$("#tokens").show();
-				
-				window.CURRENT_SCENE_DATA = {
-					...window.CURRENT_SCENE_DATA,
-					upsq: $('input[name="upsq"]').val(),
-					fpsq: $('input[name="fpsq"]').val(),
-					grid_subdivided: "0"
-				}
-				consider_upscaling(window.CURRENT_SCENE_DATA);
-				window.ScenesHandler.persist_current_scene();
-				$("#wizard_popup").empty().append("You're good to go!!");
-				$("#exitWizard").remove();
-				$("#wizard_popup").delay(2000).animate({ opacity: 0 }, 4000, function() {
-					$("#wizard_popup").remove();
-				});
-				$("#light_container, #darkness_layer, #raycastingCanvas").css('visibility', 'visible');
+
+			$("#scene_selector_toggle").show();
+			$("#tokens").show();
+			const subDivided = gridMeasurement > 5 && gridMeasurement % 5 == 0 ? $('input[name="grid_subdivided"]').val() : '0';
+			window.CURRENT_SCENE_DATA = {
+				...window.CURRENT_SCENE_DATA,
+				upsq: $('input[name="upsq"]').val(),
+				fpsq: subDivided != 0 ? '5' : gridMeasurement,
+				grid_subdivided: subDivided,
+				grid: copiedSceneData.grid,
+				gridOver: copiedSceneData.gridOver
 			}
+			if (subDivided != 0){
+				window.CURRENT_SCENE_DATA.hpps = window.CURRENT_SCENE_DATA.hpps/(gridMeasurement/5)
+				window.CURRENT_SCENE_DATA.vpps = window.CURRENT_SCENE_DATA.vpps/(gridMeasurement/5)
+			}
+			consider_upscaling(window.CURRENT_SCENE_DATA);
+			window.ScenesHandler.persist_current_scene();
+			$("#wizard_popup").empty().append("You're good to go!!");
+			$("#exitWizard").remove();
+			$("#wizard_popup").delay(2000).animate({ opacity: 0 }, 4000, function() {
+				$("#wizard_popup").remove();
+			});
+			$("#light_container, #darkness_layer, #raycastingCanvas").css('visibility', 'visible');
+			
 			$(`#sources-import-main-container`).remove();
 			$('#scene_map_container').css('background', '');
 	});
 
 
-	let grid_5 = function() {
 
-
-		$("#scene_selector_toggle").show();
-		$("#tokens").show();
-		
-		window.CURRENT_SCENE_DATA = {
-			...window.CURRENT_SCENE_DATA,
-			fpsq: "5",
-			grid_subdivided: "0"
-		}
-		consider_upscaling(window.CURRENT_SCENE_DATA);
-		window.ScenesHandler.persist_current_scene();
-		$("#light_container").css('visibility', 'visible');
-		$("#darkness_layer").css('visibility', 'visible');
-	};
-
-	let grid_10 = function() {
-
-			
-			let subdivided = $('input[name="grid_subdivided"]').val() == 1;
-			$("#scene_selector_toggle").show();
-			$("#tokens").show();
-			$("#wizard_popup").empty().append("You're good to go! AboveVTT is now super-imposing a grid that divides the original grid map in half. If you want to hide this grid just edit the manual grid data.");
-			window.CURRENT_SCENE_DATA = {
-				...window.CURRENT_SCENE_DATA,
-				hpps: (subdivided) ? window.CURRENT_SCENE_DATA.hpps/2 : window.CURRENT_SCENE_DATA.hpps,
-				vpps: (subdivided) ? window.CURRENT_SCENE_DATA.vpps/2 : window.CURRENT_SCENE_DATA.vpps,
-				fpsq: (subdivided) ? '5' : '10',
-				grid_subdivided: $('input[name="grid_subdivided"]').val()
-			}
-			consider_upscaling(window.CURRENT_SCENE_DATA);
-			window.ScenesHandler.persist_current_scene();
-			$("#light_container").css('visibility', 'visible');
-			$("#darkness_layer").css('visibility', 'visible');
-	}
-
-	let grid_15 = function() {
-		
-		let subdivided = $('input[name="grid_subdivided"]').val() == 1;
-		$("#scene_selector_toggle").show();
-		$("#tokens").show();
-		window.CURRENT_SCENE_DATA = {
-			...window.CURRENT_SCENE_DATA,
-			hpps: (subdivided) ? window.CURRENT_SCENE_DATA.hpps/3 : window.CURRENT_SCENE_DATA.hpps,
-			vpps: (subdivided) ? window.CURRENT_SCENE_DATA.vpps/3 : window.CURRENT_SCENE_DATA.vpps,
-			fpsq:  (subdivided) ? '5' : '15',
-			grid_subdivided: "0"
-		}
-		consider_upscaling(window.CURRENT_SCENE_DATA);
-		window.ScenesHandler.persist_current_scene();
-
-		$("#light_container").css('visibility', 'visible');
-		$("#darkness_layer").css('visibility', 'visible');
-	}
-
-
-	let grid_20 = function() {
-		
-		let subdivided = $('input[name="grid_subdivided"]').val() == 1;
-		$("#scene_selector_toggle").show();
-		$("#tokens").show();
-		window.CURRENT_SCENE_DATA = {
-			...window.CURRENT_SCENE_DATA,
-			hpps: (subdivided) ? window.CURRENT_SCENE_DATA.hpps/4 : window.CURRENT_SCENE_DATA.hpps,
-			vpps: (subdivided) ? window.CURRENT_SCENE_DATA.vpps/4 : window.CURRENT_SCENE_DATA.vpps,
-			fpsq: (subdivided) ? '5' : '20',
-			grid_subdivided: "0"
-		}
-		consider_upscaling(window.CURRENT_SCENE_DATA);		
-		window.ScenesHandler.persist_current_scene();		
-		$("#light_container").css('visibility', 'visible');
-		$("#darkness_layer").css('visibility', 'visible');
-	}
 
 	cancel = $("<button type='button' id='cancel_importer'>Cancel</button>");
 	cancel.click(function() {
@@ -1142,6 +1003,7 @@ function edit_scene_vision_settings(scene_id){
 		$("#scene_selector").removeAttr("disabled");
 		$("#scene_selector_toggle").click();
 		if(window.CURRENT_SCENE_DATA.id != window.ScenesHandler.scenes[scene_id].id) {
+			window.CURRENT_SCENE_DATA.id = window.ScenesHandler.scenes[scene_id].id;
 			$(`.scene-item[data-scene-id='${window.ScenesHandler.scenes[scene_id].id}'] .dm_scenes_button`).click();
 		}
 		did_update_scenes();
@@ -1215,7 +1077,6 @@ function edit_scene_dialog(scene_id) {
 		else if(grid === "1"){
 			redraw_grid(parseFloat(hpps), parseFloat(vpps), offsetx, offsety, grid_color, grid_line_width, grid_subdivided )
 		}
-		// redraw grid using current scene data
 		else if(grid === "0"){
 			clear_grid()
 		}
@@ -1459,9 +1320,21 @@ function edit_scene_dialog(scene_id) {
 			handle_form_grid_on_change()
 		})
 	)
-	showGridControls.append(gridColor)
-	showGridControls.append(gridStroke)
-	showGridControls.append(gridStrokeLabel, gridStrokeNumberInput);
+	const goVal = scene.gridOver || 0;
+	const gridOver = $(`<select id='gridOverSelect' style="float:right" name="gridOver" >
+		<option value='0' ${goVal == 0 ? 'selected' : ''}>Under Darkness/Fog</option>
+		<option value='1' ${goVal == 1 ? 'selected' : ''}>Over Darkness/Fog</option>
+		</select>`);
+/*
+<option value='2' ${goVal == 2 ? 'selected' : ''}>Drag Assist</option>
+<option value='3' ${goVal == 3 ? 'selected' : ''}>Only Drag Assist</option>
+
+Azmoria: These options were very confusing to me, and I couldn't get them to behave consistently especially when using shift+g toggle.
+Tbh I feel like these overcomplicate things
+*/
+	
+	gridOver.on('change', handle_form_grid_on_change);
+	showGridControls.append(gridColor, gridOver, gridStroke, gridStrokeLabel, gridStrokeNumberInput)
 	form.append(form_row('drawGrid', 'Draw Grid', showGridControls))
 	form.find('#drawGrid_row').attr('title', 'Draw the grid on the map. When enabled more settings for grid appearance will be available.')
 	const colorPickers = form.find('input.spectrum');
@@ -1478,16 +1351,9 @@ function edit_scene_dialog(scene_id) {
 	colorPickers.on('change.spectrum', handle_form_grid_on_change); // commit the changes when the user clicks the submit button
 	colorPickers.on('hide.spectrum', handle_form_grid_on_change);   // the hide event includes the original color so let's change it back when we get it
 
-	const goVal = scene.gridOver || 0;
-	const gridOver = $(`<select id='gridOverSelect' name="gridOver" >
-<option value='0' ${goVal == 0 ? 'selected' : ''}>Never</option>
-<option value='1' ${goVal == 1 ? 'selected' : ''}>Always</option>
-<option value='2' ${goVal == 2 ? 'selected' : ''}>Drag Assist</option>
-<option value='3' ${goVal == 3 ? 'selected' : ''}>Only Drag Assist</option>
-</select>`);
-	form.append(form_row('gridOver', 'Grid Overlay', gridOver));
-	gridOver.on('change', handle_form_grid_on_change);
-	form.find('#gridOver_row').attr('title', 'When to draw the grid overlay.');
+
+
+
 	if(scene.grid == 0) form.find("#gridOver_row").hide();
 	
 	const playlistSelect = $(`<select id='playlistSceneSelect'><option value='0'>None</option></select>`)
@@ -1548,8 +1414,11 @@ function edit_scene_dialog(scene_id) {
 		const max = parseFloat($(this).attr('max'));
 		const percentage = Math.round((val - min) / (max - min) * 100);
 		particleCount.text(percentage + '%');
-		window.CURRENT_SCENE_DATA.weatherIntensity = val;
-		set_weather();
+		if (window.CURRENT_SCENE_DATA.id == scene.id){
+			window.CURRENT_SCENE_DATA.weatherIntensity = val;
+			set_weather();
+		}
+
 	});
 
 	weatherSelect.on('change', function() {
@@ -1565,9 +1434,11 @@ function edit_scene_dialog(scene_id) {
 			particleCount.text(percentage + '%');
 			intensityRow.show();
 		}
-		window.CURRENT_SCENE_DATA.weather = selectedWeather;
-		window.CURRENT_SCENE_DATA.weatherIntensity = intensitySlider.val();
-		set_weather();
+		if (window.CURRENT_SCENE_DATA.id == scene.id) {
+			window.CURRENT_SCENE_DATA.weather = selectedWeather;
+			window.CURRENT_SCENE_DATA.weatherIntensity = intensitySlider.val();
+			set_weather();
+		}
 	});
 
 	if (weatherValue === 0 || weatherValue === '0') {
@@ -1649,6 +1520,7 @@ function edit_scene_dialog(scene_id) {
 		$("#scene_selector").removeAttr("disabled");
 		$("#scene_selector_toggle").click();
 		if(window.CURRENT_SCENE_DATA.id != window.ScenesHandler.scenes[scene_id].id) {
+			window.CURRENT_SCENE_DATA.id = window.ScenesHandler.scenes[scene_id].id;
 			$(`.scene-item[data-scene-id='${window.ScenesHandler.scenes[scene_id].id}'] .dm_scenes_button`).click();
 		}
 		did_update_scenes();
@@ -2035,6 +1907,7 @@ async function build_scene_data_payload(parentId, fullPath, sceneName = "New Sce
 		title: candidate,
 		player_map: mapUrl || "",
 		parentId,
+		...get_custom_scene_settings()
 	};
 
 	const normalizedFullPath = sanitize_folder_path(sanitizedFullPath);

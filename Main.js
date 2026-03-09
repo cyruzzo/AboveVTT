@@ -163,8 +163,8 @@ function change_zoom(newZoom, x, y, reset = false) {
 	if($('#projector_zoom_lock.enabled > [class*="is-active"]').length>0 && window.DM)
 		$(window).off('scroll.projectorMode')
 	
-
-
+    if(!window.WIZARDING)
+		draw_svg_grid(); // scale grid so lines are always visible
 	if(reset != true){
 		$(window).scrollLeft(pageX);
 		$(window).scrollTop(pageY);	
@@ -2093,21 +2093,25 @@ function init_ui() {
 	const grid_svg_underlay = $("<div id='grid_svg_underlay' class='grid-svg-tile'/>");
 	grid_svg_underlay.css("z-index", "11");	//over map but under mapdrawing
 	const grid = $("<div id='grid_svg_overlay' class='grid-svg-tile'/>");
-	grid.css("opacity", "calc(min(var(--grid-overlay-on) + var(--grid-overlay-on-tmp), 1) * 0.5)");
+	grid.css("display", "var(--grid-overlay-on)");
 	const grid_svg_overlay_container = $("<div id='grid_svg_overlay_container' class='TLA'/>")
-	grid_svg_overlay_container.css({ transform: "scale(var(--scene-scale))", "transform-origin": "top left"});
+	grid_svg_overlay_container.css({ 
+		"transform": "scale(var(--scene-scale))", 
+		"transform-origin": "top left",
+		"pointer-events": "none",
+		"z-index": "22"
+	});
 
-	grid_svg_overlay_container.css("pointer-events", "none");
-	grid_svg_overlay_container.css("z-index", "22");
 	grid_svg_overlay_container.append(grid);
 	//change the wizbox styling here
 	const wizbox = $(
 `<svg id="wizbox" class="TLA" style="display: block; width: 100%; height: 100%;" xmlns="http://www.w3.org/2000/svg">
         <style>
             .grid-box {
-                fill: rgba(0, 255, 255, 0.1);
+                fill: none;
                 stroke: #ff0000;
-                stroke-width: 4px;
+                stroke-width: min(5px, calc(1px / var(--window-zoom)));
+				stroke-dasharray:5, 5;
                 vector-effect: non-scaling-stroke;
                 transition: fill 0.2s;
             }
@@ -2240,8 +2244,6 @@ function init_ui() {
 	VTT.append(drawOverlayUnderFogDarkness);
 	VTT.append(fog);
 	VTT.append(grid_svg_overlay_container);
-	VTT.css('--grid-overlay-on', '0');
-	VTT.css('--grid-overlay-on-tmp', '0');
 	VTT.append(drawOverlay);
 	VTT.append(textDiv);
 	VTT.append(tempOverlay);
@@ -2254,7 +2256,7 @@ function init_ui() {
 	
 	mapContainer.append(outer_light_container);
 	mapContainer.append(mapItems);
-	if(window.DM) mapContainer.append(wizbox);
+	if (window.DM) grid_svg_overlay_container.append(wizbox);
 	
 	mapContainer.append(darknessLayer);
 	outer_light_container.append(rayCasting);

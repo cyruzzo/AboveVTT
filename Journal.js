@@ -2290,7 +2290,7 @@ class JournalManager{
        	
    		blocks.wrap(function(){
 			if(this instanceof HTMLImageElement){
-				container.css('width', 'fit-content');
+				container.css('min-width', 'fit-content');
 				$(this).attr('href', $(this).attr('src'));
 			}
 

@@ -836,6 +836,31 @@ function scene_setting_options(){
 			defaultValue: false
 		},
 		{
+			name: 'grid_color',
+			label: 'Grid Color',
+			type: 'colorSelect',
+			defaultValue: '#000'
+		},
+		{
+			name: 'gridOver',
+			label: 'Grid Layer',
+			type: 'dropdown',
+			options: [
+				{ value: 0, label: "Under Darkness/Fog", description: "Grid will be drawn under darkness/fog" },
+				{ value: 1, label: "Over Darkness/Fog", description: "Grid will be drawn over darkness/fog" }
+			],
+			defaultValue: false
+		},
+		{
+			name: 'grid_line_width',
+			label: 'Grid Line Width',
+			type: 'rangeInput',
+			options: [
+				{ min: 0.5, max: 10, step: 0.5, description: "Grid line width" },
+			],
+			defaultValue: 1
+		},
+		{
 			name: 'snap',
 			label: 'Snap to Grid',
 			type: 'toggle',

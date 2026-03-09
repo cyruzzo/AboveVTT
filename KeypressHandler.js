@@ -242,7 +242,7 @@ Mousetrap.bind('shift+s', function (e) {
            
 Mousetrap.bind('shift+g', function () { //toggle high visibility grid
     const vtt = $("#VTT");
-    vtt.css('--grid-overlay-on', vtt.css('--grid-overlay-on') === '1' ? '0' : '1');
+    grid_overlay_update(window.CURRENT_SCENE_DATA.grid == 1, vtt.css('--grid-overlay-on') !== 'block')
 });
 
 Mousetrap.bind('q', function () {       //collapse/show sidebar. (q is next to tab, also used to show/hide elements)

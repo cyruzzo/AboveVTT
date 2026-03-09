@@ -1558,7 +1558,7 @@ function observe_character_sheet_changes(documentToObserve) {
                   window.diceRoller.setWaitingForRoll();
                 })
                 $("[class*='DiceContainer_button']").off('click.toggle').on('click.toggle', async function () {
-                  const ddb3dDiceShareToggle = localStorage.getItem('isShared3dDiceEnabled') !== null && window.myUser != undefined ? JSON.parse(localStorage.getItem('isShared3dDiceEnabled')).state?.[window.myUser] : true;
+                  const ddb3dDiceShareToggle = getDdb3dDiceShareToggle();
                   setTimeout(() => {$(`#shared3dDiceToggleSwitch[aria-checked='${!ddb3dDiceShareToggle}']`).click()}, 60);
                 })
 
@@ -1567,7 +1567,6 @@ function observe_character_sheet_changes(documentToObserve) {
             watchForNewDicePanel.disconnect();
             return false;
           }
-
         }
       }
       return true // must return true if doesn't break

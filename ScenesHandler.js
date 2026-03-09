@@ -27,102 +27,6 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 			$("#darkness_layer").css('visibility', 'visible');
 		};
 
-		let grid_10 = function() {
-			$("#wizard_popup").empty().append("Do you want me to subdivide the map grid in 2 so you can get correct token size? <button id='grid_divide'>Yes</button> <button id='grid_nodivide'>No</button>");
-
-			$("#grid_divide").click(function() {
-				
-				$("#scene_selector_toggle").show();
-				$("#tokens").show();
-				$("#wizard_popup").empty().append("You're good to go! AboveVTT is now super-imposing a grid that divides the original grid map in half. If you want to hide this grid just edit the manual grid data.");
-				window.CURRENT_SCENE_DATA = {
-					...window.CURRENT_SCENE_DATA,
-					hpps: window.CURRENT_SCENE_DATA.hpps/2,
-					vpps: window.CURRENT_SCENE_DATA.vpps/2,
-					upsq: "ft",
-					fpsq: "5",
-					grid_subdivided: "1"
-				}
-				consider_upscaling(window.CURRENT_SCENE_DATA);
-				$("#exitWizard").remove();
-				$("#wizard_popup").delay(5000).animate({ opacity: 0 }, 4000, function() {
-					$("#wizard_popup").remove();
-				});
-				window.ScenesHandler.persist_current_scene();
-				$("#light_container").css('visibility', 'visible');
-				$("#darkness_layer").css('visibility', 'visible');
-			});
-
-			$("#grid_nodivide").click(function() {
-				
-				$("#scene_selector_toggle").show();
-				$("#tokens").show();
-				window.CURRENT_SCENE_DATA= {
-					...window.CURRENT_SCENE_DATA,
-					upsq: "ft",
-					fpsq: "10",
-					grid_subdivided: "0",
-					snap: "1",
-					grid: "0"
-				}
-				consider_upscaling(window.CURRENT_SCENE_DATA);
-				window.ScenesHandler.persist_current_scene();
-				$("#exitWizard").remove();
-				$("#wizard_popup").empty().append("You're good to go! Medium token will match the original grid size");
-				$("#wizard_popup").delay(5000).animate({ opacity: 0 }, 4000, function() {
-					$("#wizard_popup").remove();
-				});
-				$("#light_container").css('visibility', 'visible');
-				$("#darkness_layer").css('visibility', 'visible');
-			});
-		}
-
-		let grid_15 = function() {
-			
-			$("#scene_selector_toggle").show();
-			$("#tokens").show();
-			$("#wizard_popup").empty().append("You're good to go! Token will be of the correct scale. We don't currently support overimposing a grid in this scale..'");
-			window.CURRENT_SCENE_DATA = {
-				...window.CURRENT_SCENE_DATA,
-				hpps: window.CURRENT_SCENE_DATA.hpps/3,
-				vpps: window.CURRENT_SCENE_DATA.vpps/3,
-				upsq: "ft",
-				fpsq: "5",
-				grid_subdivided: "0"
-			}
-			consider_upscaling(window.CURRENT_SCENE_DATA);
-			$("#wizard_popup").delay(5000).animate({ opacity: 0 }, 4000, function() {
-				$("#wizard_popup").remove();
-			});
-			window.ScenesHandler.persist_current_scene();
-			$("#exitWizard").remove();
-			$("#light_container").css('visibility', 'visible');
-			$("#darkness_layer").css('visibility', 'visible');
-		}
-
-
-		let grid_20 = function() {
-			
-			$("#scene_selector_toggle").show();
-			$("#tokens").show();
-			$("#wizard_popup").empty().append("You're good to go! Token will be of the correct scale.");
-			window.CURRENT_SCENE_DATA = {
-				...window.CURRENT_SCENE_DATA,
-				hpps: window.CURRENT_SCENE_DATA.hpps/4,
-				vpps: window.CURRENT_SCENE_DATA.vpps/4,
-				upsq: "ft",
-				fpsq: "5",
-				grid_subdivided: "0"
-			}
-			consider_upscaling(window.CURRENT_SCENE_DATA);
-			$("#wizard_popup").delay(5000).animate({ opacity: 0 }, 4000, function() {
-				$("#wizard_popup").remove();
-			});
-			window.ScenesHandler.persist_current_scene();
-			$("#exitWizard").remove();
-			$("#light_container").css('visibility', 'visible');
-			$("#darkness_layer").css('visibility', 'visible');
-		}
 
 		let align_grid = function(square = false, just_rescaling = true, copiedSceneData) {
 
@@ -298,8 +202,8 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 					width = 2;
 				else
 					width = 1;
-				const dash = [30, 5]
-				const color = "rgba(255, 0, 0,0.5)";
+				const dash = [30, 5];
+				const color = "rgba(255, 0, 0, 1)";
 				// nulls will take the window.current_scene_data from above
 				window.CURRENT_SCENE_DATA.gridType = $('#gridType input:checked').val();
 				window.CURRENT_SCENE_DATA.gridOver = 1;
