@@ -3076,7 +3076,9 @@ function drawing_mousedown(e) {
 
 		clear_temp_canvas()
 		let { x, y } = snap_point_to_grid(window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, true);
-		window.BRUSHPOINTS.push([Math.round(x / window.CURRENT_SCENE_DATA.scaleAdjustment.x), Math.round(y / window.CURRENT_SCENE_DATA.scaleAdjustment.y)])
+		const scaleX = window.CURRENT_SCENE_DATA.scaleAdjustment?.x != undefined ? window.CURRENT_SCENE_DATA.scaleAdjustment.x : 1;
+		const scaleY = window.CURRENT_SCENE_DATA.scaleAdjustment?.y != undefined ? window.CURRENT_SCENE_DATA.scaleAdjustment.y : 1;
+		window.BRUSHPOINTS.push([Math.round(x / scaleX), Math.round(y / scaleY)])
 		window.BRUSHPOINTS = Array.from(new Set(window.BRUSHPOINTS.map(JSON.stringify)), JSON.parse)		
 		
 		window.offScreenCombineContext.clearRect(0, 0, window.offScreenCombineContext.canvas.width, window.offScreenCombineContext.canvas.height)	
@@ -3487,7 +3489,9 @@ function drawing_mousemove(e) {
 	
 			clear_temp_canvas()
 			let { x, y } = snap_point_to_grid(mouseX, mouseY, true);
-			window.BRUSHPOINTS.push([Math.round(x / window.CURRENT_SCENE_DATA.scaleAdjustment.x), Math.round(y / window.CURRENT_SCENE_DATA.scaleAdjustment.y)])
+			const scaleX = window.CURRENT_SCENE_DATA.scaleAdjustment?.x != undefined ? window.CURRENT_SCENE_DATA.scaleAdjustment.x : 1;
+			const scaleY = window.CURRENT_SCENE_DATA.scaleAdjustment?.y != undefined ? window.CURRENT_SCENE_DATA.scaleAdjustment.y : 1;
+			window.BRUSHPOINTS.push([Math.round(x / scaleX), Math.round(y / scaleY)])
 			window.BRUSHPOINTS = Array.from(new Set(window.BRUSHPOINTS.map(JSON.stringify)), JSON.parse)
 			window.offScreenCombineContext.clearRect(0, 0, window.offScreenCombineContext.canvas.width, window.offScreenCombineContext.canvas.height)
 			window.offScreenCombineContext.globalCompositeOperation = 'source-over';
