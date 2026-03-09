@@ -1003,6 +1003,7 @@ function edit_scene_vision_settings(scene_id){
 		$("#scene_selector").removeAttr("disabled");
 		$("#scene_selector_toggle").click();
 		if(window.CURRENT_SCENE_DATA.id != window.ScenesHandler.scenes[scene_id].id) {
+			window.CURRENT_SCENE_DATA.id = window.ScenesHandler.scenes[scene_id].id;
 			$(`.scene-item[data-scene-id='${window.ScenesHandler.scenes[scene_id].id}'] .dm_scenes_button`).click();
 		}
 		did_update_scenes();
@@ -1519,6 +1520,7 @@ Tbh I feel like these overcomplicate things
 		$("#scene_selector").removeAttr("disabled");
 		$("#scene_selector_toggle").click();
 		if(window.CURRENT_SCENE_DATA.id != window.ScenesHandler.scenes[scene_id].id) {
+			window.CURRENT_SCENE_DATA.id = window.ScenesHandler.scenes[scene_id].id;
 			$(`.scene-item[data-scene-id='${window.ScenesHandler.scenes[scene_id].id}'] .dm_scenes_button`).click();
 		}
 		did_update_scenes();
