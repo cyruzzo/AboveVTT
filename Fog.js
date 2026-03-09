@@ -3072,24 +3072,28 @@ function drawing_mousedown(e) {
 		window.BRUSHWAIT = false;
 		window.BRUSHPOINTS = [];
 		window.DRAWCOLOR = 'rgba(255,0,0,0.6)'
-
-		window.temp_context.fillStyle = window.DRAWCOLOR;
-		const hpps = window.CURRENT_SCENE_DATA.gridType == 2 ? window.CURRENT_SCENE_DATA.vpps : window.CURRENT_SCENE_DATA.hpps;
+		window.offScreenCombineContext.fillStyle = window.DRAWCOLOR;
 
 		clear_temp_canvas()
 		let { x, y } = snap_point_to_grid(window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, true);
-		window.BRUSHPOINTS.push([Math.round(x), Math.round(y)])
+		window.BRUSHPOINTS.push([Math.round(x / window.CURRENT_SCENE_DATA.scaleAdjustment.x), Math.round(y / window.CURRENT_SCENE_DATA.scaleAdjustment.y)])
 		window.BRUSHPOINTS = Array.from(new Set(window.BRUSHPOINTS.map(JSON.stringify)), JSON.parse)		
+		
+		window.offScreenCombineContext.clearRect(0, 0, window.offScreenCombineContext.canvas.width, window.offScreenCombineContext.canvas.height)	
+		window.offScreenCombineContext.globalCompositeOperation = 'source-over';
 		if(window.CURRENT_SCENE_DATA.gridType == '1'){
 			for(let i in window.BRUSHPOINTS){
 				drawRect(window.offScreenCombineContext, window.BRUSHPOINTS[i][0], window.BRUSHPOINTS[i][1], window.CURRENT_SCENE_DATA.hpps, window.CURRENT_SCENE_DATA.vpps, window.DRAWCOLOR, true, window.DRAWTYPE);
 			}
 		} else {
-			for(let i in window.BRUSHPOINTS){
+			window.offScreenCombineContext.scale(window.CURRENT_SCENE_DATA.scaleAdjustment.x, window.CURRENT_SCENE_DATA.scaleAdjustment.y)
+			for (let i in window.BRUSHPOINTS) {
 				drawHexagon(window.offScreenCombineContext, window.BRUSHPOINTS[i][0], window.BRUSHPOINTS[i][1])
 			}
+			window.offScreenCombineContext.setTransform(1, 0, 0, 1, 0, 0);
 		}
-		window.temp_context.drawImage(window.offScreenCombine, 0, 0);
+		window.temp_context.drawImage(window.offScreenCombine, 0, 0)
+
 	}
 	else if (window.DRAWSHAPE === "polygon") {
 		if (window.BEGIN_MOUSEX && window.BEGIN_MOUSEX.length > 0) {
@@ -3479,23 +3483,26 @@ function drawing_mousemove(e) {
 			}
 		}
 		else if (window.DRAWSHAPE == "grid-brush"){
-			
-			window.temp_context.fillStyle = window.DRAWCOLOR;
+			window.offScreenCombineContext.fillStyle = window.DRAWCOLOR;
+	
 			clear_temp_canvas()
 			let { x, y } = snap_point_to_grid(mouseX, mouseY, true);
-			window.BRUSHPOINTS.push([Math.round(x), Math.round(y)])
+			window.BRUSHPOINTS.push([Math.round(x / window.CURRENT_SCENE_DATA.scaleAdjustment.x), Math.round(y / window.CURRENT_SCENE_DATA.scaleAdjustment.y)])
 			window.BRUSHPOINTS = Array.from(new Set(window.BRUSHPOINTS.map(JSON.stringify)), JSON.parse)
-			
-			if(window.CURRENT_SCENE_DATA.gridType == '1'){
-				for(let i in window.BRUSHPOINTS){
-					drawRect(window.temp_context, window.BRUSHPOINTS[i][0], window.BRUSHPOINTS[i][1], window.CURRENT_SCENE_DATA.hpps, window.CURRENT_SCENE_DATA.vpps, window.DRAWCOLOR, true, window.DRAWTYPE);
+			window.offScreenCombineContext.clearRect(0, 0, window.offScreenCombineContext.canvas.width, window.offScreenCombineContext.canvas.height)
+			window.offScreenCombineContext.globalCompositeOperation = 'source-over';
+			if (window.CURRENT_SCENE_DATA.gridType == '1') {
+				for (let i in window.BRUSHPOINTS) {
+					drawRect(window.offScreenCombineContext, window.BRUSHPOINTS[i][0], window.BRUSHPOINTS[i][1], window.CURRENT_SCENE_DATA.hpps, window.CURRENT_SCENE_DATA.vpps, window.DRAWCOLOR, true, window.DRAWTYPE);
 				}
+			} else {
+				window.offScreenCombineContext.scale(window.CURRENT_SCENE_DATA.scaleAdjustment.x, window.CURRENT_SCENE_DATA.scaleAdjustment.y)
+				for (let i in window.BRUSHPOINTS) {
+					drawHexagon(window.offScreenCombineContext, window.BRUSHPOINTS[i][0], window.BRUSHPOINTS[i][1])
+				}
+				window.offScreenCombineContext.setTransform(1, 0, 0, 1, 0, 0);
 			}
-			else{
- 				for(let i in window.BRUSHPOINTS){
- 					drawHexagon(window.temp_context, window.BRUSHPOINTS[i][0], window.BRUSHPOINTS[i][1])
- 				}
- 			}
+			window.temp_context.drawImage(window.offScreenCombine, 0, 0)
 		}
 	}
 			
