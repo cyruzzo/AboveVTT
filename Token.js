@@ -3060,7 +3060,7 @@ class Token {
 				tok.draggable({
 					stop: function (event) {
 							event.stopPropagation();
-							//$("#VTT").css('--grid-overlay-on-tmp', '0');						
+							//$("#VTT").css('--grid-overlay-on-tmp', '0');	commented out as it's not consistent and is confusing can reasses if we enable other options for grid over			
 							window.DRAGGING = false;
 							window.enable_window_mouse_handlers();
 		
@@ -3123,7 +3123,7 @@ class Token {
 						},
 					start: function (event) {
 						event.stopPropagation();
-						//$("#VTT").css('--grid-overlay-on-tmp', '1');
+						//$("#VTT").css('--grid-overlay-on-tmp', '1'); commented out as it's not consistent and is confusing can reasses if we enable other options for grid over
 						window.disable_window_mouse_handlers();
 						pauseCursorEventListener = true; // we're going to send events from drag, so we don't need the eventListener sending events, too
 						if (get_avtt_setting_value("allowTokenMeasurement")) {
@@ -3313,10 +3313,10 @@ class Token {
 						if (should_snap_to_grid()) { // && (window.CURRENT_SCENE_DATA.gridType == '2' || window.CURRENT_SCENE_DATA.gridType == '3')) {
 							//we really want the exact mouse position -
 							//someone fix this if there is a better way with this draggable impl
-							const sd = window.CURRENT_SCENE_DATA;
+							const scene = window.CURRENT_SCENE_DATA;
 							const rect = document.querySelector('#scene_map_container').getBoundingClientRect();
-							tokenX = (event.clientX - rect.left) * $("#scene_map").width() * sd.scale_factor / rect.width;
-							tokenY = (event.clientY - rect.top) * $("#scene_map").height() * sd.scale_factor / rect.height
+							tokenX = (event.clientX - rect.left) * $("#scene_map").width() * scene.scale_factor / rect.width;
+							tokenY = (event.clientY - rect.top) * $("#scene_map").height() * scene.scale_factor / rect.height
 						}
 						//snap to where mouse is
 						let tokenPosition = snap_point_to_grid(tokenX, tokenY, undefined, tinyToken, self.options.size);
@@ -3859,10 +3859,10 @@ function should_snap_to_grid() {
 // tokenWidth only matters for hex grid
 // rounddown only matters for square ( floor instead of round)
 function snap_point_to_grid(mapX, mapY, forceSnap = false, tinyToken = false, tokenWidth = 0) {
-	const sd = window.CURRENT_SCENE_DATA;
+	const scene = window.CURRENT_SCENE_DATA;
 	//todo implement tinytoken
 	if (forceSnap || should_snap_to_grid()) {
-		if(sd.gridType == 3 || sd.gridType == 2) {
+		if(scene.gridType == 3 || scene.gridType == 2) {
 			//hex snaps to vertex if tokensize / hexsize is even
 			const vertexInstead = tokenWidth && ! (Math.round(tokenWidth / Math.min(...grid_size())) % 2);
 			const [cx, cy] = getCurrentClosestHex(mapX, mapY, vertexInstead);
@@ -3871,8 +3871,8 @@ function snap_point_to_grid(mapX, mapY, forceSnap = false, tinyToken = false, to
 		}
 
 		// todo: why parseFloat here?
-		const offsetx = parseFloat(sd.offsetx);
-		const offsety = parseFloat(sd.offsety);
+		const offsetx = parseFloat(scene.offsetx);
+		const offsety = parseFloat(scene.offsety);
 		let [gridWidth, gridHeight] = grid_size();
 		if(tinyToken) {
 			gridWidth /= 2; gridHeight /= 2;
