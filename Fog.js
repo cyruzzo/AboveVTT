@@ -3072,7 +3072,7 @@ function drawing_mousedown(e) {
 		window.BRUSHWAIT = false;
 		window.BRUSHPOINTS = [];
 		window.DRAWCOLOR = 'rgba(255,0,0,0.6)'
-		window.offScreenCombineContext.fillStyle = window.DRAWCOLOR;
+		window.temp_context.fillStyle = window.DRAWCOLOR;
 
 		clear_temp_canvas()
 		let { x, y } = snap_point_to_grid(window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, true);
@@ -3081,20 +3081,19 @@ function drawing_mousedown(e) {
 		window.BRUSHPOINTS.push([Math.round(x / scaleX), Math.round(y / scaleY)])
 		window.BRUSHPOINTS = Array.from(new Set(window.BRUSHPOINTS.map(JSON.stringify)), JSON.parse)		
 		
-		window.offScreenCombineContext.clearRect(0, 0, window.offScreenCombineContext.canvas.width, window.offScreenCombineContext.canvas.height)	
-		window.offScreenCombineContext.globalCompositeOperation = 'source-over';
+
 		if(window.CURRENT_SCENE_DATA.gridType == '1'){
 			for(let i in window.BRUSHPOINTS){
-				drawRect(window.offScreenCombineContext, window.BRUSHPOINTS[i][0], window.BRUSHPOINTS[i][1], window.CURRENT_SCENE_DATA.hpps, window.CURRENT_SCENE_DATA.vpps, window.DRAWCOLOR, true, window.DRAWTYPE);
+				drawRect(window.temp_context, window.BRUSHPOINTS[i][0], window.BRUSHPOINTS[i][1], window.CURRENT_SCENE_DATA.hpps, window.CURRENT_SCENE_DATA.vpps, window.DRAWCOLOR, true, window.DRAWTYPE);
 			}
 		} else {
-			window.offScreenCombineContext.scale(window.CURRENT_SCENE_DATA.scaleAdjustment.x, window.CURRENT_SCENE_DATA.scaleAdjustment.y)
+			window.temp_context.scale(window.CURRENT_SCENE_DATA.scaleAdjustment.x, window.CURRENT_SCENE_DATA.scaleAdjustment.y)
 			for (let i in window.BRUSHPOINTS) {
-				drawHexagon(window.offScreenCombineContext, window.BRUSHPOINTS[i][0], window.BRUSHPOINTS[i][1])
+				drawHexagon(window.temp_context, window.BRUSHPOINTS[i][0], window.BRUSHPOINTS[i][1])
 			}
-			window.offScreenCombineContext.setTransform(1, 0, 0, 1, 0, 0);
+			window.temp_context.setTransform(1, 0, 0, 1, 0, 0);
 		}
-		window.temp_context.drawImage(window.offScreenCombine, 0, 0)
+		
 
 	}
 	else if (window.DRAWSHAPE === "polygon") {
@@ -3485,7 +3484,7 @@ function drawing_mousemove(e) {
 			}
 		}
 		else if (window.DRAWSHAPE == "grid-brush"){
-			window.offScreenCombineContext.fillStyle = window.DRAWCOLOR;
+			window.temp_context.fillStyle = window.DRAWCOLOR;
 	
 			clear_temp_canvas()
 			let { x, y } = snap_point_to_grid(mouseX, mouseY, true);
@@ -3493,20 +3492,18 @@ function drawing_mousemove(e) {
 			const scaleY = window.CURRENT_SCENE_DATA.scaleAdjustment?.y != undefined ? window.CURRENT_SCENE_DATA.scaleAdjustment.y : 1;
 			window.BRUSHPOINTS.push([Math.round(x / scaleX), Math.round(y / scaleY)])
 			window.BRUSHPOINTS = Array.from(new Set(window.BRUSHPOINTS.map(JSON.stringify)), JSON.parse)
-			window.offScreenCombineContext.clearRect(0, 0, window.offScreenCombineContext.canvas.width, window.offScreenCombineContext.canvas.height)
-			window.offScreenCombineContext.globalCompositeOperation = 'source-over';
+
 			if (window.CURRENT_SCENE_DATA.gridType == '1') {
 				for (let i in window.BRUSHPOINTS) {
-					drawRect(window.offScreenCombineContext, window.BRUSHPOINTS[i][0], window.BRUSHPOINTS[i][1], window.CURRENT_SCENE_DATA.hpps, window.CURRENT_SCENE_DATA.vpps, window.DRAWCOLOR, true, window.DRAWTYPE);
+					drawRect(window.temp_context, window.BRUSHPOINTS[i][0], window.BRUSHPOINTS[i][1], window.CURRENT_SCENE_DATA.hpps, window.CURRENT_SCENE_DATA.vpps, window.DRAWCOLOR, true, window.DRAWTYPE);
 				}
 			} else {
-				window.offScreenCombineContext.scale(window.CURRENT_SCENE_DATA.scaleAdjustment.x, window.CURRENT_SCENE_DATA.scaleAdjustment.y)
+				window.temp_context.scale(window.CURRENT_SCENE_DATA.scaleAdjustment.x, window.CURRENT_SCENE_DATA.scaleAdjustment.y)
 				for (let i in window.BRUSHPOINTS) {
-					drawHexagon(window.offScreenCombineContext, window.BRUSHPOINTS[i][0], window.BRUSHPOINTS[i][1])
+					drawHexagon(window.temp_context, window.BRUSHPOINTS[i][0], window.BRUSHPOINTS[i][1])
 				}
-				window.offScreenCombineContext.setTransform(1, 0, 0, 1, 0, 0);
+				window.temp_context.setTransform(1, 0, 0, 1, 0, 0);
 			}
-			window.temp_context.drawImage(window.offScreenCombine, 0, 0)
 		}
 	}
 			
