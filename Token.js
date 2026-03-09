@@ -39,7 +39,7 @@ const availableToAoe = [
 ];
 
 //reused transform definition
-const imageTransform = 'scale(var(--token-scale)) rotate(var(--token-rotation)) scaleX(var(--token-flip-x, 1))';
+const imageTransform = 'scale(var(--token-scale)) rotate(calc(var(--token-rotation) + var(--token-heading))) scaleX(var(--token-flip-x, 1))';
 function tokenFlipX(token) { return ((token.options.tokenFlip || 0) & 1) ? -1 : 1; }
 
 const throttleLight = throttle((darknessMoved = false) => {
@@ -687,15 +687,17 @@ class Token {
 		if(this.options.imageSize === undefined) {
 			this.imageSize(1) 
 		}
+		const adjustedRotation = (newRotation + (this.options.imageHeading || 0)) % 360;
 		let imageScale = (this.options.imageSize != undefined) ? this.options.imageSize : 1;
 
 		let selector = "div[data-id='" + this.options.id + "']";
 		let tokenElement = $("#tokens").find(selector).add(`[data-notatoken='notatoken_${this.options.id}']`).add(`[data-darkness='darkness_${this.options.id.replaceAll("/", "")}']`);
 		tokenElement.css("--token-rotation", newRotation + "deg");
+		tokenElement.css("--token-heading", (this.options.imageHeading || 0) + "deg")
 		tokenElement.css("--token-scale", imageScale);
 		tokenElement.css("--token-flip-x", tokenFlipX(this));		
 		tokenElement.find(".token-image").css("transform", imageTransform);
-		$(`.aura-element-container-clip[id='${this.options.id}'] .aura-element, .aura-element[data-id='${this.options.id}']`).css('--rotation', newRotation + "deg");
+		$(`.aura-element-container-clip[id='${this.options.id}'] .aura-element, .aura-element[data-id='${this.options.id}']`).css('--rotation', adjustedRotation + "deg");
 	}
 	moveUp()        { this.moveDirection(-1,  0); }
 	moveDown()      { this.moveDirection( 1,  0); }
@@ -806,6 +808,7 @@ class Token {
 					'--z-index-diff': old.css('--z-index-diff'),
 					'--token-scale': old.css('--token-scale'),
     					'--token-rotation': old.css('--token-rotation'),
+    					'--token-heading': old.css('--token-heading'),
     					'--token-flip-x': old.css('--token-flip-x')
 				})
 				
@@ -858,6 +861,7 @@ class Token {
 						'--z-index-diff': old.css('--z-index-diff'),
 						'--token-scale': old.css('--token-scale'),
 	    					'--token-rotation': old.css('--token-rotation'),
+    						'--token-heading': old.css('--token-heading'),						
 						'--token-flip-x': old.css('--token-flip-x'),
 						'opacity': this.options.hidden ? '0.5' : '1',
 						'--hp-percentage': `${this.hpPercentage}%`,
@@ -2121,6 +2125,7 @@ class Token {
 			const imageZoom = this.options.imageZoom != undefined ? parseFloat(this.options.imageZoom): undefined;
 			const newInset = imageZoom != undefined ? 49.5 * imageZoom/100 : undefined;
 			let rotation = 0;
+			const heading = this.options.imageHeading || 0;			
 			
 			if (this.options.rotation != undefined) {
 				rotation = this.options.rotation;
@@ -2180,6 +2185,7 @@ class Token {
 				old.css({
 					"--token-scale": imageScale,
 					"--token-rotation": `${rotation}deg`,
+    					'--token-heading': `${heading}deg`,
 					"--token-flip-x": tokenFlipX(this),
 					"--offsetX": imageOffsetX != undefined ? `${parseFloat(imageOffsetX) / 90 * this.options.size }px` : '0px',
 					"--offsetY": imageOffsetY != undefined ? `${parseFloat(imageOffsetY) / 90 * this.options.size }px` : '0px',
@@ -2190,6 +2196,7 @@ class Token {
 				});
 				$(`.isAoe[data-id='${this.options.id}']:not(.token)`).css({
 					'--token-rotation': `${rotation}deg`,
+					'--token-heading': `${heading}deg`,					
 					'--token-scale': imageScale,
 					'--token-flip-x': tokenFlipX(this)
 				})
@@ -2587,6 +2594,7 @@ class Token {
 						'--z-index-diff': old.css('--z-index-diff'),
 						'--token-scale': old.css('--token-scale'),
 	    					'--token-rotation': old.css('--token-rotation'),
+	    					'--token-heading': old.css('--token-heading'),						
 	    					'--token-flip-x': old.css('--token-flip-x')						
 					})
 					copyImage.animate({
@@ -2656,6 +2664,7 @@ class Token {
 								'--z-index-diff': old.css('--z-index-diff'),
 								'--token-scale': old.css('--token-scale'),
 			    					'--token-rotation': old.css('--token-rotation'),
+			    					'--token-heading': old.css('--token-heading'),
 			    					'--token-flip-x': old.css('--token-flip-x'),
 								'opacity': this.options.hidden ? '0.5' : '1',
 								'--hp-percentage': `${this.hpPercentage}%`,
@@ -2830,6 +2839,7 @@ class Token {
 					}
 					const underdarknessDivisor = this.options.underDarkness && !this.options.exampleToken ? parseInt(window.CURRENT_SCENE_DATA.scale_factor) : 1;
 					const rotation = (this.options.rotation != undefined) ? this.options.imageSize : 0;
+					const heading = (this.options.imageHeading || 0);
 					const imageScale = (this.options.imageSize != undefined) ? this.options.imageSize : 1;
 					const imageOffsetX = this.options.offset?.x;
 					const imageOffsetY = this.options.offset?.y;
@@ -2849,6 +2859,7 @@ class Token {
 					tok.css({
 						"--token-scale": imageScale,
 						"--token-rotation": `${rotation}deg`,
+						"--token-heading": `${heading}deg`,
 						"--token-flip-x": tokenFlipX(this),
 						"--offsetX": imageOffsetX != undefined ? `${parseFloat(imageOffsetX) / 90 * this.options.size }px` : '0px',
 						"--offsetY": imageOffsetY != undefined ? `${parseFloat(imageOffsetY) / 90 * this.options.size }px` : '0px',
@@ -2881,6 +2892,7 @@ class Token {
 					tok.css({
 						"--token-scale": imageScale,
 						"--token-rotation": `${rotation}deg`,
+						"--token-heading": `${heading}deg`,
 						"--token-flip-x": tokenFlipX(this),
 					});
 					tok.toggleClass("isAoe", true);
@@ -2889,6 +2901,7 @@ class Token {
 					}
 				}
 				tok.css("--token-rotation", rotation + "deg");
+				tok.css("--token-heading", heading + "deg");				
 
 
 
@@ -4810,14 +4823,10 @@ const radToDeg = 180 / Math.PI;
 function rotation_towards_cursor(token, mousex, mousey, largerSnapAngle) {
 	const tokenCenterX = parseFloat(token.options.left) + (token.sizeWidth() / 2);
 	const tokenCenterY = parseFloat(token.options.top) + (token.sizeHeight() / 2);
-	const target = Math.atan2(mousey - tokenCenterY, mousex - tokenCenterX) + Math.PI * 3 / 2; // down = 0
-	const degrees = target * radToDeg;
-	const snap = (largerSnapAngle == true) ? 45 : 5; // if we ever allow hex, use 45 for square and 60 for hex
-	return (Math.round(degrees / snap) * snap + 360.0) % 360.0;
+	return rotation_towards_cursor_from_point(tokenCenterX, tokenCenterY, mousex, mousey, largerSnapAngle);
 }
-
-function rotation_towards_cursor_from_point(tokenCenterX, tokenCenterY, mousex, mousey, largerSnapAngle) {
-	const target = Math.atan2(mousey - tokenCenterY, mousex - tokenCenterX) + Math.PI * 3 / 2; // down = 0
+function rotation_towards_cursor_from_point(pointX, pointY, mousex, mousey, largerSnapAngle) {
+	const target = Math.atan2(mousey - pointY, mousex - pointX) + Math.PI * 3 / 2; // down = 0
 	const degrees = target * radToDeg;
 	const snap = (largerSnapAngle == true) ? 45 : 5; // if we ever allow hex, use 45 for square and 60 for hex
 	return (Math.round(degrees / snap) * snap + 360.0) % 360.0;
@@ -4923,26 +4932,18 @@ function grouprotate_commit(angle) {
 		if ((token.isPlayerLocked() || token.isDMLocked()) && !selectedGroupToken) continue;
 		let sceneToken = $(`#tokens .token[data-id='${id}']`)
 
-		window.TOKEN_OBJECTS[id].options.rotation = angle + parseFloat(sceneToken.css('--token-rotation'))
-		
-		
+		token.options.rotation = angle + parseFloat(sceneToken.css('--token-rotation'))
 		if (window.CURRENTLY_SELECTED_TOKENS.length > 1 || !token.isAoe()){
-			sceneToken.css({
-				'rotate': `-${angle%360}deg`
-			});
+			sceneToken.css('rotate', `-${angle%360}deg`);
 			currentplace = sceneToken.offset();
-		}
-		else{	
-			sceneToken.css({
-				'rotate': `-${(angle+parseFloat(sceneToken.css('--token-rotation')))%360}deg`
-			});
+		} else {	
+			sceneToken.css('rotate',`-${(angle+parseFloat(sceneToken.css('--token-rotation')))%360}deg`);
 			currentplace = sceneToken.find('.token-image').offset();
 		}
-		
 		newCoords = convert_point_from_view_to_map(currentplace.left, currentplace.top, true, true)
-		window.TOKEN_OBJECTS[id].options.left = `${newCoords.x}px`;
-		window.TOKEN_OBJECTS[id].options.top = `${newCoords.y}px`;
-	}
+		token.options.left = `${newCoords.x}px`;
+		token.options.top = `${newCoords.y}px`;
+        }
 	$(`.grouprotate`).remove();
 	//should this be here or outside this func?
 	for (let i = 0; i < window.CURRENTLY_SELECTED_TOKENS.length; i++) {

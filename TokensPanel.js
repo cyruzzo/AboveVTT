@@ -3025,6 +3025,14 @@ function display_aoe_token_configuration_modal(listItem, placedToken = undefined
     });
     inputWrapper.append(opacityWrapper);
 
+    let startingHeading = targetOptions.imageHeading || 0;
+    let headingWrapper = build_token_num_input(startingHeading, tokens,  'Image Heading', 0, 360, 1, function (heading) {
+        customization.setTokenOption("imageHeading", heading);
+        persist_token_customization(customization);
+        decorate_modal_images(sidebarPanel, listItem, placedToken);
+    });
+    inputWrapper.append(headingWrapper);
+
     // border color
     if(listItem.isTypePC() && targetOptions.playerThemeBorder != false){
         customization.setTokenOption('color', color_from_pc_object(find_pc_by_player_id(listItem.id)));
