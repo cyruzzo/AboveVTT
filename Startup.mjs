@@ -166,7 +166,13 @@ $(function() {
             if($(`.tokenselected:not([data-id*='profile'])`).length == 0){
               showTempMessage('No non-player tokens selected');
             }
-            forSelTokens((token, id) => {    
+                
+            for(let i=0; i<window.CURRENTLY_SELECTED_TOKENS.length; i++){
+
+              let id = window.CURRENTLY_SELECTED_TOKENS[i];
+              let token = window.TOKEN_OBJECTS[id];
+              if(token.isPlayer() || token.isAoe())
+                continue;
               if(token.isPlayer() || token.isAoe()) return;
               let newHp = Math.max(0, parseInt(token.hp) - parseInt(event.data.damage));
 
@@ -178,7 +184,7 @@ $(function() {
                 token.place_sync_persist()
                 addFloatingCombatText(id, event.data.damage, event.data.damage<0);
               }   
-            })
+            }
           }
           if(event.data.msgType=='DMOpenAlready' && window.DM && window.location.href.includes(event.data.url)){  
             window.close();
