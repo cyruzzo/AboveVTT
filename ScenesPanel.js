@@ -1,14 +1,6 @@
 
 function consider_upscaling(target){
-		if(target.hpps < 60 && target.hpps > 25  && target.vpps < 60 && target.vpps > 25){
-			target.scale_factor=2;
-		}
-		else if(target.hpps <=25 || target.vpps <=25){
-			target.scale_factor=4;
-		}
-		else{
-			target.scale_factor=1;
-		}
+	target.scale_factor = Math.max(1, Math.ceil(60 / target.hpps), Math.ceil(60 / target.vpps));	
 }
 
 function handle_basic_form_toggle_click(event){
@@ -630,7 +622,7 @@ function open_grid_wizard_controls(scene_id, aligner1, aligner2, regrid=function
 		else
 			width = 1;
 		const dash = [30, 5]
-		const color = "rgba(255, 0, 0,0.5)";
+		const color = "rgba(255, 0, 0,1)";
 		window.CURRENT_SCENE_DATA.gridType = gridType;
 		if(manual.find('input[name="offsety"]').val()== undefined || manual.find('input[name="offsetx"]').val()==undefined || (manual.find('#squaresTall').val()==undefined || manual.find('#squaresWide').val()==undefined ))
 			return;

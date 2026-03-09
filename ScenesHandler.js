@@ -203,7 +203,7 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 				else
 					width = 1;
 				const dash = [30, 5];
-				const color = "rgba(255, 0, 0,1)";
+				const color = "rgba(255, 0, 0, 1)";
 				// nulls will take the window.current_scene_data from above
 				window.CURRENT_SCENE_DATA.gridType = $('#gridType input:checked').val();
 				window.CURRENT_SCENE_DATA.gridOver = 1;
