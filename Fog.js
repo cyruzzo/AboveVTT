@@ -3077,7 +3077,7 @@ function drawing_mousedown(e) {
 		const hpps = window.CURRENT_SCENE_DATA.gridType == 2 ? window.CURRENT_SCENE_DATA.vpps : window.CURRENT_SCENE_DATA.hpps;
 
 		clear_temp_canvas()
-		let { x, y } = snap_point_to_grid(window.BEGIN_MOUSEX / window.CURRENT_SCENE_DATA.scale_factor, window.BEGIN_MOUSEY / window.CURRENT_SCENE_DATA.scale_factor, true);
+		let { x, y } = snap_point_to_grid(window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, true);
 		window.BRUSHPOINTS.push([Math.round(x), Math.round(y)])
 		window.BRUSHPOINTS = Array.from(new Set(window.BRUSHPOINTS.map(JSON.stringify)), JSON.parse)		
 		if(window.CURRENT_SCENE_DATA.gridType == '1'){
