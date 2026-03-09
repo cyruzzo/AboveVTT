@@ -1252,7 +1252,7 @@ function draw_svg_grid(type=null, hpps=null, vpps=null, offsetX=null, offsetY=nu
 		if(subdivide && subdivide !== '0') submult = parseInt(window.CURRENT_SCENE_DATA.fpsq) / 5; // we divide into 5 ft squares
 	}
 	let strokeWidth = lineWidth || sd.grid_line_width;
-	strokeWidth = Math.max(strokeWidth / window.ZOOM, strokeWidth); // fix disappearing lines on zoom due rendering pixel averages
+	strokeWidth = Math.max(strokeWidth / window.ZOOM / scale, strokeWidth); // fix disappearing lines on zoom due rendering pixel averages
 	const gr = svg_tile(gridType, xs*submult, ys*submult,
 			    color || sd.grid_color,
 		        strokeWidth, dash);
