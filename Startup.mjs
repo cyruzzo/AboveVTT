@@ -173,7 +173,6 @@ $(function() {
               let token = window.TOKEN_OBJECTS[id];
               if(token.isPlayer() || token.isAoe())
                 continue;
-              if(token.isPlayer() || token.isAoe()) return;
               let newHp = Math.max(0, parseInt(token.hp) - parseInt(event.data.damage));
 
               if(window.all_token_objects[id] != undefined){
