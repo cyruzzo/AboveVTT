@@ -774,21 +774,13 @@ function should_use_iframes_for_monsters() {
 }
 
 async function popout_all_selected_token_stat(){
-	const selectedTokens = window.CURRENTLY_SELECTED_TOKENS;
-	if(!selectedTokens || selectedTokens.length < 1)
-		return;
-	for(let id of selectedTokens){
+	forSelTokensAsync(async (token) => {
 		let container;
-		const token = window.TOKEN_OBJECTS[id];
-		if(token.isPlayer()){
-			continue;
-		}
+		if(token.isPlayer()) return;
 		if (token.options.statBlock) {
 			let customStatBlock = window.JOURNAL.notes[token.options.statBlock].text;
 			let pcURL = $(customStatBlock).find('.custom-pc-sheet.custom-stat').text();
-			if (pcURL) {
-				continue;
-			} 
+			if (pcURL) return;
 			container = await load_monster_stat(undefined, token.options.id, customStatBlock);
 		}
 		else if(token.options.monster){
@@ -813,7 +805,7 @@ async function popout_all_selected_token_stat(){
 			$(".dcm-backdrop").remove();
 		});
 		close_player_monster_stat_block();
-	}
+	});
 }
 function open_selected_token_stat() {
 	const selectedTokens = window.CURRENTLY_SELECTED_TOKENS;
@@ -3111,8 +3103,8 @@ function init_help_menu() {
 							<dd>Force recenter camera and instant teleport token for those receiving the message. (Always does this for those clicking the portal)</dd>
 						</dl>
 						<dl>
-							<dt>${getModKeyName()}+A while edit wall points tool is selected</dt>
-							<dd>Select all wall points</dd>
+							<dt>${getModKeyName()}+A Select all for token and wall points mode</dt>
+							<dd>Select all for some modes</dd>
 						</dl>
 						<dl>
 							<dt>Hold ${getShiftKeyName()} while selecting wall points with edit point tool</dt>

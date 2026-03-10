@@ -674,6 +674,11 @@ class Token {
 	isDMLocked() {
 		return window.DM && this.options.locked && !$('#select_locked .ddbc-tab-options__header-heading').hasClass('ddbc-tab-options__header-heading--is-active');
 	}
+	isSelectable() {
+		if ((!window.DM && this.options.hidden) || this.options.type == 'door' || this.options.combatGroupToken) return false;
+		const tokenDiv = this.isLineAoe() ? $(`#tokens>div[data-id='${this.id}'] [data-img]`) : $(`#tokens>div[data-id='${this.id}']`);
+		return tokenDiv.css("pointer-events") != "none" && tokenDiv.css("display") != "none" && !tokenDiv.hasClass("ui-draggable-disabled");
+	}
 	rotate(newRotation) {
 		if (this.isPlayerLocked()) return; // don't allow rotating if the token is locked
 		if (this.isDMLocked()) return; // don't allow rotating if the token is locked		
@@ -2361,7 +2366,6 @@ class Token {
 									let tokID = parentToken.attr('data-id');
 									let groupID = parentToken.attr('data-group-id');
 									let thisSelected = !(parentToken.hasClass('tokenselected'));
-									let count = 0;
 									if (shiftHeld == false) {
 										deselect_all_tokens(true);
 									}
@@ -2375,14 +2379,6 @@ class Token {
 									}
 
 									window.TOKEN_OBJECTS[tokID].selected = thisSelected;
-
-									for (let id in window.TOKEN_OBJECTS) {
-										if (id.selected == true) {
-											count++;
-										}
-									}
-
-									window.MULTIPLE_TOKEN_SELECTED = (count > 1);
 
 									if (window.DM) {
 										$("[id^='light_']").css('visibility', "visible");
@@ -2442,7 +2438,6 @@ class Token {
 							let tokID = parentToken.attr('data-id');
 							let groupID = parentToken.attr('data-group-id');
 							let thisSelected = !(parentToken.hasClass('tokenselected'));
-							let count = 0;
 							if (shiftHeld == false) {
 								deselect_all_tokens(true);
 							}
@@ -2456,14 +2451,6 @@ class Token {
 							}				
 
 							window.TOKEN_OBJECTS[tokID].selected = thisSelected;
-
-							for (let id in window.TOKEN_OBJECTS) {
-								if (id.selected == true) {
-									count++;
-								}			
-							}
-
-							window.MULTIPLE_TOKEN_SELECTED = (count > 1);
 					
 							if(window.DM){
 						   		$("[id^='light_']").css('visibility', "visible");
@@ -3616,7 +3603,6 @@ class Token {
 					let tokID = parentToken.attr('data-id');
 					let groupID = parentToken.attr('data-group-id');
 					let thisSelected = !(parentToken.hasClass('tokenselected'));
-					let count = 0;
 					if (shiftHeld == false) {
 						deselect_all_tokens(true);
 					}
@@ -3631,14 +3617,6 @@ class Token {
 
 					window.TOKEN_OBJECTS[tokID].selected = thisSelected;
 
-					for (let id in window.TOKEN_OBJECTS) {
-						if (id.selected == true) {
-							count++;
-						}			
-					}
-
-					window.MULTIPLE_TOKEN_SELECTED = (count > 1);
-			
 					if(window.DM){
 				   		$("[id^='light_']").css('visibility', "visible");
 				   	}
@@ -4182,14 +4160,39 @@ function token_menu() {
 		return;
 }
 
-function deselect_all_tokens(ignoreVisionUpdate = false) {
-	window.MULTIPLE_TOKEN_SELECTED = false;
-	for (let id in window.TOKEN_OBJECTS) {
-		let curr = window.TOKEN_OBJECTS[id];
-		if (curr.selected) {
-			curr.selected = false;
-		}
+//general purpose token iterators
+const forTokens = (callback, selected=false) => {
+	let cnt = 0;
+	for (const token of Object.values(window.TOKEN_OBJECTS)) {
+		if (callback(token, token.options.id)) cnt++; 
 	}
+	return cnt;
+}
+const forSelTokens = (callback) => {
+	let cnt = 0;
+	for (const id of window.CURRENTLY_SELECTED_TOKENS) {
+		const token = window.TOKEN_OBJECTS[id];
+		if (token && callback(token, id)) cnt++; 
+	}
+	return cnt;
+}
+const forSelTokensAsync = async (callback) => {
+	let cnt = 0;
+	for (const id of window.CURRENTLY_SELECTED_TOKENS) {
+		const token = window.TOKEN_OBJECTS[id];
+		if (token && await callback(token, id)) cnt++; 
+	}
+	return cnt;
+}
+
+function select_all_tokens() {
+	const cnt = forTokens((token) => token.isSelectable() && (token.selected = true));
+	draw_selected_token_bounding_box();
+	return cnt;
+}
+
+function deselect_all_tokens(ignoreVisionUpdate = false) {
+	forSelTokens((token) => (token.selected = false));
 	$(`.token`).toggleClass('tokenselected', false);
 	$(`:is(#combat_area, #combat_area_carousel) tr`).toggleClass('selected-token', false);
 	remove_selected_token_bounding_box();
@@ -4834,14 +4837,12 @@ function rotation_towards_cursor_from_point(pointX, pointY, mousex, mousey, larg
 /// rotates all selected tokens to the specified newRotation
 function rotate_selected_tokens(newRotation, persist = false) {
 	if ($("#select-button").hasClass("button-enabled") || !window.DM) { // players don't have a select tool
-		for (let i = 0; i < window.CURRENTLY_SELECTED_TOKENS.length; i++) {
-			let id = window.CURRENTLY_SELECTED_TOKENS[i];
-			let token = window.TOKEN_OBJECTS[id];
+		forSelTokens((token) => {
 			token.rotate(newRotation);
 			if (persist) {
 				token.place_sync_persist();
 			}
-		}
+		});
 		return false;
 	}
 }
@@ -4873,12 +4874,9 @@ function grouprotate_create() {
 		display: '',
 		visibility: 'hidden'
 	});
-	for (let i = 0; i < window.CURRENTLY_SELECTED_TOKENS.length; i++) {
-
-		let id = window.CURRENTLY_SELECTED_TOKENS[i];
-		let token = window.TOKEN_OBJECTS[id];
+	forSelTokens((token, id) => {
 		const selectedGroupToken = token.options.groupId && $(`.tokenselected[data-group-id="${token.options.groupId}"]:not(.ui-draggable-disabled)`).length > 0
-		if ((token.isPlayerLocked() || token.isDMLocked()) && !selectedGroupToken) continue;
+		if ((token.isPlayerLocked() || token.isDMLocked()) && !selectedGroupToken) return;
 
 		$(`#scene_map_container .token[data-id='${id}'], [data-darkness='darkness_${id.replaceAll("/", "")}']`).remove();
 		let sceneToken = $(`div.token[data-id='${id}']`)
@@ -4898,7 +4896,7 @@ function grouprotate_create() {
 
 		furthest_coord.right  = (furthest_coord.right  == undefined) ? tokenRight : Math.max(furthest_coord.right, tokenRight)
 		furthest_coord.bottom  = (furthest_coord.bottom  == undefined) ? tokenBottom : Math.max(furthest_coord.bottom , tokenBottom)
-	}
+	});
 
 	let centerPointRotateOrigin;
 	if(window.CURRENTLY_SELECTED_TOKENS.length == 1 && window.TOKEN_OBJECTS[window.CURRENTLY_SELECTED_TOKENS[0]].isAoe()){
@@ -4925,11 +4923,9 @@ function grouprotate_rotate(angle) {
 	});
 }
 function grouprotate_commit(angle) {
-	for (let i = 0; i < window.CURRENTLY_SELECTED_TOKENS.length; i++) {
-		let id = window.CURRENTLY_SELECTED_TOKENS[i];
-		let token = window.TOKEN_OBJECTS[id];
+	forSelTokens((token, id) => {
 		const selectedGroupToken = token.options.groupId && $(`.tokenselected[data-group-id="${token.options.groupId}"]:not(.ui-draggable-disabled)`).length > 0
-		if ((token.isPlayerLocked() || token.isDMLocked()) && !selectedGroupToken) continue;
+		if ((token.isPlayerLocked() || token.isDMLocked()) && !selectedGroupToken) return;
 		let sceneToken = $(`#tokens .token[data-id='${id}']`)
 
 		token.options.rotation = angle + parseFloat(sceneToken.css('--token-rotation'))
@@ -4943,18 +4939,10 @@ function grouprotate_commit(angle) {
 		newCoords = convert_point_from_view_to_map(currentplace.left, currentplace.top, true, true)
 		token.options.left = `${newCoords.x}px`;
 		token.options.top = `${newCoords.y}px`;
-        }
+	});
 	$(`.grouprotate`).remove();
-	//should this be here or outside this func?
-	for (let i = 0; i < window.CURRENTLY_SELECTED_TOKENS.length; i++) {
-		let id = window.CURRENTLY_SELECTED_TOKENS[i];
-		let token = window.TOKEN_OBJECTS[id];
-		token.selected = true;
-		token.place_sync_persist(0);
-	}	
-	setTimeout(function(){
-		delete window.key_rotation_pause;
-	},200)	
+	//not sure why it re-sets selected to true here (should already be true?)
+	forSelTokens((token) => ((token.selected = true) && token.place_sync_persist(0)));
 }
 
 
@@ -4965,28 +4953,22 @@ async function do_draw_selected_token_bounding_box() {
 	// hold a separate list of selected ids so we don't have to iterate all tokens during bulk token operations like rotation
 	window.CURRENTLY_SELECTED_TOKENS = [];
 	let promises = [];
-	let selected = Object.fromEntries(
-					   Object.entries(window.TOKEN_OBJECTS).filter(
-					      ([key, val])=> window.TOKEN_OBJECTS[key].selected == true
-					   )
-					);
 	let groupIDs = [];
-	for (let id in selected) {
-		let selector = "div[data-id='" + id + "']";
-		
+	forTokens((token, id) => {
+		if(!token.selected) return;
+		const selector = "div[data-id='" + id + "']";
 		promises.push(new Promise((resolve) => {
-			toggle_player_selectable(window.TOKEN_OBJECTS[id], $("#tokens").find(selector)); 
+			toggle_player_selectable(token, $("#tokens").find(selector)); 
 			resolve();
 		}));	
 		window.CURRENTLY_SELECTED_TOKENS.push(id);	
 		$("#tokens").find(selector).toggleClass('tokenselected', true);	
 		$(`:is(#combat_area, #combat_area_carousel) tr[data-target='${id}']`).toggleClass('selected-token', getCombatTrackerSettings().ct_selected_token == '1');
-					
-		if(window.TOKEN_OBJECTS[id].options.groupId && !groupIDs.includes(window.TOKEN_OBJECTS[id].options.groupId)){
-			groupIDs.push(window.TOKEN_OBJECTS[id].options.groupId)
+		if(token.options.groupId && !groupIDs.includes(token.options.groupId)){
+			groupIDs.push(token.options.groupId)
 		}
 									
-	}
+	})
 
 	for(let index=0; index<groupIDs.length; index++){
 		let tokens = $(`.token[data-group-id='${groupIDs[index]}']`)
@@ -5014,13 +4996,10 @@ async function do_draw_selected_token_bounding_box() {
 			let right = undefined;
 			let left = undefined;
 
-			for (let i = 0; i < window.CURRENTLY_SELECTED_TOKENS.length; i++) {
-				
-				let id = window.CURRENTLY_SELECTED_TOKENS[i];
-				let token = window.TOKEN_OBJECTS[id];
+			forSelTokens((token, id) => {
 
-				if ((!window.DM || token.options.lockRestrictDrop == "declutter") && $(`div.token[data-id='${id}']`).css('display') == 'none')
-					continue;
+				if ((!window.DM || token.options.lockRestrictDrop == "declutter") && $(`div.token[data-id='${id}']`).css('display') == 'none') return;
+
 				let tokenImageClientPosition = $(`div.token[data-id='${id}']>.token-image`)[0].getBoundingClientRect();
 				let tokenImagePosition = $(`div.token[data-id='${id}']>.token-image`).position();
 				let tokenImageWidth = (tokenImageClientPosition.width) / (window.ZOOM);
@@ -5052,7 +5031,7 @@ async function do_draw_selected_token_bounding_box() {
 				if(token.options.audioChannel?.audioArea != undefined){
 					drawPolygon(temp_context, token.options.audioChannel.audioArea, 'rgba(255, 0, 0, 0.3)', true, undefined, undefined, undefined, token.options.audioChannel.audioAreaOrigScale);
 				}
-			}
+			});
 			
 			// add 10px to each side of out bounding box to give the tokens a little space
 			let borderOffset = 10;
@@ -5391,9 +5370,7 @@ function copy_selected_tokens(teleporterTokenId=undefined) {
 	if(teleporterTokenId){
 		const selectedTokens = window.CURRENTLY_SELECTED_TOKENS.slice(0);
 		const tokens = {};
-		for(let id of selectedTokens){
-			tokens[id] = $.extend(true, {}, window.TOKEN_OBJECTS[id])
-		}
+		forSelTokens((token,id) => (tokens[id] = $.extend(true, {}, token)));
 		window.TELEPORTER_PASTE_BUFFER = {
 			'targetToken': teleporterTokenId,
 			'tokens': tokens
@@ -5410,9 +5387,7 @@ function copy_selected_tokens(teleporterTokenId=undefined) {
 			hpps: window.CURRENT_SCENE_DATA.hpps,
 			vpps: window.CURRENT_SCENE_DATA.vpps
 		};
-		for (let id in window.TOKEN_OBJECTS) {
-			let token = window.TOKEN_OBJECTS[id];
-
+		forTokens((token, id) => {
 			if (token.selected) { 
 				bounds = {
 					...bounds,
@@ -5423,7 +5398,7 @@ function copy_selected_tokens(teleporterTokenId=undefined) {
 				}
 				window.TOKEN_PASTE_BUFFER.push({id: id, left: token.options.left, top: token.options.top});
 			}
-		}
+		})
 		window.TOKEN_PASTE_BOUNDS = bounds;
 	}
 	
@@ -5533,14 +5508,13 @@ function delete_selected_walls() {
 function delete_selected_tokens() {
 	// move all the tokens into a separate list so the DM can "undo" the deletion
 	let tokensToDelete = [];
-	for (let id in window.TOKEN_OBJECTS) {
-		let token = window.TOKEN_OBJECTS[id];
+	forTokens((token) => {
 		if (token.selected) {
 			if (window.DM || token.options.deleteableByPlayers == true) {				
 				tokensToDelete.push(token);
 			}
 		}
-	}
+	})
 
 	if (tokensToDelete.length == 0) return;
 	window.TOKEN_OBJECTS_RECENTLY_DELETED = {};

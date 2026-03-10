@@ -321,16 +321,6 @@ Mousetrap.bind('esc', function () {     //deselect all buttons
     removeError();
 });
 
-
-const moveLoop = function(callback = function(){}){
-    for (let i = 0; i < window.CURRENTLY_SELECTED_TOKENS.length; i++) {
-        let id = window.CURRENTLY_SELECTED_TOKENS[i];
-        let token = window.TOKEN_OBJECTS[id];
-        callback(token);
-    }
-    return true;
-}
-
 //Throttle so the token doesn't immediately fly off map if button is held and set trailing only we can register diagonal movement as 1 move.
 const throttleMoveRequest = throttle(() => {
     requestAnimationFrame(moveKeyWatch);
@@ -340,28 +330,28 @@ const throttleMoveRequest = throttle(() => {
 //setTimeout so we can be sure diagonal key combos are pressed or not.
 function moveKeyWatch() {
     if (arrowKeysHeld[0] && arrowKeysHeld[2]) {
-        moveLoop(function(token){token.moveUpLeft()});
+        forSelTokens(function(token){token.moveUpLeft()});
     } 
     else if (arrowKeysHeld[0] && arrowKeysHeld[3]) {
-       moveLoop(function(token){token.moveUpRight()});
+       forSelTokens(function(token){token.moveUpRight()});
     } 
     else if (arrowKeysHeld[1] && arrowKeysHeld[2]) {
-       moveLoop(function(token){token.moveDownLeft()});
+       forSelTokens(function(token){token.moveDownLeft()});
     } 
     else if (arrowKeysHeld[1] && arrowKeysHeld[3]) {
-       moveLoop(function(token){token.moveDownRight()});
+       forSelTokens(function(token){token.moveDownRight()});
     } 
     else if (arrowKeysHeld[0]) {
-       moveLoop(function(token){token.moveUp()});
+       forSelTokens(function(token){token.moveUp()});
     } 
     else if (arrowKeysHeld[1]) {
-       moveLoop(function(token){token.moveDown()});
+       forSelTokens(function(token){token.moveDown()});
     }
     else if (arrowKeysHeld[2]) {
-      moveLoop(function(token){token.moveLeft()});
+      forSelTokens(function(token){token.moveLeft()});
     }
     else if (arrowKeysHeld[3]) {
-       moveLoop(function(token){token.moveRight()});
+       forSelTokens(function(token){token.moveRight()});
     }  
 }
 
@@ -570,6 +560,8 @@ Mousetrap.bind('mod+a', function (e) {
         redraw_light(true);
         sync_drawings();
         window.wallsBeingDragged = [];
+    } else if($('#select-button').hasClass('button-enabled')){ //select all tokens
+        select_all_tokens();
     }
 });
 
@@ -625,26 +617,16 @@ function handle_undo(){
 }
     
 Mousetrap.bind('|', () => { //flip all selected tokens
-    for (let i = 0; i < window.CURRENTLY_SELECTED_TOKENS.length; i++) {
-	let id = window.CURRENTLY_SELECTED_TOKENS[i];
-	let token = window.TOKEN_OBJECTS[id];
+    forSelTokens((token) => {
 	token.flip()
 	token.place_sync_persist();
-    }
+    });
 });
 Mousetrap.bind('/', () => { 
-    for (let i = 0; i < window.CURRENTLY_SELECTED_TOKENS.length; i++) {
-        let id = window.CURRENTLY_SELECTED_TOKENS[i];
-        let token = window.TOKEN_OBJECTS[id];
-        token.moveToBottom();
-    }
+    forSelTokens((token) => token.moveToBottom());
 });
-Mousetrap.bind('\'', () => { 
-    for (let i = 0; i < window.CURRENTLY_SELECTED_TOKENS.length; i++) {
-        let id = window.CURRENTLY_SELECTED_TOKENS[i];
-        let token = window.TOKEN_OBJECTS[id];
-        token.moveToTop();
-    }
+    Mousetrap.bind('\'', () => {
+    forSelTokens((token) => token.moveToTop());        
 });
 let key_rotation_done;
 let key_rotation_angle = 0;

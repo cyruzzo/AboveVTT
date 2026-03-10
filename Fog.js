@@ -2264,13 +2264,8 @@ function redraw_light_walls(clear=true, editingWallPoints = false){
 							}
 							else if(tokenObject?.options?.teleporterCoords != undefined){
 
-							
-								for(let i=0; i<window.CURRENTLY_SELECTED_TOKENS.length; i++){
-
-									let curr = window.TOKEN_OBJECTS[window.CURRENTLY_SELECTED_TOKENS[i]];
-									if(!window.DM && (curr.options.restrictPlayerMove || curr.options.locked) && !curr.isCurrentPlayer() && curr.options.groupId == undefined){
-										continue;
-									}
+								forSelTokens((curr) => {
+									if(!window.DM && (curr.options.restrictPlayerMove || curr.options.locked) && !curr.isCurrentPlayer() && curr.options.groupId == undefined) return
 										
 									const scaleCoversion = window.CURRENT_SCENE_DATA.scale_factor != undefined ? window.CURRENT_SCENE_DATA.scale_factor / tokenObject.options.teleporterCoords.scale : 1 / tokenObject.options.teleporterCoords.scale;
 									curr.options.left = `${tokenObject.options.teleporterCoords.left*scaleCoversion - curr.options.size/2}px`;
@@ -2291,8 +2286,7 @@ function redraw_light_walls(clear=true, editingWallPoints = false){
 										curr.highlight();
 									}
 									curr.sync(optionsClone);
-								
-								}
+								})
 							}
 							return;
 						}
@@ -4434,7 +4428,6 @@ function drawing_mouseup(e) {
 
 	else if (window.DRAWFUNCTION == "select") {
 		// FIND TOKENS INSIDE THE AREA
-		let c = 0;
 		const fullyInside = (window.BEGIN_MOUSEY > mouseY);
 		const y0 = Math.min(window.BEGIN_MOUSEY, mouseY);
 		const y1 = Math.max(window.BEGIN_MOUSEY, mouseY);
@@ -4442,30 +4435,18 @@ function drawing_mouseup(e) {
 		const x1 = Math.max(window.BEGIN_MOUSEX, mouseX);
 		for (let id in window.TOKEN_OBJECTS) {
 			const curr = window.TOKEN_OBJECTS[id];
-			if(curr.options.type == 'door' || curr.options.combatGroupToken) continue;
-			
+			if(!curr.isSelectable()) continue;
 			const tokenImageRect = $("#tokens>div[data-id='" + id + "'] .token-image")[0].getBoundingClientRect();
 			const CX = ((parseInt(tokenImageRect.left) + parseInt(tokenImageRect.right))/2 + window.scrollX - window.VTTMargin) / window.ZOOM;			
 			const CY = ((parseInt(tokenImageRect.top) + parseInt(tokenImageRect.bottom))/2 + window.scrollY - window.VTTMargin) / window.ZOOM;
 			const isCircle = curr.options.tokenStyleSelect == 'circle'
 			const size = curr.options.size * ((isCircle || curr.options.tokenStyleSelect == 'square' || $("#tokens>div[data-id='" + id + "']").hasClass("isAoe")) ? (curr.options.imageSize || 1) : 1);
 			const R = (isCircle ? 0 : curr.options.rotation) || 0;
-			if(! (fullyInside ? isRotatedSquareInsideRect : intersectsRotatedSquare) (
-				{x:x0, y:y0, width:x1-x0, height: y1-y0}, CX, CY, size, R)) continue;
-			c++;
-			// TOKEN IS INSIDE/OVERLAPS THE SELECTION
-			if (window.DM || !curr.options.hidden) {
-				let tokenDiv = curr.isLineAoe() ? $(`#tokens>div[data-id='${id}'] [data-img]`) : $(`#tokens>div[data-id='${id}']`)
-				if(tokenDiv.css("pointer-events")!="none" && tokenDiv.css("display")!="none" && !tokenDiv.hasClass("ui-draggable-disabled")) {
-					curr.selected = true;
-				}
-			}
-
+			curr.selected = (fullyInside ? isRotatedSquareInsideRect : intersectsRotatedSquare) (
+				{x:x0, y:y0, width:x1-x0, height: y1-y0}, CX, CY, size, R);
 		}
 		$("#temp_overlay").css('z-index', '25');
-		window.MULTIPLE_TOKEN_SELECTED = (c > 1);
 		draw_selected_token_bounding_box();
-		console.log("READY");
 	}
 	else if (window.DRAWFUNCTION == "measure") {
 		WaypointManager.fadeoutMeasuring(window.PLAYER_ID)
