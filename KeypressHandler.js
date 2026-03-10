@@ -649,6 +649,8 @@ Mousetrap.bind('\'', () => {
 let key_rotation_done;
 let key_rotation_angle = 0;
 function key_rotation(angle) {
+    if (window.key_rotation_pause)
+        return; //commit in progress, if we allow rotation during process it may remove the token from the map and cause errors
     if(key_rotation_done) {
         clearTimeout(key_rotation_done);
     } else {
@@ -656,6 +658,7 @@ function key_rotation(angle) {
         grouprotate_create();
     }
     key_rotation_done = setTimeout(() => {
+        window.key_rotation_pause = true;
         key_rotation_done = null;
         grouprotate_commit(key_rotation_angle);
         draw_selected_token_bounding_box();	        

@@ -687,7 +687,7 @@ class Token {
 		if(this.options.imageSize === undefined) {
 			this.imageSize(1) 
 		}
-		const adjustedRotation = (newRotation + (this.options.imageHeading || 0)) % 360;
+
 		let imageScale = (this.options.imageSize != undefined) ? this.options.imageSize : 1;
 
 		let selector = "div[data-id='" + this.options.id + "']";
@@ -697,7 +697,7 @@ class Token {
 		tokenElement.css("--token-scale", imageScale);
 		tokenElement.css("--token-flip-x", tokenFlipX(this));		
 		tokenElement.find(".token-image").css("transform", imageTransform);
-		$(`.aura-element-container-clip[id='${this.options.id}'] .aura-element, .aura-element[data-id='${this.options.id}']`).css('--rotation', adjustedRotation + "deg");
+		$(`.aura-element-container-clip[id='${this.options.id}'] .aura-element, .aura-element[data-id='${this.options.id}']`).css('--rotation', newRotation%360 + "deg");
 	}
 	moveUp()        { this.moveDirection(-1,  0); }
 	moveDown()      { this.moveDirection( 1,  0); }
@@ -4828,7 +4828,7 @@ function rotation_towards_cursor(token, mousex, mousey, largerSnapAngle) {
 function rotation_towards_cursor_from_point(pointX, pointY, mousex, mousey, largerSnapAngle) {
 	const target = Math.atan2(mousey - pointY, mousex - pointX) + Math.PI * 3 / 2; // down = 0
 	const degrees = target * radToDeg;
-	const snap = (largerSnapAngle == true) ? 45 : 5; // if we ever allow hex, use 45 for square and 60 for hex
+	const snap = (largerSnapAngle == true) ? 45 : 1; // if we ever allow hex, use 45 for square and 60 for hex
 	return (Math.round(degrees / snap) * snap + 360.0) % 360.0;
 }
 /// rotates all selected tokens to the specified newRotation
@@ -4951,7 +4951,10 @@ function grouprotate_commit(angle) {
 		let token = window.TOKEN_OBJECTS[id];
 		token.selected = true;
 		token.place_sync_persist(0);
-	}		
+	}	
+	setTimeout(function(){
+		delete window.key_rotation_pause;
+	},200)	
 }
 
 
@@ -5182,7 +5185,7 @@ async function do_draw_selected_token_bounding_box() {
 					for (let i = 0; i < window.CURRENTLY_SELECTED_TOKENS.length; i++) {
 						let id = window.CURRENTLY_SELECTED_TOKENS[i];
 						let token = window.TOKEN_OBJECTS[id];
-						token.place_sync_persist();
+						token.sync($.extend(true, {}, token.options));
 					}
 					draw_selected_token_bounding_box();	
 				},
