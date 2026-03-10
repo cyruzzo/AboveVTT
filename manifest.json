@@ -7,8 +7,6 @@
 		{
 			"matches": [
 				"https://www.dndbeyond.com/campaigns/*",
-				"https://www.dndbeyond.com/encounters/*",
-				"https://www.dndbeyond.com/profile/*/characters/*",
 				"https://www.dndbeyond.com/characters/*"
 			],
 			"exclude_matches": [
@@ -63,7 +61,7 @@
 			"AjaxQueueModule.js",
 			"CoreFunctions.js",
 			"CampaignPage.js",
-			"Startup.js",
+			"Startup.mjs",
 			"CharactersPage.js",
 			"EncounterHandler.js",
 			"SidebarPanel.js",
@@ -105,7 +103,8 @@
 			"WeatherOverlay.js",
 			"iframe.html",
 			"avttS3Upload.js",
-			"loadFrame.js"
+			"loadFrame.js",
+			"Load.js"	
 			],
 			"matches": [ "*://*.dndbeyond.com/*" ]	
 		}
