@@ -438,7 +438,7 @@ function filter_token_list(searchTerm) {
     open5e_monsters = [];
     inject_monster_tokens(searchTerm, 0);
     getOpen5e(open5e_monsters, searchTerm);
-     $('.custom-token-list').show();
+    $('.custom-token-list').show();
 }
 
 /**
@@ -1678,7 +1678,7 @@ async function create_and_place_token(listItem, hidden = undefined, specificImag
         }
     }
 
-    // TODO: figure out if we still need to do this, and where they are coming from
+
     delete options.undefined;
     delete options[""];
     console.log("create_and_place_token about to place token with options", options, hidden, mapPoint, eventPageX, eventPageY, disableSnap);
@@ -4529,7 +4529,7 @@ function create_token_copy_inside(listItem, open5e = false){
 
     options.imgsrc = random_image_for_item(listItem);
 
-    // TODO: figure out if we still need to do this, and where they are coming from
+
     delete options.undefined;
     delete options[""];
     const statBlock = build_stat_block_for_copy(listItem, options, open5e)
