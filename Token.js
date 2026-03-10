@@ -1568,7 +1568,7 @@ class Token {
 				}
 				$(`#token_map_items [data-id='${this.options.id}']`).css("opacity", 0.5); 
 			} else {
-				tok.hide();
+				tok.toggleClass('notVisible', true);
 			}
 		} else {
 			if (animated) {
@@ -4389,8 +4389,8 @@ function setTokenAuras (token, options) {
 			: token.parent().parent().find("#aura_" + tokenId).css("opacity", 1)
 		}
 		else{
-			(options.hidden || (options.hideaura && !token.attr("data-id").includes(window.PLAYER_ID)) || showAura == 'none') ? token.parent().parent().find("#aura_" + tokenId).hide()
-						: token.parent().parent().find("#aura_" + tokenId).show()
+			(options.hidden || (options.hideaura && !token.attr("data-id").includes(window.PLAYER_ID)) || showAura == 'none') ? token.parent().parent().find("#aura_" + tokenId).toggleClass('notVisible', true)
+				: token.parent().parent().find("#aura_" + tokenId).toggleClass('notVisible', false);
 		}
 		const currAura = token.parent().parent().find("#aura_" + tokenId);
 		if (window.ON_SCREEN_TOKENS[options.id] == undefined)
