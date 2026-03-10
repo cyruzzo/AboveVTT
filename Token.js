@@ -5152,20 +5152,16 @@ async function do_draw_selected_token_bounding_box() {
 					};
 
 					// rotate all selected tokens to face the grabber, but only for this user while dragging
-					for (let i = 0; i < window.CURRENTLY_SELECTED_TOKENS.length; i++) {
-						let id = window.CURRENTLY_SELECTED_TOKENS[i];
-						let token = window.TOKEN_OBJECTS[id];
+					forSelTokens((token, id) => {
 						let angle = rotation_towards_cursor(token, ui.position.left, ui.position.top, event.shiftKey);
 						token.rotate(angle);
-					}
+					})
 				},
 				stop: function (event) { 
 					// rotate for all players
-					for (let i = 0; i < window.CURRENTLY_SELECTED_TOKENS.length; i++) {
-						let id = window.CURRENTLY_SELECTED_TOKENS[i];
-						let token = window.TOKEN_OBJECTS[id];
+					forSelTokens((token, id) => {
 						token.sync($.extend(true, {}, token.options));
-					}
+					});
 					draw_selected_token_bounding_box();	
 				},
 			});
