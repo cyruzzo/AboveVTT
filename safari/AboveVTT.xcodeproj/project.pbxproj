@@ -52,7 +52,7 @@
 		20BD39352D7619E300E6DADC /* AOETemplates.js in Resources */ = {isa = PBXBuildFile; fileRef = 20BD38E92D7619E300E6DADC /* AOETemplates.js */; };
 		20BD39362D7619E300E6DADC /* ScenesHandler.js in Resources */ = {isa = PBXBuildFile; fileRef = 20BD38EA2D7619E300E6DADC /* ScenesHandler.js */; };
 		20BD39372D7619E300E6DADC /* images in Resources */ = {isa = PBXBuildFile; fileRef = 20BD38EB2D7619E300E6DADC /* images */; };
-		20BD39382D7619E300E6DADC /* Startup.js in Resources */ = {isa = PBXBuildFile; fileRef = 20BD38EC2D7619E300E6DADC /* Startup.js */; };
+		20BD39382D7619E300E6DADC /* Startup.mjs in Resources */ = {isa = PBXBuildFile; fileRef = 20BD38EC2D7619E300E6DADC /* Startup.mjs */; };
 		20BD39392D7619E300E6DADC /* jquery-3.6.0.min.js in Resources */ = {isa = PBXBuildFile; fileRef = 20BD38ED2D7619E300E6DADC /* jquery-3.6.0.min.js */; };
 		20BD393A2D7619E300E6DADC /* ChatObserver.js in Resources */ = {isa = PBXBuildFile; fileRef = 20BD38EE2D7619E300E6DADC /* ChatObserver.js */; };
 		20BD393C2D7619E300E6DADC /* onedrive in Resources */ = {isa = PBXBuildFile; fileRef = 20BD38F02D7619E300E6DADC /* onedrive */; };
@@ -121,7 +121,7 @@
 		20BD39812D7619E300E6DADC /* AOETemplates.js in Resources */ = {isa = PBXBuildFile; fileRef = 20BD38E92D7619E300E6DADC /* AOETemplates.js */; };
 		20BD39822D7619E300E6DADC /* ScenesHandler.js in Resources */ = {isa = PBXBuildFile; fileRef = 20BD38EA2D7619E300E6DADC /* ScenesHandler.js */; };
 		20BD39832D7619E300E6DADC /* images in Resources */ = {isa = PBXBuildFile; fileRef = 20BD38EB2D7619E300E6DADC /* images */; };
-		20BD39842D7619E300E6DADC /* Startup.js in Resources */ = {isa = PBXBuildFile; fileRef = 20BD38EC2D7619E300E6DADC /* Startup.js */; };
+		20BD39842D7619E300E6DADC /* Startup.mjs in Resources */ = {isa = PBXBuildFile; fileRef = 20BD38EC2D7619E300E6DADC /* Startup.mjs */; };
 		20BD39852D7619E300E6DADC /* jquery-3.6.0.min.js in Resources */ = {isa = PBXBuildFile; fileRef = 20BD38ED2D7619E300E6DADC /* jquery-3.6.0.min.js */; };
 		20BD39862D7619E300E6DADC /* ChatObserver.js in Resources */ = {isa = PBXBuildFile; fileRef = 20BD38EE2D7619E300E6DADC /* ChatObserver.js */; };
 		20BD39882D7619E300E6DADC /* onedrive in Resources */ = {isa = PBXBuildFile; fileRef = 20BD38F02D7619E300E6DADC /* onedrive */; };
@@ -171,8 +171,8 @@
 		20F9D20F2F31324200A70999 /* avttS3Upload.js in Resources */ = {isa = PBXBuildFile; fileRef = 20F9D20D2F31324200A70999 /* avttS3Upload.js */; };
 		20F9D2112F31326800A70999 /* WeatherOverlay.js in Resources */ = {isa = PBXBuildFile; fileRef = 20F9D2102F31326800A70999 /* WeatherOverlay.js */; };
 		20F9D2122F31326800A70999 /* WeatherOverlay.js in Resources */ = {isa = PBXBuildFile; fileRef = 20F9D2102F31326800A70999 /* WeatherOverlay.js */; };
-		20F9D2192F31355900A70999 /* constants in Resources */ = {isa = PBXBuildFile; fileRef = 20F9D2182F31355900A70999 /* constants */; };
-		20F9D21A2F31355900A70999 /* constants in Resources */ = {isa = PBXBuildFile; fileRef = 20F9D2182F31355900A70999 /* constants */; };
+		20F9D2192F31355900A70999 /* ../../constants in Resources */ = {isa = PBXBuildFile; fileRef = 20F9D2182F31355900A70999 /* ../../constants */; };
+		20F9D21A2F31355900A70999 /* ../../constants in Resources */ = {isa = PBXBuildFile; fileRef = 20F9D2182F31355900A70999 /* ../../constants */; };
 		20F9D21C2F31362900A70999 /* DMScreen.js in Resources */ = {isa = PBXBuildFile; fileRef = 20F9D21B2F31362900A70999 /* DMScreen.js */; };
 		20F9D21D2F31362900A70999 /* DMScreen.js in Resources */ = {isa = PBXBuildFile; fileRef = 20F9D21B2F31362900A70999 /* DMScreen.js */; };
 /* End PBXBuildFile section */
@@ -267,7 +267,7 @@
 		20BD38E92D7619E300E6DADC /* AOETemplates.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = AOETemplates.js; path = ../../AOETemplates.js; sourceTree = "<group>"; };
 		20BD38EA2D7619E300E6DADC /* ScenesHandler.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = ScenesHandler.js; path = ../../ScenesHandler.js; sourceTree = "<group>"; };
 		20BD38EB2D7619E300E6DADC /* images */ = {isa = PBXFileReference; lastKnownFileType = folder; name = images; path = ../../images; sourceTree = "<group>"; };
-		20BD38EC2D7619E300E6DADC /* Startup.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = Startup.js; path = ../../Startup.js; sourceTree = "<group>"; };
+		20BD38EC2D7619E300E6DADC /* Startup.mjs */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = Startup.mjs; path = ../../Startup.mjs; sourceTree = "<group>"; };
 		20BD38ED2D7619E300E6DADC /* jquery-3.6.0.min.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = "jquery-3.6.0.min.js"; path = "../../jquery-3.6.0.min.js"; sourceTree = "<group>"; };
 		20BD38EE2D7619E300E6DADC /* ChatObserver.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = ChatObserver.js; path = ../../ChatObserver.js; sourceTree = "<group>"; };
 		20BD38F02D7619E300E6DADC /* onedrive */ = {isa = PBXFileReference; lastKnownFileType = folder; name = onedrive; path = ../../onedrive; sourceTree = "<group>"; };
@@ -315,7 +315,7 @@
 		20BD39202D7619E300E6DADC /* DiceContextMenu */ = {isa = PBXFileReference; lastKnownFileType = folder; name = DiceContextMenu; path = ../../DiceContextMenu; sourceTree = "<group>"; };
 		20F9D20D2F31324200A70999 /* avttS3Upload.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = avttS3Upload.js; path = ../avttS3Upload.js; sourceTree = SOURCE_ROOT; };
 		20F9D2102F31326800A70999 /* WeatherOverlay.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = WeatherOverlay.js; path = ../WeatherOverlay.js; sourceTree = SOURCE_ROOT; };
-		20F9D2182F31355900A70999 /* constants */ = {isa = PBXFileReference; lastKnownFileType = folder; path = ../../constants; sourceTree = "<group>"; };
+		20F9D2182F31355900A70999 /* ../../constants */ = {isa = PBXFileReference; lastKnownFileType = folder; path = ../../constants; sourceTree = "<group>"; };
 		20F9D21B2F31362900A70999 /* DMScreen.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = DMScreen.js; path = ../DMScreen.js; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
@@ -473,7 +473,7 @@
 				20BD38E92D7619E300E6DADC /* AOETemplates.js */,
 				20BD38EA2D7619E300E6DADC /* ScenesHandler.js */,
 				20BD38EB2D7619E300E6DADC /* images */,
-				20BD38EC2D7619E300E6DADC /* Startup.js */,
+				20BD38EC2D7619E300E6DADC /* Startup.mjs */,
 				20BD38ED2D7619E300E6DADC /* jquery-3.6.0.min.js */,
 				20BD38EE2D7619E300E6DADC /* ChatObserver.js */,
 				20BD38F02D7619E300E6DADC /* onedrive */,
@@ -513,7 +513,7 @@
 				20BD39142D7619E300E6DADC /* TokensPanel.js */,
 				20BD39152D7619E300E6DADC /* SidebarPanel.js */,
 				20BD39162D7619E300E6DADC /* assets */,
-				20F9D2182F31355900A70999 /* constants */,
+				20F9D2182F31355900A70999 /* ../../constants */,
 				20BD39172D7619E300E6DADC /* CombatTracker.js */,
 				20BD39182D7619E300E6DADC /* environment.js */,
 				20BD39192D7619E300E6DADC /* Settings.js */,
@@ -713,7 +713,7 @@
 				20BD39B22D7619E300E6DADC /* Text.js in Resources */,
 				20BD39772D7619E300E6DADC /* MonsterDice.js in Resources */,
 				20BD39902D7619E300E6DADC /* CharactersPage.js in Resources */,
-				20BD39842D7619E300E6DADC /* Startup.js in Resources */,
+				20BD39842D7619E300E6DADC /* Startup.mjs in Resources */,
 				20BD39A62D7619E300E6DADC /* SceneData.js in Resources */,
 				20BD39822D7619E300E6DADC /* ScenesHandler.js in Resources */,
 				20BD39B82D7619E300E6DADC /* DiceContextMenu in Resources */,
@@ -746,7 +746,7 @@
 				20F9D21C2F31362900A70999 /* DMScreen.js in Resources */,
 				20BD397B2D7619E300E6DADC /* Fog.js in Resources */,
 				20BD39802D7619E300E6DADC /* LICENSE in Resources */,
-				20F9D2192F31355900A70999 /* constants in Resources */,
+				20F9D2192F31355900A70999 /* ../../constants in Resources */,
 				20BD39962D7619E300E6DADC /* Journal.js in Resources */,
 				20BD39832D7619E300E6DADC /* images in Resources */,
 				20BD398F2D7619E300E6DADC /* mousetrap.1.6.5.min.js in Resources */,
@@ -793,7 +793,7 @@
 				20BD39662D7619E300E6DADC /* Text.js in Resources */,
 				20BD392B2D7619E300E6DADC /* MonsterDice.js in Resources */,
 				20BD39442D7619E300E6DADC /* CharactersPage.js in Resources */,
-				20BD39382D7619E300E6DADC /* Startup.js in Resources */,
+				20BD39382D7619E300E6DADC /* Startup.mjs in Resources */,
 				20BD395A2D7619E300E6DADC /* SceneData.js in Resources */,
 				20BD39362D7619E300E6DADC /* ScenesHandler.js in Resources */,
 				20BD396C2D7619E300E6DADC /* DiceContextMenu in Resources */,
@@ -826,7 +826,7 @@
 				20F9D21D2F31362900A70999 /* DMScreen.js in Resources */,
 				20BD392F2D7619E300E6DADC /* Fog.js in Resources */,
 				20BD39342D7619E300E6DADC /* LICENSE in Resources */,
-				20F9D21A2F31355900A70999 /* constants in Resources */,
+				20F9D21A2F31355900A70999 /* ../../constants in Resources */,
 				20BD394A2D7619E300E6DADC /* Journal.js in Resources */,
 				20BD39372D7619E300E6DADC /* images in Resources */,
 				20BD39432D7619E300E6DADC /* mousetrap.1.6.5.min.js in Resources */,
@@ -1054,7 +1054,7 @@
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = MY_DEV_TEAM;
+				DEVELOPMENT_TEAM = U8WTHPZHK8;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "iOS (Extension)/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "AboveVTT Extension";
@@ -1084,7 +1084,7 @@
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = MY_DEV_TEAM;
+				DEVELOPMENT_TEAM = U8WTHPZHK8;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "iOS (Extension)/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "AboveVTT Extension";
@@ -1117,7 +1117,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = MY_DEV_TEAM;
+				DEVELOPMENT_TEAM = U8WTHPZHK8;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "iOS (App)/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = AboveVTT;
@@ -1155,7 +1155,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = MY_DEV_TEAM;
+				DEVELOPMENT_TEAM = U8WTHPZHK8;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "iOS (App)/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = AboveVTT;
@@ -1193,7 +1193,7 @@
 				CODE_SIGN_ENTITLEMENTS = "macOS (Extension)/AboveVTT.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = MY_DEV_TEAM;
+				DEVELOPMENT_TEAM = U8WTHPZHK8;
 				ENABLE_HARDENED_RUNTIME = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "macOS (Extension)/Info.plist";
@@ -1224,7 +1224,7 @@
 				CODE_SIGN_ENTITLEMENTS = "macOS (Extension)/AboveVTT.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = MY_DEV_TEAM;
+				DEVELOPMENT_TEAM = U8WTHPZHK8;
 				ENABLE_HARDENED_RUNTIME = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "macOS (Extension)/Info.plist";
@@ -1257,7 +1257,7 @@
 				CODE_SIGN_ENTITLEMENTS = "macOS (App)/AboveVTT.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = MY_DEV_TEAM;
+				DEVELOPMENT_TEAM = U8WTHPZHK8;
 				ENABLE_HARDENED_RUNTIME = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "macOS (App)/Info.plist";
@@ -1291,7 +1291,7 @@
 				CODE_SIGN_ENTITLEMENTS = "macOS (App)/AboveVTT.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = MY_DEV_TEAM;
+				DEVELOPMENT_TEAM = U8WTHPZHK8;
 				ENABLE_HARDENED_RUNTIME = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "macOS (App)/Info.plist";

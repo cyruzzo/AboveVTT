@@ -2,7 +2,7 @@
  * This is not injected on the Character sheet unless abovevtt=true is in the query
  * So if you need anything to execute on the Character sheet when abovevtt is not running, do that in CharacterPage.js
  */
-import { init_audio_mixer } from './audio/index.js'
+import { init_audio_mixer } from './audio/index.mjs'
 
 /** The first time the window loads, start doing all the things */
 $(function() {
