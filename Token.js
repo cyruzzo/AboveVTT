@@ -725,6 +725,9 @@ class Token {
 			const halfTokenSize = this.options.size / 2;
 			tmpx += (Math.round(tmpx / grsize[0]) % 2 ? 1 : -1) + halfTokenSize;
 			tmpy += (Math.round(tmpy / grsize[1]) % 2 ? 1 : -1) + halfTokenSize;
+		} else{
+			tmpx += 5; // +5 makes sure it doesn't land on a grid intersection which can prevent tokens from moving or skip squares
+			tmpy += 5;
 		}
 		tmpx += dx * (grsize[0] / ((this.tinyToken() && gridType == 1) ? 2 : 1));
 		tmpy += dy * (grsize[1] / ((this.tinyToken() && gridType == 1) ? 2 : 1));
