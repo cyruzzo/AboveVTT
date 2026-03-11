@@ -4488,7 +4488,11 @@ function drawing_mouseup(e) {
 		for (let id in window.TOKEN_OBJECTS) {
 			const curr = window.TOKEN_OBJECTS[id];
 			if(!curr.isSelectable()) continue;
-			const tokenImageRect = $("#tokens>div[data-id='" + id + "'] .token-image")[0].getBoundingClientRect();
+			const tokenImageRect = $("#tokens>div[data-id='" + id + "'] .token-image")?.[0]?.getBoundingClientRect();
+			if(!tokenImageRect) {
+				console.log("ERROR IMAGE BOUNDING RECT FOR", id, curr);
+				continue;
+			}
 			const CX = ((parseInt(tokenImageRect.left) + parseInt(tokenImageRect.right))/2 + window.scrollX - window.VTTMargin) / window.ZOOM;			
 			const CY = ((parseInt(tokenImageRect.top) + parseInt(tokenImageRect.bottom))/2 + window.scrollY - window.VTTMargin) / window.ZOOM;
 			const isCircle = curr.options.tokenStyleSelect == 'circle'
