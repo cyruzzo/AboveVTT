@@ -753,7 +753,7 @@ class Token {
 		
 		this.prepareWalkableArea()
 		
-		let tokenPosition = snap_point_to_grid(left + this.options.size/2, top + this.options.size/2,
+		let tokenPosition = snap_point_to_grid(left, top,
 						       true, this.tinyToken(), this.options.size);
 		// Stop movement if new position is outside of the scene
 		if (
