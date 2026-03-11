@@ -3637,9 +3637,6 @@ body .note-visibility-toggle-container {
     visibility: hidden !important; 
     pointer-events: none !important;
 }
-div#selectedTokensBorder {
-    pointer-events: none;
-}
 
 #conditions-flyout li,
 #playerTokenSelectedWarning {
