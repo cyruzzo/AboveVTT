@@ -985,12 +985,12 @@ select#doorTypeSelectUVTT{
   pointer-events: auto;
 }
 
-/*adjust grabber scale 0.20 here:*/
+/*adjust grabber scale 0.6 here:*/
 #dragbox .grabber-icon-r {
-  transform: scale(calc(0.20 / var(--window-zoom))) translate(0px, -25px);
+  transform: scale(calc(0.6 / var(--window-zoom))) translate(0px, -25px);
 }
 #dragbox .grabber-icon-c {
-  transform: scale(calc(0.20 / var(--window-zoom))) translate(-12.5px, -30px);
+  transform: translate(0px, -10px) scale(calc(0.6 / var(--window-zoom))) translate(-12.5px, -25px);
 }
 
 #fog_overlay,
