@@ -788,13 +788,13 @@ function check_single_token_visibility(id){
 		inTruesight = is_token_under_truesight_aura(id, truesightData);
 	}
 	if (showThisPlayerToken !== true && (hideThisTokenInFogOrDarkness === true && inVisibleLight !== true || (window.TOKEN_OBJECTS[id].options.hidden === true && inTruesight !== true) || (hideInvisible === true && inTruesight !== true))) {
-		$(selector + "," + auraSelector).hide();
+		$(selector + "," + auraSelector).toggleClass('notVisible', true);
 	}
 	else if (window.TOKEN_OBJECTS[id].options.hidden !== true || inTruesight === true) {
 		$(selector).css('opacity', 1);
-		$(selector).show();
+		$(selector).toggleClass('notVisible', false);
 		if(window.TOKEN_OBJECTS[id].options.hideaura !== true && id !== playerTokenId)
-			$(auraSelector).show();
+			$(auraSelector).toggleClass('notVisible', false);
 		//console.log('SHOW '+id);
 	}
 }
@@ -835,9 +835,9 @@ function do_check_token_visibility() {
 	if(window.LOADING)
 		return;
 	if((window.DM && !window.SelectedTokenVision) || (window.DM && $('#tokens .tokenselected:not(.isAoe)').length == 0)){
-		$(`.token`).show();
+		$(`.token`).toggleClass('notVisible', false);
 		$(`.door-button`).toggleClass('notVisible', false);
-		$(`.aura-element`).show();
+		$(`.aura-element`).toggleClass('notVisible', false);
 		return;
 	}
 
@@ -956,9 +956,10 @@ function do_check_token_visibility() {
 		}
 	}
 	
-	hideIds.hide();
-	showTokenIds.css({ 'opacity': 1, 'display': 'flex' });
-	showAuraIds.show();
+	hideIds.toggleClass('notVisible', true);
+	showTokenIds.css({ 'opacity': 1 });
+	showTokenIds.toggleClass('notVisible', false);
+	showAuraIds.toggleClass('notVisible', false);
 	dmSelectedTokens.css({ 'display': 'flex' });
 
 	showDoors.toggleClass('notVisible', false);
@@ -1518,9 +1519,9 @@ function check_darkness_value(){
   			$('#VTT').css('--darkness-filter', darknessPercent + "%");
   		   	if(window.DM){
   		   		$("#light_container [id^='light_']").css('visibility', "visible");
-  		   		$(`.token`).show();
+				$(`.token`).toggleClass('notVisible', false);
   				$(`.door-button`).css('visibility', '');
-  				$(`.aura-element`).show();
+				$(`.aura-element`).toggleClass('notVisible', false);
   		   	}
 	  		if(!parseInt(window.CURRENT_SCENE_DATA.darkness_filter) && window.walls?.length>4){
 			 	lightContainer.css({'opacity': '0.3'});
@@ -5273,9 +5274,9 @@ function bucketFill(ctx, mouseX, mouseY, fogStyle = 'rgba(0,0,0,0)', fogType = 0
 	}
 
 	const isBlur = parseInt(blur) > 0;
-	
-	bucketFillCtx.clearRect(0, 0, bucketFillCtx.canvas.width, bucketFillCtx.canvas.height);
 	const bucketFillCtx = window.offScreenCombineContext;
+	bucketFillCtx.clearRect(0, 0, bucketFillCtx.canvas.width, bucketFillCtx.canvas.height);
+
 	bucketFillCtx.globalCompositeOperation = "lighten";
 	bucketFillCtx.filter = isBlur ? `blur(${parseInt(blur)}px)` : `none`;
 

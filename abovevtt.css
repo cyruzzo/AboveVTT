@@ -3628,8 +3628,17 @@ body .note-visibility-toggle-container {
     display:none;
 }
 .aura-element-container-clip [id*='vision_'].notVisible,
-.door-button.notVisible{
+.door-button.notVisible,
+[id^='aura_'].notVisible{
     visibility: hidden;
+}
+.token.notVisible,
+.token.notVisible *{
+    visibility: hidden !important; 
+    pointer-events: none !important;
+}
+div#selectedTokensBorder {
+    pointer-events: none;
 }
 
 #conditions-flyout li,

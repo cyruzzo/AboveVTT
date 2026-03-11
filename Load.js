@@ -36,16 +36,6 @@
     
     const addChild = (c, where, head=false) => (where[head ? "head" : "body"] || where.documentElement).appendChild(c);
     
-    function loadingOverlay(where, isPlayer) {
-        const loadingOverlay = where.createElement('div');
-        loadingOverlay.id = "loading_overlay";
-        const loadingBg = where.createElement('div');
-        loadingBg.id = "loading_overlay_bg";
-        loadingBg.className = isPlayer ? "player" : "dm";
-        loadingOverlay.appendChild(loadingBg);
-        addChild(loadingOverlay, where);
-    }
-    
     const avttScripts = [
 	// External Dependencies
 	"jquery-3.6.0.min.js",

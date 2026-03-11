@@ -692,7 +692,7 @@ class Token {
 		if(this.options.imageSize === undefined) {
 			this.imageSize(1) 
 		}
-		const adjustedRotation = (newRotation + (this.options.imageHeading || 0)) % 360;
+
 		let imageScale = (this.options.imageSize != undefined) ? this.options.imageSize : 1;
 
 		let selector = "div[data-id='" + this.options.id + "']";
@@ -702,7 +702,7 @@ class Token {
 		tokenElement.css("--token-scale", imageScale);
 		tokenElement.css("--token-flip-x", tokenFlipX(this));		
 		tokenElement.find(".token-image").css("transform", imageTransform);
-		$(`.aura-element-container-clip[id='${this.options.id}'] .aura-element, .aura-element[data-id='${this.options.id}']`).css('--rotation', adjustedRotation + "deg");
+		$(`.aura-element-container-clip[id='${this.options.id}'] .aura-element, .aura-element[data-id='${this.options.id}']`).css('--rotation', newRotation%360 + "deg");
 	}
 	moveUp()        { this.moveDirection(-1,  0); }
 	moveDown()      { this.moveDirection( 1,  0); }
@@ -722,8 +722,12 @@ class Token {
 			// have to fudge the move a bit for hex grid to maintain consistent movement
 			// when a move "lands on" an edge (arbitrarily go either direction)
 			// todo: there is some small bug with this mechanism (it's not 100% consistent)
-			tmpx += Math.round(tmpx / grsize[0]) % 2 ? 1 : -1;
-			tmpy += Math.round(tmpy / grsize[1]) % 2 ? 1 : -1;
+			const halfTokenSize = this.options.size / 2;
+			tmpx += (Math.round(tmpx / grsize[0]) % 2 ? 1 : -1) + halfTokenSize;
+			tmpy += (Math.round(tmpy / grsize[1]) % 2 ? 1 : -1) + halfTokenSize;
+		} else{
+			tmpx += 5; // +5 makes sure it doesn't land on a grid intersection which can prevent tokens from moving or skip squares
+			tmpy += 5;
 		}
 		tmpx += dx * (grsize[0] / ((this.tinyToken() && gridType == 1) ? 2 : 1));
 		tmpy += dy * (grsize[1] / ((this.tinyToken() && gridType == 1) ? 2 : 1));
@@ -753,7 +757,7 @@ class Token {
 		
 		this.prepareWalkableArea()
 		
-		let tokenPosition = snap_point_to_grid(left + this.options.size/2, top + this.options.size/2,
+		let tokenPosition = snap_point_to_grid(left, top,
 						       true, this.tinyToken(), this.options.size);
 		// Stop movement if new position is outside of the scene
 		if (
@@ -1577,7 +1581,7 @@ class Token {
 				}
 				$(`#token_map_items [data-id='${this.options.id}']`).css("opacity", 0.5); 
 			} else {
-				tok.hide();
+				tok.toggleClass('notVisible', true);
 			}
 		} else {
 			if (animated) {
@@ -4187,13 +4191,11 @@ const forSelTokensAsync = async (callback) => {
 
 function select_all_tokens() {
 	const cnt = forTokens((token) => token.isSelectable() && (token.selected = true));
-	window.MULTIPLE_TOKEN_SELECTED = (cnt > 1);
 	draw_selected_token_bounding_box();
 	return cnt;
 }
 
 function deselect_all_tokens(ignoreVisionUpdate = false) {
-	window.MULTIPLE_TOKEN_SELECTED = false;
 	forSelTokens((token) => (token.selected = false));
 	$(`.token`).toggleClass('tokenselected', false);
 	$(`:is(#combat_area, #combat_area_carousel) tr`).toggleClass('selected-token', false);
@@ -4407,8 +4409,8 @@ function setTokenAuras (token, options) {
 			: token.parent().parent().find("#aura_" + tokenId).css("opacity", 1)
 		}
 		else{
-			(options.hidden || (options.hideaura && !token.attr("data-id").includes(window.PLAYER_ID)) || showAura == 'none') ? token.parent().parent().find("#aura_" + tokenId).hide()
-						: token.parent().parent().find("#aura_" + tokenId).show()
+			(options.hidden || (options.hideaura && !token.attr("data-id").includes(window.PLAYER_ID)) || showAura == 'none') ? token.parent().parent().find("#aura_" + tokenId).toggleClass('notVisible', true)
+				: token.parent().parent().find("#aura_" + tokenId).toggleClass('notVisible', false);
 		}
 		const currAura = token.parent().parent().find("#aura_" + tokenId);
 		if (window.ON_SCREEN_TOKENS[options.id] == undefined)
@@ -4833,7 +4835,7 @@ function rotation_towards_cursor(token, mousex, mousey, largerSnapAngle) {
 function rotation_towards_cursor_from_point(pointX, pointY, mousex, mousey, largerSnapAngle) {
 	const target = Math.atan2(mousey - pointY, mousex - pointX) + Math.PI * 3 / 2; // down = 0
 	const degrees = target * radToDeg;
-	const snap = (largerSnapAngle == true) ? 45 : 5; // if we ever allow hex, use 45 for square and 60 for hex
+	const snap = (largerSnapAngle == true) ? 45 : 1; // if we ever allow hex, use 45 for square and 60 for hex
 	return (Math.round(degrees / snap) * snap + 360.0) % 360.0;
 }
 /// rotates all selected tokens to the specified newRotation

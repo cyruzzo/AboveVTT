@@ -324,7 +324,7 @@ Mousetrap.bind('esc', function () {     //deselect all buttons
 //Throttle so the token doesn't immediately fly off map if button is held and set trailing only we can register diagonal movement as 1 move.
 const throttleMoveRequest = throttle(() => {
     requestAnimationFrame(moveKeyWatch);
-}, 5, {leading: false, trailing: true})
+}, 25, {leading: false, trailing: true})
 
 
 //setTimeout so we can be sure diagonal key combos are pressed or not.
@@ -561,6 +561,7 @@ Mousetrap.bind('mod+a', function (e) {
         sync_drawings();
         window.wallsBeingDragged = [];
     } else if($('#select-button').hasClass('button-enabled')){ //select all tokens
+        e.preventDefault();
         select_all_tokens();
     }
 });
@@ -631,6 +632,8 @@ Mousetrap.bind('/', () => {
 let key_rotation_done;
 let key_rotation_angle = 0;
 function key_rotation(angle) {
+    if (window.key_rotation_pause)
+        return; //commit in progress, if we allow rotation during process it may remove the token from the map and cause errors
     if(key_rotation_done) {
         clearTimeout(key_rotation_done);
     } else {
@@ -638,6 +641,7 @@ function key_rotation(angle) {
         grouprotate_create();
     }
     key_rotation_done = setTimeout(() => {
+        window.key_rotation_pause = true;
         key_rotation_done = null;
         grouprotate_commit(key_rotation_angle);
         draw_selected_token_bounding_box();	        
