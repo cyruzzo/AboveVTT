@@ -6404,6 +6404,138 @@ function init_elev_menu(buttons){
 }
 
 function init_vision_menu(buttons){
+	function create_los_light_presets_edit() {
+		let dialog = $('#edit_preset_light_dialog')
+
+		dialog.remove();
+		dialog = $(`<div id='edit_preset_light_dialog'></div>`);
+
+
+
+		let upsq = 'ft';
+		if (window.CURRENT_SCENE_DATA.upsq !== undefined && window.CURRENT_SCENE_DATA.upsq.length > 0) {
+			upsq = window.CURRENT_SCENE_DATA.upsq;
+		}
+		let light_presets = $('<table id="light_presets_properties"/>');
+		dialog.append(light_presets);
+
+		let titleRow = $(`
+		<tr class='light_preset_title_row'>
+				<th>
+					Name
+				</th>
+				<th>
+					Inner Light	
+				</th>
+				<th>
+					Outer Light	
+				</th>
+				<th>
+					Blur
+				</th>
+				<th>
+					Color
+				</th>
+				<th>
+				</th>
+			</tr>
+			`)
+		light_presets.append(titleRow);
+		for (let i = 0; i < LOS_PRESETS.length; i++) {
+			let row = $(`
+			<tr class='light_preset_row' data-index='${i}'>
+				<td>
+					<input class='light_preset_title' value='${LOS_PRESETS[i].name}'></input>
+				</td>
+				<td class="menu-inner-light" style='width:20%'>
+					<div class="token-image-modal-footer-select-wrapper" style="padding-left: 2px">
+						<div class="token-image-modal-footer-title">Radius (${upsq})</div>
+						<input class="light-radius" name="light1" type="text" value="${(LOS_PRESETS[i].light1?.feet) ? LOS_PRESETS[i].light1.feet : ``}" style="width: 3rem" />
+					</div>
+
+				</td>
+				<td class="menu-outer-light"style='width:20%'>
+					<div class="token-image-modal-footer-select-wrapper" style="padding-left: 2px">
+						<div class="token-image-modal-footer-title">Radius (${upsq})</div>
+						<input class="light-radius" name="light2" type="text" value="${(LOS_PRESETS[i].light2?.feet) ? LOS_PRESETS[i].light2.feet : ``}" style="width: 3rem" />
+					</div>
+	
+				</td>
+				<td class="menu-outer-light">
+					<div class="token-image-modal-footer-select-wrapper" style="padding-left: 2px;display: flex;justify-content: center;">
+						<input style='width:3rem' type='number' min='0' step='1' class="light-blur" name="blur" value="${(LOS_PRESETS[i].blur) ? LOS_PRESETS[i].blur : 0}">
+					</div>
+				</td>
+				<td class="menu-outer-light" style="width:3rem">
+					<div class="token-image-modal-footer-select-wrapper" style="padding-left: 2px">
+						<input class="spectrum" name="light1Color" value="${(LOS_PRESETS[i].light1?.color) ? LOS_PRESETS[i].light1.color : `rgba(0, 0, 0, 0)`}" >
+					</div>
+				</td>
+				<td><div class='removePreset'><svg class="" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><g transform="rotate(-45 50 50)"><rect></rect></g><g transform="rotate(45 50 50)"><rect></rect></g></svg></div></td>
+			</tr>
+		`)
+			row.find('input.light_preset_title').off('change.name').on('change.name', function () {
+				LOS_PRESETS[i].name = $(this).val().replaceAll(/['"<>]/g, '');
+				localStorage.setItem('LOS_PRESETS', JSON.stringify(LOS_PRESETS));
+				setPresetSelectOptions();
+			})
+			row.find('input[class*="radius"]').off('change.radius').on('change.radius', function () {
+				let lightname = $(this).attr('name');
+				LOS_PRESETS[i][lightname].feet = $(this).val();
+				localStorage.setItem('LOS_PRESETS', JSON.stringify(LOS_PRESETS));
+			})
+			row.find('input[class*="blur"]').off('change.blur').on('change.blur', function () {
+				LOS_PRESETS[i].blur = $(this).val();
+				localStorage.setItem('LOS_PRESETS', JSON.stringify(LOS_PRESETS));
+			})
+			row.find('.removePreset').off('click.removePreset').on('click.removePreset', function () {
+				LOS_PRESETS.splice(i, 1);
+				localStorage.setItem('LOS_PRESETS', JSON.stringify(LOS_PRESETS));
+				create_los_light_presets_edit();
+				setPresetSelectOptions();
+			})
+			let colorPickers = row.find('input.spectrum');
+			colorPickers.spectrum({
+				type: "color",
+				showInput: true,
+				showInitial: true,
+				containerClassName: 'prevent-sidebar-modal-close',
+				clickoutFiresChange: true,
+				appendTo: "parent"
+			});
+
+			const colorPickerChange = function (e, tinycolor) {
+				let lightName = e.target.name.replace("Color", "");
+				LOS_PRESETS[i][lightName].color = `rgba(${tinycolor._r}, ${tinycolor._g}, ${tinycolor._b}, ${tinycolor._a})`;
+				console.log(lightName, e, tinycolor);
+				localStorage.setItem('LOS_PRESETS', JSON.stringify(LOS_PRESETS));
+			};
+			colorPickers.on('move.spectrum', colorPickerChange);   // update the token as the player messes around with colors
+			colorPickers.on('change.spectrum', colorPickerChange); // commit the changes when the user clicks the submit button
+			colorPickers.on('hide.spectrum', colorPickerChange);   // the hide event includes the original color so let's change it back when we get it
+
+			light_presets.append(row);
+
+		}
+
+		let addButton = $(`<div id='addAuraPreset'>+</div>`)
+
+		addButton.off('click.addPreset').on('click.addPreset', function () {
+			LOS_PRESETS.push({
+				name: 'New Preset',
+				light1: {
+				},
+				light2: {
+				}
+			});
+			localStorage.setItem('LOS_PRESETS', JSON.stringify(LOS_PRESETS));
+			create_los_light_presets_edit();
+			setPresetSelectOptions();
+		});
+		light_presets.append(addButton);
+
+		adjust_create_import_edit_container(dialog, undefined, undefined, 975);
+	}
 	let vision_menu = $("<div id='vision_menu' class='top_menu'></div>");
 
 	vision_menu.append(
@@ -6472,6 +6604,102 @@ function init_vision_menu(buttons){
 		</div>`);
 
 	let bucket_menu = $(`<div id='bucket_menu'></div>`);
+    let LOS_PRESETS = [];
+	if (localStorage.getItem('LOS_PRESETS') == null) {
+		LOS_PRESETS = [
+			{
+				name: 'Candle (5/5)',
+				light1: {
+					feet: '5',
+					color: 'rgba(255, 255, 255, 1)'
+				},
+				light2: {
+					feet: '5'
+				},
+				blur: '5'
+			},
+			{
+				name: 'Torch (20/20)',
+				light1: {
+					feet: '20',
+					color: 'rgba(255, 255, 255, 1)'
+				},
+				light2: {
+					feet: '20'
+				},
+				blur: '20'
+			},
+			{
+				name: 'Lamp (15/30)',
+				light1: {
+					feet: '15',
+					color: 'rgba(255, 255, 255, 1)'
+				},
+				light2: {
+					feet: '30'
+				},
+				blur: '15'
+			},
+			{
+				name: 'Lantern (30/30)',
+				light1: {
+					feet: '30',
+					color: 'rgba(255, 255, 255, 1)'
+				},
+				light2: {
+					feet: '30'
+				},
+				blur: '30'
+			},
+		]
+	}
+	else {
+		LOS_PRESETS = JSON.parse(localStorage.getItem('LOS_PRESETS'));
+	}
+	const presetSelect = $(`<select></select >`)
+	function setPresetSelectOptions() {
+		presetSelect.empty();
+		presetSelect.append(`<option value=""></option>`)
+		for (let i = 0; i < LOS_PRESETS.length; i++) {
+			presetSelect.append(`<option value="${LOS_PRESETS[i].name}">${LOS_PRESETS[i].name}</option>`)
+		}
+	}
+	setPresetSelectOptions();
+	bucket_menu.append(`<div class='menu-subtitle'>Presets: <button id="edit_los_preset">Edit</button></div>`);
+	bucket_menu.find(`#edit_los_preset`).off('click.editPresets').on('click.editPresets', function () {
+		create_los_light_presets_edit();
+	})
+
+	const presetContainer = $('<div>').append(presetSelect);
+	bucket_menu.append(presetContainer);
+	presetSelect.on("change", function (e) {
+
+		let preset = e.target.value;
+		let selectedPreset = LOS_PRESETS.filter(d => d.name == preset)[0]
+
+		if (!selectedPreset) {
+			console.warn("somehow got an unexpected preset", preset, e);
+			return;
+		}
+
+		if (selectedPreset.light1.feet) {
+			bucket_menu.find("#bucket_radius1").val(selectedPreset.light1.feet);
+		}
+
+		if (selectedPreset.light2.feet) {
+			bucket_menu.find("#bucket_radius2").val(selectedPreset.light2.feet);
+		}
+
+		if (selectedPreset.light1.color) {
+			vision_menu.find("input#background_color").spectrum("set", selectedPreset.light1.color);
+			const colorData = vision_menu.find('#background_color').spectrum('get');
+			vision_menu.find('#background_color').val(`rgba(${colorData._r}, ${colorData._g}, ${colorData._b}, ${colorData._a})`);
+			vision_menu.find('#daylightbutton-enabled').click();
+		}
+		if (selectedPreset.blur) {
+			vision_menu.find("#draw_line_hardness").val(selectedPreset.blur);
+		}
+	});
 	bucket_menu.append(`<div class='menu-subtitle'>Inner Radius (${window.CURRENT_SCENE_DATA.upsq})</div>`);
 	bucket_menu.append(`
 		<div>
