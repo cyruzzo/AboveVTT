@@ -722,8 +722,9 @@ class Token {
 			// have to fudge the move a bit for hex grid to maintain consistent movement
 			// when a move "lands on" an edge (arbitrarily go either direction)
 			// todo: there is some small bug with this mechanism (it's not 100% consistent)
-			tmpx += Math.round(tmpx / grsize[0]) % 2 ? 1 : -1;
-			tmpy += Math.round(tmpy / grsize[1]) % 2 ? 1 : -1;
+			const halfTokenSize = this.options.size / 2;
+			tmpx += (Math.round(tmpx / grsize[0]) % 2 ? 1 : -1) + halfTokenSize;
+			tmpy += (Math.round(tmpy / grsize[1]) % 2 ? 1 : -1) + halfTokenSize;
 		}
 		tmpx += dx * (grsize[0] / ((this.tinyToken() && gridType == 1) ? 2 : 1));
 		tmpy += dy * (grsize[1] / ((this.tinyToken() && gridType == 1) ? 2 : 1));
