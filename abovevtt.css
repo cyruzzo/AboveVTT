@@ -8234,7 +8234,10 @@ button span.onedrive-btn-status{
     margin-bottom: 2px !important;
 }
 .sp-cf:after, .sp-cf:before{
-    display:none;
+    display:none !important;
+}
+#sources-import-content-container .sp-container{
+    position: fixed !important;
 }
 .sp-replacer.sp-light{
     float:  right;
