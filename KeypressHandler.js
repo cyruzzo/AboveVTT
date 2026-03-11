@@ -561,6 +561,7 @@ Mousetrap.bind('mod+a', function (e) {
         sync_drawings();
         window.wallsBeingDragged = [];
     } else if($('#select-button').hasClass('button-enabled')){ //select all tokens
+        e.preventDefault();
         select_all_tokens();
     }
 });
