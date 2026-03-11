@@ -5138,13 +5138,17 @@ function install_grabbers() {
 	install_map_dragger(document.getElementById('group-rot-grab'), {
 		start: function(d,e) {
 			d.centerPointRotateOrigin = grouprotate_create();
+			//angle of grabber from center
+			d.startAngle = Math.atan2(d.y - d.centerPointRotateOrigin.y, d.x - d.centerPointRotateOrigin.x) * (180 / Math.PI);
 			remove_selected_token_bounding_box(false, true);
 		},
 		drag: function(d,e) {
-			d.angle = rotation_towards_cursor_from_point(d.centerPointRotateOrigin.x, d.centerPointRotateOrigin.y,
-								       d.x, d.y);
+			const mouseAngle = Math.atan2(d.y - d.centerPointRotateOrigin.y, d.x - d.centerPointRotateOrigin.x) * (180 / Math.PI);
+			d.angle = (360 + mouseAngle - d.startAngle) % 360;
 			if(window.CURRENTLY_SELECTED_TOKENS.length == 1 &&
 			   window.TOKEN_OBJECTS[window.CURRENTLY_SELECTED_TOKENS[0]].isAoe()){
+				d.angle = rotation_towards_cursor_from_point(d.centerPointRotateOrigin.x, d.centerPointRotateOrigin.y,
+									     d.x, d.y);
 				// account for group rotation grabber being at corner
 				d.angle -= parseFloat($(`.token[data-id='${window.CURRENTLY_SELECTED_TOKENS[0]}']`).css('--token-rotation')); 
 			}
