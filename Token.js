@@ -4910,6 +4910,9 @@ function grouprotate_commit(angle) {
 	$(`.grouprotate`).remove();
 	//not sure why it re-sets selected to true here (should already be true?)
 	forSelTokens((token) => ((token.selected = true) && token.place_sync_persist(0)));
+	setTimeout(function(){
+		delete window.key_rotation_pause;
+	},200)	
 }
 
 
