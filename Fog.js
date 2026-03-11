@@ -1201,10 +1201,12 @@ function getCurrentClosestHex(x, y, vertex=false, allowCenter=false) {
 
 // make a tile grid suitable for a CSS background pattern
 function svg_tile(type = '1', xs = 100, ys = 100, color = 'black', lineWidth = 5, dash = []) {
+	if (type == '1')
+		lineWidth = lineWidth/2;
 	const strokeAttr = `fill="none" stroke="${color}" stroke-width="${lineWidth}" vector-effect="non-scaling-stroke" stroke-linecap="square" stroke-linejoin="bevel" ${dash ? 'stroke-dasharray="' + dash.join(',')+ '"': ''}`;
 	const svg = ((type == '1') ? // Rectangular Grid
         `<svg xmlns="http://www.w3.org/2000/svg" width="${xs}" height="${ys}" overflow="visible">
-            <path d="M ${xs} 0 L 0 0 0 ${ys}" ${strokeAttr}/>
+            <path d="M 0 0 L 0 ${ys} ${xs} ${ys} ${xs} 0 0 0" ${strokeAttr}/>
         </svg>` 
         : (type == '2') ? // (Pointy Top, Vertical Sides)
 			`<svg xmlns="http://www.w3.org/2000/svg" width="${xs}" height="${ys*1.5}" overflow="visible">
