@@ -3314,7 +3314,7 @@ class Token {
 						let tokenY = (ui.position.top - ((zoom-parseFloat(window.orig_zoom)) * parseFloat(self.sizeHeight())/2)) / zoom;
 						let tinyToken = (Math.round(parseFloat(window.TOKEN_OBJECTS[this.dataset.id].options.gridSquares)*2)/2 < 1) || window.TOKEN_OBJECTS[this.dataset.id].isAoe();
 
-						if (should_snap_to_grid()) { // && (window.CURRENT_SCENE_DATA.gridType == '2' || window.CURRENT_SCENE_DATA.gridType == '3')) {
+						if (should_snap_to_grid() && (window.CURRENT_SCENE_DATA.gridType == '2' || window.CURRENT_SCENE_DATA.gridType == '3')) { // ) {
 							//we really want the exact mouse position -
 							//someone fix this if there is a better way with this draggable impl
 							const scene = window.CURRENT_SCENE_DATA;
@@ -3401,35 +3401,22 @@ class Token {
 						}
 						let offsetLeft = ui.position.left - parseFloat(self.orig_left);
 						let offsetTop = ui.position.top - parseFloat(self.orig_top);
-						let el = ui.helper.parent().parent().find("#aura_" + ui.helper.attr("data-id").replaceAll("/", ""));
-						if (el.length > 0) {
-							let currLeft = parseFloat(el.attr("data-left"));
-							let currTop = parseFloat(el.attr("data-top"));
-							el.css('left', Math.round((currLeft + (offsetLeft/window.CURRENT_SCENE_DATA.scale_factor))) + "px");
-							el.css('top', Math.round((currTop + (offsetTop/window.CURRENT_SCENE_DATA.scale_factor)))  + "px");
-						}
-						el = ui.helper.parent().parent().find("#light_" + ui.helper.attr("data-id").replaceAll("/", ""));
-						if (el.length > 0) {
-							let currLeft = parseFloat(el.attr("data-left"));
-							let currTop = parseFloat(el.attr("data-top"));
-							el.css('left', Math.round((currLeft + (offsetLeft/window.CURRENT_SCENE_DATA.scale_factor))) + "px");
-							el.css('top', Math.round((currTop + (offsetTop/window.CURRENT_SCENE_DATA.scale_factor)))  + "px");
-						}
-						el = ui.helper.parent().parent().find("#vision_" + ui.helper.attr("data-id").replaceAll("/", ""));
-						if (el.length > 0) {
-							let currLeft = parseFloat(el.attr("data-left"));
-							let currTop = parseFloat(el.attr("data-top"));
-							el.css('left', Math.round((currLeft + (offsetLeft/window.CURRENT_SCENE_DATA.scale_factor))) + "px");
-							el.css('top', Math.round((currTop + (offsetTop/window.CURRENT_SCENE_DATA.scale_factor)))  + "px");
-						}
-						el = ui.helper.parent().parent().find(`[data-darkness='darkness_${ui.helper.attr("data-id").replaceAll("/", "")}']`);
-						if (el.length > 0) {
-							let currLeft = parseFloat(el.attr("data-left"));
-							let currTop = parseFloat(el.attr("data-top"));
-							el.css('left', Math.round((currLeft + (offsetLeft/window.CURRENT_SCENE_DATA.scale_factor))) + "px");
-							el.css('top', Math.round((currTop + (offsetTop/window.CURRENT_SCENE_DATA.scale_factor)))  + "px");
-						}
-						el = ui.helper.parent().parent().find(`[data-notatoken='notatoken_${ui.helper.attr("data-id")}']`);
+						const dataid = ui.helper.attr("data-id");
+						const dataidReplaced = dataid.replaceAll("/", "");
+						const grandParent = ui.helper.parent().parent();
+						let el = grandParent.find(`#aura_${dataidReplaced},
+									#light_${dataidReplaced},
+									#vision_${dataidReplaced},
+									[data-darkness='darkness_${dataidReplaced}']`)
+
+						el.each((i, el)=>{
+							const $el = $(el)
+							let currLeft = parseFloat($el.attr("data-left"));
+							let currTop = parseFloat($el.attr("data-top"));
+							$el.css('left', Math.round((currLeft + (offsetLeft / window.CURRENT_SCENE_DATA.scale_factor))) + "px");
+							$el.css('top', Math.round((currTop + (offsetTop / window.CURRENT_SCENE_DATA.scale_factor))) + "px");
+						})
+						el = grandParent.find(`[data-notatoken='notatoken_${dataid}']`);
 						if (el.length > 0) {
 							el.css('left', Math.round((parseFloat(self.options.left) / window.CURRENT_SCENE_DATA.scale_factor)) + "px");
 							el.css('top', Math.round((parseFloat(self.options.top) / window.CURRENT_SCENE_DATA.scale_factor))  + "px");
@@ -3497,43 +3484,19 @@ class Token {
 									const tokTop = parseFloat($(tok).css('top'));
 									const tokMidLeft = tokLeft + parseFloat(curr.sizeWidth())/2
 									const tokMidTop = tokTop + parseFloat(curr.sizeHeight())/2
-									let selEl = $(tok).parent().parent().find("#aura_" + id.replaceAll("/", ""));
-									if (selEl.length > 0) {
-										const selElWidth = parseFloat(selEl.css('width'))/2;
-										const selElHeight = parseFloat(selEl.css('height'))/2;
-										const auraLeft = Math.round(tokMidLeft/window.CURRENT_SCENE_DATA.scale_factor - selElWidth);
-										const auraTop = Math.round(tokMidTop/window.CURRENT_SCENE_DATA.scale_factor - selElHeight);
-										selEl.css('left', auraLeft  + "px");
-										selEl.css('top', auraTop + "px");
-									}
-									selEl = $(tok).parent().parent().find("#light_" + id.replaceAll("/", ""));
-									if (selEl.length > 0) {
-										const selElWidth = parseFloat(selEl.css('width'))/2;
-										const selElHeight = parseFloat(selEl.css('height'))/2;
-										const auraLeft = Math.round(tokMidLeft/window.CURRENT_SCENE_DATA.scale_factor - selElWidth);
-										const auraTop = Math.round(tokMidTop/window.CURRENT_SCENE_DATA.scale_factor - selElHeight);
-										selEl.css('left', auraLeft  + "px");
-										selEl.css('top', auraTop + "px");
-									}
-									selEl = $(tok).parent().parent().find("#vision_" + id.replaceAll("/", ""));
-									if (selEl.length > 0) {
-										const selElWidth = parseFloat(selEl.css('width'))/2;
-										const selElHeight = parseFloat(selEl.css('height'))/2;
-										const auraLeft = Math.round(tokMidLeft/window.CURRENT_SCENE_DATA.scale_factor - selElWidth);
-										const auraTop = Math.round(tokMidTop/window.CURRENT_SCENE_DATA.scale_factor - selElHeight);
-										selEl.css('left', auraLeft  + "px");
-										selEl.css('top', auraTop + "px");
-									}
-									selEl = $(tok).parent().parent().find(`[data-darkness='darkness_${id}']`);
-									if (selEl.length > 0) {
-										const selElWidth = parseFloat(selEl.css('width'))/2;
-										const selElHeight = parseFloat(selEl.css('height'))/2;
-										const auraLeft = Math.round(tokMidLeft/window.CURRENT_SCENE_DATA.scale_factor - selElWidth);
-										const auraTop = Math.round(tokMidTop/window.CURRENT_SCENE_DATA.scale_factor - selElHeight);
-										selEl.css('left', auraLeft  + "px");
-										selEl.css('top', auraTop + "px");
-									}
-									selEl = $(tok).parent().parent().find(`[data-notatoken='notatoken_${id}']`);
+									const dataidReplaced = id.replaceAll("/", "");
+									const grandParent = ui.helper.parent().parent();
+									let selEl = grandParent.find(`#aura_${dataidReplaced}, #light_${dataidReplaced}, #vision_${dataidReplaced}, [data-darkness='darkness_${dataidReplaced}']`);
+									selEl.each((i, el) => {
+										const $el = $(el);
+										const selElWidth = parseFloat($el.css('width')) / 2;
+										const selElHeight = parseFloat($el.css('height')) / 2;
+										const auraLeft = Math.round(tokMidLeft / window.CURRENT_SCENE_DATA.scale_factor - selElWidth);
+										const auraTop = Math.round(tokMidTop / window.CURRENT_SCENE_DATA.scale_factor - selElHeight);
+										$el.css('left', auraLeft + "px");
+										$el.css('top', auraTop + "px");
+									})
+									selEl = grandParent.find(`[data-notatoken='notatoken_${id}']`);
 									if (selEl.length > 0) {
 										selEl.css('left', Math.round((parseFloat(curr.options.left) / window.CURRENT_SCENE_DATA.scale_factor)) + "px");
 										selEl.css('top', Math.round((parseFloat(curr.options.top) / window.CURRENT_SCENE_DATA.scale_factor))  + "px");
