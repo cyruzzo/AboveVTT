@@ -1328,7 +1328,7 @@ class DiceRoller {
     }
 }
 function getDdb3dDiceShareToggle(){
-    return localStorage.getItem('isShared3dDiceEnabled') !== null && window.MB?.userid != undefined ? JSON.parse(localStorage.getItem('isShared3dDiceEnabled')).state?.[window.MB.userid] : true;
+    return localStorage.getItem('userDiceData') !== null && window.MB?.userid != undefined ? JSON.parse(localStorage.getItem('userDiceData')).state?.[window.MB.userid]?.settings?.visibility != 'disabled' : true;
 }
 function replace_gamelog_message_expressions(listItem) {
 
