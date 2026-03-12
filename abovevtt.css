@@ -2508,15 +2508,13 @@ padding-top:10px;
 .tokenselected::before {
     content: "";
     position: absolute;
-    top: -7px;
-    left: -7px;
-    right: -7px;
-    bottom: -7px;
-    border-radius: 0px;
-    padding: 5px;
-    border: 5px #c0f3fff5 solid;
-    z-index: 0;
-    border-radius: 5px;
+    top: calc(-5px * var(--scene-scale, 1));
+    left: calc(-5px * var(--scene-scale, 1));
+    right: calc(-5px * var(--scene-scale, 1));
+    bottom: calc(-5px * var(--scene-scale, 1));
+    padding: calc(5px * var(--scene-scale, 1));
+    border: calc(5px * var(--scene-scale, 1)) #c0f3fff5 solid;
+    border-radius: calc(1px * var(--scene-scale, 1));
     pointer-events: none;
 }
 
