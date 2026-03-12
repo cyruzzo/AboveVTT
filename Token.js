@@ -3819,6 +3819,10 @@ function should_snap_to_grid() {
 function snap_point_to_grid(mapX, mapY, forceSnap = false, tinyToken = false, tokenWidth = 0) {
 	const scene = window.CURRENT_SCENE_DATA;
 	//todo implement tinytoken
+	let [gridWidth, gridHeight] = grid_size();
+	if (tinyToken) {
+		gridWidth /= 2; gridHeight /= 2;
+	}
 	if (forceSnap || should_snap_to_grid()) {
 		if(scene.gridType == 3 || scene.gridType == 2) {
 			//hex snaps to vertex if tokensize / hexsize is even
@@ -3826,19 +3830,19 @@ function snap_point_to_grid(mapX, mapY, forceSnap = false, tinyToken = false, to
 			const [cx, cy] = getCurrentClosestHex(mapX, mapY, vertexInstead);
 			//later: do we want tinyToken for hex?
 			return { x: cx - (tokenWidth||0)/2, y: cy - (tokenWidth||0) / 2 };
+		}else{
+			mapX += gridWidth/2; //we  add this otherwise it's snaping not at grid lines but grid center
+			mapY += gridHeight/2;
 		}
 
 		// todo: why parseFloat here?
 		const offsetx = parseFloat(scene.offsetx);
 		const offsety = parseFloat(scene.offsety);
-		let [gridWidth, gridHeight] = grid_size();
-		if(tinyToken) {
-			gridWidth /= 2; gridHeight /= 2;
-		}
+
 		const currentGridX = (mapX - offsetx) / gridWidth;
 		const currentGridY = (mapY - offsety) / gridHeight;
 		return {
-			//todo not sure what ceil is for here
+			//floor is needed as long as we add `mapX += gridWidth/2;` above, if we subtract ceil
 			x: Math.floor(currentGridX) * gridWidth + offsetx,
 			y: Math.floor(currentGridY) * gridHeight + offsety
 		}
