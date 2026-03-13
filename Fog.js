@@ -1315,7 +1315,7 @@ function draw_select_box(x0, y0, w, h, inside=false, selbox=false, group=false) 
 	document.getElementById('dragbox-inside')?.setAttribute('visibility', inside ? 'visible' : 'hidden');
 	document.getElementById('dragbox-rect')?.setAttribute('visibility', !selbox ? 'visible' : 'hidden');
 	document.getElementById('selbox-rect')?.setAttribute('visibility', selbox ? 'visible' : 'hidden');
-	$("#dragbox").css("mix-blend-mode", selbox ? "" : "difference"); //helps with visibility
+	//$("#dragbox").css("mix-blend-mode", selbox ? "" : "difference"); //helps with visibility
 	if(selbox) {
 		if(group) {
 			rg2.setAttribute('transform', `translate(${(x0+w) / sf}, ${y0 / sf})`);

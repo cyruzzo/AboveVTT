@@ -963,11 +963,18 @@ select#doorTypeSelectUVTT{
   pointer-events: none;
   z-index: 1000000;
 }
-#dragbox .drag-box {
+#dragbox .drag-box-b {
+  stroke: black;
+  stroke-width: calc(1.5px / var(--scene-scale) / var(--window-zoom));
+  stroke-linecap: square;
+  vector-effect: non-scaling-stroke;
+  overflow: visible !important;
+}
+#dragbox .drag-box-w {
   fill: rgba(0, 255, 255, 0.1);
   stroke: white;
   stroke-width: calc(1.5px / var(--scene-scale) / var(--window-zoom));
-  stroke-dasharray: calc(4px / var(--scene-scale) / var(--window-zoom)) calc(2px / var(--scene-scale) / var(--window-zoom));
+  stroke-dasharray: calc(4px / var(--scene-scale) / var(--window-zoom)) calc(4px / var(--scene-scale) / var(--window-zoom));
   stroke-linecap: square;
   vector-effect: non-scaling-stroke;
   transition: fill 0.2s;

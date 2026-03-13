@@ -2135,9 +2135,15 @@ function init_ui() {
 	const dragSelectBox = $(
      `<svg id="dragbox" xmlns="http://www.w3.org/2000/svg">
         <g id="dragbox-region">
-            <path id="dragbox-rect" visibility="hidden" class="drag-box" d="M 0 0 L 0 1 M 1 0 L 1 1 M 0 0 L 1 0 M 0 1 L 1 1"/>
+            <g id="dragbox-rect" visibility="hidden"> 
+            <path  d="M 0 0 L 0 1 M 1 0 L 1 1 M 0 0 L 1 0 M 0 1 L 1 1"  class="drag-box-b"/>
+            <path d="M 0 0 L 0 1 M 1 0 L 1 1 M 0 0 L 1 0 M 0 1 L 1 1"  class="drag-box-w"/>
+            </g>
             <rect id="selbox-rect" class="sel-box" visibility="hidden" x="0" y="0" width="1" height="1" rx="0.01" />
-            <path id="dragbox-inside" visibility="hidden" stroke-dasharray="2" class="drag-box"
+            <g id="dragbox-inside"  visibility="hidden">
+            <path class="drag-box-b"
+             d="M 0.01 0.01 L 0.01 0.80 M 0.01 0.01 L 0.80 0.01 M 0.99 0.99 L 0.99 0.20 M 0.99 0.99 L 0.20 0.99 "/>
+            <path stroke-dasharray="2" class="drag-box-w"
              d="M 0.01 0.01 L 0.01 0.80 M 0.01 0.01 L 0.80 0.01 M 0.99 0.99 L 0.99 0.20 M 0.99 0.99 L 0.20 0.99 "/> </g>
         <g id="rot-grab" class="grabber" visibility="hidden"> <g class="grabber-icon-c">
             <circle fill="#ced9e080" cx="12.5" cy="12.5" r="12.5" />
