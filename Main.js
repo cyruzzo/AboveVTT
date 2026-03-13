@@ -2139,7 +2139,7 @@ function init_ui() {
             <rect id="selbox-rect" class="sel-box" visibility="hidden" x="0" y="0" width="1" height="1" rx="0.01" />
             <path id="dragbox-inside" visibility="hidden" stroke-dasharray="2" class="drag-box"
              d="M 0.01 0.01 L 0.01 0.80 M 0.01 0.01 L 0.80 0.01 M 0.99 0.99 L 0.99 0.20 M 0.99 0.99 L 0.20 0.99 "/> </g>
-        <g id="rot-grab" class="grabber"> <g class="grabber-icon-c">
+        <g id="rot-grab" class="grabber" visibility="hidden"> <g class="grabber-icon-c">
             <circle fill="#ced9e080" cx="12.5" cy="12.5" r="12.5" />
             <path d="M12.5,17.125 c-2.59,0-4.695-2.1-4.695-4.697
              c0-2.592,2.102-4.695,4.695-4.695 c2.595,0,4.697,2.103,4.697,4.695 C17.197,15.025,15.095,17.125,12.5,17.125z
@@ -2147,7 +2147,7 @@ function init_ui() {
              c3.26,0,6.53-1.892,8.872-3.655 M12.5,10.127 c-1.27,0-2.3,1.033-2.3,2.302 c0,1.267,1.033,2.302,2.3,2.302
              c1.27,0,2.302-1.033,2.302-2.302 C14.802,11.16,13.77,10.127,12.5,10.127z" />
         </g></g>
-        <g id="group-rot-grab" class="grabber"> <g class="grabber-icon-r">
+        <g id="group-rot-grab" class="grabber" visibility="hidden"> <g class="grabber-icon-r">
             <circle fill="#ced9e080" cx="12.5" cy="12.5" r="12.5" />
             <path d="M12.499 14.453 Q11.693 14.453 11.12 13.88 q-0.573-0.574-0.573-1.38
              Q10.547 11.693 11.121 11.12 q0.574-0.573 1.38-0.573 Q13.307 10.547 13.88 11.121 q0.573 0.574 0.573 1.38
