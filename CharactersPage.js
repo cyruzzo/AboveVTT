@@ -919,24 +919,34 @@ function convertToRPGRoller(){
     if(urlSplit.length > 0 && !is_abovevtt_page()) {
       window.PLAYER_ID = urlSplit[urlSplit.length - 1].split('?')[0];
     }
+    const buttons = $(`.integrated-dice__container:not('.avtt-wrapped'):not('.above-combo-roll'):not('.above-aoe'):not(.avtt-roll-formula-button)`);
+    buttons.each((i, el) => {
+      const $el = $(el);
+      $el.addClass('avtt-wrapped');
+      if ($el.parent().hasClass('ct-reset-pane__hitdie-manager-dice') || $el.prev().text().trim().match(/^death saves$/gi))// allow hit dice and death saves roll to go through ddb for auto heals - maybe setup our own message by put to https://character-service.dndbeyond.com/character/v5/life/hp/damage-taken later
+        return;
 
-    $(`.integrated-dice__container:not('.above-combo-roll'):not('.above-aoe'):not(.avtt-roll-formula-button)`).off('contextmenu.rpg-roller').on('contextmenu.rpg-roller', function(e){
+      $el.wrap(`<div class='avtt-roller'>`)
+    })
+
+
+    $(`.avtt-roller:has(.integrated-dice__container:not('.above-combo-roll'):not('.above-aoe'):not(.avtt-roll-formula-button))`).off('contextmenu.rpg-roller').on('contextmenu.rpg-roller', function(e){
+         
           if ($(this).parent().hasClass('ct-reset-pane__hitdie-manager-dice') || $(this).prev().text().trim().match(/^death saves$/gi))// allow hit dice and death saves roll to go through ddb for auto heals - maybe setup our own message by put to https://character-service.dndbeyond.com/character/v5/life/hp/damage-taken later
             return;
           let rollData = {} 
-          if($(this).hasClass('avtt-roll-formula-button')){
-             rollData = DiceRoll.fromSlashCommand($(this).attr('data-slash-command'))
+          const button = $(this).children('.integrated-dice__container');
+          if(button.hasClass('avtt-roll-formula-button')){
+             rollData = DiceRoll.fromSlashCommand(button.attr('data-slash-command'))
              rollData.modifier = `${Math.sign(rollData.calculatedConstant) == 1 ? '+' : ''}${rollData.calculatedConstant}`
           }
           else{
-             rollData = getRollData(this)
+            rollData = getRollData(button[0])
           }
 
           e.stopPropagation();
           e.preventDefault();
 
-          
-          
           if (rollData.rollType === "damage") {
             damage_dice_context_menu(rollData.expression, rollData.modifier, rollData.rollTitle, rollData.rollType, window.PLAYER_NAME, window.PLAYER_IMG, undefined, undefined, rollData.damageType)
               .present(e.clientY, e.clientX) // TODO: convert from iframe to main window
@@ -945,7 +955,7 @@ function convertToRPGRoller(){
               .present(e.clientY, e.clientX) // TODO: convert from iframe to main window
           }
     })
-    $('.integrated-dice__container.above-vtt-visited-damage:has([class*="styles_signed"])').off('mouseover.color').on('mouseover.color', function(e){
+    $('.avtt-roller:has(.integrated-dice__container.above-vtt-visited-damage:has([class*="styles_signed"]))').off('mouseover.color').on('mouseover.color', function(e){
       if(e.shiftKey){
         $(this).toggleClass('advantageHover', true)
       }
@@ -956,16 +966,16 @@ function convertToRPGRoller(){
         $(this).toggleClass('disadvantageHover', false)
       }
     })
-   $('.integrated-dice__container.above-vtt-visited-damage:has([class*="styles_signed"])').off('mouseleave.color').on('mouseleave.color', function(e){
+    $('.avtt-roller:has(.integrated-dice__container.above-vtt-visited-damage:has([class*="styles_signed"]))').off('mouseleave.color').on('mouseleave.color', function(e){
       $(this).toggleClass('advantageHover', false)
       $(this).toggleClass('disadvantageHover', false)
     })
-    $(`.integrated-dice__container:not('.above-combo-roll'):not('.above-aoe'):not(.avtt-roll-formula-button)`).off('click.rpg-roller').on('click.rpg-roller', function(e){
+    $(`.avtt-roller`).off('click.rpg-roller').on('click.rpg-roller', function(e){
       if ($(this).parent().hasClass('ct-reset-pane__hitdie-manager-dice') || $(this).prev().text().trim().match(/^death saves$/gi))// allow hit dice and death saves roll to go through ddb for auto heals - maybe setup our own message by put to https://character-service.dndbeyond.com/character/v5/life/hp/damage-taken later
         return;
-
+      const button = $(this).children('.integrated-dice__container')[0];
       let rollData = {} 
-      rollData = getRollData(this);
+      rollData = getRollData(button);
       if(!rollData.expression.match(allDiceRegex) && window.EXPERIMENTAL_SETTINGS['rpgRoller'] != true){
         return;
       }
@@ -2264,6 +2274,20 @@ function observe_character_sheet_changes(documentToObserve) {
                   font-size:16px;
                   margin-right: 2px;
                   cursor: pointer;
+              }
+              .avtt-roller {
+                  -webkit-user-select: none;
+                  -moz-user-select: none;
+                  -ms-user-select: none;
+                  user-select: none;
+                  z-index: 10000;
+              }
+              .avtt-roller *{
+                  pointer-events: none !important;
+              }
+              .avtt-roller:hover .integrated-dice__container {
+                  border: 1px solid var(--theme-color) !important;
+                  background-color: color-mix(in srgb, var(--theme-color) 20%, #000 0%) !important;
               }
               ul[role='menu'] svg:has([d="M9.00016 16.17L4.83016 12L3.41016 13.41L9.00016 19L21.0002 7.00003L19.5902 5.59003L9.00016 16.17Z"]):not(.avtt-checkbox-fix){
                   display:none;

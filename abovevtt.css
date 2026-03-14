@@ -33,6 +33,21 @@ body > button,
     border: 1px solid lightgray;
     font-size: 12px;
 }
+.avtt-roller {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    z-index: 10000;
+}
+.avtt-roller * {
+    pointer-events: none !important;
+}
+.avtt-roller:hover .integrated-dice__container,
+.avtt-roller:hover .integrated-dice__container:hover {
+    border: 1px solid var(--theme-color);
+    background-color: color-mix(in srgb, var(--theme-color) 20%);
+}
 /*Common simple positioning*/
 .TLA {
     position: absolute;
