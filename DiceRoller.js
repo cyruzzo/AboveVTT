@@ -997,13 +997,13 @@ class DiceRoller {
     /** wraps all messages that are sent by DDB, and processes any that we need to process, else passes it along as-is */
     async #wrappedDispatch(message) {
         const newDice = $("[class*='DiceContainer_button']").length > 0
-
+        
         if(this.#waitingForRoll && message.source == 'Beyond20'){
             return;
         }
         const ddb3dDiceShareToggle = getDdb3dDiceShareToggle();
 
-        if (message.eventType === "dice/roll/fulfilled" && newDice && ddb3dDiceShareToggle && this.#pendingMessages[message.data.rollId] == undefined)
+        if (message.eventType === "dice/roll/fulfilled" && newDice && ddb3dDiceShareToggle && this.#pendingMessages[message.data.rollId] == undefined && !['death', 'hitdice'].includes(message.data?.action?.toLowerCase().replaceAll(/\s/gi, '')))
             return;
         
         if (!this.#waitingForRoll || (message.eventType === "dice/roll/fulfilled" && !ddb3dDiceShareToggle)) {
