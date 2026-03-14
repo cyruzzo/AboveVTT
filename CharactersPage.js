@@ -1024,7 +1024,10 @@ async function init_character_sheet_page() {
     observe_character_theme_change();
     observe_character_image_change();
     $(document).off('keydown.keypressAdv keyup.keypressAdv').on('keydown.keypressAdv keyup.keypressAdv', function(e) {
-      let target = $('.ddbc-combat-attack__icon.above-vtt-visited:hover, .ct-spells-spell__action.above-vtt-visited:hover, .integrated-dice__container.above-vtt-visited-damage:has([class*="styles_signed"]):hover')
+      let target = $('.avtt-roller:hover')
+      const targetButtons = target.find(`.ddbc-combat-attack__icon.above-vtt-visited, .ct-spells-spell__action.above-vtt-visited, .integrated-dice__container.above-vtt-visited-damage:has([class*="styles_signed"])`);
+      if (targetButtons.length == 0) 
+        return;
       if(e.shiftKey){
         $(target).toggleClass('advantageHover', true)
       }
