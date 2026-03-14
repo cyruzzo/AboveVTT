@@ -2136,8 +2136,8 @@ function init_ui() {
      `<svg id="dragbox" xmlns="http://www.w3.org/2000/svg">
         <g id="dragbox-region">
             <g id="dragbox-rect" visibility="hidden"> 
-            <path  d="M 0 0 L 0 1 M 1 0 L 1 1 M 0 0 L 1 0 M 0 1 L 1 1"  class="drag-box-b"/>
-            <path d="M 0 0 L 0 1 M 1 0 L 1 1 M 0 0 L 1 0 M 0 1 L 1 1"  class="drag-box-w"/>
+            <path id="dragbox-rect1" d="M 0 0 L 0 1 M 1 0 L 1 1 M 0 0 L 1 0 M 0 1 L 1 1"  class="drag-box-b"/>
+            <path id="dragbox-rect2" d="M 0 0 L 0 1 M 1 0 L 1 1 M 0 0 L 1 0 M 0 1 L 1 1"  class="drag-box-w"/>
             </g>
             <rect id="selbox-rect" class="sel-box" visibility="hidden" x="0" y="0" width="1" height="1" rx="0.01" />
             <g id="dragbox-inside"  visibility="hidden">

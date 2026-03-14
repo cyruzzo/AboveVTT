@@ -1308,10 +1308,19 @@ function draw_select_box(x0, y0, w, h, inside=false, selbox=false, group=false) 
 		       '--selbox-w': `${w}`,
 		       '--selbox-h': `${h}`});
 	
-	const rect = document.getElementById('dragbox-region')
 	const rg1 = document.getElementById('rot-grab');
 	const rg2 = document.getElementById('group-rot-grab');
-	rect.setAttribute('transform', `translate(${x0 / sf}, ${y0 / sf}) scale(${w / sf}, ${h / sf})`);
+	const transform = `translate(${x0 / sf}, ${y0 / sf}) scale(${w / sf}, ${h / sf})`;
+	
+	// ++
+	// Check later: bug on some browser but not others?
+	// would like to apply to enclosing <g> but is "blurry" for some reason:
+	// document.getElementById('dragbox-region').setAttribute('transform', transform);
+	// However applying to individual paths works:
+	document.getElementById('dragbox-rect1').setAttribute('transform',transform);
+	document.getElementById('dragbox-rect2').setAttribute('transform',transform);
+	// --
+
 	document.getElementById('dragbox-inside')?.setAttribute('visibility', inside ? 'visible' : 'hidden');
 	document.getElementById('dragbox-rect')?.setAttribute('visibility', !selbox ? 'visible' : 'hidden');
 	document.getElementById('selbox-rect')?.setAttribute('visibility', selbox ? 'visible' : 'hidden');
@@ -2954,7 +2963,7 @@ function drawing_mousedown(e) {
 	let canvas = document.getElementById("temp_overlay");
 	let context = canvas.getContext("2d");
 
-	// get teh data from the menu's/buttons
+	// get the data from the menu's/buttons
 	const data = get_draw_data(e.data.clicked,  e.data.menu)
 	// select modifies this line but never resets it, so reset it here
 	// otherwise all drawings are dashed
