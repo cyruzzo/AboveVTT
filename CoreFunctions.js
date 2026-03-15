@@ -272,7 +272,10 @@ function inject_chat_buttons() {
 
   
   window.rollButtonObserver = new MutationObserver(function() {
-        // Any time the DDB dice buttons change state, we want to synchronize our dice buttons to match theirs.
+      // Any time the DDB dice buttons change state, we want to synchronize our dice buttons to match theirs.
+      if ($("[class*='AnchoredPopover_wrapper']").length>0 && window.diceRoller?.getWaitingForRoll())
+        return;
+      
       $(".dice-die-button").each(function() {
         let dieSize = $(this).attr("data-dice");
         let ourDiceElement = $(`.dice-roller > div img[alt='${dieSize}']`);
