@@ -998,7 +998,7 @@ function add_journal_roll_buttons(target, tokenId=undefined, specificImage=undef
     
     
     if (rollData.rollType === "damage") {
-      damage_dice_context_menu(rollData.expression, rollData.modifier, rollData.rollTitle, rollData.rollType, tokenName, tokenImage, entityType, tokenId, damageType)
+      damage_dice_context_menu(rollData.expression, rollData.modifier, rollData.rollTitle, rollData.rollType, tokenName, tokenImage, entityType, tokenId, damageType, spellSave)
         .present(e.clientY, e.clientX) // TODO: convert from iframe to main window
     } else {
       standard_dice_context_menu(rollData.expression, rollData.modifier, rollData.rollTitle, rollData.rollType, tokenName, tokenImage, entityType, tokenId)

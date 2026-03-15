@@ -258,7 +258,8 @@ function getRollData(rollButton){
     let expression = '';
     let rollType = 'custom';
     let rollTitle = 'AboveVTT';
-    let damageType = undefined;
+    
+    let damageType = window.diceRoller.getDamageType(rollButton);
     if($(rollButton).find('.ddbc-damage__value, .ct-spell-caster__modifier-amount').length>0){
       expression = $(rollButton).find('.ddbc-damage__value, .ct-spell-caster__modifier-amount').text();
       const damageRollRegex = /([:\s>]|^)(([0-9]+d[0-9]+)\s?([+-]\s?[0-9]+)?)([\.\):\s<,]|$)|^\d+$/gi
@@ -451,7 +452,7 @@ function getRollData(rollButton){
     damageType = followingText && window.ddbConfigJson.damageTypes.some(d => d.name.toLowerCase() == followingText.toLowerCase()) ? followingText : damageType;     
 
 
-
+    const spellSave = window.diceRoller.getSpellSave(rollButton);
 
     
 
@@ -462,7 +463,8 @@ function getRollData(rollButton){
       rollTitle: rollTitle,
       modifier: modifier,
       regExpression: regExpression,
-      damageType: damageType
+      damageType,
+      spellSave
     }
 }
 class DiceRoller {
@@ -530,6 +532,16 @@ class DiceRoller {
         window.diceRoller.setPendingDamageType(damageTypeText);
       return damageTypeText;
     }
+    getSpellSave(button){
+        let spellSave = $(button).closest('.ddbc-combat-attack, .ct-spells-spell').find(`[class*='__save']`);
+        let spellSaveText;
+        if (spellSave.length > 0) {
+            spellSaveText = `${spellSave.find('[class*="__save-label"]').text().toUpperCase()} DC${spellSave.find('[class*="__save-value"]').text()}`;
+        }
+        window.diceRoller.setPendingSpellSave(spellSaveText);
+        return spellSaveText;
+    }
+
     setWaitingForRoll(){
         const self = this;
         clearTimeout(self.#timeoutId);
@@ -663,7 +675,8 @@ class DiceRoller {
                   sendTo: window.sendToTab,
                   entityType: diceRoll.entityType,
                   entityId: diceRoll.entityId,
-                  disableDDBDice: !ddb3dDiceShareToggle
+                  disableDDBDice: !ddb3dDiceShareToggle,
+                  sendToOverride: diceRoll.sendToOverride
                 };
                 if(rollType == 'attack' || rollType == 'to hit' || rollType == 'tohit'){     
                     if(critSuccess == true){
@@ -679,11 +692,9 @@ class DiceRoller {
             else{
                 if(spellSave == undefined && this.#pendingSpellSave != undefined){
                     spellSave = this.#pendingSpellSave;
-                    this.#pendingSpellSave = undefined;
                 }
                 if(damageType == undefined && this.#pendingDamageType != undefined){
                     damageType = this.#pendingDamageType;
-                    this.#pendingDamageType = undefined;
                 }
                 else if(damageType == undefined && diceRoll.damageType != undefined){
                     damageType = diceRoll.damageType;
@@ -707,7 +718,8 @@ class DiceRoller {
                   rollData: rollData,
                   sendTo: window.sendToTab,
                   entityType: diceRoll.entityType,
-                  entityId: diceRoll.entityId
+                  entityId: diceRoll.entityId,
+                  sendToOverride: diceRoll.sendToOverride
                 };
             }
             // we're about to roll dice so we need to know if we should capture DDB messages.
@@ -715,7 +727,7 @@ class DiceRoller {
             // don't hold a reference to the object we were given in case it gets altered while we're waiting.
             this.#resetVariables();
             this.setWaitingForRoll();
-            this.#pendingDiceRoll = new DiceRoll(diceRoll.expression, diceRoll.action, diceRoll.rollType, diceRoll.name, diceRoll.avatarUrl, diceRoll.entityType, diceRoll.entityId);
+            this.#pendingDiceRoll = new DiceRoll(diceRoll.expression, diceRoll.action, diceRoll.rollType, diceRoll.name, diceRoll.avatarUrl, diceRoll.entityType, diceRoll.entityId, diceRoll.sendToOverride);
             this.#pendingCritRange = critRange;
             this.#pendingCritType = critType;
             this.#pendingSpellSave = spellSave;
