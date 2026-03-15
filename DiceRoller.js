@@ -1328,7 +1328,9 @@ class DiceRoller {
     }
 }
 function getDdb3dDiceShareToggle(){
-    return localStorage.getItem('userDiceData') !== null && window.MB?.userid != undefined ? JSON.parse(localStorage.getItem('userDiceData')).state?.[window.MB.userid]?.settings?.visibility != 'disabled' : true;
+    const newDice = $("[class*='DiceContainer_button']").length > 0
+    const userDiceData = localStorage.getItem('userDiceData')
+    return newDice && userDiceData !== null && window.MB?.userid != undefined ? JSON.parse(localStorage.getItem('userDiceData')).state?.[window.MB.userid]?.settings?.visibility != 'disabled' : true;
 }
 function replace_gamelog_message_expressions(listItem) {
 
