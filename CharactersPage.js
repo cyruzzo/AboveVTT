@@ -1556,11 +1556,6 @@ function observe_character_sheet_changes(documentToObserve) {
                 $('[data-floating-ui-portal]').off('click.waiting').on('click.waiting', `[data-dd-action-name="Roll Dice Popup > Roll Dice"]`, function () {
                   window.diceRoller.setWaitingForRoll();
                 })
-                $("[class*='DiceContainer_button']").off('click.toggle').on('click.toggle', async function () {
-                  const ddb3dDiceShareToggle = getDdb3dDiceShareToggle();
-                  setTimeout(() => {$(`#shared3dDiceToggleSwitch[aria-checked='${!ddb3dDiceShareToggle}']`).click()}, 60);
-                })
-
               }, 200)
             }, 200);
             watchForNewDicePanel.disconnect();

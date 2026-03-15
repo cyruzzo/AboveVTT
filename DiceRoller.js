@@ -874,8 +874,12 @@ class DiceRoller {
      * clicks the DDB dice and then clicks the roll button
      * @param diceRoll {DiceRoll} the DiceRoll object to roll
      */
-    async clickDiceButtons(diceRoll) {
-        
+    async clickDiceButtons(diceRoll, retries=1) {
+        if (retries > 5){
+            console.warn(`clickDiceButtons retried dice roll 5 times and failed`, diceRoll);
+            this.#resetVariables();
+            return;
+        }
         if (diceRoll === undefined) {
             console.warn("clickDiceButtons was called without a diceRoll object")
             return;
@@ -883,50 +887,33 @@ class DiceRoller {
         $('[data-floating-ui-portal], .roll-mod-container').addClass('hidden');
         if ($(".dice-toolbar").hasClass("rollable") || $(`[class*='DiceContainer_customDiceRollOpen']`).length>0) {
             // clear any that are already selected so we don't roll too many dice
-            await $(".dice-toolbar__dropdown-die, [class*='DiceContainer_customDiceRollOpen']").click();
+            await $(".dice-toolbar__dropdown-die, [data-dd-action-name='Roll Dice Popup > Clear Dice']").click();
         }
-        if ($(".dice-toolbar__dropdown, [class*='DiceContainer_button']").length > 0) {
-            if (($(".dice-toolbar__dropdown").length>0 && !$(".dice-toolbar__dropdown").hasClass("dice-toolbar__dropdown-selected")) || $("[class*='DiceContainer_button']").length>0) {
-                // make sure it's open
-                await $(".dice-toolbar__dropdown-die, [class*='DiceContainer_button']").click();
-                await $("#shared3dDiceToggleSwitch[aria-checked=false]").click();
-            }
-            for (let diceType in diceRoll.diceToRoll) {
-                let numberOfDice = diceRoll.diceToRoll[diceType];
-                for (let i = 0; i < numberOfDice; i++) {
-                   await $(`.dice-die-button[data-dice='${diceType}'], [class*='AnchoredPopover_wrapper'] #${diceType}`).click();
-                }
+        
+        if (($(".dice-toolbar__dropdown").length > 0 && !$(".dice-toolbar__dropdown").hasClass("dice-toolbar__dropdown-selected")) || ($("[class*='DiceContainer_button']").length > 0 && $(`[class*='DiceContainer_customDiceRollOpen']`).length == 0)) {
+            // make sure it's open
+            await $(".dice-toolbar__dropdown-die, [class*='DiceContainer_button']").click();
+        }
+        if ($(`.dice-die-button, [class*='AnchoredPopover_wrapper'] [class*='_diceContainer']`).length == 0){
+            const self = this;
+            setTimeout(function(){
+                self.clickDiceButtons(diceRoll, retries + 1)
+            }, 60)
+            return;
+        }
+        for (let diceType in diceRoll.diceToRoll) {
+            let numberOfDice = diceRoll.diceToRoll[diceType];
+            for (let i = 0; i < numberOfDice; i++) {
+                await $(`.dice-die-button[data-dice='${diceType}'], [class*='AnchoredPopover_wrapper'] #${diceType}`).click();
             }
         }
 
+
         if ($(".dice-toolbar").hasClass("rollable")) {
             console.log("diceRoll.sendToOverride", diceRoll.sendToOverride)
-            if (diceRoll.sendToOverride === "Everyone") {
-                // expand the options and click the "Everyone" button
-                await $(".dice-toolbar__target-menu-button").click();
-                await $("#options-menu ul > li > ul > div").eq(0).click();
-            } else if (diceRoll.sendToOverride === "Self") {
-                // expand the options and click the "Self" button
-                await $(".dice-toolbar__target-menu-button").click();
-                await $("#options-menu ul > li > ul > div").eq(1).click();
-            } else if (diceRoll.sendToOverride === "DungeonMaster") {
-                // expand the options and click the "Self" button
-                await $(".dice-toolbar__target-menu-button").click();
-                await $("#options-menu ul > li > ul > div").eq(2).click();
-            } else {
-                // click the roll button which will use whatever the gamelog is set to roll to
-                await $(".dice-toolbar__target").children().first().click();
-            }
+            await $(".dice-toolbar__target").children().first().click();
         }
-        if ($(`[class*='DiceContainer_button']`).length>0) {
-            console.log("diceRoll.sendToOverride", diceRoll.sendToOverride)
-            if (diceRoll.sendToOverride === "Everyone") {
-                // expand the options and click the "Everyone" button
-                $("[class*='AnchoredPopover_wrapper'] #Everyone").click();
-            } else if (diceRoll.sendToOverride === "Self" || diceRoll.sendToOverride === "DungeonMaster" || diceRoll.sendToOverride === "DM") {
-                // expand the options and click the "Self" button
-                $("[class*='AnchoredPopover_wrapper'] #Self").click();
-            }       
+        if ($(`[class*='DiceContainer_button']`).length>0) {    
             await $(`[data-dd-action-name="Roll Dice Popup > Roll Dice"]`).click();
         }  
         clearTimeout(this.diceRollButtonHide);
