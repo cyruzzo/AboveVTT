@@ -1125,7 +1125,7 @@ class DiceRoller {
         }
         const newId = uuid();
         
-        const message = { ...this.#pendingMessages[firstPending].ddbMessage, eventType: "dice/roll/fulfilled", id: newId };
+        const message = { ...this.#pendingMessages[firstPending].ddbMessage, eventType: "dice/roll/fulfilled", id: newId, persist: true };
         console.log("capturing fulfilled message: ", message)
         let alteredMessage = message;
         if (alteredMessage.data?.context?.avatarUrl?.startsWith("above-bucket-not-a-url")) {
