@@ -923,7 +923,7 @@ function add_journal_roll_buttons(target, tokenId=undefined, specificImage=undef
       rollType = 'Check'
     }
 
-    if(rollAction == ''){
+    if (rollAction == '' || rollAction == undefined){
       rollAction = 'Roll';
     } 
     else if(rollAction.replace(' ', '').toLowerCase() == 'savingthrows'){ 
