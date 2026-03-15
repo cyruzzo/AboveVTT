@@ -33,6 +33,7 @@ body > button,
     border: 1px solid lightgray;
     font-size: 12px;
 }
+
 /*Common simple positioning*/
 .TLA {
     position: absolute;

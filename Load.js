@@ -19,7 +19,7 @@
     
     const pgType = pageType(window.location); //only relevant in extension context;
     const isIframe = window.self !== window.top;
-    if(runtime) { //we are in the extension context - decide whether to bail quickly
+    if (runtime?.getURL) { //we are in the extension context - decide whether to bail quickly
         //with this scheme we should never load in iframes from here
         console.log("🎲 AVTT extension: ", pgType);
         if(!pgType || isIframe) { //block iFrame extension loading (eg older Safari) until we want it
@@ -29,70 +29,70 @@
     }
 
     //setup to work in both contexts
-    const getExtURL = runtime ? ((url) => runtime.getURL(url))
+    const getExtURL = runtime?.getURL ? ((url) => runtime.getURL(url))
           : ((url) => document.querySelector("#extensionpath").dataset.path + url);
-    const getExtVersion = runtime ? (() => (chrome||browser).runtime?.getManifest()?.version)
+    const getExtVersion = runtime?.getManifest ? (() => (chrome||browser).runtime?.getManifest()?.version)
           : ((url) => document.querySelector("#avttversion").dataset.path);
     
     const addChild = (c, where, head=false) => (where[head ? "head" : "body"] || where.documentElement).appendChild(c);
     
     const avttScripts = [
-	// External Dependencies
-	"jquery-3.6.0.min.js",
-	"jquery-ui.min.js",
-	"jquery.csv.js",
-	"jquery.ui.touch-punch.js",
-	"jquery.contextMenu.js",
-	"jquery.magnific-popup.min.js",
-	"spectrum-2.0.8.min.js",
-	"purify.min.js",
-	"rpg-dice-roller.bundle.min.js",
-	"color-picker.js",
-	"mousetrap.1.6.5.min.js",
-	"peerjs.min.js",
-	"fuse.min.js",
-	"ajaxQueue/ajaxQueueIndex.mjs",            
-	// AboveVTT Files
-	"environment.js",
-	"CoreFunctions.js", // Make sure CoreFunctions executes before anything else
-	"avttS3Upload.js",
-	"AboveApi.js",
-	"DDBApi.js",
-	"AOETemplates.js",
-	"Text.js",
-	"CombatTracker.js",
-	"EncounterHandler.js",
-	"Fog.js",
-	"Journal.js",
-	"KeypressHandler.js",
-	"MessageBroker.js",
-	"MonsterDice.js",
-	"PlayerPanel.js",
-	"ScenesHandler.js",
-	"ScenesPanel.js",
-	"Settings.js",
-	"SidebarPanel.js",
-	"StatHandler.js",
-	"Token.js",
-	"constants/names.js",
-	"TokenMenu.js",
-	"ChatObserver.js",
-	"DiceContextMenu/DiceContextMenu.js",
-	"TokensPanel.js",
-	"TokenCustomization.js",
-	"built-in-tokens.js",
-	"PeerManager.js",
-	"PeerCommunication.js",
-	"peerVideo.js",
-	"peerDice.js",		
-	"DiceRoller.js",
-	"DMScreen.js",
-	"Main.js",
-	"MonsterStatBlock.js",
-	// AboveVTT files that execute when loaded	
-	"onedrive/onedrivemsal.js",
-	"onedrive/onedrivepicker.js",
-	"audio/index.mjs",
+        // External Dependencies
+        "jquery-3.6.0.min.js",
+        "jquery-ui.min.js",
+        "jquery.csv.js",
+        "jquery.ui.touch-punch.js",
+        "jquery.contextMenu.js",
+        "jquery.magnific-popup.min.js",
+        "spectrum-2.0.8.min.js",
+        "purify.min.js",
+        "rpg-dice-roller.bundle.min.js",
+        "color-picker.js",
+        "mousetrap.1.6.5.min.js",
+        "peerjs.min.js",
+        "fuse.min.js",
+        "ajaxQueue/ajaxQueueIndex.mjs",            
+        // AboveVTT Files
+        "environment.js",
+        "CoreFunctions.js", // Make sure CoreFunctions executes before anything else
+        "avttS3Upload.js",
+        "AboveApi.js",
+        "DDBApi.js",
+        "AOETemplates.js",
+        "Text.js",
+        "CombatTracker.js",
+        "EncounterHandler.js",
+        "Fog.js",
+        "Journal.js",
+        "KeypressHandler.js",
+        "MessageBroker.js",
+        "MonsterDice.js",
+        "PlayerPanel.js",
+        "ScenesHandler.js",
+        "ScenesPanel.js",
+        "Settings.js",
+        "SidebarPanel.js",
+        "StatHandler.js",
+        "Token.js",
+        "constants/names.js",
+        "TokenMenu.js",
+        "ChatObserver.js",
+        "DiceContextMenu/DiceContextMenu.js",
+        "TokensPanel.js",
+        "TokenCustomization.js",
+        "built-in-tokens.js",
+        "PeerManager.js",
+        "PeerCommunication.js",
+        "peerVideo.js",
+        "peerDice.js",		
+        "DiceRoller.js",
+        "DMScreen.js",
+        "Main.js",
+        "MonsterStatBlock.js",
+        // AboveVTT files that execute when loaded	
+        "onedrive/onedrivemsal.js",
+        "onedrive/onedrivepicker.js",
+        "audio/index.mjs",
     	"WeatherOverlay.js"
     ]
     const avttCharacterScripts = [
@@ -207,7 +207,7 @@
         console.log("🏁 AVTT: done loading",pgType);
     }
     
-    if(runtime) { //extension loader context
+    if (runtime?.getURL) { //extension loader context
         await inject(pgType, document);
     } else {
         //in page context install loader on window for iframe injects later

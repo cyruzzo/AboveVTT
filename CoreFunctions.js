@@ -272,7 +272,10 @@ function inject_chat_buttons() {
 
   
   window.rollButtonObserver = new MutationObserver(function() {
-        // Any time the DDB dice buttons change state, we want to synchronize our dice buttons to match theirs.
+      // Any time the DDB dice buttons change state, we want to synchronize our dice buttons to match theirs.
+      if ($("[class*='AnchoredPopover_wrapper']").length>0 && window.diceRoller?.getWaitingForRoll())
+        return;
+      
       $(".dice-die-button").each(function() {
         let dieSize = $(this).attr("data-dice");
         let ourDiceElement = $(`.dice-roller > div img[alt='${dieSize}']`);
@@ -334,14 +337,24 @@ function inject_chat_buttons() {
       return true // must return true if doesn't break
     })
   });
-
+  if (window.sendToDefaultObserver)
+    window.sendToDefaultObserver.disconnect();
+  if (window.diceResultsObserver)
+    window.sendToDefaultObserver.disconnect();
   window.sendToDefaultObserver = new MutationObserver(function() {
     localStorage.setItem(`${window.gameId != undefined ? window.gameId : window.myUser}-sendToDefault`, gamelog_send_to_text());
   })
-
+  window.diceResultsObserver = new MutationObserver(function (mutations) {
+    mutations.forEach( (mutation) => {
+      const firstAddedNode = $(mutation.addedNodes[0]);
+      if (firstAddedNode.is('[class*="-Line-Notation"]') && firstAddedNode.closest("[data-avtt-expression]").length > 0) {
+        replace_gamelog_message_expressions(firstAddedNode.closest("[data-avtt-expression]"))
+      }
+    })
+  })
 
   let gamelogObserver = new MutationObserver((mutations) => {
-   mutations.every((mutation) => {
+    mutations.forEach((mutation) => {
       if (!mutation.addedNodes) return
       for (let i = 0; i < mutation.addedNodes.length; i++) {
         // do things to your newly added nodes here
@@ -350,6 +363,9 @@ function inject_chat_buttons() {
           const sendto_mutation_target = $(".glc-game-log [class*='-SendToLabel'] ~ button")[0];
           const sendto_mutation_config = { attributes: true, childList: true, characterData: true, subtree: true };
           window.sendToDefaultObserver.observe(sendto_mutation_target, sendto_mutation_config);
+          const results_mutation_target = $(".glc-game-log")[0];
+          const results_mutation_config = { attributes: false, childList: true, characterData: false, subtree: true };
+          window.diceResultsObserver.observe(results_mutation_target, results_mutation_config);
           gamelogObserver.disconnect();
           return false;
         }
@@ -900,17 +916,20 @@ function add_journal_roll_buttons(target, tokenId=undefined, specificImage=undef
       rollType = $(this).closest('td').index() == 2 ? 'Check' : 'Save'
     }
     else if($(this).closest('table').find('tr:first').text().toLowerCase().includes('str')){
-      let statIndex = $(this).closest('table').find('tr button').index($(this)); 
+      let statIndex = $(this).closest('table').find('tr button').index($(this));  
       let stats = ['STR', 'DEX', 'CON', 'INT', 'WIS', 'CHA']
-      rollAction = stats[statIndex];
-      rollType = 'Check'
+      rollAction = stats[statIndex%6];
+      if(statIndex > 6)
+        rollType = 'Save'
+      else
+        rollType = 'Check'
     }
     else if($(this).closest('.ability-block__stat')?.find('.ability-block__heading').length>0){
       rollAction = $(this).closest('.ability-block__stat')?.find('.ability-block__heading').text();
       rollType = 'Check'
     }
 
-    if(rollAction == ''){
+    if (rollAction == '' || rollAction == undefined){
       rollAction = 'Roll';
     } 
     else if(rollAction.replace(' ', '').toLowerCase() == 'savingthrows'){ 
@@ -1052,170 +1071,7 @@ function init_my_dice_details() {
  */
 //currently used for flat value rolls
 
-function send_ddb_dice_message(expression, displayName, imgUrl, rollType = "roll", damageType, actionType = "custom", sendTo = "") {
-  let diceRoll = new DiceRoll(expression);
-  diceRoll.action = actionType;
-  diceRoll.rollType = rollType;
-  diceRoll.name = displayName == true ? 'THE DM' : displayName;
-  diceRoll.avatarUrl = imgUrl;
-  // diceRoll.entityId = monster.id;
-  // diceRoll.entityType = monsterData.id;
 
-  console.log("with values", expression, displayName, imgUrl, rollType, damageType, actionType, sendTo)
-
-
-  try {
-    expression = expression.replace(/\s+/g, ''); // remove all whitespace
-
-    const supportedDieTypes = ["d4", "d6", "d8", "d10", "d12", "d20", "d100"];
-
-    let roll = new rpgDiceRoller.DiceRoll(expression);
-
-    // rpgDiceRoller doesn't give us the notation of each roll so we're going to do our best to find and match them as we go
-    let choppedExpression = expression;
-    let notationList = [];
-    for (let i = 0; i < roll.rolls.length; i++) {
-      let currentRoll = roll.rolls[i];
-      if (typeof currentRoll === "string") {
-        let idx = choppedExpression.indexOf(currentRoll);
-        let previousNotation = choppedExpression.slice(0, idx);
-        notationList.push(previousNotation);
-        notationList.push(currentRoll);
-        choppedExpression = choppedExpression.slice(idx + currentRoll.length);
-      }
-    }
-    console.log("chopped expression", choppedExpression)
-    notationList.push(choppedExpression); // our last notation will still be here so add it to the list
-
-    if (roll.rolls.length != notationList.length) {
-      console.warn(`Failed to convert expression to DDB roll; expression ${expression}`);
-      console.groupEnd()
-      return false;
-    }
-
-    let convertedDice = [];       // a list of objects in the format that DDB expects
-    let allValues = [];           // all the rolled values
-    let convertedExpression = []; // a list of strings that we'll concat for a string representation of the final math being done
-    let constantsTotal = 0;       // all the constants added together
-    for (let i = 0; i < roll.rolls.length; i++) {
-      let currentRoll = roll.rolls[i];
-      if (typeof currentRoll === "object") {
-        let currentNotation = notationList[i];
-        let currentDieType = supportedDieTypes.find(dt => currentNotation.includes(dt)); // we do it this way instead of splitting the string so we can easily clean up things like d20kh1, etc. It's less clever, but it avoids any parsing errors
-        if (!supportedDieTypes.includes(currentDieType)) {
-          console.warn(`found an unsupported dieType ${currentNotation}`);
-          console.groupEnd()
-          return false;
-        }
-        if (currentNotation.includes("kh") || currentNotation.includes("kl")) {
-          let cleanerString = currentRoll.toString()
-            .replace("[", "(")    // swap square brackets with parenthesis
-            .replace("]", ")")    // swap square brackets with parenthesis
-            .replace("d", "")     // remove all drop notations
-            .replace(/\s+/g, ''); // remove all whitespace
-          convertedExpression.push(cleanerString);
-        } else {
-          convertedExpression.push(currentRoll.value);
-        }
-        let dice = currentRoll.rolls.map(d => {
-          allValues.push(d.value);
-          console.groupEnd()
-          return { dieType: currentDieType, dieValue: d.value };
-        });
-
-        convertedDice.push({
-          "dice": dice,
-          "count": dice.length,
-          "dieType": currentDieType,
-          "operation": 0
-        })
-      } else if (typeof currentRoll === "string") {
-        convertedExpression.push(currentRoll);
-      } else if (typeof currentRoll === "number") {
-        convertedExpression.push(currentRoll);
-        if (i > 0) {
-          if (convertedExpression[i - 1] == "-") {
-            constantsTotal -= currentRoll;
-          } else if (convertedExpression[i - 1] == "+") {
-            constantsTotal += currentRoll;
-          } else {
-            console.warn(`found an unexpected symbol ${convertedExpression[i - 1]}`);
-            console.groupEnd()
-            return false;
-          }
-        } else {
-          constantsTotal += currentRoll;
-        }
-      }
-    }
-    if(sendTo == ''){
-      sendTo = gamelog_send_to_text().trim().replace('/\s/gi', '');
-    }
-    sendTo = sendTo.toLowerCase();
-    
-    let ddbJson = {
-      id: uuid(),
-      dateTime: `${Date.now()}`,
-      gameId: `${window.gameId}`,
-      userId: `${window.myUser}`,
-      source: "web",
-      persist: true,
-      messageScope: sendTo === "everyone" ? "gameId" : "userId",
-      messageTarget: sendTo === "everyone" ? `${window.gameId}` : sendTo === "dungeonmaster" || sendTo === "dm" ? `${window.CAMPAIGN_INFO.dmId}` : `${window.myUser}`,
-      entityId: `${window.myUser}`,
-      entityType: "user",
-      eventType: "dice/roll/fulfilled",
-      data: {
-        action: actionType,
-        setId: window.mydice.data.setId,
-        context: {
-          entityId: `${window.myUser}`,
-          entityType: "user",
-          messageScope: sendTo === "everyone" ? "gameId" : "userId",
-          messageTarget: sendTo === "everyone" ? `${window.gameId}` : sendTo === "dungeonmaster" || sendTo === "dm"  ? `${window.CAMPAIGN_INFO.dmId}` : `${window.myUser}`,
-          name: displayName,
-          avatarUrl: imgUrl
-        },
-        rollId: uuid(),
-        rolls: [
-          {
-            diceNotation: {
-              set: convertedDice,
-              constant: constantsTotal
-            },
-            diceNotationStr: expression,
-            rollType: rollType,
-            rollKind: expression.includes("kh") ? "advantage" : expression.includes("kl") ? "disadvantage" : "",
-            result: {
-              constant: constantsTotal,
-              values: allValues,
-              total: roll.total,
-              text: convertedExpression.join("")
-            }
-          }
-        ]
-      }
-    };
-    if (window.MB?.ws?.readyState && window.MB.ws.readyState == window.MB.ws.OPEN) {
-      window.MB.ws.send(JSON.stringify(ddbJson));
-      console.groupEnd()
-      return true;
-    } else { // TRY TO RECOVER
-      get_cobalt_token(function (token) {
-        window.MB.loadWS(token, function () {
-          // TODO, CONSIDER ADDING A SYNCMEUP / SCENE PAIR HERE
-          window.MB.ws.send(JSON.stringify(ddbJson));
-        });
-      });
-      console.groupEnd()
-      return true; // we can't guarantee that this actually worked, unfortunately
-    }
-  } catch (error) {
-    console.warn(`failed to send expression as DDB roll; expression = ${expression}`, error);
-    console.groupEnd()
-    return false;
-  }
-}
 
 function general_statblock_formating(input){
   input = input.replace(/&nbsp;/g,' ')
