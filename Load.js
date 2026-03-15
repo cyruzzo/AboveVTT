@@ -31,7 +31,7 @@
     //setup to work in both contexts
     const getExtURL = runtime?.getURL ? ((url) => runtime.getURL(url))
           : ((url) => document.querySelector("#extensionpath").dataset.path + url);
-    const getExtVersion = runtime ? (() => (chrome||browser).runtime?.getManifest()?.version)
+    const getExtVersion = runtime?.getManifest ? (() => (chrome||browser).runtime?.getManifest()?.version)
           : ((url) => document.querySelector("#avttversion").dataset.path);
     
     const addChild = (c, where, head=false) => (where[head ? "head" : "body"] || where.documentElement).appendChild(c);
