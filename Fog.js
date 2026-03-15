@@ -3212,9 +3212,11 @@ function drawing_mousemove(e) {
 
 	const isFilled = window.DRAWTYPE === "filled" || window.DRAWTYPE === "light";
 	const mouseMoveFps = Math.round((1000.0 / 24.0));
-	if (window.DRAWFUNCTION === "select" && e.which == 1){
+	if (window.MOUSEDOWN && window.DRAWFUNCTION === "select" && e.which == 1){
 		//change cursor for "fullyInside" select mode
 		$("#temp_overlay").css('cursor', (window.BEGIN_MOUSEY < mouseY) ? 'crosshair' : 'cell');
+	}else{
+		$("#temp_overlay").css('cursor', '');
 	}
 
 
