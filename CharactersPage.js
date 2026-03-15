@@ -926,7 +926,7 @@ function convertToRPGRoller(){
       if ($el.parent().hasClass('ct-reset-pane__hitdie-manager-dice') || $el.prev().text().trim().match(/^death saves$/gi))// allow hit dice and death saves roll to go through ddb for auto heals - maybe setup our own message by put to https://character-service.dndbeyond.com/character/v5/life/hp/damage-taken later
         return;
 
-      $el.wrap(`<div class='avtt-roller'>`)
+      $el.wrap(`<div class='avtt-roller'>`) //we wrap DDB buttons in a DIV we can add event listeners too and remove point-events from DDB buttons. Otherwise we get double dice rolls due to some changes they made
     })
 
 
