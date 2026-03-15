@@ -2745,6 +2745,7 @@ function observe_character_sheet_changes(documentToObserve) {
 
             break;
           case "childList":
+            const firstAddedNode = $(mutation.addedNodes[0]);
             const firstRemoved = $(mutation.removedNodes[0]);
             if (mutationTarget.hasClass('ct-conditions-summary')) { // conditions update from sidebar
               const conditionsSet = read_conditions(documentToObserve);
@@ -2753,7 +2754,7 @@ function observe_character_sheet_changes(documentToObserve) {
               let maxhp = parseInt(firstRemoved.find(`.ct-health-summary__hp-number, [aria-label*='Max Hit'], [class*='styles_maxContainer']`).text());
               send_character_hp(maxhp);
             }else if (
-              ($(mutation.addedNodes[0]).hasClass('ct-health-summary__hp-number')) ||
+              (firstAddedNode.hasClass('ct-health-summary__hp-number')) ||
               (firstRemoved.hasClass('ct-health-summary__hp-item-input') && mutationTarget.hasClass('ct-health-summary__hp-item-content')) ||
               (firstRemoved.hasClass('ct-health-summary__deathsaves-label') && mutationTarget.hasClass('ct-health-summary__hp-item')) ||
               mutationTarget.hasClass('ct-health-summary__deathsaves') ||
@@ -2772,8 +2773,10 @@ function observe_character_sheet_changes(documentToObserve) {
               send_senses();
             } else if (mutationTarget.hasClass("ct-speed-manage-pane")) {
               send_movement_speeds(documentToObserve, mutationTarget);
-            } else if($(mutation.addedNodes[0]).hasClass('ct-extra-row') || ($(mutation.addedNodes[0]).hasClass('ct-content-group') && $('.ct-extra-row').length>0)){
+            } else if(firstAddedNode.hasClass('ct-extra-row') || (firstAddedNode.hasClass('ct-content-group') && $('.ct-extra-row').length>0)){
               debounce_add_extras();
+            } else if (firstAddedNode.is('[class*="-Line-Notation"]') && mutationTarget.closest("[data-avtt-expression]").length>0){
+              replace_gamelog_message_expressions(mutationTarget.closest("[data-avtt-expression]"))
             }
 
             // TODO: check for class or something. We don't need to do this on every mutation

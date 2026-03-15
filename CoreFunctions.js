@@ -334,14 +334,24 @@ function inject_chat_buttons() {
       return true // must return true if doesn't break
     })
   });
-
+  if (window.sendToDefaultObserver)
+    window.sendToDefaultObserver.disconnect();
+  if (window.diceResultsObserver)
+    window.sendToDefaultObserver.disconnect();
   window.sendToDefaultObserver = new MutationObserver(function() {
     localStorage.setItem(`${window.gameId != undefined ? window.gameId : window.myUser}-sendToDefault`, gamelog_send_to_text());
   })
-
+  window.diceResultsObserver = new MutationObserver(function (mutations) {
+    mutations.forEach( (mutation) => {
+      const firstAddedNode = $(mutation.addedNodes[0]);
+      if (firstAddedNode.is('[class*="-Line-Notation"]') && firstAddedNode.closest("[data-avtt-expression]").length > 0) {
+        replace_gamelog_message_expressions(firstAddedNode.closest("[data-avtt-expression]"))
+      }
+    })
+  })
 
   let gamelogObserver = new MutationObserver((mutations) => {
-   mutations.every((mutation) => {
+    mutations.forEach((mutation) => {
       if (!mutation.addedNodes) return
       for (let i = 0; i < mutation.addedNodes.length; i++) {
         // do things to your newly added nodes here
@@ -350,6 +360,9 @@ function inject_chat_buttons() {
           const sendto_mutation_target = $(".glc-game-log [class*='-SendToLabel'] ~ button")[0];
           const sendto_mutation_config = { attributes: true, childList: true, characterData: true, subtree: true };
           window.sendToDefaultObserver.observe(sendto_mutation_target, sendto_mutation_config);
+          const results_mutation_target = $(".glc-game-log")[0];
+          const results_mutation_config = { attributes: false, childList: true, characterData: false, subtree: true };
+          window.diceResultsObserver.observe(results_mutation_target, results_mutation_config);
           gamelogObserver.disconnect();
           return false;
         }
