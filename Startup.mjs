@@ -133,7 +133,8 @@ $(function() {
                   event.data.msg.player,
                   event.data.msg.img,
                   "character",
-                  event.data.msg.playerId
+                  event.data.msg.playerId,
+                  event.data.msg.sendToOverride
                 ), event.data.multiroll, event.data.critRange, event.data.critType, event.data.msg.rollData.spellSave, event.data.msg.rollData.damageType);
               }
             }       
