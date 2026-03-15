@@ -907,12 +907,6 @@ async function init_characters_pages(container = $(document)) {
 const debounceConvertToRPGRoller =  mydebounce(() => {convertToRPGRoller()}, 20)
 
 
-const debounceRemoveRPGRoller =  mydebounce(() => {
-    $(`.integrated-dice__container:not('.above-aoe'):not(.avtt-roll-formula-button)`).off('click.rpg-roller'); 
-    $(`.integrated-dice__container:not('.above-aoe'):not(.avtt-roll-formula-button)`).off('contextmenu.rpg-roller')
-    delete window.EXPERIMENTAL_SETTINGS['rpgRoller'];
-}, 20)
-
 
 function convertToRPGRoller(){
     let urlSplit = window.location.href.split("/");
@@ -1048,14 +1042,8 @@ async function init_character_sheet_page() {
 
   if(!is_abovevtt_page()){
     tabCommunicationChannel.addEventListener ('message', (event) => {
-      if(event.data.msgType == 'setupObserver'){
-        if(event.data.tab == undefined && event.data.rpgRoller != true && window.self==window.top){
-          $(`.integrated-dice__container:not('.above-aoe'):not(.avtt-roll-formula-button)`).off('click.rpg-roller'); 
-          $(`.integrated-dice__container:not('.above-aoe'):not(.avtt-roll-formula-button)`).off('contextmenu.rpg-roller')
-        }else{
-          convertToRPGRoller();
-        }
-
+      if(event.data.msgType == 'setupObserver'){   
+        convertToRPGRoller();
         window.EXPERIMENTAL_SETTINGS['rpgRoller'] = event.data.rpgRoller;
         if(window.sendToTab != false || event.data.tab == undefined){
           window.sendToTab = (window.self != window.top) ? event.data.iframeTab : event.data.tab;     
@@ -1065,8 +1053,6 @@ async function init_character_sheet_page() {
         }
       }
       if(event.data.msgType =='removeObserver'){
-        $(`.integrated-dice__container:not('.above-aoe'):not(.avtt-roll-formula-button)`).off('click.rpg-roller'); 
-        $(`.integrated-dice__container:not('.above-aoe'):not(.avtt-roll-formula-button)`).off('contextmenu.rpg-roller')
         delete window.EXPERIMENTAL_SETTINGS['rpgRoller'];
         window.sendToTabRPGRoller = undefined;
         window.sendToTab = undefined;
@@ -1980,7 +1966,10 @@ function observe_character_sheet_changes(documentToObserve) {
     }
 
 
-    const spellDamageButtons = documentToObserve.find(`.ddbc-spell-damage-effect .integrated-dice__container:not('.above-vtt-visited-spell-damage'),  [class*='styles_attack']:has([class*='__save-value']) [class*='attack__damage'] .integrated-dice__container:not('.above-vtt-visited-spell-damage')`)
+    const spellDamageButtons = documentToObserve.find(`.ddbc-spell-damage-effect .avtt-roller:not('.above-vtt-visited-spell-damage'), 
+        [class*='styles_attack']:has([class*='__save-value']) [class*='attack__damage'].avtt-roller:not('.above-vtt-visited-spell-damage'),
+        .ddbc-spell-damage-effect .integrated-dice__container:not('.above-vtt-visited-spell-damage'),  
+        [class*='styles_attack']:has([class*='__save-value']) [class*='attack__damage'] .integrated-dice__container:not('.above-vtt-visited-spell-damage')`)
     if(spellDamageButtons.length > 0){
       $(spellDamageButtons).addClass("above-vtt-visited-spell-damage");
       spellDamageButtons.off('click.spellSave').on('click.spellSave', function(e){
@@ -1994,7 +1983,9 @@ function observe_character_sheet_changes(documentToObserve) {
     } 
 
 
-    const damageButtons = documentToObserve.find(`.ddb-note-roll:not('.above-vtt-visited-damage'), .integrated-dice__container:not('.above-vtt-visited-damage')`)
+    const damageButtons = documentToObserve.find(`.avtt-roller:not('.above-vtt-visited-damage'), 
+      .ddb-note-roll:not('.above-vtt-visited-damage'), 
+      .integrated-dice__container:not('.above-vtt-visited-damage')`)
     if(damageButtons.length > 0){
       $(damageButtons).addClass("above-vtt-visited-damage");
       damageButtons.off('click.damageType').on('click.damageType', function(e){
@@ -2202,7 +2193,7 @@ function observe_character_sheet_changes(documentToObserve) {
         e.stopImmediatePropagation();
         let versatileRoll = window.CHARACTER_AVTT_SETTINGS.versatile;
                      
-        let rollButtons = $(this).parent().find(`.integrated-dice__container:not('.avtt-roll-formula-button'):not('.above-vtt-visited'):not('.above-vtt-dice-visited'):not('.above-aoe'), .integrated-dice__container.abovevtt-icon-roll`);
+        let rollButtons = $(this).parent().find(`.integrated-dice__container.abovevtt-icon-roll, .integrated-dice__container:not('.avtt-roll-formula-button'):not('.above-vtt-visited'):not('.above-vtt-dice-visited'):not('.above-aoe')`);
         let spellSave = $(this).parent().find(`[class*='__save']`);   
         let spellSaveText;
         if(spellSave.length>0){
@@ -2210,18 +2201,20 @@ function observe_character_sheet_changes(documentToObserve) {
         }    
 
         for(let i = 0; i<rollButtons.length; i++){  
-          let isVersatileDamage = $(rollButtons[i]).parent().hasClass('ddb-combat-item-attack__damage--is-versatile')
+          let isVersatileDamage = $(rollButtons[i]).closest('.ddb-combat-item-attack__damage--is-versatile').length>0
+          let damageLookIndex = i;
           if(isVersatileDamage && versatileRoll =='1'){
-            if($(rollButtons[i]).parent().find('.integrated-dice__container:first-of-type')[0] != rollButtons[i])
+            if($(rollButtons[i]).parent().parent().find('.avtt-roller:first-of-type .integrated-dice__container')[0] != rollButtons[i])
               continue;
           }
           else if(isVersatileDamage && versatileRoll =='2'){
-            if($(rollButtons[i]).parent().find('.integrated-dice__container:first-of-type')[0] == rollButtons[i])
+            damageLookIndex = i-1;
+            if ($(rollButtons[i]).parent().parent().find('.avtt-roller:first-of-type .integrated-dice__container')[0] == rollButtons[i])
               continue;
           }           
           let data = getRollData(rollButtons[i]);
           
-          let damageTypeText = window.diceRoller.getDamageType(rollButtons[i]);
+          let damageTypeText = window.diceRoller.getDamageType(rollButtons[damageLookIndex]);
           let diceRoll;
 
           if(data.expression != undefined){

@@ -525,7 +525,6 @@ class DiceRoller {
         if(damageTypeTitle.length > 0){
           damageTypeText = damageTypeTitle.attr('data-original-title')
         }
-
       }
       if(damageTypeText != undefined)
         window.diceRoller.setPendingDamageType(damageTypeText);
