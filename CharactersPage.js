@@ -2285,6 +2285,80 @@ function observe_character_sheet_changes(documentToObserve) {
                   border: 1px solid var(--theme-color) !important;
                   background-color: color-mix(in srgb, var(--theme-color) 20%, #000 0%) !important;
               }
+              body {
+                  --crit-success: #0a0;
+                  --crit-fail: #a00;
+                  --crit-mixed: #4768ff;
+              }
+
+              body.color-blind-avtt {
+                  --crit-success: #ffff00;
+              }
+
+                [class*="glc-game-log"] .crit-success div[class*="TotalContainer-Flex"] span,
+                [class*="glc-game-log"] .crit-success div[class*="TotalContainer-Flex"] span,
+                [class*="glc-game-log"] .crit-success div[class*="TotalContainer-Flex"] .aboveDiceTotal,
+                [class*="glc-game-log"] .crit-success div[class*='DiceMessage_TotalContainer'] span,
+                [class*="glc-game-log"] .crit-success div[class*='DiceMessage_TotalContainer'] span,
+                [class*="glc-game-log"] .crit-success div[class*='DiceMessage_TotalContainer'] .aboveDiceTotal {
+                    color: var(--crit-success) !important;
+                }
+
+                .color-blind-avtt [class*="glc-game-log"] .crit-success div[class*="TotalContainer-Flex"] span,
+                .color-blind-avtt [class*="glc-game-log"] .crit-success div[class*="TotalContainer-Flex"] span,
+                .color-blind-avtt [class*="glc-game-log"] .crit-success div[class*="TotalContainer-Flex"] .aboveDiceTotal,
+                .color-blind-avtt [class*="glc-game-log"] .crit-success div[class*='DiceMessage_TotalContainer'] span,
+                .color-blind-avtt [class*="glc-game-log"] .crit-success div[class*='DiceMessage_TotalContainer'] span,
+                .color-blind-avtt [class*="glc-game-log"] .crit-success div[class*='DiceMessage_TotalContainer'] .aboveDiceTotal {
+                    --text-shadow-color: color-mix(in srgb, #000 100%, var(--crit-success) 50%);
+                    text-shadow: 1px 1px var(--text-shadow-color), -1px -1px var(--text-shadow-color), -1px 1px var(--text-shadow-color), 1px -1px var(--text-shadow-color), 2px 2px 2px var(--text-shadow-color);
+                }
+
+                [class*="glc-game-log"] .crit-fail div[class*="TotalContainer-Flex"] span,
+                [class*="glc-game-log"] .crit-fail div[class*="TotalContainer-Flex"] span,
+                [class*="glc-game-log"] .crit-fail div[class*="TotalContainer-Flex"] .aboveDiceTotal,
+                [class*="glc-game-log"] .crit-fail div[class*='DiceMessage_TotalContainer'] span,
+                [class*="glc-game-log"] .crit-fail div[class*='DiceMessage_TotalContainer'] span,
+                [class*="glc-game-log"] .crit-fail div[class*='DiceMessage_TotalContainer'] .aboveDiceTotal {
+                    color: var(--crit-fail) !important;
+                }
+
+                [class*="glc-game-log"] .crit-mixed div[class*="TotalContainer-Flex"] span,
+                [class*="glc-game-log"] .crit-mixed div[class*="TotalContainer-Flex"] span,
+                [class*="glc-game-log"] .crit-mixed div[class*="TotalContainer-Flex"] .aboveDiceTotal,
+                [class*="glc-game-log"] .crit-mixed div[class*='DiceMessage_TotalContainer'] span,
+                [class*="glc-game-log"] .crit-mixed div[class*='DiceMessage_TotalContainer'] span,
+                [class*="glc-game-log"] .crit-mixed div[class*='DiceMessage_TotalContainer'] .aboveDiceTotal {
+                    color: var(--crit-mixed) !important;
+                }
+
+                [class*="glc-game-log"] div[class*="TotalContainer-Flex"] .custom-spell-save-text span,
+                [class*="glc-game-log"] div[class*='DiceMessage_TotalContainer'] .custom-spell-save-text span {
+                    color: #716f6f !important;
+                    font-size: 10px;
+                    font-weight: bold;
+                    line-height: 10px;
+                    text-wrap: nowrap;
+                }
+
+                [class*="glc-game-log"] div[class*='DiceMessage_TotalContainer'] .custom-spell-save-text {
+                    line-height: 13px;
+                }
+
+                [class*="glc-game-log"] div[class*='DiceMessage_TotalContainer']>div[class*='DiceMessage_Total'] {
+                    position: relative;
+                    align-self: stretch;
+                    display: flex;
+                    -webkit-box-align: center;
+                    align-items: center;
+                    flex-direction: column;
+                    -webkit-box-pack: center;
+                    justify-content: center;
+                }
+
+                .glc-game-log>div>div[class*="-Title"] {
+                    margin-bottom: 7px;
+                }
               ul[role='menu'] svg:has([d="M9.00016 16.17L4.83016 12L3.41016 13.41L9.00016 19L21.0002 7.00003L19.5902 5.59003L9.00016 16.17Z"]):not(.avtt-checkbox-fix){
                   display:none;
               }
