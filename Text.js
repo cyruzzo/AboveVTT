@@ -318,7 +318,7 @@ function create_text_controller(applyFromWindow = false) {
         minHeight: 55
     });
 
-    $("#text_controller_inside").mousedown(function () {
+    $("#text_controller_inside").on("pointerdown", function () {
         frame_z_index_when_click($(this));
     });
     // on first render check if settings in storage
@@ -423,7 +423,7 @@ function create_moveable_text_box(x,y,width, height, text = undefined) {
         }, { once: true});
       });
 
-    $(textInputInside).mousedown(function () {
+    $(textInputInside).on("pointerdown", function () {
         frame_z_index_when_click($(this));
     });
     const input = $(

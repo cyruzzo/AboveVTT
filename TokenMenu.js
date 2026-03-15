@@ -4737,7 +4737,7 @@ function open_quick_roll_menu(e){
 		minWidth: 215,
 		minHeight: 200
 	});
-	$("#qrm_dialog").mousedown(function() {
+	$("#qrm_dialog").on("pointerdown", function() {
 		frame_z_index_when_click($(this));
 	});
 }
