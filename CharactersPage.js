@@ -1,6 +1,18 @@
 /* CharactersPage.js - scripts that are exclusive to the Characters page */
 
 $(function() {
+  function interceptRollEvent(e) {
+    if(e.button == 2) return;
+    const target = $(e.target);
+    const rollButton = target.closest(`.integrated-dice__container:not('.above-combo-roll'):not('.above-aoe'):not(.avtt-roll-formula-button)`);
+    if (!rollButton.length) return;
+    e.preventDefault();
+    e.stopImmediatePropagation();
+    e.stopPropagation();
+    rollDiceButton(e, rollButton[0]);
+  }
+
+  window.addEventListener('pointerdown', interceptRollEvent, true);
   init_characters_pages();
 });
 
@@ -905,31 +917,57 @@ async function init_characters_pages(container = $(document)) {
 }
 
 const debounceConvertToRPGRoller =  mydebounce(() => {convertToRPGRoller()}, 20)
+function rollDiceButton(e, button){
+  if ($(this).parent().hasClass('ct-reset-pane__hitdie-manager-dice') || $(this).prev().text().trim().match(/^death saves$/gi))// allow hit dice and death saves roll to go through ddb for auto heals - maybe setup our own message by put to https://character-service.dndbeyond.com/character/v5/life/hp/damage-taken later
+    return;
+  let rollData = {}
+  rollData = getRollData(button);
+  if (!rollData.expression.match(allDiceRegex) && window.EXPERIMENTAL_SETTINGS['rpgRoller'] != true) {
+    return;
+  }
 
 
+
+  if (/^1d20/g.test(rollData.expression)) {
+    if (e.altKey) {
+      if (e.shiftKey) {
+        rollData.expression = rollData.expression.replace(/^1d20/g, '3d20kh1');
+      }
+      else if ((!isMac() && e.ctrlKey) || e.metaKey) {
+        rollData.expression = rollData.expression.replace(/^1d20/g, '3d20kl1');
+      }
+    }
+    else if (e.shiftKey) {
+      rollData.expression = rollData.expression.replace(/^1d20/g, '2d20kh1');
+    }
+    else if ((!isMac() && e.ctrlKey) || e.metaKey) {
+      rollData.expression = rollData.expression.replace(/^1d20/g, '2d20kl1');
+    }
+  }
+
+  if (rollData.rollTitle == 'Initiative' && $(`[aria-label="Has advantage on initiative"]`).length) {
+    rollData.expression = rollData.expression.replace(/^1d20/g, '2d20kh1');
+  }
+
+
+  window.diceRoller.roll(new DiceRoll(rollData.expression, rollData.rollTitle, rollData.rollType));
+
+}
 
 function convertToRPGRoller(){
     let urlSplit = window.location.href.split("/");
     if(urlSplit.length > 0 && !is_abovevtt_page()) {
       window.PLAYER_ID = urlSplit[urlSplit.length - 1].split('?')[0];
     }
-    const buttons = $(`.integrated-dice__container:not('.avtt-wrapped'):not('.above-combo-roll'):not('.above-aoe'):not(.avtt-roll-formula-button)`);
-    buttons.each((i, el) => {
-      const $el = $(el);
-      $el.addClass('avtt-wrapped');
-      if ($el.parent().hasClass('ct-reset-pane__hitdie-manager-dice') || $el.prev().text().trim().match(/^death saves$/gi))// allow hit dice and death saves roll to go through ddb for auto heals - maybe setup our own message by put to https://character-service.dndbeyond.com/character/v5/life/hp/damage-taken later
-        return;
-
-      $el.wrap(`<div class='avtt-roller'>`) //we wrap DDB buttons in a DIV we can add event listeners too and remove point-events from DDB buttons. Otherwise we get double dice rolls due to some changes they made
-    })
 
 
-    $(`.avtt-roller:has(.integrated-dice__container:not('.above-combo-roll'):not('.above-aoe'):not(.avtt-roll-formula-button))`).off('contextmenu.rpg-roller').on('contextmenu.rpg-roller', function(e){
+
+    $(`.integrated-dice__container:not('.above-combo-roll'):not('.above-aoe'):not(.avtt-roll-formula-button)`).off('contextmenu.rpg-roller').on('contextmenu.rpg-roller', function(e){
          
           if ($(this).parent().hasClass('ct-reset-pane__hitdie-manager-dice') || $(this).prev().text().trim().match(/^death saves$/gi))// allow hit dice and death saves roll to go through ddb for auto heals - maybe setup our own message by put to https://character-service.dndbeyond.com/character/v5/life/hp/damage-taken later
             return;
           let rollData = {} 
-          const button = $(this).children('.integrated-dice__container');
+          const button = $(this);
           if(button.hasClass('avtt-roll-formula-button')){
              rollData = DiceRoll.fromSlashCommand(button.attr('data-slash-command'))
              rollData.modifier = `${Math.sign(rollData.calculatedConstant) == 1 ? '+' : ''}${rollData.calculatedConstant}`
@@ -949,7 +987,7 @@ function convertToRPGRoller(){
               .present(e.clientY, e.clientX) // TODO: convert from iframe to main window
           }
     })
-    $('.avtt-roller:has(.integrated-dice__container.above-vtt-visited-damage:has([class*="styles_signed"]))').off('mouseover.color').on('mouseover.color', function(e){
+    $('.integrated-dice__container.above-vtt-visited-damage:has([class*="styles_signed"])').off('mouseover.color').on('mouseover.color', function(e){
       if(e.shiftKey){
         $(this).toggleClass('advantageHover', true)
       }
@@ -960,46 +998,11 @@ function convertToRPGRoller(){
         $(this).toggleClass('disadvantageHover', false)
       }
     })
-    $('.avtt-roller:has(.integrated-dice__container.above-vtt-visited-damage:has([class*="styles_signed"]))').off('mouseleave.color').on('mouseleave.color', function(e){
+    $('.integrated-dice__container.above-vtt-visited-damage:has([class*="styles_signed"])').off('mouseleave.color').on('mouseleave.color', function(e){
       $(this).toggleClass('advantageHover', false)
       $(this).toggleClass('disadvantageHover', false)
     })
-    $(`.avtt-roller`).off('click.rpg-roller').on('click.rpg-roller', function(e){
-      if ($(this).parent().hasClass('ct-reset-pane__hitdie-manager-dice') || $(this).prev().text().trim().match(/^death saves$/gi))// allow hit dice and death saves roll to go through ddb for auto heals - maybe setup our own message by put to https://character-service.dndbeyond.com/character/v5/life/hp/damage-taken later
-        return;
-      const button = $(this).children('.integrated-dice__container')[0];
-      let rollData = {} 
-      rollData = getRollData(button);
-      if(!rollData.expression.match(allDiceRegex) && window.EXPERIMENTAL_SETTINGS['rpgRoller'] != true){
-        return;
-      }
-      e.stopImmediatePropagation();
-
-
-      if (/^1d20/g.test( rollData.expression)) {
-        if(e.altKey){
-          if(e.shiftKey){
-            rollData.expression = rollData.expression.replace(/^1d20/g, '3d20kh1');
-          }
-           else if((!isMac() && e.ctrlKey) || e.metaKey){
-            rollData.expression = rollData.expression.replace(/^1d20/g, '3d20kl1');
-          }
-         }
-         else if(e.shiftKey){
-          rollData.expression = rollData.expression.replace(/^1d20/g, '2d20kh1');
-         }  
-         else if((!isMac() && e.ctrlKey) || e.metaKey){
-            rollData.expression = rollData.expression.replace(/^1d20/g, '2d20kl1');
-         }
-      }
-
-      if(rollData.rollTitle == 'Initiative' && $(`[aria-label="Has advantage on initiative"]`).length){
-        rollData.expression = rollData.expression.replace(/^1d20/g, '2d20kh1');
-      }
-
-     
-      window.diceRoller.roll(new DiceRoll(rollData.expression, rollData.rollTitle, rollData.rollType));
-    });
+    
 }
 
 const debounceObserverSetup = mydebounce(function(){
@@ -1009,6 +1012,7 @@ const debounceObserverSetup = mydebounce(function(){
 /** actions to take on the character sheet when AboveVTT is NOT running */
 async function init_character_sheet_page() {
   if (!is_characters_page() || is_characters_builder_page()) return;
+
   init_my_dice_details();
   // check for name and image
   set_window_name_and_image(function() {
@@ -1018,10 +1022,7 @@ async function init_character_sheet_page() {
     observe_character_theme_change();
     observe_character_image_change();
     $(document).off('keydown.keypressAdv keyup.keypressAdv').on('keydown.keypressAdv keyup.keypressAdv', function(e) {
-      let target = $('.avtt-roller:hover, .ddbc-combat-attack__icon.above-vtt-visited:hover, .ct-spells-spell__action.above-vtt-visited:hover')
-      const targetButtons = target.find(`.integrated-dice__container.above-vtt-visited-damage:has([class*="styles_signed"])`);
-      if (target.is('.avtt-roller') && targetButtons.length == 0) 
-        return;
+      let target = $('.integrated-dice__container.above-vtt-visited-damage:has([class*="styles_signed"]):hover, .ddbc-combat-attack__icon.above-vtt-visited:hover, .ct-spells-spell__action.above-vtt-visited:hover')
       if(e.shiftKey){
         $(target).toggleClass('advantageHover', true)
       }
@@ -1550,7 +1551,6 @@ function observe_character_sheet_changes(documentToObserve) {
             await $("[class*='DiceContainer_button']").click(); // initialize dice panel so first roll doesn't fail
             setTimeout(async () => {
               $("[class*='DiceContainer_button']").click();//close dice panel
-
               setTimeout(() => {
                 $('[data-floating-ui-portal], .roll-mod-container').removeClass('hidden');
                 $('[data-floating-ui-portal]').off('click.waiting').on('click.waiting', `[data-dd-action-name="Roll Dice Popup > Roll Dice"]`, function () {
@@ -1961,9 +1961,7 @@ function observe_character_sheet_changes(documentToObserve) {
     }
 
 
-    const spellDamageButtons = documentToObserve.find(`.ddbc-spell-damage-effect .avtt-roller:not('.above-vtt-visited-spell-damage'), 
-        [class*='styles_attack']:has([class*='__save-value']) [class*='attack__damage'].avtt-roller:not('.above-vtt-visited-spell-damage'),
-        .ddbc-spell-damage-effect .integrated-dice__container:not('.above-vtt-visited-spell-damage'),  
+    const spellDamageButtons = documentToObserve.find(`.ddbc-spell-damage-effect .integrated-dice__container:not('.above-vtt-visited-spell-damage'),  
         [class*='styles_attack']:has([class*='__save-value']) [class*='attack__damage'] .integrated-dice__container:not('.above-vtt-visited-spell-damage')`)
     if(spellDamageButtons.length > 0){
       $(spellDamageButtons).addClass("above-vtt-visited-spell-damage");
@@ -1978,8 +1976,7 @@ function observe_character_sheet_changes(documentToObserve) {
     } 
 
 
-    const damageButtons = documentToObserve.find(`.avtt-roller:not('.above-vtt-visited-damage'), 
-      .ddb-note-roll:not('.above-vtt-visited-damage'), 
+    const damageButtons = documentToObserve.find(`.ddb-note-roll:not('.above-vtt-visited-damage'), 
       .integrated-dice__container:not('.above-vtt-visited-damage')`)
     if(damageButtons.length > 0){
       $(damageButtons).addClass("above-vtt-visited-damage");
@@ -2199,12 +2196,12 @@ function observe_character_sheet_changes(documentToObserve) {
           let isVersatileDamage = $(rollButtons[i]).closest('.ddb-combat-item-attack__damage--is-versatile').length>0
           let damageLookIndex = i;
           if(isVersatileDamage && versatileRoll =='1'){
-            if($(rollButtons[i]).parent().parent().find('.avtt-roller:first-of-type .integrated-dice__container')[0] != rollButtons[i])
+            if ($(rollButtons[i]).parent().parent().find('.integrated-dice__container:first-of-type')[0] != rollButtons[i])
               continue;
           }
           else if(isVersatileDamage && versatileRoll =='2'){
             damageLookIndex = i-1;
-            if ($(rollButtons[i]).parent().parent().find('.avtt-roller:first-of-type .integrated-dice__container')[0] == rollButtons[i])
+            if ($(rollButtons[i]).parent().parent().find('.integrated-dice__container:first-of-type')[0] == rollButtons[i])
               continue;
           }           
           let data = getRollData(rollButtons[i]);
@@ -2265,20 +2262,6 @@ function observe_character_sheet_changes(documentToObserve) {
                   font-size:16px;
                   margin-right: 2px;
                   cursor: pointer;
-              }
-              .avtt-roller {
-                  -webkit-user-select: none;
-                  -moz-user-select: none;
-                  -ms-user-select: none;
-                  user-select: none;
-                  z-index: 10000;
-              }
-              .avtt-roller *{
-                  pointer-events: none !important;
-              }
-              .avtt-roller:hover .integrated-dice__container {
-                  border: 1px solid var(--theme-color) !important;
-                  background-color: color-mix(in srgb, var(--theme-color) 20%, #000 0%) !important;
               }
               body {
                   --crit-success: #0a0;
