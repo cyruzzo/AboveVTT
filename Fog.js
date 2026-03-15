@@ -1319,6 +1319,8 @@ function draw_select_box(x0, y0, w, h, inside=false, selbox=false, group=false) 
 	// However applying to individual paths works:
 	document.getElementById('dragbox-rect1').setAttribute('transform',transform);
 	document.getElementById('dragbox-rect2').setAttribute('transform',transform);
+	document.getElementById('selbox-rect').setAttribute('transform',transform);	
+	
 	// --
 
 	document.getElementById('dragbox-inside')?.setAttribute('visibility', inside ? 'visible' : 'hidden');
