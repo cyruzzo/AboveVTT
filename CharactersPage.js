@@ -1082,12 +1082,16 @@ async function init_character_sheet_page() {
         .then(set_game_id)              // set it to window.gameId
         .then(harvest_campaign_secret)  // find our join link
         .then(set_campaign_secret)      // set it to window.CAMPAIGN_SECRET
-        .then(store_campaign_info)      // store gameId and campaign secret in localStorage for use on other pages     
+        .then(store_campaign_info)      // store gameId and campaign secret in localStorage for use on other pages
         .then(async () => {
           window.CAMPAIGN_INFO = await DDBApi.fetchCampaignInfo(window.gameId);
           if (window.myUser == undefined)
             window.myUser = $('#message-broker-client').attr('data-userid') || Cobalt?.User?.ID;
           window.MB = new MessageBroker();
+        })
+        .catch(error => {
+          console.error("Failed to initialize character page", error);
+          showError(error, "Failed to initialize character page");
         })
     }, 5000)
   }
