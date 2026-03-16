@@ -1969,6 +1969,8 @@ const debounce_fetch_character_from_api = mydebounce(() => {
         console.log(`debounce_fetch_character_from_api is not calling update_pc_with_data for ${characterData.characterId} because ${lastSynchronized} < ${idsAndDates[characterData.characterId]}`);
       }
     });
+  }).catch(error => {
+    console.error("debounce_fetch_character_from_api: failed to fetch character details", error);
   });
 }, 5000); // wait 5 seconds before making API calls. We don't want to make these calls unless we absolutely have to
 
