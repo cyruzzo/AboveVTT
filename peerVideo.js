@@ -212,6 +212,8 @@ function joinRoom(room = window.gameId) {
         if($('#audioSource').val() == '' || $('#videoSource option:nth-of-type(2)').val() == '' || $('#audioSource').val() == null || $('#videoSource option:nth-of-type(2)').val() == null){
             alert('It appears your camera and/or microphone permissions are disabled for dndbeyond. Please enable these in your browser settings and refresh. Alternatively you are missing a video and/or audio input device.')
         }
+    }).catch(error => {
+        console.warn("peerVideo: failed to enumerate media devices", error);
     });
 
 
@@ -319,6 +321,8 @@ function startScreenShare() {
         }
         setLocalStream(screenStream)
         console.log(screenStream)
+    }).catch(error => {
+        console.warn("peerVideo: screen share failed or was denied", error);
     })
 }
 
