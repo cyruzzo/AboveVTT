@@ -1062,10 +1062,7 @@ function build_draggable_monster_window(tokenId) {
 		minWidth: 200,
 		minHeight: 200
 	});
-	frame_z_index_when_click(container);
-	container.mousedown(function() {
-		frame_z_index_when_click($(this));
-	});
+	frame_z_index_when_click(container, true);
 	container.draggable({
 		addClasses: false,
 		scroll: false,
@@ -1531,7 +1528,10 @@ function minimize_player_window_double_click(titleBar) {
  * Move frames behind each other in the order they were clicked
  * @param {DOMObject} moveableFrame
  */
-function frame_z_index_when_click(moveableFrame){
+function frame_z_index_when_click(moveableFrame, install=false){
+	if(install) {
+		moveableFrame.on('pointerdown', (e) => frame_z_index_when_click($(e.currentTarget)));;
+	}
 	const moveableWindows = $(".moveableWindow, [role='dialog']");
 	const someFrameNotSet = moveableWindows.not("[style*='z-index']").length > 0;
 	if (someFrameNotSet || moveableFrame.css('z-index') != 100000 || !moveableFrame.attr('style')?.includes('z-index')) {
@@ -1660,10 +1660,7 @@ function  init_sheet() {
 			minWidth: 200,
 			minHeight: 200
 		});
-		frame_z_index_when_click(container);
-		container.mousedown(function(){
-			frame_z_index_when_click($(this));
-		});
+		frame_z_index_when_click(container, true);
 		container.draggable({
 			addClasses: false,
 			scroll: false,
