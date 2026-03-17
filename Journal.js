@@ -3100,10 +3100,7 @@ class JournalManager{
 				$('.iframeResizeCover').remove();			
 			}
 		});
-		frame_z_index_when_click(note.parent());
-		note.parent().mousedown(function() {
-			frame_z_index_when_click($(this));
-		});
+		frame_z_index_when_click(note.parent(), true);
 		
 		const debounceNoteSave = mydebounce(function(e, editor){
 		    if(editor.isDirty()){

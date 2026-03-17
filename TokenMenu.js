@@ -4737,10 +4737,7 @@ function open_quick_roll_menu(e){
 		minWidth: 215,
 		minHeight: 200
 	});
-	frame_z_index_when_click(qrm);
-	qrm.mousedown(function() {
-		frame_z_index_when_click($(this));
-	});
+	frame_z_index_when_click(qrm, true);
 }
 
 function add_to_quick_roll_menu(token){
