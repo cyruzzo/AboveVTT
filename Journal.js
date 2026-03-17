@@ -1944,7 +1944,6 @@ class JournalManager{
 			note_text.empty();
 		}
 		note_text.append(self.notes[id].text); // valid tags are controlled by tinyMCE.init()
-		
 		this.translateHtmlAndBlocks(note_text, id).then(() => {
 			add_journal_roll_buttons(note_text);
 			this.add_journal_tooltip_targets(note_text);
@@ -1988,7 +1987,6 @@ class JournalManager{
 						$('.iframeResizeCover').remove();
 					}
 				});
-
 				note.parent().mousedown(function () {
 					frame_z_index_when_click($(this));
 				});
@@ -2019,6 +2017,7 @@ class JournalManager{
 				});
 				note.parent().css('height', '600px');
 			}
+			frame_z_index_when_click(note.parent());
 			this.positionNotePins(id, note_text);
 		});	
 		
@@ -3148,6 +3147,7 @@ class JournalManager{
 				$('.iframeResizeCover').remove();			
 			}
 		});
+		frame_z_index_when_click(note.parent());
 		note.parent().mousedown(function() {
 			frame_z_index_when_click($(this));
 		});
