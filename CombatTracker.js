@@ -497,10 +497,7 @@ function init_combat_tracker(){
 		minWidth: 215,
 		minHeight: 200
 	});
-	frame_z_index_when_click(ct_inside);
-	ct_inside.mousedown(function() {
-		frame_z_index_when_click($(this));
-	});
+	frame_z_index_when_click(ct_inside, true);
 
 	if(getCombatTrackerSettings().carousel == '1'){
 		init_carousel_combat_tracker()
