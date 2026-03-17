@@ -950,7 +950,7 @@ function rollDiceButton(e, button){
   }
 
 
-  window.diceRoller.roll(new DiceRoll(rollData.expression, rollData.rollTitle, rollData.rollType));
+  window.diceRoller.roll(new DiceRoll(rollData.expression, rollData.rollTitle, rollData.rollType, undefined, undefined, undefined, undefined, undefined, rollData.damageType, rollData.spellSave));
 
 }
 
@@ -980,10 +980,10 @@ function convertToRPGRoller(){
           e.preventDefault();
 
           if (rollData.rollType === "damage") {
-            damage_dice_context_menu(rollData.expression, rollData.modifier, rollData.rollTitle, rollData.rollType, window.PLAYER_NAME, window.PLAYER_IMG, undefined, undefined, rollData.damageType)
+            damage_dice_context_menu(rollData.expression, rollData.modifier, rollData.rollTitle, rollData.rollType, window.PLAYER_NAME, window.PLAYER_IMG, undefined, undefined, rollData.damageType, rollData.spellSave)
               .present(e.clientY, e.clientX) // TODO: convert from iframe to main window
           } else {
-            standard_dice_context_menu(rollData.expression, rollData.modifier, rollData.rollTitle, rollData.rollType, window.PLAYER_NAME, window.PLAYER_IMG, undefined, undefined, rollData.damageType)
+            standard_dice_context_menu(rollData.expression, rollData.modifier, rollData.rollTitle, rollData.rollType, window.PLAYER_NAME, window.PLAYER_IMG)
               .present(e.clientY, e.clientX) // TODO: convert from iframe to main window
           }
     })
@@ -1198,7 +1198,7 @@ function inject_dice_roll(element, clear=true) {
       let rollData = getRollData(this);
       
 
-      window.diceRoller.roll(new DiceRoll(rollData.expression, rollData.rollTitle, rollData.rollType));
+      window.diceRoller.roll(new DiceRoll(rollData.expression, rollData.rollTitle, rollData.rollType, undefined, undefined, undefined, undefined, undefined, rollData.damageType, rollData.spellSave));
     }
    
   });
@@ -1216,7 +1216,7 @@ function inject_dice_roll(element, clear=true) {
       
       
       if (rollData.rollType === "damage") {
-        damage_dice_context_menu(rollData.expression, rollData.modifier, rollData.rollTitle, rollData.rollType, window.PLAYER_NAME, window.PLAYER_IMG)
+        damage_dice_context_menu(rollData.expression, rollData.modifier, rollData.rollTitle, rollData.rollType, window.PLAYER_NAME, window.PLAYER_IMG, undefined, undefined, rollData.damageType, rollData.spellSave)
           .present(e.clientY, e.clientX) // TODO: convert from iframe to main window
       } else {
         standard_dice_context_menu(rollData.expression, rollData.modifier, rollData.rollTitle, rollData.rollType, window.PLAYER_NAME, window.PLAYER_IMG)
@@ -1830,7 +1830,7 @@ function observe_character_sheet_changes(documentToObserve) {
 
         e.stopImmediatePropagation();
         
-        window.diceRoller.roll(new DiceRoll(rollData.expression, rollData.rollTitle, rollData.rollType), undefined, undefined, undefined, undefined, rollData.damageType);
+        window.diceRoller.roll(new DiceRoll(rollData.expression, rollData.rollTitle, rollData.rollType), undefined, undefined, undefined, undefined, rollData.damageType, rollData.spellSave);
 
       };
 
@@ -1850,7 +1850,7 @@ function observe_character_sheet_changes(documentToObserve) {
         
         
         if (rollData.rollType === "damage") {
-          damage_dice_context_menu(rollData.expression, rollData.modifier, rollData.rollTitle, rollData.rollType, window.PLAYER_NAME, window.PLAYER_IMG, undefined, undefined, rollData.damageType)
+          damage_dice_context_menu(rollData.expression, rollData.modifier, rollData.rollTitle, rollData.rollType, window.PLAYER_NAME, window.PLAYER_IMG, undefined, undefined, rollData.damageType, rollData.spellSave)
             .present(e.clientY, e.clientX) 
         } else {
           standard_dice_context_menu(rollData.expression, rollData.modifier, rollData.rollTitle, rollData.rollType, window.PLAYER_NAME, window.PLAYER_IMG)
@@ -1965,24 +1965,12 @@ function observe_character_sheet_changes(documentToObserve) {
         [class*='styles_attack']:has([class*='__save-value']) [class*='attack__damage'] .integrated-dice__container:not('.above-vtt-visited-spell-damage')`)
     if(spellDamageButtons.length > 0){
       $(spellDamageButtons).addClass("above-vtt-visited-spell-damage");
-      spellDamageButtons.off('click.spellSave').on('click.spellSave', function(e){
-        let spellSave = $(this).closest('.ddbc-combat-attack, .ct-spells-spell').find(`[class*='__save']`);   
-        let spellSaveText;
-        if(spellSave.length>0){
-          spellSaveText = `${spellSave.find('[class*="__save-label"]').text().toUpperCase()} DC${spellSave.find('[class*="__save-value"]').text()}`;
-        } 
-        window.diceRoller.setPendingSpellSave(spellSaveText);
-      })
     } 
 
 
-    const damageButtons = documentToObserve.find(`.ddb-note-roll:not('.above-vtt-visited-damage'), 
-      .integrated-dice__container:not('.above-vtt-visited-damage')`)
+    const damageButtons = documentToObserve.find(`.ddb-note-roll:not('.above-vtt-visited-damage'), .integrated-dice__container:not('.above-vtt-visited-damage')`)
     if(damageButtons.length > 0){
       $(damageButtons).addClass("above-vtt-visited-damage");
-      damageButtons.off('click.damageType').on('click.damageType', function(e){
-        window.diceRoller.getDamageType(this);
-      })
     } 
 
 

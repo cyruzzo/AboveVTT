@@ -134,30 +134,30 @@ function init_combat_tracker(){
 
 	$(ct_title_bar).dblclick(function(){
 		if($(ct_title_bar).hasClass("restored")){
-			$(ct_title_bar).data("prev-height", $("#combat_tracker_inside").height());
-			$(ct_title_bar).data("prev-width", $("#combat_tracker_inside").width());
-			$(ct_title_bar).data("prev-top", $("#combat_tracker_inside").css("top"));
-			$(ct_title_bar).data("prev-left", $("#combat_tracker_inside").css("left"));
-			$("#combat_tracker_inside").css("top", $(ct_title_bar).data("prev-minimized-top"));
-			$("#combat_tracker_inside").css("left", $(ct_title_bar).data("prev-minimized-left"));
-			$("#combat_tracker_inside").height(25);
-			$("#combat_tracker_inside").width(200);
-			$("#combat_tracker_inside").css("visibility", "hidden");
+			$(ct_title_bar).data("prev-height", ct_inside.height());
+			$(ct_title_bar).data("prev-width", ct_inside.width());
+			$(ct_title_bar).data("prev-top", ct_inside.css("top"));
+			$(ct_title_bar).data("prev-left", ct_inside.css("left"));
+			ct_inside.css("top", $(ct_title_bar).data("prev-minimized-top"));
+			ct_inside.css("left", $(ct_title_bar).data("prev-minimized-left"));
+			ct_inside.height(25);
+			ct_inside.width(200);
+			ct_inside.css("visibility", "hidden");
 			$(ct_title_bar).css("visibility", "visible");
 			$(ct_title_bar).addClass("minimized");
 			$(ct_title_bar).removeClass("restored");
 			$(ct_title_bar).prepend("<div id='ct_text_title'>Combat Tracker</div>")
 		}
 		else if($(ct_title_bar).hasClass("minimized")){
-			$(ct_title_bar).data("prev-minimized-top", $("#combat_tracker_inside").css("top"));
-			$(ct_title_bar).data("prev-minimized-left", $("#combat_tracker_inside").css("left"));
-			$("#combat_tracker_inside").height($(ct_title_bar).data("prev-height"));
-			$("#combat_tracker_inside").width($(ct_title_bar).data("prev-width"));
-			$("#combat_tracker_inside").css("top", $(ct_title_bar).data("prev-top"));
-			$("#combat_tracker_inside").css("left", $(ct_title_bar).data("prev-left"));
+			$(ct_title_bar).data("prev-minimized-top", ct_inside.css("top"));
+			$(ct_title_bar).data("prev-minimized-left", ct_inside.css("left"));
+			ct_inside.height($(ct_title_bar).data("prev-height"));
+			ct_inside.width($(ct_title_bar).data("prev-width"));
+			ct_inside.css("top", $(ct_title_bar).data("prev-top"));
+			ct_inside.css("left", $(ct_title_bar).data("prev-left"));
 			$(ct_title_bar).addClass("restored");
 			$(ct_title_bar).removeClass("minimized");
-			$("#combat_tracker_inside").css("visibility", "visible");
+			ct_inside.css("visibility", "visible");
 			$("#ct_text_title").remove();
 		}
 	});
@@ -471,8 +471,8 @@ function init_combat_tracker(){
 
 	$("#site").append(ct);
 	/*draggable and resizeable combat tracker - set which frame should be on top and remove others. Cover iframes to prevent mouse interference*/
-	$("#combat_tracker_inside").addClass("moveableWindow");
-	$("#combat_tracker_inside").draggable({
+	ct_inside.addClass("moveableWindow");
+	ct_inside.draggable({
 			addClasses: false,
 			scroll: false,
 			containment: "#windowContainment",
@@ -484,7 +484,7 @@ function init_combat_tracker(){
 
 			}
 		});
-	$("#combat_tracker_inside").resizable({
+	ct_inside.resizable({
 		addClasses: false,
 		handles: "all",
 		containment: "#windowContainment",
@@ -497,8 +497,8 @@ function init_combat_tracker(){
 		minWidth: 215,
 		minHeight: 200
 	});
-
-	$("#combat_tracker_inside").on("pointerdown", function() {
+	frame_z_index_when_click(ct_inside);
+	ct_inside.mousedown(function() {
 		frame_z_index_when_click($(this));
 	});
 

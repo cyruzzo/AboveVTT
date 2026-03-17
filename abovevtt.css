@@ -782,7 +782,7 @@ span.button-text{
     opacity: 1;
     background: #242527;  
     cursor: move;   
-    z-index: 49000;
+    z-index: 100000;
     border-radius: 3px;   
     border: 1px solid gray;
 }
@@ -2048,7 +2048,10 @@ padding-bottom: 5px;
         0px 0px 5px #000;
     pointer-events:none;
 }
-
+.labelToken.notVisible.hasTooltip:after,
+.labelToken.notVisible.hasTooltip:hover:after{
+    visibility: hidden;
+}
 #token_map_items .labelToken.hasTooltip:after, 
 #token_map_items .labelToken.hasTooltip:hover:after {
     font-size: calc(12px / var(--scene-scale));
@@ -2516,13 +2519,12 @@ padding-top:10px;
 .tokenselected::before {
     content: "";
     position: absolute;
-    top: calc(-5px * var(--scene-scale, 1));
-    left: calc(-5px * var(--scene-scale, 1));
-    right: calc(-5px * var(--scene-scale, 1));
-    bottom: calc(-5px * var(--scene-scale, 1));
-    padding: calc(5px * var(--scene-scale, 1));
-    border: calc(5px * var(--scene-scale, 1)) #c0f3fff5 solid;
-    border-radius: calc(1px * var(--scene-scale, 1));
+    top: calc(-1px * var(--scene-scale, 1));
+    left: calc(-1px * var(--scene-scale, 1));
+    right: calc(-1px * var(--scene-scale, 1));
+    bottom: calc(-1px * var(--scene-scale, 1));
+    border: calc(2px * var(--scene-scale, 1)) #c0f3fff5 solid;
+    border-radius: calc(2px * var(--scene-scale, 1));
     pointer-events: none;
 }
 
@@ -7083,7 +7085,7 @@ button.avtt-roll-formula-button {
 
 #tokenOptionsPopup{
     position: fixed;
-    z-index: 59000;
+    z-index: 110000;
     background: #fff;
     border-radius: 10px;
     width: 245px;
@@ -7702,7 +7704,7 @@ div#file-listing-section .sidebar-panel-loading-indicator {
 }
 #combat_tracker_inside {
     height: 450px;
-    z-index: 49000;
+    z-index: 100000;
 }
 /*minimize windows*/
 
@@ -8987,7 +8989,7 @@ body.color-blind-avtt {
     bottom: 0;
 }
 .ui-front{
-    z-index: 100000 !important;
+    z-index: 100000;
 }
 #combat_area tr.CTToken:before{
     content:  '???';

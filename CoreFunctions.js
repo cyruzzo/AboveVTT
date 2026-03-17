@@ -998,7 +998,7 @@ function add_journal_roll_buttons(target, tokenId=undefined, specificImage=undef
     
     
     if (rollData.rollType === "damage") {
-      damage_dice_context_menu(rollData.expression, rollData.modifier, rollData.rollTitle, rollData.rollType, tokenName, tokenImage, entityType, tokenId, damageType)
+      damage_dice_context_menu(rollData.expression, rollData.modifier, rollData.rollTitle, rollData.rollType, tokenName, tokenImage, entityType, tokenId, damageType, spellSave)
         .present(e.clientY, e.clientX) // TODO: convert from iframe to main window
     } else {
       standard_dice_context_menu(rollData.expression, rollData.modifier, rollData.rollTitle, rollData.rollType, tokenName, tokenImage, entityType, tokenId)
@@ -2819,8 +2819,8 @@ function find_or_create_generic_draggable_window(id, titleBarText, addLoadingInd
     minWidth: 200,
     minHeight: 200
   });
-
-  container.on('pointerdown', function(event) {
+  frame_z_index_when_click(container);
+  container.on('mousedown', function(event) {
     frame_z_index_when_click($(event.currentTarget));
   });
 
