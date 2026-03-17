@@ -1968,8 +1968,7 @@ class JournalManager{
 				event.preventDefault();
 				render_source_chapter_in_iframe(event.target.href);
 			});
-				
-			frame_z_index_when_click(note.parent());
+		
 			this.positionNotePins(id, note_text);
 		});	
 		
