@@ -1537,6 +1537,7 @@ function frame_z_index_when_click(moveableFrame){
 	if (someFrameNotSet || moveableFrame.css('z-index') != 100000 || !moveableFrame.attr('style')?.includes('z-index')) {
 		moveableFrame.css('z-index', 100000);
 		moveableWindows.not(moveableFrame).each(function() {
+			if($(this).css('z-index') > 100000) return;
 			$(this).css('z-index',(Math.min($(this).css('z-index')-1, 99999)));
 		});
 	}
