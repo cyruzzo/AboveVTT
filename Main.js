@@ -2088,8 +2088,8 @@ function init_ui() {
 	outer_light_container.css("height", "100%");
 
 
-	const textDiv = $("<div id='text_div' class='TLA SST'/>");
-	textDiv.css({ "z-index": "20", transform: "scale(var(--scene-scale))", "transform-origin": "top left"});	
+	const textDiv = $("<div id='text_div' class='TLA'/>");
+	textDiv.css({ "z-index": "20" });	
 
 	const grid_svg_underlay = $("<div id='grid_svg_underlay' class='grid-svg-tile'/>");
 	grid_svg_underlay.css("z-index", "11");	//over map but under mapdrawing
