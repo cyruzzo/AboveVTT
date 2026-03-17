@@ -3402,7 +3402,7 @@ function drawing_mousemove(e) {
 				redraw_light_walls(true, true);
 			}
 			else{
-				if (window.DRAWFUNCTION === "select" && e.originalEvent?.buttons == 1){
+				if (window.DRAWFUNCTION === "select" && e.button == 0){
 					const selInside = (window.BEGIN_MOUSEY > mouseY)
 					$("#temp_overlay").css('cursor', selInside ? 'crosshair' : 'cell');
 					draw_select_box(window.BEGIN_MOUSEX,
