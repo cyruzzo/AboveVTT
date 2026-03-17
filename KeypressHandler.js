@@ -287,6 +287,7 @@ Mousetrap.bind('shift+l', function () {
 
 Mousetrap.bind('esc', function () {     //deselect all buttons
 
+    close_splash();
     $('#displayedDiceFormula').remove();
     delete window.numpadRollFormulaMod;
     delete window.numpadRollFormula;
