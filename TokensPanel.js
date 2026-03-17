@@ -2917,11 +2917,13 @@ function display_aoe_token_configuration_modal(listItem, placedToken = undefined
         editNoteButton.off().on("click", function(){
             if (!(customization.id in window.JOURNAL.notes)) {
                 window.JOURNAL.notes[customization.id] = {
-                    title: customization.tokenOptions.name,
+                    title: listItem.name,
                     text: '',
                     plain: '',
                     player: true
                 }     
+            }else{
+                window.JOURNAL.notes[customization.id].title = listItem.name;
             }
             if(customization.tokenOptions.statBlock != customization.id){
                 customization.tokenOptions.statBlock = customization.id;
