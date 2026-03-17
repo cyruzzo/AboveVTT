@@ -2004,7 +2004,10 @@ padding-bottom: 5px;
         0px 0px 5px #000;
     pointer-events:none;
 }
-
+.labelToken.notVisible.hasTooltip:after,
+.labelToken.notVisible.hasTooltip:hover:after{
+    visibility: hidden;
+}
 #token_map_items .labelToken.hasTooltip:after, 
 #token_map_items .labelToken.hasTooltip:hover:after {
     font-size: calc(12px / var(--scene-scale));
