@@ -4801,7 +4801,7 @@ const fetch_and_cache_scene_monster_items = mydebounce( () => {
     });
 });
 
-const fetch_and_cache_monsters = mydebounce( (monsterIds, callback, open5e) => {
+const fetch_and_cache_monsters = mydebounce( (monsterIds, callback=()=>{}, open5e) => {
     if(open5e){
         const cachedIds = Object.keys(cached_open5e_items);
         const monstersToFetch = monsterIds.filter(id => !cachedIds.includes(id) && id != 'customStat');
@@ -4818,7 +4818,6 @@ const fetch_and_cache_monsters = mydebounce( (monsterIds, callback, open5e) => {
             if (response !== false) {
                 update_monster_item_cache(response.map(m => SidebarListItem.Monster(m)), function(){callback()});
             }
- 
         });
     }
     
