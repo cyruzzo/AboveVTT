@@ -48,7 +48,7 @@ $(function() {
       .then(async () => {
         window.CAMPAIGN_INFO = await DDBApi.fetchCampaignInfo(window.gameId)
         window.AVTT_CAMPAIGN_INFO = await AboveApi.getCampaignData();
-        return window.CAMPAIGN_INFO.dmId;
+        return window.CAMPAIGN_INFO?.dmId;
       })
       .then((campaignDmId) => {
         const isDmPage = is_encounters_page();
