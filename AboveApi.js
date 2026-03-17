@@ -45,20 +45,26 @@ class AboveApi {
     try {
       request = await fetch(url);
     } catch (error) {
-      console.error(`AboveApi.fetchJson network error for action '${action}':`, error);
-      throw new Error(`AboveApi network error: ${error.message}`);
+      const wrappedError = new Error(`AboveApi network error for '${action}': ${error.message}`);
+      console.error(wrappedError.message, error);
+      showError(wrappedError);
+      throw wrappedError;
     }
     if (!request.ok) {
       const errorText = await request.text().catch(() => 'Unknown error');
-      console.error(`AboveApi.fetchJson HTTP ${request.status} for action '${action}':`, errorText);
-      throw new Error(`AboveApi HTTP ${request.status}: ${errorText}`);
+      const httpError = new Error(`AboveApi HTTP ${request.status} for '${action}': ${errorText}`);
+      console.error(httpError.message);
+      showError(httpError);
+      throw httpError;
     }
     let response;
     try {
       response = await request.json();
     } catch (error) {
-      console.error(`AboveApi.fetchJson JSON parse error for action '${action}':`, error);
-      throw new Error(`AboveApi: invalid JSON response for '${action}'`);
+      const parseError = new Error(`AboveApi: invalid JSON response for '${action}'`);
+      console.error(parseError.message, error);
+      showError(parseError);
+      throw parseError;
     }
     this.checkForErrors(response);
     return response;
@@ -119,20 +125,26 @@ class AboveApi {
     try {
       request = await fetch(url, config);
     } catch (error) {
-      console.error("AboveApi.setCampaignData network error:", error);
-      throw new Error(`AboveApi network error: ${error.message}`);
+      const wrappedError = new Error(`AboveApi network error for 'setCampaignData': ${error.message}`);
+      console.error(wrappedError.message, error);
+      showError(wrappedError);
+      throw wrappedError;
     }
     if (!request.ok) {
       const errorText = await request.text().catch(() => 'Unknown error');
-      console.error(`AboveApi.setCampaignData HTTP ${request.status}:`, errorText);
-      throw new Error(`AboveApi HTTP ${request.status}: ${errorText}`);
+      const httpError = new Error(`AboveApi HTTP ${request.status} for 'setCampaignData': ${errorText}`);
+      console.error(httpError.message);
+      showError(httpError);
+      throw httpError;
     }
     let response;
     try {
       response = await request.json();
     } catch (error) {
-      console.error("AboveApi.setCampaignData JSON parse error:", error);
-      throw new Error("AboveApi: invalid JSON response for setCampaignData");
+      const parseError = new Error("AboveApi: invalid JSON response for 'setCampaignData'");
+      console.error(parseError.message, error);
+      showError(parseError);
+      throw parseError;
     }
     console.log("AboveApi.setCampaignData", response);
     return response;
@@ -193,13 +205,17 @@ class AboveApi {
       try {
         request = await fetch(url, config);
       } catch (error) {
-        console.error("AboveApi.migrateScenes network error:", error);
-        throw new Error(`AboveApi network error: ${error.message}`);
+        const wrappedError = new Error(`AboveApi network error for 'migrateScenes': ${error.message}`);
+        console.error(wrappedError.message, error);
+        showError(wrappedError);
+        throw wrappedError;
       }
       if (!request.ok) {
         const errorText = await request.text().catch(() => 'Unknown error');
-        console.error(`AboveApi.migrateScenes HTTP ${request.status}:`, errorText);
-        throw new Error(`AboveApi HTTP ${request.status}: ${errorText}`);
+        const httpError = new Error(`AboveApi HTTP ${request.status} for 'migrateScenes': ${errorText}`);
+        console.error(httpError.message);
+        showError(httpError);
+        throw httpError;
       }
       console.log("AboveApi.migrateScenes request", request);
       const response = await request.text();
