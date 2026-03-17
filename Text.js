@@ -93,30 +93,30 @@ function create_text_controller(applyFromWindow = false) {
 
     $(textControllerTitleBar).dblclick(function () {
         if ($(textControllerTitleBar).hasClass("restored")) {
-            $(textControllerTitleBar).data("prev-height", $("#text_controller_inside").height());
-            $(textControllerTitleBar).data("prev-width", $("#text_controller_inside").width());
-            $(textControllerTitleBar).data("prev-top", $("#text_controller_inside").css("top"));
-            $(textControllerTitleBar).data("prev-left", $("#text_controller_inside").css("left"));
-            $("#text_controller_inside").css("top", $(textControllerTitleBar).data("prev-minimized-top"));
-            $("#text_controller_inside").css("left", $(textControllerTitleBar).data("prev-minimized-left"));
-            $("#text_controller_inside").height(25);
-            $("#text_controller_inside").width(200);
-            $("#text_controller_inside").css("visibility", "hidden");
+            $(textControllerTitleBar).data("prev-height", textControllerInside.height());
+            $(textControllerTitleBar).data("prev-width", textControllerInside.width());
+            $(textControllerTitleBar).data("prev-top", textControllerInside.css("top"));
+            $(textControllerTitleBar).data("prev-left", textControllerInside.css("left"));
+            textControllerInside.css("top", $(textControllerTitleBar).data("prev-minimized-top"));
+            textControllerInside.css("left", $(textControllerTitleBar).data("prev-minimized-left"));
+            textControllerInside.height(25);
+            textControllerInside.width(200);
+            textControllerInside.css("visibility", "hidden");
             $(textControllerTitleBar).css("visibility", "visible");
             $(textControllerTitleBar).addClass("minimized");
             $(textControllerTitleBar).removeClass("restored");
             $(textControllerTitleBar).prepend("<div id='text_controller_title'>Text Settings</div>")
         }
         else if ($(textControllerTitleBar).hasClass("minimized")) {
-            $(textControllerTitleBar).data("prev-minimized-top", $("#text_controller_inside").css("top"));
-            $(textControllerTitleBar).data("prev-minimized-left", $("#text_controller_inside").css("left"));
-            $("#text_controller_inside").height($(textControllerTitleBar).data("prev-height"));
-            $("#text_controller_inside").width($(textControllerTitleBar).data("prev-width"));
-            $("#text_controller_inside").css("top", $(textControllerTitleBar).data("prev-top"));
-            $("#text_controller_inside").css("left", $(textControllerTitleBar).data("prev-left"));
+            $(textControllerTitleBar).data("prev-minimized-top", textControllerInside.css("top"));
+            $(textControllerTitleBar).data("prev-minimized-left", textControllerInside.css("left"));
+            textControllerInside.height($(textControllerTitleBar).data("prev-height"));
+            textControllerInside.width($(textControllerTitleBar).data("prev-width"));
+            textControllerInside.css("top", $(textControllerTitleBar).data("prev-top"));
+            textControllerInside.css("left", $(textControllerTitleBar).data("prev-left"));
             $(textControllerTitleBar).addClass("restored");
             $(textControllerTitleBar).removeClass("minimized");
-            $("#text_controller_inside").css("visibility", "visible");
+            textControllerInside.css("visibility", "visible");
             $("#text_controller_title").remove();
         }
     });
@@ -270,8 +270,8 @@ function create_text_controller(applyFromWindow = false) {
         $(this).attr("title", $(this).prev().attr("title"))
     });
 
-    $("#text_controller_inside").addClass("moveableWindow");
-    $("#text_controller_inside").draggable({
+    textControllerInside.addClass("moveableWindow");
+    textControllerInside.draggable({
         addClasses: false,
         scroll: false,
         containment: "#windowContainment",
@@ -283,7 +283,7 @@ function create_text_controller(applyFromWindow = false) {
 
         }
     });
-    $("#text_controller_inside").resizable({
+    textControllerInside.resizable({
         addClasses: false,
         handles: "all",
         containment: "#windowContainment",
@@ -317,8 +317,8 @@ function create_text_controller(applyFromWindow = false) {
         minWidth: 80,
         minHeight: 55
     });
-
-    $("#text_controller_inside").mousedown(function () {
+    frame_z_index_when_click(textControllerInside);
+    textControllerInside.mousedown(function () {
         frame_z_index_when_click($(this));
     });
     // on first render check if settings in storage
@@ -422,7 +422,7 @@ function create_moveable_text_box(x,y,width, height, text = undefined) {
             document.getElementById("text_controller_inside")?.remove();
         }, { once: true});
       });
-
+    frame_z_index_when_click($(textInputInside));
     $(textInputInside).mousedown(function () {
         frame_z_index_when_click($(this));
     });

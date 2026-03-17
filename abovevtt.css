@@ -782,7 +782,7 @@ span.button-text{
     opacity: 1;
     background: #242527;  
     cursor: move;   
-    z-index: 49000;
+    z-index: 100000;
     border-radius: 3px;   
     border: 1px solid gray;
 }
@@ -7046,7 +7046,7 @@ div#selectedTokensBorderRotationGrabberConnector,
 
 #tokenOptionsPopup{
     position: fixed;
-    z-index: 59000;
+    z-index: 110000;
     background: #fff;
     border-radius: 10px;
     width: 245px;
@@ -7665,7 +7665,7 @@ div#file-listing-section .sidebar-panel-loading-indicator {
 }
 #combat_tracker_inside {
     height: 450px;
-    z-index: 49000;
+    z-index: 100000;
 }
 /*minimize windows*/
 
@@ -8950,7 +8950,7 @@ body.color-blind-avtt {
     bottom: 0;
 }
 .ui-front{
-    z-index: 100000 !important;
+    z-index: 100000;
 }
 #combat_area tr.CTToken:before{
     content:  '???';
