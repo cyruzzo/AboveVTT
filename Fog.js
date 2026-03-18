@@ -1844,9 +1844,11 @@ function redraw_drawings() {
 		}
 	}
 
-	ctxAboveFog.drawImage(offscreenDrawAboveFog, 0, 0); // draw to visible canvas only once so we render this once
+	if (offscreenDrawAboveFog.width > 0 && offscreenDrawAboveFog.height > 0)
+		ctxAboveFog.drawImage(offscreenDrawAboveFog, 0, 0); // draw to visible canvas only once so we render this once
 
-	ctxBelowFog.drawImage(offscreenDrawBelowFog, 0, 0); // draw to visible canvas only once so we render this once
+	if (offscreenDrawBelowFog.width > 0 && offscreenDrawBelowFog.height > 0)
+		ctxBelowFog.drawImage(offscreenDrawBelowFog, 0, 0); // draw to visible canvas only once so we render this once
 	
 }
 function redraw_elev(openLegened = false) {
