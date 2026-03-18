@@ -126,7 +126,7 @@ function token_setting_options() {
 				{ value: false, label: "Above darkness", description: "The token will appear above darkness/light" }
 			],
 			defaultValue: false,
-			menuPosition: '13',
+			menuPosition: '14',
 			player: true
 		},
 		{
@@ -168,7 +168,7 @@ function token_setting_options() {
 				{ value: false, label: 'Border', description: "The token has a border around it." }
 			],
 			defaultValue: false,
-			menuPosition: '12',
+			menuPosition: '13',
 			player: true
 		},
 		{
