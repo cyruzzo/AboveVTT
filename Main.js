@@ -15,75 +15,66 @@ window.onbeforeunload = function(event)
 	}
 };
 
+function getGameLogButton() {
+	let btn = $("div.ct-character-header__group--game-log.ct-character-header__group--game-log-last, [data-original-title='Game Log'] button, button[class*='-gamelog-button'], div[class*='campaignButtonGroup'][class*='GameLogButton']");
+	if(btn.length === 0){
+		// Fallback SVG selector
+		btn = $(`[d='M243.9 7.7c-12.4-7-27.6-6.9-39.9 .3L19.8 115.6C7.5 122.8 0 135.9 0 150.1V366.6c0 14.5 7.8 27.8 20.5 34.9l184 103c12.1 6.8 26.9 6.8 39.1 0l184-103c12.6-7.1 20.5-20.4 20.5-34.9V146.8c0-14.4-7.7-27.7-20.3-34.8L243.9 7.7zM71.8 140.8L224.2 51.7l152 86.2L223.8 228.2l-152-87.4zM48 182.4l152 87.4V447.1L48 361.9V182.4zM248 447.1V269.7l152-90.1V361.9L248 447.1z']`).closest('[role="button"]');
+	}
+	return btn;
+}
 
+const DISCORD_LINK_MAP = {
+  'https://cdn.discordapp.com/attachments/1083353621778923581/1110550133134852206/lightbulb.png': 'https://www.googleapis.com/drive/v3/files/1_QnkvmGct2dzeu-pBO9ofT-828pWvCcn?alt=media&key=AIzaSyBcA_C2gXjTueKJY2iPbQbDvkZWrTzvs5I',
+  'https://cdn.discordapp.com/attachments/1083353621778923581/1083353624891105290/star.png': 'https://drive.google.com/uc?id=1F868fVhQnzFALTcnEIXUDeAl3UKZccKA',
+  'https://cdn.discordapp.com/attachments/1083353621778923581/1083353624652038215/skull.png': 'https://drive.google.com/uc?id=1of0nmVMh8rnt9pz6iri9gtq-mCQmgCWA',
+  'https://cdn.discordapp.com/attachments/1083353621778923581/1083353625113399376/mappin.png': 'https://drive.google.com/uc?id=1excaNtaLfn_Hj5EHuH-h8iimpzC36i0M',
+  'https://cdn.discordapp.com/attachments/1083353621778923581/1148091041589756005/flame1.gif': 'https://drive.google.com/uc?id=1eWHXQsHloLuocYOuHnvvd0zymZQMH7sm'
+};
+function update_old_discord_link(link) {
+  return DISCORD_LINK_MAP[link] || link;
+}
 
 /** Parses the given URL for GoogleDrive or Dropbox semantics and returns an updated URL.
  * @param {String} url to parse
  * @return {String} a sanitized and possibly modified url to help with loading maps */
+const GOOGLE_DRIVE_ID_REGEX = /id=([a-zA-Z0-9_-]+)/;
 function parse_img(url) {
-		let retval = url;
-		if (typeof retval !== "string") {
-			console.log("parse_img is converting", url, "to an empty string");
-			retval = "";
-		} else if (retval.trim().startsWith("data:")) {
-			console.warn("parse_img is removing a data url because those are not allowed"); 
-			retval = "";
-		} else if (retval.includes("https://drive.google.com") && !retval.match(/id=([a-zA-Z0-9_-]+)/g)) {
-			const parsed = 'https://drive.google.com/thumbnail?id=' + retval.split('/')[5] +'&sz=w3000';
-			retval = parsed;
-			return retval;		
-		} 
-		else if (retval.startsWith("https://drive.google.com") || (retval.includes("https://drive.usercontent.google.com")) && retval.match(/id=([a-zA-Z0-9_-]+)/g)) {
-			const parsed = 'https://drive.google.com/thumbnail?id=' + retval.matchAll(/id=([a-zA-Z0-9_-]+)/g).next().value[1] +'&sz=w3000';
-			retval = parsed;
-			return retval;		
-		} 
-		else if(retval.startsWith("https://www.googleapis.com/drive/v3/files/")){ // fix due to 1.5/1.6 beta 
-			const fileid = retval.split('files/')[1].split('?')[0];
-			const parsed = 'https://drive.google.com/thumbnail?id=' + fileid +'&sz=w3000';
-			retval = parsed;
-			return retval;
+	if (typeof url !== "string") {
+		console.log("parse_img is converting", url, "to an empty string");
+		return "";
+	}
+	let retval = url.trim();
+	if (retval.startsWith("data:")) {
+		console.warn("parse_img is removing a data url because those are not allowed"); 
+		return "";
+	}
+	if (retval.includes("https://drive.google.com") || retval.includes("https://drive.usercontent.google.com")) {
+		const match = retval.match(GOOGLE_DRIVE_ID_REGEX);
+		if (match) {
+			return `https://drive.google.com/thumbnail?id=${match[1]}&sz=w3000`;
+		} else if (retval.includes("https://drive.google.com")) {
+			// Fallback: split by '/' to get ID
+			return `https://drive.google.com/thumbnail?id=${retval.split('/')[5]}&sz=w3000`;
 		}
-		else if(retval.includes("dropbox.com")){
-			const splitUrl = url.split('dropbox.com');
-			const parsed = `https://dl.dropboxusercontent.com${splitUrl[splitUrl.length-1]}`
-			retval = parsed;
+	} else if (retval.startsWith("https://www.googleapis.com/drive/v3/files/")) {
+		const fileid = retval.split('files/')[1].split('?')[0];
+		return `https://drive.google.com/thumbnail?id=${fileid}&sz=w3000`;
+	} else if (retval.includes("dropbox.com")) {
+		const splitUrl = url.split('dropbox.com');
+		return `https://dl.dropboxusercontent.com${splitUrl[splitUrl.length - 1]}`;
+	} else if (retval.includes("https://1drv.ms/")) {
+		if (retval.split('/')[4].length !== 1) {
+			return `https://api.onedrive.com/v1.0/shares/u!${btoa(url)}/root/content`;
 		}
-		else if(retval.includes("https://1drv.ms/"))
-		{
-			if(retval.split('/')[4].length == 1){
-				retval = retval;
-			}
-			else{
-				retval = "https://api.onedrive.com/v1.0/shares/u!" + btoa(url) + "/root/content";
-			}
-		}
-		if(retval.includes("discordapp.com")){
-			retval = update_old_discord_link(retval)
-		}
-		return retval;	
+		return retval;
+	}
+	if (retval.includes("discordapp.com")) {
+		return update_old_discord_link(retval);
+	}
+
+	return retval;	
 }
-
-function update_old_discord_link(link){
-  if(link == 'https://cdn.discordapp.com/attachments/1083353621778923581/1110550133134852206/lightbulb.png'){
-    link = 'https://www.googleapis.com/drive/v3/files/1_QnkvmGct2dzeu-pBO9ofT-828pWvCcn?alt=media&key=AIzaSyBcA_C2gXjTueKJY2iPbQbDvkZWrTzvs5I'
-  }
-  else if(link == "https://cdn.discordapp.com/attachments/1083353621778923581/1083353624891105290/star.png"){
-   link = 'https://drive.google.com/uc?id=1F868fVhQnzFALTcnEIXUDeAl3UKZccKA';
-  }
-  else if(link == "https://cdn.discordapp.com/attachments/1083353621778923581/1083353624652038215/skull.png"){
-    link = "https://drive.google.com/uc?id=1of0nmVMh8rnt9pz6iri9gtq-mCQmgCWA"
-  }
-  else if(link == "https://cdn.discordapp.com/attachments/1083353621778923581/1083353625113399376/mappin.png"){
-    link = "https://drive.google.com/uc?id=1excaNtaLfn_Hj5EHuH-h8iimpzC36i0M"
-  }
-  else if(link == "https://cdn.discordapp.com/attachments/1083353621778923581/1148091041589756005/flame1.gif"){
-    link = "https://drive.google.com/uc?id=1eWHXQsHloLuocYOuHnvvd0zymZQMH7sm"
-  }
-  return link;
-}
-
-
 
 /**
  * Generates a random integer number between min and max.
@@ -114,9 +105,9 @@ function clamp (number, min, max) {
  * @param {String} url Youtube video URL
  * @returns String | false
  */
+const YT_REGEX = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
 function youtube_parser(url) {
-	let regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
-	let match = url.match(regExp);
+	const match = url.match(YT_REGEX);
 	return (match && match[7].length == 11) ? match[7] : false;
 }
 
@@ -125,8 +116,9 @@ function youtube_parser(url) {
  * @param {string} value any URL
  * @returns boolean
  */
+const URL_VALIDATION_REGEX = /^(?:(?:(?:https?|ftp):)?\/\/)(?:\S+(?::\S*)?@)?(?:(?!(?:10|127)(?:\.\d{1,3}){3})(?!(?:169\.254|192\.168)(?:\.\d{1,3}){2})(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)(?:\.(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)*(?:\.(?:[a-z\u00a1-\uffff]{2,})))(?::\d{2,5})?(?:[/?#]\S*)?$/i;
 function validateUrl(value) {
-  return /^(?:(?:(?:https?|ftp):)?\/\/)(?:\S+(?::\S*)?@)?(?:(?!(?:10|127)(?:\.\d{1,3}){3})(?!(?:169\.254|192\.168)(?:\.\d{1,3}){2})(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)(?:\.(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)*(?:\.(?:[a-z\u00a1-\uffff]{2,})))(?::\d{2,5})?(?:[/?#]\S*)?$/i.test(value);
+  return URL_VALIDATION_REGEX.test(value);
 }
 
 const MAX_ZOOM = 5
@@ -234,10 +226,16 @@ function add_zoom_to_storage() {
 * Sets default values for VTTWRAPPER and black_layer based off zoom.
 */
 function set_default_vttwrapper_size() {
-	$("#VTTWRAPPER").width($("#scene_map").width() * window.CURRENT_SCENE_DATA.scale_factor * window.ZOOM + 1400);
-	$("#VTTWRAPPER").height($("#scene_map").height() * window.CURRENT_SCENE_DATA.scale_factor * window.ZOOM + 1400);
-	$("#black_layer").width(($("#scene_map").width()) * window.CURRENT_SCENE_DATA.scale_factor * window.ZOOM + 2000 + window.VTTMargin );
-	$("#black_layer").height(($("#scene_map").height()) * window.CURRENT_SCENE_DATA.scale_factor * window.ZOOM + 2000 + window.VTTMargin );
+	const vttwrapper = $("#VTTWRAPPER");
+	const scene_map = $("#scene_map");
+	const black_layer = $("#black_layer");
+	const scalezoom = window.CURRENT_SCENE_DATA.scale_factor * window.ZOOM;
+	const w = $("#scene_map").width() * scalezoom;
+	const h = $("#scene_map").height() * scalezoom;
+	vttwrapper.width(w + 1400);
+	vttwrapper.height(h + 1400);
+	black_layer.width(w + 2000 + window.VTTMargin );
+	black_layer.height(h + 2000 + window.VTTMargin );
 }
 
 /**
@@ -304,83 +302,90 @@ function apply_zoom_from_storage() {
 	console.groupEnd()
 }
 
-var zoomBusy = false;
-var zoomQ = [];
-var lastZoom;	  
-//each zoom event [amt, typ, off, x, y] typ = 0(relative) 1(absolute) 2(offset)
-//keep a queue - which can mostly be squashed except for some offset events
-function throttledZoom(amount, typeFlag, zx, zy)  {
-	if(typeFlag === 2) {
-		if(zoomQ.length == 0) {
-			zoomQ = [[1.0,0,amount,zx,zy]];				
-		} else {
-			last = zoomQ[zoomQ.length-1];
-			if(last[1] === 0) {
-				last[2] = amount;
-			} else { //last[1] == 1
-				last[0] += amount;
-			}
-		}
-	} else if(zoomQ.length == 0 || typeFlag === 1) {
-		zoomQ = [[amount,typeFlag, 0, zx, zy]];
-	} else { //relative
-		last = zoomQ[zoomQ.length-1];
-		if(last[2] === 0) { //no offset
-			last[0] = last[0] * amount;
-		} else { //complex case where we need sequence
-			zoomQ.push([amount,typeFlag, 0, zx, zy]);
-		}
-	}
-	if(!zoomBusy) {
-		zoomBusy = true;
-		function applyOrDone() {
-			if(zoomQ.length) { //add all the queue events together based on current zoom
-				let z = window.ZOOM;
-				let zoomX, zoomY;
-				let doit = false;
-				if(zoomQ.length) {
-					while(zoomQ.length) {
-						e = zoomQ.pop(0);
-						z = ((e[1] === 0) ? z * e[0] : e[0]) + e[2];
-						zoomX = e[3];
-						zoomY = e[4];
-					}
-					z = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, z));
-					if(z != window.ZOOM) doit = true;
-					zoomQ = [];
+
+//encapsulate
+const throttledZoom = function(){
+	let zoomBusy = false;
+	let zoomQ = [];
+	let lastZoom;
+	function applyOrDone() {
+		if(zoomQ.length) { //add all the queue events together based on current zoom
+			let z = window.ZOOM;
+			let zoomX, zoomY;
+			let doit = false;
+			if(zoomQ.length) {
+				while(zoomQ.length) {
+					let e = zoomQ.shift(); //was: pop(0) -- not a thing
+					z = ((e[1] === 0) ? z * e[0] : e[0]) + e[2];
+					zoomX = e[3];
+					zoomY = e[4];
 				}
-				if(doit && lastZoom && Date.now() - lastZoom < 2) {
-					//throttle by time
-					setTimeout(() => {
-						change_zoom(z, zoomX, zoomY);
-						lastZoom = Date.now();
-						requestAnimationFrame(applyOrDone)
-					}, 1);
-				} else {
-					if(doit) {
-						change_zoom(z, zoomX, zoomY);
-						lastZoom = Date.now();
-					}
-					requestAnimationFrame(applyOrDone);
-				} 
+				z = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, z));
+				if(z != window.ZOOM) doit = true;
+			}
+			if(doit && lastZoom && Date.now() - lastZoom < 2) {
+				//throttle by time
+				setTimeout(() => {
+					change_zoom(z, zoomX, zoomY);
+					lastZoom = Date.now();
+					requestAnimationFrame(applyOrDone)
+				}, 1);
 			} else {
-				zoomBusy = false;
+				if(doit) {
+					change_zoom(z, zoomX, zoomY);
+					lastZoom = Date.now();
+				}
+				requestAnimationFrame(applyOrDone);
+			} 
+		} else {
+			zoomBusy = false;
+		}
+	}
+
+	//each zoom event [amt, typ, off, x, y] typ = 0(relative) 1(absolute) 2(offset)
+	//keep a queue - which can mostly be squashed except for some offset events
+	function throttledZoom(amount, typeFlag, zx, zy)  {
+		if(typeFlag === 2) {
+			if(zoomQ.length === 0) {
+				zoomQ = [[1.0,0,amount,zx,zy]];				
+			} else {
+				let last = zoomQ[zoomQ.length-1];
+				if(last[1] === 0) {
+					last[2] = amount;
+				} else { //last[1] == 1
+					last[0] += amount;
+				}
+			}
+		} else if(zoomQ.length == 0 || typeFlag === 1) {
+			zoomQ = [[amount,typeFlag, 0, zx, zy]];
+		} else { //relative
+			let last = zoomQ[zoomQ.length-1];
+			if(last[2] === 0) { //no offset
+				last[0] = last[0] * amount;
+			} else { //complex case where we need sequence
+				zoomQ.push([amount,typeFlag, 0, zx, zy]);
 			}
 		}
-		requestAnimationFrame(applyOrDone);
+		if(!zoomBusy) {
+			zoomBusy = true;
+			requestAnimationFrame(applyOrDone);
+		}
 	}
-}
+	return throttledZoom;}();
 
 /**
 * Gets the zoom values that will fit the map to the viewport
 * @return {Number}
 */
 function get_reset_zoom() {
+	const w = $(window);
+	const scene_map = $("#scene_map");
+	const sf = window.CURRENT_SCENE_DATA.scale_factor;
 	const sidebar_open = ($('#hide_rightpanel').hasClass('point-right') && $('.ct-sidebar.ct-sidebar--hidden').length == 0) ? 340 : 0;
-	const wH = $(window).height();
-	const mH = $("#scene_map").height()*window.CURRENT_SCENE_DATA.scale_factor;
-	const wW = $(window).width()-sidebar_open;
-	const mW = $("#scene_map").width()*window.CURRENT_SCENE_DATA.scale_factor;
+	const wH = w.height();
+	const mH = scene_map.height()*sf;
+	const wW = w.width()-sidebar_open;
+	const mW = scene_map.width()*sf;
 
 	console.log(wH, mH, wW, mW);
 	return Math.min((wH / mH), (wW / mW));
@@ -631,6 +636,7 @@ async function load_scenemap(url, is_video = false, width = null, height = null,
  * @param {Boolean} dontscroll prevent scrolling
  */
 function set_pointer(data, dontscroll = false) {
+	const w = $(window);
 
 	let marker = $("<div></div>");
 	marker.css({
@@ -660,8 +666,8 @@ function set_pointer(data, dontscroll = false) {
 	// Calculate pageX and pageY and scroll there!
 
 	if(!dontscroll){
-		let pageX = Math.round(data.x * window.ZOOM - ($(window).width() / 2));
-		let pageY = Math.round(data.y * window.ZOOM - ($(window).height() / 2));
+		let pageX = Math.round(data.x * window.ZOOM - (w.width() / 2));
+		let pageY = Math.round(data.y * window.ZOOM - (w.height() / 2));
 		let sidebarSize = ($('#hide_rightpanel.point-right').length>0 ? 340 : 0);
 		$("html,body").animate({
 			scrollTop: pageY + window.VTTMargin,
@@ -744,11 +750,7 @@ function change_sidbar_tab(clickedTab, isCharacterSheetInfo = false) {
 		// This only happens when `is_character_page() == true` and the user clicked the gamelog tab.
 		// This is an important distinction, because we switch to the gamelog tab when the user clicks info on their character sheet that causes details to be displayed instead of the gamelog.
 		// Since the user clicked the tab, we need to show the gamelog instead of any detail info that was previously shown.
-		let gameLogButton = $("div.ct-character-header__group--game-log.ct-character-header__group--game-log-last, [data-original-title='Game Log'] button, button[class*='-gamelog-button'], div[class*='campaignButtonGroup'][class*='GameLogButton']")
-		if(gameLogButton.length == 0){
-		gameLogButton = $(`[d='M243.9 7.7c-12.4-7-27.6-6.9-39.9 .3L19.8 115.6C7.5 122.8 0 135.9 0 150.1V366.6c0 14.5 7.8 27.8 20.5 34.9l184 103c12.1 6.8 26.9 6.8 39.1 0l184-103c12.6-7.1 20.5-20.4 20.5-34.9V146.8c0-14.4-7.7-27.7-20.3-34.8L243.9 7.7zM71.8 140.8L224.2 51.7l152 86.2L223.8 228.2l-152-87.4zM48 182.4l152 87.4V447.1L48 361.9V182.4zM248 447.1V269.7l152-90.1V361.9L248 447.1z']`).closest('[role="button"]'); // this is a fall back to look for the gamelog svg icon and look for it's button.
-		}
-		gameLogButton.click()
+		getGameLogButton().click();
 	}
 }
 
@@ -898,17 +900,18 @@ function load_monster_stat_iframe(monsterId, tokenId) {
 
 	window.StatHandler.getStat(monsterId, function(stats) {
 		iframe.on("load", function(event) {
+			const contents = $(event.target).contents()
 			console.log('carico mostro');
-			$(event.target).contents().find("body[class*='marketplace']").replaceWith($("<div id='noAccessToContent' style='height: 100%;text-align: center;width: 100%;padding: 10px;font-weight: bold;color: #944;'>You do not have access to this content on DndBeyond.</div>"));
-			$(event.target).contents().find("#mega-menu-target").remove();
-			$(event.target).contents().find(".site-bar").remove();
-			$(event.target).contents().find(".page-header").remove();
-			$(event.target).contents().find(".homebrew-comments").remove();
-			$(event.target).contents().find("header").hide();
-			$(event.target).contents().find("#site-main").css("padding", "0px");
-			$(event.target).contents().find("#footer").remove();
-			const img = $(event.target).contents().find(".detail-content").find(".image");
-			const statblock = $(event.target).contents().find(".mon-stat-block");
+			contents.find("body[class*='marketplace']").replaceWith($("<div id='noAccessToContent' style='height: 100%;text-align: center;width: 100%;padding: 10px;font-weight: bold;color: #944;'>You do not have access to this content on DndBeyond.</div>"));
+			contents.find("#mega-menu-target").remove();
+			contents.find(".site-bar").remove();
+			contents.find(".page-header").remove();
+			contents.find(".homebrew-comments").remove();
+			contents.find("header").hide();
+			contents.find("#site-main").css("padding", "0px");
+			contents.find("#footer").remove();
+			const img = contents.find(".detail-content").find(".image");
+			const statblock = contents.find(".mon-stat-block");
 			if (img.length == 1) {
 				img.insertAfter(statblock);
 				const sendToGamelog = $("<button>Send IMG To Gamelog</button>");
@@ -928,8 +931,8 @@ function load_monster_stat_iframe(monsterId, tokenId) {
 			}
 
 
-			scan_monster($(event.target).contents(), stats, tokenId);
-			$(event.target).contents().find("a").attr("target", "_blank");
+			scan_monster(contents, stats, tokenId);
+			contents.find("a").attr("target", "_blank");
 			$(".sidebar-panel-loading-indicator").hide()
 			$("#monster_block").fadeIn("slow")
 			console.groupEnd()
@@ -1145,11 +1148,7 @@ async function init_controls() {
 	$(".sidebar").css("height", "calc(100vh - 24px)");
 
 	$(".ct-sidebar__inner button[aria-label='Unlocked']").click(); // Click on the padlock icon  // This is safe to call multiple times
-	let gameLogButton = $("div.ct-character-header__group--game-log.ct-character-header__group--game-log-last, [data-original-title='Game Log'] button, button[class*='-gamelog-button'], div[class*='campaignButtonGroup'][class*='GameLogButton']")
- 	if(gameLogButton.length == 0){
-   	gameLogButton = $(`[d='M243.9 7.7c-12.4-7-27.6-6.9-39.9 .3L19.8 115.6C7.5 122.8 0 135.9 0 150.1V366.6c0 14.5 7.8 27.8 20.5 34.9l184 103c12.1 6.8 26.9 6.8 39.1 0l184-103c12.6-7.1 20.5-20.4 20.5-34.9V146.8c0-14.4-7.7-27.7-20.3-34.8L243.9 7.7zM71.8 140.8L224.2 51.7l152 86.2L223.8 228.2l-152-87.4zM48 182.4l152 87.4V447.1L48 361.9V182.4zM248 447.1V269.7l152-90.1V361.9L248 447.1z']`).closest('[role="button"]'); // this is a fall back to look for the gamelog svg icon and look for it's button.
- 	}
- 	gameLogButton.click();
+	getGameLogButton().click();
 
 	init_sidebar_tabs();
 	let sidebarControlsParent = is_characters_page() ? $(".ct-sidebar__inner>[class*='styles_controls']") : $(".sidebar__controls");
@@ -1347,12 +1346,7 @@ function init_mouse_zoom() {
 
 
 /**
- * Start sending google analytics heartbeat events.
- */
-
-/**
  * Creates and displays splash screen
- * Also starts Google Analytics heartbeat.
  */
 function init_splash() {
 
@@ -1920,14 +1914,9 @@ function init_character_page_sidebar() {
 		}, 1000);
 		return;
 	}
-	let gameLogButton = $("div.ct-character-header__group--game-log.ct-character-header__group--game-log-last, [data-original-title='Game Log'] button, button[class*='-gamelog-button'], div[class*='campaignButtonGroup'][class*='GameLogButton']")
-	if(gameLogButton.length == 0){
-	  gameLogButton = $(`[d='M243.9 7.7c-12.4-7-27.6-6.9-39.9 .3L19.8 115.6C7.5 122.8 0 135.9 0 150.1V366.6c0 14.5 7.8 27.8 20.5 34.9l184 103c12.1 6.8 26.9 6.8 39.1 0l184-103c12.6-7.1 20.5-20.4 20.5-34.9V146.8c0-14.4-7.7-27.7-20.3-34.8L243.9 7.7zM71.8 140.8L224.2 51.7l152 86.2L223.8 228.2l-152-87.4zM48 182.4l152 87.4V447.1L48 361.9V182.4zM248 447.1V269.7l152-90.1V361.9L248 447.1z']`).closest('[role="button"]'); // this is a fall back to look for the gamelog svg icon and look for it's button.
-	}
 	// Open the gamelog, and lock it open
-
 	if(window.showPanel == undefined || window.showPanel == true)
-		gameLogButton.click()
+		getGameLogButton().click()
 	$(".ct-sidebar__control--unlock, [class*='styles_controls'] [aria-label='Unlocked']").click();
 
 	$("#site-main").css({"display": "block", "visibility": "hidden"});
@@ -2007,11 +1996,7 @@ function init_character_page_sidebar() {
  * Any time they do that, we need to react to those changes.
  */
 function monitor_character_sidebar_changes() {
-	let gameLogButton = $("div.ct-character-header__group--game-log.ct-character-header__group--game-log-last, [data-original-title='Game Log'] button, button[class*='-gamelog-button'], div[class*='campaignButtonGroup'][class*='GameLogButton']")
-	 if(gameLogButton.length == 0){
-	   gameLogButton = $(`[d='M243.9 7.7c-12.4-7-27.6-6.9-39.9 .3L19.8 115.6C7.5 122.8 0 135.9 0 150.1V366.6c0 14.5 7.8 27.8 20.5 34.9l184 103c12.1 6.8 26.9 6.8 39.1 0l184-103c12.6-7.1 20.5-20.4 20.5-34.9V146.8c0-14.4-7.7-27.7-20.3-34.8L243.9 7.7zM71.8 140.8L224.2 51.7l152 86.2L223.8 228.2l-152-87.4zM48 182.4l152 87.4V447.1L48 361.9V182.4zM248 447.1V269.7l152-90.1V361.9L248 447.1z']`).closest('[role="button"]'); // this is a fall back to look for the gamelog svg icon and look for it's button.
-	 }
-	gameLogButton.click(function(event) {
+	getGameLogButton().click(function(event) {
 		if (event.originalEvent !== undefined) {
 			// the user actually clicked the button. Make sure we switch tabs
 			$("#switch_gamelog").click();
