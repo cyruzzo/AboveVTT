@@ -167,7 +167,7 @@ function token_context_menu_expanded(tokenIds, e) {
 	});
 
 
-	let moveableTokenOptions = $("<div id='tokenOptionsPopup'></div>");
+	let moveableTokenOptions = $("<div id='tokenOptionsPopup' class='moveableWindow'></div>");
 
 	
 	let body = $("<div id='tokenOptionsContainer'></div>");
@@ -175,8 +175,8 @@ function token_context_menu_expanded(tokenIds, e) {
 
 	$('body').append(moveableTokenOptions);
 
-	$("#tokenOptionsPopup").addClass("moveableWindow");
-	$("#tokenOptionsPopup").draggable({
+	frame_z_index_when_click(moveableTokenOptions, true);
+	moveableTokenOptions.draggable({
 		addClasses: false,
 		scroll: false,
 		handle: "div:not(:has(select)), button, label, input",
