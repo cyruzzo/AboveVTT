@@ -1010,7 +1010,7 @@ function build_draggable_monster_window(tokenId) {
 	/*Set draggable and resizeable on monster sheets for players. Allow dragging and resizing through iFrames by covering them to avoid mouse interaction*/
 	if($("#monster_close_title_button").length==0) {
 		const monster_close_title_button = $('<div id="monster_close_title_button"><svg class="" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><g transform="rotate(-45 50 50)"><rect></rect></g><g transform="rotate(45 50 50)"><rect></rect></g></svg></div>');
-		$("#resizeDragMon").append(monster_close_title_button);
+		container.append(monster_close_title_button);
 		monster_close_title_button.click(function() {
 			close_player_monster_stat_block();
 		});
@@ -1018,7 +1018,7 @@ function build_draggable_monster_window(tokenId) {
 	let popoutButton = $("#resizeDragMon .popout-button");
 	if (popoutButton.length==0){
 		popoutButton =$('<div class="popout-button"><svg xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 0 24 24" width="18px" fill="#000000"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M18 19H6c-.55 0-1-.45-1-1V6c0-.55.45-1 1-1h5c.55 0 1-.45 1-1s-.45-1-1-1H5c-1.11 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-6c0-.55-.45-1-1-1s-1 .45-1 1v5c0 .55-.45 1-1 1zM14 4c0 .55.45 1 1 1h2.59l-9.13 9.13c-.39.39-.39 1.02 0 1.41.39.39 1.02.39 1.41 0L19 6.41V9c0 .55.45 1 1 1s1-.45 1-1V4c0-.55-.45-1-1-1h-5c-.55 0-1 .45-1 1z"/></svg></div>')
-		$("#resizeDragMon").append(popoutButton);
+		container.append(popoutButton);
 	}
 	popoutButton.off('click.popout').on('click.popout', function() {
 		let name = $("#resizeDragMon .avtt-stat-block-container .mon-stat-block__name-link").text();
@@ -1042,14 +1042,14 @@ function build_draggable_monster_window(tokenId) {
 		});
 		monster_close_title_button.click();
 	});
-	$("#resizeDragMon").addClass("moveableWindow");
-	if(!$("#resizeDragMon").hasClass("minimized")) {
-		$("#resizeDragMon").addClass("restored");
+	container.addClass("moveableWindow");
+	if(!container.hasClass("minimized")) {
+		container.addClass("restored");
 	}
 	else{
-		$("#resizeDragMon").dblclick();
+		container.dblclick();
 	}
-	$("#resizeDragMon").resizable({
+	container.resizable({
 		addClasses: false,
 		handles: "all",
 		containment: "#windowContainment",
@@ -1062,11 +1062,8 @@ function build_draggable_monster_window(tokenId) {
 		minWidth: 200,
 		minHeight: 200
 	});
-
-	$("#resizeDragMon").mousedown(function() {
-		frame_z_index_when_click($(this));
-	});
-	$("#resizeDragMon").draggable({
+	frame_z_index_when_click(container, true);
+	container.draggable({
 		addClasses: false,
 		scroll: false,
 		containment: "#windowContainment",
@@ -1077,7 +1074,7 @@ function build_draggable_monster_window(tokenId) {
 			$('.iframeResizeCover').remove();
 		}
 	});
-	minimize_player_monster_window_double_click($("#resizeDragMon"));
+	minimize_player_monster_window_double_click(container);
 
 	return container;
 }
@@ -1531,12 +1528,17 @@ function minimize_player_window_double_click(titleBar) {
  * Move frames behind each other in the order they were clicked
  * @param {DOMObject} moveableFrame
  */
-function frame_z_index_when_click(moveableFrame){
-
-	if(moveableFrame.css('z-index') != 90000) {
-		moveableFrame.css('z-index', 90000);
-		$(".moveableWindow, [role='dialog']").not(moveableFrame).each(function() {
-			$(this).css('z-index',($(this).css('z-index')-1));
+function frame_z_index_when_click(moveableFrame, install=false){
+	if(install) {
+		moveableFrame.on('pointerdown', (e) => frame_z_index_when_click($(e.currentTarget)));;
+	}
+	const moveableWindows = $(".moveableWindow, [role='dialog']");
+	const someFrameNotSet = moveableWindows.not("[style*='z-index']").length > 0;
+	if (someFrameNotSet || moveableFrame.css('z-index') != 100000 || !moveableFrame.attr('style')?.includes('z-index')) {
+		moveableFrame.css('z-index', 100000);
+		moveableWindows.not(moveableFrame).each(function() {
+			if($(this).css('z-index') > 100000) return;
+			$(this).css('z-index',(Math.min($(this).css('z-index')-1, 99999)));
 		});
 	}
 }
@@ -1631,7 +1633,7 @@ function  init_sheet() {
 	
 	
 		reload_button.click(function() {
-			let iframe = $("#sheet").find("iframe");
+			let iframe = container.find("iframe");
 			let currentSrc = iframe.attr('src');
 			iframe.attr('src', currentSrc);
 		});
@@ -1641,11 +1643,11 @@ function  init_sheet() {
 	
 	
 		/*Set draggable and resizeable on player sheets. Allow dragging and resizing through iFrames by covering them to avoid mouse interaction*/
-		$("#sheet").addClass("moveableWindow");
-		if(!$("#sheet").hasClass("minimized")){
-			$("#sheet").addClass("restored");
+		container.addClass("moveableWindow");
+		if(!container.hasClass("minimized")){
+			container.addClass("restored");
 		}
-		$("#sheet").resizable({
+		container.resizable({
 			addClasses: false,
 			handles: "all",
 			containment: "#windowContainment",
@@ -1658,11 +1660,8 @@ function  init_sheet() {
 			minWidth: 200,
 			minHeight: 200
 		});
-	
-		$("#sheet").mousedown(function(){
-			frame_z_index_when_click($(this));
-		});
-		$("#sheet").draggable({
+		frame_z_index_when_click(container, true);
+		container.draggable({
 			addClasses: false,
 			scroll: false,
 			containment: "#windowContainment",
