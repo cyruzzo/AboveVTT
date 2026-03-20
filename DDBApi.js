@@ -319,8 +319,13 @@ class DDBApi {
         console.warn("fetchCampaignCharacterIds caught an error trying to collect ids from fetchActiveCharacters", error);
       } 
     }
+    if (!window.playerUsers) {
+      console.warn("fetchCampaignCharacterIds: failed to fetch campaign characters, falling back to DM");
+      window.myUser = window.CAMPAIGN_INFO?.dmId;
+      return characterIds;
+    }
     let playerUser = window.playerUsers.filter(d=> d.id == window.PLAYER_ID)[0]?.userId;
-    window.myUser = playerUser ? playerUser : window.CAMPAIGN_INFO.dmId; 
+    window.myUser = playerUser ? playerUser : window.CAMPAIGN_INFO?.dmId;
     return characterIds;
   }
 
