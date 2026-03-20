@@ -46,7 +46,23 @@ $(function() {
       .then(harvest_campaign_secret)  // find our join link
       .then(set_campaign_secret)      // set it to window.CAMPAIGN_SECRET
       .then(async () => {
-        window.CAMPAIGN_INFO = await DDBApi.fetchCampaignInfo(window.gameId)
+        const maxRetries = 5
+        const baseDelay = 500
+        for (let attempt = 1; attempt <= maxRetries; attempt++) {
+          try {
+            window.CAMPAIGN_INFO = await DDBApi.fetchCampaignInfo(window.gameId)
+            break
+          } catch (error) {
+            if (attempt < maxRetries) {
+              const delay = Math.min(baseDelay * Math.pow(2, attempt - 1), 10000)
+              console.warn(`Failed to fetch campaign info (attempt ${attempt}/${maxRetries}), retrying in ${delay}ms...`, error)
+              await new Promise(resolve => setTimeout(resolve, delay))
+            } else {
+              showError(error, `Failed to fetch campaign info after ${maxRetries} attempts. This is likely temporary — please refresh the page. If the issue persists, D&D Beyond may be experiencing outages.`)
+              throw error
+            }
+          }
+        }
         window.AVTT_CAMPAIGN_INFO = await AboveApi.getCampaignData();
         return window.CAMPAIGN_INFO.dmId;
       })
