@@ -1738,10 +1738,17 @@ function redraw_text() {
 function redraw_drawings() {
 
 	let canvasAboveFog = document.getElementById("draw_overlay");
+	let canvasBelowFog = document.getElementById("draw_overlay_under_fog_darkness");
+
+	if (!canvasAboveFog?.width || !canvasBelowFog?.width || !canvasAboveFog?.height || !canvasBelowFog?.height) {
+		const mapLink = window.DM && window.CURRENT_SCENE_DATA?.dm_map_usable ? window.CURRENT_SCENE_DATA.dm_map : window.CURRENT_SCENE_DATA?.player_map
+		console.warn('Attempted draw without scene being loaded or missing image', mapLink)
+		return;
+	}
+
 	let ctxAboveFog = canvasAboveFog.getContext("2d");
 	ctxAboveFog.clearRect(0, 0, canvasAboveFog.width, canvasAboveFog.height);
 
-	let canvasBelowFog = document.getElementById("draw_overlay_under_fog_darkness");
 	let ctxBelowFog = canvasBelowFog.getContext("2d");
 	ctxBelowFog.clearRect(0, 0, canvasBelowFog.width, canvasBelowFog.height);
 
@@ -1845,7 +1852,6 @@ function redraw_drawings() {
 	}
 
 	ctxAboveFog.drawImage(offscreenDrawAboveFog, 0, 0); // draw to visible canvas only once so we render this once
-
 	ctxBelowFog.drawImage(offscreenDrawBelowFog, 0, 0); // draw to visible canvas only once so we render this once
 	
 }
