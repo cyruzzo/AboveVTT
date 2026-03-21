@@ -953,10 +953,54 @@ select#doorTypeSelectUVTT{
     filter: drop-shadow(0px 0px 2px #000) blur(1px); /*fill in fog gaps on player view*/
     opacity: 1;
 }
-#groupRotationGrabber,
-#rotationGrabber {
-    scale: min(4, max(1, calc(0.5 / var(--window-zoom))))
+#dragbox {
+  position: absolute;
+  overflow: visible;
+  top: 0;
+  left: 0;
+  transform-origin: top left;
+  transform: scale(var(--scene-scale));
+  display: block;
+  pointer-events: none;
+  z-index: 1000000;
 }
+#dragbox .drag-box-b {
+  stroke: black;
+  stroke-width: calc(1.5px / var(--scene-scale) / var(--window-zoom));
+  stroke-linecap: square;
+  vector-effect: non-scaling-stroke;
+  overflow: visible !important;
+}
+#dragbox .drag-box-w {
+  fill: rgba(0, 255, 255, 0.1);
+  stroke: white;
+  stroke-width: calc(1.5px / var(--scene-scale) / var(--window-zoom));
+  stroke-dasharray: calc(4px / var(--scene-scale) / var(--window-zoom)) calc(4px / var(--scene-scale) / var(--window-zoom));
+  stroke-linecap: square;
+  vector-effect: non-scaling-stroke;
+  transition: fill 0.2s;
+  overflow: visible !important;
+}
+#dragbox .sel-box {
+  fill: rgba(0, 255, 255, 0.1);
+  stroke: white;
+  stroke-width: calc(1.5px / var(--scene-scale) / var(--window-zoom));
+  stroke-linecap: round;
+  vector-effect: non-scaling-stroke;
+}
+#dragbox .grabber {
+  cursor: alias;
+  pointer-events: auto;
+}
+
+/*adjust grabber scale 1.2 here:*/
+#dragbox .grabber-icon-r {
+  transform: scale(calc(1.2 / var(--scene-scale) / var(--window-zoom))) translate(0px, -25px);
+}
+#dragbox .grabber-icon-c {
+  transform: translate(0px, -10px) scale(calc(1.2 / var(--scene-scale)  / var(--window-zoom))) translate(-12.5px, -25px);
+}
+
 #fog_overlay,
 #draw_overlay_under_fog_darkness,
 #draw_overlay{
@@ -3600,9 +3644,6 @@ body .note-visibility-toggle-container {
 .token.notVisible *{
     visibility: hidden !important; 
     pointer-events: none !important;
-}
-div#selectedTokensBorder {
-    pointer-events: none;
 }
 
 #conditions-flyout li,
@@ -6410,8 +6451,6 @@ button.avtt-roll-formula-button {
     width: unset;
 }
 .MuiModal-root,
-div#selectedTokensBorder,
-div#selectedTokensBorderRotationGrabberConnector,
 #sounds-panel .volume-control {
     width: 50%;
     float: right;
@@ -7391,7 +7430,9 @@ div#tokenOptionsContainer .remove-from-ct>button{
     background-image: linear-gradient(to left, transparent calc(100% - var(--hp-percentage)), var(--token-hpbar-aura-color) 0%, var(--token-hpbar-aura-color) 100%) !important;
     box-shadow: inset 0px 0px 0px 1px var(--token-temp-hpbar), 0px 0px 3px 1px var(--token-temp-hpbar);
 }
-
+.VTTToken.freeform.notVisible .hpbar:after{
+    visibility: hidden;
+}
 :is(#combat_area, #combat_area_carousel) td [class*="AvatarPortrait"]{
     border-radius: 5px;
     top:2px;
@@ -8524,6 +8565,10 @@ button#changeTokenImage:before{
     content:'';
     --mask-size:calc(98% - 2px / var(--window-zoom));
 }
+.VTTToken:not(.freeform).notVisible .hpvisualbar:before{
+    visibility: hidden;
+}
+
 .VTTToken[data-notatoken]:not(.freeform) .hpvisualbar:before{
     --mask-size:calc(98% - calc(2px / var(--scene-scale)) / var(--window-zoom));
 }

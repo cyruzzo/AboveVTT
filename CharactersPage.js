@@ -321,10 +321,15 @@ const buffsDebuffs = {
   },
   "Great Weapon Master (2024)": {
     "tohit": "0",
-    "dmg": "+PB",
+    "dmg": "0",
     "save": "0",
     "check": "0",
     "type": "feat",
+    "replace": /(.)$/gi,//last character
+    "replaceType": {
+      "damage": '[class*="styles_attack"]:has(.ddbc-note-components__component:contains("Heavy"))' //looks for Heavy trait in item note
+    },
+    "newRoll": '$1+PB', //add proficiency
   },
   "Reroll damage 1's": {
     "tohit": "0",

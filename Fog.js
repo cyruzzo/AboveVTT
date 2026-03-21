@@ -1301,6 +1301,53 @@ function redraw_grid(hpps=null, vpps=null, offsetX=null, offsetY=null, color=nul
 	draw_svg_grid(null, hpps, vpps, offsetX, offsetY, color, lineWidth, subdivide, dash);	
 }
 
+function draw_select_box(x0, y0, w, h, inside=false, selbox=false, group=false) {
+	const sf = window.CURRENT_SCENE_DATA.scale_factor || 1.0;
+	$("#VTT").css({'--selbox-x': `${x0}`,
+		       '--selbox-y': `${y0}`,
+		       '--selbox-w': `${w}`,
+		       '--selbox-h': `${h}`});
+	
+	const rg1 = document.getElementById('rot-grab');
+	const rg2 = document.getElementById('group-rot-grab');
+	const transform = `translate(${x0 / sf}, ${y0 / sf}) scale(${w / sf}, ${h / sf})`;
+	
+	// ++
+	// Check later: bug on some browser but not others?
+	// would like to apply to enclosing <g> but is "blurry" for some reason:
+	// document.getElementById('dragbox-region').setAttribute('transform', transform);
+	// However applying to individual paths works:
+	document.getElementById('dragbox-rect1').setAttribute('transform',transform);
+	document.getElementById('dragbox-rect2').setAttribute('transform',transform);
+	document.getElementById('selbox-rect').setAttribute('transform',transform);	
+	
+	// --
+
+	document.getElementById('dragbox-inside')?.setAttribute('visibility', inside ? 'visible' : 'hidden');
+	document.getElementById('dragbox-rect')?.setAttribute('visibility', !selbox ? 'visible' : 'hidden');
+	document.getElementById('selbox-rect')?.setAttribute('visibility', selbox ? 'visible' : 'hidden');
+	//$("#dragbox").css("mix-blend-mode", selbox ? "" : "difference"); //helps with visibility
+	if(selbox) {
+		if(group) {
+			rg2.setAttribute('transform', `translate(${(x0+w) / sf}, ${y0 / sf})`);
+			rg2.setAttribute('visibility','visible');
+		} else {
+			rg2.setAttribute('visibility','hidden');
+		}
+		rg1.setAttribute('transform', `translate(${(x0+w/2) / sf}, ${y0 / sf})`);
+		rg1.setAttribute('visibility','visible');			    
+	} else {
+		rg1.setAttribute('visibility','hidden');
+	}
+}
+function hide_select_box() {
+	document.getElementById('dragbox-rect')?.setAttribute('visibility', 'hidden');
+	document.getElementById('dragbox-inside')?.setAttribute('visibility', 'hidden');	
+	document.getElementById('selbox-rect')?.setAttribute('visibility', 'hidden');
+	document.getElementById('rot-grab')?.setAttribute('visibility', 'hidden');
+	document.getElementById('group-rot-grab')?.setAttribute('visibility', 'hidden');
+}
+		
 function hide_wizarding_box() {
 	const grid = document.getElementById('wizbox-grid');
 	const hex = document.getElementById('wizbox-hex');	
@@ -1361,7 +1408,7 @@ function reset_canvas(apply_zoom=true) {
 	$("#scene_map_container").css({"width": sceneMapWidth, "height": sceneMapHeight});
 	// grid overlay css tiling needs a container to fill that matches map
 	$("#grid_svg_overlay_container").css({"width": sceneMapWidth, "height": sceneMapHeight});
-	
+	$("#dragbox").css({"width": sceneMapWidth, "height": sceneMapHeight});	
 	ctxScale('peer_overlay', sceneMapWidth, sceneMapHeight);
 	ctxScale('temp_overlay', sceneMapWidth, sceneMapHeight);
 	ctxScale('draw_overlay_under_fog_darkness', sceneMapWidth, sceneMapHeight, true);
@@ -1738,10 +1785,17 @@ function redraw_text() {
 function redraw_drawings() {
 
 	let canvasAboveFog = document.getElementById("draw_overlay");
+	let canvasBelowFog = document.getElementById("draw_overlay_under_fog_darkness");
+
+	if (!canvasAboveFog?.width || !canvasBelowFog?.width || !canvasAboveFog?.height || !canvasBelowFog?.height) {
+		const mapLink = window.DM && window.CURRENT_SCENE_DATA?.dm_map_usable ? window.CURRENT_SCENE_DATA.dm_map : window.CURRENT_SCENE_DATA?.player_map
+		console.warn('Attempted draw without scene being loaded or missing image', mapLink)
+		return;
+	}
+
 	let ctxAboveFog = canvasAboveFog.getContext("2d");
 	ctxAboveFog.clearRect(0, 0, canvasAboveFog.width, canvasAboveFog.height);
 
-	let canvasBelowFog = document.getElementById("draw_overlay_under_fog_darkness");
 	let ctxBelowFog = canvasBelowFog.getContext("2d");
 	ctxBelowFog.clearRect(0, 0, canvasBelowFog.width, canvasBelowFog.height);
 
@@ -1845,7 +1899,6 @@ function redraw_drawings() {
 	}
 
 	ctxAboveFog.drawImage(offscreenDrawAboveFog, 0, 0); // draw to visible canvas only once so we render this once
-
 	ctxBelowFog.drawImage(offscreenDrawBelowFog, 0, 0); // draw to visible canvas only once so we render this once
 	
 }
@@ -2913,7 +2966,7 @@ function drawing_mousedown(e) {
 	let canvas = document.getElementById("temp_overlay");
 	let context = canvas.getContext("2d");
 
-	// get teh data from the menu's/buttons
+	// get the data from the menu's/buttons
 	const data = get_draw_data(e.data.clicked,  e.data.menu)
 	// select modifies this line but never resets it, so reset it here
 	// otherwise all drawings are dashed
@@ -3355,14 +3408,23 @@ function drawing_mousemove(e) {
 				redraw_light_walls(true, true);
 			}
 			else{
-				drawRect(window.temp_context,
-						window.BEGIN_MOUSEX,
-						window.BEGIN_MOUSEY,
-						width,
-						height,
-						window.DRAWCOLOR,
-						isFilled,
-						window.LINEWIDTH);
+				if (window.DRAWFUNCTION === "select" && e.button == 0){
+					const selInside = (window.BEGIN_MOUSEY > mouseY)
+					$("#temp_overlay").css('cursor', selInside ? 'crosshair' : 'cell');
+					draw_select_box(window.BEGIN_MOUSEX,
+							window.BEGIN_MOUSEY,
+							width,
+							height, selInside);
+				} else {
+					drawRect(window.temp_context,
+						 window.BEGIN_MOUSEX,
+						 window.BEGIN_MOUSEY,
+						 width,
+						 height,
+						 window.DRAWCOLOR,
+						 isFilled,
+						 window.LINEWIDTH);
+				}
 			}
 		}
 		if (window.DRAWSHAPE === "text_erase") {
@@ -3614,6 +3676,7 @@ function isRotatedSquareInsideRect(rect, cx, cy, w, angle) {
  * @returns
  */
 function drawing_mouseup(e) {
+	hide_select_box();
 	//$("#VTT").css('--grid-overlay-on-tmp', '0');	commented out as it's not consistent and is confusing can reasses if we enable other options for grid over
 	
 	// ignore this if we're dragging a token
@@ -4440,7 +4503,11 @@ function drawing_mouseup(e) {
 		for (let id in window.TOKEN_OBJECTS) {
 			const curr = window.TOKEN_OBJECTS[id];
 			if(!curr.isSelectable()) continue;
-			const tokenImageRect = $("#tokens>div[data-id='" + id + "'] .token-image")[0].getBoundingClientRect();
+			const tokenImageRect = $("#tokens>div[data-id='" + id + "'] .token-image")?.[0]?.getBoundingClientRect();
+			if(!tokenImageRect) {
+				console.log("ERROR IMAGE BOUNDING RECT FOR", id, curr);
+				continue;
+			}
 			const CX = ((parseInt(tokenImageRect.left) + parseInt(tokenImageRect.right))/2 + window.scrollX - window.VTTMargin) / window.ZOOM;			
 			const CY = ((parseInt(tokenImageRect.top) + parseInt(tokenImageRect.bottom))/2 + window.scrollY - window.VTTMargin) / window.ZOOM;
 			const isCircle = curr.options.tokenStyleSelect == 'circle'

@@ -3207,8 +3207,7 @@ function adjust_create_import_edit_container(content='', empty=true, title='', w
 				$('.iframeResizeCover').remove();
 			}
 		});
-		frame_z_index_when_click(mainContainer);
-		mainContainer.on('mousedown', function(){frame_z_index_when_click(mainContainer)})
+		frame_z_index_when_click(mainContainer, true);
 		$(document.body).append(mainContainer);
 	}
 	$(`#sources-import-main-container`).css({

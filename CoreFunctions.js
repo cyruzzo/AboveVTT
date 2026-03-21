@@ -2819,10 +2819,7 @@ function find_or_create_generic_draggable_window(id, titleBarText, addLoadingInd
     minWidth: 200,
     minHeight: 200
   });
-  frame_z_index_when_click(container);
-  container.on('mousedown', function(event) {
-    frame_z_index_when_click($(event.currentTarget));
-  });
+  frame_z_index_when_click(container, true);
 
   container.draggable({
     addClasses: false,

@@ -317,10 +317,7 @@ function create_text_controller(applyFromWindow = false) {
         minWidth: 80,
         minHeight: 55
     });
-    frame_z_index_when_click(textControllerInside);
-    textControllerInside.mousedown(function () {
-        frame_z_index_when_click($(this));
-    });
+    frame_z_index_when_click(textControllerInside, true);
     // on first render check if settings in storage
     if (localStorage.getItem("textSettings") === null) {
         store_text_settings()
@@ -422,10 +419,7 @@ function create_moveable_text_box(x,y,width, height, text = undefined) {
             document.getElementById("text_controller_inside")?.remove();
         }, { once: true});
       });
-    frame_z_index_when_click($(textInputInside));
-    $(textInputInside).mousedown(function () {
-        frame_z_index_when_click($(this));
-    });
+    frame_z_index_when_click($(textInputInside), true);
     const input = $(
         `<textarea class="drawing-text-box" 
         title="Input your text, this is an approximation of your final text"
