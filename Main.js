@@ -1787,7 +1787,6 @@ function open_player_sheet(sheet_url, closeIfOpen = true, playerName = '') {
 			</style>
 		`);
 		console.log("removing headers");
-		$(event.target).contents().find("body").append(`<div id='extensionpath' data-path='${window.EXTENSION_PATH}'></div>`)
 
 		if (window.JOINTHEDICESTREAM) {
 			joinDiceRoom();
@@ -2094,7 +2093,7 @@ function init_ui() {
 	grid_svg_overlay_container.append(grid);
 	//change the wizbox styling here
 	const wizbox = $(
-`<svg id="wizbox" style="display: block; width: 100%; height: 100%;" xmlns="http://www.w3.org/2000/svg">
+`<svg id="wizbox" class="TLA" style="display: block; width: 100%; height: 100%;" xmlns="http://www.w3.org/2000/svg">
         <style>
             .grid-box {
                 fill: none;
@@ -2119,6 +2118,40 @@ function init_ui() {
 `
 	);
 	wizbox.css("z-index", "19");
+
+	//Set up drag box, select box and rotation grabbers
+	const dragSelectBox = $(
+     `<svg id="dragbox" xmlns="http://www.w3.org/2000/svg">
+        <g id="dragbox-region">
+            <g id="dragbox-rect" visibility="hidden"> 
+            <path id="dragbox-rect1" d="M 0 0 L 0 1 M 1 0 L 1 1 M 0 0 L 1 0 M 0 1 L 1 1"  class="drag-box-b"/>
+            <path id="dragbox-rect2" d="M 0 0 L 0 1 M 1 0 L 1 1 M 0 0 L 1 0 M 0 1 L 1 1"  class="drag-box-w"/>
+            </g>
+            <rect id="selbox-rect" class="sel-box" visibility="hidden" x="0" y="0" width="1" height="1" rx="0.01" />
+            <g id="dragbox-inside"  visibility="hidden">
+            <path class="drag-box-b"
+             d="M 0.01 0.01 L 0.01 0.80 M 0.01 0.01 L 0.80 0.01 M 0.99 0.99 L 0.99 0.20 M 0.99 0.99 L 0.20 0.99 "/>
+            <path stroke-dasharray="2" class="drag-box-w"
+             d="M 0.01 0.01 L 0.01 0.80 M 0.01 0.01 L 0.80 0.01 M 0.99 0.99 L 0.99 0.20 M 0.99 0.99 L 0.20 0.99 "/> </g>
+        <g id="rot-grab" class="grabber" visibility="hidden"> <g class="grabber-icon-c">
+            <circle fill="#ced9e080" cx="12.5" cy="12.5" r="12.5" />
+            <path d="M12.5,17.125 c-2.59,0-4.695-2.1-4.695-4.697
+             c0-2.592,2.102-4.695,4.695-4.695 c2.595,0,4.697,2.103,4.697,4.695 C17.197,15.025,15.095,17.125,12.5,17.125z
+             M24.75,12.5 c0,0-6.147-6.637-12.25-6.637 C6.397,5.863,0.25,12.5,0.25,12.5 s6.147,6.635,12.25,6.635
+             c3.26,0,6.53-1.892,8.872-3.655 M12.5,10.127 c-1.27,0-2.3,1.033-2.3,2.302 c0,1.267,1.033,2.302,2.3,2.302
+             c1.27,0,2.302-1.033,2.302-2.302 C14.802,11.16,13.77,10.127,12.5,10.127z" />
+        </g></g>
+        <g id="group-rot-grab" class="grabber" visibility="hidden"> <g class="grabber-icon-r">
+            <circle fill="#ced9e080" cx="12.5" cy="12.5" r="12.5" />
+            <path d="M12.499 14.453 Q11.693 14.453 11.12 13.88 q-0.573-0.574-0.573-1.38
+             Q10.547 11.693 11.121 11.12 q0.574-0.573 1.38-0.573 Q13.307 10.547 13.88 11.121 q0.573 0.574 0.573 1.38
+             Q14.453 13.307 13.879 13.88 q-0.574 0.573-1.38 0.573 Z M12.5 21.875 q-3.906 0-6.641-2.747 T3.125 12.474
+             h1.563 q0 3.255 2.278 5.547 T12.5 20.313 q3.264 0 5.539-2.274 Q20.313 15.765 20.313 12.5 t-2.274-5.539
+             Q15.765 4.688 12.5 4.688 q-1.797 0-3.359 0.794 T6.406 7.63 h2.709 v1.563 H3.698 V3.776 h1.563 v2.76
+             q1.38-1.615 3.261-2.513 T12.5 3.125 q1.953 0 3.659 0.742 t2.969 2.005 q1.263 1.263 2.005 2.969 T21.875 12.5
+             q0 1.953-0.742 3.659 t-2.005 2.969 q-1.263 1.263-2.969 2.005 T12.5 21.875 Z"/>
+        </g></g>
+      </svg>`);
 	
 	const walls = $("<canvas id='walls_layer' class='TLA'/>");
 	walls.css("z-index", "19");
@@ -2208,6 +2241,7 @@ function init_ui() {
 	VTT.append(drawOverlay);
 	VTT.append(textDiv);
 	VTT.append(tempOverlay);
+	VTT.append(dragSelectBox);
 	VTT.append(walls);
 	VTT.append(elev);
 	VTT.append(weather);
@@ -2268,7 +2302,7 @@ function init_ui() {
 	init_combat_tracker();
 
 	token_menu();
-	
+	install_grabbers(); //do it once instead of every time
 
 	// EXPERIMENTAL DRAG TO MOVE
 	let  curDown = false,
