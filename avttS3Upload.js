@@ -5067,7 +5067,7 @@ async function launchFilePicker(selectFunction = false, fileTypes = [], secondar
                 border: 1px solid rgba(0, 0, 0, 0.2);
                 border-radius: 4px;
                 box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-                z-index: 99999;
+                z-index: 9999999;
                 white-space: nowrap;
             }
             .avtt-context-menu.hidden {
