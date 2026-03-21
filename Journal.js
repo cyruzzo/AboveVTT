@@ -2098,6 +2098,15 @@ class JournalManager{
 
 				return;	
 			}
+			const addMonsterButton = function(){
+				if ($self.hasClass('monster-tooltip')) {
+					$self.css('display', 'inline-block')
+					const monsterId = $self.attr('data-tooltip-href').match(/monsters\/(\d+)/i)?.[1];
+					$self.attr('data-monsterid', monsterId);
+					monsterIds.push(monsterId);
+					window.JOURNAL.addTokenDragToMonsterLink(self);
+				}
+			}
 			if(!$self.attr('data-tooltip-href')){
 				if(self.href.match(/\/spells\/[0-9]|\/magic-items\/[0-9]|\/monsters\/[0-9]|\/sources\//gi)){
 					$self.attr('data-moreinfo', `${self.href}`);
@@ -2105,15 +2114,12 @@ class JournalManager{
 				window.JOURNAL.getDataTooltip(self.href, function(url, typeClass){
 					$self.attr('data-tooltip-href', url);
 					$self.toggleClass(`${typeClass}-tooltip`, true);
+					addMonsterButton();
 				});	
+			} else{
+				addMonsterButton();
 			}
-			if ($self.hasClass('monster-tooltip')) {
-				$self.css('display', 'inline-block')
-				const monsterId = $self.attr('data-tooltip-href').match(/monsters\/(\d+)/i)?.[1];
-				$self.attr('data-monsterid', monsterId);
-				monsterIds.push(monsterId);
-				window.JOURNAL.addTokenDragToMonsterLink(self);
-			}
+
 		});
 		if (monsterIds.length>0)
 			fetch_and_cache_monsters(monsterIds);
