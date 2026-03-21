@@ -3209,6 +3209,9 @@ button.roll-button-mod.adv {
     height: calc(100% - 68px);
     width: 100%;
 }
+.body-rpgcharacter-sheet .moveableWindow .note > .note-text {
+    height: calc(100% - 25px);
+}
  .moveableWindow .note > .note-text *{
     overscroll-behavior: auto;
 }  
