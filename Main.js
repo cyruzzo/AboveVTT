@@ -1419,15 +1419,19 @@ function init_splash() {
 
 	patreons.append(patrons_list);
 	cont.append(patreons);
-	cont.click(function() {
-		$("#splash").remove();
-
-	});
 
 	let closeButton = $(`<button class="ddbeb-modal__close-button qa-modal_close" title="Close Modal" ><svg class="" xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><g transform="rotate(-45 50 50)"><rect x="0" y="45" width="100" height="10"></rect></g><g transform="rotate(45 50 50)"><rect x="0" y="45" width="100" height="10"></rect></g></svg></button>`);
 	cont.append(closeButton);
 
 	$(window.document.body).append(cont);
+	window.addEventListener("pointerdown", close_splash_if_not_link);
+}
+function close_splash_if_not_link(event) {
+	if (!event.target.closest('a')) close_splash();
+}
+function close_splash() {
+	$("#splash").remove();
+	window.removeEventListener("pointerdown", close_splash_if_not_link);
 }
 
 
@@ -2319,9 +2323,6 @@ function init_ui() {
 		curDown = false;
 		$("#VTT, #black_layer").css("cursor", "");
 
-		if (event.target.tagName.toLowerCase() !== 'a') {
-			$("#splash").remove(); // don't remove the splash screen if clicking an anchor tag otherwise the browser won't follow the link
-		}
 		if (sidebar_modal_is_open() && event.which === 1 && !window.MODALDOWN) {
 			// check if the click was within the modal or within an element that we specifically don't want to close the modal
 			let modal = event.target.closest(".sidebar-modal");
