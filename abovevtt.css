@@ -3198,6 +3198,21 @@ button.roll-button-mod.adv {
     justify-content: center;
     align-items: center; 
 }
+.moveableWindow .note{
+    width: 100%;
+    height: 100%;
+    position: relative;
+    display: block;
+}
+.moveableWindow .note > .note-text {
+    overflow: auto;
+    height: calc(100% - 68px);
+    width: 100%;
+}
+ .moveableWindow .note > .note-text *{
+    overscroll-behavior: auto;
+}  
+
 body .note-visibility-toggle-container {
     position:fixed;
     background:#fff;
@@ -8985,15 +9000,7 @@ body.color-blind-avtt {
 .mfp-wrap{
     z-index: 1000000 !important;
 }
-[role='dialog']>.note>.note-text {
-    min-height: 450px;
-    position: relative;
-    height: 100%;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-}
+
 .ui-front{
     z-index: 100000;
 }
