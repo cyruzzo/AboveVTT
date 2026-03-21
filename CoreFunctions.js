@@ -2704,7 +2704,7 @@ function display_url_embeded(url){
   $('body').append(container);
 }
 
-function find_or_create_generic_draggable_window(id, titleBarText, addLoadingIndicator = true, addPopoutButton = false, popoutSelector=``, width='80%', height='80%', top='10%', left='10%', showSlow = true, cancelClasses='', hideOnX = false) {
+function find_or_create_generic_draggable_window(id, titleBarText, addLoadingIndicator = true, addPopoutButton = false, popoutSelector=``, width='80%', height='80%', top='10%', left='10%', showSlow = true, cancelClasses='', hideOnX = false, alwaysDisplayTitle = false) {
   console.log(`find_or_create_generic_draggable_window id: ${id}, titleBarText: ${titleBarText}, addLoadingIndicator: ${addLoadingIndicator}, addPopoutButton: ${addPopoutButton}`);
   const existing = id.startsWith("#") ? $(id) : $(`#${id}`);
   if (existing.length > 0) {
@@ -2834,7 +2834,8 @@ function find_or_create_generic_draggable_window(id, titleBarText, addLoadingInd
     },
     cancel: cancelClasses
   });
-
+  if(alwaysDisplayTitle)
+    titleBar.prepend(`<div class="title_bar_text">${titleBarText}</div>`);
   titleBar.on('dblclick', function(event) {
     const titleBar = $(event.currentTarget);
     if (titleBar.hasClass("restored")) {
@@ -2855,7 +2856,8 @@ function find_or_create_generic_draggable_window(id, titleBarText, addLoadingInd
 
       titleBar.addClass("minimized");
       titleBar.removeClass("restored");
-      titleBar.prepend(`<div class="title_bar_text">${titleBarText}</div>`);
+      if (!alwaysDisplayTitle)
+        titleBar.prepend(`<div class="title_bar_text">${titleBarText}</div>`);
     } else if(titleBar.hasClass("minimized")) {
       container.data("prev-minimized-top", container.css("top"));
       container.data("prev-minimized-left", container.css("left"));
@@ -2865,7 +2867,8 @@ function find_or_create_generic_draggable_window(id, titleBarText, addLoadingInd
       container.css("left", container.data("prev-left"));
       titleBar.addClass("restored");
       titleBar.removeClass("minimized");
-      titleBar.find(".title_bar_text").remove();
+      if (!alwaysDisplayTitle)
+        titleBar.find(".title_bar_text").remove();
       if(container.find('#sourceChapterIframe').length>0){
         $('#sourceChapterIframe')[0].contentWindow.scrollTo(0, container.data("prev-scroll"));
       }
