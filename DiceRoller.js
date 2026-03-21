@@ -378,7 +378,7 @@ const rollTypeKeys = Object.freeze({
     'to hit': { 'char': 'hitRoll', 'buff':'tohit'},
     'attack': { 'char': 'hitRoll', 'buff':'tohit'},
     'tohit': { 'char': 'hitRoll', 'buff':'tohit'},
-    'check': { 'char': 'checkRoll', 'buff':'check'},
+    'check': { 'char': 'checkRoll', 'buff':'check'}
 });
 
 function adjustRollWithRollBuffs(expression, rollType, rollButton){

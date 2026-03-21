@@ -1974,15 +1974,18 @@ class JournalManager{
 		
 	}
 	add_journal_tooltip_targets(target){
+		const monsterIds = [];
 		$(target).find('.tooltip-hover').each(function(){
-			let self = this;
-			if($(self).hasClass('note-tooltip')){
-					let noteId = $(self).attr('data-id');
-					if(noteId.replace(/[-+*&<>]/gi, '') == $(self).text().replace(/[-+*&<>\s]/gi, '')){
-						noteId = Object.keys(window.JOURNAL.notes).filter(d=> window.JOURNAL.notes[d]?.title?.trim()?.toLowerCase()?.replace(/[-+*&<>\s]/gi, '')?.includes($(self).text()?.trim()?.toLowerCase()?.replace(/[-+*&<>\s]/gi, '')))[0]
-					}
+			const self = this;
+			const $self = $(self);
+			$self.css('display:inline-block');
+			if($self.hasClass('note-tooltip')){
+				let noteId = $self.attr('data-id');
+				if(noteId.replace(/[-+*&<>]/gi, '') == $self.text().replace(/[-+*&<>\s]/gi, '')){
+					noteId = Object.keys(window.JOURNAL.notes).filter(d=> window.JOURNAL.notes[d]?.title?.trim()?.toLowerCase()?.replace(/[-+*&<>\s]/gi, '')?.includes($self.text()?.trim()?.toLowerCase()?.replace(/[-+*&<>\s]/gi, '')))[0]
+				}
 					
-				$(self).off('click.openNote').on('click.openNote', function(event){
+				$self.off('click.openNote').on('click.openNote', function(event){
 					event.preventDefault();
 					event.stopPropagation();
 					if(noteId != undefined)
@@ -2012,13 +2015,13 @@ class JournalManager{
 
 			
 					let hoverNoteTimer;
-					$(self).on({
+					$self.on({
 						'mouseover': function(e){
 							hoverNoteTimer = setTimeout(function () {
 								build_and_display_sidebar_flyout(e.clientY, async function (flyout) {
 						            flyout.addClass("prevent-sidebar-modal-close"); // clicking inside the tooltip should not close the sidebar modal that opened it
 						            flyout.addClass('note-flyout');
-						            $(self).toggleClass('loading-tooltip', false);
+						            $self.toggleClass('loading-tooltip', false);
 						            const tooltipHtml = $(noteHover);
 									await window.JOURNAL.translateHtmlAndBlocks(tooltipHtml, noteId);
 									add_journal_roll_buttons(tooltipHtml);
@@ -2095,22 +2098,117 @@ class JournalManager{
 
 				return;	
 			}
-			
-
-
-			if(!$(self).attr('data-tooltip-href')){
-				
+			if(!$self.attr('data-tooltip-href')){
 				if(self.href.match(/\/spells\/[0-9]|\/magic-items\/[0-9]|\/monsters\/[0-9]|\/sources\//gi)){
-					$(self).attr('data-moreinfo', `${self.href}`);
+					$self.attr('data-moreinfo', `${self.href}`);
 				}	
 				window.JOURNAL.getDataTooltip(self.href, function(url, typeClass){
-					$(self).attr('data-tooltip-href', url);
-					$(self).toggleClass(`${typeClass}-tooltip`, true);
-				});
+					$self.attr('data-tooltip-href', url);
+					$self.toggleClass(`${typeClass}-tooltip`, true);
+				});	
+			}
+			if ($self.hasClass('monster-tooltip')) {
+				$self.css('display', 'inline-block')
+				const monsterId = $self.attr('data-tooltip-href').match(/monsters\/(\d+)/i)?.[1];
+				$self.attr('data-monsterid', monsterId);
+				monsterIds.push(monsterId);
+				window.JOURNAL.addTokenDragToMonsterLink(self);
 			}
 		});
+		if (monsterIds.length>0)
+			fetch_and_cache_monsters(monsterIds);
 	}
-
+	addTokenDragToMonsterLink(target){
+		const $target = $(target);
+		const monsterId = $target.attr('data-monsterid');
+		if (monsterId) {
+			const defaultSize = window.CURRENT_SCENE_DATA.hpps / 1 / window.ZOOM;
+			const tokenIcon = $(`<span class="material-symbols-outlined" style="user-select: none;display: inline-block;cursor: pointer;font-size: 91%;margin-left: 1px;padding-bottom: 3px;vertical-align: middle;">person_add</span>`)
+			$target.after(tokenIcon);
+			let tokenImgSrc;
+			tokenIcon.off('pointerup.droptoken').on('pointerup.droptoken',function(event){
+				if (window.cached_monster_items[monsterId]){
+					create_and_place_token(window.cached_monster_items[monsterId], event.shiftKey)
+					return;
+				}
+				fetch_and_cache_monsters([monsterId], function () {
+					create_and_place_token(window.cached_monster_items[monsterId], event.shiftKey)
+				});
+			})
+			tokenIcon.draggable({
+				addClasses: false,
+				scroll: true,
+				cursorAt: { left: 0, top: 0 },
+				containment: "#windowContainment",
+				distance: 5,
+				appendTo: 'body',
+				zIndex: 10000000,
+				helper: (event) => {
+					const helper = $(`<img class='draggable-token-creation' style='pointer-events:none;width:${defaultSize}; height:${defaultSize}'; src='${defaultAvatarUrl}'/>`)
+					const setHelper = () => {
+						tokenImgSrc = random_image_for_item(window.cached_monster_items[monsterId]);
+						helper.attr("data-src", tokenImgSrc);
+						if (tokenImgSrc.startsWith('above-bucket-not-a-url')) {
+							getAvttStorageUrl(tokenImgSrc).then((url) => {
+								helper.attr("src", url);
+							})
+						}
+						else {
+							helper.attr("src", tokenImgSrc);
+						}
+						let [helperWidth, helperHeight] = get_helper_size(window.cached_monster_items[monsterId])
+						$(helper).css({
+							'width': `${helperWidth}px`,
+							'height': `${helperHeight}px`
+						});
+					}
+					if (window.cached_monster_items[monsterId]) {
+						setHelper();
+						return helper;
+					}
+					fetch_and_cache_monsters([monsterId], function () {
+						setHelper();
+					});
+					return helper;
+				},
+				start: function (event, ui) {
+					$("#resizeDragMon, .note:has(iframe) form .mce-container-body, #sheet").append($('<div class="iframeResizeCover"></div>'));;
+					window.orig_zoom = window.ZOOM;
+				},
+				drag: function (event, ui) {
+					if (event.shiftKey) {	
+						$(ui.helper).css("opacity", 0.5);
+					} else {
+						$(ui.helper).css("opacity", 1);
+					}
+					const setHelperPosition = () => {
+						let [helperWidth, helperHeight] = get_helper_size(window.cached_monster_items[monsterId])
+						ui.position = {
+							left: (ui.position.left - (helperWidth / 2)),
+							top: (ui.position.top - (helperHeight / 2))
+						};
+					}
+					if (window.cached_monster_items[monsterId]) {
+						setHelperPosition();
+						return;
+					}
+				},
+				stop: function (event, ui) {
+					$(".iframeResizeCover").remove();
+					let droppedOn = $(document.elementFromPoint(event.clientX, event.clientY));
+					if (droppedOn.closest('#VTT').length > 0) {
+						if (window.cached_monster_items[monsterId]) {
+							create_and_place_token(window.cached_monster_items[monsterId], event.shiftKey, tokenImgSrc, event.pageX, event.pageY)
+							return;
+						}
+						fetch_and_cache_monsters([monsterId], function () {
+							create_and_place_token(window.cached_monster_items[monsterId], event.shiftKey)
+						});
+					}
+				},
+			})
+		}
+	}
 	async getDataTooltip(url, callback){
 		if(window.spellIdCache == undefined){
 			window.spellIdCache = {};
@@ -4714,8 +4812,34 @@ function render_source_chapter_in_iframe(url) {
 			iframeContents.find("body").css('background', '#f9f9f9 url(../images/background_texture.png) repeat');
 		}
 
-		iframeContents.find("body").append($(`<style id='ddbSourceStyles'>
+		setTimeout(()=>{
+			const monsterIds = [];
+			iframeContents.find('.monster-tooltip').each((i, ele) => {
+				const $target = $(ele);
+				const monsterId = $target.attr('data-tooltip-href').match(/monsters\/(\d+)/i)?.[1];
+				if(monsterId){
+					monsterIds.push(monsterId);
+					const tokenIcon = $(`<span class="material-symbols-outlined" style="user-select: none;display: inline-block;cursor: pointer;font-size: 91%;margin-left: 1px;padding-bottom: 3px;vertical-align: middle;">person_add</span>`)
+					$target.after(tokenIcon);
+					tokenIcon.off('pointerup.droptoken').on('pointerup.droptoken', function (event) {
+						if (window.top.cached_monster_items[monsterId]) {
+							create_and_place_token(window.cached_monster_items[monsterId], event.shiftKey)
+							return;
+						}
+						fetch_and_cache_monsters([monsterId], function () {
+							create_and_place_token(window.top.cached_monster_items[monsterId], event.shiftKey)
+						});
+					})
+				}
+			})
+			if(monsterIds.length >0)
+				fetch_and_cache_monsters(monsterIds);
+		}, 2000)
 
+		iframeContents.find("head").append('<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons"></link>');
+		iframeContents.find("head").append('<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />');
+
+		iframeContents.find("body").append($(`<style id='ddbSourceStyles'>
 		body, html body.responsive-enabled{
 			background: var(--theme-page-bg-color,#f9f9f9) !important;
 			background-position: center 0px !important;
