@@ -27,7 +27,9 @@ class DDBApi {
       return response;
     }
     if(response.status == 410){
-      showError(new Error(`DDB 410 Error`), `<b>Try clearing <div style="backdrop-filter: brightness(0.8);padding: 0px 3px;display: inline-block;border-radius: 5px;">${navigator.userAgent.indexOf("Firefox") != -1 ? `temporary cached files and pages` : `cached images and files`}</div> and restarting the browser.</b>`, `<br/><b>As long as you do <span style='color: #900;'>not</span> clear <div style="backdrop-filter: brightness(0.8);padding: 0px 3px;display: inline-block;border-radius: 5px;">cookies and other site data</div> this should not remove any AboveVTT data.`);
+      const error = new Error(`DDB 410 Error`);
+      showError(error, `<b>Try clearing <div style="backdrop-filter: brightness(0.8);padding: 0px 3px;display: inline-block;border-radius: 5px;">${navigator.userAgent.indexOf("Firefox") != -1 ? `temporary cached files and pages` : `cached images and files`}</div> and restarting the browser.</b>`, `<br/><b>As long as you do <span style='color: #900;'>not</span> clear <div style="backdrop-filter: brightness(0.8);padding: 0px 3px;display: inline-block;border-radius: 5px;">cookies and other site data</div> this should not remove any AboveVTT data.`);
+      throw error;
     }
     else{
       // We have an error so let's try to parse it
@@ -40,7 +42,9 @@ class DDBApi {
       if(type == 'EncounterLimitException'){
         alert("Encounter limit reached. AboveVTT needs 1 encounter slot free to join as DM. If you are on a free DDB account you are limited to 8 encounter slots. Please try deleting an encounter.")
       }
-      showError(new Error(`DDB API Error: ${type} ${messages}`));
+      const error = new Error(`DDB API Error: ${type} ${messages}`);
+      showError(error);
+      throw error;
     }
 
   }

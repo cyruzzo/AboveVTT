@@ -1839,12 +1839,19 @@ class JournalManager{
 
 		})
 	}
+	
 	display_note(id, statBlock = false){
 		let self=this;
 		let noteAlreadyOpen = $(`div.note[data-id='${id}']`).length>0;
 		
 		let note= noteAlreadyOpen ? $(`div.note[data-id='${id}']`) : $(`<div class='note' data-id='${id}'></div>`);
-		
+		const note_container = find_or_create_generic_draggable_window(`noteWindow_${id}`, self.notes[id].title, false, true, `div.note[data-id='${id}']`, "860px", "600px", undefined, undefined, false, undefined, false, true)
+		//to do adjust so these attr/classes are no longer needed - they are hold over from when we used dialog instead of our own draggable window
+		note_container.attr("role", "dialog");
+		note_container.addClass(['ui-dialog', 'ui-corner-all', 'ui-widget', 'ui-widget-content', 'ui-front', 'ui-draggable', 'ui-resizable'])
+		note_container.find('.title_bar').off('dblclick.adjustClasses').on('dblclick.adjustClasses', function (event) {
+			note_container.toggleClass(['ui-dialog', 'ui-corner-all', 'ui-widget', 'ui-widget-content', 'ui-front', 'ui-draggable', 'ui-resizable']);
+		});
 		if(!noteAlreadyOpen){
 			note.attr('title',self.notes[id].title);
 			if(window.DM){
@@ -1928,7 +1935,7 @@ class JournalManager{
 				
 				let edit_btn=$("<button>Edit</button>");
 				edit_btn.click(function(){
-					note.remove();
+					note_container.remove();
 					window.JOURNAL.edit_note(id, statBlock);
 				});
 				
@@ -1938,13 +1945,12 @@ class JournalManager{
 				
 			}
 		}
-		
 		let note_text= noteAlreadyOpen ? note.find('.note-text') : $("<div class='note-text'/>");
 		if(noteAlreadyOpen){
 			note_text.empty();
 		}
 		note_text.append(self.notes[id].text); // valid tags are controlled by tinyMCE.init()
-		this.translateHtmlAndBlocks(note_text, id).then(() => {
+		this.translateHtmlAndBlocks(note_text, id).then(() => {	
 			add_journal_roll_buttons(note_text);
 			this.add_journal_tooltip_targets(note_text);
 			this.block_send_to_buttons(note_text);
@@ -1956,67 +1962,13 @@ class JournalManager{
 				note.append(note_text);
 			}
 			note.find("a").attr("target", "_blank");
-			if (!noteAlreadyOpen) {
-				note.dialog({
-					draggable: true,
-					width: 860,
-					height: 600,
-					position: {
-						my: "center",
-						at: "center-200",
-						of: window
-					},
-					close: function (event, ui) {
-						$(this).remove();
-					}
-				});
-				$("[role='dialog']").draggable({
-					containment: "#windowContainment",
-					start: function () {
-						$("#resizeDragMon, .note:has(iframe) form .mce-container-body, #sheet").append($('<div class="iframeResizeCover"></div>'));
-					},
-					stop: function () {
-						$('.iframeResizeCover').remove();
-					}
-				});
-				$("[role='dialog']").resizable({
-					start: function () {
-						$("#resizeDragMon, .note:has(iframe) form .mce-container-body, #sheet").append($('<div class="iframeResizeCover"></div>'));
-					},
-					stop: function () {
-						$('.iframeResizeCover').remove();
-					}
-				});
-				frame_z_index_when_click(note.parent(), true);
-				let btn_popout = $(`<div class="popout-button journal-button"><svg xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 0 24 24" width="18px" fill="#000000"><path d="M0 0h24v24H0V0z" fill="none"></path><path d="M18 19H6c-.55 0-1-.45-1-1V6c0-.55.45-1 1-1h5c.55 0 1-.45 1-1s-.45-1-1-1H5c-1.11 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-6c0-.55-.45-1-1-1s-1 .45-1 1v5c0 .55-.45 1-1 1zM14 4c0 .55.45 1 1 1h2.59l-9.13 9.13c-.39.39-.39 1.02 0 1.41.39.39 1.02.39 1.41 0L19 6.41V9c0 .55.45 1 1 1s1-.45 1-1V4c0-.55-.45-1-1-1h-5c-.55 0-1 .45-1 1z"></path></svg></div>"`);
-				note.parent().append(btn_popout);
-				btn_popout.click(function () {
-					let uiId = $(this).siblings(".note").attr("id");
-					let journal_text = $(`#${uiId}.note .note-text`)
-					let title = self.notes[id]?.title?.trim() || $("#resizeDragMon .avtt-stat-block-container .mon-stat-block__name-link").text();
-					popoutWindow(title, note, journal_text.width(), journal_text.height());
-					removeFromPopoutWindow(title, ".visibility-container");
-					removeFromPopoutWindow(title, ".ui-resizable-handle");
-					$(window.childWindows[title].document).find("head").append(`<style id='noteStyles'>
-					body div.note[id^="ui-id"]{
-						height: 100% !important;
-					    max-height: 100% !important;
-					    overflow: auto !important;
-					}
-				</stlye>`);
-					if (!window.DM)
-						$(window.childWindows[title].document).find("body").addClass('body-rpgcharacter-sheet');
-
-					$(this).siblings(".ui-dialog-titlebar").children(".ui-dialog-titlebar-close").click();
-				});
-				note.off('click').on('click', '.tooltip-hover[href*="https://www.dndbeyond.com/sources/dnd/"], .int_source_link ', function (event) {
-					event.preventDefault();
-					render_source_chapter_in_iframe(event.target.href);
-				});
-				note.parent().css('height', '600px');
-			} else {
-				frame_z_index_when_click(note.parent());
-			}
+			note_container.append(note);
+			
+			note.off('click').on('click', '.tooltip-hover[href*="https://www.dndbeyond.com/sources/dnd/"], .int_source_link ', function (event) {
+				event.preventDefault();
+				render_source_chapter_in_iframe(event.target.href);
+			});
+		
 			this.positionNotePins(id, note_text);
 		});	
 		
@@ -3181,7 +3133,8 @@ class JournalManager{
 		}
 	}
 	edit_note(id, statBlock = false){
-		$(`div.note[data-id='${id}']`)?.dialog("close");
+		$(`.ui-dialog:not(.resize_drag_window) div.note[data-id='${id}']`)?.dialog("close");
+		$(`.resize_drag_window#${id}`).remove();
 		this.close_all_notes();
 		let self=this;
 		
@@ -4039,40 +3992,6 @@ class JournalManager{
 
 			.ddbc-creature-block:after {
 			    bottom: -3px
-			}
-			@font-face {
-			    font-family: Scala Sans Offc;
-			    font-style: normal;
-			    font-weight: 700;
-			    src: url(https://media.dndbeyond.com/encounter-builder/static/media/ScalaSansOffc-Bold.048d2d142baf798dc56f.ttf) format("truetype")
-			}
-
-			@font-face {
-			    font-family: Scala Sans Offc;
-			    font-style: normal;
-			    font-weight: 400;
-			    src: url(https://media.dndbeyond.com/encounter-builder/static/media/ScalaSansOffc.0eea070d2279b1a6be23.ttf) format("truetype")
-			}
-
-			@font-face {
-			    font-family: Scala Sans Offc;
-			    font-style: italic;
-			    font-weight: 700;
-			    src: url(https://media.dndbeyond.com/encounter-builder/static/media/ScalaSansOffc-BoldIta.740e4d6d85a09a9cd0a0.ttf) format("truetype")
-			}
-
-			@font-face {
-			    font-family: Scala Sans Offc;
-			    font-style: italic;
-			    font-weight: 400;
-			    src: url(https://media.dndbeyond.com/encounter-builder/static/media/ScalaSansOffc-Ita.86c4513e1c4b869189c2.ttf) format("truetype")
-			}
-
-			@font-face {
-			    font-family: MrsEavesSmallCaps;
-			    font-style: normal;
-			    font-weight: 100;
-			    src: url(https://media.dndbeyond.com/encounter-builder/static/media/MrsEavesSmallCaps.1744d7a566b5a2ccca6c.ttf) format("truetype")
 			}
 			@font-face {
 			  font-family: "Tiamat Condensed SC Regular";

@@ -315,7 +315,7 @@ function getRollData(rollButton){
       rollTitle = $(rollButton).closest(`.ct-skills__item`).find('.ct-skills__col--skill').text();
     } else if($(rollButton).parents(`[class*='initiative-box'],  .ct-combat-tablet__extra--initiative, .ct-combat__summary-group--initiative`).length > 0 || $(rollButton).closest('[class*="styles_boxMobile"]').find('[class*="styles_labelMobile"]').text() == "Initiative"){
       rollTitle = 'Initiative';
-      rollType = 'roll'
+      rollType = 'check'
     } else if($(rollButton).parents(`[class*='__damage']`).length > 0){
       rollType = 'damage'
       if($(rollButton).parents(`[class*='damage-effect__healing']`).length > 0){
@@ -387,55 +387,49 @@ function adjustRollWithRollBuffs(expression, rollType, rollButton){
     
     const rollBuffs = window.rollBuffs;
     const charRollKey = rollTypeKeys[rollType]?.char;
-    const rollBuffKey = rollTypeKeys[rollType]?.buff;
+    const rollBuffKey = rollTypeKeys[rollType]?.buff || rollType;
     if(charRollKey != undefined ){
-        const addToRoll = window.CHARACTER_AVTT_SETTINGS?.[charRollKey];// used to check for custom entered numbers in character roll settings
-        const rollPB = addToRoll?.replace('PB', getPB());
-        const addToRollValid = (addToRoll?.match(allDiceRegex) || !isNaN(parseInt(rollPB)));
+        const addToRoll = window.CHARACTER_AVTT_SETTINGS?.[charRollKey]?.replace('PB', getPB());// used to check for custom entered numbers in character roll settings
+        const addToRollValid = (addToRoll?.match(allDiceRegex));
         if(addToRollValid)
-            expression = `${expression}${addToRoll.match(/[+-]/g) ? '' : '+'}${rollPB}`;
+            expression = `${expression}${addToRoll.match(/[+-]/g) ? '' : '+'}${addToRoll}`;
     }
 
     if (typeof rollBuffs == 'undefined') 
         return expression;
-
+    const $rollButton = $(rollButton);
     for (let i in rollBuffs) {
         const currBuffSet = rollBuffs[i];
         const isMultiOption = Array.isArray(currBuffSet);
         const targetBuff = buffsDebuffs?.[currBuffSet?.[0]];
-        const targetBuffOptions = targetBuff?.multiOptions?.[currBuffSet?.[1]];
-
-        if (isMultiOption && targetBuffOptions[rollBuffKey] != '0') {
-            expression = `${expression}${targetBuffOptions[rollBuffKey].replace('PB', getPB())}`
-            }
-        else if (!isMultiOption && buffsDebuffs[currBuffSet][rollBuffKey] != '0') {
-            expression = `${expression}${buffsDebuffs[currBuffSet][rollBuffKey].replace('PB', getPB())}`
-            }
-
-    
-        if (isMultiOption && targetBuffOptions.replace != undefined) {
-            if (targetBuffOptions.replaceType != undefined) {
-                if (targetBuffOptions.replaceType[rollType] != undefined && $(rollButton).closest(targetBuffOptions.replaceType[rollType]).length > 0) {
-                    expression = `${expression.replace(targetBuffOptions.replace, targetBuffOptions.newRoll)}`
-                }
-            }
-            else {
-                expression = `${expression.replace(targetBuffOptions.replace, targetBuffOptions.newRoll)}`
-            }
+        const targetMultiOptions = targetBuff?.multiOptions?.[currBuffSet?.[1]];
+        const multiOptionAdd = targetMultiOptions?.[rollBuffKey];
+        const singleTarget = buffsDebuffs[currBuffSet];
+        const singleOptionAdd = singleTarget?.[rollBuffKey];
+        if (isMultiOption && multiOptionAdd && multiOptionAdd != '0') {
+            expression = `${expression}${multiOptionAdd}`
         }
-        else if (!isMultiOption && buffsDebuffs[currBuffSet].replace != undefined) {
-            if (buffsDebuffs[currBuffSet].replaceType != undefined) {
-                if (buffsDebuffs[currBuffSet].replaceType[rollType] != undefined && $(rollButton).closest(buffsDebuffs[currBuffSet].replaceType[rollType]).length > 0) {
-                    expression = `${expression.replace(buffsDebuffs[currBuffSet].replace, buffsDebuffs[currBuffSet].newRoll)}`
-                }
-            }
-            else {
-                expression = `${expression.replace(buffsDebuffs[currBuffSet].replace, buffsDebuffs[currBuffSet].newRoll)}`
-            }
+        else if (!isMultiOption && singleOptionAdd && singleOptionAdd != '0') {
+            expression = `${expression}${singleOptionAdd}`
+        }
+
+        const multiReplaceRegex = targetMultiOptions?.replace;
+        const multiReplaceSelector = targetMultiOptions?.replaceType
+        const validMultiButton = multiReplaceSelector?.[rollType] != undefined && $rollButton.closest(multiReplaceSelector[rollType]).length > 0
+        
+        const singleReplaceRegex = singleTarget?.replace;
+        const singleReplaceSelector = singleTarget?.replaceType?.[rollType];
+        const validSingleButton = singleReplaceSelector != undefined && $rollButton.closest(singleReplaceSelector).length > 0;
+       
+        if (multiReplaceRegex != undefined && (multiReplaceSelector == undefined || validMultiButton)) {
+            expression = `${expression.replace(multiReplaceRegex, targetMultiOptions.newRoll)}`   
+        }
+        else if (!isMultiOption && singleReplaceRegex != undefined && (singleReplaceSelector == undefined || validSingleButton)){
+            expression = `${expression.replace(singleReplaceRegex, singleTarget.newRoll)}` 
         }
     }
-    
-    return expression;
+    const PB = getPB();
+    return expression.replaceAll('PB', PB); 
 }
 class DiceRoller {
     
