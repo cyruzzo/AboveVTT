@@ -300,27 +300,40 @@ class DDBApi {
       return characterIds;
     }
 
-
-    try {
-      window.playerUsers = await DDBApi.fetchCampaignCharacters(campaignId);
-      characterIds = window.playerUsers.map(c => c.id);
-    } 
-    catch (error) {
+    const maxRetries = 3;
+    const baseDelay = 1000;
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
       try {
-        // This is what the campaign page calls
-        window.playerUsers = await DDBApi.fetchActiveCharacters(campaignId);
-        window.playerUsers.forEach(c => {
-          if (!characterIds.includes(c.id)) {
-            characterIds.push(c.id);
-          }
-        });
-      } 
+        window.playerUsers = await DDBApi.fetchCampaignCharacters(campaignId);
+        characterIds = window.playerUsers.map(c => c.id);
+        break;
+      }
       catch (error) {
-        console.warn("fetchCampaignCharacterIds caught an error trying to collect ids from fetchActiveCharacters", error);
-      } 
+        try {
+          // This is what the campaign page calls
+          window.playerUsers = await DDBApi.fetchActiveCharacters(campaignId);
+          window.playerUsers.forEach(c => {
+            if (!characterIds.includes(c.id)) {
+              characterIds.push(c.id);
+            }
+          });
+          break;
+        }
+        catch (fallbackError) {
+          if (attempt < maxRetries) {
+            const delay = Math.min(baseDelay * Math.pow(2, attempt - 1), 8000);
+            console.warn(`fetchCampaignCharacterIds: both endpoints failed (attempt ${attempt}/${maxRetries}), retrying in ${delay}ms...`, fallbackError);
+            await new Promise(resolve => setTimeout(resolve, delay));
+          } else {
+            console.warn("fetchCampaignCharacterIds: failed to fetch campaign characters after all retries", fallbackError);
+            showError(fallbackError, "Failed to load campaign characters. Please refresh the page.");
+            return characterIds;
+          }
+        }
+      }
     }
     let playerUser = window.playerUsers.filter(d=> d.id == window.PLAYER_ID)[0]?.userId;
-    window.myUser = playerUser ? playerUser : window.CAMPAIGN_INFO.dmId; 
+    window.myUser = playerUser ? playerUser : window.CAMPAIGN_INFO.dmId;
     return characterIds;
   }
 
