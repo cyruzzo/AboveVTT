@@ -626,7 +626,8 @@ class MessageBroker {
 					notify_gamelog();
 					self.handle_injected_data(msg);
 				}
-			}
+				return;
+			} else
 			if (msg.eventType == "dice/roll/fulfilled") {
 				notify_gamelog();
 				const gamelogItem = $(`ol[class*='-GameLogEntries'] li`).first();
@@ -908,7 +909,7 @@ class MessageBroker {
 					}
 
 				}
-
+				return;
 			}
 			// WE NEED TO IGNORE CERTAIN MESSAGE IF THEY'RE NOT FROM THE CURRENT SCENE
 			if (window.CURRENT_SCENE_DATA == undefined || (msg.sceneId && window.CURRENT_SCENE_DATA && msg.sceneId !== window.CURRENT_SCENE_DATA.id && [
@@ -928,17 +929,17 @@ class MessageBroker {
 			if (msg.eventType == "character-sheet/item-shared/fulfilled"){
 				DDBApi.debounceGetPartyInventory();
 				return;
-			}
+			} else
 			if (msg.eventType == "custom/myVTT/token" && (msg.sceneId == window.CURRENT_SCENE_DATA.id || msg.data.id in window.TOKEN_OBJECTS)) {
 				self.handleToken(msg);
-			}
+			} else
 			if(msg.eventType=="custom/myVTT/delete_token"){
 				let tokenid=msg.data.id;
 				if(tokenid in window.TOKEN_OBJECTS){
 					window.TOKEN_OBJECTS[tokenid].options.deleteableByPlayers = true;
 					window.TOKEN_OBJECTS[tokenid].delete(false);
 				}
-			}
+			} else
 			if(msg.eventType == "custom/myVTT/createtoken"){
 				if(window.DM){
 					let left = parseInt(msg.data.left);
@@ -949,16 +950,16 @@ class MessageBroker {
 						place_token_in_center_of_view(msg.data);
 					}
 				}
-			}
+			} else
 			if(msg.eventType == "custom/myVTT/deleteExplore"){
 				if(!window.DM){
 					deleteExploredScene(msg.data.sceneId)
 				}
-			}
+			} else
 			if (msg.eventType == "custom/myVTT/campaignData"){
 				window.AVTT_CAMPAIGN_INFO = msg.data;
 				window.MB.checkHideSceneFromPlayers();
-			}
+			} else
 			if(msg.eventType == "custom/myVTT/place-extras-token"){
 				if(window.DM){
 					let left = parseInt(msg.data.centerView.x);
@@ -968,7 +969,7 @@ class MessageBroker {
 						create_and_place_token(window.cached_monster_items[monsterId], undefined, undefined, left, top, undefined, undefined, true, msg.data.extraOptions)
 					});
 				}
-			}
+			} else
 			if(msg.eventType == "custom/myVTT/createTimer"){
 				const {type, message, startTime, duration, remove} = msg.data;
 				if(type === "gamelog"){
@@ -985,11 +986,11 @@ class MessageBroker {
 					}
 					create_combat_tracker_timer(duration, startTime)
 				}
-			}
+			} else
 			if (msg.eventType == "custom/myVTT/open-url-embed"){
 				const url = msg.data;
 				display_url_embeded(url);
-			}
+			} else
 			if (msg.eventType === "custom/myVTT/fetchscene") {
 
 				if(msg.data.sceneid.players){
@@ -1018,7 +1019,7 @@ class MessageBroker {
 					
 				}
 				delete window.startupSceneId; // we only want to prevent a double load of the initial scene, so we want to delete this no matter what.
-			}
+			} else
 
 			if(msg.eventType == "custom/myVTT/update_dm_player_scenes"){
 				if(window.DM){
@@ -1026,35 +1027,35 @@ class MessageBroker {
 					did_update_scenes();
 				}
 				
-			}
+			} else
 			if (msg.eventType == "custom/myVTT/scene") {
 				self.handleScene(msg);
-			}
+			} else
 			if (msg.eventType == "custom/myVTT/syncmeup") {
 				self.handleSyncMeUp(msg);
-			}
+			} else
 			if (msg.eventType == "custom/myVTT/audioPlayingSyncMe") {
 				self.handleAudioPlayingSync(msg);
-			}
+			} else
 			if(msg.eventType == ('custom/myVTT/character-update')){
 				update_pc_with_data(msg.data.characterId, msg.data.pcData);
-			}
+			} else
 			if(msg.eventType == ('character-sheet/character-update/fulfilled')) {
 				console.log('update_pc character-sheet/character-update/fulfilled', msg);
 				update_pc_with_api_call(msg.data?.characterId);
-			}
+			} else
 
 			if (msg.eventType == "custom/myVTT/reveal") {
 				window.REVEALED.push(msg.data);
 				redraw_fog();
 				check_token_visibility(); // CHECK FOG OF WAR VISIBILITY OF TOKEN
-			}
+			} else
 
 			if(msg.eventType== "custom/myVTT/fogdata"){ // WE RESEND ALL THE FOG EVERYTIME NOW
 				window.REVEALED=msg.data;
 				redraw_fog();
 				check_token_visibility();
-			}
+			} else
 
 			if (msg.eventType == "custom/myVTT/drawing") {
 				window.DRAWINGS.push(msg.data);
@@ -1065,7 +1066,7 @@ class MessageBroker {
 				redraw_drawn_light();
 				redraw_light();
 
-			}
+			} else
 
 			if(msg.eventType=="custom/myVTT/drawdata"){
 				window.DRAWINGS=msg.data;
@@ -1075,27 +1076,27 @@ class MessageBroker {
 				redraw_text();
 				redraw_drawn_light();
 				redraw_light();
-			}
+			} else
 			if(msg.eventType=="custom/myVTT/forceRedrawLight"){
 				redraw_light(true);
-			}
+			} else
 			if (msg.eventType == "custom/myVTT/chat") { // DEPRECATED!!!!!!!!!
 				if(!window.NOTIFIEDOLDVERSION){
 					alert('One of the player is using AboveTT 0.0.51 or less. Please update everyone to 0.0.52 or higher');
 					window.NOTIFIEDOLDVERSION=true;
 				}
-			}
+			} else
 			if (msg.eventType == "custom/myVTT/CT" && (!window.DM)) {
 				self.handleCT(msg.data);
-			}
+			} else
 			if (msg.eventType == "custom/myVTT/highlight") {
 				if (msg.data.id in window.TOKEN_OBJECTS) {
 					window.TOKEN_OBJECTS[msg.data.id].highlight(true);
 				}
-			}
+			} else
 			if (msg.eventType == "custom/myVTT/pointer") {
 				set_pointer(msg.data,(!msg.data.dm || (msg.data.dm && !msg.data.center_on_ping)));
-			}
+			} else
 
 			if (msg.eventType == "custom/myVTT/lock") {
 				if (window.DM)
@@ -1131,7 +1132,7 @@ class MessageBroker {
 					}
 
 				}
-			}
+			} else
 			if (msg.eventType == "custom/myVTT/unlock") {
 				if (window.DM)
 				{
@@ -1145,7 +1146,7 @@ class MessageBroker {
 					$("#sheet iframe").css('opacity', '1');
 					$("#sheet iframe").attr('src', function(i, val) { return val; }); // RELOAD IFRAME
 				}
-			}
+			} else
 
 			if (msg.eventType == "custom/myVTT/player_sheet_closed") {
 				if (window.DM)
@@ -1154,7 +1155,7 @@ class MessageBroker {
 					$("[id='PlayerSheet"+getPlayerIDFromSheet(msg.data.player_sheet)+"']").attr('data-changed', 'true');
 					return;
 				}
-			}
+			} else
 			
 			
 			if(msg.eventType=="custom/myVTT/JournalChapters"){
@@ -1163,8 +1164,33 @@ class MessageBroker {
 					window.JOURNAL.build_journal();
 					window.JOURNAL.persist(true);
 				}
-			}
-			
+			} else
+
+			if(msg.eventType=="custom/myVTT/Popup"){
+				if(!window.DM &&
+				   !(msg.data.from && msg.data.from != window.PLAYER_ID) &&
+				   !(msg.data.to && msg.data.to != "everyone" && msg.data.to != window.PLAYER_ID)) {
+					if(msg.data.delete == true){
+						$.magnificPopup.close();
+					} else {
+						const popup = {
+							items: { src: msg.data.src },
+							type: (msg.data.type || 'image'),
+							closeOnContentClick: true							
+						};
+						if(msg.data.timed) {
+							popup.callbacks = {
+								open: function() {
+									var self = this;
+									setTimeout(function() { self.close() }, msg.data.timed);
+								}
+							};
+						}
+						$.magnificPopup.open(popup);
+					}
+				}
+			} else
+							
 			if(msg.eventType=="custom/myVTT/note"){
 				if(!window.DM || (msg.data.from && msg.data.from != window.PLAYER_ID)){
 					if(msg.data.delete == true){
@@ -1210,7 +1236,7 @@ class MessageBroker {
 					window.JOURNAL.persist(true);
 
 				}
-			}
+			} else
 			if(msg.eventType=="custom/myVTT/notesSync"){
 				if(!window.DM){
 					for(let i in msg.data.notes){
@@ -1225,11 +1251,11 @@ class MessageBroker {
 					window.JOURNAL.build_journal();			
 					window.JOURNAL.persist(true);	
 				}
-			}
+			} else
 			if(msg.eventType=="custom/myVTT/DMAvatar"){
 				dmAvatarUrl = msg.data.avatar;
 				$(`.player-card[data-player-id=''] .player-token img`).attr('src', dmAvatarUrl);
-			}
+			} else
 		
 			if(msg.eventType=="custom/myVTT/pausePlayer"){
 				if(!window.DM){
@@ -1252,7 +1278,7 @@ class MessageBroker {
 				else{
 					$(".paused-indicator").remove();
 				}
-			}
+			} else
 			
 			if(msg.eventType=="custom/myVTT/playerjoin"){
 				if (window.DM) {										
@@ -1293,35 +1319,35 @@ class MessageBroker {
 						pc: read_pc_object_from_character_sheet(window.PLAYER_ID)
 					});
 				}
-			}
+			} else
 			if(msg.eventType==="custom/myVTT/pcsync"){
 				// a player just sent us their pc data, so let's update our window.pcs with what they gave us
 				if (msg.data && msg.data.player_id && msg.data.pc) {
 					update_pc_with_data(msg.data.player_id, msg.data.pc);
 				}
-			}
+			} else
 			if(msg.eventType == "custom/myVTT/endplayerturn" && window.DM){
 				let tokenId = $("#combat_area tr[data-current=1]").attr('data-target');
 				if(tokenId.endsWith(`characters/${msg.data.from}`) || window.all_token_objects[tokenId].options.player_owned)
 					$("#combat_next_button").click();				
 
-			}
+			} else
 			if(msg.eventType=="custom/myVTT/mixer"){
 				handle_mixer_event(msg.data);
-			}
+			} else
 			if(msg.eventType=="custom/myVTT/soundpad"){
 				build_soundpad(msg.data.soundpad, msg.data.playing);
-			}
+			} else
 
 			if(msg.eventType=="custom/myVTT/playchannel"){
 				audio_playchannel(msg.data.channel,msg.data.time,msg.data.volume);
-			}
+			} else
 			if(msg.eventType=="custom/myVTT/pausechannel"){
 				audio_pausechannel(msg.data.channel);
-			}
+			} else
 			if(msg.eventType=="custom/myVTT/changechannel"){
 				audio_changesettings(msg.data.channel,msg.data.volume,msg.data.loop);
-			}
+			} else
 			if(msg.eventType=="custom/myVTT/changeyoutube"){
 				if(window.YTPLAYER?.setVolume){
 						window.YTPLAYER.setVolume(msg.data.volume*$("#master-volume input").val());
@@ -1331,7 +1357,7 @@ class MessageBroker {
 					$('video#scene_map').attr('data-volume', msg.data.volume/100)
 				}
 
-			}
+			} else
 
 
 			
@@ -1357,7 +1383,7 @@ class MessageBroker {
 						streamid: diceplayer_id
 					});
 				}
-			}
+			} else
 
 			if(msg.eventType == "custom/myVTT/turnoffsingledicestream"){
 				let dicePeer = window.diceCurrentPeers.filter(d=> d.peer==msg.data.from)[0]
@@ -1374,11 +1400,11 @@ class MessageBroker {
               whisper: window.PLAYER_NAME
           });
 				}
-			}
+			} else
 
 			if(msg.eventType == "custom/myVTT/disabledicestream"){
 				enable_dice_streaming_feature(false);
-			}
+			} else
 
 			if(msg.eventType == "custom/myVTT/showonlytodmdicestream"){
 				if(!window.DM){		
@@ -1387,16 +1413,16 @@ class MessageBroker {
 				else{
 					revealDiceVideo(msg.data.streamid);
 				}
-			}
+			} else
 			if(msg.eventType == "custom/myVTT/hidemydicestream"){
 					hideDiceVideo(msg.data.streamid);
-			}
+			} else
 			if(msg.eventType == "custom/myVTT/revealmydicestream"){
 					revealDiceVideo(msg.data.streamid);
-			}
+			} else
 			if(msg.eventType == "custom/myVTT/enabledicestreamingfeature"){
 					enable_dice_streaming_feature(true);				
-			}
+			} else
 					
 
 
@@ -1471,7 +1497,7 @@ class MessageBroker {
 					})
 				};				
 				window.STREAMPEERS[msg.data.from]=peer;				
-			}
+			} else
 
 
 			if(msg.eventType == "custom/myVTT/okletmeseeyourdice"){
@@ -1572,7 +1598,7 @@ class MessageBroker {
 			});
 				
 				window.STREAMPEERS[msg.data.from] = peer;					
-			}
+			} else
 
 			if(msg.eventType == "custom/myVTT/okseethem"){
 				if( !window.JOINTHEDICESTREAM)
@@ -1583,16 +1609,16 @@ class MessageBroker {
 				let peer=window.STREAMPEERS[msg.data.from];
 				peer.setRemoteDescription(msg.data.answer);
 				console.log("fatto setRemoteDescription");
-			}
+			} else
 
 
 
 			if (msg.eventType === "custom/myVTT/peerReady") {
 				window.PeerManager.receivedPeerReady(msg);
-			}
+			} else
 			if (msg.eventType === "custom/myVTT/peerConnect") {
 				window.PeerManager.receivedPeerConnect(msg);
-			}
+			} else
 			if (msg.eventType === "custom/myVTT/videoPeerConnect") {
 				if(msg.data.id != window.myVideoPeerID){
 					let call = window.videoPeer.call(msg.data.id, window.myLocalVideostream)
@@ -1606,10 +1632,10 @@ class MessageBroker {
 					window.currentPeers = window.currentPeers.filter(d=> d.peer != call.peer)
 					window.currentPeers.push(call);
 				}
-			}
+			} else
 			if (msg.eventType === "custom/myVTT/videoPeerDisconnect") {
 					$(`.video-meet-area video#${msg.data.id}`).remove();
-			}
+			} else
 
 			if (msg.eventType === "custom/myVTT/diceVideoPeerConnect") {
 				if(msg.data.id != diceplayer_id){

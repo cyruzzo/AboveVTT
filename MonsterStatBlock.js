@@ -94,8 +94,8 @@ async function display_stat_block_in_container(statBlock, container, tokenId, cu
             </div>
             <div style="display:flex;flex-direction:row;width:100%;justify-content:space-between;padding:10px;">
                 <a id="monster-image-to-gamelog-link" class="ddbeb-button monster-details-link" href="${imageUrl}" target='_blank' >Send Image To Gamelog</a>
+                <a id="monster-image-popup-link" class="ddbeb-button monster-details-link" href="${imageUrl}" target='_blank' >Popup Image To Players</a>
             </div>`);
-
     }
     add_aoe_statblock_click(container, tokenId);
     container.find("#monster-image-to-gamelog-link").on("click", function (e) {
@@ -106,7 +106,18 @@ async function display_stat_block_in_container(statBlock, container, tokenId, cu
       imgContainer.find("img, video").addClass("magnify");
       send_html_to_gamelog(imgContainer[0].outerHTML);
     });
-
+    container.find("#monster-image-popup-link").on("click", function (e) { 
+      e.stopPropagation();
+      e.preventDefault();
+      const imgContainer = $(e.target).parent().prev();
+      popup = {
+        src: imgContainer.find("img, video").attr("src"),
+        timed: 10000,
+        from:window.PLAYER_ID
+      }
+      window.MB.sendMessage('custom/myVTT/Popup',  popup);
+    });
+  
     if(!customStatBlock){
       statBlock.imageHtml(token).then(imageHtml => { 
         container.find("div.image").append(imageHtml); 
@@ -469,6 +480,7 @@ async function build_monster_stat_block(statBlock, token) {
                   <div style="display:flex;flex-direction:row;width:100%;justify-content:space-between;padding:10px;">
                       <a class="ddbeb-button monster-details-link" href="${statBlock.data.url}" target='_blank' >View Details Page</a>
                       <a id="monster-image-to-gamelog-link" class="ddbeb-button monster-details-link" href="${image}" target='_blank' >Send Image To Gamelog</a>
+                      <a id="monster-image-popup-link" class="ddbeb-button monster-details-link" href="${image}" target='_blank' >Popup Image To Players</a>
                   </div>
 
 
@@ -762,8 +774,9 @@ async function build_monster_stat_block(statBlock, token) {
 
                 <div class="image" style="display: block;"></div>
                 <div style="display:flex;flex-direction:row;width:100%;justify-content:space-between;padding:10px;">
-                    <a class="ddbeb-button monster-details-link" href="${statBlock.data.url}" target='_blank' >View Details Page</a>
+                    <a class="ddbeb-button monster-details-link" href="${statBlock.data.url}" target='_blank' >View Details</a>
                     <a id="monster-image-to-gamelog-link" class="ddbeb-button monster-details-link" href="${image}" target='_blank' >Send Image To Gamelog</a>
+                      <a id="monster-image-popup-link" class="ddbeb-button monster-details-link" href="${image}" target='_blank' >Popup Image To Players</a>    
                 </div>
 
 
