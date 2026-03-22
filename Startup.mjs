@@ -59,7 +59,7 @@ $(function() {
               await new Promise(resolve => setTimeout(resolve, delay))
             } else {
               showError(error, `Failed to fetch campaign info after ${maxRetries} attempts. This is likely temporary — please refresh the page. If the issue persists, D&D Beyond may be experiencing outages.`)
-              throw error
+              throw new noLogError(error.message, error.options)
             }
           }
         }

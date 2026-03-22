@@ -46,15 +46,11 @@ class AboveApi {
       request = await fetch(url);
     } catch (error) {
       const wrappedError = new Error(`AboveApi network error for '${action}': ${error.message}`);
-      console.error(wrappedError.message, error);
-      showError(wrappedError);
       throw wrappedError;
     }
     if (!request.ok) {
       const errorText = await request.text().catch(() => 'Unknown error');
       const httpError = new Error(`AboveApi HTTP ${request.status} for '${action}': ${errorText}`);
-      console.error(httpError.message);
-      showError(httpError);
       throw httpError;
     }
     let response;
@@ -62,8 +58,6 @@ class AboveApi {
       response = await request.json();
     } catch (error) {
       const parseError = new Error(`AboveApi: invalid JSON response for '${action}'`);
-      console.error(parseError.message, error);
-      showError(parseError);
       throw parseError;
     }
     this.checkForErrors(response);
@@ -126,15 +120,11 @@ class AboveApi {
       request = await fetch(url, config);
     } catch (error) {
       const wrappedError = new Error(`AboveApi network error for 'setCampaignData': ${error.message}`);
-      console.error(wrappedError.message, error);
-      showError(wrappedError);
       throw wrappedError;
     }
     if (!request.ok) {
       const errorText = await request.text().catch(() => 'Unknown error');
       const httpError = new Error(`AboveApi HTTP ${request.status} for 'setCampaignData': ${errorText}`);
-      console.error(httpError.message);
-      showError(httpError);
       throw httpError;
     }
     let response;
@@ -142,8 +132,6 @@ class AboveApi {
       response = await request.json();
     } catch (error) {
       const parseError = new Error("AboveApi: invalid JSON response for 'setCampaignData'");
-      console.error(parseError.message, error);
-      showError(parseError);
       throw parseError;
     }
     console.log("AboveApi.setCampaignData", response);
@@ -206,15 +194,11 @@ class AboveApi {
         request = await fetch(url, config);
       } catch (error) {
         const wrappedError = new Error(`AboveApi network error for 'migrateScenes': ${error.message}`);
-        console.error(wrappedError.message, error);
-        showError(wrappedError);
-        throw wrappedError;
+        throw wrappedError
       }
       if (!request.ok) {
         const errorText = await request.text().catch(() => 'Unknown error');
         const httpError = new Error(`AboveApi HTTP ${request.status} for 'migrateScenes': ${errorText}`);
-        console.error(httpError.message);
-        showError(httpError);
         throw httpError;
       }
       console.log("AboveApi.migrateScenes request", request);
