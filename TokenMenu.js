@@ -939,6 +939,7 @@ function token_context_menu_expanded(tokenIds, e) {
 
 	if (tokens.length === 1) {
 		let token = tokens[0];
+
 		if (token.isPlayer() && !token.options.id.includes(window.PLAYER_ID)) {
 			let button = $(`<button>Open Character Sheet<span class="material-icons icon-view"></span></button>`);
 			button.on("click", function() {
@@ -949,13 +950,12 @@ function token_context_menu_expanded(tokenIds, e) {
 		} 
 		else if(token.options.statBlock){
 			let button =$('<button>Open Monster Stat Block<span class="material-icons icon-view"></span></button>');
-			
+			const {customStatBlock, pcURL} = token.getCustomPcUrl();
 			button.click(function(){
-				const {customStatBlock, pcURL } = token.getCustomPcUrl();
 				if(pcURL){
 					open_player_sheet(pcURL, undefined, token.options.name);
 				}else{
-					load_monster_stat(undefined, token.options.id, customStatBlock)
+					load_monster_stat(token.options.statBlock, token.options.id, customStatBlock)
 				}	
 				close_token_context_menu();
 			});

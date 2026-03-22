@@ -924,7 +924,7 @@ class Token {
 	}, 300);
 	sync(){
 		const options = $.extend(true, {}, this.options)
-		debounceSyncMessage(options);
+		this.debounceSyncMessage(options);
 	}
 	place_sync_persist(animationDuration) {
 		this.place(animationDuration);
