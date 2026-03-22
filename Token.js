@@ -117,8 +117,6 @@ class Token {
 	constructor(options) {
 		this.selected = false;
 		this.options = options;
-		this.sync = null;
-			this.persist= ()=>{};
 
 		this.doing_highlight = false;
 		if (typeof this.options.size == "undefined") {
@@ -516,7 +514,14 @@ class Token {
 	isInCombatTracker() {
 		return ct_list_tokens().includes(this.options.id);
 	}
-
+	getCustomPcUrl(){
+		if(!this.options.statBlock){
+			return {};
+		}
+		const customStatBlock = window.JOURNAL.notes[this.options.statBlock]?.text;
+		const pcURL = customStatBlock != undefined ? $(customStatBlock).find('.custom-pc-sheet.custom-stat').text() : undefined;
+		return {customStatBlock, pcURL};
+	}
 	size(newSize, linewidth=false) {
 
 		let originalOrigin;
@@ -914,10 +919,16 @@ class Token {
 
 
 	}
-
+	debounceSyncMessage = mydebounce(function(options) {				
+		window.MB.sendMessage('custom/myVTT/token', options);
+	}, 300);
+	sync(){
+		const options = $.extend(true, {}, this.options)
+		debounceSyncMessage(options);
+	}
 	place_sync_persist(animationDuration) {
 		this.place(animationDuration);
-		this.sync($.extend(true, {}, this.options));
+		this.sync();
 	}
 
 	highlight(dontscroll=false) {
@@ -2103,11 +2114,8 @@ class Token {
 				this.delete();
 				return;
 			}
-			if(this.isPlayer() && this.options.campaign != undefined){ // put this here so it's removed from existing tokens for now
-				const unusedPlayerData = ['image', 'attacks', 'attunedItems', 'campaign', 'campaignSetting', 'castingInfo', 'classes', 'deathSaveInfo', 'decorations', 'extras', 'immunities', 'level', 'passiveInsight', 'passiveInvestigation', 'passivePerception', 'proficiencyBonus', 'proficiencyGroups', 'race', 'readOnlyUrl', 'resistances', 'senses', 'skills', 'speeds', 'vulnerabilities'];
-				for(let i =0; i<unusedPlayerData.length; i++){
-					delete this.options[unusedPlayerData[i]];
-				}
+			if(this.isPlayer() || this.getCustomPcUrl().pcURL){ // put this here so it's removed from existing tokens
+				removeUnusedPlayerData(this.options);
 			}
 			if(this.options.combatGroupToken){
 				this.options.left = '0px';
