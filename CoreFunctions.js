@@ -29,6 +29,13 @@ $(function() {
   }
 });
 
+class noLogError extends Error{
+  constructor(message, options) {
+    super(message, options); 
+    this.name = "noLogError";
+  }
+}
+
 const async_sleep = m => new Promise(r => setTimeout(r, m));
 
 const charactersPageRegex = /\/characters\/\d+/;
@@ -54,6 +61,7 @@ function getAltKeyName() {
 function getShiftKeyName() {
   return isMac() ? "&#8679;" : "SHIFT";
 }
+
 
 
 function mydebounce(func, timeout = 800){  
@@ -792,10 +800,6 @@ function create_update_token(options, save = true) {
 
   if (!(id in window.TOKEN_OBJECTS)) {
     window.TOKEN_OBJECTS[id] = new Token(options);
-
-    window.TOKEN_OBJECTS[id].sync = mydebounce(function(options) {
-      window.MB.sendMessage('custom/myVTT/token', options);
-    }, 300);
   }
 
   if(options.repositionAoe != undefined){
@@ -1438,15 +1442,15 @@ function dropBoxOptions(callback, multiselect = false, fileType=['images', 'vide
 function showErrorMessage(error, ...extraInfo) {
   removeError();
   window.logSnapshot = process_monitored_logs(false);
-
-  console.log("showErrorMessage", ...extraInfo, error.stack);
   if (!(error instanceof Error)) {
     if (typeof error === "object") {
       error = JSON.stringify(error);
     } 
     error = new Error(error?.toString());
   }
+
   const stack = error.stack || new Error().stack;
+  console.error(error, ...extraInfo);
   if(stack.includes('Internal Server Error') && stack.includes('AboveApi.getScene')){
     if(!window.DM){
       extraInfo.push('<br/><b>The last scene players were on may have been deleted by the DM. Ask the DM to click the player button beside an existing scene. Even if one is already highlighted click it again to update the server info.</b>')
@@ -1553,12 +1557,16 @@ function showGoogleDriveWarning(){
  * @param {Error} error an error object to be parsed and displayed
  * @param {string|*[]} extraInfo other relevant information */
 function showError(error, ...extraInfo) {
+  if(error instanceof noLogError) 
+    return;
+  
   if (!(error instanceof Error)) {
     if (typeof error === "object") {
       error = JSON.stringify(error);
     } 
     error = new Error(error?.toString());
   }
+
   $('#loadingStyles').remove(); 
   showErrorMessage(error, ...extraInfo);
 
