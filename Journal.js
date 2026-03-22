@@ -2272,7 +2272,7 @@ class JournalManager{
 		const blocks = target.find('img:not(.mon-stat-block__separator-img), .text--quote-box, .rules-text, .block-torn-paper, .read-aloud-text, .dmScreenChunk')
 
 		const sendToGamelogButton = $('<button class="block-send-to-game-log"><span class="material-symbols-outlined">login</span></button>')
-		const container = $(`<div class='note-text' style='position:relative; width:'></div>`)
+		const container = $(`<div class='note-text' style='position:relative; width:fit-content; max-width: 100%'></div>`)
 		
 	
 
