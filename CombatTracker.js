@@ -1261,11 +1261,7 @@ function ct_add_token(token,persist=true,disablerolling=false, adv=false, dis=fa
 		});
 		if(window.DM){
 			init.change(function(){	
-
 					window.all_token_objects[token.options.id].options.init = init.val()
-					window.all_token_objects[token.options.id].sync = mydebounce(function(options) {				
-						window.MB.sendMessage('custom/myVTT/token', options);
-					}, 300);
 				
 					token.options.init = init.val();
 					if(!!window.TOKEN_OBJECTS[token.options.id]){
@@ -1479,8 +1475,7 @@ function ct_add_token(token,persist=true,disablerolling=false, adv=false, dis=fa
 		
 		stat.click(function(){			
 			if(token.options.statBlock){
-				let customStatBlock = window.JOURNAL.notes[token.options.statBlock].text;
-				let pcURL = $(customStatBlock).find('.custom-pc-sheet.custom-stat').text();
+				const {customStatBlock, pcURL} = token.getCustomPcUrl();
 				if(pcURL){
 					open_player_sheet(pcURL, undefined, token.options.name);
 				}else{
@@ -1695,9 +1690,6 @@ function ct_load(data=null){
 					if (window.TOKEN_OBJECTS[data[i]['data-target']]) {
 						window.all_token_objects[data[i]['data-target']].options.alternativeImages = window.TOKEN_OBJECTS[data[i]['data-target']].options.alternativeImages;
 					}
-					window.all_token_objects[data[i]['data-target']].sync = mydebounce(function(options) {				
-						window.MB.sendMessage('custom/myVTT/token', options);
-					}, 300);
 				}
 				const altImages = window.all_token_objects[data[i]['data-target']].options.alternativeImages;
 				const currAltImage = altImages ? [...altImages] : [];

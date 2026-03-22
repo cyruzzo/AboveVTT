@@ -951,15 +951,12 @@ function token_context_menu_expanded(tokenIds, e) {
 			let button =$('<button>Open Monster Stat Block<span class="material-icons icon-view"></span></button>');
 			
 			button.click(function(){
-				let customStatBlock = window.JOURNAL.notes[token.options.statBlock].text;
-				let pcURL = $(customStatBlock).find('.custom-pc-sheet.custom-stat').text();
+				const {customStatBlock, pcURL } = token.getCustomPcUrl();
 				if(pcURL){
 					open_player_sheet(pcURL, undefined, token.options.name);
 				}else{
 					load_monster_stat(undefined, token.options.id, customStatBlock)
-				}
-
-				
+				}	
 				close_token_context_menu();
 			});
 			if(token.options.player_owned || window.DM){
@@ -1143,9 +1140,7 @@ function token_context_menu_expanded(tokenIds, e) {
 						if(window.all_token_objects[group] == undefined){
 							window.all_token_objects[group] = t;
 						}
-						t.sync = mydebounce(function(options) { // VA IN FUNZIONE SOLO SE IL TOKEN NON ESISTE GIA					
-							window.MB.sendMessage('custom/myVTT/token', options);
-						}, 300);
+
 						t.place_sync_persist();
 						ct_add_token(window.TOKEN_OBJECTS[group], false, undefined, clickEvent.shiftKey, clickEvent.ctrlKey)	
 					
@@ -1252,9 +1247,7 @@ function token_context_menu_expanded(tokenIds, e) {
 				if(window.all_token_objects[group] == undefined){
 					window.all_token_objects[group] = t;
 				}
-				t.sync = mydebounce(function(options) { // VA IN FUNZIONE SOLO SE IL TOKEN NON ESISTE GIA					
-					window.MB.sendMessage('custom/myVTT/token', options);
-				}, 300);
+
 				t.place_sync_persist();
 				ct_add_token(window.TOKEN_OBJECTS[group], false, undefined, clickEvent.shiftKey, clickEvent.ctrlKey)
 			}

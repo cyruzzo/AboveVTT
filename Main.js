@@ -780,8 +780,7 @@ async function popout_all_selected_token_stat(){
 		let container;
 		if(token.isPlayer()) return;
 		if (token.options.statBlock) {
-			let customStatBlock = window.JOURNAL.notes[token.options.statBlock].text;
-			let pcURL = $(customStatBlock).find('.custom-pc-sheet.custom-stat').text();
+			const {customStatBlock, pcURL} = token.getCustomPcUrl();
 			if (pcURL) return;
 			container = await load_monster_stat(undefined, token.options.id, customStatBlock);
 		}
@@ -819,8 +818,7 @@ function open_selected_token_stat() {
 		open_player_sheet(token.options.sheet, undefined, token.options.name);
 	}
 	else if (token.options.statBlock) {
-		let customStatBlock = window.JOURNAL.notes[token.options.statBlock].text;
-		let pcURL = $(customStatBlock).find('.custom-pc-sheet.custom-stat').text();
+		const {customStatBlock, pcURL} = token.getCustomPcUrl();
 		if (pcURL) {
 			open_player_sheet(pcURL, undefined, token.options.name);
 		}

@@ -14779,41 +14779,7 @@ button#displayedDiceFormulaExit:hover {
 }
 
 
-/***Font Faces*****/
-@font-face {
-    font-family: Scala Sans Offc;
-    font-style: normal;
-    font-weight: 700;
-    src: url(https://media.dndbeyond.com/encounter-builder/static/media/ScalaSansOffc-Bold.048d2d142baf798dc56f.ttf) format("truetype")
-}
 
-@font-face {
-    font-family: Scala Sans Offc;
-    font-style: normal;
-    font-weight: 400;
-    src: url(https://media.dndbeyond.com/encounter-builder/static/media/ScalaSansOffc.0eea070d2279b1a6be23.ttf) format("truetype")
-}
-
-@font-face {
-    font-family: Scala Sans Offc;
-    font-style: italic;
-    font-weight: 700;
-    src: url(https://media.dndbeyond.com/encounter-builder/static/media/ScalaSansOffc-BoldIta.740e4d6d85a09a9cd0a0.ttf) format("truetype")
-}
-
-@font-face {
-    font-family: Scala Sans Offc;
-    font-style: italic;
-    font-weight: 400;
-    src: url(https://media.dndbeyond.com/encounter-builder/static/media/ScalaSansOffc-Ita.86c4513e1c4b869189c2.ttf) format("truetype")
-}
-
-@font-face {
-    font-family: MrsEavesSmallCaps;
-    font-style: normal;
-    font-weight: 100;
-    src: url(https://media.dndbeyond.com/encounter-builder/static/media/MrsEavesSmallCaps.1744d7a566b5a2ccca6c.ttf) format("truetype")
-}
 @font-face {
   font-family: "Tiamat Condensed SC Regular";
   src: url("https://www.dndbeyond.com/fonts/tiamatcondensedsc-regular-webfont.woff2") format("woff2");

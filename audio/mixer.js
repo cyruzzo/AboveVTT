@@ -529,6 +529,10 @@ class Mixer extends EventTarget {
     addChannel(channel, audioId=false) {
         const state = this.state();
         if(audioId){      
+            if(window.TOKEN_OBJECTS?.[channel.token] == undefined){
+                console.warn("Attempted to add audio token track but token doesn't exist", channel.token)
+                return;
+            }
             state.channels[audioId] = channel;
             window.TOKEN_OBJECTS[channel.token].options.audioChannel.audioId = audioId;
         }
