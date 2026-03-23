@@ -337,16 +337,15 @@ class Token {
 	}
 
 	// number of grid spaces. eg: 0.5 for tiny, 1 for small/medium, 2 for large, etc
-	numberOfGridSpacesWide() {
+	numberOfGridSpaces(widthMode=false) {		
 		try {
 			let output = 1;
-			const w = parseFloat(this.options.gridWidth);
+			const w = parseFloat(widthMode ? this.options.gridWidth : this.options.gridHeight);
 			if (!isNaN(w)) {
 				output = w;
 			} else {
-				let tokenMultiplierAdjustment = (!window.CURRENT_SCENE_DATA.scaleAdjustment) ? 1 : (window.CURRENT_SCENE_DATA.scaleAdjustment.x > window.CURRENT_SCENE_DATA.scaleAdjustment.y) ? window.CURRENT_SCENE_DATA.scaleAdjustment.x : window.CURRENT_SCENE_DATA.scaleAdjustment.y;
-		
-				const calculatedFromSize = (parseFloat(this.options.size) / (parseInt(window.CURRENT_SCENE_DATA.hpps) * tokenMultiplierAdjustment));
+				const tokenMultiplierAdjustment = (!window.CURRENT_SCENE_DATA.scaleAdjustment) ? 1 : Math.max(window.CURRENT_SCENE_DATA.scaleAdjustment.x, window.CURRENT_SCENE_DATA.scaleAdjustment.y);
+				const calculatedFromSize = (parseFloat(this.options.size) / (parseInt(window.CURRENT_SCENE_DATA[widthMode ? "hpps" : "vpps" ]) * tokenMultiplierAdjustment));
 				if (!isNaN(calculatedFromSize)) {
 					output = calculatedFromSize;
 				}
@@ -354,37 +353,15 @@ class Token {
 			if (output < 0.5) {
 				return 0.5;
 			}
-			return output;
+			return +output.toFixed(1); //round to prevent floating drift
 		} catch (error) {
-			console.warn("Failed to parse gridWidth for token", this, error);
+			console.warn("Failed to parse gridSize for token", this, error, widthMode);
 			return 1;
 		}
 	}
-	// number of grid spaces. eg: 0.5 for tiny, 1 for small/medium, 2 for large, etc
-	numberOfGridSpacesTall() {
-		try {
-			let output = 1;
-			const h = parseFloat(this.options.gridHeight);
-			if (!isNaN(h)) {
-				output = h;
-			} else {
-				let tokenMultiplierAdjustment = (!window.CURRENT_SCENE_DATA.scaleAdjustment) ? 1 : (window.CURRENT_SCENE_DATA.scaleAdjustment.x > window.CURRENT_SCENE_DATA.scaleAdjustment.y) ? window.CURRENT_SCENE_DATA.scaleAdjustment.x : window.CURRENT_SCENE_DATA.scaleAdjustment.y;
-		
-				const calculatedFromSize = (parseFloat(this.options.size) / (parseInt(window.CURRENT_SCENE_DATA.vpps)*tokenMultiplierAdjustment));
-				if (!isNaN(calculatedFromSize)) {
-					output = calculatedFromSize;
-				}
-			}
-			if (output < 0.5) {
-				return 0.5;
-			}
-			return output;
-		} catch (error) {
-			console.warn("Failed to parse gridHeight for token", this, error);
-			return 1;
-		}
-	}
-
+	numberOfGridSpacesTall() { return this.numberOfGridSpaces(false) }
+	numberOfGridSpacesWide() { return this.numberOfGridSpaces(true) }
+	
 	// number of pixels
 	sizeWidth() {
 		let w = parseFloat(this.options.gridWidth);
