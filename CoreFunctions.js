@@ -2101,15 +2101,15 @@ function projector_scroll_event(event){
 function store_campaign_info() {
   const campaignId = window.gameId;
   const campaignSecret = window.CAMPAIGN_SECRET;
-  if (typeof campaignId !== "string" || campaignId.length < 0) return;
-  if (typeof campaignSecret !== "string" || campaignSecret.length < 0) return;
+  if (typeof campaignId !== "string" || campaignId.length <= 0) return;
+  if (typeof campaignSecret !== "string" || campaignSecret.length <= 0) return;
   localStorage.setItem(`AVTT-CampaignInfo-${campaignId}`, campaignSecret);
 }
 
 /** @param {string} campaignId the DDB id of the campaign
  * @return {string|undefined} the join link secret if it exists */
 function read_campaign_info(campaignId) {
-  if (typeof campaignId !== "string" || campaignId.length < 0) return undefined;
+  if (typeof campaignId !== "string" || campaignId.length <= 0) return undefined;
   const cs = localStorage.getItem(`AVTT-CampaignInfo-${campaignId}`);
   if (typeof cs === "string" && cs.length > 0) return cs;
   return undefined;
