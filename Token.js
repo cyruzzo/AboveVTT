@@ -339,18 +339,18 @@ class Token {
 	// number of grid spaces. eg: 0.5 for tiny, 1 for small/medium, 2 for large, etc
 	numberOfGridSpaces() {		
 		try {
-			let output = 1;
-			let w = parseFloat(this.options.gridWidth);
-			let h = parseFloat(this.options.gridHeight);
-			const tokenMultiplierAdjustment = ((!window.CURRENT_SCENE_DATA.scaleAdjustment) ?
+			const w = parseFloat(this.options.gridWidth);
+			const h = parseFloat(this.options.gridHeight);
+			const tokenAdjustedSize = ((!window.CURRENT_SCENE_DATA.scaleAdjustment) ?
 				1 : Math.max(window.CURRENT_SCENE_DATA.scaleAdjustment.x, window.CURRENT_SCENE_DATA.scaleAdjustment.y)) * this.options.size;
-			
-			return { width:
-				!isNaN(w) ? Math.max(w,0.5) : Math.max(0.5,
-					+(tokenMultiplierAdjustment / parseFloat(window.CURRENT_SCENE_DATA.vpps) || 1).toFixed(2)),
-				height:
-				!isNaN(w) ? Math.max(h,0.5) : Math.max(0.5,
-					+(tokenMultiplierAdjustment / parseFloat(window.CURRENT_SCENE_DATA.hpps) || 1).toFixed(2))				
+
+			//note: not sure why vpps/hpps is "reversed" - that is what original code did
+			return { width: Math.max(0.5,
+				        !isNaN(w) ? w : 
+						(+(tokenAdjustedSize / parseFloat(window.CURRENT_SCENE_DATA.vpps) || 1).toFixed(2))),
+				height: Math.max(0.5,
+					!isNaN(h) ? h :
+						(+(tokenAdjustedSize / parseFloat(window.CURRENT_SCENE_DATA.hpps) || 1).toFixed(2)))				
 				
 			};
 		} catch (error) {
