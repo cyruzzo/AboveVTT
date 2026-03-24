@@ -2891,7 +2891,7 @@ function display_aoe_token_configuration_modal(listItem, placedToken = undefined
     // token size
     let tokenSizes = [];
     if (placedToken) {
-        tokenSizes.push(... placedToken.numberOfGridSpaces());
+        tokenSizes.push(... Object.values(placedToken.numberOfGridSpaces()));
     } else {
         tokenSizes.push(token_size_for_item(listItem, selectedTokenImage))
     }

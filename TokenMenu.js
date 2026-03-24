@@ -3423,13 +3423,13 @@ function build_adjustments_flyout_menu(tokenIds) {
 	// name
 	
 	let tokenSizes = [];
-	tokens.forEach(t => tokenSizes.push(t.numberOfGridSpaces()[t.isLineAoe() ? 2 : 1]));
+	tokens.forEach(t => tokenSizes.push(t.numberOfGridSpaces()[t.isLineAoe() ? "height" : "width"]));
 	
 	let uniqueSizes = [...new Set(tokenSizes)];
 
 	console.log("uniqueSizes", uniqueSizes);
 	let lineaoe = tokens.length == 1 && tokens[0].isLineAoe();
-	let linewidthsize = tokens[0].numberOfGridSpaces()[0];
+	let linewidthsize = tokens[0].numberOfGridSpaces().width;
 	let sizeInputs = build_token_size_input(uniqueSizes, function (newSize, linewidth=false) {
 		let tokenMultiplierAdjustment = (!window.CURRENT_SCENE_DATA.scaleAdjustment) ? 1 : (window.CURRENT_SCENE_DATA.scaleAdjustment.x > window.CURRENT_SCENE_DATA.scaleAdjustment.y) ? window.CURRENT_SCENE_DATA.scaleAdjustment.x : window.CURRENT_SCENE_DATA.scaleAdjustment.y;
 			

@@ -344,16 +344,15 @@ class Token {
 			let h = parseFloat(this.options.gridHeight);
 			const tokenMultiplierAdjustment = ((!window.CURRENT_SCENE_DATA.scaleAdjustment) ?
 				1 : Math.max(window.CURRENT_SCENE_DATA.scaleAdjustment.x, window.CURRENT_SCENE_DATA.scaleAdjustment.y)) * this.options.size;
-			console.log("WH ", w, h, tokenMultiplierAdjustment)
 			
-			return [
+			return { width:
 				!isNaN(w) ? Math.max(w,0.5) : Math.max(0.5,
-					+(tokenMultiplierAdjustment / parseFloat(window.CURRENT_SCENE_DATA.vpps) || 1).toFixed(2)
-				),
+					+(tokenMultiplierAdjustment / parseFloat(window.CURRENT_SCENE_DATA.vpps) || 1).toFixed(2)),
+				height:
 				!isNaN(w) ? Math.max(h,0.5) : Math.max(0.5,
-					+(tokenMultiplierAdjustment / parseFloat(window.CURRENT_SCENE_DATA.hpps) || 1).toFixed(2)				
-				)
-			];
+					+(tokenMultiplierAdjustment / parseFloat(window.CURRENT_SCENE_DATA.hpps) || 1).toFixed(2))				
+				
+			};
 		} catch (error) {
 			console.warn("Failed to parse gridSize for token", this, error, widthMode);
 			return 1;
