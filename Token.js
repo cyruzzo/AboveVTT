@@ -346,10 +346,10 @@ class Token {
 
 			return { width: Math.max(0.5,
 				        !isNaN(w) ? w : 
-						(+(tokenAdjustedSize / parseFloat(window.CURRENT_SCENE_DATA.hpps) || 1).toFixed(2))),
+						(+((tokenAdjustedSize / parseFloat(window.CURRENT_SCENE_DATA.hpps)) || 1).toFixed(2))),
 				height: Math.max(0.5,
 					!isNaN(h) ? h :
-						(+(tokenAdjustedSize / parseFloat(window.CURRENT_SCENE_DATA.vpps) || 1).toFixed(2)))				
+						(+((tokenAdjustedSize / parseFloat(window.CURRENT_SCENE_DATA.vpps)) || 1).toFixed(2)))				
 				
 			};
 		} catch (error) {
