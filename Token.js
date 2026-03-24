@@ -337,30 +337,28 @@ class Token {
 	}
 
 	// number of grid spaces. eg: 0.5 for tiny, 1 for small/medium, 2 for large, etc
-	numberOfGridSpaces(widthMode=false) {		
+	numberOfGridSpaces() {		
 		try {
 			let output = 1;
-			const w = parseFloat(widthMode ? this.options.gridWidth : this.options.gridHeight);
-			if (!isNaN(w)) {
-				output = w;
-			} else {
-				const tokenMultiplierAdjustment = (!window.CURRENT_SCENE_DATA.scaleAdjustment) ? 1 : Math.max(window.CURRENT_SCENE_DATA.scaleAdjustment.x, window.CURRENT_SCENE_DATA.scaleAdjustment.y);
-				const calculatedFromSize = (parseFloat(this.options.size) / (parseInt(window.CURRENT_SCENE_DATA[widthMode ? "hpps" : "vpps" ]) * tokenMultiplierAdjustment));
-				if (!isNaN(calculatedFromSize)) {
-					output = calculatedFromSize;
-				}
-			}
-			if (output < 0.5) {
-				return 0.5;
-			}
-			return +output.toFixed(1); //round to prevent floating drift
+			let w = parseFloat(this.options.gridWidth);
+			let h = parseFloat(this.options.gridHeight);
+			const tokenMultiplierAdjustment = ((!window.CURRENT_SCENE_DATA.scaleAdjustment) ?
+				1 : Math.max(window.CURRENT_SCENE_DATA.scaleAdjustment.x, window.CURRENT_SCENE_DATA.scaleAdjustment.y)) * this.options.size;
+			console.log("WH ", w, h, tokenMultiplierAdjustment)
+			
+			return [
+				!isNaN(w) ? Math.max(w,0.5) : Math.max(0.5,
+					+(tokenMultiplierAdjustment / parseFloat(window.CURRENT_SCENE_DATA.vpps) || 1).toFixed(2)
+				),
+				!isNaN(w) ? Math.max(h,0.5) : Math.max(0.5,
+					+(tokenMultiplierAdjustment / parseFloat(window.CURRENT_SCENE_DATA.hpps) || 1).toFixed(2)				
+				)
+			];
 		} catch (error) {
 			console.warn("Failed to parse gridSize for token", this, error, widthMode);
 			return 1;
 		}
 	}
-	numberOfGridSpacesTall() { return this.numberOfGridSpaces(false) }
-	numberOfGridSpacesWide() { return this.numberOfGridSpaces(true) }
 	
 	// number of pixels
 	sizeWidth() {
