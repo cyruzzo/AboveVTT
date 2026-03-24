@@ -354,7 +354,7 @@ class Token {
 			};
 		} catch (error) {
 			console.warn("Failed to parse gridSize for token", this, error);
-			return 1;
+			return {width: 1, height: 1};
 		}
 	}
 	
