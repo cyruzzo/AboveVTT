@@ -939,7 +939,7 @@ function persist_token_customization(customization, callback) {
             if(window.TOKEN_OBJECTS[customization.id]){
                 token.options = $.extend(true, {}, token.options, customization.tokenOptions);
                 token.place();
-                token.sync($.extend(true, {}, token.options));
+                token.sync();
             }
         }
         else if (customization.tokenType == ItemType.Folder && customization.rootId == RootFolder.Players.id){
@@ -959,7 +959,7 @@ function persist_token_customization(customization, callback) {
                if (window.TOKEN_OBJECTS[listItem.id]) {
                    token.options = $.extend(true, {}, token.options, newOptions);
                    token.place();
-                   token.sync($.extend(true, {}, token.options));
+                   token.sync();
                }
            }
         }

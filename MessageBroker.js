@@ -2259,9 +2259,7 @@ class MessageBroker {
 			if(window.all_token_objects[data.id] == undefined){
 				window.all_token_objects[data.id] = t;
 			}
-			t.sync = mydebounce(function(options) { // VA IN FUNZIONE SOLO SE IL TOKEN NON ESISTE GIA					
-				window.MB.sendMessage('custom/myVTT/token', options);
-			}, 300);
+
 			if(t.isPlayer()){
 				if (!window.PC_TOKENS_NEEDING_UPDATES.includes(data.id)) {
 					window.PC_TOKENS_NEEDING_UPDATES.push(data.id);

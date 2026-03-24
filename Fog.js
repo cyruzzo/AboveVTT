@@ -840,6 +840,10 @@ function do_check_token_visibility() {
 		$(`.aura-element`).toggleClass('notVisible', false);
 		return;
 	}
+	if(!window.walls){
+		console.warn("Token visibility check called before walls loaded");
+		return;
+	}
 
 
 	let hideIds = $('');

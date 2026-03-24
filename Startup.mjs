@@ -24,8 +24,20 @@ $(function() {
       .then((databases)=> {
         window.gameIndexedDb = databases[0];
         window.globalIndexedDB = databases[1];
-        const campaignSettings = JSON.parse(localStorage.getItem(`ExperimentalSettings${window.gameId}`)) || {};
-        const globalSettings = JSON.parse(localStorage.getItem(`ExperimentalSettingsGlobal`)) || {}; ;
+        let campaignSettings = {};
+        try {
+          campaignSettings = JSON.parse(localStorage.getItem(`ExperimentalSettings${window.gameId}`)) || {};
+        } catch (e) {
+          console.warn(`Failed to parse campaign settings for game ${window.gameId}, using defaults`, e);
+          localStorage.removeItem(`ExperimentalSettings${window.gameId}`);
+        }
+        let globalSettings = {};
+        try {
+          globalSettings = JSON.parse(localStorage.getItem(`ExperimentalSettingsGlobal`)) || {};
+        } catch (e) {
+          console.warn(`Failed to parse global settings, using defaults`, e);
+          localStorage.removeItem(`ExperimentalSettingsGlobal`);
+        }
         window.EXPERIMENTAL_SETTINGS = {...campaignSettings, ...globalSettings};
         delete window.EXPERIMENTAL_SETTINGS.streamDiceRolls;
         if (is_release_build()) {
