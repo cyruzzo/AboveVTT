@@ -2155,6 +2155,10 @@ class Token {
 			}		
 
 			if (old.length > 0) {
+				const hasDraggable = old.hasClass('ui-draggable');
+				if (!hasDraggable) {
+					console.warn(`Token.place(): draggable not initialized for token ${this.options.id} — skipping draggable enable/disable`);
+				}
 				if(this.options.type == 'door'){
 					this.options.size = 50;
 					setTokenLight(old, this.options);
@@ -2557,15 +2561,15 @@ class Token {
 				}
 				if((!window.DM && this.options.restrictPlayerMove && !this.isCurrentPlayer() && this.options.share_vision != true &&  this.options.share_vision != window.myUser) || this.options.locked){
 					if(!window.DM || (window.DM && !$('#select_locked>div.ddbc-tab-options__header-heading').hasClass('ddbc-tab-options__header-heading--is-active'))){
-						old.draggable("disable");
+						if (hasDraggable) old.draggable("disable");
 						old.removeClass("ui-state-disabled"); // removing this manually.. otherwise it stops right click menu
 					}
 				}
 				else if((window.DM && this.options.restrictPlayerMove && !this.isCurrentPlayer() && this.options.share_vision != true &&  this.options.share_vision != window.myUser) || !this.options.locked || (window.DM && !$('#select_locked>div.ddbc-tab-options__header-heading').hasClass('ddbc-tab-options__header-heading--is-active'))){
-					old.draggable("enable");
-				}	
+					if (hasDraggable) old.draggable("enable");
+				}
 				else if(!window.DM && ((!this.options.restrictPlayerMove  && !this.isCurrentPlayer())) || !this.options.locked){
-					old.draggable("enable");
+					if (hasDraggable) old.draggable("enable");
 				}
 				if(!this.options.id.includes('exampleToken')){
 					old.toggleClass('lockedToken', this.options.locked==true)
@@ -3026,35 +3030,6 @@ class Token {
 				this.build_conditions().forEach(cond_bar => {
 					tok.append(cond_bar);
 				});
-
-
-				$("#tokens").append(tok);
-		
-				if(this.options.darkness){
-					let tokenClone = tok.clone();
-					tokenClone.css({
-						left: parseFloat(this.options.left) / window.CURRENT_SCENE_DATA.scale_factor,
-						top: parseFloat(this.options.top) / window.CURRENT_SCENE_DATA.scale_factor,
-						width: `calc(${this.sizeWidth()}px / var(--scene-scale))`,
-						height: `calc(${this.sizeHeight()}px / var(--scene-scale))`
-					})
-			        tokenClone.attr('data-darkness', `darkness_${this.options.id}`);
-			        tokenClone.find('.conditions').remove();
-			        tokenClone.removeClass(['token', 'VTTToken']);
-			        if($(`[data-darkness='darkness_${this.options.id}]'`).length == 0)
-			        	$('#light_container').append(tokenClone);
-			        redraw_drawn_light();
-			    }
-
-			    if(!this.options.id.includes('exampleToken')){
-					this.update_opacity(tok, true);
-			    }
-
-				
-				if(!this.options.id.includes('exampleToken') && !this.options.combatGroupToken){
-					setTokenAuras(tok, this.options);
-					setTokenLight(tok, this.options);
-				}
 
 
 				setTokenBase(tok, this.options);
@@ -3519,6 +3494,35 @@ class Token {
 					},
 					distance: 5,
 				});
+
+				$("#tokens").append(tok);
+		
+				if(this.options.darkness){
+					let tokenClone = tok.clone();
+					tokenClone.css({
+						left: parseFloat(this.options.left) / window.CURRENT_SCENE_DATA.scale_factor,
+						top: parseFloat(this.options.top) / window.CURRENT_SCENE_DATA.scale_factor,
+						width: `calc(${this.sizeWidth()}px / var(--scene-scale))`,
+						height: `calc(${this.sizeHeight()}px / var(--scene-scale))`
+					})
+			        tokenClone.attr('data-darkness', `darkness_${this.options.id}`);
+			        tokenClone.find('.conditions').remove();
+			        tokenClone.removeClass(['token', 'VTTToken']);
+			        if($(`[data-darkness='darkness_${this.options.id}]'`).length == 0)
+			        	$('#light_container').append(tokenClone);
+			        redraw_drawn_light();
+			    }
+
+			    if(!this.options.id.includes('exampleToken')){
+					this.update_opacity(tok, true);
+			    }
+
+				
+				if(!this.options.id.includes('exampleToken') && !this.options.combatGroupToken){
+					setTokenAuras(tok, this.options);
+					setTokenLight(tok, this.options);
+				}
+
 				let classToClick = null;
 				if(this.isLineAoe()){
 					tok.draggable( "option", "handle", "[data-img]" );
