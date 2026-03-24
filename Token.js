@@ -559,7 +559,7 @@ class Token {
 			this.options.left = `${parseFloat(this.options.left) - dx}px`;
 			this.options.top = `${parseFloat(this.options.top) - dy}px`;
 			this.place(0);
-			this.sync($.extend(true, {}, this.options))
+			this.sync()
 		}
 		else{
 			this.place_sync_persist()
@@ -914,7 +914,7 @@ class Token {
 			}
 
 		
-			this.sync($.extend(true, {}, this.options));
+			this.sync();
 		}
 
 
@@ -1272,8 +1272,7 @@ class Token {
 	update_and_sync(e) {
 		self = this;
 		self.update_from_page();
-		if (self.sync != null)
-			self.sync($.extend(true, {}, self.options));//create deep copy so we don't send data when tokens are updated too quickly
+		self.sync();//create deep copy so we don't send data when tokens are updated too quickly
 
 		/* UPDATE COMBAT TRACKER */
 		this.update_combat_tracker()
@@ -3052,7 +3051,7 @@ class Token {
 							window.enable_window_mouse_handlers();
 		
 							if(window.TOKEN_OBJECTS[self.options.id] != undefined){
-								self.sync($.extend(true, {}, self.options));
+								self.sync();
 							}
 							if (window.CURRENT_SCENE_DATA.disableSceneVision == 1 && !window.DM)
 								check_single_token_visibility(self.options.id);
@@ -3065,7 +3064,7 @@ class Token {
 										continue;
 									let curr = window.TOKEN_OBJECTS[id];
 									if (curr != undefined){
-										curr.sync($.extend(true, {}, curr.options));
+										curr.sync();
 										if (curr.options?.darkness === true)
 											darknessMoved = true;
 										if (window.CURRENT_SCENE_DATA.disableSceneVision == 1 && !window.DM)
@@ -3494,7 +3493,6 @@ class Token {
 					},
 					distance: 5,
 				});
-
 				$("#tokens").append(tok);
 		
 				if(this.options.darkness){
@@ -4626,7 +4624,7 @@ function setTokenLight (token, options) {
 function setTokenBase(token, options) {
 	if(options.imgsrc?.startsWith("class"))
 		return;
-	$(`.token[data-id='${options.id}']>.base`).remove();
+	token.find(`.base`).remove();
 	let base = $(`<div class='base'></div>`);
 
 
@@ -4695,7 +4693,7 @@ function setTokenBase(token, options) {
 		token.toggleClass("freeform", true);
 	}
 	else if(options.tokenStyleSelect === "virtualMiniCircle"){
-		$(`.token[data-id='${options.id}']`).prepend(base);
+		token.prepend(base);
 		//Virtual Mini Circle
 		options.square = true;
 		options.legacyaspectratio = false;
@@ -4703,7 +4701,7 @@ function setTokenBase(token, options) {
 		token.children(".token-image").addClass("preserve-aspect-ratio");
 	}
 	else if(options.tokenStyleSelect === "virtualMiniSquare"){
-		$(`.token[data-id='${options.id}']`).prepend(base);
+		token.prepend(base);
 		//Virtual Mini Square
 		options.square = true;
 		options.legacyaspectratio = false;
