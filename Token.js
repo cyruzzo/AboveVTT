@@ -341,16 +341,15 @@ class Token {
 		try {
 			const w = parseFloat(this.options.gridWidth);
 			const h = parseFloat(this.options.gridHeight);
-			const tokenAdjustedSize = ((!window.CURRENT_SCENE_DATA.scaleAdjustment) ?
-				1 : Math.max(window.CURRENT_SCENE_DATA.scaleAdjustment.x, window.CURRENT_SCENE_DATA.scaleAdjustment.y)) * this.options.size;
+			const tokenAdjustedSize = this.options.size / ((!window.CURRENT_SCENE_DATA.scaleAdjustment) ?
+				1 : Math.max(window.CURRENT_SCENE_DATA.scaleAdjustment.x, window.CURRENT_SCENE_DATA.scaleAdjustment.y));
 
-			//note: not sure why vpps/hpps is "reversed" - that is what original code did
 			return { width: Math.max(0.5,
 				        !isNaN(w) ? w : 
-						(+(tokenAdjustedSize / parseFloat(window.CURRENT_SCENE_DATA.vpps) || 1).toFixed(2))),
+						(+(tokenAdjustedSize / parseFloat(window.CURRENT_SCENE_DATA.hpps) || 1).toFixed(2))),
 				height: Math.max(0.5,
 					!isNaN(h) ? h :
-						(+(tokenAdjustedSize / parseFloat(window.CURRENT_SCENE_DATA.hpps) || 1).toFixed(2)))				
+						(+(tokenAdjustedSize / parseFloat(window.CURRENT_SCENE_DATA.vpps) || 1).toFixed(2)))				
 				
 			};
 		} catch (error) {
