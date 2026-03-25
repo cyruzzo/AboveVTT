@@ -1768,7 +1768,7 @@ function ct_load(data=null){
 			$("#combat_area tr[data-target='"+data.current+"']").attr("data-current","1");
 			if(window.TOKEN_OBJECTS[data.current] != undefined){
 				window.TOKEN_OBJECTS[data.current].options.current = true;
-				window.TOKEN_OBJECTS[tokenID].place();
+				window.TOKEN_OBJECTS[data.current].place();
 			}
 			if(window.all_token_objects[data.current] != undefined){
 				if(window.all_token_objects[data.current].isCurrentPlayer() || window.all_token_objects[data.current].options.player_owned){
