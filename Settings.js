@@ -366,7 +366,7 @@ function avtt_settings() {
 			class: 'ui',
 			global: 1
 		},
-	/*	{
+		{
 			name: 'streamDiceRolls',
 			label: 'Stream Dice Rolls',
 			type: 'toggle',
@@ -376,7 +376,7 @@ function avtt_settings() {
 			],
 			defaultValue: false,
 			class: 'stream'
-		},*/
+		},
 		{
 			name: 'iframeStatBlocks',
 			label: 'Fallback Monster Statblocks',
@@ -1576,21 +1576,11 @@ function update_token_base_visibility(container) {
 }
 
 function enable_dice_streaming_feature(enabled){
-	enabled = false; //dice stream disabled for now
 	if(enabled)
 	{
-		if($(".stream-dice-button").length>0)
-			return;
-		$(".glc-game-log>[class*='Container-Flex']").append($(`<div  id="stream_dice"><div class='stream-dice-button'>Dice Stream Disabled</div></div>`));
+		window.JOINTHEDICESTREAM = true;
+		add_dice_stream_gamelog_button();
 		update_dice_streaming_feature(window.JOINTHEDICESTREAM);
-		$(".stream-dice-button").off().on("click", function(){
-			if(window.JOINTHEDICESTREAM){
-				update_dice_streaming_feature(false);
-			}
-			else {
-				update_dice_streaming_feature(true);
-			}
-		})
 	}
 	else{
 		$(".stream-dice-button").remove();
@@ -1629,10 +1619,7 @@ function update_dice_streaming_feature(enabled, sendToText=gamelog_send_to_text(
 				}
 			});
 		});
-
-
 		if (window.JOINTHEDICESTREAM) {
-
 			joinDiceRoom();
 			setTimeout(function(){
 				if (sendToText == "Dungeon Master" || sendToText == "DM"){
