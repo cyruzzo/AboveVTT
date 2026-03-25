@@ -2714,7 +2714,8 @@ function display_url_embeded(url){
 
 function find_or_create_generic_draggable_window(id, titleBarText, addLoadingIndicator = true, addPopoutButton = false, popoutSelector=``, width='80%', height='80%', top='10%', left='10%', showSlow = true, cancelClasses='', hideOnX = false, alwaysDisplayTitle = false) {
   console.log(`find_or_create_generic_draggable_window id: ${id}, titleBarText: ${titleBarText}, addLoadingIndicator: ${addLoadingIndicator}, addPopoutButton: ${addPopoutButton}`);
-  const existing = id.startsWith("#") ? $(id) : $(`#${id}`);
+
+  const existing = $(`[id="${id.replace('#', '')}"]`);
   if (existing.length > 0) {
     return existing;
   }
@@ -2888,7 +2889,7 @@ function find_or_create_generic_draggable_window(id, titleBarText, addLoadingInd
 }
 
 function close_and_cleanup_generic_draggable_window(id) {
-  const container = id.startsWith("#") ? $(id) : $(`#${id}`);
+  const container = $(`[id="${id.replace('#', '')}"]`);
   container.off('dblclick');
   container.off('mousedown');
   container.draggable('destroy');
