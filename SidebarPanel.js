@@ -919,15 +919,6 @@ class SidebarListItem {
       case ItemType.MyToken:
       case ItemType.Scene:
         return true;
-      case ItemType.PC:
-      case ItemType.Monster:
-      case ItemType.isTypeOpen5eMonster:
-      case ItemType.BuiltinToken:
-      case ItemType.Encounter:
-        if(this.encounterId != undefined)
-          return false;
-        else
-          return true;
       case ItemType.Aoe: // we technically could support this, but I don't think we should
       default:
         return false;
