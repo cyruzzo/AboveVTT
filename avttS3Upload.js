@@ -4631,6 +4631,10 @@ const PatreonAuth = (() => {
       },
     );
     
+    if (!response.ok) {
+      const errorText = await response.text().catch(() => 'Unknown error');
+      throw new Error(`Patreon membership check failed (HTTP ${response.status}): ${errorText}`);
+    }
     const { user } = await response.json();
     activeUserLimit = user.limit;
     activeUserTier = user;
