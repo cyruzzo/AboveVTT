@@ -1878,6 +1878,7 @@ function register_token_row_context_menu() {
                         for (let i = 0; i < selectedItems.length; i++) {
                             let selectedRow = $(selectedItems[i]);
                             let selectedItem = find_sidebar_list_item(selectedRow);
+                            listItemArray.push(selectedItem);
                         }
                         if (listItemArray.length < 10 || confirm(`This will add ${listItemArray.length} tokens which could lead to unexpected results. Are you sure you want to add all of these tokens?`)) {
                             let distanceFromCenter = window.CURRENT_SCENE_DATA.hpps * window.ZOOM * (listItemArray.length / 8);
