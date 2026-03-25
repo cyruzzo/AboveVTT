@@ -605,7 +605,7 @@ class Mixer extends EventTarget {
         const state = this.state();
         delete state.channels[id];
         if(state.orderedChannels){
-            state.orderedChannels.filter(d=> d != id);
+            state.orderedChannels = state.orderedChannels.filter(d=> d != id);
         }
         this._write(state);
         this.dispatchEvent(new Event(mixerEvents.ON_CHANNEL_LIST_CHANGE));
