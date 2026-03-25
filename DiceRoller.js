@@ -1112,9 +1112,9 @@ class DiceRoller {
         this.ddbDispatch(alteredMessage);
         if(this.#multiRollArray.length>0){
             const self = this;
-            const nextCritRange = self.#pendingMessages[ddbMessage.data.rollId].pendingCritRange;
-            const nextCritType = self.#pendingMessages[ddbMessage.data.rollId].pendingCritType;
-            const nextDamageType = self.#pendingMessages[ddbMessage.data.rollId].pendingDamageType;
+            const nextCritRange = self.#pendingMessages[firstPending]?.pendingCritRange;
+            const nextCritType = self.#pendingMessages[firstPending]?.pendingCritType;
+            const nextDamageType = self.#pendingMessages[firstPending]?.pendingDamageType;
             setTimeout(function () {
                 if (newDice) {
                     self.nextRoll(alteredMessage, nextCritRange, nextCritType, nextDamageType);
