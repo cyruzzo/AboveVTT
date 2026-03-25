@@ -911,7 +911,7 @@ class SidebarListItem {
           case ItemType.Scene:
           case ItemType.PC:
           case ItemType.Encounter:
-            if(this.encounterId == undefined)
+            if(this.encounterId == undefined && this.folderPath != '/')
               return true;
           default:
             return false;
