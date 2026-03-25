@@ -2943,7 +2943,7 @@ function display_aoe_token_configuration_modal(listItem, placedToken = undefined
     });
     inputWrapper.append(imageZoomWrapper);
 
-    let startingTokenFlip = targetOptions.targetFlip || 0;
+    let startingTokenFlip = targetOptions.tokenFlip || 0;
     let tokenFlipWrapper = build_token_flip_input(startingTokenFlip, function (tokenFlip) { 
         customization.setTokenOption("tokenFlip", tokenFlip);
         persist_token_customization(customization);
