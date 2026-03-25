@@ -1,6 +1,5 @@
 (async function() { //don't leave clutter after load
-
-    const runtime = (chrome || browser).runtime; //detect extension context
+    const runtime = typeof chrome != 'undefined' || typeof browser != 'undefined' ? (chrome || browser).runtime : null; //detect extension context, check type of == undefined specifically for firefox as it errors otherwise
 
     function pageType(location) { // page type from location: [char, gamelog, campaign, vtt-player, vtt-dm, null]
         //match campaign page exactly in case other pages ever get added like campaigns/join that we want to exclude    
