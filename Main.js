@@ -2527,16 +2527,13 @@ function init_zoom_buttons() {
 			const iconWrapper = $(event.currentTarget).find(".ddbc-tab-options__header-heading");
 			if (iconWrapper.hasClass('ddbc-tab-options__header-heading--is-active')) {
 				iconWrapper.removeClass('ddbc-tab-options__header-heading--is-active');
-				window.ProjectorEnabled = false;
 			} else {
 				iconWrapper.addClass('ddbc-tab-options__header-heading--is-active');
-				window.ProjectorEnabled = false;
 			}
 		});
 		projector_toggle.append(`<div class="ddbc-tab-options__header-heading"><span style="font-size: 20px;" class="material-symbols-outlined">cast</span></div>`);
 		if(defaultValues.projectorMode != undefined){
-			projector_toggle.find('.ddbc-tab-options__header-heading').toggleClass('ddbc-tab-options__header-heading--is-active', defaultValues.projectorMode) 
-			window.ProjectorEnabled = defaultValues.projectorMode;
+			projector_toggle.find('.ddbc-tab-options__header-heading').toggleClass('ddbc-tab-options__header-heading--is-active', defaultValues.projectorMode)
 		}
 				
 		const projector_zoom_lock = $(`<div id='projector_zoom_lock' class='ddbc-tab-options--layout-pill hasTooltip button-icon hideable' data-name='Quick toggle projector zoom lock'></div>`);
