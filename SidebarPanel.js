@@ -791,9 +791,9 @@ class SidebarListItem {
     item.shape = shape;
     let parsedSize = parseInt(size);
     if (isNaN(parsedSize)) {
-      item.size = parsedSize;
-    } else {
       item.size = 1;
+    } else {
+      item.size = parsedSize;
     }
     item.style = style;
     return item;
