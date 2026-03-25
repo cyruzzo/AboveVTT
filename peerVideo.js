@@ -156,6 +156,48 @@ function setRemoteStream(stream, peerId) {
     video[0].play();
 }
 
+async function initiateVideoUI() {
+  try {
+    try{ 
+        const audioStream = await navigator.mediaDevices.getUserMedia({ audio: true});
+        audioStream.getTracks().forEach(track => track.stop());
+        try{    
+            const videoStream = await navigator.mediaDevices.getUserMedia({ video: true });
+            videoStream.getTracks().forEach(track => track.stop());
+        }catch{
+            console.warn('No video camera found')
+        }
+    }catch{
+        console.warn('No microphone found')
+    }
+
+  
+    const devices = await navigator.mediaDevices.enumerateDevices();
+
+
+    let option = $(`<option value='disable'>Disable Camera</option>`);
+
+    $('select#videoSource').append(option);
+    for(let i = 0; i < devices.length; i ++){
+        let device = devices[i];
+        if (device.kind === 'videoinput') {
+            let option = document.createElement('option');
+            option.value = device.deviceId;
+            option.text = device.label || 'camera ' + (i + 1);
+            document.querySelector('select#videoSource').appendChild(option);
+        }
+        if (device.kind === 'audioinput') {
+            let option = document.createElement('option');
+            option.value = device.deviceId;
+            option.text = device.label || 'microphone ' + (i + 1);
+            document.querySelector('select#audioSource').appendChild(option);
+        }
+    };
+  } catch (err) {
+    console.error("Error accessing media devices, check your browser permissions:", err);
+  }
+}
+
 
 function joinRoom(room = window.gameId) {
     console.log("Joining Room")
@@ -189,30 +231,8 @@ function joinRoom(room = window.gameId) {
         window.currentPeers = window.currentPeers.filter(d=> d.peer != call.peer)
         window.currentPeers.push(call);
     })
-    navigator.mediaDevices.enumerateDevices().then(function (devices) {
-        let option = $(`<option value='disable'>Disable Camera</option>`);
+    initiateVideoUI();
 
-        $('select#videoSource').append(option);
-        for(let i = 0; i < devices.length; i ++){
-            let device = devices[i];
-            if (device.kind === 'videoinput') {
-                let option = document.createElement('option');
-                option.value = device.deviceId;
-                option.text = device.label || 'camera ' + (i + 1);
-                document.querySelector('select#videoSource').appendChild(option);
-            }
-            if (device.kind === 'audioinput') {
-                let option = document.createElement('option');
-                option.value = device.deviceId;
-                option.text = device.label || 'microphone ' + (i + 1);
-                document.querySelector('select#audioSource').appendChild(option);
-            }
-        };
-        
-        if($('#audioSource').val() == '' || $('#videoSource option:nth-of-type(2)').val() == '' || $('#audioSource').val() == null || $('#videoSource option:nth-of-type(2)').val() == null){
-            alert('It appears your camera and/or microphone permissions are disabled for dndbeyond. Please enable these in your browser settings and refresh. Alternatively you are missing a video and/or audio input device.')
-        }
-    });
 
 
     $('select#videoSource').off('change.videoSource').on('change.videoSource', function(){
