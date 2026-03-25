@@ -995,7 +995,7 @@ class DiceRoller {
                 }
             }
             if (sendTo == '') {
-                sendTo = gamelog_send_to_text().trim().replace('/\s/gi', '');
+                sendTo = gamelog_send_to_text().trim().replace(/\s/gi, '');
             }
             sendTo = sendTo.toLowerCase();
             const rollId = uuid();
