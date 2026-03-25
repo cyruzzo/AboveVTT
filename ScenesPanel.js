@@ -3608,7 +3608,7 @@ async function build_source_book_chapter_import_section(sceneSet) {
 			})
 			.catch(error => {
 				$(`body>.import-loading-indicator`).remove();
-				showError(error, "Failed to import scene", importData);
+				showError(error, "Failed to import scene", sceneData);
 			});
 	})
 		
