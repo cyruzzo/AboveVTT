@@ -1041,7 +1041,7 @@ function update_pc_token_rows() {
             } else{
                 row.find(".subtitle-attibute[title='Fly Speed']").hide()
             }
-            if(flyingSpeed > 0) {
+            if(swimmingSpeed > 0) {
                 row.find(".subtitle-attibute[title='Swim Speed']").show()
             } else {
                 row.find(".subtitle-attibute[title='Swim Speed']").hide()
