@@ -3140,7 +3140,7 @@ class JournalManager{
 	}
 	edit_note(id, statBlock = false){
 		$(`.ui-dialog:not(.resize_drag_window) div.note[data-id='${id}']`)?.dialog("close");
-		$(`.resize_drag_window#${id}`).remove();
+		$(`.resize_drag_window[id="${id}"]`).remove();
 		this.close_all_notes();
 		let self=this;
 		
