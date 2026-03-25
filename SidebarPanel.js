@@ -921,7 +921,7 @@ class SidebarListItem {
         return true;
       case ItemType.PC:
       case ItemType.Monster:
-      case ItemType.isTypeOpen5eMonster:
+      case ItemType.Open5e:
       case ItemType.BuiltinToken:
       case ItemType.Encounter:
         if(this.encounterId != undefined)
