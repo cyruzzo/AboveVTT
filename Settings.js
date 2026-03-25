@@ -1576,6 +1576,7 @@ function update_token_base_visibility(container) {
 }
 
 function enable_dice_streaming_feature(enabled){
+	enabled = false; //dice stream disabled for now
 	if(enabled)
 	{
 		if($(".stream-dice-button").length>0)
