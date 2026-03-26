@@ -8575,9 +8575,9 @@ async function getAllUserFiles(options = {}) {
   if (signal) {
     linkedAbortHandler = () => {
       try {
-        abortController.abort(signal.reason);
+        window.abortGetAllUserFilesController.abort(signal.reason);
       } catch (_) {
-        abortController.abort();
+        window.abortGetAllUserFilesController.abort();
       }
     };
     if (signal.aborted) {
