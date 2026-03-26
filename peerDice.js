@@ -169,7 +169,7 @@ function getDiceMedia(){
     let diceRollPanel = $(".dice-rolling-panel__container, canvas[style*='z-index: 99999999;']:not([id]):not([class])");
     window.MYMEDIASTREAM = diceRollPanel[0].captureStream(30)
 
-    if(window.currentPeers.length == 0){
+    if(window.diceCurrentPeers.length == 0){
         window.MB.sendMessage("custom/myVTT/diceVideoPeerConnect", {id: diceplayer_id});  
     }
     else{
