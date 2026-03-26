@@ -976,7 +976,7 @@ function read_temp_hp(container = $(document)) {
   }
   if (container.find(`.ct-status-summary-mobile__hp--has-temp`).length) {
     if(container.find('.ct-health-manager__health-item--temp').length){
-        return parseInt(('.ct-health-manager__health-item--temp .ct-health-manager__input').val()); // if hp side panel is open check this for temp hp
+        return parseInt($('.ct-health-manager__health-item--temp .ct-health-manager__input').val()); // if hp side panel is open check this for temp hp
       }
     // DDB doesn't display the temp value on mobile layouts so just set it to 1, so we can at least show that there is temp hp. See `read_current_hp` for the other side of this
     return 1;
@@ -1958,7 +1958,7 @@ function observe_character_sheet_changes(documentToObserve) {
 
         e.stopImmediatePropagation();
         
-        window.diceRoller.roll(new DiceRoll(rollData.expression, rollData.rollTitle, rollData.rollType), undefined, undefined, undefined, undefined, rollData.damageType, rollData.spellSave);
+        window.diceRoller.roll(new DiceRoll(rollData.expression, rollData.rollTitle, rollData.rollType), undefined, undefined, undefined, rollData.spellSave, rollData.damageType);
 
       };
 

@@ -4631,6 +4631,10 @@ const PatreonAuth = (() => {
       },
     );
     
+    if (!response.ok) {
+      const errorText = await response.text().catch(() => 'Unknown error');
+      throw new Error(`Patreon membership check failed (HTTP ${response.status}): ${errorText}`);
+    }
     const { user } = await response.json();
     activeUserLimit = user.limit;
     activeUserTier = user;
@@ -8571,9 +8575,9 @@ async function getAllUserFiles(options = {}) {
   if (signal) {
     linkedAbortHandler = () => {
       try {
-        abortController.abort(signal.reason);
+        window.abortGetAllUserFilesController.abort(signal.reason);
       } catch (_) {
-        abortController.abort();
+        window.abortGetAllUserFilesController.abort();
       }
     };
     if (signal.aborted) {

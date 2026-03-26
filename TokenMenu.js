@@ -3116,7 +3116,7 @@ function build_notes_flyout_menu(tokenIds, flyout) {
 	});
 	let editNoteButton = $(`<button class="icon-note material-icons">Create Note</button>`)
 
-	if(tokenIds.length=1){
+	if(tokenIds.length==1){
 		let has_note=id in window.JOURNAL.notes;
 		if(has_note){
 			let viewNoteButton = $(`<button class="icon-view-note material-icons">View Note</button>`)		
@@ -4043,7 +4043,7 @@ function build_options_flyout_menu(tokenIds) {
 
 		let tokenSettings = tokens.map(t => t.options[setting.name]);
 		let uniqueSettings = [...new Set(tokenSettings)].filter(d => d != undefined);
-		if(uniqueSettings.length = 0)
+		if(uniqueSettings.length == 0)
 			uniqueSettings = [undefined]
 		let currentValue = null; // passing null will set the switch as unknown; undefined is the same as false
 		if (uniqueSettings.length === 1) {

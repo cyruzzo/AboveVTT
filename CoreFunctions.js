@@ -179,6 +179,22 @@ function build_combat_tracker_loading_indicator(subtext = "One moment while we f
   });
   return loadingIndicator.clone();
 }
+function add_dice_stream_gamelog_button(){    
+  if(window.JOINTHEDICESTREAM == undefined){
+    window.JOINTHEDICESTREAM = window.EXPERIMENTAL_SETTINGS['streamDiceRolls'];
+  }
+  if ($('.stream-dice-button').length == 0){
+    $(".glc-game-log>[class*='Container-Flex']").append($(`<div id="stream_dice"><div class='stream-dice-button ${window.EXPERIMENTAL_SETTINGS['streamDiceRolls'] ? `enabled` : ``}'>Dice Stream ${window.EXPERIMENTAL_SETTINGS['streamDiceRolls'] ? `Enabled` : `Disabled`}</div></div>`));
+    $(".stream-dice-button").off().on("click", function () {
+      if (window.JOINTHEDICESTREAM) {
+        update_dice_streaming_feature(false);
+      }
+      else {
+        update_dice_streaming_feature(true);
+      } 
+    })
+  }
+}
 /**
  * Add Dice buttons into sidebar.
  *
@@ -193,7 +209,7 @@ function inject_chat_buttons() {
     // make sure we only ever inject these once. This gets called a lot on the character sheet which is intentional, but just in case we accidentally call it too many times, let's log it, and return
     return;
   }
-
+  add_dice_stream_gamelog_button();
   const chatTextWrapper = $(`<div class='chat-text-wrapper sidebar-hover-text' data-hover="Dice Rolling Format: /cmd diceNotation action  &#xa;
     '/r 1d20'&#xa;
     '/roll 1d4 punch:bludgeoning damage'&#xa;
@@ -1872,6 +1888,10 @@ function update_pc_with_data(playerId, data) {
     console.warn("update_pc_with_data was given invalid data", playerId, data);
     return;
   }
+  if(!window.pcs){
+    console.warn('update_pc_with_data called before window.pcs initialized');
+    return;
+  }
   const index = window.pcs.findIndex(pc => pc.sheet.includes(playerId));
   if (index < 0) {
     console.warn("update_pc_with_data could not find pc with id", playerId);
@@ -2714,7 +2734,8 @@ function display_url_embeded(url){
 
 function find_or_create_generic_draggable_window(id, titleBarText, addLoadingIndicator = true, addPopoutButton = false, popoutSelector=``, width='80%', height='80%', top='10%', left='10%', showSlow = true, cancelClasses='', hideOnX = false, alwaysDisplayTitle = false) {
   console.log(`find_or_create_generic_draggable_window id: ${id}, titleBarText: ${titleBarText}, addLoadingIndicator: ${addLoadingIndicator}, addPopoutButton: ${addPopoutButton}`);
-  const existing = id.startsWith("#") ? $(id) : $(`#${id}`);
+
+  const existing = $(`[id="${id.replace('#', '')}"]`);
   if (existing.length > 0) {
     return existing;
   }
@@ -2888,7 +2909,7 @@ function find_or_create_generic_draggable_window(id, titleBarText, addLoadingInd
 }
 
 function close_and_cleanup_generic_draggable_window(id) {
-  const container = id.startsWith("#") ? $(id) : $(`#${id}`);
+  const container = $(`[id="${id.replace('#', '')}"]`);
   container.off('dblclick');
   container.off('mousedown');
   container.draggable('destroy');

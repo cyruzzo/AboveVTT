@@ -366,10 +366,10 @@ function init_combat_tracker(){
 		debounceCombatPersist();
 		ct_update_popout();
 		if(window.childWindows['Combat Tracker'] != undefined)
-			$(window.childWindows['Combat Tracker'].document).find("tr[data-current=1]")[0].scrollIntoView({ behavior: 'instant', block: 'center', start: 'inline' });
-		$("#site tr[data-current=1]")[0].scrollIntoView({ behavior: 'instant', block: 'center', start: 'inline' });	
+			$(window.childWindows['Combat Tracker'].document).find("tr[data-current=1]")[0]?.scrollIntoView({ behavior: 'instant', block: 'center', start: 'inline' });
+		$("#site tr[data-current=1]")[0]?.scrollIntoView({ behavior: 'instant', block: 'center', start: 'inline' });
 	});
-	
+
 	let prev=$("<button id='combat_prev_button'>PREV</button>");
 	prev.click(function(){
 		if($("#combat_area tr").length==0 || (document.getElementById('round_number').value <= 1 && $("#combat_area tr").first().attr('data-current') == 1))
@@ -430,8 +430,8 @@ function init_combat_tracker(){
 		debounceCombatPersist();
 		ct_update_popout();
 		if(window.childWindows['Combat Tracker'] != undefined)
-			$(window.childWindows['Combat Tracker'].document).find("tr[data-current=1]")[0].scrollIntoView({ behavior: 'instant', block: 'center', start: 'inline' });
-		$("#site tr[data-current=1]")[0].scrollIntoView({ behavior: 'instant', block: 'center', start: 'inline' });	
+			$(window.childWindows['Combat Tracker'].document).find("tr[data-current=1]")[0]?.scrollIntoView({ behavior: 'instant', block: 'center', start: 'inline' });
+		$("#site tr[data-current=1]")[0]?.scrollIntoView({ behavior: 'instant', block: 'center', start: 'inline' });
 	});
 
 	let endplayerturn=$('<button id="endplayerturn">E<u>n</u>d Turn</button>');
@@ -1768,7 +1768,7 @@ function ct_load(data=null){
 			$("#combat_area tr[data-target='"+data.current+"']").attr("data-current","1");
 			if(window.TOKEN_OBJECTS[data.current] != undefined){
 				window.TOKEN_OBJECTS[data.current].options.current = true;
-				window.TOKEN_OBJECTS[tokenID].place();
+				window.TOKEN_OBJECTS[data.current].place();
 			}
 			if(window.all_token_objects[data.current] != undefined){
 				if(window.all_token_objects[data.current].isCurrentPlayer() || window.all_token_objects[data.current].options.player_owned){

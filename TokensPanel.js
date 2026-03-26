@@ -1041,7 +1041,7 @@ function update_pc_token_rows() {
             } else{
                 row.find(".subtitle-attibute[title='Fly Speed']").hide()
             }
-            if(flyingSpeed > 0) {
+            if(swimmingSpeed > 0) {
                 row.find(".subtitle-attibute[title='Swim Speed']").show()
             } else {
                 row.find(".subtitle-attibute[title='Swim Speed']").hide()
@@ -1878,6 +1878,7 @@ function register_token_row_context_menu() {
                         for (let i = 0; i < selectedItems.length; i++) {
                             let selectedRow = $(selectedItems[i]);
                             let selectedItem = find_sidebar_list_item(selectedRow);
+                            listItemArray.push(selectedItem);
                         }
                         if (listItemArray.length < 10 || confirm(`This will add ${listItemArray.length} tokens which could lead to unexpected results. Are you sure you want to add all of these tokens?`)) {
                             let distanceFromCenter = window.CURRENT_SCENE_DATA.hpps * window.ZOOM * (listItemArray.length / 8);
@@ -2943,7 +2944,7 @@ function display_aoe_token_configuration_modal(listItem, placedToken = undefined
     });
     inputWrapper.append(imageZoomWrapper);
 
-    let startingTokenFlip = targetOptions.targetFlip || 0;
+    let startingTokenFlip = targetOptions.tokenFlip || 0;
     let tokenFlipWrapper = build_token_flip_input(startingTokenFlip, function (tokenFlip) { 
         customization.setTokenOption("tokenFlip", tokenFlip);
         persist_token_customization(customization);

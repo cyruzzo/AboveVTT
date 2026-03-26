@@ -1585,7 +1585,7 @@ class MonsterStatBlock {
               return match.toUpperCase();
           });
         }
-        if (this.data.conditionImmunitiesHtml === "string" && this.data.conditionImmunitiesHtml.length > 0) {
+        if (typeof this.data.conditionImmunitiesHtml === "string" && this.data.conditionImmunitiesHtml.length > 0) {
             return this.data.conditionImmunitiesHtml;
         }
         if (!this.data.conditionImmunities || this.data.conditionImmunities.length === 0) {
