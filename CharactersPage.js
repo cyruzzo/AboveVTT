@@ -1958,7 +1958,7 @@ function observe_character_sheet_changes(documentToObserve) {
 
         e.stopImmediatePropagation();
         
-        window.diceRoller.roll(new DiceRoll(rollData.expression, rollData.rollTitle, rollData.rollType), undefined, undefined, undefined, undefined, rollData.damageType, rollData.spellSave);
+        window.diceRoller.roll(new DiceRoll(rollData.expression, rollData.rollTitle, rollData.rollType), undefined, undefined, undefined, rollData.spellSave, rollData.damageType);
 
       };
 
