@@ -54,7 +54,10 @@ function init_peerVideo_box() {
 
     $("#peerVideo_mute_mic").off('click.mute').on('click.mute', function(){
         $(this).toggleClass('muted');
-        window.myLocalVideostream.getAudioTracks()[0].enabled = !$(this).hasClass('muted');
+        const audioTrack = window.myLocalVideostream?.getAudioTracks()[0];
+        if (audioTrack) {
+            audioTrack.enabled = !$(this).hasClass('muted');
+        }
     });
     $("#peerVideo_echo_cancel").off('click.echo').on('click.echo', function(){
         $(this).toggleClass('enabled');
@@ -283,7 +286,10 @@ function getMediaDevice(){
             audio: audioConditions,
         }).then( (stream) => {
         window.myLocalVideostream = stream;
-        window.myLocalVideostream.getAudioTracks()[0].enabled = !$("#peerVideo_mute_mic").hasClass('muted');
+        const audioTrack = window.myLocalVideostream.getAudioTracks()[0];
+        if (audioTrack) {
+            audioTrack.enabled = !$("#peerVideo_mute_mic").hasClass('muted');
+        }
         setLocalStream(window.myLocalVideostream)
         if(window.currentPeers.length == 0){
             window.MB.sendMessage("custom/myVTT/videoPeerConnect", {id: window.myVideoPeerID});  
@@ -327,7 +333,10 @@ function startScreenShare() {
             stopScreenSharing()
         }
 
-        screenStream.addTrack(window.myLocalVideostream.getAudioTracks()[0])
+        const micTrack = window.myLocalVideostream?.getAudioTracks()[0];
+        if (micTrack) {
+            screenStream.addTrack(micTrack);
+        }
         for(let i=0; i<window.currentPeers.length; i++){
           let call = window.videoPeer.call(window.currentPeers[i].peer, screenStream)
           call.on('stream', (stream) => {
