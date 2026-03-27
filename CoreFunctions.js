@@ -1267,7 +1267,7 @@ function inject_dice(){
        if($(mutation.addedNodes).is('.encounter-builder, .release-indicator')){
          $(mutation.addedNodes).remove();
        }
-     } catch{
+     } catch(error){
        console.warn("non_sheet_observer failed to parse mutation", error, mutation);
      }
    });

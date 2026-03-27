@@ -1,18 +1,6 @@
 /* CharactersPage.js - scripts that are exclusive to the Characters page */
 
 $(function() {
-  function interceptRollEvent(e) {
-    if(e.button == 2) return;
-    const target = $(e.target);
-    const rollButton = target.closest(`.integrated-dice__container:not('.above-combo-roll'):not('.above-aoe'):not(.avtt-roll-formula-button)`);
-    if (!rollButton.length) return;
-    e.preventDefault();
-    e.stopImmediatePropagation();
-    e.stopPropagation();
-    rollDiceButton(e, rollButton[0]);
-  }
-
-  window.addEventListener('pointerdown', interceptRollEvent, true);
   init_characters_pages();
 });
 
@@ -3044,7 +3032,7 @@ function observe_non_sheet_changes(documentToObserve) {
           window.MB.reprocess_chat_message_history();
         }
       }
-      catch{
+      catch(error){
         console.warn("non_sheet_observer failed to parse mutation", error, mutation);
       }
     })
