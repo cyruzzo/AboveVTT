@@ -25,6 +25,22 @@
             console.log("⛔  AVTT: no extension loading here.")
             return; //don't load anything
         }
+    } else{
+        //Load this as soon as possible for new dice
+        function interceptRollEvent(e) {
+            if(e.button == 2) return;
+            const newDice = $("[class*='DiceContainer_button']").length > 0;
+            if(!newDice) return;
+            const target = $(e.target);
+            const rollButton = target.closest(`.integrated-dice__container:not('.above-combo-roll'):not('.above-aoe'):not(.avtt-roll-formula-button)`);
+            
+            if (!rollButton.length) return;
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            e.stopPropagation();
+            rollDiceButton(e, rollButton[0]);
+        }
+        window.addEventListener('pointerdown', interceptRollEvent, true);
     }
 
     //setup to work in both contexts
@@ -197,8 +213,9 @@
                   "DDBApi.js", 
                   "Settings.js",
                   "CampaignPage.js"
-              ] : [...avttScripts,
-                   "Load.js", //load Loader on VTT full pages (for iframe inject - see below)
+              ] : [
+                    "Load.js",//load Loader on VTT full pages (for iframe inject - see below)
+                    ...avttScripts,
                    (pgType.endsWith("-dm") ? "SceneData.js" : "CharactersPage.js"),
                   ];
         if(pgType.startsWith("vtt-")) scripts.push("Startup.mjs");        
