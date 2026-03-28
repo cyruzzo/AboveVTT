@@ -284,7 +284,11 @@ Mousetrap.bind('shift+l', function () {
         $('#select_locked').click();
     }
 });
-
+if(is_spectator_page()){
+    Mousetrap.bind('shift+k', function () {
+        sendPointerEvent('#lock_view_button')
+    });
+}
 Mousetrap.bind('esc', function () {     //deselect all buttons
 
     close_splash();

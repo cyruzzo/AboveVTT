@@ -1285,6 +1285,13 @@ function inject_dice(){
  }, 300000);
  
 }
+
+function sendPointerEvent(targetSelector='', type="pointerdown", options = {}){
+  const pointerEvent = new PointerEvent(type, options)
+  const target = $(targetSelector);
+  console.assert(target.length>0, `Target not found for pointer event. Target selector: ${targetSelector}`, pointerEvent);
+  target[0]?.dispatchEvent(pointerEvent);
+}
 /**
  * Creates a transparent context background that can be clicked to close items
  * @param {String[]} closeItemTargets - An array of jQuery selectors for items to close when the background is clicked
