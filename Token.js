@@ -2149,6 +2149,7 @@ class Token {
 			return canMove;
 		} catch(error){
 			showError(error);
+			return false;
 		}			
 	}	
 	place(animationDuration) {
