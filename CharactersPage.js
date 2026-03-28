@@ -1400,20 +1400,12 @@ function register_buff_row_context_menu() {
 function rebuild_buffs(fullBuild = false){
   window.rollBuffs = JSON.parse(localStorage.getItem('rollBuffs' + window.PLAYER_ID)) || [];
   const buffDebuffKeys=Object.keys(buffsDebuffs);
-  for(let i in window.rollBuffs){
-    if(Array.isArray(window.rollBuffs[i])){
-      if(!buffDebuffKeys.includes(window.rollBuffs[i][0])){
-        window.rollBuffs.splice(i, 1);
-        localStorage.setItem('rollBuffs' + window.PLAYER_ID, JSON.stringify(window.rollBuffs));
-      }
-    }
-    else{
-      if(!buffDebuffKeys.includes(window.rollBuffs[i])){
-        window.rollBuffs.splice(i, 1);
-        localStorage.setItem('rollBuffs' + window.PLAYER_ID, JSON.stringify(window.rollBuffs));
-      }
-    }
-  }
+  const originalLength = window.rollBuffs.length;
+  window.rollBuffs = window.rollBuffs.filter(buff =>
+    Array.isArray(buff) ? buffDebuffKeys.includes(buff[0]) : buffDebuffKeys.includes(buff)
+  );
+  if(window.rollBuffs.length !== originalLength)
+    localStorage.setItem('rollBuffs' + window.PLAYER_ID, JSON.stringify(window.rollBuffs));
   rollBuffFavorites = JSON.parse(localStorage.getItem('rollFavoriteBuffs' + window.PLAYER_ID)) || [];
   rollBuffPins = JSON.parse(localStorage.getItem('rollBuffPins' + window.PLAYER_ID)) || [];
   let avttBuffSelect;
