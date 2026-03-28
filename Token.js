@@ -2127,8 +2127,7 @@ class Token {
 			const tokMidLeft = tokenX + parseFloat(token.sizeWidth())/2
 			const tokMidTop = tokenY + parseFloat(token.sizeHeight())/2
 			const idReplaced = token.options.id.replaceAll("/", "");
-			const grandParent = $placedToken.parent().parent();
-			let selEl = grandParent.find(`#aura_${idReplaced}, #light_${idReplaced}, #vision_${idReplaced}, [data-darkness='darkness_${idReplaced}']`);
+			let selEl = $(`#aura_${idReplaced}, #light_${idReplaced}, #vision_${idReplaced}, [data-darkness='darkness_${idReplaced}']`);
 			selEl.each((i, el) => {
 				const $el = $(el);
 				const selElWidth = parseFloat($el.css('width')) / 2;
@@ -2140,7 +2139,7 @@ class Token {
 					'top': auraTop + "px"
 				});
 			})
-			selEl = grandParent.find(`[data-notatoken='notatoken_${token.options.id}']`);
+			selEl = $(`[data-notatoken='notatoken_${token.options.id}']`);
 			if (selEl.length > 0) {
 				selEl.css({
 					'left': (parseFloat(token.options.left) / window.CURRENT_SCENE_DATA.scale_factor) + "px",
@@ -3193,14 +3192,9 @@ class Token {
 						if(tok.is(":animated")){
 							self.stopAnimation();
 						}
-
-
-						let selectedTokens = $('.tokenselected');
-				
 						
 						// for dragging behind iframes so tokens don't "jump" when you move past it
 						$("#resizeDragMon, .note:has(iframe) form .mce-container-body, #sheet").append($('<div class="iframeResizeCover"></div>'));
-
 
 						self.orig_top = self.options.top;
 						self.orig_left = self.options.left;
@@ -3209,10 +3203,27 @@ class Token {
 							$(`.token[data-group-id='${self.options.groupId}']:not([style*=' display: none;'])`).toggleClass('tokenselected', true); // set grouped tokens as selected
 						}
 						
-
 						window.playerTokenAuraIsLight = (window.CURRENT_SCENE_DATA.disableSceneVision == '1') ? false : (playerTokenId == undefined) ? true : window.TOKEN_OBJECTS[playerTokenId].options.auraislight; // used in drag to know if we should check for wall/LoS collision.
 						window.dragSelectedTokens = $(`#tokens .token.tokenselected:not(.ui-draggable-disabled), #tokens .token[data-group-id='${self.options.groupId}']`); //set variable for selected tokens that we'll be looking at in drag, deleted in stop.
-						
+						const setDataPos = (id) =>{
+							const idReplaced = id.replaceAll("/", "");
+							let selEl = $(`#aura_${idReplaced}, #light_${idReplaced}, #vision_${idReplaced}, [data-darkness='darkness_${idReplaced}']`);
+							selEl.each((i, el) => {
+								const $el = $(el);
+								$el.attr({
+									'data-left': $el.css("left").replace("px", ""),
+									"data-top": $el.css("top").replace("px", "")
+								});
+							})
+							selEl = $(`[data-notatoken='notatoken_${id}']`);
+							if (selEl.length > 0) {
+								selEl.attr({
+									'data-left': selEl.css("left").replace("px", ""),
+									"data-top": selEl.css("top").replace("px", "")
+								});
+							}	
+						}
+						setDataPos(self.options.id);
 						if (self.selected && window.dragSelectedTokens.length>1 && !shiftHeld) {
 							for (let tok of window.dragSelectedTokens){
 								let id = $(tok).attr("data-id");
@@ -3229,62 +3240,14 @@ class Token {
 									curr.orig_left = curr.options.left;
 	 								
 	 								curr.prepareWalkableArea();
+												
+									setDataPos(id);
 									
-									let el = $("#aura_" + id.replaceAll("/", ""));
-									if (el.length > 0) {
-										el.attr("data-left", el.css("left").replace("px", ""));
-										el.attr("data-top", el.css("top").replace("px", ""));
-									}
-									el = $("#light_" + id.replaceAll("/", ""));
-									if (el.length > 0) {
-										el.attr("data-left", el.css("left").replace("px", ""));
-										el.attr("data-top", el.css("top").replace("px", ""));
-									}
-									el = $("#vision_" + id.replaceAll("/", ""));
-									if (el.length > 0) {
-										el.attr("data-left", el.css("left").replace("px", ""));
-										el.attr("data-top", el.css("top").replace("px", ""));
-									}
-									el = $("[data-darkness='darkness_" + id + "']");
-									if (el.length > 0) {
-										el.attr("data-left", el.css("left").replace("px", ""));
-										el.attr("data-top", el.css("top").replace("px", ""));
-									}
-									el = $("[data-notatoken='notatoken_" + id + "']");
-									if (el.length > 0) {
-										el.attr("data-left", el.css("left").replace("px", ""));
-										el.attr("data-top", el.css("top").replace("px", ""));
-									}
 								}
 
 							}												
 						}
-
-						let el = $("#aura_" + self.options.id.replaceAll("/", ""));
-						if (el.length > 0) {
-							el.attr("data-left", el.css("left").replace("px", ""));
-							el.attr("data-top", el.css("top").replace("px", ""));
-						}
-						el = $("#light_" + self.options.id.replaceAll("/", ""));
-						if (el.length > 0) {
-							el.attr("data-left", el.css("left").replace("px", ""));
-							el.attr("data-top", el.css("top").replace("px", ""));
-						}
-						el = $("#vision_" + self.options.id.replaceAll("/", ""));
-						if (el.length > 0) {
-							el.attr("data-left", el.css("left").replace("px", ""));
-							el.attr("data-top", el.css("top").replace("px", ""));
-						}
-						el = $("[data-darkness='darkness_" + self.options.id.replaceAll("/", "") + "']");
-						if (el.length > 0) {
-							el.attr("data-left", el.css("left").replace("px", ""));
-							el.attr("data-top", el.css("top").replace("px", ""));
-						}
-						el = $("[data-notatoken='notatoken_" + self.options.id + "']");
-						if (el.length > 0) {
-							el.attr("data-left", el.css("left").replace("px", ""));
-							el.attr("data-top", el.css("top").replace("px", ""));
-						}
+	
 
 						if (get_avtt_setting_value("allowTokenMeasurement")) {
 								// Setup waypoint manager
