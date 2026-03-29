@@ -82,7 +82,7 @@ class PeerManager {
       });
       conn.on("error", (error) => {
         console.error("PeerManager connection error", error);
-        // should we call rebuild_peerManager() here?
+        window.PeerManager.disconnectFromPeer(conn.peer);
       });
     });
     this.peer.on('error', function (error) {
