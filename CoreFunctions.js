@@ -1019,7 +1019,9 @@ function add_journal_roll_buttons(target, tokenId=undefined, specificImage=undef
     
     
     if (rollData.rollType === "damage") {
-      damage_dice_context_menu(rollData.expression, rollData.modifier, rollData.rollTitle, rollData.rollType, tokenName, tokenImage, entityType, tokenId, damageType, spellSave)
+      const followingText = this.nextSibling?.textContent?.trim()?.split(' ')[0]
+      const damageType = followingText && window.ddbConfigJson.damageTypes.some(d => d.name.toLowerCase() == followingText.toLowerCase()) ? followingText : undefined
+      damage_dice_context_menu(rollData.expression, rollData.modifier, rollData.rollTitle, rollData.rollType, tokenName, tokenImage, entityType, tokenId, damageType, undefined)
         .present(e.clientY, e.clientX) // TODO: convert from iframe to main window
     } else {
       standard_dice_context_menu(rollData.expression, rollData.modifier, rollData.rollTitle, rollData.rollType, tokenName, tokenImage, entityType, tokenId)
