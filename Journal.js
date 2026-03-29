@@ -2670,22 +2670,22 @@ class JournalManager{
             );
             // Search for spell casting section
             const spellcasting = lines.findIndex((l) =>
-                l.match(/Spellcasting([^.]+)?./g)
+                l.match(/(?<!<[^>]+)Spellcasting([^.]+)?./g)
             );
             // If we find the section, loop through the levels
             if (
                 spellcasting >= 0 &&
                 spellcasting < li &&
-                (input.match(/At will:/gi) ||
-                    input.match(/Cantrips \(at will\):/gi) ||
-                    input.match(/(\d+\/day( each)?|\d+\w+ level \(\d slots?\))\:/gi))
+                (input.match(/(?<!<[^>]+)At will:/gi) ||
+                    input.match(/(?<!<[^>]+)Cantrips \(at will\):/gi) ||
+                    input.match(/(?<!<[^>]+)(\d+\/day( each)?|\d+\w+ level \(\d slots?\))\:/gi))
             ) {
-            	let eachNumberFound = (input.match(/\d+\/day( each)?/gi)) ? parseInt(input.match(/[0-9]+(?![0-9]?px)/gi)[0]) : undefined;
-            	let slotsNumberFound = (input.match(/\d+\w+ level \(\d slots?\)\:/gi)) ? parseInt(input.match(/[0-9]+/gi)[1]) : undefined;
+            	let eachNumberFound = (input.match(/(?<!<[^>]+)\d+\/day( each)?/gi)) ? parseInt(input.match(/(?<!<[^>]+)[0-9]+(?![0-9]?px)/gi)[0]) : undefined;
+            	let slotsNumberFound = (input.match(/(?<!<[^>]+)\d+\w+ level \(\d slots?\)\:/gi)) ? parseInt(input.match(/(?<!<[^>]+)[0-9]+/gi)[1]) : undefined;
             	let spellLevelFound = (slotsNumberFound) ? input.match(/\d+\w+ level/gi)[0] : undefined;
-                let parts = input.split(/(:\s(?<!(left:\s?|style="[\s\S]+?))|:(?<!(left:\s?|style="[\s\S]+?))<\/strong>(\s)?)/gi);
+                let parts = input.split(/((?<!<[^>]+):\s)/gi);
                 let i = parts.length - 1;
-                parts[i] = parts[i].split(/,\s(?![^(]*\))/gm);
+                parts[i] = parts[i].split(/(?<!<[^>]+),\s(?![^(]*\))/gm);
                 for (let p in parts[i]) {
 
                 	if(parts[i][p].match(/^((\s+?)?(<a|<span))/gi) && $(parts[i][p])?.is('a, span[data-spell]'))
