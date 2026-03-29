@@ -2089,7 +2089,7 @@ class Token {
 			let canMove = true;
 			if(!window.DM && window.playerTokenAuraIsLight){
 				const left = (tokenX + (parseFloat(token.sizeWidth()) / 2)) / parseFloat(window.CURRENT_SCENE_DATA.scale_factor);
-				const top = (tokenY + (parseFloat(token.sizeWidth()) / 2)) / parseFloat(window.CURRENT_SCENE_DATA.scale_factor);
+				const top = (tokenY + (parseFloat(token.sizeHeight()) / 2)) / parseFloat(window.CURRENT_SCENE_DATA.scale_factor);
 				if(typeof left != 'number' || isNaN(left) || typeof top != 'number' || isNaN(top)){
 					showErrorMessage(
 						Error(`One of these values is not a number: Size: ${token.sizeWidth()}, Scene Scale: ${window.CURRENT_SCENE_DATA.scale_factor}, x: ${tokenX}, y: ${tokenY}`),
