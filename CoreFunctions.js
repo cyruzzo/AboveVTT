@@ -1262,7 +1262,7 @@ function inject_dice(){
      try {
        let mutationTarget = $(mutation.target);
        
-       if(mutationTarget.hasClass(['encounter-details', 'encounter-builder', 'release-indicator'])){
+       if(mutationTarget.is('.encounter-details, .encounter-builder, .release-indicator')){
          mutationTarget.remove();
        }
        if($(mutation.addedNodes).is('.encounter-builder, .release-indicator')){
