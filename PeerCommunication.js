@@ -236,19 +236,42 @@ function disable_peer_manager() {
   window.PeerManager.enabled = false;
 }
 
-/** when we receive catastrophic errors, we need to tear down and rebuild PeerManager */
+/** Tracks rebuild state for the current session. Not reset on success — server costs are the concern. */
+let _rebuildAttempts = 0;
+const _maxRebuildAttempts = 3;
+const _rebuildBaseDelay = 2000;
+let _rebuildTimerId = undefined;
+
+/** When we receive catastrophic errors, we tear down and rebuild PeerManager.
+ * Uses exponential backoff (2s, 4s, 8s) with a per-session retry limit to avoid
+ * the WebSocket message spam that caused this to be disabled originally. */
 function rebuild_peerManager() {
-  //DO NOT REBUILD - CAUSES MESSAGE SPAM through websocket
-  // Can maybe add limited retries.
-  return;
-  /*
-    console.log("rebuild_peerManager starting");
-    disable_peer_manager();
-    window.PeerManager.tearDown();
-    window.PeerManager = new PeerManager();
-    enable_peer_manager();
-    console.log("rebuild_peerManager finished");
-  */
+  if (_rebuildTimerId) {
+    console.debug("rebuild_peerManager already scheduled, skipping");
+    return;
+  }
+  if (_rebuildAttempts >= _maxRebuildAttempts) {
+    console.warn(`rebuild_peerManager giving up after ${_maxRebuildAttempts} attempts. Cursors/rulers may not work until page refresh.`);
+    return;
+  }
+
+  _rebuildAttempts++;
+  const delay = Math.min(_rebuildBaseDelay * Math.pow(2, _rebuildAttempts - 1), 10000);
+  console.warn(`rebuild_peerManager scheduling attempt ${_rebuildAttempts}/${_maxRebuildAttempts} in ${delay}ms`);
+
+  _rebuildTimerId = setTimeout(() => {
+    _rebuildTimerId = undefined;
+    try {
+      console.log("rebuild_peerManager starting");
+      disable_peer_manager();
+      window.PeerManager.tearDown();
+      window.PeerManager = new PeerManager();
+      enable_peer_manager();
+      console.log("rebuild_peerManager finished");
+    } catch (error) {
+      console.warn("rebuild_peerManager failed", error);
+    }
+  }, delay);
 }
 
 /** Called when a new connection is opened
