@@ -133,9 +133,8 @@ $(function() {
         window.STREAMPEERS = {};
         window.MYSTREAMID = uuid();
         window.JOINTHEDICESTREAM = window.EXPERIMENTAL_SETTINGS['streamDiceRolls'];
-        if(window.JOINTHEDICESTREAM){
-          enable_dice_streaming_feature(window.JOINTHEDICESTREAM );
-        }
+        enable_dice_streaming_feature(window.JOINTHEDICESTREAM);
+       
         tabCommunicationChannel.addEventListener ('message', (event) => {
           if(event.data.msgType == 'CharacterData' && !find_pc_by_player_id(event.data.characterId, false))
             return;
