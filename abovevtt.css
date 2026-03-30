@@ -5211,7 +5211,9 @@ button.applyDamageButton svg {
     align-items: center;
     direction: rtl;
 }
-
+.block-send-to-game-log:has(.whisper-container.visible){
+    background: revert !important;
+}
 
 td button.block-send-to-game-log {
     position: absolute;

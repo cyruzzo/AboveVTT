@@ -2272,7 +2272,7 @@ class JournalManager{
 		const blocks = target.find('img:not(.mon-stat-block__separator-img), .text--quote-box, .rules-text, .block-torn-paper, .read-aloud-text, .dmScreenChunk')
 
 		const sendToGamelogButton = $('<button class="block-send-to-game-log"><span class="material-symbols-outlined">login</span></button>')
-		const container = $(`<div class='note-text' style='position:relative; width:fit-content; max-width: 100%'></div>`)
+
 		
 	
 
@@ -2342,12 +2342,15 @@ class JournalManager{
 		
 		const allDiceRegex = /(\d+)?d(?:100|20|12|10|8|6|4)((?:kh|kl|ro(<|<=|>|>=|=)|min=)\d+)*/g; // ([numbers]d[diceTypes]kh[numbers] or [numbers]d[diceTypes]kl[numbers]) or [numbers]d[diceTypes]
        	
-   		blocks.wrap(function(){
-			if(this instanceof HTMLImageElement){
-				container.css('min-width', 'fit-content');
+   		blocks.wrap(function(i){
+			const container = $(`<div class='note-text' style='position:relative;max-width: 100%;'></div>`)
+			if(blocks[i] instanceof HTMLImageElement){
+				container.css({
+					'min-width': 'fit-content',
+					'width': 'fit-content'
+				});
 				$(this).attr('href', $(this).attr('src'));
 			}
-
 			return container;
 		});
 		sendToGamelogButton.clone(true, true).insertAfter(blocks);
