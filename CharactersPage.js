@@ -1,18 +1,6 @@
 /* CharactersPage.js - scripts that are exclusive to the Characters page */
 
 $(function() {
-  function interceptRollEvent(e) {
-    if(e.button == 2) return;
-    const target = $(e.target);
-    const rollButton = target.closest(`.integrated-dice__container:not('.above-combo-roll'):not('.above-aoe'):not(.avtt-roll-formula-button)`);
-    if (!rollButton.length) return;
-    e.preventDefault();
-    e.stopImmediatePropagation();
-    e.stopPropagation();
-    rollDiceButton(e, rollButton[0]);
-  }
-
-  window.addEventListener('pointerdown', interceptRollEvent, true);
   init_characters_pages();
 });
 
@@ -1412,20 +1400,12 @@ function register_buff_row_context_menu() {
 function rebuild_buffs(fullBuild = false){
   window.rollBuffs = JSON.parse(localStorage.getItem('rollBuffs' + window.PLAYER_ID)) || [];
   const buffDebuffKeys=Object.keys(buffsDebuffs);
-  for(let i in window.rollBuffs){
-    if(Array.isArray(window.rollBuffs[i])){
-      if(!buffDebuffKeys.includes(window.rollBuffs[i][0])){
-        window.rollBuffs.splice(i, 1);
-        localStorage.setItem('rollBuffs' + window.PLAYER_ID, JSON.stringify(window.rollBuffs));
-      }
-    }
-    else{
-      if(!buffDebuffKeys.includes(window.rollBuffs[i])){
-        window.rollBuffs.splice(i, 1);
-        localStorage.setItem('rollBuffs' + window.PLAYER_ID, JSON.stringify(window.rollBuffs));
-      }
-    }
-  }
+  const originalLength = window.rollBuffs.length;
+  window.rollBuffs = window.rollBuffs.filter(buff =>
+    Array.isArray(buff) ? buffDebuffKeys.includes(buff[0]) : buffDebuffKeys.includes(buff)
+  );
+  if(window.rollBuffs.length !== originalLength)
+    localStorage.setItem('rollBuffs' + window.PLAYER_ID, JSON.stringify(window.rollBuffs));
   rollBuffFavorites = JSON.parse(localStorage.getItem('rollFavoriteBuffs' + window.PLAYER_ID)) || [];
   rollBuffPins = JSON.parse(localStorage.getItem('rollBuffPins' + window.PLAYER_ID)) || [];
   let avttBuffSelect;
@@ -3044,7 +3024,7 @@ function observe_non_sheet_changes(documentToObserve) {
           window.MB.reprocess_chat_message_history();
         }
       }
-      catch{
+      catch(error){
         console.warn("non_sheet_observer failed to parse mutation", error, mutation);
       }
     })
