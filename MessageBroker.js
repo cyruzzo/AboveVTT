@@ -138,7 +138,7 @@ const debounceHandleInjected = mydebounce(() => {
 										nextUrl = parts.join("/");
 										el.attr("data-current-avatar-url", "hacky");
 									} catch (error) {
-										console.warn("imageHtml failed to hack the largeAvatarUrl", el, e);
+										console.warn("imageHtml failed to hack the largeAvatarUrl", el, error);
 										nextUrl = el.attr("data-avatar-url");
 										el.attr("data-current-avatar-url", "avatarUrl");
 									}
