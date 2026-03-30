@@ -322,8 +322,6 @@ function avttCloneListingEntry(entry) {
     const clone = { ...entry };
     if (entry.Key) {
       clone.Key = entry.Key;
-    } else if (entry.Key) {
-      clone.Key = entry.Key;
     }
     if (typeof clone.Size === "number") {
       clone.Size = Number.isFinite(clone.Size) ? clone.Size: 0;
@@ -1608,7 +1606,7 @@ async function avttResolveMoveConflicts(moves) {
       ...move,
       toKey: targetKey,
       overwrite: action === "overwrite" && exists,
-      ...(skipDescendants.Size ? { skipDescendants: Array.from(skipDescendants) } : {}),
+      ...(skipDescendants.size ? { skipDescendants: Array.from(skipDescendants) } : {}),
     });
     if (additionalMoves.length) {
       resolved.push(...additionalMoves);
@@ -1650,7 +1648,7 @@ async function avttPromptUploadConflict({ fileName }) {
     };
 
     const onKeyDown = (event) => {
-      if (event.Key === "Escape") {
+      if (event.key === "Escape") {
         cleanup({ action: "skip", applyAll: applyAllCheckbox?.checked || false });
       }
     };
@@ -1713,9 +1711,9 @@ function avttPromptTextDialog({
     };
 
     const onKeyDown = (event) => {
-      if (event.Key === "Escape") {
+      if (event.key === "Escape") {
         cleanup(null);
-      } else if (event.Key === "Enter") {
+      } else if (event.key === "Enter") {
         event.preventDefault();
         confirmButton.click();
       }
@@ -3274,7 +3272,7 @@ async function avttMoveEntries(moves, options = {}) {
             .map((value) => avttNormalizeRelativePath(value))
             .filter(Boolean),
         );
-        if (skipSourceSet.Size > 0) {
+        if (skipSourceSet.size > 0) {
           if (Array.isArray(descendantEntries) && descendantEntries.length) {
             descendantEntries = descendantEntries.filter((entry) => {
               const candidate = avttNormalizeRelativePath(entry?.Key);
@@ -8064,7 +8062,7 @@ async function processGetFileFromS3Queue() {
         batchLookup.get(fullPath).items.push(item);
       }
 
-      if (batchLookup.Size <= 1) {
+      if (batchLookup.size <= 1) {
         for (const item of batchItems) {
           await processSingleItem(item);
         }
@@ -8103,7 +8101,7 @@ async function processGetFileFromS3Queue() {
         }
       }
 
-      if (unresolvedItems.Size > 0) {
+      if (unresolvedItems.size > 0) {
         for (const item of unresolvedItems) {
           await processSingleItem(item);
         }
