@@ -2853,6 +2853,15 @@ function init_zoom_buttons() {
 			$(window).off('scroll.resetToLockedPos')
 		})
 	}
+	const gridZoomConversion = $(`<div id='grid_zoom_conversion' class='ddbc-tab-options--layout-pill hideable'><div class='ddbc-tab-options__header-heading hasTooltip button-icon' data-name='Grid Zoom Conversion'><span class='material-symbols-outlined md-16 button-icon'>visibility</span></div></div>`);
+	zoom_section.append(gridZoomConversion);
+	gridZoomConversion.off('pointerdown.gridZoom').on('pointerdown.gridZoom', (e) =>{
+		if(window.EXPERIMENTAL_SETTINGS?.gridZoomConversion){
+			const zoom = window.EXPERIMENTAL_SETTINGS?.gridZoomConversion; 
+			change_zoom(zoom / parseFloat(window.CURRENT_SCENE_DATA.hpps));
+		}
+	})
+
 
 	let zoom_center = $("<div id='zoom_fit' class='ddbc-tab-options--layout-pill hasTooltip button-icon hideable' data-name='fit screen (0)'><div class='ddbc-tab-options__header-heading'><span class='material-icons button-icon'>fit_screen</span></div></div>");
 	zoom_center.click(reset_zoom);
