@@ -452,13 +452,13 @@ const avttPrimeListingCachesFromFullListing = throttle((entries) => {
 
 
 let avttPersistTimer = null;
-function avttSchedulePersist(delay = 250, persistToCloud = true) {
+function avttSchedulePersist(delay = 250) {
   if (avttPersistTimer) {
     clearTimeout(avttPersistTimer);
   }
   avttPersistTimer = setTimeout(() => {
     avttPersistTimer = null;
-    avttPersistCachesToIndexedDB(persistToCloud);
+    persistCacheThrottle();
   }, delay);
 }
 
@@ -472,33 +472,15 @@ function avttDelayFilePickerWriteTick() {
 }
 
 
-const persistCacheThrottle = throttle((persistToCloud = true)=>{
-  const records = [];
-  if (Array.isArray(avttAllFilesCache)) {
-    for (const entry of avttAllFilesCache) {
-      const key = entry?.Key || null;
-      if (!key) continue;
-      records.push({ fileEntry: key, type: "file", payload: avttCloneListingEntry(entry) });
-    }
-  }
-  for (const [folderPath, listing] of avttFolderListingCache.entries()) {
-    const recordKey = `folder:${folderPath}`;
-    const clonedListing = Array.isArray(listing) ? listing.map(avttCloneListingEntry) : [];
-    records.push({ fileEntry: recordKey, type: "folderListing", payload: clonedListing });
-  }
+const persistCacheThrottle = throttle(()=>{
   try {
-
-    if(persistToCloud){
-      uploadCacheFile()
-    }
+    uploadCacheFile()
   } catch (err) {
-    console.warn("avttPersistCachesToIndexedDB write helper failed", err);
+    console.warn("persistCacheThrottle failed", err);
   }
   return;
 }, 30000, { leading: true, trailing: true });
-function avttPersistCachesToIndexedDB(persistToCloud = true) {
-  persistCacheThrottle(persistToCloud);
-}
+
 
 
 
@@ -6361,7 +6343,7 @@ async function avttProcessUploadQueue() {
         }
 
         if (!isProxyUpload) {
-          const prospectiveTotal = (Number(selectedFile.Size) || 0) + (avttPendingUsageBytes || 0);
+          const prospectiveTotal = (Number(selectedFile.size) || 0) + (avttPendingUsageBytes || 0);
           if (
             activeUserLimit !== undefined &&
             prospectiveTotal + S3_Current_Size > activeUserLimit
@@ -6450,11 +6432,11 @@ async function avttProcessUploadQueue() {
                 targetKey = normalizedProxyTarget;
               }
             }
-            remoteSize = Number(proxyPayload?.Size);
+            remoteSize = Number(proxyPayload?.size);
             if (Number.isFinite(remoteSize) && remoteSize >= 0) {
-              selectedFile.Size = remoteSize;
-            } else if (!Number.isFinite(Number(selectedFile.Size))) {
-              selectedFile.Size = 0;
+              selectedFile.size = remoteSize;
+            } else if (!Number.isFinite(Number(selectedFile.size))) {
+              selectedFile.size = 0;
             }
             if (typeof proxyPayload?.contentType === "string") {
               selectedFile.avttUploadedContentType = proxyPayload.contentType;
@@ -6522,7 +6504,7 @@ async function avttProcessUploadQueue() {
           if (!isSystemTarget){
             const now = new Date().toISOString();
             const normalizedKey = `${window.PATREON_ID}/${targetKey}`;
-            const newSize = selectedFile.Size == 0 && remoteSize > 0 ? remoteSize : Number(selectedFile.Size) || 0;
+            const newSize = selectedFile.size == 0 && remoteSize > 0 ? remoteSize : Number(selectedFile.size) || 0;
             const newEntry = { Key: normalizedKey, Size: newSize, LastModified: now };
             avttRegisterPendingUploadKey(targetKey, newSize);
             if (Array.isArray(avttAllFilesCache)) {
@@ -6546,9 +6528,6 @@ async function avttProcessUploadQueue() {
                 avttFolderListingCache.set(parentFolder, existing);
               }
             }
-            if (!skipPersistCache) {
-              try { avttSchedulePersist(false); } catch { }
-            }
           }
          
             
@@ -6556,7 +6535,7 @@ async function avttProcessUploadQueue() {
           console.warn('Failed to update local caches after upload', cacheError);
         }
 
-        avttPendingUsageBytes += Number(selectedFile.Size) || 0;
+        avttPendingUsageBytes += Number(selectedFile.size) || 0;
         avttPendingUsageCount += 1;
         avttPendingUsageKeys.push(targetKey);
 
@@ -6760,8 +6739,6 @@ async function readUploadedFileCache() {
 
     avttAllFilesCache = DataFile.avttAllFilesCache;
     avttFolderListingCache = new Map(Object.entries(DataFile.avttFolderListingCache));
-    avttSchedulePersist(250, false);
-
   } catch (err) {
    console.error(err);
   }
