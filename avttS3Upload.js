@@ -1,4 +1,4 @@
-const AVTT_S3 = "https://l0cqoq0b4d.execute-api.us-east-1.amazonaws.com/default/uploader";
+﻿const AVTT_S3 = "https://l0cqoq0b4d.execute-api.us-east-1.amazonaws.com/default/uploader";
 
 let S3_Current_Size = 0;
 let currentFolder = "";
@@ -36,6 +36,20 @@ const AVTT_THUMBNAIL_DIMENSION = 50;
 const AVTT_THUMBNAIL_MIME_TYPE = "image/png";
 const avttPendingThumbnailGenerations = new Set();
 window.filePickerFirstLoad = true;
+
+
+function avttIsAboveVttOrCsvFile(entries) {
+  return Array.isArray(entries) && entries.some((e) => !e.isFolder && (/\.abovevtt$/i.test(e.Key) || /\.csv$/i.test(e.Key)));
+}
+
+function avttIsMediaFile(entries) {
+  return Array.isArray(entries) && entries.some((e) => !e.isFolder && (allowedVideoTypes.includes(getFileExtension(e.Key)) || allowedImageTypes.includes(getFileExtension(e.Key))));
+}
+
+function avttNormalizeSize(size, fallback = 0) {
+  const num = Number(size);
+  return Number.isFinite(num) ? num : fallback;
+}
 
 function avttGetPatreonIdForPaths() {
   const patreonId =
@@ -308,13 +322,13 @@ function avttCloneListingEntry(entry) {
     const clone = { ...entry };
     if (entry.Key) {
       clone.Key = entry.Key;
-    } else if (entry.key) {
-      clone.Key = entry.key;
+    } else if (entry.Key) {
+      clone.Key = entry.Key;
     }
     if (typeof clone.Size === "number") {
-      clone.Size = Number.isFinite(clone.Size) ? clone.Size : 0;
-    } else if (typeof entry.size === "number") {
-      clone.Size = Number.isFinite(entry.size) ? entry.size : 0;
+      clone.Size = Number.isFinite(clone.Size) ? clone.Size: 0;
+    } else if (typeof entry.Size === "number") {
+      clone.Size = Number.isFinite(entry.Size) ? entry.Size: 0;
     } else {
       clone.Size = 0;
     }
@@ -405,7 +419,7 @@ const avttPrimeListingCachesFromFullListing = throttle((entries) => {
     const absoluteFolderKey = `${window.PATREON_ID}/${folderPath}`;
     const parentListing = grouped.get(parent) || [];
     const alreadyPresentInParent = parentListing.some(
-      (e) => (e?.Key || e?.key || "") === absoluteFolderKey,
+      (e) => (e?.Key || "") === absoluteFolderKey,
     );
     if (!alreadyPresentInParent) {
 
@@ -415,7 +429,7 @@ const avttPrimeListingCachesFromFullListing = throttle((entries) => {
 
 
       const existsInAll = avttAllFilesCache.some(
-        (e) => (e?.Key || e?.key || "") === absoluteFolderKey,
+        (e) => (e?.Key || "") === absoluteFolderKey,
       );
       if (!existsInAll) {
         avttAllFilesCache.push({ ...folderEntry });
@@ -464,7 +478,7 @@ const persistCacheThrottle = throttle((persistToCloud = true)=>{
   const records = [];
   if (Array.isArray(avttAllFilesCache)) {
     for (const entry of avttAllFilesCache) {
-      const key = entry?.Key || entry?.key || null;
+      const key = entry?.Key || null;
       if (!key) continue;
       records.push({ fileEntry: key, type: "file", payload: avttCloneListingEntry(entry) });
     }
@@ -516,7 +530,7 @@ function avttBuildCacheEntry(relativeKey, size = 0, sourceEntry = null) {
   }
   return {
     Key: `${window.PATREON_ID}/${normalizedRelative}`,
-    Size: Number.isFinite(Number(size)) ? Number(size) : 0,
+    Size: avttNormalizeSize(size, 0),
   };
 }
 
@@ -529,7 +543,7 @@ function avttUpsertCacheEntry(relativeKey, size = 0, sourceEntry = null) {
   const listing = avttEnsureFolderListing(parentFolder);
   const normalizedKey = `${window.PATREON_ID}/${normalizedRelative}`;
   const existingIndex = listing.findIndex(
-    (entry) => (entry?.Key || entry?.key || "") === normalizedKey,
+    (entry) => (entry?.Key || "") === normalizedKey,
   );
   const newEntry = avttBuildCacheEntry(normalizedRelative, size, sourceEntry);
   if (!newEntry) {
@@ -542,7 +556,7 @@ function avttUpsertCacheEntry(relativeKey, size = 0, sourceEntry = null) {
   }
   if (Array.isArray(avttAllFilesCache)) {
     const allIndex = avttAllFilesCache.findIndex(
-      (entry) => (entry?.Key || entry?.key || "") === normalizedKey,
+      (entry) => (entry?.Key || "") === normalizedKey,
     );
     if (allIndex >= 0) {
       avttAllFilesCache[allIndex] = { ...newEntry };
@@ -567,14 +581,14 @@ function avttRemoveCacheEntry(relativeKey) {
     const listing = avttFolderListingCache.get(parentFolder);
     const normalizedKey = `${window.PATREON_ID}/${normalizedRelative}`;
     const filtered = listing.filter(
-      (entry) => (entry?.Key || entry?.key || entry) !== normalizedKey,
+      (entry) => (entry?.Key || entry) !== normalizedKey,
     );
     avttFolderListingCache.set(parentFolder, filtered);
   }
   if (Array.isArray(avttAllFilesCache)) {
     const normalizedKey = `${window.PATREON_ID}/${normalizedRelative}`;
     avttAllFilesCache = avttAllFilesCache.filter(
-      (entry) => (entry?.Key || entry?.key || entry) !== normalizedKey,
+      (entry) => (entry?.Key || entry) !== normalizedKey,
     );
   }
   try {
@@ -597,7 +611,7 @@ function avttRemoveFolderCacheRecursively(folderPath) {
   }
   if (Array.isArray(avttAllFilesCache)) {
     avttAllFilesCache = avttAllFilesCache.filter((entry) => {
-      const absolute = entry?.Key || entry?.key || "";
+      const absolute = entry?.Key || "";
       return typeof absolute === "string"
         ? !absolute.startsWith(absolutePrefix)
         : true;
@@ -623,7 +637,7 @@ function avttMoveFolderCaches(fromFolder, toFolder) {
     if (key === source || key.startsWith(source)) {
       const newKey = `${target}${key.slice(source.length)}`;
       const remappedListing = listing.map((entry) => {
-        const absolute = entry?.Key || entry?.key || "";
+        const absolute = entry?.Key || "";
         if (typeof absolute !== "string") {
           return avttCloneListingEntry(entry);
         }
@@ -647,7 +661,7 @@ function avttMoveFolderCaches(fromFolder, toFolder) {
   }
   if (Array.isArray(avttAllFilesCache)) {
     avttAllFilesCache = avttAllFilesCache.map((entry) => {
-      const absolute = entry?.Key || entry?.key || "";
+      const absolute = entry?.Key || "";
       if (typeof absolute !== "string" || !absolute.startsWith(absoluteSource)) {
         return avttCloneListingEntry(entry);
       }
@@ -675,7 +689,7 @@ function avttCopyFolderCaches(fromFolder, toFolder) {
   const gathered = [];
   if (Array.isArray(avttAllFilesCache)) {
     for (const entry of avttAllFilesCache) {
-      const absolute = entry?.Key || entry?.key || "";
+      const absolute = entry?.Key || "";
       if (typeof absolute !== "string" || !absolute.startsWith(absoluteSource)) {
         continue;
       }
@@ -685,7 +699,7 @@ function avttCopyFolderCaches(fromFolder, toFolder) {
     for (const [key, listing] of avttFolderListingCache.entries()) {
       if (key === source || key.startsWith(source)) {
         for (const entry of listing) {
-          const absolute = entry?.Key || entry?.key || "";
+          const absolute = entry?.Key || "";
           if (typeof absolute !== "string" || !absolute.startsWith(absoluteSource)) {
             continue;
           }
@@ -696,7 +710,7 @@ function avttCopyFolderCaches(fromFolder, toFolder) {
     const parentListing = avttFolderListingCache.get(avttGetParentFolder(source));
     if (parentListing) {
       const folderEntry = parentListing.find((entry) => {
-        const absolute = entry?.Key || entry?.key || "";
+        const absolute = entry?.Key || "";
         return typeof absolute === "string" && absolute === absoluteSource;
       });
       if (folderEntry) {
@@ -710,7 +724,7 @@ function avttCopyFolderCaches(fromFolder, toFolder) {
     return;
   }
   for (const entry of gathered) {
-    const absolute = entry?.Key || entry?.key || "";
+    const absolute = entry?.Key || "";
     if (typeof absolute !== "string" || !absolute.startsWith(absoluteSource)) {
       continue;
     }
@@ -775,8 +789,8 @@ const avttContextMenuState = {
 function avttGetSelectedEntries() {
   const selectedCheckboxes = $('#file-listing input[type="checkbox"]:checked').get();
   return selectedCheckboxes.map((element) => ({
-    key: element.value,
-    size: Number(element.getAttribute("data-size")) || 0,
+    Key: element.value,
+    Size: Number(element.getAttribute("data-size")) || 0,
     isFolder: element.classList.contains("folder"),
   }));
 }
@@ -802,7 +816,7 @@ function avttSelectPaths(paths) {
 
 function avttEnsureSelectionIncludes(path, isFolder) {
   const selected = avttGetSelectedEntries();
-  const hasPath = selected.some((entry) => entry.key === path);
+  const hasPath = selected.some((entry) => entry.Key === path);
   if (hasPath) {
     const checkbox = $('#file-listing input[type="checkbox"]').filter(function () {
       return this.value === path;
@@ -861,7 +875,7 @@ function avttApplyClipboardHighlights() {
     return;
   }
   for (const entry of avttClipboard.items) {
-    const row = avttFindRowByPath(entry.key);
+    const row = avttFindRowByPath(entry.Key);
     if (row) {
       row.classList.add("avtt-cut-row");
     }
@@ -872,11 +886,11 @@ function avttSetClipboard(items, mode) {
   const entries = Array.isArray(items)
     ? items
         .map((item) => ({
-          key: item.key,
-          size: Number(item.size) || 0,
+          Key: item.Key,
+          Size: Number(item.Size) || 0,
           isFolder: Boolean(item.isFolder),
         }))
-        .filter((item) => item.key)
+        .filter((item) => item.Key)
     : [];
   if (!entries.length || !mode) {
     avttClearClipboard();
@@ -906,7 +920,7 @@ function avttCopySelectedPathsToClipboard() {
     return false;
   }
   const paths = selections.map(
-    (entry) => `above-bucket-not-a-url/${window.PATREON_ID}/${entry.key}`,
+    (entry) => `above-bucket-not-a-url/${window.PATREON_ID}/${entry.Key}`,
   );
   const copyText = paths.join(", ");
   navigator.clipboard.writeText(copyText);
@@ -978,7 +992,7 @@ function avttUpdateActionsMenuState() {
   }
 
   const hasNonFolder = selection.some((e) => !e.isFolder);
-  const hasAbovevtt = hasNonFolder && selection.some((e) => (/\.abovevtt$/i.test(e.key) || /\.csv$/i.test(e.key)));
+  const hasAbovevtt = hasNonFolder && avttIsAboveVttOrCsvFile(selection);
   const openNewTabButton = dropdown.querySelector('button[data-action="openNewTab"]');
   if (openNewTabButton) {
     
@@ -998,8 +1012,8 @@ function avttUpdateActionsMenuState() {
   }
   const sendToGamelogButton = dropdown.querySelector('button[data-action="sendToGamelog"]');
   if (sendToGamelogButton) {
-    const hasAbovevtt = selection.some((e) => !e.isFolder && (allowedVideoTypes.includes(getFileExtension(e.key)) || allowedImageTypes.includes(getFileExtension(e.key))));
-    sendToGamelogButton.disabled = !hasAbovevtt;
+    const hasMediaFile = avttIsMediaFile(selection);
+    sendToGamelogButton.disabled = !hasMediaFile;
   }
 }
 
@@ -1151,8 +1165,8 @@ function avttSortEntries(entries) {
         { sensitivity: "base" },
       );
     } else if (column === AVTT_SORT_COLUMNS.SIZE) {
-      const sizeA = Number(a.size) || 0;
-      const sizeB = Number(b.size) || 0;
+      const sizeA = Number(a.Size) || 0;
+      const sizeB = Number(b.Size) || 0;
       compare = sizeA - sizeB;
     }
     if (compare === 0) {
@@ -1256,7 +1270,7 @@ async function avttGetEntryForKey(relativeKey) {
   const listing = await avttGetFolderListingCached(parentFolder);
   const normalizedKey = `${window.PATREON_ID}/${relativeKey}`;
   return (
-    listing.find((entry) => (entry?.Key || entry?.key) === normalizedKey) ||
+    listing.find((entry) => (entry?.Key) === normalizedKey) ||
     null
   );
 }
@@ -1321,7 +1335,7 @@ function avttEntryAppearsFolder(entry) {
   if (entry.isFolder === true) {
     return true;
   }
-  const keyCandidate = entry.Key || entry.key;
+  const keyCandidate = entry.Key;
   if (typeof keyCandidate === "string" && keyCandidate.endsWith("/")) {
     return true;
   }
@@ -1382,7 +1396,7 @@ async function avttResolveFolderDescendantConflicts(move, targetRootKey, conflic
       if (avttEntryAppearsFolder(entry)) {
         continue;
       }
-      const candidate = entry.key || entry.Key;
+      const candidate = entry.Key;
       const normalizedCandidate = avttNormalizeRelativePath(candidate);
       if (!normalizedCandidate) {
         continue;
@@ -1395,7 +1409,7 @@ async function avttResolveFolderDescendantConflicts(move, targetRootKey, conflic
     if (!entry || entry.synthetic || entry.isFolder) {
       continue;
     }
-    const sourceKey = avttNormalizeRelativePath(entry.key || entry.Key);
+    const sourceKey = avttNormalizeRelativePath(entry.Key);
     if (!sourceKey || avttIsHiddenSystemRelativeKey(sourceKey)) {
       continue;
     }
@@ -1463,14 +1477,14 @@ async function avttResolveFolderDescendantConflicts(move, targetRootKey, conflic
         skipDescendants.add(sourceKey);
         continue;
       }
-      const sizeValue = Number(entry.size);
+      const sizeValue = Number(entry.Size);
       const normalizedSize = Number.isFinite(sizeValue) ? sizeValue : 0;
       avttRegisterPendingUploadKey(uniqueTargetKey, normalizedSize);
       additionalMoves.push({
         fromKey: sourceKey,
         toKey: uniqueTargetKey,
         isFolder: false,
-        size: normalizedSize,
+        Size: normalizedSize,
         overwrite: false,
       });
       skipDescendants.add(sourceKey);
@@ -1589,12 +1603,12 @@ async function avttResolveMoveConflicts(moves) {
       }
     }
 
-    avttRegisterPendingUploadKey(targetKey, Number(move.size) || 0);
+    avttRegisterPendingUploadKey(targetKey, Number(move.Size) || 0);
     resolved.push({
       ...move,
       toKey: targetKey,
       overwrite: action === "overwrite" && exists,
-      ...(skipDescendants.size ? { skipDescendants: Array.from(skipDescendants) } : {}),
+      ...(skipDescendants.Size ? { skipDescendants: Array.from(skipDescendants) } : {}),
     });
     if (additionalMoves.length) {
       resolved.push(...additionalMoves);
@@ -1636,7 +1650,7 @@ async function avttPromptUploadConflict({ fileName }) {
     };
 
     const onKeyDown = (event) => {
-      if (event.key === "Escape") {
+      if (event.Key === "Escape") {
         cleanup({ action: "skip", applyAll: applyAllCheckbox?.checked || false });
       }
     };
@@ -1699,9 +1713,9 @@ function avttPromptTextDialog({
     };
 
     const onKeyDown = (event) => {
-      if (event.key === "Escape") {
+      if (event.Key === "Escape") {
         cleanup(null);
-      } else if (event.key === "Enter") {
+      } else if (event.Key === "Enter") {
         event.preventDefault();
         confirmButton.click();
       }
@@ -1797,7 +1811,7 @@ async function avttHandleToolbarAction(action) {
       const selection = avttGetSelectedEntries();
       if (selection.length === 1) {
         handled = Boolean(
-          await avttPromptRename(selection[0].key, selection[0].isFolder),
+          await avttPromptRename(selection[0].Key, selection[0].isFolder),
         );
       }
       break;
@@ -1822,7 +1836,7 @@ async function avttHandleToolbarAction(action) {
     case "openNewTab": {
       const selection = avttGetSelectedEntries();
       if (selection.length > 0) {
-        const rawKey = selection[0].key
+        const rawKey = selection[0].Key
         const url = await getAvttStorageUrl(rawKey, true)
 
         if (!url) {
@@ -1843,7 +1857,7 @@ async function avttHandleToolbarAction(action) {
       try {
         const selection = avttGetSelectedEntries();
         if (selection.length > 0) {
-          const rawKey = selection[0].key
+          const rawKey = selection[0].Key
           const url = await getAvttStorageUrl(rawKey);
           if (!url) {
             throw new Error("File URL could not be generated.");
@@ -1864,7 +1878,7 @@ async function avttHandleToolbarAction(action) {
       try {
         const selection = avttGetSelectedEntries();
         if (selection.length > 0) {
-          const rawKey = selection[0].key
+          const rawKey = selection[0].Key
           const url = await getAvttStorageUrl(rawKey);
           if (!url) {
             throw new Error("File URL could not be generated.");
@@ -1903,7 +1917,7 @@ async function avttHandleToolbarAction(action) {
         }
 
 
-        const url = `above-bucket-not-a-url/${window.PATREON_ID}/${selection[0].key}`;
+        const url = `above-bucket-not-a-url/${window.PATREON_ID}/${selection[0].Key}`;
         const avttUrl = await getAvttStorageUrl(url, true)
         data.text = `
             <a class='chat-link' href='${avttUrl}' target='_blank' rel='noopener noreferrer'>${url}</a>
@@ -1947,24 +1961,24 @@ async function setAvttFilePickerCssVar(options = {}) {
 }
 async function avttImportSelectedFiles(selection) {
   const entries = Array.isArray(selection) ? selection : avttGetSelectedEntries();
-  const csvFiles = entries.filter((e) => !e.isFolder && /\.csv$/i.test(e.key));
+  const csvFiles = entries.filter((e) => !e.isFolder && /\.csv$/i.test(e.Key));
   if (csvFiles.length) {
     try { 
       build_import_loading_indicator('Importing CSV Files');
 
       for (const entry of csvFiles) {
         try {
-          const url = await getAvttStorageUrl(`${PATREON_ID}/${entry.key}`);
+          const url = await getAvttStorageUrl(`${PATREON_ID}/${entry.Key}`);
           if (!url) continue;
           const resp = await fetch(url);
           if (!resp.ok) {
-            console.warn('Failed to fetch CSV file for import', entry.key);
+            console.warn('Failed to fetch CSV file for import', entry.Key);
             continue;
           }
           const text = await resp.text();
           window.TRACK_LIBRARY.importCSV(text);
         } catch (err) {
-          console.error('CSV Import failed for', entry.key, err);
+          console.error('CSV Import failed for', entry.Key, err);
         }
       }
       $('body>.import-loading-indicator').remove();
@@ -1975,7 +1989,7 @@ async function avttImportSelectedFiles(selection) {
     }
   }
 
-  const filesToImport = entries.filter((e) => !e.isFolder && /\.abovevtt$/i.test(e.key));
+  const filesToImport = entries.filter((e) => !e.isFolder && /\.abovevtt$/i.test(e.Key));
   if (!filesToImport.length) return;
 
   build_import_loading_indicator('Importing Files');
@@ -1985,11 +1999,11 @@ async function avttImportSelectedFiles(selection) {
 
   for (const entry of filesToImport) {
     try {
-      const url = await getAvttStorageUrl(`${PATREON_ID}/${entry.key}`);
+      const url = await getAvttStorageUrl(`${PATREON_ID}/${entry.Key}`);
       if (!url) continue;
       const resp = await fetch(url);
       if (!resp.ok) {
-        console.warn('Failed to fetch file for import', entry.key);
+        console.warn('Failed to fetch file for import', entry.Key);
         continue;
       }
       const text = await resp.text();
@@ -1998,7 +2012,7 @@ async function avttImportSelectedFiles(selection) {
       await import_process_datafile_text(text);
      
     } catch (err) {
-      console.error('Import failed for', entry.key, err);
+      console.error('Import failed for', entry.Key, err);
     }
   }
 
@@ -2146,23 +2160,23 @@ function avttUpdateContextMenuState() {
   } 
   const openButton = menu.querySelector('button[data-action="open"]');
   if (openButton) {
-    const hasAbovevtt = selection.some((e) => !e.isFolder && (/\.abovevtt$/i.test(e.key) || /\.csv$/i.test(e.key)));
+    const hasAbovevtt = avttIsAboveVttOrCsvFile(selection);
     openButton.disabled = hasAbovevtt || !hasExplicitTarget || avttContextMenuState.isFolder;
   } 
   const forceOpenButton = menu.querySelector('button[data-action="forceOpen"]');
   if (forceOpenButton) {
-    const hasAbovevtt = selection.some((e) => !e.isFolder && (/\.abovevtt$/i.test(e.key) || /\.csv$/i.test(e.key)));
+    const hasAbovevtt = avttIsAboveVttOrCsvFile(selection);
     forceOpenButton.disabled = hasAbovevtt || !hasExplicitTarget || avttContextMenuState.isFolder;
   } 
   const importButton = menu.querySelector('button[data-action="import"]');
   if (importButton) {
-    const hasAbovevtt = selection.some((e) => !e.isFolder && (/\.abovevtt$/i.test(e.key) || /\.csv$/i.test(e.key)));
+    const hasAbovevtt = avttIsAboveVttOrCsvFile(selection);
     importButton.disabled = !hasAbovevtt;
   }
   const sendToGamelogButton = menu.querySelector('button[data-action="sendToGamelog"]');
   if (sendToGamelogButton) {
-    const hasAbovevtt = selection.some((e) => !e.isFolder && (allowedVideoTypes.includes(getFileExtension(e.key)) || allowedImageTypes.includes(getFileExtension(e.key))));
-    sendToGamelogButton.disabled = !hasAbovevtt;
+    const hasMediaFile = avttIsMediaFile(selection);
+    sendToGamelogButton.disabled = !hasMediaFile;
   }
 }
 
@@ -2418,14 +2432,14 @@ function avttComputeNewKeyForDestination(entry, destinationFolder) {
   const normalizedDestination = (destinationFolder && destinationFolder.endsWith("/")) ? destinationFolder
       : destinationFolder ? `${destinationFolder}/` : "";
   if (entry.isFolder) {
-    const trimmed = entry.key.replace(/\/$/, "");
+    const trimmed = entry.Key.replace(/\/$/, "");
     const folderName = trimmed.split("/").pop();
     if (!folderName) {
       return null;
     }
     return `${normalizedDestination}${folderName}/`;
   }
-  const fileName = entry.key.split("/").pop();
+  const fileName = entry.Key.split("/").pop();
   if (!fileName) {
     return null;
   }
@@ -2458,13 +2472,13 @@ async function avttCollectDescendantEntries(folderKey, options = {}) {
     if (!allowFolderSelf && normalizedKey === normalizedFolder) {
       return false;
     }
-    const numericSize = Number.isFinite(Number(size)) ? Number(size) : undefined;
+    const numericSize = avttNormalizeSize(size, undefined);
     const existing = entriesByKey.get(normalizedKey);
     if (existing) {
       if (existing.synthetic && !synthetic) {
         entriesByKey.set(normalizedKey, {
-          key: normalizedKey,
-          size: numericSize,
+          Key: normalizedKey,
+          Size: numericSize,
           isFolder: Boolean(isFolder),
           synthetic: false,
         });
@@ -2472,8 +2486,8 @@ async function avttCollectDescendantEntries(folderKey, options = {}) {
       return false;
     }
     entriesByKey.set(normalizedKey, {
-      key: normalizedKey,
-      size: numericSize,
+      Key: normalizedKey,
+      Size: numericSize,
       isFolder: Boolean(isFolder),
       synthetic: Boolean(synthetic),
     });
@@ -2490,7 +2504,7 @@ async function avttCollectDescendantEntries(folderKey, options = {}) {
     const absolutePrefix = `${window.PATREON_ID}/${normalizedFolder}`;
     const beforeCount = order.length;
     for (const cachedEntry of avttAllFilesCache) {
-      const absolute = cachedEntry?.Key || cachedEntry?.key;
+      const absolute = cachedEntry?.Key;
       if (typeof absolute !== "string" || !absolute.startsWith(absolutePrefix)) {
         continue;
       }
@@ -2498,9 +2512,7 @@ async function avttCollectDescendantEntries(folderKey, options = {}) {
       if (!relative) {
         continue;
       }
-      const size = Number.isFinite(Number(cachedEntry?.Size))
-        ? Number(cachedEntry.Size)
-        : Number(cachedEntry?.size);
+      const size = avttNormalizeSize(cachedEntry?.Size, undefined);
       const isFolder = relative.endsWith("/");
       addEntry(relative, size, isFolder, { allowFolderSelf: relative === normalizedFolder });
     }
@@ -2563,7 +2575,7 @@ async function avttCollectDescendantEntries(folderKey, options = {}) {
     }
 
     for (const cachedEntry of listing) {
-      const absolute = cachedEntry?.Key || cachedEntry?.key;
+      const absolute = cachedEntry?.Key;
       if (typeof absolute !== "string") {
         continue;
       }
@@ -2571,9 +2583,7 @@ async function avttCollectDescendantEntries(folderKey, options = {}) {
       if (!relative) {
         continue;
       }
-      const size = Number.isFinite(Number(cachedEntry?.Size))
-        ? Number(cachedEntry.Size)
-        : Number(cachedEntry?.size);
+      const size = avttNormalizeSize(cachedEntry?.Size, undefined);
       const isFolder = relative.endsWith("/");
       addEntry(relative, size, isFolder, { allowFolderSelf: relative === normalizedFolder });
       if (isFolder) {
@@ -2601,10 +2611,10 @@ function avttBuildThumbnailDescendants(entries) {
   const order = [];
 
   for (const entry of entries) {
-    if (!entry || typeof entry.key !== "string") {
+    if (!entry || typeof entry.Key !== "string") {
       continue;
     }
-    const normalizedSourceKey = avttNormalizeRelativePath(entry.key);
+    const normalizedSourceKey = avttNormalizeRelativePath(entry.Key);
     if (!normalizedSourceKey) {
       continue;
     }
@@ -2627,7 +2637,7 @@ function avttBuildThumbnailDescendants(entries) {
 
     const existing = resultsByKey.get(thumbnailKey);
     const payload = {
-      key: thumbnailKey,
+      Key: thumbnailKey,
       isFolder,
       ...(synthetic ? { synthetic: true } : {}),
     };
@@ -2674,7 +2684,7 @@ function avttChunkMovePayloadItems(items, maxKeys = AVTT_MAX_MOVE_KEYS_PER_REQUE
       if (!entry || !entry.synthetic) {
         return false;
       }
-      const normalizedKey = avttNormalizeFolderPath(entry.key);
+      const normalizedKey = avttNormalizeFolderPath(entry.Key);
       return normalizedKey === normalizedFrom;
     });
 
@@ -3208,11 +3218,11 @@ async function avttMoveEntries(moves, options = {}) {
     const buildDescendantPayload = (entries) =>
       entries.map((entry) => {
         const payload = {
-          key: entry.key,
+          Key: entry.Key,
           isFolder: Boolean(entry.isFolder),
         };
-        if (Number.isFinite(Number(entry.size))) {
-          payload.size = Number(entry.size);
+        if (Number.isFinite(Number(entry.Size))) {
+          payload.Size = Number(entry.Size);
         }
         if (entry.synthetic) {
           payload.synthetic = true;
@@ -3264,10 +3274,10 @@ async function avttMoveEntries(moves, options = {}) {
             .map((value) => avttNormalizeRelativePath(value))
             .filter(Boolean),
         );
-        if (skipSourceSet.size > 0) {
+        if (skipSourceSet.Size > 0) {
           if (Array.isArray(descendantEntries) && descendantEntries.length) {
             descendantEntries = descendantEntries.filter((entry) => {
-              const candidate = avttNormalizeRelativePath(entry?.key || entry?.Key);
+              const candidate = avttNormalizeRelativePath(entry?.Key);
               return candidate ? !skipSourceSet.has(candidate) : true;
             });
           }
@@ -3289,7 +3299,7 @@ async function avttMoveEntries(moves, options = {}) {
               });
             }
             destinationDescendants = destinationDescendants.filter((entry) => {
-              const candidate = avttNormalizeRelativePath(entry?.key || entry?.Key);
+              const candidate = avttNormalizeRelativePath(entry?.Key);
               return candidate ? !skipDestinationSet.has(candidate) : true;
             });
           }
@@ -3302,7 +3312,7 @@ async function avttMoveEntries(moves, options = {}) {
         if (normalizedFromRoot) {
           descendantRelativeKeySet = new Set([""]);
           descendantEntries.forEach((entry) => {
-            const rawKey = avttNormalizeRelativePath(entry?.key || entry?.Key);
+            const rawKey = avttNormalizeRelativePath(entry?.Key);
             if (!rawKey) {
               return;
             }
@@ -3328,7 +3338,7 @@ async function avttMoveEntries(moves, options = {}) {
         const normalizedToRoot = avttNormalizeFolderPath(move.toKey);
         if (normalizedToRoot) {
           destinationDescendants = destinationDescendants.filter((entry) => {
-            const rawKey = avttNormalizeRelativePath(entry?.key || entry?.Key);
+            const rawKey = avttNormalizeRelativePath(entry?.Key);
             if (!rawKey || !rawKey.startsWith(normalizedToRoot)) {
               return false;
             }
@@ -3466,7 +3476,7 @@ async function avttMoveEntries(moves, options = {}) {
     if (operation === "move") {
       for (const move of resolvedMoves) {
         ensureNotAborted();
-        const size = Number(move.size) || 0;
+        const size = Number(move.Size) || 0;
         if (move.isFolder) {
           avttRemoveCacheEntry(move.fromKey);
           avttMoveFolderCaches(move.fromKey, move.toKey);
@@ -3478,7 +3488,7 @@ async function avttMoveEntries(moves, options = {}) {
     } else {
       for (const move of resolvedMoves) {
         ensureNotAborted();
-        const size = Number(move.size) || 0;
+        const size = Number(move.Size) || 0;
         if (move.isFolder) {
           avttCopyFolderCaches(move.fromKey, move.toKey);
         }
@@ -3579,20 +3589,20 @@ async function avttHandlePasteFromClipboard(destinationFolder = currentFolder) {
     if (
       entry.isFolder &&
       destinationFolder &&
-      destinationFolder.startsWith(entry.key)
+      destinationFolder.startsWith(entry.Key)
     ) {
       alert("Cannot paste a folder inside itself.");
       return;
     }
     const newKey = avttComputeNewKeyForDestination(entry, destinationFolder);
-    if (!newKey || newKey === entry.key) {
+    if (!newKey || newKey === entry.Key) {
       continue;
     }
     moves.push({
-      fromKey: entry.key,
+      fromKey: entry.Key,
       toKey: newKey,
       isFolder: entry.isFolder,
-      size: Number(entry.size) || 0,
+      Size: Number(entry.Size) || 0,
     });
   }
   if (moves.length === 0) {
@@ -3694,12 +3704,12 @@ function avttHandleDragStart(event, entry) {
     try {
       event.dataTransfer.setData(
         "application/json",
-        JSON.stringify(avttDragItems.map((item) => item.key)),
+        JSON.stringify(avttDragItems.map((item) => item.Key)),
       );
     } catch (error) {
       event.dataTransfer.setData(
         "text/plain",
-        avttDragItems.map((item) => item.key).join(","),
+        avttDragItems.map((item) => item.Key).join(","),
       );
     }
     try {
@@ -3709,7 +3719,7 @@ function avttHandleDragStart(event, entry) {
     }
   }
   for (const item of avttDragItems) {
-    const row = avttFindRowByPath(item.key);
+    const row = avttFindRowByPath(item.Key);
     if (row) {
       row.classList.add("avtt-cut-row");
     }
@@ -3730,10 +3740,10 @@ function avttCanDropOnFolder(destinationPath) {
     return false;
   }
   return !avttDragItems.some((item) => {
-    if (item.key === destinationPath) {
+    if (item.Key === destinationPath) {
       return true;
     }
-    if (item.isFolder && destinationPath.startsWith(item.key)) {
+    if (item.isFolder && destinationPath.startsWith(item.Key)) {
       return true;
     }
     return false;
@@ -3817,23 +3827,23 @@ async function avttHandleFolderDrop(event, destinationPath) {
   }
   const moves = [];
   for (const entry of avttDragItems) {
-    if (entry.key === destinationPath) {
+    if (entry.Key === destinationPath) {
       continue;
     }
-    if (entry.isFolder && destinationPath.startsWith(entry.key)) {
+    if (entry.isFolder && destinationPath.startsWith(entry.Key)) {
       alert("Cannot move a folder inside itself.");
       avttHandleDragEnd();
       return;
     }
     const newKey = avttComputeNewKeyForDestination(entry, destinationPath);
-    if (!newKey || newKey === entry.key) {
+    if (!newKey || newKey === entry.Key) {
       continue;
     }
     moves.push({
-      fromKey: entry.key,
+      fromKey: entry.Key,
       toKey: newKey,
       isFolder: entry.isFolder,
-      size: Number(entry.size) || 0,
+      Size: Number(entry.Size) || 0,
     });
   }
   if (moves.length > 0) {
@@ -6353,7 +6363,7 @@ async function avttProcessUploadQueue() {
         }
 
         if (!isProxyUpload) {
-          const prospectiveTotal = (Number(selectedFile.size) || 0) + (avttPendingUsageBytes || 0);
+          const prospectiveTotal = (Number(selectedFile.Size) || 0) + (avttPendingUsageBytes || 0);
           if (
             activeUserLimit !== undefined &&
             prospectiveTotal + S3_Current_Size > activeUserLimit
@@ -6442,11 +6452,11 @@ async function avttProcessUploadQueue() {
                 targetKey = normalizedProxyTarget;
               }
             }
-            remoteSize = Number(proxyPayload?.size);
+            remoteSize = Number(proxyPayload?.Size);
             if (Number.isFinite(remoteSize) && remoteSize >= 0) {
-              selectedFile.size = remoteSize;
-            } else if (!Number.isFinite(Number(selectedFile.size))) {
-              selectedFile.size = 0;
+              selectedFile.Size = remoteSize;
+            } else if (!Number.isFinite(Number(selectedFile.Size))) {
+              selectedFile.Size = 0;
             }
             if (typeof proxyPayload?.contentType === "string") {
               selectedFile.avttUploadedContentType = proxyPayload.contentType;
@@ -6514,13 +6524,13 @@ async function avttProcessUploadQueue() {
           if (!isSystemTarget){
             const now = new Date().toISOString();
             const normalizedKey = `${window.PATREON_ID}/${targetKey}`;
-            const newSize = selectedFile.size == 0 && remoteSize > 0 ? remoteSize : Number(selectedFile.size) || 0;
+            const newSize = selectedFile.Size == 0 && remoteSize > 0 ? remoteSize : Number(selectedFile.Size) || 0;
             const newEntry = { Key: normalizedKey, Size: newSize, LastModified: now };
             avttRegisterPendingUploadKey(targetKey, newSize);
             if (Array.isArray(avttAllFilesCache)) {
-              const idx = avttAllFilesCache.findIndex((f) => (f?.Key || f?.key) === normalizedKey);
+              const idx = avttAllFilesCache.findIndex((f) => (f?.Key) === normalizedKey);
               if (idx >= 0) {
-                avttAllFilesCache[idx] = { ...avttAllFilesCache[idx], ...newEntry, key: undefined, size: undefined, lastModified: undefined };
+                avttAllFilesCache[idx] = { ...avttAllFilesCache[idx], ...newEntry };
               } else {
                 avttAllFilesCache.push({ ...newEntry });
               }
@@ -6529,9 +6539,9 @@ async function avttProcessUploadQueue() {
               const parentFolder = avttGetParentFolder(normalizedKey);
               const existing = avttFolderListingCache.get(parentFolder);
               if (Array.isArray(existing)) {
-                const idx = existing.findIndex((f) => (f?.Key || f?.key) === normalizedKey);
+                const idx = existing.findIndex((f) => (f?.Key) === normalizedKey);
                 if (idx >= 0) {
-                  existing[idx] = { ...existing[idx], ...newEntry, key: undefined, size: undefined, lastModified: undefined };
+                  existing[idx] = { ...existing[idx], ...newEntry };
                 } else {
                   existing.push({ ...newEntry });
                 }
@@ -6548,7 +6558,7 @@ async function avttProcessUploadQueue() {
           console.warn('Failed to update local caches after upload', cacheError);
         }
 
-        avttPendingUsageBytes += Number(selectedFile.size) || 0;
+        avttPendingUsageBytes += Number(selectedFile.Size) || 0;
         avttPendingUsageCount += 1;
         avttPendingUsageKeys.push(targetKey);
 
@@ -6931,7 +6941,7 @@ function refreshFiles(
       for (const fileEntry of files) {
         const rawKey =
           typeof fileEntry === "object" && fileEntry !== null
-            ? fileEntry.Key || fileEntry.key || ""
+            ? fileEntry.Key || ""
             : fileEntry;
         if (!rawKey) {
           continue;
@@ -7099,14 +7109,14 @@ function refreshFiles(
           listItem.dataset.path = entry.relativePath;
           listItem.dataset.isFolder = entry.isFolder ? "true" : "false";
           listItem.dataset.type = entry.type || "";
-          const checkboxCell = $(`<td><input type=\"checkbox\" tabindex="-1" id='input-${entry.relativePath}' class=\"avtt-file-checkbox ${entry.isFolder ? "folder" : ""}\" value=\"${entry.relativePath}\" data-size=\"${entry.isFolder ? 0 : entry.size}\"></td>`);
+          const checkboxCell = $(`<td><input type=\"checkbox\" tabindex="-1" id='input-${entry.relativePath}' class=\"avtt-file-checkbox ${entry.isFolder ? "folder" : ""}\" value=\"${entry.relativePath}\" data-size=\"${entry.isFolder ? 0 : entry.Size}\"></td>`);
           if (!entry.isFolder && selectFiles && Array.isArray(selectFiles) && selectFiles.includes(entry.relativePath)) {
             checkboxCell.find("input").prop("checked", true);
           }
 
           const labelCell = $(`<td><label for='input-${entry.relativePath}' style=\"cursor:pointer;\" class=\"avtt-file-name  ${entry.isFolder ? "folder" : ""}\" title=\"${entry.relativePath}\"><span class=\"material-symbols-outlined\">${fileTypeIcon[entry.type] || ""}</span><span>${entry.displayName}${searchTerm ? `<br><span class='file-picker-path'>${entry.relativePath}</span>`: ''}</span></label></td>`);
           const typeCell = $(`<td>${entry.type || ""}</td>`);
-          const sizeValue = entry.isFolder ? "" : formatFileSize(entry.size || 0);
+          const sizeValue = entry.isFolder ? "" : formatFileSize(entry.Size || 0);
           const sizeCell = $(`<td class=\"avtt-file-size\">${sizeValue}</td>`);
 
           const iconElement = labelCell.find("span.material-symbols-outlined")[0];
@@ -7180,7 +7190,7 @@ function refreshFiles(
                 return;
               }
               for (const entry of avttDragItems) {
-                const rawKey = entry.key;
+                const rawKey = entry.Key;
                 if (entry.isFolder) {
                   continue;
                 }
@@ -7487,15 +7497,15 @@ async function avttDeleteThumbnailKeys(entries, options = {}) {
           const key =
             typeof entry === "string"
               ? avttNormalizeRelativePath(entry)
-              : avttNormalizeRelativePath(entry.key);
+              : avttNormalizeRelativePath(entry.Key);
           if (!key || !avttIsThumbnailRelativeKey(key)) {
             return null;
           }
           const sizeValue =
-            typeof entry === "string" ? undefined : Number.isFinite(Number(entry.size)) ? Number(entry.size) : undefined;
+            typeof entry === "string" ? undefined : avttNormalizeSize(entry.Size, undefined);
           return {
             key,
-            size: sizeValue,
+            Size: sizeValue,
             isFolder: false,
           };
         })
@@ -7513,7 +7523,7 @@ async function avttDeleteThumbnailKeys(entries, options = {}) {
     if (!chunkEntries.length) {
       continue;
     }
-    const chunkTotalSize = chunkEntries.reduce((sum, entry) => sum + (Number(entry?.size) || 0), 0);
+    const chunkTotalSize = chunkEntries.reduce((sum, entry) => sum + (Number(entry?.Size) || 0), 0);
     const chunkPayload = {
       keys: chunkEntries,
       totalSize: chunkTotalSize,
@@ -7546,12 +7556,12 @@ async function avttDeleteThumbnailKeys(entries, options = {}) {
   }
 
   for (const entry of normalizedEntries) {
-    avttRemoveCacheEntry(entry.key);
+    avttRemoveCacheEntry(entry.Key);
   }
 }
 
 async function deleteFilesFromS3Folder(selections, fileTypes) {
-  const entries = Array.isArray(selections) ? selections.filter((entry) => entry && entry.key) : [];
+  const entries = Array.isArray(selections) ? selections.filter((entry) => entry && entry.Key) : [];
   if (entries.length === 0) {
     return;
   }
@@ -7604,8 +7614,8 @@ async function deleteFilesFromS3Folder(selections, fileTypes) {
     seenKeys.add(normalized);
     const numericSize = Number(size);
     payloadEntries.push({
-      key: normalized,
-      size: Number.isFinite(numericSize) ? numericSize : undefined,
+      Key: normalized,
+      Size: Number.isFinite(numericSize) ? numericSize : undefined,
       isFolder: Boolean(isFolder),
     });
     return true;
@@ -7673,7 +7683,7 @@ async function deleteFilesFromS3Folder(selections, fileTypes) {
       const expansionCountBefore = cachedExpansionCount;
       for (const cachedEntry of avttAllFilesCache) {
         ensureNotAborted();
-        const absolute = cachedEntry?.Key || cachedEntry?.key;
+        const absolute = cachedEntry?.Key;
         if (typeof absolute !== "string" || !absolute.startsWith(absolutePrefix)) {
           continue;
         }
@@ -7681,9 +7691,7 @@ async function deleteFilesFromS3Folder(selections, fileTypes) {
         if (!relative || relative === normalizedFolder) {
           continue;
         }
-        const size = Number.isFinite(Number(cachedEntry?.Size))
-          ? Number(cachedEntry.Size)
-          : Number(cachedEntry?.size);
+        const size = avttNormalizeSize(cachedEntry?.Size, undefined);
         const isFolder = relative.endsWith("/");
         includeEntry(relative, size, isFolder);
       }
@@ -7724,7 +7732,7 @@ async function deleteFilesFromS3Folder(selections, fileTypes) {
       }
       for (const cachedEntry of listing) {
         ensureNotAborted();
-        const absolute = cachedEntry?.Key || cachedEntry?.key;
+        const absolute = cachedEntry?.Key;
         if (typeof absolute !== "string") {
           continue;
         }
@@ -7732,9 +7740,7 @@ async function deleteFilesFromS3Folder(selections, fileTypes) {
         if (!relative || relative === currentFolder) {
           continue;
         }
-        const size = Number.isFinite(Number(cachedEntry?.Size))
-          ? Number(cachedEntry.Size)
-          : Number(cachedEntry?.size);
+        const size = avttNormalizeSize(cachedEntry?.Size, undefined);
         const isFolder = relative.endsWith("/");
         includeEntry(relative, size, isFolder);
         if (isFolder) {
@@ -7749,12 +7755,12 @@ async function deleteFilesFromS3Folder(selections, fileTypes) {
 
   for (const entry of entries) {
     ensureNotAborted();
-    if (!entry?.key) {
+    if (!entry) {
       continue;
     }
-    addEntryWithAssociatedDeletes(entry.key, entry.size, entry.isFolder);
+    addEntryWithAssociatedDeletes(entry.Key, entry.Size, entry.isFolder);
     if (entry.isFolder) {
-      await includeCachedDescendants(entry.key);
+      await includeCachedDescendants(entry.Key);
       ensureNotAborted();
     }
   }
@@ -7792,7 +7798,7 @@ async function deleteFilesFromS3Folder(selections, fileTypes) {
         continue;
       }
       const chunkTotalSize = chunkEntries.reduce(
-        (sum, entry) => sum + (Number(entry?.size) || 0),
+        (sum, entry) => sum + (Number(entry?.Size) || 0),
         0,
       );
       const chunkPayload = {
@@ -7867,14 +7873,14 @@ async function deleteFilesFromS3Folder(selections, fileTypes) {
     for (const entry of entries) {
       ensureNotAborted();
       if (entry.isFolder) {
-        avttRemoveFolderCacheRecursively(entry.key);
-        const thumbnailFolderKey = avttGetThumbnailKeyFromRelative(entry.key);
+        avttRemoveFolderCacheRecursively(entry.Key);
+        const thumbnailFolderKey = avttGetThumbnailKeyFromRelative(entry.Key);
         avttRemoveFolderCacheRecursively(thumbnailFolderKey);
-      } else if (avttShouldGenerateThumbnail(getFileExtension(entry.key))) {
-        const thumbnailKey = avttGetThumbnailKeyFromRelative(entry.key);
+      } else if (avttShouldGenerateThumbnail(getFileExtension(entry.Key))) {
+        const thumbnailKey = avttGetThumbnailKeyFromRelative(entry.Key);
         avttRemoveCacheEntry(thumbnailKey);
       }
-      avttRemoveCacheEntry(entry.key);
+      avttRemoveCacheEntry(entry.Key);
     }
 
     if (finalJson?.usage) {
@@ -8058,7 +8064,7 @@ async function processGetFileFromS3Queue() {
         batchLookup.get(fullPath).items.push(item);
       }
 
-      if (batchLookup.size <= 1) {
+      if (batchLookup.Size <= 1) {
         for (const item of batchItems) {
           await processSingleItem(item);
         }
@@ -8097,7 +8103,7 @@ async function processGetFileFromS3Queue() {
         }
       }
 
-      if (unresolvedItems.size > 0) {
+      if (unresolvedItems.Size > 0) {
         for (const item of unresolvedItems) {
           await processSingleItem(item);
         }
@@ -8430,15 +8436,15 @@ async function getUserUploadedFileSize(forceFullCheck = false, options = {}) {
       if (!file) {
         continue;
       }
-      const key = file.Key || file.key;
+      const key = file.Key;
       if (!key) {
         continue;
       }
       const relative = avttExtractRelativeKey(key);
       if (avttIsThumbnailRelativeKey(relative)) {
         thumbnailCandidates.push({
-          key: avttNormalizeRelativePath(relative),
-          size: Number.isFinite(Number(file.Size)) ? Number(file.Size) : undefined,
+          Key: avttNormalizeRelativePath(relative),
+          Size: avttNormalizeSize(file.Size, undefined),
         });
         continue;
       }
@@ -8456,29 +8462,29 @@ async function getUserUploadedFileSize(forceFullCheck = false, options = {}) {
     const orphanedThumbnails = [];
     if (thumbnailCandidates.length) {
       for (const candidate of thumbnailCandidates) {
-        if (!candidate?.key) {
+        if (!candidate) {
           continue;
         }
-        const baseRelative = avttGetRelativeKeyFromThumbnail(candidate.key);
+        const baseRelative = avttGetRelativeKeyFromThumbnail(candidate.Key);
         if (!baseRelative || nonThumbnailKeys.has(baseRelative)) {
           continue;
         }
         orphanedThumbnails.push({
-          key: candidate.key,
-          size: candidate.size,
+          Key: candidate.Key,
+          Size: candidate.Size,
         });
       }
     }
 
     const orphanedThumbnailKeySet =
       orphanedThumbnails.length > 0
-        ? new Set(orphanedThumbnails.map((thumb) => thumb.key))
+        ? new Set(orphanedThumbnails.map((thumb) => thumb.Key))
         : null;
 
     const filteredFolderContents =
       orphanedThumbnailKeySet
         ? folderContents.filter((entry) => {
-            const relative = avttExtractRelativeKey(entry?.Key || entry?.key);
+            const relative = avttExtractRelativeKey(entry?.Key);
             const normalized = avttNormalizeRelativePath(relative);
             return !orphanedThumbnailKeySet.has(normalized);
           })
