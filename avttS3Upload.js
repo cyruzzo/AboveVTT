@@ -6949,7 +6949,7 @@ function refreshFiles(
           continue;
         }
         const isFolder = /\/$/gi.test(relativePath);
-        const size =
+        const Size =
           typeof fileEntry === "object" &&
           fileEntry !== null &&
           Number.isFinite(Number(fileEntry.Size))
@@ -7003,7 +7003,7 @@ function refreshFiles(
         filesForInsert.push({
           rawKey,
           relativePath,
-          size,
+          Size,
           isFolder,
           type,
           displayName: relativePath.split("/").filter(Boolean).pop() || relativePath,
