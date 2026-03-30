@@ -1629,7 +1629,7 @@ class Token {
 		moreCond.css('left', this.sizeWidth() - symbolSize);
 		[cond, moreCond].forEach(cond_bar => {
 			cond_bar.width(symbolSize);
-			cond_bar.height(this.sizeWidth() - bar_width); // height or width???
+			cond_bar.height(this.sizeHeight() - bar_width);
 		})
 		if (this.isPlayer() && (this.options.inspiration || find_pc_by_player_id(this.options.id, false)?.inspiration)){
 			if (!this.hasCondition("Inspiration")){
