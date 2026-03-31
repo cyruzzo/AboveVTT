@@ -1039,7 +1039,7 @@ async function avttTokenCollectAssets(folderRelativePath) {
       continue;
     }
     for (const entry of entries) {
-      const keyValue = typeof entry === "string" ? entry : entry?.Key || entry?.key || "";
+      const keyValue = typeof entry === "string" ? entry : entry?.Key || "";
       if (!keyValue) {
         continue;
       }

@@ -340,10 +340,6 @@ function scan_player_creature_pane(target) {
  	} catch { }
 	const displayName = `${window.PLAYER_NAME} (${creatureName} ${creatureType})`;
 	
-	const clickHandler = function(clickEvent) {
-		roll_button_clicked(clickEvent, displayName, creatureAvatar, "monster", 'playerExtra');
-	};
-
 	const rightClickHandler = function(contextmenuEvent) {
 		roll_button_contextmenu_handler(contextmenuEvent, displayName, creatureAvatar, "monster", 'playerExtra');
 	}
@@ -377,10 +373,6 @@ function scan_player_creature_pane(target) {
 
 
 	add_journal_roll_buttons(target, 'playerExtra', creatureAvatar, displayName);
-
-
-
-	container.find(".avtt-roll-button").off('click.roller').on('click.roller', clickHandler);
 	container.find(".avtt-roll-button").on("contextmenu", rightClickHandler);
 
 	container.find("p>em>strong, p>strong>em, div>strong>em, div>em>strong, p>span>em>strong, p>span>strong>em").off("contextmenu.sendToGamelog").on("contextmenu.sendToGamelog", function (e) {
