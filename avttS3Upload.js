@@ -7195,7 +7195,7 @@ function refreshFiles(
                   top: (ui.position.top - (size / 2))
                 };
                 $('.avtt-drop-target').toggleClass('avtt-drop-target', false);
-              } else if (droppedOn.closest('#myTokensFolder').length > 0 || droppedOn.closest('#scenes-panel').length > 0 || droppedOn.closest('#journal-panel'))  {
+              } else if (droppedOn.closest('#myTokensFolder').length > 0 || droppedOn.closest('#scenes-panel').length > 0 || droppedOn.closest('#journal-panel').length>0)  {
                 const closestFolder = droppedOn.closest('.folder.list-item-identifier')
                 $('.avtt-drop-target').toggleClass('avtt-drop-target', false);
                 if (closestFolder.is('#scenesFolder') || droppedOn.is('.sidebar-panel-body'))
