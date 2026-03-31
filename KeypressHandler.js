@@ -92,7 +92,7 @@ function fKeyGoToLocation(e){
     e.preventDefault();
     const locData = window.savedLocations?.[e.key];
     if(!locData) return;
-    window.ZOOM = locData.zoom;
+    changeZoom(locData.zoom);
     window.scrollTo({left: locData.scrollX, top: locData.scrollY, behavior: 'smooth'});
 }
 Mousetrap.bind(['shift+f1', 'shift+f2', 'shift+f3', 'shift+f4'], function (e) {    
