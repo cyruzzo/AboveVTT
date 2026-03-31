@@ -67,6 +67,41 @@ Mousetrap.bind('v', function () {       //video toggle
     $('#peerVideo_switch').click()
 });
 
+function fKeySaveLocation(e){
+    window.savedLocations = {
+        ...window.savedLocations,
+        [e.key]: {
+            zoom: window.ZOOM,
+            scrollX: window.scrollX,
+            scrollY: window.scrollY
+        }
+    }
+}
+function fKeySaveLocation(e){
+    e.preventDefault();
+    window.savedLocations = {
+        ...window.savedLocations,
+        [e.key]: {
+            zoom: window.ZOOM,
+            scrollX: window.scrollX,
+            scrollY: window.scrollY
+        }
+    }
+}
+function fKeyGoToLocation(e){
+    e.preventDefault();
+    const locData = window.savedLocations?.[e.key];
+    if(!locData) return;
+    window.ZOOM = locData.zoom;
+    window.scrollTo({left: locData.scrollX, top: locData.scrollY, behavior: 'smooth'});
+}
+Mousetrap.bind(['shift+f1', 'shift+f2', 'shift+f3', 'shift+f4'], function (e) {    
+    fKeySaveLocation(e);
+})
+Mousetrap.bind(['f1', 'f2', 'f3', 'f4'], function (e) {    
+    fKeyGoToLocation(e);
+})
+
 Mousetrap.bind('shift+v', function () {    
     if(window.SelectedTokenVision == true && $('#selected_token_vision .ddbc-tab-options__header-heading--is-active').length==0){
         window.SelectedTokenVision = false;
