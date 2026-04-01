@@ -4083,21 +4083,7 @@ class JournalManager{
 			
 			/***** END NEW STAT BLOCKS ****/
 		`
-		tinymce.PluginManager.add('customfontsize', function(editor) {
-			editor.addButton('fontsizeinput', {
-				type: 'container',
-				html: '<input type="number" id="mce-custom-font-size" style="width: 45px; height: 14px; text-align:right;" placeholder="px"> px',
-				onPostRender: function() {
-					let input = document.getElementById('mce-custom-font-size');
-					input.addEventListener('change', function() {
-						let size = this.value;
-						if (size) {
-							editor.execCommand('FontSize', false, size + 'px');
-						}
-					});
-				}
-			});
-		});
+
 		tinyMCE.init({
 			selector: '#' + tmp,
 			menubar: false,
@@ -4135,7 +4121,7 @@ class JournalManager{
 			      { title: 'AboveVTT Slash Command Roll Button', inline: 'span', classes: 'abovevtt-slash-command-journal custom-stat' }
 			   	]}
 			],
-			plugins: 'save,hr,image,link,lists,media,paste,tabfocus,textcolor,colorpicker,autoresize, code, table, template, customfontsize',
+			plugins: 'save,hr,image,link,lists,media,paste,tabfocus,textcolor,colorpicker,autoresize, code, table, template',
 			table_cell_advtab: true,
 			add_toolbar: "template",
 			templates: [
@@ -4402,6 +4388,19 @@ class JournalManager{
 			valid_children : '+body[style]',
 			
 			setup: function (editor) { 
+				editor.addButton('fontsizeinput', {
+					type: 'container',
+					html: '<input type="number" id="mce-custom-font-size" style="width: 45px; height: 14px; text-align:right;" placeholder="px"> px',
+					onPostRender: function() {
+						let input = document.getElementById('mce-custom-font-size');
+						input.addEventListener('change', function() {
+							let size = this.value;
+							if (size) {
+								editor.execCommand('FontSize', false, size + 'px');
+							}
+						});
+					}
+				});
 				editor.on("keydown", function (e) {
 					if (e.which == "13" || e.keyCode == "13") {
 						
