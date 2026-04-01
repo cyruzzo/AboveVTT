@@ -3129,7 +3129,9 @@ function drawing_mousedown(e) {
 		window.temp_context.fillStyle = window.DRAWCOLOR;
 
 		clear_temp_canvas()
-		let { x, y } = snap_point_to_grid(window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, true);
+		const gridWidth = window.CURRENT_SCENE_DATA.gridType == 1 ? window.CURRENT_SCENE_DATA.hpps : 0;
+		const gridHeight = window.CURRENT_SCENE_DATA.gridType == 1 ? window.CURRENT_SCENE_DATA.vpps : 0;
+		let { x, y } = snap_point_to_grid(window.BEGIN_MOUSEX-gridWidth/2, window.BEGIN_MOUSEY-gridHeight/2, true);
 		if (window.CURRENT_SCENE_DATA.gridType == 1) {
 			window.BRUSHPOINTS.push([Math.round(x), Math.round(y)])
 		}
@@ -3556,13 +3558,14 @@ function drawing_mousemove(e) {
 		}
 		else if (window.DRAWSHAPE == "grid-brush"){
 			window.temp_context.fillStyle = window.DRAWCOLOR;
-	
+			
 			clear_temp_canvas()
-			let { x, y } = snap_point_to_grid(mouseX, mouseY, true);
+			const gridWidth = window.CURRENT_SCENE_DATA.gridType == 1 ? window.CURRENT_SCENE_DATA.hpps : 0;
+			const gridHeight = window.CURRENT_SCENE_DATA.gridType == 1 ? window.CURRENT_SCENE_DATA.vpps : 0;
+			let { x, y } = snap_point_to_grid(mouseX-gridWidth/2, mouseY-gridHeight/2, true);
 			
 			if (window.CURRENT_SCENE_DATA.gridType == 1){
 				window.BRUSHPOINTS.push([Math.round(x), Math.round(y)])
-
 			}
 			else{
 				const scaleX = window.CURRENT_SCENE_DATA.scaleAdjustment?.x != undefined ? window.CURRENT_SCENE_DATA.scaleAdjustment.x : 1;
@@ -3807,6 +3810,7 @@ function drawing_mouseup(e) {
 				data[4] = null
 				data[5] = null
 				data[6] = window.CURRENT_SCENE_DATA.scale_factor
+				break;
 			case "paint-bucket":
 				data[0] = "paint-bucket"
 				data[7] = 0
