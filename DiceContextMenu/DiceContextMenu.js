@@ -150,7 +150,7 @@ function damage_dice_context_menu(diceExpression, modifierString = "", action = 
 
             const doubleDamage = rollAsIndex === 2 ? 3 : undefined;
 
-            window.diceRoller.roll(diceRoll, undefined, rollAsIndex == 2 ? 3 : undefined, undefined, spellSave, damageType, doubleDamage);
+            window.diceRoller.roll(diceRoll, undefined, undefined, undefined, spellSave, damageType, doubleDamage);
             
         });
 
