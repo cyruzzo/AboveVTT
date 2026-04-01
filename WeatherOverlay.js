@@ -51,7 +51,7 @@ class WeatherOverlay {
             
             if (this.type === 'fog') {
                 $(this.canvas).css({
-                    filter: `blur(${ window.CURRENT_SCENE_DATA.hpps }px`
+                    filter: `blur(${ window.CURRENT_SCENE_DATA.hpps }px)`
                 })
             }
             else if (this.type === 'faerieLight' || this.type === 'fireflies') {
@@ -67,7 +67,7 @@ class WeatherOverlay {
             
             if (weatherData?.lit) {
                 $(this.lightCanvas).css({
-                    filter: `blur(${window.CURRENT_SCENE_DATA.hpps / window.CURRENT_SCENE_DATA.scale_factor}px`
+                    filter: `blur(${window.CURRENT_SCENE_DATA.hpps / window.CURRENT_SCENE_DATA.scale_factor}px)`
                 })
             }
             else{
@@ -942,7 +942,7 @@ class WeatherOverlay {
             const cy = p.y + Math.cos(t * 0.5 + p.phase) * 12;
             const baseR = p.r;
             const baseAspect = p.aspect;
-            const fogColor = `rgba(120, 120, 120, ${(p.alpha * 1.2 + 0.22).toFixed(3)}`;
+            const fogColor = `rgba(120, 120, 120, ${(p.alpha * 1.2 + 0.22).toFixed(3)})`;
             let fade = 1;
             if (p.fadeIn !== undefined && p.fadeIn < (p.fadeInFrames || 10)) {
                 fade = p.fadeIn / (p.fadeInFrames || 10);
