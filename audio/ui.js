@@ -767,7 +767,7 @@ function init_trackLibrary() {
     const cancelButton = $('<button class="add-track-cancel-button">X</button>');  
 
     // Mixer/ Track List QOL updates
-    const addTracksToMixer = $(`<button id='addTrack'>Add Visible to Mixer</button>`);
+    const addTracksToMixer = $(`<button id='addTracksToMixer'>Add Visible to Mixer</button>`);
     const addShuffledToMixer = $('<button id="addShuffledToMixer">Add Shuffled to Mixer</button>');
 
     // Click handlers
