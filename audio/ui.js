@@ -935,7 +935,9 @@ function init_trackLibrary() {
                     const trackSrcInput = $(`<input class='trackSrc trackInput' placeholder='https://.../example.mp3'/>`)
                     const okButton = $('<button class="add-track-ok-button">OK</button>');  
                     const cancelButton = $('<button class="add-track-cancel-button">X</button>');  
-                    const trackTags = window.TRACK_LIBRARY.find(trackName, trackSrc)[1].tags;
+                    const findResult = window.TRACK_LIBRARY.find(trackName, trackSrc);
+                    if (!findResult) return;
+                    const trackTags = findResult[1].tags;
                     trackNameInput.val(trackName);
                     trackSrcInput.val(trackSrc);
                     
@@ -962,7 +964,7 @@ function init_trackLibrary() {
                     const okButton = $('<button class="add-track-ok-button">OK</button>');  
                     const cancelButton = $('<button class="add-track-cancel-button">X</button>');  
                     const currentTrack = window.TRACK_LIBRARY.find(trackName, trackSrc);
-
+                    if (!currentTrack) return;
                     trackTagsInput.val(currentTrack[1].tags.join(', '));
 
                     
