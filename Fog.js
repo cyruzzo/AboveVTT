@@ -3833,6 +3833,7 @@ function drawing_mouseup(e) {
 			data[1] = "wall"
 			data[10] = window.wallBottom
 			data[11] = window.wallTop
+			break;
 		case 'elev':
 			data[1] = "elev"
 			data[2] = window.mapElev
