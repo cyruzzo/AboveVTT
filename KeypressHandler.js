@@ -592,27 +592,26 @@ Mousetrap.bind('[', function(e) {
 });
 
 function handle_undo(){
-    const buttonSelectedClasses = "button-enabled ddbc-tab-options__header-heading--is-active"
 
-    if ($("#select-button").hasClass(buttonSelectedClasses)){
+    if ($("#select-button").hasClass("button-enabled")){
         undo_delete_tokens();
     }
-    else if(($("#fog_button").hasClass(buttonSelectedClasses))){
+    else if(($("#fog_button").hasClass("button-enabled"))){
         $("#fog_undo").click()
     }
-    else if($("#draw_button").hasClass(buttonSelectedClasses)){
+    else if($("#draw_button").hasClass("button-enabled")){
         $("#draw_undo").click()
     }
-    else if($("#vision_button").hasClass(buttonSelectedClasses)){
+    else if($("#vision_button").hasClass("button-enabled")){
         $("#light_undo").click()
     }
-    else if(($("#text_button").hasClass(buttonSelectedClasses))){
+    else if(($("#text_button").hasClass("button-enabled"))){
         $("#text_undo").click()
     }
-    else if(($("#wall_button").hasClass(buttonSelectedClasses))){
+    else if(($("#wall_button").hasClass("button-enabled"))){
         $("#wall_undo").click()
     }
-    else if(($("#elev_button").hasClass(buttonSelectedClasses))){
+    else if(($("#elev_button").hasClass("button-enabled"))){
         $("#elev_undo").click()
     }
 
