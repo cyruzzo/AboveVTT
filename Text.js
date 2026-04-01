@@ -638,9 +638,12 @@ function draw_text(
 
     let shadowStyle ='';
     if (font.shadow && font.shadow !== "none"){
-        const shadowRegex = /(rgb\(.*\))\s(\d+px)\s(\d+px)\s(\d+px)/
-        const [_, shadowColor, shadowOffsetX, shadowOffsetY, shadowBlur ] = font.shadow.match(shadowRegex)
-        shadowStyle = `drop-shadow(${shadowOffsetX} ${shadowOffsetY} ${shadowBlur} ${shadowColor})`
+        const shadowRegex = /(rgba?\(.*?\))\s(\d+px)\s(\d+px)\s(\d+px)/
+        const shadowMatch = font.shadow.match(shadowRegex)
+        if (shadowMatch) {
+            const [_, shadowColor, shadowOffsetX, shadowOffsetY, shadowBlur ] = shadowMatch
+            shadowStyle = `drop-shadow(${shadowOffsetX} ${shadowOffsetY} ${shadowBlur} ${shadowColor})`
+        }
     }
     
     let x = (font.align == 'right') ? '100%' : ((font.align=='center') ? '50%' : '0');
