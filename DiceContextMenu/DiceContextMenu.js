@@ -136,6 +136,7 @@ function damage_dice_context_menu(diceExpression, modifierString = "", action = 
             }
              else { // not possible
                 console.warn("DiceContextMenu unexpectedly gave an  invalid row index for section 1! rollAsIndex: ", rollAsIndex, ", dcm: ", dcm);
+                return;
             }
 
 
