@@ -472,7 +472,7 @@ function handle_auto_resize(e){
  * @returns 
  */
 function handle_draw_text_submit(event) {
-    textBox = $(this).parent().parent().find("textarea");
+    let textBox = $(this).parent().parent().find("textarea");
     // no text in box, return early
     if (!textBox.val()) return;
 
@@ -513,7 +513,7 @@ function handle_draw_text_submit(event) {
     // data should match params in draw_text
     // push the starting position of y south based on the font size
     let textid = uuid();
-    data = ["text",
+    let data = ["text",
         rectX,
         rectY + Math.ceil(parseFloat($(textBox).css("font-size")) / window.ZOOM),
         width,
@@ -625,7 +625,7 @@ function draw_text(
     if(!window.DM && hidden)
         return;
 
-    divideScale = (window.CURRENT_SCENE_DATA.scale_factor == "") ? 1 : window.CURRENT_SCENE_DATA.scale_factor;
+    let divideScale = (window.CURRENT_SCENE_DATA.scale_factor == "") ? 1 : window.CURRENT_SCENE_DATA.scale_factor;
 
     let adjustScale = (scale/divideScale);   
 
@@ -686,7 +686,7 @@ function draw_text(
             testElem.innerHTML = testLine;
             /* Messure textElement */
             let metrics = testElem.getBoundingClientRect();
-            testWidth = metrics.width;
+            let testWidth = metrics.width;
            
             if(words[n].includes('\n')  && n > 0){
                 let splitNewLines = words[n].split(/(\n)/g);
@@ -792,11 +792,11 @@ function draw_text(
  * @param {$} buttons the buttons in which this text button is appended to
  */
 function init_text_button(buttons) {
-    textButton = $(
+    let textButton = $(
         "<button style='display:inline;width:75px' id='text_button' data-name='Text (T)' class='drawbutton hasTooltip menu-button hideable ddbc-tab-options__header-heading'><span class='button-text'><u>T</u>ext</span></button>"
     );
 
-    textMenu = $(
+    let textMenu = $(
         "<div id='text_menu' class='top_menu' style='position:fixed; top:25px; width:75px'></div>"
     );
      textMenu.append(
@@ -839,7 +839,7 @@ function init_text_button(buttons) {
     );
 
     textMenu.find("#text_clear").click(function () {
-        r = confirm("DELETE ALL TEXT? (cannot be undone!)");
+        let r = confirm("DELETE ALL TEXT? (cannot be undone!)");
         if (r === true) {
             // keep anything that isn't text
             window.DRAWINGS = window.DRAWINGS.filter(
