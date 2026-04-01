@@ -754,6 +754,7 @@ function draw_text(
         });
         textSVG.on('dblclick', function(){
             let text_data = window.DRAWINGS.filter(d => d[9] == this.id)[0];
+            if (!text_data) return;
             if(window.TEXTDATA == undefined){
                 window.TEXTDATA = {};
             }
