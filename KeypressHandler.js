@@ -256,14 +256,14 @@ Mousetrap.bind('w', function () {
 });
 Mousetrap.bind('shift+w', function () {
     if(window.DM){
-        $('#show_walls').toggleClass(['button-enabled', 'ddbc-tab-options__header-heading--is-active']);
+        $('#show_walls').toggleClass('button-enabled ddbc-tab-options__header-heading--is-active');
         redraw_light_walls();
     }
        
 });
 Mousetrap.bind('shift+e', function () {
     if(window.DM){
-        $('#show_elev').toggleClass(['button-enabled', 'ddbc-tab-options__header-heading--is-active']);
+        $('#show_elev').toggleClass('button-enabled ddbc-tab-options__header-heading--is-active');
         if($('#show_elev').hasClass('button-enabled')){
             redraw_elev(true);
         }
