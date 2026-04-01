@@ -4083,7 +4083,21 @@ class JournalManager{
 			
 			/***** END NEW STAT BLOCKS ****/
 		`
-
+		tinymce.PluginManager.add('customfontsize', function(editor) {
+			editor.addButton('fontsizeinput', {
+				type: 'container',
+				html: '<input type="number" id="mce-custom-font-size" style="width: 45px; height: 14px; text-align:right;" placeholder="px"> px',
+				onPostRender: function() {
+					let input = document.getElementById('mce-custom-font-size');
+					input.addEventListener('change', function() {
+						let size = this.value;
+						if (size) {
+							editor.execCommand('FontSize', false, size + 'px');
+						}
+					});
+				}
+			});
+		});
 		tinyMCE.init({
 			selector: '#' + tmp,
 			menubar: false,
@@ -4121,7 +4135,7 @@ class JournalManager{
 			      { title: 'AboveVTT Slash Command Roll Button', inline: 'span', classes: 'abovevtt-slash-command-journal custom-stat' }
 			   	]}
 			],
-			plugins: 'save,hr,image,link,lists,media,paste,tabfocus,textcolor,colorpicker,autoresize, code, table, template',
+			plugins: 'save,hr,image,link,lists,media,paste,tabfocus,textcolor,colorpicker,autoresize, code, table, template, customfontsize',
 			table_cell_advtab: true,
 			add_toolbar: "template",
 			templates: [
@@ -4374,7 +4388,7 @@ class JournalManager{
 				},
 			],
 		  	table_grid: false,
-			toolbar: 'undo styleselect template | horizontalrules | bold italic underline strikethrough | alignleft aligncenter alignright justify| outdent indent | bullist numlist | forecolor backcolor | fontsizeselect | link unlink | image media filePickers table tableCustom | code',
+			toolbar: 'undo styleselect template | horizontalrules | bold italic underline strikethrough | alignleft aligncenter alignright justify| outdent indent | bullist numlist | fontsizeinput forecolor backcolor | link unlink | image media filePickers table tableCustom | code',
 			image_class_list: [
 				{title: 'Magnify', value: 'magnify'},
 			],
@@ -4386,6 +4400,7 @@ class JournalManager{
 			   {title: 'DDB Tooltip Link (Spells, Monsters, Magic Items, Source)', value: 'tooltip-hover no-border ignore-abovevtt-formating'}
 			],
 			valid_children : '+body[style]',
+			
 			setup: function (editor) { 
 				editor.on("keydown", function (e) {
 					if (e.which == "13" || e.keyCode == "13") {
@@ -4418,6 +4433,7 @@ class JournalManager{
 						
 					}
 				});
+
 				editor.addButton('horizontalrules', {
 					  type: 'splitbutton',
 				      text: '',
@@ -4625,8 +4641,11 @@ class JournalManager{
 
 					editor.execCommand('setAvttImageSrc', e);
 				});
-
 				editor.on('NodeChange', async function (e) {
+					const currentFontSize = editor.dom.getStyle(e.element, 'font-size', true);
+					if (currentFontSize) {
+						$("#mce-custom-font-size").val(parseInt(currentFontSize));
+					}
 					// When an image is inserted into the editor
 				    if (e.element.tagName === "IMG") { 
 				    	let url = e.element.getAttribute('src');
