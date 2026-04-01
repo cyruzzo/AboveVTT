@@ -359,8 +359,9 @@ function moveKeyWatch() {
 
 Mousetrap.bind('up', function (e) {
     arrowKeysHeld[0] = 1;
-    const visibleMenuId = `#${$('[id*="_menu"].visible').attr("id")}`
-    if (visibleMenuId){
+    const $visibleMenu = $('[id*="_menu"].visible');
+    if ($visibleMenu.length > 0){
+        const visibleMenuId = `#${$visibleMenu.attr("id")}`;
         // prevent scrolling the window
         e.preventDefault();
         $(`${visibleMenuId} .ddbc-tab-options__header-heading--is-active`).first().parent().prevAll().not("[data-skip='true']").first().children().first().click()
@@ -369,8 +370,9 @@ Mousetrap.bind('up', function (e) {
 }, 'keydown');
 Mousetrap.bind('down', function (e) {
     arrowKeysHeld[1] = 1;
-    const visibleMenuId = `#${$('[id*="_menu"].visible').attr("id")}`
-    if (visibleMenuId){
+    const $visibleMenu = $('[id*="_menu"].visible');
+    if ($visibleMenu.length > 0){
+        const visibleMenuId = `#${$visibleMenu.attr("id")}`;
         // prevent scrolling the window
         e.preventDefault();
         $(`${visibleMenuId} .ddbc-tab-options__header-heading--is-active`).first().parent().nextAll().not("[data-skip='true']").first().children().first().click()
