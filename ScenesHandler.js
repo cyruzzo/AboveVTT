@@ -626,7 +626,9 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 				dm_map_usable: "0",
 				thumb: thumb,
 				tokens: {},
-			});		
+			});
+			callback();
+			return;
 		}
 
 		let f = $("<iframe src='" + chapter_url + "'></iframe>");
