@@ -272,10 +272,10 @@ function init_mixer() {
             const masterVolume = $("#master-volume input").val();
             if (window.YTPLAYER) {
                 window.YTPLAYER.volume = newVolume;
-                window.YTPLAYER.setVolume(window.YTPLAYER.volume*masterVolume);
+                window.YTPLAYER.setVolume(window.YTPLAYER.volume * masterVolume / 100);
             }   
             if($('video#scene_map').length > 0)
-                $('video#scene_map')[0].volume = newVolume/100 * masterVolume;  
+                $('video#scene_map')[0].volume = newVolume/100 * masterVolume/100;
 
             if(window.YTPLAYER || $('video#scene_map').length>0){
                 let data={
