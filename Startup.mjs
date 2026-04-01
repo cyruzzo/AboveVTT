@@ -153,7 +153,7 @@ $(function() {
                   "character",
                   event.data.msg.playerId,
                   event.data.msg.sendToOverride
-                ), event.data.multiroll, event.data.critRange, event.data.critType, event.data.msg.rollData.spellSave, event.data.msg.rollData.damageType);
+                ), event.data.multiroll, event.data.critRange, event.data.critType, event.data.msg.rollData.spellSave, event.data.msg.rollData.damageType, event.data.forceCritType);
               }
             }       
             return;
