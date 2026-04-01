@@ -935,11 +935,13 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 
 		sceneData.isnewscene=false;
 		window.MB.sendMessage("custom/myVTT/update_scene",sceneData,dontswitch);
-		const currentPlayerScenes = Object.values(window.splitPlayerScenes);
-		if(window.DM && dontswitch == false && currentPlayerScenes.includes(sceneData.id)){
-			setTimeout(function(){
-				window.MB.sendMessage("custom/myVTT/switch_scene", { sceneId: window.splitPlayerScenes});
-			}, 100)
+		if(window.DM && dontswitch == false && window.splitPlayerScenes?.players != undefined){
+			const currentPlayerScenes = Object.values(window.splitPlayerScenes);
+			if(currentPlayerScenes.includes(sceneData.id)){
+				setTimeout(function(){
+					window.MB.sendMessage("custom/myVTT/switch_scene", { sceneId: window.splitPlayerScenes});
+				}, 100)
+			}
 		}
 		did_update_scenes();
 		
