@@ -39,12 +39,6 @@ Mousetrap.bind('f', function () {       //fog menu
 });
 
 
-Mousetrap.bind('n', function () {   //while combat menu is open, press n to cycle next in initiative order
-    if(window.DM && $('#combat_tracker_inside').attr('style') == 'display: block;') {
-        $('#combat_next_button').click()
-    }
-});
-
 Mousetrap.bind('r', function () {       //ruler
     $('#ruler_button').click()
 });
@@ -102,8 +96,10 @@ Mousetrap.bind(["1","2","3","4","5","6","7","8","9","shift+1","shift+2","shift+3
 
 
 Mousetrap.bind("n", function (e) {
-    if(window.DM)
-        $('#combat_next_button').click();
+    if(window.DM){
+        if($('#combat_tracker_inside').attr('style') == 'display: block;')
+            $('#combat_next_button').click();
+    }
     else
         $('#combat_tracker_inside #endplayerturn').click();
 
