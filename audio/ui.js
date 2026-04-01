@@ -425,7 +425,7 @@ function init_mixer() {
                 mixer_pause_svg.css('display', 'none');
                 playPauseMixer.toggleClass('playing', false);
                 playPauseMixer.toggleClass('pressed', false);
-                $('head').append(`<style id="mixer-paused" />#sounds-panel button.pressed.playing{background: #ffd03b45 !important;}</style>`);
+                $('head').append(`<style id="mixer-paused">#sounds-panel button.pressed.playing{background: #ffd03b45 !important;}</style>`);
             }
             else {
                 mixer_pause_svg.css('display', 'block');
@@ -598,7 +598,7 @@ function init_mixer() {
         pause_svg.css('display', 'none');
         playPause.toggleClass('playing', false);
         playPause.toggleClass('pressed', false);
-        $('head').append(`<style id="mixer-paused" />#sounds-panel button.pressed.playing{background: #ffd03b45 !important;}</style>`);
+        $('head').append(`<style id="mixer-paused">#sounds-panel button.pressed.playing{background: #ffd03b45 !important;}</style>`);
     }
     else {
         pause_svg.css('display', 'block');
@@ -621,7 +621,7 @@ function init_mixer() {
             pause_svg.css('display', 'none');
             playPause.toggleClass('playing', false);
             playPause.toggleClass('pressed', false);
-             $('head').append(`<style id="mixer-paused" />#sounds-panel button.pressed.playing{background: #ffd03b45 !important;}</style>`);
+             $('head').append(`<style id="mixer-paused">#sounds-panel button.pressed.playing{background: #ffd03b45 !important;}</style>`);
            
         }
         else {
