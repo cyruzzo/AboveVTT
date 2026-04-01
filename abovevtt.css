@@ -3827,6 +3827,20 @@ body .note-visibility-toggle-container {
 .mce-floatpanel{
     z-index: 191000 !important;
 }
+.mce-container-body:has(>#mce-custom-font-size){
+    display:inline-flex;
+    align-items: center;
+    justify-content: center;
+    align-content: center;
+    flex-wrap: wrap;
+    flex-direction: row;
+    border:none;
+    height: 26px;
+}
+.mce-container:has(>.mce-container-body>#mce-custom-font-size){
+    border:none;
+    display:inline-block;
+}
 .icon-condition,
 .context-menu-icon-condition {
     margin: 4px;
