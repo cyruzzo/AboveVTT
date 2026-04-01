@@ -794,7 +794,6 @@ class WeatherOverlay {
             this.offscreenCtx.restore();
             this._lightningAlpha -= 0.012;
             this._lightningFlashFrames--;
-            this.offscreenCtx.restore();
         } else {
             this._lightningAlpha = 0;
         }
