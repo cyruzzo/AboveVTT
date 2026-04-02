@@ -77,7 +77,9 @@ function fKeySaveLocation(e){
             scrollY: window.scrollY
         }
     }
-    showTempMessage(`Location ${e.key} saved`);
+    const fadeDelay = 600;
+    const fadeTime = 400;
+    showTempMessage(`Location ${e.key} saved`, { fadeDelay, fadeTime });
 }
 function fKeyGoToLocation(e){
     e.preventDefault();
@@ -85,7 +87,6 @@ function fKeyGoToLocation(e){
     if(!locData) return;
     change_zoom(locData.zoom);
     window.scrollTo({left: locData.scrollX, top: locData.scrollY, behavior: 'smooth'});
-    showTempMessage(`Location ${e.key} loaded`);
 }
 Mousetrap.bind(['shift+f1', 'shift+f2', 'shift+f3', 'shift+f4'], function (e) {    
     fKeySaveLocation(e);
