@@ -68,16 +68,6 @@ Mousetrap.bind('v', function () {       //video toggle
 });
 
 function fKeySaveLocation(e){
-    window.savedLocations = {
-        ...window.savedLocations,
-        [e.key]: {
-            zoom: window.ZOOM,
-            scrollX: window.scrollX,
-            scrollY: window.scrollY
-        }
-    }
-}
-function fKeySaveLocation(e){
     e.preventDefault();
     window.savedLocations = {
         ...window.savedLocations,
@@ -87,6 +77,7 @@ function fKeySaveLocation(e){
             scrollY: window.scrollY
         }
     }
+    showTempMessage(`Location ${e.key} saved`);
 }
 function fKeyGoToLocation(e){
     e.preventDefault();
@@ -94,6 +85,7 @@ function fKeyGoToLocation(e){
     if(!locData) return;
     change_zoom(locData.zoom);
     window.scrollTo({left: locData.scrollX, top: locData.scrollY, behavior: 'smooth'});
+    showTempMessage(`Location ${e.key} loaded`);
 }
 Mousetrap.bind(['shift+f1', 'shift+f2', 'shift+f3', 'shift+f4'], function (e) {    
     fKeySaveLocation(e);
