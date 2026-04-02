@@ -4393,10 +4393,16 @@ class JournalManager{
 					html: '<input type="number" id="mce-custom-font-size" style="width: 40px;height: 16px;text-align:right;padding: 4px 1px;" placeholder="px"> px',
 					onPostRender: function() {
 						let input = document.getElementById('mce-custom-font-size');
-						input.addEventListener('change', function() {
+						input.addEventListener('change', function(e) {
 							let size = this.value;
 							if (size) {
 								editor.execCommand('FontSize', false, size + 'px');
+							}
+						});
+						input.addEventListener('keypress', function(e) {
+							if(e.key === 'Enter') {
+								e.preventDefault();
+								this.blur();
 							}
 						});
 					}
