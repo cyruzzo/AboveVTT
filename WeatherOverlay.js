@@ -135,8 +135,9 @@ class WeatherOverlay {
                     id,
                     startX,
                     startY,
-                    endX,
-                    endY,
+                    groundX: endX,
+                    groundY: endY,
+                    wind,
                     z: z,
                     fadeIn: Math.ceil(fadeInFrames * z),
                     fadeInFrames,
@@ -298,7 +299,12 @@ class WeatherOverlay {
                     drift: -0.5 + Math.random(),
                     phase: Math.random() * Math.PI * 2,
                     fadeIn: 0,
-                    fadeInFrames: fadeInFrames
+                    fadeInFrames: fadeInFrames,
+                    blinkPhase: Math.random() * Math.PI * 2,
+                    blinkSpeed: 1.2 + Math.random() * 0.8,
+                    wanderAngle: Math.random() * Math.PI * 2,
+                    wanderSpeed: 0.2 + Math.random() * 0.2,
+                    color: Math.random() > 0.5 ? 'rgba(200,255,120,1)' : 'rgba(255,255,180,1)'
                 });
             }
         }
@@ -788,7 +794,6 @@ class WeatherOverlay {
             this.offscreenCtx.restore();
             this._lightningAlpha -= 0.012;
             this._lightningFlashFrames--;
-            this.offscreenCtx.restore();
         } else {
             this._lightningAlpha = 0;
         }

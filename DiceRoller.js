@@ -726,7 +726,8 @@ class DiceRoller {
                           msg: msgdata,
                           multiroll: multiroll,
                           critRange: critRange,
-                          critType: critType
+                          critType: critType,
+                          forceCritType: forceCritType
                         });
                     self.#resetVariables();
                     self.nextRoll(undefined, critRange, critType)
