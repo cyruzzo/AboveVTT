@@ -4390,7 +4390,7 @@ class JournalManager{
 			setup: function (editor) { 
 				editor.addButton('fontsizeinput', {
 					type: 'container',
-					html: '<input type="number" id="mce-custom-font-size" style="width: 45px; height: 14px; text-align:right;" placeholder="px"> px',
+					html: '<input type="number" id="mce-custom-font-size" style="width: 40px;height: 16px;text-align:right;padding: 4px 1px;" placeholder="px"> px',
 					onPostRender: function() {
 						let input = document.getElementById('mce-custom-font-size');
 						input.addEventListener('change', function() {
