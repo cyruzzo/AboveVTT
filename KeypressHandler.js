@@ -39,12 +39,6 @@ Mousetrap.bind('f', function () {       //fog menu
 });
 
 
-Mousetrap.bind('n', function () {   //while combat menu is open, press n to cycle next in initiative order
-    if(window.DM && $('#combat_tracker_inside').attr('style') == 'display: block;') {
-        $('#combat_next_button').click()
-    }
-});
-
 Mousetrap.bind('r', function () {       //ruler
     $('#ruler_button').click()
 });
