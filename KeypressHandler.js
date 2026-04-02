@@ -77,9 +77,7 @@ function fKeySaveLocation(e){
             scrollY: window.scrollY
         }
     }
-    const fadeDelay = 600;
-    const fadeTime = 400;
-    showTempMessage(`Location ${e.key} saved`, { fadeDelay, fadeTime });
+    showTempMessage(`Location ${e.key} saved`, { fadeDelay:600, fadeTime:400 });
 }
 function fKeyGoToLocation(e){
     e.preventDefault();

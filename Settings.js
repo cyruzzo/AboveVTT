@@ -361,6 +361,7 @@ function avtt_settings() {
 			type: "customButton",
 			customFunction: function (clickEvent, body) {
 				set_avtt_setting_value('gridZoomConversion', window.ZOOM*parseFloat(window.CURRENT_SCENE_DATA.hpps));
+				showTempMessage(`Grid visual size stored`, { fadeDelay: 600, fadeTime: 400 });
 			},
 			class: 'ui'
 		},
