@@ -110,7 +110,7 @@ class ChatObserver {
 
         if (text.startsWith("/w")) {
             let matches = text.match(/\[(.*?)] (.*)/);
-            if (matches.length === 3) {
+            if (matches !== null && matches.length === 3) {
                 data.whisper = matches[1]
                 data.text = `<div class="custom-gamelog-message"style="position: relative;margin-bottom: 12px;"><span style='font-size: 9px;position: absolute;bottom: -18px;left: 0px;opacity: 0.5;margin-top: 10px;'><b>To: ${matches[1]}</b></span>${matches[2]}</div>`;
             }
