@@ -1978,7 +1978,7 @@ class JournalManager{
 		$(target).find('.tooltip-hover').each(function(){
 			const self = this;
 			const $self = $(self);
-			$self.css('display:inline-block');
+			$self.css('display', 'inline-block');
 			if($self.hasClass('note-tooltip')){
 				let noteId = $self.attr('data-id');
 				if(noteId.replace(/[-+*&<>]/gi, '') == $self.text().replace(/[-+*&<>\s]/gi, '')){
