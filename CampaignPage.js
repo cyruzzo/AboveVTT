@@ -16,7 +16,7 @@ $(function() {
       .then(harvest_campaign_secret)  // find our join link
       .then(set_campaign_secret)      // set it to window.CAMPAIGN_SECRET
       .then(store_campaign_info)      // store gameId and campaign secret in localStorage for use on other pages   
-      .then(() => {window.CAMPAIGN_INFO = DDBApi.fetchCampaignInfo(window.gameId)})  
+      .then(async () => {window.CAMPAIGN_INFO = await DDBApi.fetchCampaignInfo(window.gameId)})
       .then(() => {
          openCampaignDB(async function() {
           if (is_gamelog_popout()) {
