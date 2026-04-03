@@ -573,7 +573,6 @@ class JournalManager{
 		journalPanel.body.append(chapter_list);
 		let chaptersWithLaterParents = [];
 
-		console.log('window',window);
 		let relevantNotes = {};
 		let relevantChapters = [];
 
