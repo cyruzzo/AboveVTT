@@ -435,7 +435,7 @@ function create_moveable_text_box(x,y,width, height, text = undefined) {
     
     apply_settings_to_boxes()
     $(input).on("keyup", handle_key_press);
-    $(input).on("input onchange", handle_auto_resize);
+    $(input).on("input change", handle_auto_resize);
     $(input).focus();
 }
 
