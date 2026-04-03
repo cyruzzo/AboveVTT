@@ -1,6 +1,18 @@
 function apply_settings_from_storage(applyFromWindow = false){
     const buttonSelectedClasses = "button-enabled ddbc-tab-options__header-heading--is-active"
-    const settings = (applyFromWindow) ? window.TEXTDATA : JSON.parse(localStorage.getItem('textSettings'));
+    let settings;
+    if (applyFromWindow) {
+        settings = window.TEXTDATA;
+    } else {
+        try {
+            settings = JSON.parse(localStorage.getItem('textSettings'));
+        } catch(e) {
+            console.warn('textSettings corrupted in localStorage, resetting to defaults');
+            localStorage.removeItem('textSettings');
+            store_text_settings();
+            return;
+        }
+    }
     window.TEXTDATA = settings
     $(`#text_controller_inside button[id^='text_']`).removeClass(buttonSelectedClasses);
     $(`#text_font option`).removeAttr('selected');
