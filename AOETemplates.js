@@ -84,7 +84,7 @@ function setup_aoe_button(buttons) {
     aoeMenu.css("left", aoeButton.position().left);
 
 
-    $("#aoe_feet").keydown(function(e) {
+    $("#aoe_feet_in_menu").keydown(function(e) {
         if (e.key === "Escape") {
             $('#select-button').click();
         }

@@ -75,8 +75,9 @@ async function buildDMScreen(container) {
             container.append(cont);
             const dmScreenBlocks = $("#dmScreenBlocks");
             $('#addDmScreenPageButton').off('click.addDmPage').on('click.addDmPage', function () {
-                const newId = uuid();
                 const name = prompt("Enter the title for the new DM Screen page:");
+                if (name === null || name.trim() === '') return;
+                const newId = uuid();
                 window.JOURNAL.notes[newId] = {
                     title: name,
                     text: "",

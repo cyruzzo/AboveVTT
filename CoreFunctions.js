@@ -1792,7 +1792,7 @@ function color_from_pc_object(pc) {
   if (!isDefaultTheme && pc.decorations?.characterTheme?.themeColor) { // only the DM can use the default theme color
     return pc.decorations.characterTheme.themeColor;
   } else {
-    const pcIndex = window.pcs.findIndex(p => p.id === p.id);
+    const pcIndex = window.pcs.findIndex(p => p.id === pc.id);
     return get_token_color_by_index(pcIndex);
   }
 }
@@ -2515,7 +2515,19 @@ function inject_sidebar_send_to_gamelog_button(sidebarPaneContent) {
     
   });
 }
-
+function chat_command_error(message = `Invalid roll. Hover the input to see valid formats`) {
+  const chatWrapper = $('.chat-text-wrapper');
+  const chatTextFocus = $('#chat-text:focus');
+  chatTextFocus.addClass("chat-error-shake");
+  chatWrapper.attr('data-content', message);
+  chatWrapper.addClass('invalidExpression');
+  setTimeout(function () {
+        chatTextFocus.removeClass("chat-error-shake");
+  }, 150);
+  setTimeout(function () {
+        chatWrapper.removeClass('invalidExpression');
+  }, 3000);
+}
 function find_items_in_cache_by_id_and_name(items = []) {
   const foundItems = [];
   for (let item of items) {

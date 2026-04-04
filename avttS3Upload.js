@@ -6391,7 +6391,7 @@ async function avttProcessUploadQueue() {
             linkedSignal.addEventListener("abort", linkedAbortHandler, { once: true });
           }
         }
-        let remoteSize=0;
+
         try {
           if (isProxyUpload) {
             const proxyResponse = await avttFetchWithRetry(
@@ -6432,11 +6432,11 @@ async function avttProcessUploadQueue() {
                 targetKey = normalizedProxyTarget;
               }
             }
-            remoteSize = Number(proxyPayload?.size);
+            const remoteSize = Number(proxyPayload?.size);
             if (Number.isFinite(remoteSize) && remoteSize >= 0) {
-              selectedFile.size = remoteSize;
-            } else if (!Number.isFinite(Number(selectedFile.size))) {
-              selectedFile.size = 0;
+              selectedFile.remoteSize = remoteSize;
+            } else {
+              selectedFile.remoteSize = 0;
             }
             if (typeof proxyPayload?.contentType === "string") {
               selectedFile.avttUploadedContentType = proxyPayload.contentType;
@@ -6499,12 +6499,11 @@ async function avttProcessUploadQueue() {
         if (userUsedElement) {
           userUsedElement.innerHTML = formatFileSize((avttPendingUsageBytes || 0) + S3_Current_Size);
         }
-       
+        const newSize = selectedFile.size == 0 && selectedFile.remoteSize > 0 ? selectedFile.remoteSize : Number(selectedFile.size) || 0;   
         try {
           if (!isSystemTarget){
             const now = new Date().toISOString();
             const normalizedKey = `${window.PATREON_ID}/${targetKey}`;
-            const newSize = selectedFile.size == 0 && remoteSize > 0 ? remoteSize : Number(selectedFile.size) || 0;
             const newEntry = { Key: normalizedKey, Size: newSize, LastModified: now };
             avttRegisterPendingUploadKey(targetKey, newSize);
             if (Array.isArray(avttAllFilesCache)) {
@@ -6529,13 +6528,11 @@ async function avttProcessUploadQueue() {
               }
             }
           }
-         
-            
         } catch (cacheError) {
           console.warn('Failed to update local caches after upload', cacheError);
         }
 
-        avttPendingUsageBytes += Number(selectedFile.size) || 0;
+        avttPendingUsageBytes += newSize;
         avttPendingUsageCount += 1;
         avttPendingUsageKeys.push(targetKey);
 
@@ -7198,7 +7195,7 @@ function refreshFiles(
                   top: (ui.position.top - (size / 2))
                 };
                 $('.avtt-drop-target').toggleClass('avtt-drop-target', false);
-              } else if (droppedOn.closest('#myTokensFolder').length > 0 || droppedOn.closest('#scenes-panel').length > 0 || droppedOn.closest('#journal-panel'))  {
+              } else if (droppedOn.closest('#myTokensFolder').length > 0 || droppedOn.closest('#scenes-panel').length > 0 || droppedOn.closest('#journal-panel').length>0)  {
                 const closestFolder = droppedOn.closest('.folder.list-item-identifier')
                 $('.avtt-drop-target').toggleClass('avtt-drop-target', false);
                 if (closestFolder.is('#scenesFolder') || droppedOn.is('.sidebar-panel-body'))

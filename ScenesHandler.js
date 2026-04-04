@@ -481,7 +481,7 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 				let keyword = url.replaceAll(/https:\/\/www\.dndbeyond\.com|^\/?sources\/|/gi, '');
 
 				if (keyword in self.sources){ // OBJECT ALREADY EXISTS... evito di riscrivere per non perdere i dati
-					scraped_sources[keyword]=self.sources.keyword;
+					scraped_sources[keyword]=self.sources[keyword];
 					return;
 				}
 				scraped_sources[keyword] = {
@@ -502,7 +502,7 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 							return ((scraped_sources[a].title == scraped_sources[b].title) ? 0 : ((scraped_sources[a].title > scraped_sources[b].title) ? 1 : -1));
 						}
 						else {
-							return (a.ddbtype == "Adventures") ? 1 : -1;
+							return (scraped_sources[a].ddbtype == "Adventures") ? 1 : -1;
 						}
 					}
 				)
@@ -626,7 +626,9 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 				dm_map_usable: "0",
 				thumb: thumb,
 				tokens: {},
-			});		
+			});
+			callback();
+			return;
 		}
 
 		let f = $("<iframe src='" + chapter_url + "'></iframe>");

@@ -135,18 +135,7 @@ class DiceRoll {
 
         if (!parsedExpression.match(validExpressionRegex)) {
             console.warn("Not parsing expression because it contains an invalid character", expression);          
-            $('#chat-text:focus').addClass("chat-error-shake");
-            $('.chat-text-wrapper').attr('data-content',`Invalid roll. Hover the input to see valid formats`);
-            $('.chat-text-wrapper').addClass('invalidExpression');
-           
-            setTimeout(function () {
-                 $('#chat-text:focus').removeClass("chat-error-shake");
-            }, 150);
-
-            setTimeout(function () {
-                  $('.chat-text-wrapper').removeClass('invalidExpression');
-            }, 3000);
-
+            chat_command_error();
             throw new Error("Invalid Expression");
         }
 
@@ -157,16 +146,7 @@ class DiceRoll {
         }
         if (!separateDiceExpressions) {
             console.warn("Not parsing expression because there are no valid dice expressions within it", expression);
-            $('#chat-text:focus').addClass("chat-error-shake");
-            $('.chat-text-wrapper').attr('data-content',`Invalid roll. Hover the input to see valid formats`);
-            $('.chat-text-wrapper').addClass('invalidExpression');
-           
-            setTimeout(function () {
-                 $('#chat-text:focus').removeClass("chat-error-shake");
-            }, 150);
-            setTimeout(function () {
-                  $('.chat-text-wrapper').removeClass('invalidExpression');
-            }, 3000);
+            chat_command_error();
             throw new Error("Invalid Expression");
         }
          $('.chat-text-wrapper').removeClass('invalidExpression');
@@ -415,16 +395,16 @@ function adjustRollWithRollBuffs(expression, rollType, $rollButton){
 
         const multiReplaceRegex = targetMultiOptions?.replace;
         const multiReplaceSelector = targetMultiOptions?.replaceType
-        const validMultiButton = multiReplaceSelector?.[rollType] != undefined && $rollButton.closest(multiReplaceSelector[rollType]).length > 0
+        const validMultiButton = (multiReplaceSelector == undefined || multiReplaceSelector?.[rollType] != undefined && $rollButton.closest(multiReplaceSelector[rollType]).length > 0);
         
         const singleReplaceRegex = singleTarget?.replace;
-        const singleReplaceSelector = singleTarget?.replaceType?.[rollType];
-        const validSingleButton = singleReplaceSelector != undefined && $rollButton.closest(singleReplaceSelector).length > 0;
+        const singleReplaceSelector = singleTarget?.replaceType;
+        const validSingleButton = singleReplaceSelector == undefined || (singleReplaceSelector?.[rollType] != undefined && $rollButton.closest(singleReplaceSelector[rollType]).length > 0);
        
-        if (multiReplaceRegex != undefined && (multiReplaceSelector == undefined || validMultiButton)) {
+        if (multiReplaceRegex != undefined && validMultiButton) {
             expression = `${expression.replace(multiReplaceRegex, targetMultiOptions.newRoll)}`   
         }
-        else if (!isMultiOption && singleReplaceRegex != undefined && (singleReplaceSelector == undefined || validSingleButton)){
+        else if (!isMultiOption && singleReplaceRegex != undefined && validSingleButton){
             expression = `${expression.replace(singleReplaceRegex, singleTarget.newRoll)}` 
         }
     }
@@ -726,7 +706,8 @@ class DiceRoller {
                           msg: msgdata,
                           multiroll: multiroll,
                           critRange: critRange,
-                          critType: critType
+                          critType: critType,
+                          forceCritType: forceCritType
                         });
                     self.#resetVariables();
                     self.nextRoll(undefined, critRange, critType)

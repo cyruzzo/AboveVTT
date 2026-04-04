@@ -128,7 +128,7 @@ class StatHandler {
 			const options = currentToken?.options;
 			const customInitStatic = options?.customInitStatic;
 			const customInitMod = options?.customInit;
-			const statMod = options?.customStat[1]?.mod || 0;
+			const statMod = options?.customStat?.[1]?.mod || 0;
 			let total;
 			if(!customInitMod && customInitStatic != undefined){
 				let decimalAdd = statMod ? ((parseInt(statMod) * 2) + 10) / 100 : 0

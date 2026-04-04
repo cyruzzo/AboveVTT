@@ -573,7 +573,6 @@ class JournalManager{
 		journalPanel.body.append(chapter_list);
 		let chaptersWithLaterParents = [];
 
-		console.log('window',window);
 		let relevantNotes = {};
 		let relevantChapters = [];
 
@@ -1978,7 +1977,7 @@ class JournalManager{
 		$(target).find('.tooltip-hover').each(function(){
 			const self = this;
 			const $self = $(self);
-			$self.css('display:inline-block');
+			$self.css('display', 'inline-block');
 			if($self.hasClass('note-tooltip')){
 				let noteId = $self.attr('data-id');
 				if(noteId.replace(/[-+*&<>]/gi, '') == $self.text().replace(/[-+*&<>\s]/gi, '')){
@@ -4374,7 +4373,7 @@ class JournalManager{
 				},
 			],
 		  	table_grid: false,
-			toolbar: 'undo styleselect template | horizontalrules | bold italic underline strikethrough | alignleft aligncenter alignright justify| outdent indent | bullist numlist | forecolor backcolor | fontsizeselect | link unlink | image media filePickers table tableCustom | code',
+			toolbar: 'undo styleselect template | horizontalrules | bold italic underline strikethrough | alignleft aligncenter alignright justify| outdent indent | bullist numlist | fontsizeinput forecolor backcolor | link unlink | image media filePickers table tableCustom | code',
 			image_class_list: [
 				{title: 'Magnify', value: 'magnify'},
 			],
@@ -4386,7 +4385,27 @@ class JournalManager{
 			   {title: 'DDB Tooltip Link (Spells, Monsters, Magic Items, Source)', value: 'tooltip-hover no-border ignore-abovevtt-formating'}
 			],
 			valid_children : '+body[style]',
+			
 			setup: function (editor) { 
+				editor.addButton('fontsizeinput', {
+					type: 'container',
+					html: '<input type="number" id="mce-custom-font-size" style="width: 40px;height: 16px;text-align:right;padding: 4px 1px;" placeholder="px"> px',
+					onPostRender: function() {
+						let input = document.getElementById('mce-custom-font-size');
+						input.addEventListener('change', function(e) {
+							let size = this.value;
+							if (size) {
+								editor.execCommand('FontSize', false, size + 'px');
+							}
+						});
+						input.addEventListener('keypress', function(e) {
+							if(e.key === 'Enter') {
+								e.preventDefault();
+								this.blur();
+							}
+						});
+					}
+				});
 				editor.on("keydown", function (e) {
 					if (e.which == "13" || e.keyCode == "13") {
 						
@@ -4418,6 +4437,7 @@ class JournalManager{
 						
 					}
 				});
+
 				editor.addButton('horizontalrules', {
 					  type: 'splitbutton',
 				      text: '',
@@ -4625,8 +4645,11 @@ class JournalManager{
 
 					editor.execCommand('setAvttImageSrc', e);
 				});
-
 				editor.on('NodeChange', async function (e) {
+					const currentFontSize = editor.dom.getStyle(e.element, 'font-size', true);
+					if (currentFontSize) {
+						$("#mce-custom-font-size").val(parseInt(currentFontSize));
+					}
 					// When an image is inserted into the editor
 				    if (e.element.tagName === "IMG") { 
 				    	let url = e.element.getAttribute('src');
