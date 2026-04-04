@@ -4916,8 +4916,9 @@ async function do_draw_selected_token_bounding_box() {
 			const isGroupSelect = window.CURRENTLY_SELECTED_TOKENS.length > 1 || (window.CURRENTLY_SELECTED_TOKENS.length == 1 && window.TOKEN_OBJECTS[window.CURRENTLY_SELECTED_TOKENS[0]].isAoe());
 			// draw the bounding box
 			draw_select_box(left, top, width, height, false, true, isGroupSelect);
-			throttleLight();
-		})			      
+		})	
+		
+	throttleLight();
 }
 
 
