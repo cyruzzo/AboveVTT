@@ -537,7 +537,7 @@ class TokenCustomization {
         } else if (RootFolder.allIds().includes(this.id)) {
             n = RootFolder.findById(this.id).name;
         } else if (RootFolder.allPaths().map(p => path_to_html_id(p)).includes(this.id)) {
-            n = RootFolder.allPaths().map(p => path_to_html_id(p)).name;
+            n = RootFolder.allValues().find(f => path_to_html_id(f.path) === this.id)?.name;
         } else {
             n = this.tokenOptions?.name;
             if (!n) {

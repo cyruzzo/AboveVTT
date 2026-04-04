@@ -1,6 +1,18 @@
 function apply_settings_from_storage(applyFromWindow = false){
     const buttonSelectedClasses = "button-enabled ddbc-tab-options__header-heading--is-active"
-    const settings = (applyFromWindow) ? window.TEXTDATA : JSON.parse(localStorage.getItem('textSettings'));
+    let settings;
+    if (applyFromWindow) {
+        settings = window.TEXTDATA;
+    } else {
+        try {
+            settings = JSON.parse(localStorage.getItem('textSettings'));
+        } catch(e) {
+            console.warn('textSettings corrupted in localStorage, resetting to defaults');
+            localStorage.removeItem('textSettings');
+            store_text_settings();
+            return;
+        }
+    }
     window.TEXTDATA = settings
     $(`#text_controller_inside button[id^='text_']`).removeClass(buttonSelectedClasses);
     $(`#text_font option`).removeAttr('selected');
@@ -86,7 +98,7 @@ function create_text_controller(applyFromWindow = false) {
     const textControllerTitleBarExit = $('<div id="text_controller_title_bar_exit"><svg class="" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><g transform="rotate(-45 50 50)"><rect></rect></g><g transform="rotate(45 50 50)"><rect></rect></g></svg></div>')
     textControllerTitleBarExit.click(function () {
         $(this).parent().parent().hide()
-        $("select-button").click();
+        $("#select-button").click();
     });
     textControllerTitleBar.append(textControllerTitleBarExit);
     textControllerInside.append(textControllerTitleBar);
@@ -435,7 +447,7 @@ function create_moveable_text_box(x,y,width, height, text = undefined) {
     
     apply_settings_to_boxes()
     $(input).on("keyup", handle_key_press);
-    $(input).on("input onchange", handle_auto_resize);
+    $(input).on("input change", handle_auto_resize);
     $(input).focus();
 }
 

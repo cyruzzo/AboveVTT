@@ -573,7 +573,6 @@ class JournalManager{
 		journalPanel.body.append(chapter_list);
 		let chaptersWithLaterParents = [];
 
-		console.log('window',window);
 		let relevantNotes = {};
 		let relevantChapters = [];
 
@@ -1978,7 +1977,7 @@ class JournalManager{
 		$(target).find('.tooltip-hover').each(function(){
 			const self = this;
 			const $self = $(self);
-			$self.css('display:inline-block');
+			$self.css('display', 'inline-block');
 			if($self.hasClass('note-tooltip')){
 				let noteId = $self.attr('data-id');
 				if(noteId.replace(/[-+*&<>]/gi, '') == $self.text().replace(/[-+*&<>\s]/gi, '')){
@@ -4390,13 +4389,19 @@ class JournalManager{
 			setup: function (editor) { 
 				editor.addButton('fontsizeinput', {
 					type: 'container',
-					html: '<input type="number" id="mce-custom-font-size" style="width: 45px; height: 14px; text-align:right;" placeholder="px"> px',
+					html: '<input type="number" id="mce-custom-font-size" style="width: 40px;height: 16px;text-align:right;padding: 4px 1px;" placeholder="px"> px',
 					onPostRender: function() {
 						let input = document.getElementById('mce-custom-font-size');
-						input.addEventListener('change', function() {
+						input.addEventListener('change', function(e) {
 							let size = this.value;
 							if (size) {
 								editor.execCommand('FontSize', false, size + 'px');
+							}
+						});
+						input.addEventListener('keypress', function(e) {
+							if(e.key === 'Enter') {
+								e.preventDefault();
+								this.blur();
 							}
 						});
 					}
