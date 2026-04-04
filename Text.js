@@ -86,7 +86,7 @@ function create_text_controller(applyFromWindow = false) {
     const textControllerTitleBarExit = $('<div id="text_controller_title_bar_exit"><svg class="" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><g transform="rotate(-45 50 50)"><rect></rect></g><g transform="rotate(45 50 50)"><rect></rect></g></svg></div>')
     textControllerTitleBarExit.click(function () {
         $(this).parent().parent().hide()
-        $("select-button").click();
+        $("#select-button").click();
     });
     textControllerTitleBar.append(textControllerTitleBarExit);
     textControllerInside.append(textControllerTitleBar);
