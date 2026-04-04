@@ -7581,15 +7581,13 @@ function lineLine(x1, y1, x2, y2, x3, y3, x4, y4) {
 function detectInLos(x, y) {
 	let canvas = window.moveOffscreenCanvasMask;
 	let ctx = canvas.getContext("2d");
-	const pixeldata = ctx.getImageData((x-5)/window.CURRENT_SCENE_DATA.scale_factor, (y-5)/window.CURRENT_SCENE_DATA.scale_factor, 10, 10).data;
-
+	const pixeldata = ctx.getImageData((x-1)/window.CURRENT_SCENE_DATA.scale_factor, (y-1)/window.CURRENT_SCENE_DATA.scale_factor, 2, 2).data;
 
 	for(let i=0; i<pixeldata.length; i+=4){
 		if(pixeldata[i] <= 5)
 			return false;
 	}
 	return true;
-	
 }
 	
 
