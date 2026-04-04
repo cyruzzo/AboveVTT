@@ -3064,7 +3064,11 @@ class JournalManager{
 				const name = $(this).closest('tr').find('.item-link-cell a').text();
 				
 				const itemData = find_items_in_cache_by_id_and_name([{id, name}]);
-				
+				if (itemData.length === 0) {
+					console.warn("Item not found", [{id, name}]);
+					return;
+				}
+
 				console.log(`[PartyLoot] Adding ${quantity} of item ${name} to queue`);
 				
 				if (quantity > 10){
