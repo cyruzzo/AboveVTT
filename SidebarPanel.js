@@ -2664,10 +2664,18 @@ function edit_encounter(clickEvent) {
 
                     
             }
-            if(crText != '' && crText != undefined)
-              cr = eval(crText);   
-            else
+            if(crText != '' && crText != undefined){
+              try{
+                cr = eval(crText); 
+              }catch(e){
+                console.warn(`Could not parse CR from custom stat block, defaulting to 0. CR text was ${crText}`);
+                cr = 0;
+              }
+            }
+            else{
               cr = 0;
+            }
+
           }
         }
         for(let j = 0; j<item.quantity; j++ ){
