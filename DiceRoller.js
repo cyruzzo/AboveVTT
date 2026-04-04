@@ -135,18 +135,7 @@ class DiceRoll {
 
         if (!parsedExpression.match(validExpressionRegex)) {
             console.warn("Not parsing expression because it contains an invalid character", expression);          
-            $('#chat-text:focus').addClass("chat-error-shake");
-            $('.chat-text-wrapper').attr('data-content',`Invalid roll. Hover the input to see valid formats`);
-            $('.chat-text-wrapper').addClass('invalidExpression');
-           
-            setTimeout(function () {
-                 $('#chat-text:focus').removeClass("chat-error-shake");
-            }, 150);
-
-            setTimeout(function () {
-                  $('.chat-text-wrapper').removeClass('invalidExpression');
-            }, 3000);
-
+            chat_command_error();
             throw new Error("Invalid Expression");
         }
 
@@ -157,16 +146,7 @@ class DiceRoll {
         }
         if (!separateDiceExpressions) {
             console.warn("Not parsing expression because there are no valid dice expressions within it", expression);
-            $('#chat-text:focus').addClass("chat-error-shake");
-            $('.chat-text-wrapper').attr('data-content',`Invalid roll. Hover the input to see valid formats`);
-            $('.chat-text-wrapper').addClass('invalidExpression');
-           
-            setTimeout(function () {
-                 $('#chat-text:focus').removeClass("chat-error-shake");
-            }, 150);
-            setTimeout(function () {
-                  $('.chat-text-wrapper').removeClass('invalidExpression');
-            }, 3000);
+            chat_command_error();
             throw new Error("Invalid Expression");
         }
          $('.chat-text-wrapper').removeClass('invalidExpression');
