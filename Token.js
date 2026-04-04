@@ -691,7 +691,7 @@ class Token {
 	moveUpLeft()    { this.moveDirection(-1, -1); }
 	moveDownLeft()  { this.moveDirection( 1, -1); }
 	// grid move; dy/dx in abstract grid coords units	
-        moveDirection(dy,dx) {
+	moveDirection(dy,dx) {
 		const gridType = window.CURRENT_SCENE_DATA.gridType;
 		const grsize = grid_size(false,true);
 		let tmpx = parseFloat(this.options.left);
@@ -3736,12 +3736,11 @@ function snap_point_to_grid(mapX, mapY, forceSnap = false, tinyToken = false, to
 		const offsetx = parseFloat(scene.offsetx);
 		const offsety = parseFloat(scene.offsety);
 
-		const currentGridX = (mapX - offsetx) / gridWidth;
-		const currentGridY = (mapY - offsety) / gridHeight;
+		const currentGridX = Math.floor((mapX - offsetx) / gridWidth);
+		const currentGridY = Math.floor((mapY - offsety) / gridHeight);
 		return {
-			//floor is needed as long as we add `mapX += gridWidth/2;` above, if we subtract ceil
-			x: Math.floor(currentGridX) * gridWidth + offsetx,
-			y: Math.floor(currentGridY) * gridHeight + offsety
+			x: currentGridX * gridWidth + offsetx,
+			y: currentGridY * gridHeight + offsety
 		}
 	} else {
 		return { x: mapX, y: mapY };
