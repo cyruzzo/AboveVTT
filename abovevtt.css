@@ -8447,6 +8447,8 @@ button#changeTokenImage:before{
     position: relative;
     top: 0;
     opacity: 1;
+    white-space: pre-wrap;
+    max-width:100%;
 }
 
 #conditions-flyout li{

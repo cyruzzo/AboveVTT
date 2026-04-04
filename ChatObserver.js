@@ -113,6 +113,9 @@ class ChatObserver {
             if (matches !== null && matches.length === 3) {
                 data.whisper = matches[1]
                 data.text = `<div class="custom-gamelog-message"style="position: relative;margin-bottom: 12px;"><span style='font-size: 9px;position: absolute;bottom: -18px;left: 0px;opacity: 0.5;margin-top: 10px;'><b>To: ${matches[1]}</b></span>${matches[2]}</div>`;
+            } else{
+                chat_command_error(`Invalid whisper command. Format: /w [player name] message`);
+                return;
             }
         } 
         else if(text.startsWith("/dm")){     
