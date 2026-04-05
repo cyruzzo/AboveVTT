@@ -6378,14 +6378,14 @@ When left blank it is treated as infinity, preventing tokens from seeing over th
 			</button>
 		</div>`);
 	wall_menu.append("<div class='menu-subtitle'>Controls</div>");
-	const snapDesc = `When using drawing tools snaps to other nearby wall end points.`	
+	const snapDesc = `Toggle to snap wall drawing to other nearby wall end points. This overrides grid snapping if enabled.`	
 	wall_menu.append(
 		`<div class='ddbc-tab-options--layout-pill menu-option' data-desc="${snapDesc}">
 			<button id='snap_walls' data-toggle='true' class='drawbutton menu-option ddbc-tab-options__header-heading ${(window.snapWallsToggle) ? "button-enabled" : ''}'>
 				Join Snap
 			</button>
 		</div>`);
-		const objectWallDesc = `This blocks vision at the 2nd wall of this type hit. Does not prevent movement into visible area.
+		const objectWallDesc = `Toggle to draw Object Walls in place of regular walls. Object walls block vision at the 2nd wall of this type hit. Does not prevent movement into visible area.
 
 Example usage: 
 
@@ -6400,7 +6400,7 @@ Example usage:
 				Object Wall
 		</button>
 	</div>`);
-	const hiddenIconsDesc = `Makes the icon of drawn doors (any type) hidden to both DM and Player. DM's can still see and access them when walls are shown.`
+	const hiddenIconsDesc = `Toggle that makes the icon of drawn doors (any type) hidden to both DM and Player. DM's can still see and access them when walls are shown.`
 	wall_menu.append(
 		`<div class='ddbc-tab-options--layout-pill menu-option' data-desc="${hiddenIconsDesc}">
 			<button id='draw_door_hidden' class='drawbutton menu-option  ddbc-tab-options__header-heading'
