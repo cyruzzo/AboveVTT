@@ -6295,7 +6295,7 @@ function init_walls_menu(buttons){
 	wall_menu.append(
 		`<div class='ddbc-tab-options--layout-pill menu-option data-skip='true''>
 			<button id='snap_walls' data-toggle='true' class='drawbutton menu-option ddbc-tab-options__header-heading ${(window.snapWallsToggle) ? "button-enabled" : ''}'>
-				Wall Snap
+				Join Snap
 			</button>
 		</div>`);
 	wall_menu.append(
