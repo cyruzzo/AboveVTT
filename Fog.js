@@ -6400,7 +6400,7 @@ Example usage:
 				Object Wall
 		</button>
 	</div>`);
-	const hiddenIconsDesc = `Makes the icon of drawn doors (any type) hidden to both DM and Player unless walls are shown.`
+	const hiddenIconsDesc = `Makes the icon of drawn doors (any type) hidden to both DM and Player. DM's can still see and access them when walls are shown.`
 	wall_menu.append(
 		`<div class='ddbc-tab-options--layout-pill menu-option' data-desc="${hiddenIconsDesc}">
 			<button id='draw_door_hidden' class='drawbutton menu-option  ddbc-tab-options__header-heading'
