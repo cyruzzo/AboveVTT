@@ -411,7 +411,7 @@ class MessageBroker {
 			return;
 		}
 		window.MB.chat_message_history.unshift(data);
-		if (window.MB.chat_message_history > 100) {
+		if (window.MB.chat_message_history.length > 100) {
 			window.MB.chat_message_history.pop();
 		}
 	}
