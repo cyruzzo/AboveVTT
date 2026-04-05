@@ -1321,7 +1321,7 @@ async function create_and_place_token(listItem, hidden = undefined, specificImag
 
             placedCount = 1;
             for (let tokenId in window.TOKEN_OBJECTS) {
-                if (window.TOKEN_OBJECTS[tokenId].options.monster === listItem.monsterData.id) {
+                if (window.TOKEN_OBJECTS[tokenId].options.monster === listItem.monsterData.id || window.TOKEN_OBJECTS[tokenId].options.stat === listItem.monsterData.id) {
                     placedCount++;
                 }
             }
@@ -1387,7 +1387,7 @@ async function create_and_place_token(listItem, hidden = undefined, specificImag
             options.stat = listItem.monsterData.slug;
             placedCount = 1;
             for (let tokenId in window.TOKEN_OBJECTS) {
-                if (window.TOKEN_OBJECTS[tokenId].options.monster === listItem.monsterData.id) {
+                if (window.TOKEN_OBJECTS[tokenId].options.monster === listItem.monsterData.slug || window.TOKEN_OBJECTS[tokenId].options.stat === listItem.monsterData.slug) {
                     placedCount++;
                 }
             }
