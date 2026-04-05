@@ -2926,9 +2926,14 @@ function get_event_cursor_position(event, preventSnap = false) {
     let pointX = Math.round(((eventLocation.pageX - window.VTTMargin) * (1.0 / window.ZOOM)));
     let pointY = Math.round(((eventLocation.pageY - window.VTTMargin) * (1.0 / window.ZOOM)));
 
-    if (!preventSnap && window.DRAWFUNCTION === 'wall' &&
+    if (!preventSnap && 
+		(window.DRAWFUNCTION === 'wall' || 
+			window.DRAWFUNCTION == 'wall-door' || 
+			window.DRAWFUNCTION == 'wall-window') &&
 	    (window.DRAWSHAPE === '3pointRound' ||
-		    window.DRAWSHAPE === 'line') &&
+		    window.DRAWSHAPE === 'line' ||
+			window.DRAWSHAPE === '3pointRect' ||
+			window.DRAWSHAPE === 'rect') &&
 	    $('#snap_walls').hasClass('button-enabled')
     ) {
 	    return wall_snap(pointX, pointY);
@@ -3068,14 +3073,17 @@ function drawing_mousedown(e) {
 	else if(window.DRAWFUNCTION === "wall"){
 		// semi transparent black
 		window.DRAWCOLOR = "rgba(0, 255, 0, 1)"
-		if(data.type == 'terrain')
+		if(data.object_wall !== undefined)
 			window.DRAWCOLOR = "rgba(0, 180, 80, 1)"
+
 		if(window.DRAWSHAPE == 'line')
 			window.DRAWTYPE = "filled"
 		window.LINEWIDTH = 6;
 	}
 	else if(window.DRAWFUNCTION === "wall-door-convert" || window.DRAWFUNCTION === "wall-door" || window.DRAWFUNCTION === "door-door-convert"){
 		// semi transparent black
+
+		window.HIDDENICONDOOR = data.hidden_icon
 		window.DRAWCOLOR = doorColors[$('#door_types').val()].closed
 		window.DRAWTYPE = (window.DRAWFUNCTION === "door-door-convert") ? 'border' : "filled"
 		window.LINEWIDTH = 12;
@@ -3834,7 +3842,7 @@ function drawing_mouseup(e) {
 	const width = mouseX - window.BEGIN_MOUSEX;
 	const height = mouseY - window.BEGIN_MOUSEY;
 	// data is modified by each shape/function but as a starting point fill it up
-	let hidden = $('[data-hidden]').hasClass('button-enabled');
+	const hidden = (Boolean(window.HIDDENICONDOOR) == true);
 	let data = ['',
 		 window.DRAWTYPE,
 		 (window.DRAWDAYLIGHT) ? window.DRAWDAYLIGHT : window.DRAWCOLOR,
@@ -4105,7 +4113,7 @@ function drawing_mouseup(e) {
 		let undoArray = [];
 		let redoArray = [];
 		for(let i=0; i<walls.length; i++){
-			if(walls[i][2].startsWith('rgba(0, 255, 0') && window.DRAWFUNCTION === "door-door-convert")
+			if(!doorColorsArray.includes(walls[i][2]) && window.DRAWFUNCTION === "door-door-convert")
 				continue;
 			let wallInitialScale = walls[i][8];
 			let scale_factor = window.CURRENT_SCENE_DATA.scale_factor != undefined ? window.CURRENT_SCENE_DATA.scale_factor : 1;
@@ -4430,7 +4438,7 @@ function drawing_mouseup(e) {
 				 y2,
 				 12,
 				 window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion,
-				 0, 
+				 hidden,
 				 window.wallBottom, 
 				 window.wallTop
 				 ];	
@@ -6293,12 +6301,6 @@ function init_walls_menu(buttons){
 		</button>
 	</div>`);
 	wall_menu.append(
-		`<div class='ddbc-tab-options--layout-pill menu-option data-skip='true''>
-			<button id='snap_walls' data-toggle='true' class='drawbutton menu-option ddbc-tab-options__header-heading ${(window.snapWallsToggle) ? "button-enabled" : ''}'>
-				Join Snap
-			</button>
-		</div>`);
-	wall_menu.append(
 	`<div class='ddbc-tab-options--layout-pill'>
 		<button id='draw_line' class='drawbutton menu-option  ddbc-tab-options__header-heading'
 			data-shape='rect' data-function="wall" data-unique-with="draw">
@@ -6313,13 +6315,7 @@ function init_walls_menu(buttons){
 		</button>
 	</div>`);
 	
-	wall_menu.append(
-	`<div class='ddbc-tab-options--layout-pill'>
-		<button id='draw_line' class='drawbutton menu-option  ddbc-tab-options__header-heading'
-			data-shape='line' data-function="wall" data-type="terrain" data-unique-with="draw">
-				Object Wall
-		</button>
-	</div>`);
+
 	wall_menu.append(
 		`<div class='ddbc-tab-options--layout-pill menu-option data-skip='true''>
 			<button id='draw_height_convert' class='drawbutton menu-option  ddbc-tab-options__header-heading'
@@ -6365,13 +6361,7 @@ function init_walls_menu(buttons){
 				 	Wall>Selected
 			</button>
 		</div>`);
-	wall_menu.append(
-		`<div class='ddbc-tab-options--layout-pill menu-option data-skip='true''>
-			<button id='draw_door_hidden' class='drawbutton menu-option  ddbc-tab-options__header-heading'
-				data-shape='line' data-function="wall-door" data-unique-with="draw" data-hidden="true">
-				 	Hidden Icon
-			</button>
-		</div>`);
+
 	wall_menu.append(
 		`<div class='ddbc-tab-options--layout-pill menu-option data-skip='true''>
 			<button id='draw_door_convert' class='drawbutton menu-option  ddbc-tab-options__header-heading'
@@ -6380,6 +6370,26 @@ function init_walls_menu(buttons){
 			</button>
 		</div>`);
 	wall_menu.append("<div class='menu-subtitle'>Controls</div>");
+	wall_menu.append(
+		`<div class='ddbc-tab-options--layout-pill menu-option data-skip='true''>
+			<button id='snap_walls' data-toggle='true' class='drawbutton menu-option ddbc-tab-options__header-heading ${(window.snapWallsToggle) ? "button-enabled" : ''}'>
+				Join Snap
+			</button>
+		</div>`);
+	wall_menu.append(
+	`<div class='ddbc-tab-options--layout-pill'>
+		<button id='object_wall' class='drawbutton menu-option  ddbc-tab-options__header-heading'
+			data-key="object_wall" data-value="terrain" data-toggle='true'>
+				Object Wall
+		</button>
+	</div>`);
+	wall_menu.append(
+		`<div class='ddbc-tab-options--layout-pill menu-option data-skip='true''>
+			<button id='draw_door_hidden' class='drawbutton menu-option  ddbc-tab-options__header-heading'
+				data-key="hidden_icon" data-toggle="true" data-value="true">
+				 	Hidden Icon
+			</button>
+		</div>`);
 	wall_menu.append(
 		`<div class='ddbc-tab-options--layout-pill menu-option data-skip='true''>
 			<button id='edit_wall' class='drawbutton menu-option  ddbc-tab-options__header-heading'
