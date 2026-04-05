@@ -2926,14 +2926,16 @@ function get_event_cursor_position(event, preventSnap = false) {
     let pointX = Math.round(((eventLocation.pageX - window.VTTMargin) * (1.0 / window.ZOOM)));
     let pointY = Math.round(((eventLocation.pageY - window.VTTMargin) * (1.0 / window.ZOOM)));
 
+    if (!preventSnap && window.DRAWFUNCTION === 'wall' &&
+	    (window.DRAWSHAPE === '3pointRound' ||
+		    window.DRAWSHAPE === 'line') &&
+	    $('#snap_walls').hasClass('button-enabled')
+    ) {
+	    return wall_snap(pointX, pointY);
+    }
+	
     // Apply snapping if enabled
     if (!preventSnap && ((window.toggleSnap && !window.toggleDrawingSnap) || (window.toggleDrawingSnap && !window.toggleSnap))) {
-        //for certain wall drawing snap to wall points instead of grid
-	if (!preventSnap && window.DRAWFUNCTION === 'wall' &&
-	    (window.DRAWSHAPE === '3pointRound' ||
-	     window.DRAWSHAPE === 'line')) {
-		return wall_snap(pointX, pointY);
-	}
         [pointX, pointY] = get_snapped_coordinates(pointX, pointY);
     }
 	
@@ -6286,6 +6288,19 @@ function init_walls_menu(buttons){
 	wall_menu.append(
 	`<div class='ddbc-tab-options--layout-pill'>
 		<button id='draw_line' class='drawbutton menu-option  ddbc-tab-options__header-heading'
+			data-shape='3pointRound' data-function="wall" data-unique-with="draw">
+				CircularPoly
+		</button>
+	</div>`);
+	wall_menu.append(
+		`<div class='ddbc-tab-options--layout-pill menu-option data-skip='true''>
+			<button id='snap_walls' data-toggle='true' class='drawbutton menu-option ddbc-tab-options__header-heading ${(window.snapWallsToggle) ? "button-enabled" : ''}'>
+				Wall Snap
+			</button>
+		</div>`);
+	wall_menu.append(
+	`<div class='ddbc-tab-options--layout-pill'>
+		<button id='draw_line' class='drawbutton menu-option  ddbc-tab-options__header-heading'
 			data-shape='rect' data-function="wall" data-unique-with="draw">
 				Rect Wall
 		</button>
@@ -6297,13 +6312,7 @@ function init_walls_menu(buttons){
 				3p Rect
 		</button>
 	</div>`);
-	wall_menu.append(
-	`<div class='ddbc-tab-options--layout-pill'>
-		<button id='draw_line' class='drawbutton menu-option  ddbc-tab-options__header-heading'
-			data-shape='3pointRound' data-function="wall" data-unique-with="draw">
-				CircularPoly
-		</button>
-	</div>`);
+	
 	wall_menu.append(
 	`<div class='ddbc-tab-options--layout-pill'>
 		<button id='draw_line' class='drawbutton menu-option  ddbc-tab-options__header-heading'
