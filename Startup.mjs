@@ -56,6 +56,7 @@ $(function() {
       .then(init_splash)              // show the splash screen; it reads from settings. That's why we show it here instead of earlier
       .then(harvest_campaign_secret)  // find our join link
       .then(set_campaign_secret)      // set it to window.CAMPAIGN_SECRET
+      .then(store_campaign_info)      // store gameId and campaign secret in localStorage for use on other pages
       .then(async () => {
         const maxRetries = 5
         const baseDelay = 500
