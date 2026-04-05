@@ -6385,11 +6385,11 @@ When left blank it is treated as infinity, preventing tokens from seeing over th
 				Join Snap
 			</button>
 		</div>`);
-		const objectWallDesc = `This blocks vision at the 2nd wall of this type hit. 
+		const objectWallDesc = `This blocks vision at the 2nd wall of this type hit. Does not prevent movement into visible area.
 
 Example usage: 
 
-• Objects where you want art visible but don't want players seeing past, like a statue. 
+• Objects where you want art visible but don't want players seeing past, like a statue or foilage like bushes. 
 
 • Drawing a 1 grid width area around the edge of a cliff, this allows those below to see the edge and only those standing at the edge to see down.
 `
