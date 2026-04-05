@@ -2818,8 +2818,8 @@ function init_zoom_buttons() {
 			window.SelectedTokenVision = true;
 		}
 		redraw_light();	
-    if(window.DM && !window.SelectedTokenVision)
-      do_check_token_visibility();
+		if(window.DM && !window.SelectedTokenVision)
+			do_check_token_visibility();
 	});
 	if(defaultValues.selectedTokenVision != undefined){
 		selected_token_vision.find('.ddbc-tab-options__header-heading').toggleClass('ddbc-tab-options__header-heading--is-active', defaultValues.selectedTokenVision); 

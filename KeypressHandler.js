@@ -261,6 +261,12 @@ Mousetrap.bind('shift+w', function () {
     }
        
 });
+Mousetrap.bind('j', function () {
+    if(window.DM){
+        $('#snap_walls').toggleClass(['button-enabled', 'ddbc-tab-options__header-heading--is-active']);
+    }
+});
+    
 Mousetrap.bind('shift+e', function () {
     if(window.DM){
         $('#show_elev').toggleClass(['button-enabled', 'ddbc-tab-options__header-heading--is-active']);
