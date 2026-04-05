@@ -6286,7 +6286,6 @@ function init_draw_menu(buttons){
 }
 function init_walls_menu(buttons){
 	let wall_menu = $("<div id='wall_menu' class='top_menu'></div>");
-
 	wall_menu.append(
 		`<div class='ddbc-tab-options--layout-pill'>
 			<button id='draw_line' class='drawbutton menu-option  ddbc-tab-options__header-heading'
@@ -6294,45 +6293,54 @@ function init_walls_menu(buttons){
 					Draw Wall
 			</button>
 		</div>`);
+	const circularPolyDesc = `Draw a circular/arc polygon by clicking 3 points. First for starting point, second for size, third for arc length up to a full circle.`;
 	wall_menu.append(
-	`<div class='ddbc-tab-options--layout-pill'>
+	`<div class='ddbc-tab-options--layout-pill' data-desc="${circularPolyDesc}">
 		<button id='draw_line' class='drawbutton menu-option  ddbc-tab-options__header-heading'
 			data-shape='3pointRound' data-function="wall" data-unique-with="draw">
 				CircularPoly
 		</button>
 	</div>`);
+	const rectDesc = `Draw 4 walls in the shape of rectangle by dragging from one corner to the opposite corner.`;
 	wall_menu.append(
-	`<div class='ddbc-tab-options--layout-pill'>
+	`<div class='ddbc-tab-options--layout-pill' data-desc="${rectDesc}">
 		<button id='draw_line' class='drawbutton menu-option  ddbc-tab-options__header-heading'
 			data-shape='rect' data-function="wall" data-unique-with="draw">
 				Rect Wall
 		</button>
 	</div>`);
+	const pointRectDesc = `Draw 4 walls in the shape of a parallelogram by clicking 3 corners.`;
 	wall_menu.append(
-	`<div class='ddbc-tab-options--layout-pill'>
+	`<div class='ddbc-tab-options--layout-pill' data-desc="${pointRectDesc}">
 		<button id='draw_line' class='drawbutton menu-option  ddbc-tab-options__header-heading'
 			data-shape='3pointRect' data-function="wall" data-unique-with="draw">
 				3p Rect
 		</button>
 	</div>`);
 	
-
+	const heightConvertDesc = `Changes the base/top of all walls in a selected area to values below.`
 	wall_menu.append(
-		`<div class='ddbc-tab-options--layout-pill menu-option data-skip='true''>
+		`<div class='ddbc-tab-options--layout-pill menu-option' data-desc="${heightConvertDesc}">
 			<button id='draw_height_convert' class='drawbutton menu-option  ddbc-tab-options__header-heading'
 				data-shape='rect' data-function="wall-height-convert" data-unique-with="draw">
 				 	Height Convert
 			</button>
 		</div>`);
 	wall_menu.append("<div class='wall-input menu-subtitle'>Wall Base</div>");
+	const wallBaseDesc = `Sets the elevation of the base of the wall. 
+Any token with elevation below this height will be able to see under the wall.
+When left blank it is treated as negative infinity, preventing tokens from seeing under the wall.`
 	wall_menu.append(
-		`<div>
+		`<div data-desc="${wallBaseDesc}">
 			<input id='wall_base_height' type='number' step='5' data-required="wall_base_height" style='width:90%'
 			value='' >
 		</div>`);
+	const wallTopDesc = `Sets the elevation of the top of the wall. 
+Any token with elevation above this height will be able to see over the wall.
+When left blank it is treated as infinity, preventing tokens from seeing over the wall.`		
 	wall_menu.append("<div class='wall-input menu-subtitle'>Wall Top</div>");
 	wall_menu.append(
-		`<div>
+		`<div data-desc="${wallTopDesc}">
 			<input id='wall_top_height' type='number' step='5' data-required="wall_top_height" style='width:90%'
 			value=''>
 		</div>`);
@@ -6347,73 +6355,87 @@ function init_walls_menu(buttons){
             </select>
         </div>
             `)
-
 	wall_menu.append(
-	`<div class='ddbc-tab-options--layout-pill menu-option data-skip='true''>
+	`<div class='ddbc-tab-options--layout-pill menu-option'>
 		<button id='draw_door' class='drawbutton menu-option  ddbc-tab-options__header-heading'
 			data-shape='line' data-function="wall-door" data-unique-with="draw">
 			 	Draw Selected
 		</button>
 	</div>`);
+	const wallToDesc = `A section of wall in the selected area will be converted to a door of the selected type.`		
 	wall_menu.append(
-		`<div class='ddbc-tab-options--layout-pill menu-option data-skip='true''>
+		`<div class='ddbc-tab-options--layout-pill menu-option' data-desc="${wallToDesc}">
 			<button id='draw_door_erase' class='drawbutton menu-option  ddbc-tab-options__header-heading'
 				data-shape='rect' data-function="wall-door-convert" data-unique-with="draw">
 				 	Wall>Selected
 			</button>
 		</div>`);
-
+	const doorCovertDesc = `Doors (any type) in the selected area will be converted to the selected door type.`	
 	wall_menu.append(
-		`<div class='ddbc-tab-options--layout-pill menu-option data-skip='true''>
+		`<div class='ddbc-tab-options--layout-pill menu-option' data-desc="${doorCovertDesc}">
 			<button id='draw_door_convert' class='drawbutton menu-option  ddbc-tab-options__header-heading'
 				data-shape='rect' data-function="door-door-convert" data-unique-with="draw">
 				 	Door Convert
 			</button>
 		</div>`);
 	wall_menu.append("<div class='menu-subtitle'>Controls</div>");
+	const snapDesc = `Toggle to snap wall drawing to other nearby wall end points. This overrides grid snapping if enabled.`	
 	wall_menu.append(
-		`<div class='ddbc-tab-options--layout-pill menu-option data-skip='true''>
+		`<div class='ddbc-tab-options--layout-pill menu-option' data-desc="${snapDesc}">
 			<button id='snap_walls' data-toggle='true' class='drawbutton menu-option ddbc-tab-options__header-heading ${(window.snapWallsToggle) ? "button-enabled" : ''}'>
 				Join Snap
 			</button>
 		</div>`);
+		const objectWallDesc = `Toggle to draw Object Walls in place of regular walls. Object walls block vision at the 2nd wall of this type hit. Does not prevent movement into visible area.
+
+Example usage: 
+
+• Objects where you want art visible but don't want players seeing past, like a statue or foilage like bushes. 
+
+• Drawing a 1 grid width area around the edge of a cliff, this allows those below to see the edge and only those standing at the edge to see down.
+`
 	wall_menu.append(
-	`<div class='ddbc-tab-options--layout-pill'>
+	`<div class='ddbc-tab-options--layout-pill' data-desc="${objectWallDesc}">
 		<button id='object_wall' class='drawbutton menu-option  ddbc-tab-options__header-heading'
 			data-key="object_wall" data-value="terrain" data-toggle='true'>
 				Object Wall
 		</button>
 	</div>`);
+	const hiddenIconsDesc = `Toggle that makes the icon of drawn doors (any type) hidden to both DM and Player. DM's can still see and access them when walls are shown.`
 	wall_menu.append(
-		`<div class='ddbc-tab-options--layout-pill menu-option data-skip='true''>
+		`<div class='ddbc-tab-options--layout-pill menu-option' data-desc="${hiddenIconsDesc}">
 			<button id='draw_door_hidden' class='drawbutton menu-option  ddbc-tab-options__header-heading'
 				data-key="hidden_icon" data-toggle="true" data-value="true">
 				 	Hidden Icons
 			</button>
 		</div>`);
+	const editWallDesc = `Select wall points to edit. Once selected you can drag to move them or shift+drag to scale them.`
 	wall_menu.append(
-		`<div class='ddbc-tab-options--layout-pill menu-option data-skip='true''>
+		`<div class='ddbc-tab-options--layout-pill menu-option' data-desc="${editWallDesc}">
 			<button id='edit_wall' class='drawbutton menu-option  ddbc-tab-options__header-heading'
 				data-shape='rect' data-function="wall-edit" data-unique-with="draw">
 				 	Edit Points
 			</button>
 		</div>`);
+	const eraseLineDesc = `Erases all wall lines in a selected area. Only part of a line must be in the selection area.`	
 	wall_menu.append(
-		`<div class='ddbc-tab-options--layout-pill menu-option data-skip='true''>
+		`<div class='ddbc-tab-options--layout-pill menu-option' data-desc="${eraseLineDesc}">
 			<button id='draw_erase' class='drawbutton menu-option  ddbc-tab-options__header-heading'
 				data-shape='rect' data-function="wall-eraser-one" data-unique-with="draw">
 				 	Erase Line
 			</button>
 		</div>`);
+	const eraseAreaDesc = `Erases sections of walls in a selected area.`	
 	wall_menu.append(
-		`<div class='ddbc-tab-options--layout-pill menu-option data-skip='true''>
+		`<div class='ddbc-tab-options--layout-pill menu-option' data-desc="${eraseAreaDesc}">
 			<button id='draw_erase' class='drawbutton menu-option  ddbc-tab-options__header-heading'
 				data-shape='rect' data-function="wall-eraser" data-unique-with="draw">
 				 	Erase Area
 			</button>
 		</div>`);
+	const showWallsDesc = `With this toggled the walls will remain visible to you with the walls menu closed (Shift+W). This allows you to interact with doors that have hidden icons or just see the walls when using other tools.`
 	wall_menu.append(
-		`<div class='ddbc-tab-options--layout-pill menu-option data-skip='true''>
+		`<div class='ddbc-tab-options--layout-pill menu-option' data-skip="true" data-desc="${showWallsDesc}">
 			<button id='show_walls' data-toggle='true' class='drawbutton menu-option ddbc-tab-options__header-heading ${(window.showWallsToggle) ? "button-enabled" : ''}'>
 				Always Show
 			</button>
@@ -6546,7 +6568,7 @@ function init_elev_menu(buttons){
 		</div>`)
 	elev_menu.append("<div class='menu-subtitle'>Controls</div>");
 	elev_menu.append(
-	`<div class='ddbc-tab-options--layout-pill menu-option data-skip='true''>
+	`<div class='ddbc-tab-options--layout-pill menu-option' data-skip='true'>
 		<button id='show_elev' data-toggle='true' class='drawbutton menu-option ddbc-tab-options__header-heading'>
 			Always Show
 		</button>
