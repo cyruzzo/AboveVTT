@@ -6327,7 +6327,7 @@ function init_walls_menu(buttons){
 		</div>`);
 	wall_menu.append("<div class='wall-input menu-subtitle'>Wall Base</div>");
 	const wallBaseDesc = `Sets the elevation of the base of the wall. 
-Any token with elevation above this height will be able to see under the wall.
+Any token with elevation below this height will be able to see under the wall.
 When left blank it is treated as negative infinity, preventing tokens from seeing under the wall.`
 	wall_menu.append(
 		`<div data-desc="${wallBaseDesc}">
