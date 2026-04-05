@@ -1892,7 +1892,7 @@ class MessageBroker {
 
 						// Scale map according to scaleFactor
 						$("#VTT").css("--scene-scale", scaleFactor)
-						$("#VTT").css("--scene-scale-conversion", scaleFactor)
+						$("#VTT").css("--scene-scale-conversion", window.CURRENT_SCENE_DATA.conversion)
 						$('#loadingStyles').remove(); // incase 2nd load
 						if(!window.DM){
 							$('body').append($(`<style id='loadingStyles'>
