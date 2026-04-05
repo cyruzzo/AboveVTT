@@ -4686,6 +4686,30 @@ function drawing_contextmenu(e) {
 			clear_temp_canvas();
 		}
 	}
+	else if (window.DRAWSHAPE === "3pointRound") {
+		window.BEGIN_MOUSEX.pop();
+		window.BEGIN_MOUSEY.pop();
+		if(window.BEGIN_MOUSEX.length > 0){
+			let canvas = document.getElementById("temp_overlay");
+			let ctx = canvas.getContext("2d");
+			clear_temp_canvas();
+			draw3PointRound(
+				ctx,
+				joinPointsArray(
+					window.BEGIN_MOUSEX,
+					window.BEGIN_MOUSEY
+				),
+				window.DRAWCOLOR,
+				window.LINEWIDTH,
+				Math.round(((mousePosition.pageX - window.VTTMargin) * (1.0 / window.ZOOM))),
+				Math.round(((mousePosition.pageY - window.VTTMargin) * (1.0 / window.ZOOM)))
+			);
+		}
+		else{
+			// cancel polygon if on last point
+			clear_temp_canvas();
+		}
+	}
 	else if((window.DRAWFUNCTION == "draw") || (window.DRAWFUNCTION == "elev") || (window.DRAWFUNCTION == "reveal") || (window.DRAWFUNCTION == "hide"))
 	{
 		// cancel shape
