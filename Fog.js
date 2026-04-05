@@ -6426,7 +6426,7 @@ Example usage:
 		</div>`);
 	const eraseAreaDesc = `Erases sections of walls in a selected area.`	
 	wall_menu.append(
-		`<div class='ddbc-tab-options--layout-pill menu-option'>
+		`<div class='ddbc-tab-options--layout-pill menu-option' data-desc="${eraseAreaDesc}">
 			<button id='draw_erase' class='drawbutton menu-option  ddbc-tab-options__header-heading'
 				data-shape='rect' data-function="wall-eraser" data-unique-with="draw">
 				 	Erase Area
