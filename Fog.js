@@ -1405,6 +1405,7 @@ function ctxScale(canvasid,  w, h, doNotScale=false){
 }
 
 function reset_canvas(apply_zoom=true) {
+	window.lightDrawingLosCache = {};
 	const sceneMapWidth = $("#scene_map").width();
 	const sceneMapHeight = $("#scene_map").height();
 
@@ -2153,6 +2154,7 @@ function setVisionLightOffscreenCanvas(){
 	create_or_set_offscreen_canvas('truesightCanvas'); //this is stored and checked against in vision checks for invisible creatures (also works like devilsight for magical darkness)
 }
 function redraw_light_walls(clear=true, editingWallPoints = false){
+	window.lightDrawingLosCache = {};
 	let showWallsToggle = $('#show_walls').hasClass('button-enabled');
 	let canvas = document.getElementById("walls_layer");	
 
@@ -5486,6 +5488,9 @@ function bucketFill(ctx, mouseX, mouseY, fogStyle = 'rgba(0,0,0,0)', fogType = 0
 	else {
 		particleLook(bucketFillCtx, allWalls, undefined, fog, undefined, fogType, false, islight, undefined, 0, 0);
 		drawPolygon(bucketFillCtx, window.lightPolygon, "#000", true);
+		if (Object.keys(window.lightDrawingLosCache).length >= 500) {
+			window.lightDrawingLosCache = {};
+		}
 		window.lightDrawingLosCache[cacheKey] = {
 			lightPolygon: window.lightPolygon,
 			wallLength: allWalls.length,
