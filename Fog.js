@@ -1,4 +1,10 @@
 const POLYGON_CLOSE_DISTANCE = 15;
+const WALL_UNDO_MAX = 100;
+function pushWallUndo(entry) {
+	if (!window.wallUndo) window.wallUndo = [];
+	window.wallUndo.push(entry);
+	if (window.wallUndo.length > WALL_UNDO_MAX) window.wallUndo.shift();
+}
 const doorColors = {
 	0: {
 		'open': "rgba(255, 100, 255, 0.5)", // door
@@ -74,8 +80,9 @@ function sync_drawings(newDraw = true){
 		if(window.playerDrawUndo == undefined)
 			window.playerDrawUndo = [];
 		window.playerDrawUndo.push(window.DRAWINGS[window.DRAWINGS.length-1]);
+		if (window.playerDrawUndo.length > WALL_UNDO_MAX) window.playerDrawUndo.shift();
 	}
-	
+
 	window.MB.sendMessage("custom/myVTT/drawdata",window.DRAWINGS);
 }
 
@@ -2382,7 +2389,7 @@ function redraw_light_walls(clear=true, editingWallPoints = false){
 										(doors[0][11] != undefined ? doors[0][11] : "")
 							];	
 							window.DRAWINGS.push(data);
-							window.wallUndo.push({
+							pushWallUndo({
 								undo: [[...data]],
 								redo: [[...doors[0]]]
 							})
@@ -2847,7 +2854,7 @@ function open_close_door(x1, y1, x2, y2, type=0){
 				 (doors[0][11] != undefined ? doors[0][11] : "")
 				];	
 	window.DRAWINGS.push(data);
-	window.wallUndo.push({
+	pushWallUndo({
 		undo: [[...data]],
 		redo: [[...doors[0]]]
 	})
@@ -4004,7 +4011,7 @@ function drawing_mouseup(e) {
 				 window.wallTop];
 			window.DRAWINGS.push(line4);
 
-			window.wallUndo.push({
+			pushWallUndo({
 				undo: [[...line1], [...line2], [...line3], [...line4]]
 			});
 		}
@@ -4033,12 +4040,12 @@ function drawing_mouseup(e) {
 						window.wallBottom,
 				 		window.wallTop];
 					window.DRAWINGS.push(data);
-					window.wallUndo.push({
+					pushWallUndo({
 						undo: [[...data]]
 					});
 			}
 			if(undoArray.length > 0){
-				window.wallUndo.push({
+				pushWallUndo({
 					undo: [...undoArray]
 				});
 			}
@@ -4446,7 +4453,7 @@ function drawing_mouseup(e) {
 				undoArray.push([...data]);
 			}					
 		}
- 		window.wallUndo.push({
+ 		pushWallUndo({
 			undo: [...undoArray],
 			redo: [...redoArray]
 		});
@@ -4574,7 +4581,7 @@ function drawing_mouseup(e) {
 				undoArray.push([...window.DRAWINGS[index]])
 				window.selectedWalls[i].wall = [...window.DRAWINGS[index]];	
 			}	
-			window.wallUndo.push({undo: [...undoArray], redo:[...redoArray], selectedWalls: originalSelected});
+			pushWallUndo({undo: [...undoArray], redo:[...redoArray], selectedWalls: originalSelected});
 		}
 
       	redraw_light_walls();
@@ -5578,10 +5585,10 @@ function save3PointRect(e){
 			undoArray.push([...data]);
 		}
 
-		window.wallUndo.push({
+		pushWallUndo({
 			undo: [...undoArray]
 		});
-			
+
 
 		window.MOUSEDOWN = false;
 		redraw_light_walls();
@@ -5654,7 +5661,7 @@ function save3PointRound(e){  //only used for wall currently
 		window.DRAWINGS.push(l);
 		undoArray.push(l);
 	}
-	window.wallUndo.push({
+	pushWallUndo({
 		undo: [...undoArray]
 	});
 	window.MOUSEDOWN = false;

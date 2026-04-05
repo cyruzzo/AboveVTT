@@ -5153,7 +5153,7 @@ function paste_selected_walls(x, y) {
 		window.selectedWalls.push({pt1: pt1, pt2: pt2, wall: wall, tokenId: doorTokenId, drawIndex: drawIndex})
 	}
 
-	window.wallUndo.push({undo: [...undoArray], selectedWalls: originalSelected});
+	pushWallUndo({undo: [...undoArray], selectedWalls: originalSelected});
 	
 	redraw_light_walls();
 	redraw_drawn_light();
@@ -5292,7 +5292,7 @@ function delete_selected_walls() {
 				window.TOKEN_OBJECTS[tokenId].delete();
 			}
 		}
-		window.wallUndo.push({redo: [...redoArray], selectedWalls: originalSelected});
+		pushWallUndo({redo: [...redoArray], selectedWalls: originalSelected});
 		window.selectedWalls =[];
 		redraw_light_walls();
 		redraw_drawn_light();
