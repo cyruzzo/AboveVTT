@@ -5296,9 +5296,10 @@ function draw3PointRound(ctx, points, style, lineWidth,
 	const ret = [];
 	const pts = (mouseX !== null && mouseY !== null) ? [...points, {x: mouseX, y: mouseY}] : points
 	if(pts.length < 2) return ret;
-	const radius = Math.sqrt(Math.pow(pts[0].x - pts[1].x, 2) + Math.pow(pts[0].y - pts[1].y, 2));
-	const startAngle = Math.atan2(pts[0].y - pts[1].y, pts[0].x - pts[1].x);
-	let endAngle = pts.length < 3 ? (startAngle - 2 * Math.PI) : Math.atan2(pts[2].y - pts[1].y, pts[2].x - pts[1].x);
+	const pt1 = {x:(pts[1].x + pts[0].x)/2, y:(pts[1].y + pts[0].y)/2}
+	const radius = Math.sqrt(Math.pow(pts[0].x - pts[1].x, 2) + Math.pow(pts[0].y - pts[1].y, 2))/2;
+	const startAngle = Math.atan2(pts[0].y - pt1.y, pts[0].x - pt1.x);
+	let endAngle = pts.length < 3 ? (startAngle - 2 * Math.PI) : Math.atan2(pts[2].y - pt1.y, pts[2].x - pt1.x);
 	while(endAngle <= startAngle) {
 		endAngle += 2 * Math.PI;
 	}
@@ -5315,8 +5316,8 @@ function draw3PointRound(ctx, points, style, lineWidth,
 	const segments = Math.min(density, Math.ceil(density * ((endAngle - startAngle) / (2 * Math.PI))));
 	for (let i = 0; i <= segments; i++) {
 		const currentAngle = startAngle + (endAngle - startAngle) * (i / segments);
-		const x = (pts[1].x + radius * Math.cos(currentAngle));
-		const y = (pts[1].y + radius * Math.sin(currentAngle));
+		const x = (pt1.x + radius * Math.cos(currentAngle));
+		const y = (pt1.y + radius * Math.sin(currentAngle));
 		if(ctx) {
 			ctx[ i === 0 ? "moveTo" : "lineTo"](x / scale, y / scale);
 		} else {
@@ -6387,7 +6388,7 @@ function init_walls_menu(buttons){
 		`<div class='ddbc-tab-options--layout-pill menu-option data-skip='true''>
 			<button id='draw_door_hidden' class='drawbutton menu-option  ddbc-tab-options__header-heading'
 				data-key="hidden_icon" data-toggle="true" data-value="true">
-				 	Hidden Icon
+				 	Hidden Icons
 			</button>
 		</div>`);
 	wall_menu.append(
