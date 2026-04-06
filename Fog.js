@@ -1441,7 +1441,7 @@ function reset_canvas(apply_zoom=true) {
 	}
 
 	setVisionLightOffscreenCanvas(); //adding this here as it was previously being done every fill causing webgl issues
-	redraw_light_walls();
+	redraw_light_walls(false); // cache already cleared above at the top of reset_canvas
 	redraw_drawings();
 	redraw_drawn_light();
 	redraw_light();
@@ -2154,7 +2154,7 @@ function setVisionLightOffscreenCanvas(){
 	create_or_set_offscreen_canvas('truesightCanvas'); //this is stored and checked against in vision checks for invisible creatures (also works like devilsight for magical darkness)
 }
 function redraw_light_walls(clear=true, editingWallPoints = false){
-	window.lightDrawingLosCache = {};
+	if (clear) window.lightDrawingLosCache = {};
 	let showWallsToggle = $('#show_walls').hasClass('button-enabled');
 	let canvas = document.getElementById("walls_layer");	
 
@@ -4905,8 +4905,8 @@ function handle_drawing_button_click() {
 		stop_drawing();
 		if(window.CURRENT_SCENE_DATA != undefined){
 			if($('#show_walls').hasClass('button-enabled') || $(clicked).is("#wall_button") || $("#wall_button").hasClass('ddbc-tab-options__header-heading--is-active')  || $('.top_menu.visible [data-shape="paint-bucket"]').hasClass('button-enabled')){
-				redraw_light_walls();
-				$('.hiddenDoor').css('display', 'block');	
+				redraw_light_walls(false); // menu open — no wall changes, preserve LOS cache
+				$('.hiddenDoor').css('display', 'block');
 				$(`[id*='wallHeight']`).css('display', 'block');
 			}
 			else{
@@ -6596,7 +6596,7 @@ function init_elev_menu(buttons){
 			// keep only non elev
 			window.DRAWINGS = window.DRAWINGS.filter(d => d[1] !== "elev");
 			redraw_elev();
-			redraw_light_walls();
+			redraw_light_walls(false); // elevation delete — walls unchanged, preserve LOS cache
 	        redraw_drawn_light();
 	        redraw_light();
 			sync_drawings();
@@ -6611,7 +6611,7 @@ function init_elev_menu(buttons){
             if (window.DRAWINGS[currentElement][1] == 'elev'){
                 window.DRAWINGS.splice(currentElement, 1)
                 redraw_elev();
-                redraw_light_walls();
+                redraw_light_walls(false); // elevation undo — walls unchanged, preserve LOS cache
 		        redraw_drawn_light();
 		        redraw_light();
 				sync_drawings()
