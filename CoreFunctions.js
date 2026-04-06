@@ -2023,16 +2023,7 @@ async function harvest_game_id() {
 
   if (is_characters_page()) {
 
-    // Try to find campaign ID from the campaign summary section (current DDB format: /campaigns/<id>)
-    // [class*='styles_campaignSummary'] is a wildcard to match CSS-module hashed class names (e.g. styles_campaignSummary__a1b2c)
-    const campaignSummary = $(".ddbc-campaign-summary, [class*='styles_campaignSummary']");
-    const fromCampaignLink = campaignSummary.find("a[href*='/campaigns/']").first().attr("href")?.match(/\/campaigns\/(\d+)/)?.[1];
-    if (typeof fromCampaignLink === "string" && fromCampaignLink.length > 1) {
-      console.log("harvest_game_id found gameId from campaign summary link:", fromCampaignLink);
-      return fromCampaignLink;
-    }
-
-    // Legacy: older DDB format used /games/<id>
+    // The "Join MAPS" button on the character sheet uses /games/<id> — this is the current DDB format
     const fromLink = $("[href^='/games/']").attr("href")?.split("/")?.pop();
     if (typeof fromLink === "string" && fromLink.length > 1) {
       return fromLink;
