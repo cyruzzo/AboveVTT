@@ -201,7 +201,7 @@ function add_zoom_to_storage() {
 		const zooms = JSON.parse(localStorage.getItem('zoom')) || [];
 		const zoomIndex = zooms.findIndex(zoom => zoom.title === window.CURRENT_SCENE_DATA.title);
 		const centerView = center_of_view(); 
-		const sidebarSize = ($('#hide_rightpanel.point-right').length>0 ? 340 : 0);
+		const sidebarSize = ($('#hide_rightpanel.point-right').length>0 ? get_sidebar_width() : 0);
 		if (zoomIndex !== -1) {
 			zooms[zoomIndex].zoom = window.ZOOM;
 			zooms[zoomIndex].leftOffset = window.scrollX + window.innerWidth/2 - sidebarSize/2;
@@ -256,7 +256,7 @@ function remove_zoom_from_storage() {
 */
 function apply_zoom_from_storage() {
 	console.group("apply_zoom_from_storage");
-	const sidebarSize = ($('#hide_rightpanel.point-right').length>0 ? 340 : 0);
+	const sidebarSize = ($('#hide_rightpanel.point-right').length>0 ? get_sidebar_width() : 0);
 	let initial_x = isNaN(parseInt(window.CURRENT_SCENE_DATA.initial_x)) ? undefined : window.CURRENT_SCENE_DATA.initial_x - window.innerWidth/2 + sidebarSize/2;
 	let initial_y =  isNaN(parseInt(window.CURRENT_SCENE_DATA.initial_y)) ? undefined : window.CURRENT_SCENE_DATA.initial_y - window.innerHeight/2;
 	let initial_zoom =  isNaN(parseInt(window.CURRENT_SCENE_DATA.initial_zoom)) ? undefined : window.CURRENT_SCENE_DATA.initial_zoom;
@@ -381,7 +381,7 @@ function get_reset_zoom() {
 	const w = $(window);
 	const scene_map = $("#scene_map");
 	const sf = window.CURRENT_SCENE_DATA.scale_factor;
-	const sidebar_open = ($('#hide_rightpanel').hasClass('point-right') && $('.ct-sidebar.ct-sidebar--hidden').length == 0) ? 340 : 0;
+	const sidebar_open = ($('#hide_rightpanel').hasClass('point-right') && $('.ct-sidebar.ct-sidebar--hidden').length == 0) ? get_sidebar_width() : 0;
 	const wH = w.height();
 	const mH = scene_map.height()*sf;
 	const wW = w.width()-sidebar_open;
@@ -668,7 +668,7 @@ function set_pointer(data, dontscroll = false) {
 	if(!dontscroll){
 		let pageX = Math.round(data.x * window.ZOOM - (w.width() / 2));
 		let pageY = Math.round(data.y * window.ZOOM - (w.height() / 2));
-		let sidebarSize = ($('#hide_rightpanel.point-right').length>0 ? 340 : 0);
+		let sidebarSize = ($('#hide_rightpanel.point-right').length>0 ? get_sidebar_width() : 0);
 		$("html,body").animate({
 			scrollTop: pageY + window.VTTMargin,
 			scrollLeft: pageX + window.VTTMargin + sidebarSize/2,
@@ -1989,6 +1989,77 @@ function monitor_character_sidebar_changes() {
 
 
 
+const SIDEBAR_MIN_WIDTH = 340;
+const SIDEBAR_MAX_WIDTH = 600;
+
+function get_sidebar_width() {
+	const stored = get_avtt_setting_value('sidebarWidth');
+	const n = parseInt(stored, 10);
+	return (!isNaN(n) && n >= SIDEBAR_MIN_WIDTH && n <= SIDEBAR_MAX_WIDTH) ? n : SIDEBAR_MIN_WIDTH;
+}
+
+function apply_sidebar_width(newWidth) {
+	newWidth = Math.max(SIDEBAR_MIN_WIDTH, Math.min(SIDEBAR_MAX_WIDTH, parseInt(newWidth, 10) || SIDEBAR_MIN_WIDTH));
+	document.documentElement.style.setProperty('--sidebar-width', newWidth + 'px');
+	const widthStr = is_sidebar_visible() ? newWidth + 'px' : '0px';
+	$('canvas.dice-rolling-panel__container, .roll-mod-container').css('--sidebar-width', widthStr);
+	$('canvas.streamer-canvas').css('--sidebar-width', widthStr);
+	const sidebar = is_characters_page() ? $(".ct-sidebar__portal") : $(".sidebar--right");
+	sidebar.css("width", newWidth + "px");
+	$(".sidebar__controls").width(newWidth);
+	if (is_characters_page()) {
+		reposition_player_sheet();
+	}
+	window.dispatchEvent(new Event('resize'));
+}
+
+function init_sidebar_resize_handle() {
+	$('#avtt-sidebar-resize-handle').remove();
+	const handle = $('<div id="avtt-sidebar-resize-handle"></div>');
+	$('body').append(handle);
+
+	let startX, startWidth;
+
+	handle.on('mousedown', function(e) {
+		e.preventDefault();
+		startX = e.clientX;
+		startWidth = get_sidebar_width();
+		$("#resizeDragMon, .note:has(iframe) form .mce-container-body, #sheet")
+			.append($('<div class="iframeResizeCover"></div>'));
+
+		$(document).on('mousemove.sidebarResize', function(e) {
+			const delta = startX - e.clientX;
+			const newWidth = Math.max(SIDEBAR_MIN_WIDTH, Math.min(SIDEBAR_MAX_WIDTH, startWidth + delta));
+			document.documentElement.style.setProperty('--sidebar-width', newWidth + 'px');
+			const sidebar = is_characters_page() ? $(".ct-sidebar__portal") : $(".sidebar--right");
+			sidebar.css("width", newWidth + "px");
+			$(".sidebar__controls").width(newWidth);
+			$('canvas.dice-rolling-panel__container, .roll-mod-container').css('--sidebar-width', newWidth + 'px');
+			$('canvas.streamer-canvas').css('--sidebar-width', newWidth + 'px');
+		});
+
+		function cleanupSidebarDrag() {
+			$(document).off('mousemove.sidebarResize');
+			$(window).off('mouseup.sidebarResize blur.sidebarResize');
+			$('.iframeResizeCover').remove();
+		}
+
+		$(window).one('mouseup.sidebarResize', function(e) {
+			cleanupSidebarDrag();
+			const delta = startX - e.clientX;
+			const newWidth = Math.max(SIDEBAR_MIN_WIDTH, Math.min(SIDEBAR_MAX_WIDTH, startWidth + delta));
+			set_avtt_setting_value('sidebarWidth', newWidth);
+		});
+
+		$(window).one('blur.sidebarResize', function() {
+			cleanupSidebarDrag();
+			const sidebar = is_characters_page() ? $(".ct-sidebar__portal") : $(".sidebar--right");
+			const currentWidth = Math.max(SIDEBAR_MIN_WIDTH, Math.min(SIDEBAR_MAX_WIDTH, parseInt(sidebar.css('width')) || SIDEBAR_MIN_WIDTH));
+			set_avtt_setting_value('sidebarWidth', currentWidth);
+		});
+	});
+}
+
 /**
  * Initializes the user interface.
  */
@@ -2008,12 +2079,11 @@ function init_ui() {
 	// ATTIVA GAMELOG
 	$(".glc-game-log").addClass("sidepanel-content");
 	$(".sidebar").css("z-index", 9999);
-	if (is_characters_page()) {
-		reposition_player_sheet();
-	}
-	$(".sidebar__controls").width(340);
 	// $(".ct-sidebar__control").width(340);
 	$("body").css("overflow", "scroll");
+
+	apply_sidebar_width(get_sidebar_width());
+	init_sidebar_resize_handle();
 
 	inject_chat_buttons();
 
@@ -3468,7 +3538,7 @@ function toggle_player_sheet_size() {
  */
 function reposition_player_sheet() {
 
-	let sidebarWidth = is_sidebar_visible() ? 340 : 0;
+	let sidebarWidth = is_sidebar_visible() ? get_sidebar_width() : 0;
 	let playableSpace = window.innerWidth - sidebarWidth;
 	let forceLayout = "none";
 
@@ -3698,8 +3768,8 @@ function show_sidebar(dispatchResize = true) {
 	} else {
 		$("#sheet").removeClass("sidebar_hidden");
 	}
-	$('canvas.dice-rolling-panel__container, .roll-mod-container').css('--sidebar-width', '340px');
-	$('canvas.streamer-canvas').css('--sidebar-width', '340px');
+	$('canvas.dice-rolling-panel__container, .roll-mod-container').css('--sidebar-width', get_sidebar_width() + 'px');
+	$('canvas.streamer-canvas').css('--sidebar-width', get_sidebar_width() + 'px');
 	if(dispatchResize)
 		window.dispatchEvent(new Event('resize'));
 	addGamelogPopoutButton()
@@ -3855,7 +3925,7 @@ function hide_sidebar(triggerResize = true) {
 		
 	} else {
 		let sidebar = is_characters_page() ? $(".ct-sidebar__portal") : $(".sidebar--right");
-		sidebar.css("transform", "translateX(340px)");
+		sidebar.css("transform", `translateX(${get_sidebar_width()}px)`);
 		$('#combat_carousel_container.tracker-list').toggleClass('sidebarClosed', true)
 	}
 
@@ -3882,7 +3952,7 @@ function adjust_site_bar() {
 	let fullWidth = "100%";
 	if (!is_player_sheet_full_width()) {
 		let sheetWidth =  window.innerWidth < 1200 ? 550 : 620;
-		let sidebarWidth = is_sidebar_visible() ? 340 : 0;
+		let sidebarWidth = is_sidebar_visible() ? get_sidebar_width() : 0;
 		fullWidth = `${sheetWidth + sidebarWidth}px`;
 	}
 

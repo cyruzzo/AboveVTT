@@ -668,6 +668,17 @@ function avtt_settings() {
 		class: 'ui',
 		global: 1
 	})
+	settings.push({
+		name: 'sidebarWidth',
+		label: 'Sidebar Width',
+		type: 'rangeInput',
+		options: [
+			{ min: 340, max: 600, step: 10, description: "Width of the sidebar panel in pixels" },
+		],
+		defaultValue: 340,
+		class: 'ui',
+		global: 1
+	})
 	settings.push(
 	{
 		name: "monsterCritType",
@@ -990,6 +1001,9 @@ function set_avtt_setting_value(name, newValue) {
 		case "projector":
 			$('#projector_toggle, #projector_zoom_lock').toggleClass('enabled', newValue);
 			break;
+		case "sidebarWidth":
+			apply_sidebar_width(newValue);
+			break;
 		case "receiveCursorFromPeers":
 		case "receiveRulerFromPeers":
 			local_peer_setting_changed(name, newValue);
@@ -1215,6 +1229,11 @@ function init_settings() {
 				break;
 			case "customButton":
 				inputWrapper = build_custom_button_input(setting);
+				break;
+			case "rangeInput":
+				inputWrapper = build_rangeInput_input(setting.options[0], currentValue, function(_name, newValue){
+					set_avtt_setting_value(setting.name, newValue);
+				})
 				break;
 		}
 		if (inputWrapper) {

@@ -271,7 +271,7 @@ $(function() {
               });
             }
             else if(event.data.msgType == 'projectionScroll' && event.data.sceneId == window.CURRENT_SCENE_DATA.id){
-              let sidebarSize = ($('#hide_rightpanel.point-right').length>0 ? 340 : 0);
+              let sidebarSize = ($('#hide_rightpanel.point-right').length>0 ? get_sidebar_width() : 0);
               let windowRatio = window.innerHeight / event.data.innerHeight;
 
               if(windowRatio == 1 && window.ZOOM == event.data.zoom){
