@@ -250,7 +250,7 @@ const debounceSyncMeUp = mydebounce(()=>{
 class MessageBroker {
 
 	loadAboveWS(callback=null){
-		if(is_gamelog_popout() || !is_abovevtt_page())
+		if(is_gamelog_popout() || (!is_abovevtt_page()))
 			return;
 		let self=this;
 
