@@ -1866,7 +1866,8 @@ function redraw_drawings() {
 			targetCtx.save();
 			targetCtx.filter = `blur(${lineBlur}px)`;
 		}
-		else if (shape == "eraser") {
+		
+		if (shape == "eraser") {
 			if (lineBlur != undefined) {
 				targetCtx.globalCompositeOperation = 'destination-out';
 				drawRect(targetCtx, x, y, width, height, '#000', true, 0);
