@@ -6357,21 +6357,21 @@ function init_walls_menu(buttons){
 				 	Height Convert
 			</button>
 		</div>`);
-	wall_menu.append("<div class='wall-input menu-subtitle'>Wall Base</div>");
-	const wallBaseDesc = `Sets the elevation of the base of the wall. 
+			const wallBaseDesc = `Sets the elevation of the base of the wall. 
 Any token with elevation below this height will be able to see under the wall.
 When left blank it is treated as negative infinity, preventing tokens from seeing under the wall.`
+	wall_menu.append(`<div class='wall-input menu-subtitle' data-desc='${wallBaseDesc}'>Wall Base</div>`);
 	wall_menu.append(
-		`<div data-desc="${wallBaseDesc}">
+		`<div>
 			<input id='wall_base_height' type='number' step='5' data-required="wall_base_height" style='width:90%'
 			value='' >
 		</div>`);
 	const wallTopDesc = `Sets the elevation of the top of the wall. 
 Any token with elevation above this height will be able to see over the wall.
 When left blank it is treated as infinity, preventing tokens from seeing over the wall.`		
-	wall_menu.append("<div class='wall-input menu-subtitle'>Wall Top</div>");
+	wall_menu.append(`<div class='wall-input menu-subtitle' data-desc='${wallTopDesc}'>Wall Top</div>`);
 	wall_menu.append(
-		`<div data-desc="${wallTopDesc}">
+		`<div>
 			<input id='wall_top_height' type='number' step='5' data-required="wall_top_height" style='width:90%'
 			value=''>
 		</div>`);
