@@ -1836,7 +1836,7 @@ function my_player_id() {
 }
 function removeUnusedPlayerData(object, isToken = true){
     const unusedPlayerData = isToken 
-      ? ['image', 'attacks', 'attunedItems', 'campaign', 'campaignSetting', 'castingInfo', 'classes', 'deathSaveInfo', 'decorations', 'extras', 'immunities', 'level', 'passiveInsight', 'passiveInvestigation', 'passivePerception', 'proficiencyBonus', 'proficiencyGroups', 'race', 'readOnlyUrl', 'resistances', 'senses', 'skills', 'speeds', 'vulnerabilities'] 
+      ? ['image', 'attacks', 'attunedItems', 'campaign', 'campaignSetting', 'castingInfo', 'classes', 'deathSaveInfo', 'extras', 'immunities', 'level', 'passiveInsight', 'passiveInvestigation', 'passivePerception', 'proficiencyBonus', 'proficiencyGroups', 'race', 'readOnlyUrl', 'resistances', 'senses', 'skills', 'speeds', 'vulnerabilities'] 
       : ['attacks', 'attunedItems', 'campaign', 'campaignSetting', 'classes'];
 
     for (let i = 0; i < unusedPlayerData.length; i++) {
