@@ -4777,6 +4777,8 @@ function grouprotate_create() {
 		
 		centerPointRotateOrigin = { x: (furthest_coord.left + furthest_coord.right)/2 + (widthAdded*dir.x/2),
 					    y: (furthest_coord.top + furthest_coord.bottom)/2 + (widthAdded*dir.y/2) };
+
+
 	} else {
 		centerPointRotateOrigin = { x: (furthest_coord.left + furthest_coord.right)/2,
 					    y: (furthest_coord.top + furthest_coord.bottom)/2 };
@@ -4911,10 +4913,11 @@ async function do_draw_selected_token_bounding_box() {
 			bottom = bottom + borderOffset;
 			let width = right - left;
 			let height = bottom - top;
-
-			const isGroupSelect = window.CURRENTLY_SELECTED_TOKENS.length > 1 || (window.CURRENTLY_SELECTED_TOKENS.length == 1 && window.TOKEN_OBJECTS[window.CURRENTLY_SELECTED_TOKENS[0]].isAoe());
+			const singleAoe = window.CURRENTLY_SELECTED_TOKENS.length == 1 && window.TOKEN_OBJECTS[window.CURRENTLY_SELECTED_TOKENS[0]].isAoe();
+			const isGroupSelect = window.CURRENTLY_SELECTED_TOKENS.length > 1;
+			
 			// draw the bounding box
-			draw_select_box(left, top, width, height, false, true, isGroupSelect);
+			draw_select_box(left, top, width, height, false, true, isGroupSelect, singleAoe);
 		})	
 		
 	throttleLight();

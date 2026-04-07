@@ -1312,7 +1312,7 @@ function redraw_grid(hpps=null, vpps=null, offsetX=null, offsetY=null, color=nul
 	draw_svg_grid(null, hpps, vpps, offsetX, offsetY, color, lineWidth, subdivide, dash);	
 }
 
-function draw_select_box(x0, y0, w, h, inside=false, selbox=false, group=false) {
+function draw_select_box(x0, y0, w, h, inside=false, selbox=false, group=false, aoeRotate=false) {
 	const sf = window.CURRENT_SCENE_DATA.scale_factor || 1.0;
 	$("#VTT").css({'--selbox-x': `${x0}`,
 		       '--selbox-y': `${y0}`,
@@ -1339,9 +1339,13 @@ function draw_select_box(x0, y0, w, h, inside=false, selbox=false, group=false) 
 	document.getElementById('selbox-rect')?.setAttribute('visibility', selbox ? 'visible' : 'hidden');
 	//$("#dragbox").css("mix-blend-mode", selbox ? "" : "difference"); //helps with visibility
 	if(selbox) {
-		if(group) {
+		if(group || aoeRotate) {
+			const aoeSvg = document.getElementById('aoeRotateSvg');
+			const regSvg = document.getElementById('groupRotateSvg');
 			rg2.setAttribute('transform', `translate(${(x0+w) / sf}, ${y0 / sf})`);
 			rg2.setAttribute('visibility','visible');
+			aoeSvg.setAttribute('visibility', aoeRotate ? 'visible' : 'hidden');
+			regSvg.setAttribute('visibility', !aoeRotate ? 'visible' : 'hidden');
 		} else {
 			rg2.setAttribute('visibility','hidden');
 		}
@@ -1357,6 +1361,8 @@ function hide_select_box() {
 	document.getElementById('selbox-rect')?.setAttribute('visibility', 'hidden');
 	document.getElementById('rot-grab')?.setAttribute('visibility', 'hidden');
 	document.getElementById('group-rot-grab')?.setAttribute('visibility', 'hidden');
+	document.getElementById('aoeRotateSvg')?.setAttribute('visibility', 'hidden');
+	document.getElementById('groupRotateSvg')?.setAttribute('visibility', 'hidden');
 }
 		
 function hide_wizarding_box() {
