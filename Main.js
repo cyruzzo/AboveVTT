@@ -3125,7 +3125,7 @@ function init_help_menu() {
 							<dd>Roll added dice pool</dd>
 						</dl>
 						<dl>
-							<dt>F1through F4</dt>
+							<dt>F1 through F4</dt>
 							<dd>Load saved location and zoom</dd>
 						</dl>
 						<dl>
