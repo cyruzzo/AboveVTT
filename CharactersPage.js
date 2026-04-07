@@ -1745,7 +1745,7 @@ function observe_character_sheet_changes(documentToObserve) {
 
 
     if(is_abovevtt_page()){
-      if($('.dice-rolling-panel').length == 0 && window.diceWarning == undefined){
+      if($('.dice-rolling-panel, [data-floating-ui-portal]').length == 0 && window.diceWarning == undefined){
         showDiceDisabledWarning();
       }
       else if($('.dice-rolling-panel').length > 0){
