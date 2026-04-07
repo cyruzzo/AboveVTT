@@ -3125,12 +3125,12 @@ function init_help_menu() {
 							<dd>Roll added dice pool</dd>
 						</dl>
 						<dl>
-							<dt>F1</dt> through <dt>F4</dt>
-							<dd>Load saved location</dd>
+							<dt>F1 through F4</dt>
+							<dd>Load saved location and zoom</dd>
 						</dl>
 						<dl>
-							<dt>Shift+F1</dt> through <dt>Shift+F4</dt>
-							<dd>Roll added dice pool</dd>
+							<dt>Shift+F1 through Shift+F4</dt>
+							<dd>Save current location and zoom</dd>
 						</dl>
 						<dl>
 							<dt>${getModKeyName()} (held)</dt>
