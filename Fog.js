@@ -1405,7 +1405,6 @@ function ctxScale(canvasid,  w, h, doNotScale=false){
 }
 
 function reset_canvas(apply_zoom=true) {
-	window.lightDrawingLosCache = {};
 	const sceneMapWidth = $("#scene_map").width();
 	const sceneMapHeight = $("#scene_map").height();
 
@@ -1441,7 +1440,7 @@ function reset_canvas(apply_zoom=true) {
 	}
 
 	setVisionLightOffscreenCanvas(); //adding this here as it was previously being done every fill causing webgl issues
-	redraw_light_walls(false); // cache already cleared above at the top of reset_canvas
+	redraw_light_walls(true, false, false); // canvas was just resized so redraw it; wall data hasn't changed so preserve LOS cache
 	redraw_drawings();
 	redraw_drawn_light();
 	redraw_light();
@@ -2153,8 +2152,8 @@ function setVisionLightOffscreenCanvas(){
 	create_or_set_offscreen_canvas('devilsightCanvas'); //devilsight canvas is used to combine with darkness aoe (or other magical darkness sources if implemented)
 	create_or_set_offscreen_canvas('truesightCanvas'); //this is stored and checked against in vision checks for invisible creatures (also works like devilsight for magical darkness)
 }
-function redraw_light_walls(clear=true, editingWallPoints = false){
-	if (clear) window.lightDrawingLosCache = {};
+function redraw_light_walls(clear=true, editingWallPoints = false, wallsChanged=true){
+	if (wallsChanged) window.lightDrawingLosCache = {};
 	let showWallsToggle = $('#show_walls').hasClass('button-enabled');
 	let canvas = document.getElementById("walls_layer");	
 
@@ -4905,7 +4904,7 @@ function handle_drawing_button_click() {
 		stop_drawing();
 		if(window.CURRENT_SCENE_DATA != undefined){
 			if($('#show_walls').hasClass('button-enabled') || $(clicked).is("#wall_button") || $("#wall_button").hasClass('ddbc-tab-options__header-heading--is-active')  || $('.top_menu.visible [data-shape="paint-bucket"]').hasClass('button-enabled')){
-				redraw_light_walls(false); // menu open — no wall changes, preserve LOS cache
+				redraw_light_walls(false, false, false); // menu open — no wall changes, preserve LOS cache
 				$('.hiddenDoor').css('display', 'block');
 				$(`[id*='wallHeight']`).css('display', 'block');
 			}
@@ -6596,7 +6595,7 @@ function init_elev_menu(buttons){
 			// keep only non elev
 			window.DRAWINGS = window.DRAWINGS.filter(d => d[1] !== "elev");
 			redraw_elev();
-			redraw_light_walls(false); // elevation delete — walls unchanged, preserve LOS cache
+			redraw_light_walls(false, false, false); // elevation delete — walls unchanged, preserve LOS cache
 	        redraw_drawn_light();
 	        redraw_light();
 			sync_drawings();
@@ -6611,7 +6610,7 @@ function init_elev_menu(buttons){
             if (window.DRAWINGS[currentElement][1] == 'elev'){
                 window.DRAWINGS.splice(currentElement, 1)
                 redraw_elev();
-                redraw_light_walls(false); // elevation undo — walls unchanged, preserve LOS cache
+                redraw_light_walls(false, false, false); // elevation undo — walls unchanged, preserve LOS cache
 		        redraw_drawn_light();
 		        redraw_light();
 				sync_drawings()

@@ -440,6 +440,7 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 		load_scenemap(map_url, map_is_video, window.CURRENT_SCENE_DATA.width, window.CURRENT_SCENE_DATA.height, window.CURRENT_SCENE_DATA.UVTTFile, async function() {
 			$("#scene_map").off("load");
 			delete window.LOADING;
+			window.lightDrawingLosCache = {};
 			await reset_canvas();
 			await set_default_vttwrapper_size()
 			align_grid(false, false, copiedSceneData);
