@@ -2853,7 +2853,36 @@ function init_zoom_buttons() {
 			$(window).off('scroll.resetToLockedPos')
 		})
 	}
-	const gridZoomConversion = $(`<div id='grid_zoom_conversion' class='ddbc-tab-options--layout-pill hideable'><div class='ddbc-tab-options__header-heading hasTooltip button-icon' data-name='Grid Zoom Conversion'><span class='material-symbols-outlined md-16 button-icon'>visibility</span></div></div>`);
+	const gridZoomConversion = $(`<div id='grid_zoom_conversion' class='ddbc-tab-options--layout-pill hideable'><div class='ddbc-tab-options__header-heading hasTooltip button-icon' data-name='Grid Zoom Conversion'><svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24.73 24.74">
+  <g>
+    <path d="M1.5,8.5c.15,0-1.39,0-1.24,0h.72" style="fill: none; stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .5px;"/>
+    <line x1="3.67" y1="8.5" x2="21.14" y2="8.5" style="fill: none; stroke: #231f20; stroke-dasharray: 3.58 2.69; stroke-linecap: round; stroke-linejoin: round; stroke-width: .5px;"/>
+    <line x1="22.48" y1="8.5" x2="24.48" y2="8.5" style="fill: none; stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .5px;"/>
+  </g>
+  <g>
+    <path d="M8.32.86c0,.15,0-.75,0-.6v1.34" style="fill: none; stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .5px;"/>
+    <line x1="8.32" y1="4.22" x2="8.32" y2="21.19" style="fill: none; stroke: #231f20; stroke-dasharray: 3.48 2.61; stroke-linecap: round; stroke-linejoin: round; stroke-width: .5px;"/>
+    <line x1="8.32" y1="22.49" x2="8.32" y2="24.49" style="fill: none; stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .5px;"/>
+  </g>
+  <g>
+    <line x1=".26" y1="16.68" x2="2.26" y2="16.68" style="fill: none; stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .5px;"/>
+    <line x1="4.79" y1="16.68" x2="21.22" y2="16.68" style="fill: none; stroke: #231f20; stroke-dasharray: 3.37 2.53; stroke-linecap: round; stroke-linejoin: round; stroke-width: .5px;"/>
+    <line x1="22.48" y1="16.68" x2="24.48" y2="16.68" style="fill: none; stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .5px;"/>
+  </g>
+  <g>
+    <line x1="16.31" y1=".27" x2="16.31" y2="2.27" style="fill: none; stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .5px;"/>
+    <line x1="16.31" y1="4.8" x2="16.31" y2="21.23" style="fill: none; stroke: #231f20; stroke-dasharray: 3.37 2.53; stroke-linecap: round; stroke-linejoin: round; stroke-width: .5px;"/>
+    <line x1="16.31" y1="22.49" x2="16.31" y2="24.49" style="fill: none; stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .5px;"/>
+  </g>
+  <g>
+    <line x1="5.07" y1="19.83" x2="1.13" y2="23.78" style="fill: none; stroke: #231f20; stroke-miterlimit: 10;"/>
+    <polygon points="1.34 21.17 1.34 23.57 3.74 23.57 2.72 24.58 .32 24.58 .32 22.19 1.34 21.17" style="fill: #231f20;"/>
+  </g>
+  <g>
+    <line x1="19.18" y1="5.42" x2="23.19" y2="1.41" style="fill: none; stroke: #231f20; stroke-miterlimit: 10;"/>
+    <polygon points="22.98 4.02 22.98 1.62 20.58 1.62 21.6 .6 24 .6 24 3 22.98 4.02" style="fill: #231f20;"/>
+  </g>
+</svg></div></div>`);
 	zoom_section.append(gridZoomConversion);
 	gridZoomConversion.off('pointerdown.gridZoom').on('pointerdown.gridZoom', (e) =>{
 		if(window.EXPERIMENTAL_SETTINGS?.gridZoomConversion){
@@ -3052,7 +3081,8 @@ function init_help_menu() {
 							<dd>Rotate selected tokens as a group. Shift rotates in smaller increments</dd>
 						</dl>
 						<dl>
-							<dt>|</dt> <dt>${getShiftKeyName()}+\\</dt><dd>Flip selected tokens images</dd>
+							<dt>|</dt> <dt>${getShiftKeyName()}+\\</dt>
+							<dd>Flip selected tokens images</dd>
 						</dl>
 						<dl>
 							<dt>'</dt><dd>Move selected tokens to top of stack</dd>
@@ -3077,6 +3107,14 @@ function init_help_menu() {
 						</dl>
 						<dl>
 							<dt>Enter</dt>
+							<dd>Roll added dice pool</dd>
+						</dl>
+						<dl>
+							<dt>F1</dt> through <dt>F4</dt>
+							<dd>Load saved location</dd>
+						</dl>
+						<dl>
+							<dt>Shift+F1</dt> through <dt>Shift+F4</dt>
 							<dd>Roll added dice pool</dd>
 						</dl>
 						<dl>
