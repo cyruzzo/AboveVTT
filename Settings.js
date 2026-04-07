@@ -354,6 +354,17 @@ function avtt_settings() {
 			class: 'ui',
 			global: 1
 		},
+		{	
+			name: "gridZoomConversion",
+			label: "Store grid size based on current view",
+			buttonText: "Store",
+			type: "customButton",
+			customFunction: function (clickEvent, body) {
+				set_avtt_setting_value('gridZoomConversion', window.ZOOM*parseFloat(window.CURRENT_SCENE_DATA.hpps));
+				showTempMessage(`Grid visual size stored`, { fadeDelay: 600, fadeTime: 400 });
+			},
+			class: 'ui'
+		},
 		{
 			name: "disableCombatText",
 			label: "Disable DM Damage Button Text",

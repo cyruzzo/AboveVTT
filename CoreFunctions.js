@@ -1672,14 +1672,13 @@ function add_issues_to_error_message(issues, errorMessage) {
   }
 }
 
-function showTempMessage(messageString){
+function showTempMessage(messageString, options = { fadeDelay: 1000, fadeTime: 1000 }) {
   $('.abovevttTempMessage').remove();
   let messageBox = $(`<div class='abovevttTempMessage'>${messageString}</div>`);
   $('body').append(messageBox);
   setTimeout(function(){
-    messageBox.fadeOut(1000, function() { $(this).remove(); });
-  }, 1000);
-
+    messageBox.fadeOut(options.fadeTime, function() { $(this).remove(); });
+  }, options.fadeDelay);
 }
 function convertMmSsToMs(text) {
   const [minutes, seconds] = text.split(':').map(Number); //
