@@ -1272,7 +1272,7 @@ async function create_and_place_token(listItem, hidden = undefined, specificImag
                     options = { ...options, ...options.alternativeImagesCustomizations?.[specificImage], imgsrc: chosenImage };
                 }
             }
-          
+            options.color = color_from_pc_object(pc);
             tokenSizeSetting = options.tokenSize;
             tokenSize = parseFloat(tokenSizeSetting);
             if (tokenSizeSetting === undefined || typeof tokenSizeSetting !== 'number') {
@@ -1541,6 +1541,7 @@ async function create_and_place_token(listItem, hidden = undefined, specificImag
                 const charURLparts = pcURL.match(/.*?\/characters\/([0-9]+)(\/.*?)?/i);
                 const charDetails  = await DDBApi.fetchCharacterDetails([charURLparts[1]]);
                 removeUnusedPlayerData(charDetails[0]);
+                options.color = color_from_pc_object(charDetails[0]);
                 options = $.extend(true, {}, charDetails[0], options);
                 options.customStat = options.abilities;
                 if(!options.customInit){
