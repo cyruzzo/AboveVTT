@@ -941,7 +941,7 @@ function set_avtt_setting_value(name, newValue) {
 
 	// store the setting
 	window.EXPERIMENTAL_SETTINGS[name] = newValue;
-	persist_experimental_settings(window.EXPERIMENTAL_SETTINGS);
+	persist_single_setting(name, newValue);
 
 	// take action based on the newly changed setting
 	switch (name) {
@@ -1658,16 +1658,16 @@ function persist_token_settings(settings){
 }
 
 
-function persist_experimental_settings(settings) {
-	const globalSettings = {};
-	for(let item in settings){
-		if (get_avtt_setting_is_global(item)){
-			globalSettings[item] = settings[item];
-		}
+function persist_single_setting(name, value) {
+	const gameId = find_game_id();
+	if (!gameId) {
+		console.warn(`persist_single_setting: no gameId when persisting "${name}" — in-memory only`);
+		return;
 	}
-	localStorage.setItem("ExperimentalSettingsGlobal", JSON.stringify(globalSettings));
-	const gameid = find_game_id();
-	localStorage.setItem("ExperimentalSettings" + gameid, JSON.stringify(settings));
+	localStorage.setItem(`AVTT-${gameId}-${name}`, JSON.stringify(value));
+	if (get_avtt_setting_is_global(name)) {
+		localStorage.setItem(`AVTT-Global-${name}`, JSON.stringify(value));
+	}
 }
 
 function export_current_scene(){

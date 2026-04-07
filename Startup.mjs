@@ -24,19 +24,44 @@ $(function() {
       .then((databases)=> {
         window.gameIndexedDb = databases[0];
         window.globalIndexedDB = databases[1];
-        let campaignSettings = {};
-        try {
-          campaignSettings = JSON.parse(localStorage.getItem(`ExperimentalSettings${window.gameId}`)) || {};
-        } catch (e) {
-          console.warn(`Failed to parse campaign settings for game ${window.gameId}, using defaults`, e);
+        const campaignPrefix = `AVTT-${window.gameId}-`;
+        const globalPrefix = `AVTT-Global-`;
+
+        // migrate from old blob format if present (runs once, then deletes old keys)
+        const oldCampaignRaw = localStorage.getItem(`ExperimentalSettings${window.gameId}`);
+        const oldGlobalRaw = localStorage.getItem(`ExperimentalSettingsGlobal`);
+        if (oldCampaignRaw !== null || oldGlobalRaw !== null) {
+          let oldCampaign = {};
+          let oldGlobal = {};
+          try { oldCampaign = JSON.parse(oldCampaignRaw) || {}; } catch(e) { console.warn('Failed to parse old campaign settings during migration', e); }
+          try { oldGlobal = JSON.parse(oldGlobalRaw) || {}; } catch(e) { console.warn('Failed to parse old global settings during migration', e); }
+          for (const [name, value] of Object.entries(oldCampaign)) {
+            if (localStorage.getItem(`${campaignPrefix}${name}`) === null)
+              localStorage.setItem(`${campaignPrefix}${name}`, JSON.stringify(value));
+          }
+          for (const [name, value] of Object.entries(oldGlobal)) {
+            if (localStorage.getItem(`${globalPrefix}${name}`) === null)
+              localStorage.setItem(`${globalPrefix}${name}`, JSON.stringify(value));
+          }
           localStorage.removeItem(`ExperimentalSettings${window.gameId}`);
-        }
-        let globalSettings = {};
-        try {
-          globalSettings = JSON.parse(localStorage.getItem(`ExperimentalSettingsGlobal`)) || {};
-        } catch (e) {
-          console.warn(`Failed to parse global settings, using defaults`, e);
           localStorage.removeItem(`ExperimentalSettingsGlobal`);
+          console.log('AboveVTT: migrated settings to per-key storage');
+        }
+
+        // read individual keys into settings objects
+        let campaignSettings = {};
+        let globalSettings = {};
+        const allKeys = Object.keys(localStorage);
+        for (const key of allKeys) {
+          try {
+            if (key.startsWith(campaignPrefix)) {
+              campaignSettings[key.slice(campaignPrefix.length)] = JSON.parse(localStorage.getItem(key));
+            } else if (key.startsWith(globalPrefix)) {
+              globalSettings[key.slice(globalPrefix.length)] = JSON.parse(localStorage.getItem(key));
+            }
+          } catch(e) {
+            console.warn(`Failed to parse setting key ${key}, skipping`, e);
+          }
         }
         window.EXPERIMENTAL_SETTINGS = {...campaignSettings, ...globalSettings};
         if (is_release_build()) {
