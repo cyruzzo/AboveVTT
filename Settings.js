@@ -1231,7 +1231,7 @@ function init_settings() {
 				inputWrapper = build_custom_button_input(setting);
 				break;
 			case "rangeInput":
-				inputWrapper = build_rangeInput_input(setting.options[0], currentValue, function(_name, newValue){
+				inputWrapper = build_rangeInput_input(setting, currentValue, function(_name, newValue){
 					set_avtt_setting_value(setting.name, newValue);
 				})
 				break;

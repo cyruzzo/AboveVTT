@@ -2773,6 +2773,7 @@ body:not(.encounter-builder-page) .sidebar__pane-content {
     right: 0;
     top: 28px;
     height: calc(100vh - 30px) !important;
+    width: var(--sidebar-width, 340px);
 }
 body .gamelogcontainer .sidebar__pane-content {
     top: 0px !important;

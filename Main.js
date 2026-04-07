@@ -2007,6 +2007,10 @@ function apply_sidebar_width(newWidth) {
 	const sidebar = is_characters_page() ? $(".ct-sidebar__portal") : $(".sidebar--right");
 	sidebar.css("width", newWidth + "px");
 	$(".sidebar__controls").width(newWidth);
+	const zoomOffset = $("#zoom_buttons").data("zoom-offset");
+	if (zoomOffset !== undefined) {
+		$("#zoom_buttons").css("right", (newWidth + zoomOffset) + "px");
+	}
 	if (is_characters_page()) {
 		reposition_player_sheet();
 	}
@@ -2036,6 +2040,10 @@ function init_sidebar_resize_handle() {
 			$(".sidebar__controls").width(newWidth);
 			$('canvas.dice-rolling-panel__container, .roll-mod-container').css('--sidebar-width', newWidth + 'px');
 			$('canvas.streamer-canvas').css('--sidebar-width', newWidth + 'px');
+			const zoomOffset = $("#zoom_buttons").data("zoom-offset");
+			if (zoomOffset !== undefined) {
+				$("#zoom_buttons").css("right", (newWidth + zoomOffset) + "px");
+			}
 		});
 
 		function cleanupSidebarDrag() {
@@ -2983,11 +2991,9 @@ function init_zoom_buttons() {
 	zoom_section.append(hide_interface);
 
 	$(".avtt-sidebar-controls").append(zoom_section);
-	if (window.DM || is_spectator_page()) {
-		zoom_section.css("right","371px");
-	} else {
-		zoom_section.css("right","420px");
-	}
+	const zoomOffset = (window.DM || is_spectator_page()) ? 31 : 80;
+	zoom_section.css("right", (get_sidebar_width() + zoomOffset) + "px");
+	zoom_section.data("zoom-offset", zoomOffset);
 }
 
 /**
