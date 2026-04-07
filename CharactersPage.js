@@ -3214,9 +3214,9 @@ function observe_character_theme_change() {
       if (mutation.addedNodes && mutation.addedNodes.length > 0) {
         mutation.addedNodes.forEach(node => {
           // console.log("theme_observer node", node);
-          if (node.innerHTML && node.innerHTML.includes("--dice-color")) {
+          if (node.textContent && node.textContent.includes("--theme-color")) {
             // console.log("theme_observer is calling find_and_set_player_color", mutation, node);
-            const newColor = node.innerHTML.match(/#(?:[0-9a-fA-F]{3}){1,2}/)?.[0];
+            const newColor = node.textContent.match(/#(?:[0-9a-fA-F]{3}){1,2}/)?.[0];
             if (newColor) {
               update_window_color(newColor);
               if(window.PeerManager != undefined)
@@ -3234,7 +3234,8 @@ function observe_character_theme_change() {
       }
     });
   });
-  window.theme_observer.observe(document.documentElement, { childList: true });
+  const toolsTarget = document.getElementById("character-tools-target");
+  window.theme_observer.observe(toolsTarget, { childList: true, subtree: true });
 }
 
 function observe_character_image_change() {
