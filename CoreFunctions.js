@@ -2022,13 +2022,12 @@ async function harvest_game_id() {
   }
 
   if (is_characters_page()) {
-   
-    
+
+    // The "Join MAPS" button on the character sheet uses /games/<id> — this is the current DDB format
     const fromLink = $("[href^='/games/']").attr("href")?.split("/")?.pop();
     if (typeof fromLink === "string" && fromLink.length > 1) {
       return fromLink;
     }
-    
 
     // we didn't find it on the page so hit the DDB API, and try to pull it from there
     const characterId = window.location.pathname.split("/").pop();
@@ -2050,17 +2049,49 @@ async function harvest_campaign_secret() {
 
   if (typeof window.gameId !== "string" || window.gameId.length <= 1) {
     if (window.gameId === false){
-      return
+      return ""; // character is not in a campaign; resolve with "" so set_campaign_secret gets a string, not undefined
     }
     throw new Error("harvest_campaign_secret requires gameId to be set. Make sure you call harvest_game_id first");
   }
 
   if (is_campaign_page()) {
-    return $(".ddb-campaigns-invite-primary").text().split("/").pop();
+    // DDB renders this element asynchronously via React — poll until it's populated.
+    // Hard timeout guards against background-tab timer throttling where setInterval may stall.
+    return new Promise((resolve) => {
+      let settled = false;
+      let poll; // hoisted so finish() can clearInterval before the first tick races with giveUpTimer
+
+      function finish(joinLink) {
+        if (settled) return;
+        settled = true;
+        clearInterval(poll);
+        clearTimeout(giveUpTimer);
+        resolve(joinLink);
+      }
+
+      let attempts = 0;
+      const maxAttempts = 20;
+      poll = setInterval(() => {
+        if (settled) { clearInterval(poll); return; }
+        attempts++;
+        const joinLink = $(".ddb-campaigns-invite-primary").text().split("/").pop();
+        if (typeof joinLink === "string" && joinLink.length > 0) {
+          finish(joinLink);
+        } else if (attempts >= maxAttempts) {
+          console.warn("harvest_campaign_secret: campaign join link not found on campaign page after polling");
+          finish("");
+        }
+      }, 500);
+
+      const giveUpTimer = setTimeout(() => {
+        console.warn("harvest_campaign_secret: campaign page join link timed out (background tab throttling?)");
+        finish("");
+      }, 11000);
+    });
   }
 
   const secretFromLocalStorage = read_campaign_info(window.gameId);
-  if (typeof secretFromLocalStorage === "string" && secretFromLocalStorage.length > 1) {
+  if (typeof secretFromLocalStorage === "string" && secretFromLocalStorage.length > 0) {
     console.log("harvest_campaign_secret found it in localStorage");
     return secretFromLocalStorage;
   }
@@ -2077,21 +2108,59 @@ async function harvest_campaign_secret() {
   });
   $(document.body).append(iframe);
 
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
+    let settled = false;
+    let poll; // hoisted so giveUpTimer and the load handler can both reach it
+
+    function finish(joinLink) {
+      if (settled) return;
+      settled = true;
+      clearInterval(poll);
+      clearTimeout(giveUpTimer);
+      iframe.remove();
+      resolve(joinLink);
+    }
+
+    // Safety net for the case where the load event never fires (15s > 20×500ms polling window)
+    const giveUpTimer = setTimeout(() => {
+      console.warn("harvest_campaign_secret: iframe timed out waiting for campaign page");
+      finish("");
+    }, 15000);
+
     iframe.on("load", function (event) {
-      if (!this.src) {
-        // it was just created. no need to do anything until it actually loads something
+      // Skip the initial about:blank load that fires when the iframe is first created,
+      // and any intermediate blank state during navigation (observed on some Firefox versions).
+      if (!this.contentDocument || !this.src || !this.src.includes(`/campaigns/${window.gameId}`)) {
         return;
       }
-      try {
-        const joinLink = $(event.target).contents().find(".ddb-campaigns-invite-primary").text().split("/").pop();
-        console.log("harvest_campaign_secret found it by loading the campaign page in an iframe");
-        resolve(joinLink);
-      } catch(error) {
-        console.error("harvest_campaign_secret failed to find the campaign secret by loading the campaign page in an iframe", error);
-        reject("harvest_campaign_secret loaded it in localStorage")
-      }
-      $(event.target).remove();
+
+      // If DDB redirects within the iframe a second load event fires; clear any previous
+      // polling loop before starting a new one to prevent concurrent leaked intervals.
+      clearInterval(poll);
+
+      // DDB uses React which renders the join link asynchronously after the load event fires.
+      // Poll until the element is populated or we run out of attempts (10s window).
+      let attempts = 0;
+      const maxAttempts = 20;
+      poll = setInterval(() => {
+        if (settled) { clearInterval(poll); return; }
+        attempts++;
+        try {
+          const joinLink = $(event.target).contents().find(".ddb-campaigns-invite-primary").text().split("/").pop();
+          if (typeof joinLink === "string" && joinLink.length > 0) {
+            console.log("harvest_campaign_secret found it by loading the campaign page in an iframe");
+            finish(joinLink);
+          } else if (attempts >= maxAttempts) {
+            console.warn("harvest_campaign_secret: campaign join link not populated in iframe after polling");
+            // Resolve with "" rather than rejecting — callers have no .catch() handler and
+            // store_campaign_info silently skips empty secrets.
+            finish("");
+          }
+        } catch(error) {
+          console.error("harvest_campaign_secret failed reading iframe content", error);
+          finish("");
+        }
+      }, 500);
     });
 
     iframe.attr("src", `/campaigns/${window.gameId}`);
