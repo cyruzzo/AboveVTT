@@ -2061,6 +2061,10 @@ function check_token_elev(tokenid, elevContext=undefined){
 
 function redraw_drawn_light(darknessMoved = false){
 	let lightCanvas = document.getElementById("light_overlay");
+	if (!lightCanvas?.width || !lightCanvas?.height) {
+		console.warn('Attempted light draw without scene being loaded or missing image');
+		return;
+	}
 	let lightCtx = lightCanvas.getContext("2d");
 	lightCtx.clearRect(0, 0, lightCanvas.width, lightCanvas.height);
 	const drawings = window.DRAWINGS.filter(d => d[1] == "light")
