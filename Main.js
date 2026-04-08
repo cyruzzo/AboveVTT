@@ -177,7 +177,7 @@ function change_zoom(newZoom, x, y, reset = false) {
 		let scrollX = Math.max(0, sceneMapCenterX - Math.round(window.innerWidth / 2));
 		const scrollY = Math.max(0, sceneMapCenterY - Math.round(window.innerHeight / 2));
 		if ($('#hide_rightpanel').hasClass('point-right') && $('.ct-sidebar.ct-sidebar--hidden').length == 0)
-			scrollX += 170 // 170 half of game log		
+			scrollX += get_sidebar_width() / 2 // offset by half the sidebar width so the scene centers in the visible area
 		window.scrollTo({ left: scrollX, top: scrollY, behavior: 'auto' });			
 	}
 
@@ -2004,8 +2004,14 @@ function apply_sidebar_width(newWidth) {
 	const widthStr = is_sidebar_visible() ? newWidth + 'px' : '0px';
 	$('canvas.dice-rolling-panel__container, .roll-mod-container').css('--sidebar-width', widthStr);
 	$('canvas.streamer-canvas').css('--sidebar-width', widthStr);
-	const sidebar = is_characters_page() ? $(".ct-sidebar__portal") : $(".sidebar--right");
-	sidebar.css("width", newWidth + "px");
+	if (is_characters_page()) {
+		// On the characters page, .ct-sidebar__portal must stay at width:100% (see abovevtt.css ~6464)
+		// so popovers/menus position correctly. The visible sidebar inside it is sized via the
+		// --sidebar-width CSS var on .ct-sidebar[class*='styles_sidebar'] [class*='styles_content'].
+		$(".ct-sidebar__portal").css("width", "");
+	} else {
+		$(".sidebar--right").css("width", newWidth + "px");
+	}
 	$(".sidebar__controls").width(newWidth);
 	const zoomOffset = $("#zoom_buttons").data("zoom-offset");
 	if (zoomOffset !== undefined) {
@@ -2035,8 +2041,9 @@ function init_sidebar_resize_handle() {
 			const delta = startX - e.clientX;
 			const newWidth = Math.max(SIDEBAR_MIN_WIDTH, Math.min(SIDEBAR_MAX_WIDTH, startWidth + delta));
 			document.documentElement.style.setProperty('--sidebar-width', newWidth + 'px');
-			const sidebar = is_characters_page() ? $(".ct-sidebar__portal") : $(".sidebar--right");
-			sidebar.css("width", newWidth + "px");
+			if (!is_characters_page()) {
+				$(".sidebar--right").css("width", newWidth + "px");
+			}
 			$(".sidebar__controls").width(newWidth);
 			$('canvas.dice-rolling-panel__container, .roll-mod-container').css('--sidebar-width', newWidth + 'px');
 			$('canvas.streamer-canvas').css('--sidebar-width', newWidth + 'px');
@@ -2061,8 +2068,8 @@ function init_sidebar_resize_handle() {
 
 		$(window).one('blur.sidebarResize', function() {
 			cleanupSidebarDrag();
-			const sidebar = is_characters_page() ? $(".ct-sidebar__portal") : $(".sidebar--right");
-			const currentWidth = Math.max(SIDEBAR_MIN_WIDTH, Math.min(SIDEBAR_MAX_WIDTH, parseInt(sidebar.css('width')) || SIDEBAR_MIN_WIDTH));
+			const cssVarWidth = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--sidebar-width'));
+			const currentWidth = Math.max(SIDEBAR_MIN_WIDTH, Math.min(SIDEBAR_MAX_WIDTH, cssVarWidth || SIDEBAR_MIN_WIDTH));
 			set_avtt_setting_value('sidebarWidth', currentWidth);
 		});
 	});
