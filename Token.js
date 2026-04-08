@@ -794,13 +794,14 @@ class Token {
 					'max-height': `var(--token-height)`,
 					'--z-index-diff': old.css('--z-index-diff'),
 					'--token-scale': old.css('--token-scale'),
-    					'--token-rotation': old.css('--token-rotation'),
-    					'--token-heading': old.css('--token-heading'),
-    					'--token-flip-x': old.css('--token-flip-x')
+					'--token-rotation': old.css('--token-rotation'),
+					'--token-heading': old.css('--token-heading'),
+					'--token-flip-x': old.css('--token-flip-x'),
+					'--max-width': `var(--underdarkness-max-width)`,
+					'--max-height': `var(--underdarkness-max-height)`
 				})
 				
 				redraw_drawn_light();
-		
 			}
 			if(this.options.tokenStyleSelect == 'definitelyNotAToken' || this.options.underDarkness == true){
 				old.toggleClass('underDarkness', true);
@@ -824,7 +825,9 @@ class Token {
 	    				"--offsetY": old.css('--offsetY'),
 						"--image-opacity": old.css('--image-opacity'),
 						"--view-box": old.css('--view-box'),
-						"--image-zoom": old.css('--image-zoom')
+						"--image-zoom": old.css('--image-zoom'),
+						'--max-width': `var(--underdarkness-max-width)`,
+						'--max-height': `var(--underdarkness-max-height)`
 					})
 			        tokenClone.attr('data-notatoken', `notatoken_${this.options.id}`);
 			        tokenClone.children('div:not(.base):not(.token-image):not(.hpvisualbar):not(.dead)').remove();    
@@ -847,8 +850,8 @@ class Token {
 						'max-height': `var(--token-height)`,
 						'--z-index-diff': old.css('--z-index-diff'),
 						'--token-scale': old.css('--token-scale'),
-	    					'--token-rotation': old.css('--token-rotation'),
-    						'--token-heading': old.css('--token-heading'),						
+						'--token-rotation': old.css('--token-rotation'),
+						'--token-heading': old.css('--token-heading'),						
 						'--token-flip-x': old.css('--token-flip-x'),
 						'opacity': this.options.hidden ? '0.5' : '1',
 						'--hp-percentage': `${this.hpPercentage}%`,
@@ -858,7 +861,9 @@ class Token {
 	    				"--offsetY": old.css('--offsetY'),
 						"--image-opacity": old.css('--image-opacity'),
 						"--view-box": old.css('--view-box'),
-						"--image-zoom": old.css('--image-zoom')
+						"--image-zoom": old.css('--image-zoom'),
+						'--max-width': `var(--underdarkness-max-width)`,
+						'--max-height': `var(--underdarkness-max-height)`
 					})
 					copyToken.children('div:not(.base):not(.token-image):not(.hpvisualbar):not(.dead)').remove()
 					copyToken.toggleClass('lockedToken', this.options.locked==true)
@@ -868,12 +873,7 @@ class Token {
 				}
 
 
-				const underDarkToken = $(`[data-notatoken='notatoken_${this.options.id}']`)
-				underDarkToken.find('.token-image').remove();
 
-				let oldImage = $(`#tokens div[data-id='${this.options.id}'] .token-image`);
-				const copyImage = oldImage.clone();
-				underDarkToken.append(copyImage);
 
 				if(this.options.imgsrc.startsWith('above-bucket-not-a-url')){
 					const fileSrc = this.options.imgsrc.replace('above-bucket-not-a-url', '');
@@ -1054,8 +1054,8 @@ class Token {
 		}
 
 		const tokenHpAuraColor = token_health_aura(this.hpPercentage, this.options.healthauratype);
-		let tokenWidth =  this.sizeWidth();
-		let tokenHeight = this.sizeHeight();
+		let paddingX = 0;
+		let paddingY = 0;
 		
 
 
@@ -1066,8 +1066,8 @@ class Token {
 		} 
 		else {
 			if(this.options.tokenStyleSelect === "circle" || this.options.tokenStyleSelect === "square"){
-				tokenWidth = tokenWidth - window.CURRENT_SCENE_DATA.hpps/10;
-				tokenHeight = tokenHeight - window.CURRENT_SCENE_DATA.vpps/10;
+				paddingX += window.CURRENT_SCENE_DATA.hpps/10;
+				paddingY += window.CURRENT_SCENE_DATA.vpps/10;
 			}
 			token.css('--token-hp-aura-color', tokenHpAuraColor);
 			if(this.tempHp) {
@@ -1082,8 +1082,8 @@ class Token {
 		} 
 		else {
 			if(this.options.tokenStyleSelect === "circle" || this.options.tokenStyleSelect === "square"){
-				tokenWidth = tokenWidth - Math.min(1, window.CURRENT_SCENE_DATA.hpps/40);
-				tokenHeight = tokenHeight - Math.min(1, window.CURRENT_SCENE_DATA.vpps/40);
+				paddingX += Math.min(1, window.CURRENT_SCENE_DATA.hpps/40);
+				paddingY += Math.min(1, window.CURRENT_SCENE_DATA.vpps/40);
 			}
 			token.css('--token-border-color', this.options.color);
 			$("#combat_area tr[data-target='" + this.options.id + "'] img[class*='Avatar']").css("border-color", this.options.color);
@@ -1093,8 +1093,8 @@ class Token {
 		}
 		else {
 			if(this.options.tokenStyleSelect === "circle" || this.options.tokenStyleSelect === "square"){
-				tokenWidth = tokenWidth - window.CURRENT_SCENE_DATA.hpps/10;
-				tokenHeight = tokenHeight - window.CURRENT_SCENE_DATA.vpps/10;
+				paddingX += window.CURRENT_SCENE_DATA.hpps/10;
+				paddingY += window.CURRENT_SCENE_DATA.vpps/10;
 			}
 			token.css('--token-hpbar-aura-color', tokenHpAuraColor);
 			if(this.tempHp) {
@@ -1105,6 +1105,9 @@ class Token {
 			}
 			token.css('--token-hpbar-display', 'block');
 		}
+		//round  to even number for positioning purposes since css border and aura are centered on the edge of the token, this helps prevent subpixel rendering issues that can cause blurriness and inconsistent border/aura widths	
+		paddingX = 2 * Math.round(paddingX / 2);
+		paddingY = 2 * Math.round(paddingY / 2);
 		token.attr("data-border-color", this.options.color);
 		if(!this.options.legacyaspectratio) {
 			if($(`div.token[data-id='${this.options.id}'] .token-image`)[0] !== undefined){
@@ -1113,15 +1116,15 @@ class Token {
 				if(imageWidth != 0 && imageHeight != 0){
 
 					if( imageWidth == imageHeight ){
-						token.children('.token-image').css("--min-width", tokenWidth + 'px');
-						token.children('.token-image').css("--min-height", tokenHeight + 'px');
+						token.children('.token-image').css("--min-width", `calc(100% - ${paddingX}px)`);
+						token.children('.token-image').css("--min-height", `calc(100% - ${paddingY}px)`);
 					}
 					else if(imageWidth > imageHeight) {
-						token.children('.token-image').css("--min-width", tokenWidth + 'px');
+						token.children('.token-image').css("--min-width", `calc(100% - ${paddingX}px)`);
 						token.children('.token-image').css("min-height", '');
 					}
 					else {
-						token.children('.token-image').css("--min-height", tokenHeight + 'px');
+						token.children('.token-image').css("--min-height", `calc(100% - ${paddingY}px)`);
 						token.children('.token-image').css("--min-width", '');
 					}
 									
@@ -1134,8 +1137,10 @@ class Token {
 		}
 		
 		token.children('.token-image').css({		
-		    '--max-width': tokenWidth + 'px',
-			'--max-height': tokenHeight + 'px',
+		    '--max-width': `calc(100% - ${paddingX}px)`,
+			'--max-height': `calc(100% - ${paddingY}px)`,
+			'--underdarkness-max-width': `calc(calc(100% - calc(${paddingX}px / var(--scene-scale, 1))) * var(--scene-scale, 1))`,
+			'--underdarkness-max-height': `calc(calc(100% - calc(${paddingY}px / var(--scene-scale, 1))) * var(--scene-scale, 1))`
 		});
 
 		let underdarknessToken = $(`[data-notatoken][data-id='${this.options.id}']`)
@@ -1151,9 +1156,9 @@ class Token {
 		})
 		underdarknessToken.children('.token-image').css({
 			'--min-width': token.children('.token-image').css("--min-width"),
-			'--min-height': token.children('.token-image').css("--min-width"),
-			'--max-width': tokenWidth + 'px',
-			'--max-height': tokenHeight + 'px',
+			'--min-height': token.children('.token-image').css("--min-height"),
+			'--max-width': `var(--underdarkness-max-width)`,
+			'--max-height': `var(--underdarkness-max-height)`,
 		})
 	}
 
@@ -2117,15 +2122,16 @@ class Token {
 				}
 			}
 			const $placedToken = $(placedToken);
+			//we round css values at the final step to prevent sub pixel rendering which causes blurriness or stetching the token image
 			$placedToken.css({
-				'left': `${tokenX}px`,
-				'top': `${tokenY}px`
+				'left': `${Math.round(tokenX)}px`,
+				'top': `${Math.round(tokenY)}px`
 			});
-			token.options.left = tokenX + "px";
-			token.options.top = tokenY + "px";
+			token.options.left = `${Math.round(tokenX)}px`;
+			token.options.top = `${Math.round(tokenY)}px`;
 								
-			const tokMidLeft = tokenX + parseFloat(token.sizeWidth())/2
-			const tokMidTop = tokenY + parseFloat(token.sizeHeight())/2
+			const tokMidLeft = Math.round(tokenX) + parseFloat(token.sizeWidth())/2
+			const tokMidTop = Math.round(tokenY) + parseFloat(token.sizeHeight())/2
 			const idReplaced = token.options.id.replaceAll("/", "");
 			let selEl = $(`#aura_${idReplaced}, #light_${idReplaced}, #vision_${idReplaced}, [data-darkness='darkness_${idReplaced}']`);
 			selEl.each((i, el) => {
@@ -2135,15 +2141,15 @@ class Token {
 				const auraLeft = tokMidLeft / window.CURRENT_SCENE_DATA.scale_factor - selElWidth;
 				const auraTop = tokMidTop / window.CURRENT_SCENE_DATA.scale_factor - selElHeight;
 				$el.css({
-					'left': auraLeft + "px",
-					'top': auraTop + "px"
+					'left': `${auraLeft}px`,
+					'top': `${auraTop}px`
 				});
 			})
 			selEl = $(`[data-notatoken='notatoken_${token.options.id}']`);
 			if (selEl.length > 0) {
 				selEl.css({
-					'left': (parseFloat(token.options.left) / window.CURRENT_SCENE_DATA.scale_factor) + "px",
-					'top': (parseFloat(token.options.top) / window.CURRENT_SCENE_DATA.scale_factor)  + "px"
+					'left': `${parseFloat(token.options.left) / window.CURRENT_SCENE_DATA.scale_factor}px`,
+					'top': `${parseFloat(token.options.top) / window.CURRENT_SCENE_DATA.scale_factor}px`
 				});
 			}	
 			return canMove;
@@ -2217,15 +2223,15 @@ class Token {
 				if(window.CURRENT_SCENE_DATA.disableSceneVision == 1 && !window.DM)
 					check_single_token_visibility(this.options.id);
 
-				if (old.css("left") != this.options.left || old.css("top") != this.options.top)
-					
+				if (old.css("left") != this.options.left || old.css("top") != this.options.top){
 					remove_selected_token_bounding_box();
+
 					if(old.is(':animated') && animationDuration > 100){
 						// this token is being moved quickly, speed up the animation
 						animationDuration = 100;
 					}
 
-				old.animate(
+					old.animate(
 					{
 						left: this.options.left,
 						top: this.options.top,
@@ -2234,24 +2240,22 @@ class Token {
 							if (darknessMoved){
 								redraw_drawn_light(darknessMoved);
 							}
-								
-
-							
+											
 							if(window.EXPERIMENTAL_SETTINGS.dragLight == true)
 								throttleLight(darknessMoved);
 							else
 								debounceLightChecks(darknessMoved)
 						}
-					});
+					});	
+				}
 					
 
-
-				old.find(".token-image").css("transition", "max-height 0.2s linear, max-width 0.2s linear, transform 0.2s linear")
+					
 				old.find(".token-image").css("transform", imageTransform);
 				old.css({
 					"--token-scale": imageScale,
 					"--token-rotation": `${rotation}deg`,
-    					'--token-heading': `${heading}deg`,
+					'--token-heading': `${heading}deg`,
 					"--token-flip-x": tokenFlipX(this),
 					"--offsetX": imageOffsetX != undefined ? `${parseFloat(imageOffsetX) / 90 * this.options.size }px` : '0px',
 					"--offsetY": imageOffsetY != undefined ? `${parseFloat(imageOffsetY) / 90 * this.options.size }px` : '0px',
@@ -2266,9 +2270,7 @@ class Token {
 					'--token-scale': imageScale,
 					'--token-flip-x': tokenFlipX(this)
 				})
-
-
-				setTimeout(function() {old.find(".token-image").css("transition", "")}, 200);		
+		
 				
 				let selector = "tr[data-target='"+this.options.id+"']";
 				let entry = $("#combat_area").find(selector);
@@ -2684,8 +2686,8 @@ class Token {
 								"--token-border-width": tokenBorderWidth,
 								'border-width': old.find('.token-image').css('border-width'),
 			    				"--offsetX": old.css('--offsetX'),
-			    					"--offsetY": old.css('--offsetY'),
-			    					'--token-flip-x': old.css('--token-flip-x'),
+								"--offsetY": old.css('--offsetY'),
+								'--token-flip-x': old.css('--token-flip-x'),
 								"--view-box": old.css('--view-box'),
 								"--image-zoom": old.css('--image-zoom')
 							})
@@ -2711,9 +2713,9 @@ class Token {
 								'max-height': `var(--token-height)`,
 								'--z-index-diff': old.css('--z-index-diff'),
 								'--token-scale': old.css('--token-scale'),
-			    					'--token-rotation': old.css('--token-rotation'),
-			    					'--token-heading': old.css('--token-heading'),
-			    					'--token-flip-x': old.css('--token-flip-x'),
+								'--token-rotation': old.css('--token-rotation'),
+								'--token-heading': old.css('--token-heading'),
+								'--token-flip-x': old.css('--token-flip-x'),
 								'opacity': this.options.hidden ? '0.5' : '1',
 								'--hp-percentage': `${this.hpPercentage}%`,
 								'--temp-hp-percentage': `${this.tempHpPercentage}%`,
@@ -3323,10 +3325,11 @@ class Token {
 							tokenPosition.x = clamp(tokenPosition.x, self.walkableArea.left, self.walkableArea.right);
 							tokenPosition.y = clamp(tokenPosition.y, self.walkableArea.top, self.walkableArea.bottom);
 						}
-	
+				
+						//we round css values to prevent sub pixel rendering which causes blurriness or stetching the token image
 						ui.position = {
-							left: tokenPosition.x,
-							top: tokenPosition.y
+							left: Math.round(tokenPosition.x),
+							top: Math.round(tokenPosition.y)
 						};
 						
 						const canMove = self.setTokenDragPos(tokenPosition.x, tokenPosition.y, tok, ctx);
@@ -3340,15 +3343,15 @@ class Token {
 						if (self.selected && window.dragSelectedTokens.length>1 && !shiftHeld) {
 							// if dragging on a selected token, we should move also the other selected tokens
 							// try to move other tokens by the same amount
-							let offsetLeft = tokenPosition.x - parseInt(self.orig_left);
-							let offsetTop = tokenPosition.y - parseInt(self.orig_top);
+							let offsetLeft = tokenPosition.x - parseFloat(self.orig_left);
+							let offsetTop = tokenPosition.y - parseFloat(self.orig_top);
 
 							for (let tok of window.dragSelectedTokens){
 								let id = $(tok).attr("data-id");
 								if (id != self.options.id) {
 									let curr = window.TOKEN_OBJECTS[id];
-									tokenX = offsetLeft + parseInt(curr.orig_left);
-									tokenY = offsetTop + parseInt(curr.orig_top);
+									tokenX = offsetLeft + parseFloat(curr.orig_left);
+									tokenY = offsetTop + parseFloat(curr.orig_top);
 									curr.setTokenDragPos(tokenX, tokenY, tok, ctx);
 								}
 							}													
@@ -3559,7 +3562,13 @@ class Token {
 				new Promise(() => this.update_health_aura(token)),
 				new Promise(() => this.update_dead_cross(token)),
 				new Promise(() => toggle_player_selectable(this, token)),
-				new Promise(debounceAudioChecks)
+				new Promise(debounceAudioChecks),
+				new Promise(() => {
+					setTimeout(() =>{ 
+					if (old.css("left") == this.options.left && old.css("top") == this.options.top)
+						draw_selected_token_bounding_box();
+					}, animationDuration)
+				}),
 			]).catch((error) => {
 		        showError(error, `Failed to start AboveVTT on ${window.location.href}`);
 		    });  
