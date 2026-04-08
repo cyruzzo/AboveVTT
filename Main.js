@@ -1393,7 +1393,7 @@ function init_splash() {
 	ul.append("<li><a style='font-weight:bold;text-decoration: underline;' target='_blank' href='https://www.patreon.com/AboveVTT'>Patreon</a></li>");
 	cont.append(ul);*/
 	cont.append("");
-	cont.append("<div style='padding-top:10px'>Contributors: <b>SnailDice (Nadav),Stumpy, Palad1N, KuzKuz, Coryphon, Johnno, Hypergig, JoshBrodieNZ, Kudolpf, Koals, Mikedave, Jupi Taru, Limping Ninja, Turtle_stew, Etus12, Cyelis1224, Ellasar, DotterTrotter, Mosrael, Bain, Faardvark, Azmoria, Natemoonlife, Pensan, H2, CollinHerber, Josh-Archer, TachyonicSpace, TheRyanMC, j3f (jeffsenn), MonstraG, Wyrmwood, Drenam1, Lauriel, Disil, WhoctorDo, HeroDragon33, Grimshok, SirWaltonOfSmeg, Jumbalicious79</b></div>");
+	cont.append("<div style='padding-top:10px'>Contributors: <b>SnailDice (Nadav),Stumpy, Palad1N, KuzKuz, Coryphon, Johnno, Hypergig, JoshBrodieNZ, Kudolpf, Koals, Mikedave, Jupi Taru, Limping Ninja, Turtle_stew, Etus12, Cyelis1224, Ellasar, DotterTrotter, Mosrael, Bain, Faardvark, Azmoria, Natemoonlife, Pensan, H2, CollinHerber, Josh-Archer, TachyonicSpace, TheRyanMC, j3f (jeffsenn), MonstraG, Wyrmwood, Drenam1, Lauriel, Disil, WhoctorDo, HeroDragon33, Grimshok, SirWaltonOfSmeg, Jumbalicious79, Valamorde</b></div>");
 
 	cont.append("<br>AboveVTT is an hobby opensource project. It's completely free (like in Free Speech). The resources needed to pay for the infrastructure are kindly donated by the supporters through <a style='font-weight:bold;text-decoration: underline;' target='_blank' href='https://www.patreon.com/AboveVTT'>Patreon</a> , what's left is used to buy wine for cyruzzo");
 
@@ -2139,18 +2139,33 @@ function init_ui() {
              c3.26,0,6.53-1.892,8.872-3.655 M12.5,10.127 c-1.27,0-2.3,1.033-2.3,2.302 c0,1.267,1.033,2.302,2.3,2.302
              c1.27,0,2.302-1.033,2.302-2.302 C14.802,11.16,13.77,10.127,12.5,10.127z" />
         </g></g>
+		
         <g id="group-rot-grab" class="grabber" visibility="hidden"> <g class="grabber-icon-r">
-            <circle fill="#ced9e080" cx="12.5" cy="12.5" r="12.5" />
-            <path d="M12.499 14.453 Q11.693 14.453 11.12 13.88 q-0.573-0.574-0.573-1.38
-             Q10.547 11.693 11.121 11.12 q0.574-0.573 1.38-0.573 Q13.307 10.547 13.88 11.121 q0.573 0.574 0.573 1.38
-             Q14.453 13.307 13.879 13.88 q-0.574 0.573-1.38 0.573 Z M12.5 21.875 q-3.906 0-6.641-2.747 T3.125 12.474
-             h1.563 q0 3.255 2.278 5.547 T12.5 20.313 q3.264 0 5.539-2.274 Q20.313 15.765 20.313 12.5 t-2.274-5.539
-             Q15.765 4.688 12.5 4.688 q-1.797 0-3.359 0.794 T6.406 7.63 h2.709 v1.563 H3.698 V3.776 h1.563 v2.76
-             q1.38-1.615 3.261-2.513 T12.5 3.125 q1.953 0 3.659 0.742 t2.969 2.005 q1.263 1.263 2.005 2.969 T21.875 12.5
-             q0 1.953-0.742 3.659 t-2.005 2.969 q-1.263 1.263-2.969 2.005 T12.5 21.875 Z"/>
+			<circle fill="#ced9e080" cx="12.5" cy="12.5" r="12.5" />
+			<g id="aoeRotateSvg" transform="translate(3,1) scale(2.2)">
+				<polygon points="1.22 8.06 3.17 1.94 7.43 6.74 1.22 8.06" style="fill: #ced9e080; stroke: #000; stroke-miterlimit: 10;"/>
+				<g>
+					<path d="M1.22,8.78c-.06,0-.12,0-.18-.02-.19-.05-.34-.17-.44-.33-.1-.17-.12-.36-.07-.55.08-.32.37-.54.7-.54.06,0,.12,0,.18.02.19.05.34.17.44.33.1.17.12.36.07.55-.08.32-.37.54-.7.54Z" style="fill: #000;"/>
+					<path d="M1.22,7.84s.04,0,.06,0c.12.03.19.15.16.27-.03.11-.13.17-.21.17-.02,0-.04,0-.06,0-.12-.03-.19-.15-.16-.27.03-.11.13-.17.21-.17M1.22,6.84c-.54,0-1.04.36-1.18.91-.17.65.22,1.32.87,1.49.1.03.21.04.31.04.54,0,1.04-.36,1.18-.91.17-.65-.22-1.32-.87-1.49-.1-.03-.21-.04-.31-.04h0Z" style="fill: #000;"/>
+				</g>
+				<g>
+					<path d="M8.6,5.11c-.24-2.24-1.49-3.65-3.73-4.23" style="fill: none; stroke: #000; stroke-linecap: round; stroke-linejoin: round;"/>
+					<polygon points="9.55 4.78 8.63 6.55 7.55 4.87 9.55 4.78" style="fill: #000;"/>
+					<polygon points="5.34 0 3.45 .64 4.96 1.96 5.34 0" style="fill: #000;"/>
+				</g>
+			</g>
+			<g id="groupRotateSvg">
+				<path d="M12.499 14.453 Q11.693 14.453 11.12 13.88 q-0.573-0.574-0.573-1.38
+				Q10.547 11.693 11.121 11.12 q0.574-0.573 1.38-0.573 Q13.307 10.547 13.88 11.121 q0.573 0.574 0.573 1.38
+				Q14.453 13.307 13.879 13.88 q-0.574 0.573-1.38 0.573 Z M12.5 21.875 q-3.906 0-6.641-2.747 T3.125 12.474
+				h1.563 q0 3.255 2.278 5.547 T12.5 20.313 q3.264 0 5.539-2.274 Q20.313 15.765 20.313 12.5 t-2.274-5.539
+				Q15.765 4.688 12.5 4.688 q-1.797 0-3.359 0.794 T6.406 7.63 h2.709 v1.563 H3.698 V3.776 h1.563 v2.76
+				q1.38-1.615 3.261-2.513 T12.5 3.125 q1.953 0 3.659 0.742 t2.969 2.005 q1.263 1.263 2.005 2.969 T21.875 12.5
+				q0 1.953-0.742 3.659 t-2.005 2.969 q-1.263 1.263-2.969 2.005 T12.5 21.875 Z"/>
+			</g>
         </g></g>
       </svg>`);
-	
+
 	const walls = $("<canvas id='walls_layer' class='TLA'/>");
 	walls.css("z-index", "19");
 
@@ -2827,6 +2842,70 @@ function init_zoom_buttons() {
 	}
 	zoom_section.append(selected_token_vision);
 
+	if(is_spectator_page()){
+		const lockView = $(`<div id='lock_view_button' class='ddbc-tab-options--layout-pill hideable'><div class='ddbc-tab-options__header-heading hasTooltip button-icon' data-name='Lock View (Shift+K)'><span class='material-symbols-outlined md-16 button-icon'>visibility_lock</span></div></div>`);
+		zoom_section.append(lockView);
+		const resetPos = mydebounce(() => {
+			change_zoom(window.lockViewPos.zoom);
+			window.scrollTo({top: window.lockViewPos.scrollY, left: window.lockViewPos.scrollX, behavior: "smooth"});		
+		}, 2000)
+		lockView.off('pointerdown.lockView').on('pointerdown.lockView', (e) =>{
+			const button = $(e.currentTarget);
+			const enabled = button.find('.ddbc-tab-options__header-heading').hasClass('ddbc-tab-options__header-heading--is-active')
+			button.find('.ddbc-tab-options__header-heading').toggleClass('ddbc-tab-options__header-heading--is-active')
+			
+			if(!enabled){
+				window.lockViewPos = {
+					scrollX: window.scrollX,
+					scrollY: window.scrollY,
+					zoom: window.ZOOM
+				}
+				$(window).off('scroll.resetToLockedPos').on('scroll.resetToLockedPos', resetPos);
+				return;
+			}
+			
+			delete window.lockViewPos;
+			$(window).off('scroll.resetToLockedPos')
+		})
+	}
+	const gridZoomConversion = $(`<div id='grid_zoom_conversion' class='ddbc-tab-options--layout-pill hideable'><div class='ddbc-tab-options__header-heading hasTooltip button-icon' data-name='Grid Zoom Conversion'><svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24.73 24.74">
+  <g>
+    <path d="M1.5,8.5c.15,0-1.39,0-1.24,0h.72" style="fill: none; stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .5px;"/>
+    <line x1="3.67" y1="8.5" x2="21.14" y2="8.5" style="fill: none; stroke: #231f20; stroke-dasharray: 3.58 2.69; stroke-linecap: round; stroke-linejoin: round; stroke-width: .5px;"/>
+    <line x1="22.48" y1="8.5" x2="24.48" y2="8.5" style="fill: none; stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .5px;"/>
+  </g>
+  <g>
+    <path d="M8.32.86c0,.15,0-.75,0-.6v1.34" style="fill: none; stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .5px;"/>
+    <line x1="8.32" y1="4.22" x2="8.32" y2="21.19" style="fill: none; stroke: #231f20; stroke-dasharray: 3.48 2.61; stroke-linecap: round; stroke-linejoin: round; stroke-width: .5px;"/>
+    <line x1="8.32" y1="22.49" x2="8.32" y2="24.49" style="fill: none; stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .5px;"/>
+  </g>
+  <g>
+    <line x1=".26" y1="16.68" x2="2.26" y2="16.68" style="fill: none; stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .5px;"/>
+    <line x1="4.79" y1="16.68" x2="21.22" y2="16.68" style="fill: none; stroke: #231f20; stroke-dasharray: 3.37 2.53; stroke-linecap: round; stroke-linejoin: round; stroke-width: .5px;"/>
+    <line x1="22.48" y1="16.68" x2="24.48" y2="16.68" style="fill: none; stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .5px;"/>
+  </g>
+  <g>
+    <line x1="16.31" y1=".27" x2="16.31" y2="2.27" style="fill: none; stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .5px;"/>
+    <line x1="16.31" y1="4.8" x2="16.31" y2="21.23" style="fill: none; stroke: #231f20; stroke-dasharray: 3.37 2.53; stroke-linecap: round; stroke-linejoin: round; stroke-width: .5px;"/>
+    <line x1="16.31" y1="22.49" x2="16.31" y2="24.49" style="fill: none; stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .5px;"/>
+  </g>
+  <g>
+    <line x1="5.07" y1="19.83" x2="1.13" y2="23.78" style="fill: none; stroke: #231f20; stroke-miterlimit: 10;"/>
+    <polygon points="1.34 21.17 1.34 23.57 3.74 23.57 2.72 24.58 .32 24.58 .32 22.19 1.34 21.17" style="fill: #231f20;"/>
+  </g>
+  <g>
+    <line x1="19.18" y1="5.42" x2="23.19" y2="1.41" style="fill: none; stroke: #231f20; stroke-miterlimit: 10;"/>
+    <polygon points="22.98 4.02 22.98 1.62 20.58 1.62 21.6 .6 24 .6 24 3 22.98 4.02" style="fill: #231f20;"/>
+  </g>
+</svg></div></div>`);
+	zoom_section.append(gridZoomConversion);
+	gridZoomConversion.off('pointerdown.gridZoom').on('pointerdown.gridZoom', (e) =>{
+		if(window.EXPERIMENTAL_SETTINGS?.gridZoomConversion){
+			const zoom = window.EXPERIMENTAL_SETTINGS?.gridZoomConversion; 
+			change_zoom(zoom / parseFloat(window.CURRENT_SCENE_DATA.hpps));
+		}
+	})
+
 
 	let zoom_center = $("<div id='zoom_fit' class='ddbc-tab-options--layout-pill hasTooltip button-icon hideable' data-name='fit screen (0)'><div class='ddbc-tab-options__header-heading'><span class='material-icons button-icon'>fit_screen</span></div></div>");
 	zoom_center.click(reset_zoom);
@@ -3017,7 +3096,8 @@ function init_help_menu() {
 							<dd>Rotate selected tokens as a group. Shift rotates in smaller increments</dd>
 						</dl>
 						<dl>
-							<dt>|</dt> <dt>${getShiftKeyName()}+\\</dt><dd>Flip selected tokens images</dd>
+							<dt>|</dt> <dt>${getShiftKeyName()}+\\</dt>
+							<dd>Flip selected tokens images</dd>
 						</dl>
 						<dl>
 							<dt>'</dt><dd>Move selected tokens to top of stack</dd>
@@ -3043,6 +3123,14 @@ function init_help_menu() {
 						<dl>
 							<dt>Enter</dt>
 							<dd>Roll added dice pool</dd>
+						</dl>
+						<dl>
+							<dt>F1 through F4</dt>
+							<dd>Load saved location and zoom</dd>
+						</dl>
+						<dl>
+							<dt>Shift+F1 through Shift+F4</dt>
+							<dd>Save current location and zoom</dd>
 						</dl>
 						<dl>
 							<dt>${getModKeyName()} (held)</dt>

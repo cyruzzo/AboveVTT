@@ -243,7 +243,7 @@ function token_context_menu_expanded(tokenIds, e) {
 					 			 (doors[0][11] != undefined ? doors[0][11] : "")
 					];	
 					window.DRAWINGS.push(data);
-					window.wallUndo.push({
+					pushWallUndo({
 						undo: [data],
 						redo: [doors[0]]
 					})
@@ -414,7 +414,7 @@ function token_context_menu_expanded(tokenIds, e) {
 					 			 (doors[0][11] != undefined ? doors[0][11] : "")
 					 	]
 					 	window.DRAWINGS.push(data);
-					 	window.wallUndo.push({
+					 	pushWallUndo({
 							undo: [[...data]],
 						})
 						let clonePortalId = `${mouseX-5}${mouseY}${mouseX+5}${mouseY}${window.CURRENT_SCENE_DATA.id}`.replaceAll('.','') 
@@ -570,7 +570,7 @@ function token_context_menu_expanded(tokenIds, e) {
 					 			 (doors[0][11] != undefined ? doors[0][11] : "")
 					];	
 					window.DRAWINGS.push(data);
-					window.wallUndo.push({
+					pushWallUndo({
 						undo: [data],
 						redo: [doors[0]]
 					})
@@ -617,7 +617,7 @@ function token_context_menu_expanded(tokenIds, e) {
 				 			 (doors[0][11] != undefined ? doors[0][11] : "")
 				];	
 				window.DRAWINGS.push(data);
-				window.wallUndo.push({
+				pushWallUndo({
 					undo: [data],
 					redo: [doors[0]]
 				})
@@ -657,7 +657,7 @@ function token_context_menu_expanded(tokenIds, e) {
 				 			 (doors[0][11] != undefined ? doors[0][11] : "")
 				];	
 				window.DRAWINGS.push(data);
-				window.wallUndo.push({
+				pushWallUndo({
 					undo: [data],
 					redo: [doors[0]]
 				})

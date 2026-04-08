@@ -1745,7 +1745,7 @@ function observe_character_sheet_changes(documentToObserve) {
 
 
     if(is_abovevtt_page()){
-      if($('.dice-rolling-panel').length == 0 && window.diceWarning == undefined){
+      if($('.dice-rolling-panel, [data-floating-ui-portal]').length == 0 && window.diceWarning == undefined){
         showDiceDisabledWarning();
       }
       else if($('.dice-rolling-panel').length > 0){
@@ -3006,7 +3006,7 @@ function observe_non_sheet_changes(documentToObserve) {
   window.non_sheet_observer = new MutationObserver(function(mutationList, observer) {
     if(window.DRAGGING || (typeof arrowKeysHeld !== 'undefined' && (arrowKeysHeld[0] || arrowKeysHeld[1] || arrowKeysHeld[2] || arrowKeysHeld[3])))
       return;
-    mutationList.forEach(mutation => {
+    mutationList.every(mutation => {
       try {
         let mutationTarget = $(mutation.target);
         //Remove beyond20 popup and swtich to gamelog
@@ -3022,7 +3022,9 @@ function observe_non_sheet_changes(documentToObserve) {
           }
           
           window.MB.reprocess_chat_message_history();
+          return false;
         }
+        return true;
       }
       catch(error){
         console.warn("non_sheet_observer failed to parse mutation", error, mutation);
@@ -3209,14 +3211,14 @@ function observe_character_theme_change() {
   if (window.theme_observer) window.theme_observer.disconnect();
   window.theme_observer = new MutationObserver(function(mutationList, observer) {
     // console.log("theme_observer mutationList", mutationList);
-    mutationList.forEach(mutation => {
+    mutationList.every(mutation => {
       // console.log("theme_observer mutation", mutation, mutation.addedNodes, mutation.addedNodes.length);
       if (mutation.addedNodes && mutation.addedNodes.length > 0) {
-        mutation.addedNodes.forEach(node => {
+        const shouldContinue = Array.from(mutation.addedNodes).every(node => {
           // console.log("theme_observer node", node);
-          if (node.innerHTML && node.innerHTML.includes("--dice-color")) {
+          if (node.textContent && node.textContent.includes("--theme-color")) {
             // console.log("theme_observer is calling find_and_set_player_color", mutation, node);
-            const newColor = node.innerHTML.match(/#(?:[0-9a-fA-F]{3}){1,2}/)?.[0];
+            const newColor = node.textContent.match(/#(?:[0-9a-fA-F]{3}){1,2}/)?.[0];
             if (newColor) {
               update_window_color(newColor);
               if(window.PeerManager != undefined)
@@ -3228,27 +3230,29 @@ function observe_character_theme_change() {
                   }
                 }
               });
+              return false;
             }
           }
+          return true;
         });
+        return shouldContinue;
       }
     });
   });
-  window.theme_observer.observe(document.documentElement, { childList: true });
+  const toolsTarget = document.getElementById("character-tools-target");
+  window.theme_observer.observe(toolsTarget, { childList: true, subtree: true });
 }
 
 function observe_character_image_change() {
   if (window.character_image_observer) window.character_image_observer.disconnect();
   window.character_image_observer = new MutationObserver(function(mutationList, observer) {
-    mutationList.forEach(mutation => {
       try {
         // This should be just fine, but catch any parsing errors just in case
-        const updatedUrl = get_higher_res_url($(mutation.target).attr("src"));
+        const updatedUrl = get_higher_res_url($(".ddbc-character-avatar__portrait").attr("src"));
         window.PLAYER_IMG = updatedUrl;
         character_sheet_changed({avatarUrl: updatedUrl,
                                 image: updatedUrl});
       } catch { }
-    });
   });
   window.character_image_observer.observe(document.querySelector(".ddbc-character-avatar__portrait"), { attributeFilter: ["src"] });
 }

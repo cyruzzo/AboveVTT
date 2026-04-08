@@ -92,6 +92,8 @@ class PeerManager {
   }
 
   tearDown() {
+    clearInterval(this.staleConnectionTimerId);
+    this.staleConnectionTimerId = undefined;
     this.disconnectAllPeers();
     this.peer.disconnect();
     this.peer.destroy();
@@ -381,6 +383,7 @@ class PeerManager {
 
   /** Checks for and cleans up stale connections */
   checkForStaleConnections() {
+    if (!this.peer || this.peer.destroyed) return;
     try {
       let attemptReconnect = false;
       // first let's clean up everything that we actually know about

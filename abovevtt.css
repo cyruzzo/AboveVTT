@@ -2016,6 +2016,7 @@ div#scene_properties form > div{
 #wall_menu [data-desc]:hover::after{
     opacity: 1;
     visibility: visible;
+    transition: 0.0s linear 0.0s;
 }
 .drawbutton.hasTooltip{
     position: relative;

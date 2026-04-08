@@ -187,7 +187,8 @@ function enable_peer_manager() {
     }
     console.log(`enable_peer_manager no peer id yet. Trying again in ${window.peerTimeout} seconds`);
     setTimeout(function() {
-      enable_peer_manager()
+      if(get_avtt_setting_value("peerStreaming")) 
+        enable_peer_manager()
     }, window.peerTimeout * 1000);
     return;
   }
@@ -266,7 +267,9 @@ function rebuild_peerManager() {
       disable_peer_manager();
       window.PeerManager.tearDown();
       window.PeerManager = new PeerManager();
-      enable_peer_manager();
+      if(get_avtt_setting_value("peerStreaming"))
+        enable_peer_manager();
+
       console.log("rebuild_peerManager finished");
     } catch (error) {
       console.warn("rebuild_peerManager failed", error);

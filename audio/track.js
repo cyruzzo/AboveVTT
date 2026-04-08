@@ -64,7 +64,7 @@ class TrackLibrary extends Library {
                     for(let i in window.SOUNDPADS[pad][folder]){
                         let t = window.SOUNDPADS[pad][folder][i];
                         const track = new Track(t.name, t.src);
-                        track.setTags = [folder];
+                        track.setTags([folder]);
                         const existingTrack = this.find(track.name, track.src);
                         if ( typeof existingTrack === 'undefined' ) {
                             newTracks.push(track);
@@ -193,7 +193,7 @@ class TrackLibrary extends Library {
 
         importList.forEach(t => {
             const track = new Track(t.name, t.src);
-            track.tags = t.tags.split("|");
+            track.tags = t.tags ? t.tags.split("|") : [];
             const existingTrack = this.find(track.name, track.src);
             if ( typeof existingTrack === 'undefined' ) {
                 newTracks.push(track);
