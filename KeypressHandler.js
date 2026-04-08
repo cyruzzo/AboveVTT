@@ -283,9 +283,9 @@ Mousetrap.bind('w', function () {
 Mousetrap.bind('shift+w', function () {
     if(window.DM){
         $('#show_walls').toggleClass(['button-enabled', 'ddbc-tab-options__header-heading--is-active']);
-        redraw_light_walls();
+        redraw_light_walls(false, false, false);
     }
-       
+
 });
 Mousetrap.bind('j', function () {
     if(window.DM){
@@ -334,7 +334,7 @@ Mousetrap.bind('esc', function () {     //deselect all buttons
         $('#select-button').click();
     }
     else{
-        redraw_light_walls();
+        redraw_light_walls(false, false, false);
     }
 
     close_token_context_menu();

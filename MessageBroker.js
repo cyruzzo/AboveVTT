@@ -916,7 +916,6 @@ class MessageBroker {
 				"custom/myVTT/createtoken",
 				"custom/myVTT/reveal",
 				"custom/myVTT/fogdata",
-				"custom/myVTT/drawing",
 				"custom/myVTT/drawdata",
 				"custom/myVTT/highlight",
 				"custom/myVTT/pointer",
@@ -1056,25 +1055,20 @@ class MessageBroker {
 				check_token_visibility();
 			}
 
-			if (msg.eventType == "custom/myVTT/drawing") {
-				window.DRAWINGS.push(msg.data);
-				redraw_light_walls();		
-				redraw_drawings();
-				redraw_elev();
-				redraw_text();
-				redraw_drawn_light();
-				redraw_light();
-
-			}
-
 			if(msg.eventType=="custom/myVTT/drawdata"){
+				const wallsChanged = msg.data?.[0] == 'wallsChanged';
+				if(wallsChanged){
+					msg.data.shift();
+				}
 				window.DRAWINGS=msg.data;
-				redraw_light_walls();
+				redraw_light_walls({wallsChanged});
 				redraw_elev();
 				redraw_drawings();
 				redraw_text();
 				redraw_drawn_light();
 				redraw_light();
+				if(wallsChanged)
+					redraw_fog();// for point line of sight fog tool that is line of sight bucket fill stopped by walls
 			}
 			if(msg.eventType=="custom/myVTT/forceRedrawLight"){
 				redraw_light(true);
@@ -1739,6 +1733,8 @@ class MessageBroker {
 				window.wallUndo = [];
 				window.visionBlockingTokenCache = {};
 				window.lightDrawingLosCache = {};
+				window.lightAuraClipPolygon = {};
+				window.lineOfSightPolygons = {};
 				$('#exploredCanvas').remove();
 				window.TOKEN_OBJECTS = {};
 				window.ON_SCREEN_TOKENS = {};
@@ -1746,16 +1742,16 @@ class MessageBroker {
 				let data = msg.data;
 				let self=this;
 
-					if(data.dm_map_usable=="1"){ // IN THE CLOUD WE DON'T RECEIVE WIDTH AND HEIGT. ALWAYS LOAD THE DM_MAP FIRST, AS TO GET THE PROPER WIDTH
-						data.map=data.dm_map;
-						if(data.dm_map_is_video=="1" || data.dm_map?.includes('youtube.com') || data.dm_map?.includes("youtu.be"))
-							data.is_video=true;
-					}
-					else{
-						data.map=data.player_map;
-						if(data.player_map_is_video=="1")
-							data.is_video=true;
-					}
+				if(data.dm_map_usable=="1"){ // IN THE CLOUD WE DON'T RECEIVE WIDTH AND HEIGT. ALWAYS LOAD THE DM_MAP FIRST, AS TO GET THE PROPER WIDTH
+					data.map=data.dm_map;
+					if(data.dm_map_is_video=="1" || data.dm_map?.includes('youtube.com') || data.dm_map?.includes("youtu.be"))
+						data.is_video=true;
+				}
+				else{
+					data.map=data.player_map;
+					if(data.player_map_is_video=="1")
+						data.is_video=true;
+				}
 
 				for(const i in msg.data.tokens){
 					if(i == msg.data.tokens[i].id)
@@ -1829,8 +1825,7 @@ class MessageBroker {
 						window.REVEALED = [];
 					}
 					if (typeof data.drawings !== "undefined") {
-						window.DRAWINGS = data.drawings;
-
+						window.DRAWINGS = data.drawings.filter(d => d != 'wallsChanged');
 					}
 					else {
 						window.DRAWINGS = [];
