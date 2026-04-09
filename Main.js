@@ -2868,7 +2868,9 @@ function init_zoom_buttons() {
 			$(window).off('scroll.resetToLockedPos')
 		})
 	}
-	const gridZoomConversion = $(`<div id='grid_zoom_conversion' class='ddbc-tab-options--layout-pill hideable'><div class='ddbc-tab-options__header-heading hasTooltip button-icon' data-name='Set grid visual size to match stored size'><svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24.73 24.74">
+
+	const displayGridZoomConversion = window.EXPERIMENTAL_SETTINGS?.gridZoomConversion;
+	const gridZoomConversion = $(`<div id='grid_zoom_conversion' style='${displayGridZoomConversion ? '' : 'display: none;'}' class='ddbc-tab-options--layout-pill hideable'><div class='ddbc-tab-options__header-heading hasTooltip button-icon' data-name='Set grid visual size to match stored size'><svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24.73 24.74">
   <g>
     <path d="M1.5,8.5c.15,0-1.39,0-1.24,0h.72" style="fill: none; stroke: var(--font-color, #231f20); stroke-linecap: round; stroke-linejoin: round; stroke-width: .5px;"/>
     <line x1="3.67" y1="8.5" x2="21.14" y2="8.5" style="fill: none; stroke: var(--font-color, #231f20); stroke-dasharray: 3.58 2.69; stroke-linecap: round; stroke-linejoin: round; stroke-width: .5px;"/>
