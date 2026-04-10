@@ -1716,7 +1716,8 @@ class MessageBroker {
 				$("#VTT").css("--scene-scale", scaleFactor)
 				window.CURRENT_SCENE_DATA.width = mapWidth;
 				window.CURRENT_SCENE_DATA.height = mapHeight;
-				await reset_canvas(false);
+				const continueLoading = await reset_canvas(false);
+				if(!continueLoading) return;
 
 				if(!isSameTokenLight){
 					for(let i in window.TOKEN_OBJECTS){
@@ -1907,7 +1908,12 @@ class MessageBroker {
 						}
 
 
-						await reset_canvas();
+						const continueLoading = await reset_canvas();
+						if(!continueLoading){
+							console.groupEnd();
+							window.MB.loadNextScene();
+							return;
+						}
         				await set_default_vttwrapper_size();
 						$('.import-loading-indicator .percentageLoaded').css('width', `20%`);	
 						remove_loading_overlay();
