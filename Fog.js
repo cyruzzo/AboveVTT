@@ -1426,6 +1426,16 @@ function reset_canvas(apply_zoom=true) {
 	const sceneMapWidth = $("#scene_map").width();
 	const sceneMapHeight = $("#scene_map").height();
 
+	if (!sceneMapWidth || !sceneMapHeight) {
+		showErrorMessage("Error loading scene.", `<p>Possible issues:</p>• The scene map link may be blank<br>• If using a video map ensure the "video map" toggle is enabled<br>• The file may not be publicly accessible (check share settings on host)<br>• The host may have rate limits on file access`);
+		set_default_vttwrapper_size();
+		$('#loadingStyles').remove();
+		$('.import-loading-indicator').remove();
+		remove_loading_overlay();
+		delete window.LOADING;
+		return false;
+	}
+
 	$('#darkness_layer').css({"width": sceneMapWidth, "height": sceneMapHeight});
 	$("#scene_map_container").css({"width": sceneMapWidth, "height": sceneMapHeight});
 	// grid overlay css tiling needs a container to fill that matches map
@@ -1454,7 +1464,7 @@ function reset_canvas(apply_zoom=true) {
 	if (!window.FOG_OF_WAR) {
 		const canvas = document.getElementById("fog_overlay");
 		canvas.getContext("2d").clearRect(0, 0, canvas.width, canvas.height);
-		return;
+		return true;
 	}
 
 	setVisionLightOffscreenCanvas(); //adding this here as it was previously being done every fill causing webgl issues
@@ -1491,7 +1501,7 @@ function reset_canvas(apply_zoom=true) {
 	if(apply_zoom)
 		apply_zoom_from_storage();
 	redraw_text();
-	return;
+	return true;
 }
 function check_darkness_value(){
 	
