@@ -2443,7 +2443,7 @@ function init_buttons() {
 	if ($("#fog_menu").length > 0) {
 		return; // only need to do this once
 	}
-	let buttons = $(`<div class="ddbc-tab-options--layout-pill"></div>`);
+	let buttons = $(`<div class="ddbc-tab-options--layout-pill main-top-buttons"></div>`);
 	$("body").append(buttons);
 
 	buttons.append($("<button style='display:inline; width:75px;' id='select-button' data-name='Select (S)' class='drawbutton hasTooltip hideable ddbc-tab-options__header-heading' data-shape='rect' data-function='select'><spam class='button-text'><u>S</u>ELECT</span></button>"));

@@ -2914,6 +2914,8 @@ function stop_drawing() {
 	window.wallToStore = [];
 	window.selectedWalls = [];
 	window.wallsBeingDragged = [];
+	window.BEGIN_MOUSEX = undefined;
+	window.BEGIN_MOUSEY = undefined;
 }
 
 /**
@@ -2978,7 +2980,7 @@ function get_event_cursor_position(event, preventSnap = false) {
 		    window.DRAWSHAPE === 'line' ||
 			window.DRAWSHAPE === '3pointRect' ||
 			window.DRAWSHAPE === 'rect') &&
-	    $('#snap_walls').hasClass('button-enabled')
+	    window.SNAP_WALLS === true
     ) {
 	    return wall_snap(pointX, pointY);
     }
@@ -3018,6 +3020,11 @@ const [wall_snap, clear_wall_snap] = function () {
 			const adjustedScale =  walls[i][8]/adjustScale;
 			ret.push([walls[i][3]/adjustedScale,walls[i][4]/adjustedScale]);
 			ret.push([walls[i][5]/adjustedScale,walls[i][6]/adjustedScale]);		
+		}
+		// also snap to walls being drawn with shift or right click
+		for(let i=0; i<window.StoredWalls.length; i++){
+			ret.push([window.StoredWalls[i][0],window.StoredWalls[i][1]]);
+			ret.push([window.StoredWalls[i][2],window.StoredWalls[i][3]]);		
 		}
 		return ret;
 	}
@@ -3079,7 +3086,7 @@ function drawing_mousedown(e) {
 	window.DRAWLOCATION = data.location
 	window.DRAWSHAPE = window.drawAudioPolygon || window.drawTokenWallPolygon ? 'polygon' : data.shape;
 	window.DRAWFUNCTION = window.drawAudioPolygon ? 'audio-polygon' : window.drawTokenWallPolygon ? 'token-wall-polygon' : data.function;
-
+	window.SNAP_WALLS = Boolean(data.snap_walls);
 	//these are used with walls or elevation tool
 	window.wallTop = data.wall_top_height;
 	window.wallBottom = data.wall_base_height;
@@ -6459,7 +6466,7 @@ When left blank it is treated as infinity, preventing tokens from seeing over th
 	const snapDesc = `Toggle to snap wall drawing to other nearby wall end points. This overrides grid snapping if enabled.`	
 	wall_menu.append(
 		`<div class='ddbc-tab-options--layout-pill menu-option' data-desc="${snapDesc}">
-			<button id='snap_walls' data-toggle='true' class='drawbutton menu-option ddbc-tab-options__header-heading ${(window.snapWallsToggle) ? "button-enabled" : ''}'>
+			<button id='snap_walls' data-key="snap_walls" data-value="true" data-toggle='true' class='drawbutton menu-option ddbc-tab-options__header-heading ${(window.snapWallsToggle) ? "button-enabled" : ''}'>
 				Join Snap
 			</button>
 		</div>`);
