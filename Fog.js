@@ -2257,7 +2257,7 @@ function redraw_light_walls(options = {clearCanvas: true, editingWallPoints: fal
 
 		scale = (scale == undefined) ?  currentSceneScale/currentSceneConversion : scale/currentSceneConversion;
 		let adjustedScale = scale/currentSceneScale;
-		lineWidth = Math.min(lineWidth, Math.max(lineWidth/window.ZOOM/scale, 1));
+		lineWidth = Math.min(lineWidth, Math.max(lineWidth/window.ZOOM/currentSceneScale, 1));
 		if (displayWalls) {
 				
 			if(!editingWallPoints && ((wallBottom != undefined && wallBottom != '') || (wallTop != undefined && wallTop != ''))){
