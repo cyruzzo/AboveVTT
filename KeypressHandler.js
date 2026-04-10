@@ -283,7 +283,7 @@ Mousetrap.bind('w', function () {
 Mousetrap.bind('shift+w', function () {
     if(window.DM){
         $('#show_walls').toggleClass(['button-enabled', 'ddbc-tab-options__header-heading--is-active']);
-        redraw_light_walls(false, false, false);
+        redraw_light_walls();
     }
 
 });
@@ -322,20 +322,18 @@ if(is_spectator_page()){
     });
 }
 Mousetrap.bind('esc', function () {     //deselect all buttons
-
+    clear_temp_canvas();
     close_splash();
     $('#displayedDiceFormula').remove();
     delete window.numpadRollFormulaMod;
     delete window.numpadRollFormula;
 
-    stop_drawing();
-
-    if(!$("#wall_button").hasClass("button-enabled")){
-        $('#select-button').click();
-    }
-    else{
-        redraw_light_walls(false, false, false);
-    }
+    //reselect the current menu to trigger draw stop/reset, allows cancelling polygons or other drawings
+    //ensure menu stays open if it was open, as clicking the button again would close it
+    const enabledMenuHeader = $('.main-top-buttons>.drawbutton.button-enabled');
+    const visibleMenu = $('.top_menu.visible');
+    enabledMenuHeader.click();
+    visibleMenu.toggleClass('visible', true); 
 
     close_token_context_menu();
     $(".draggable-token-creation").addClass("drag-cancelled");
@@ -354,6 +352,7 @@ Mousetrap.bind('esc', function () {     //deselect all buttons
         // only close the sidebar if there isn't something on the screen explicitly trying to keep it open
         close_sidebar_modal();
     }
+    deselect_all_tokens();
     remove_tooltip();
     removeError();
 });
