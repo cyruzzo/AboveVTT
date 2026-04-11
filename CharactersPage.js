@@ -1593,18 +1593,25 @@ function rebuild_buffs(fullBuild = false){
         }
         localStorage.setItem('rollBuffs' + window.PLAYER_ID, JSON.stringify(window.rollBuffs));
 		// Added by Lauriel April 2026
-		// Allowing buffsDebuffs with conditions to update player tokens
-		if(buffsDebuffs[i].condition != undefined) {
+		if(buffsDebuffs[i].condition != undefined) { // Allowing buffsDebuffs with conditions to update player tokens
 			let setOnOff = 'removeCondition';
+			let condition = buffsDebuffs[i].condition;
 			if($(this).is(':checked')){
 				setOnOff = 'addCondition';
 			}
-			tabCommunicationChannel.postMessage({
-				msgType: setOnOff, 
-				characterId: window.PLAYER_ID,
-				text: buffsDebuffs[i].condition, 
-				sendTo: window.sendToTab
-			})
+			if (is_abovevtt_page()) {
+				const pc = find_pc_by_player_id(window.PLAYER_ID, false);
+				const token = window.all_token_objects[pc.sheet];
+				token[setOnOff](condition);
+				token.place_sync_persist();
+			} else {
+				tabCommunicationChannel.postMessage({
+					msgType: setOnOff, 
+					characterId: window.PLAYER_ID,
+					text: condition, 
+					sendTo: window.sendToTab
+				})
+			}
 		}
 		// End of section added by Lauriel April 2026
       })
