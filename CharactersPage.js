@@ -1407,6 +1407,25 @@ function register_buff_row_context_menu() {
 
   })
 }
+function click_condition(conditionName, setToggle = true, callback, addtionalCSS = ''){
+  $('body').append(`<style id='condition-click'>.ct-condition-manage-pane{visibility:hidden !important;}${addtionalCSS}</style>`);
+  $('.ct-combat__statuses-group--conditions .ct-combat__summary-label:contains("Conditions"), .ct-combat-tablet__cta-button:contains("Conditions"), .ct-combat-mobile__cta-button:contains("Conditions")').click();
+  setTimeout(function () {
+    if(typeof setToggle == "boolean" || conditionName !== 'Exhaustion'){
+      setToggle = typeof setToggle === "boolean" ? setToggle : Boolean(parseInt(setToggle));
+      $(`.ct-sidebar__inner .ct-condition-manage-pane__condition-name:contains('${conditionName}') ~ .ct-condition-manage-pane__condition-toggle>[class*='styles_toggle'][aria-pressed="${!setToggle}"]`).click();
+    }
+    else{
+      $(`[class*='styles_progressBar']>[class*='styles_bar']:nth-of-type(${setToggle/-2+1})`).click();
+    }    
+  }, 30)
+  setTimeout(function () {
+    if(is_abovevtt_page()) $(`#switch_gamelog`).click();
+    else $(document.body).click();
+    if(callback) callback();
+    $('#condition-click').remove();
+  }, 40)	
+}
 function rebuild_buffs(fullBuild = false){
   window.rollBuffs = JSON.parse(localStorage.getItem('rollBuffs' + window.PLAYER_ID)) || [];
   const buffDebuffKeys=Object.keys(buffsDebuffs);
@@ -1454,18 +1473,23 @@ function rebuild_buffs(fullBuild = false){
     avttBuffSelect = $(`#avtt-buff-options`);
     avttBuffSelect.find('.avttBuffItems').html(innerBuffHtml)
   }
-
-  const avttBuffItems = avttBuffSelect.find('.avttBuffItems')
-  avttBuffSelect.off('click.clickHandle').on('click.clickHandle', '.clickHandle', function(){
+  const toggleBuffMenuVisiblity = function(){
     avttBuffSelect.toggleClass('visible')
     if(avttBuffSelect.hasClass('visible')){
-      $(document).on('click.blurHandle', function(e){
-        if($(e.target).closest('#avtt-buff-options, .context-menu-list').length == 0){
-          avttBuffSelect.toggleClass('visible', false)
-          $(document).off('click.blurHandle');
-        }
-      })  
+      //set a timeout here to allow other automated clicks such as clicking the gamelog after setting a condition to finish before adding the close event
+      setTimeout(function(){
+        $(document).on('click.blurHandle', function(e){
+          if($(e.target).closest('#avtt-buff-options, .context-menu-list').length == 0){
+            avttBuffSelect.toggleClass('visible', false)
+            $(document).off('click.blurHandle');
+          }
+        })
+      }, 250)
     }
+  }
+  const avttBuffItems = avttBuffSelect.find('.avttBuffItems')
+  avttBuffSelect.off('click.clickHandle').on('click.clickHandle', '.clickHandle', function(){
+    toggleBuffMenuVisiblity();
   })
   avttBuffSelect.off('click.headers').on('click.headers', 'ul>ul', function(e){
     e.stopPropagation();
@@ -1520,28 +1544,49 @@ function rebuild_buffs(fullBuild = false){
          window.rollBuffs = window.rollBuffs.filter(d => !d.includes(i)); 
         }
         localStorage.setItem('rollBuffs' + window.PLAYER_ID, JSON.stringify(window.rollBuffs));
-		if(buffsDebuffs[i].condition != undefined) { // Allow buffsDebuffs with conditions to update player tokens
-			let setOnOff = 'removeCondition';
-			let condition = buffsDebuffs[i].condition;
-			if($(this).val() != '0'){
-				setOnOff = 'addCondition';
-			}
-			if (is_abovevtt_page()) {
-				const pc = find_pc_by_player_id(window.PLAYER_ID, false);
-				if (!pc) return;
-				const token = window.all_token_objects[pc.sheet];
-				if (!token) return;
-				token[setOnOff](condition);
-				token.place_sync_persist();
-			} else {
-				tabCommunicationChannel.postMessage({
-					msgType: setOnOff, 
-					characterId: window.PLAYER_ID,
-					text: condition, 
-					sendTo: window.sendToTab
-				})
-			}
-		}
+        $(this).blur();
+        if(buffsDebuffs[i].condition != undefined) { // Allow buffsDebuffs with conditions to update player tokens
+          let setOnOff = 'removeCondition';
+          let condition = buffsDebuffs[i].condition;
+          const value = $(this).val();
+          if( value != '0'){
+            setOnOff = 'addCondition';
+          }
+          const menuOpen = avttBuffSelect.hasClass('visible');
+          const additionalCSS = menuOpen ? `.dropdown-check-list .avttBuffItems {
+                  display: block !important;
+                  position: absolute !important;
+                  background: var(--theme-background-solid) !important;
+                  z-index: 200 !important;
+              }` : '';
+          if (is_abovevtt_page()) {
+            const pc = find_pc_by_player_id(window.PLAYER_ID, false);
+            if (!pc) return;
+            const token = window.all_token_objects[pc.sheet];
+            if (!token) return;
+            if(STANDARD_CONDITIONS.includes(condition)){
+              click_condition(condition, value, menuOpen ? toggleBuffMenuVisiblity : undefined, additionalCSS);
+            }
+            else{
+              token[setOnOff](condition);
+            }
+            token.place_sync_persist();
+          } else {
+            if(STANDARD_CONDITIONS.includes(condition)){
+
+              click_condition(condition, value, menuOpen ? toggleBuffMenuVisiblity : undefined, additionalCSS);
+            }
+            else{
+              tabCommunicationChannel.postMessage({
+                msgType: setOnOff, 
+                characterId: window.PLAYER_ID,
+                text: condition, 
+                sendTo: window.sendToTab
+              })
+            }
+
+          }
+        }
       })
       row.find('span.favorite').off('click.favorite').on('click.favorite', function(e){
         e.preventDefault();
@@ -1607,28 +1652,48 @@ function rebuild_buffs(fullBuild = false){
          window.rollBuffs = window.rollBuffs.filter(d => d != i); 
         }
         localStorage.setItem('rollBuffs' + window.PLAYER_ID, JSON.stringify(window.rollBuffs));
-		if(buffsDebuffs[i].condition != undefined) { // Allow buffsDebuffs with conditions to update player tokens
-			let setOnOff = 'removeCondition';
-			let condition = buffsDebuffs[i].condition;
-			if($(this).is(':checked')){
-				setOnOff = 'addCondition';
-			}
-			if (is_abovevtt_page()) {
-				const pc = find_pc_by_player_id(window.PLAYER_ID, false);
-				if (!pc) return;
-				const token = window.all_token_objects[pc.sheet];
-				if (!token) return;
-				token[setOnOff](condition);
-				token.place_sync_persist();
-			} else {
-				tabCommunicationChannel.postMessage({
-					msgType: setOnOff, 
-					characterId: window.PLAYER_ID,
-					text: condition, 
-					sendTo: window.sendToTab
-				})
-			}
-		}
+        $(this).blur();
+        if(buffsDebuffs[i].condition != undefined) { // Allow buffsDebuffs with conditions to update player tokens
+          let setOnOff = 'removeCondition';
+          let condition = buffsDebuffs[i].condition;
+          if($(this).is(':checked')){
+            setOnOff = 'addCondition';
+          }
+          const menuOpen = avttBuffSelect.hasClass('visible');
+          const additionalCSS = menuOpen ? `.dropdown-check-list .avttBuffItems {
+                  display: block !important;
+                  position: absolute !important;
+                  background: var(--theme-background-solid) !important;
+                  z-index: 200 !important;
+              }` : '';
+          
+          if (is_abovevtt_page()) {
+            const pc = find_pc_by_player_id(window.PLAYER_ID, false);
+            if (!pc) return;
+            const token = window.all_token_objects[pc.sheet];
+            if (!token) return;
+            if(STANDARD_CONDITIONS.includes(condition)){
+              click_condition(condition, setOnOff == 'addCondition' ? true : false, menuOpen ? toggleBuffMenuVisiblity : undefined, additionalCSS);
+            }
+            else{
+              token[setOnOff](condition);
+            }
+            
+            token.place_sync_persist();
+          } else {
+            if(STANDARD_CONDITIONS.includes(condition)){
+              click_condition(condition, setOnOff == 'addCondition' ? true : false, menuOpen ? toggleBuffMenuVisiblity : undefined, additionalCSS);
+            }
+            else{
+              tabCommunicationChannel.postMessage({
+                msgType: setOnOff, 
+                characterId: window.PLAYER_ID,
+                text: condition, 
+                sendTo: window.sendToTab
+              })
+            }
+          }
+        }
       })
       row.find('span.favorite').off('click.favorite').on('click.favorite', function(e){
         e.preventDefault();

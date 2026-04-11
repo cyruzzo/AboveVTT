@@ -137,16 +137,17 @@ $(function() {
         enable_dice_streaming_feature(window.JOINTHEDICESTREAM);
        
         tabCommunicationChannel.addEventListener ('message', (event) => {
-		  if(event.data.msgType == 'addCondition' || event.data.msgType == 'removeCondition'){ // Sets a player token's condition on and off
-			const tokenId = Object.keys(window.all_token_objects).find(key => key.includes(event.data.characterId));
-			const pcToken = window.all_token_objects[tokenId];
-			const condition = event.data.text;
-			const setOnOff = event.data.msgType;
-			
-			pcToken[setOnOff](condition);
-			pcToken.place_sync_persist();
-		    return;
-		  }
+          if((event.data.msgType == 'addCondition' || event.data.msgType == 'removeCondition') && event.data.sendTo == window.PLAYER_ID){ // Sets a player token's condition on and off
+            const tokenId = Object.keys(window.all_token_objects).find(key => key.includes(event.data.characterId));
+            const pcToken = window.all_token_objects[tokenId];
+            if(!pcToken) return;
+            const condition = event.data.text;
+            const setOnOff = event.data.msgType;
+            
+            pcToken[setOnOff](condition);
+            pcToken.place_sync_persist();
+            return;
+          }
           if(event.data.msgType == 'CharacterData' && !find_pc_by_player_id(event.data.characterId, false))
             return;
           if(event.data.msgType == 'roll'){
