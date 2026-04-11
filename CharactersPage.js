@@ -1528,7 +1528,9 @@ function rebuild_buffs(fullBuild = false){
 			}
 			if (is_abovevtt_page()) {
 				const pc = find_pc_by_player_id(window.PLAYER_ID, false);
+				if (!pc) return;
 				const token = window.all_token_objects[pc.sheet];
+				if (!token) return;
 				token[setOnOff](condition);
 				token.place_sync_persist();
 			} else {
@@ -1613,7 +1615,9 @@ function rebuild_buffs(fullBuild = false){
 			}
 			if (is_abovevtt_page()) {
 				const pc = find_pc_by_player_id(window.PLAYER_ID, false);
+				if (!pc) return;
 				const token = window.all_token_objects[pc.sheet];
+				if (!token) return;
 				token[setOnOff](condition);
 				token.place_sync_persist();
 			} else {
