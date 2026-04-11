@@ -106,17 +106,20 @@ const buffsDebuffs = {
       "dmg": "0",
       "save": "-d4",
       "check": "0",
-      "type": "spell"
+      "type": "spell",
+	  "condition": "Baned",
   },
   "Bless": {
       "tohit": "+d4",
       "dmg": "0",
       "save": "+d4",
       "check": "0",
-      "type": "spell"
+      "type": "spell",
+	  "condition": "Blessed",
   },
   
   "Exhaustion": {
+    "condition": "Exhaustion",
     "multiOptions": {
       "-2": {
         "tohit": "0",
@@ -172,6 +175,7 @@ const buffsDebuffs = {
     },
     "newRoll": '2d20kl1',
     "type": "2024condition",
+	"condition": "Blinded",
   },
   "Frightened": {
     "tohit": "0",
@@ -185,6 +189,7 @@ const buffsDebuffs = {
     },
     "newRoll": '2d20kl1',
     "type": "2024condition",
+	"condition": "Frightened",
   },
   "Invisible": {
     "tohit": "0",
@@ -198,6 +203,7 @@ const buffsDebuffs = {
     },
     "newRoll": '2d20kl1',
     "type": "2024condition",
+	"condition": "Invisible"
   },
   "Poisoned": {
     "tohit": "0",
@@ -211,6 +217,7 @@ const buffsDebuffs = {
     },
     "newRoll": '2d20kl1',
     "type": "2024condition",
+	"condition": "Poisoned",
   },
   "Prone": {
     "tohit": "0",
@@ -223,6 +230,7 @@ const buffsDebuffs = {
     },
     "newRoll": '2d20kl1',
     "type": "2024condition",
+	"condition": "Prone",
   },
   "Restrained" :{
     "tohit": "0",
@@ -236,6 +244,7 @@ const buffsDebuffs = {
     },
     "newRoll": '2d20kl1',
     "type": "2024condition",
+	"condition": "Restrained",
   },
   "Rage": {
     "multiOptions": {
@@ -278,6 +287,7 @@ const buffsDebuffs = {
     },
     "type": "class",
     "class": "barbarian",
+    "condition": "Rage",
   },
   "Elemental Cleaver": {
     "multiOptions": {
@@ -1510,6 +1520,28 @@ function rebuild_buffs(fullBuild = false){
          window.rollBuffs = window.rollBuffs.filter(d => !d.includes(i)); 
         }
         localStorage.setItem('rollBuffs' + window.PLAYER_ID, JSON.stringify(window.rollBuffs));
+		if(buffsDebuffs[i].condition != undefined) { // Allow buffsDebuffs with conditions to update player tokens
+			let setOnOff = 'removeCondition';
+			let condition = buffsDebuffs[i].condition;
+			if($(this).val() != '0'){
+				setOnOff = 'addCondition';
+			}
+			if (is_abovevtt_page()) {
+				const pc = find_pc_by_player_id(window.PLAYER_ID, false);
+				if (!pc) return;
+				const token = window.all_token_objects[pc.sheet];
+				if (!token) return;
+				token[setOnOff](condition);
+				token.place_sync_persist();
+			} else {
+				tabCommunicationChannel.postMessage({
+					msgType: setOnOff, 
+					characterId: window.PLAYER_ID,
+					text: condition, 
+					sendTo: window.sendToTab
+				})
+			}
+		}
       })
       row.find('span.favorite').off('click.favorite').on('click.favorite', function(e){
         e.preventDefault();
@@ -1575,6 +1607,28 @@ function rebuild_buffs(fullBuild = false){
          window.rollBuffs = window.rollBuffs.filter(d => d != i); 
         }
         localStorage.setItem('rollBuffs' + window.PLAYER_ID, JSON.stringify(window.rollBuffs));
+		if(buffsDebuffs[i].condition != undefined) { // Allow buffsDebuffs with conditions to update player tokens
+			let setOnOff = 'removeCondition';
+			let condition = buffsDebuffs[i].condition;
+			if($(this).is(':checked')){
+				setOnOff = 'addCondition';
+			}
+			if (is_abovevtt_page()) {
+				const pc = find_pc_by_player_id(window.PLAYER_ID, false);
+				if (!pc) return;
+				const token = window.all_token_objects[pc.sheet];
+				if (!token) return;
+				token[setOnOff](condition);
+				token.place_sync_persist();
+			} else {
+				tabCommunicationChannel.postMessage({
+					msgType: setOnOff, 
+					characterId: window.PLAYER_ID,
+					text: condition, 
+					sendTo: window.sendToTab
+				})
+			}
+		}
       })
       row.find('span.favorite').off('click.favorite').on('click.favorite', function(e){
         e.preventDefault();
