@@ -1559,32 +1559,23 @@ function rebuild_buffs(fullBuild = false){
                   background: var(--theme-background-solid) !important;
                   z-index: 200 !important;
               }` : '';
-          if (is_abovevtt_page()) {
+          if(STANDARD_CONDITIONS.includes(condition)){
+              click_condition(condition, value, menuOpen ? toggleBuffMenuVisiblity : undefined, additionalCSS);
+          }
+          else if (is_abovevtt_page()) {        
             const pc = find_pc_by_player_id(window.PLAYER_ID, false);
             if (!pc) return;
             const token = window.all_token_objects[pc.sheet];
             if (!token) return;
-            if(STANDARD_CONDITIONS.includes(condition)){
-              click_condition(condition, value, menuOpen ? toggleBuffMenuVisiblity : undefined, additionalCSS);
-            }
-            else{
-              token[setOnOff](condition);
-            }
+            token[setOnOff](condition);
             token.place_sync_persist();
           } else {
-            if(STANDARD_CONDITIONS.includes(condition)){
-
-              click_condition(condition, value, menuOpen ? toggleBuffMenuVisiblity : undefined, additionalCSS);
-            }
-            else{
-              tabCommunicationChannel.postMessage({
-                msgType: setOnOff, 
-                characterId: window.PLAYER_ID,
-                text: condition, 
-                sendTo: window.sendToTab
-              })
-            }
-
+            tabCommunicationChannel.postMessage({
+              msgType: setOnOff, 
+              characterId: window.PLAYER_ID,
+              text: condition, 
+              sendTo: window.sendToTab
+            })
           }
         }
       })
@@ -1666,32 +1657,23 @@ function rebuild_buffs(fullBuild = false){
                   background: var(--theme-background-solid) !important;
                   z-index: 200 !important;
               }` : '';
-          
-          if (is_abovevtt_page()) {
+          if(STANDARD_CONDITIONS.includes(condition)){
+            click_condition(condition, setOnOff == 'addCondition' ? true : false, menuOpen ? toggleBuffMenuVisiblity : undefined, additionalCSS);
+          } else if (is_abovevtt_page()) {
             const pc = find_pc_by_player_id(window.PLAYER_ID, false);
             if (!pc) return;
             const token = window.all_token_objects[pc.sheet];
             if (!token) return;
-            if(STANDARD_CONDITIONS.includes(condition)){
-              click_condition(condition, setOnOff == 'addCondition' ? true : false, menuOpen ? toggleBuffMenuVisiblity : undefined, additionalCSS);
-            }
-            else{
-              token[setOnOff](condition);
-            }
-            
+
+            token[setOnOff](condition);
             token.place_sync_persist();
           } else {
-            if(STANDARD_CONDITIONS.includes(condition)){
-              click_condition(condition, setOnOff == 'addCondition' ? true : false, menuOpen ? toggleBuffMenuVisiblity : undefined, additionalCSS);
-            }
-            else{
-              tabCommunicationChannel.postMessage({
-                msgType: setOnOff, 
-                characterId: window.PLAYER_ID,
-                text: condition, 
-                sendTo: window.sendToTab
-              })
-            }
+            tabCommunicationChannel.postMessage({
+              msgType: setOnOff, 
+              characterId: window.PLAYER_ID,
+              text: condition, 
+              sendTo: window.sendToTab
+            })
           }
         }
       })
