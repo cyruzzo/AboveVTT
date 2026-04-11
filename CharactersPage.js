@@ -100,8 +100,6 @@ function getPB(){
   return parseInt($(".ct-proficiency-bonus-box__value").text());
 }
 
-// Modified by Lauriel April 2026
-// Added keyword 'condition' to link a buff to a character token's condition
 const buffsDebuffs = {
   "Bane": {
       "tohit": "-d4",
@@ -121,6 +119,7 @@ const buffsDebuffs = {
   },
   
   "Exhaustion": {
+    "condition": "Exhaustion",
     "multiOptions": {
       "-2": {
         "tohit": "0",
@@ -129,7 +128,6 @@ const buffsDebuffs = {
         "check": "0",
         "replace": /^1d20/gi,
         "newRoll": '1d20-2',
-		"condition": "Exhausted",
       },
       "-4": {
         "tohit": "0",
@@ -138,7 +136,6 @@ const buffsDebuffs = {
         "check": "0",
         "replace": /^1d20/gi,
         "newRoll": '1d20-4',
-		"condition": "Exhausted",
       },
       "-6": {
         "tohit": "0",
@@ -147,7 +144,6 @@ const buffsDebuffs = {
         "check": "0",
         "replace": /^1d20/gi,
         "newRoll": '1d20-6',
-		"condition": "Exhausted",
       },
       "-8": {
         "tohit": "0",
@@ -156,7 +152,6 @@ const buffsDebuffs = {
         "check": "0",
         "replace": /^1d20/gi,
         "newRoll": '1d20-8',
-		"condition": "Exhausted",
       },
       "-10": {
         "tohit": "0",
@@ -165,7 +160,6 @@ const buffsDebuffs = {
         "check": "0",
         "replace": /^1d20/gi,
         "newRoll": '1d20-10',
-		"condition": "Exhausted",
       }
     },
     "type": "2024condition",
@@ -181,6 +175,7 @@ const buffsDebuffs = {
     },
     "newRoll": '2d20kl1',
     "type": "2024condition",
+	"condition": "Blinded",
   },
   "Frightened": {
     "tohit": "0",
@@ -194,7 +189,7 @@ const buffsDebuffs = {
     },
     "newRoll": '2d20kl1',
     "type": "2024condition",
-	"condition": "Blinded",
+	"condition": "Frightened",
   },
   "Invisible": {
     "tohit": "0",
@@ -264,7 +259,6 @@ const buffsDebuffs = {
           "save": '.ddbc-saving-throws-summary__ability--str' 
         },
         "newRoll": '2d20kh1',
-		"condition": "Rage"
       },
       "+3": {
         "tohit": "0",
@@ -277,7 +271,6 @@ const buffsDebuffs = {
           "save": '.ddbc-saving-throws-summary__ability--str' 
         },
         "newRoll": '2d20kh1',
-		"condition": "Rage"
       },
       "+4": {
         "tohit": "0",
@@ -290,11 +283,11 @@ const buffsDebuffs = {
           "save": '.ddbc-saving-throws-summary__ability--str' 
         },
         "newRoll": '2d20kh1',
-		"condition": "Rage"
       },
     },
     "type": "class",
     "class": "barbarian",
+    "condition": "Rage",
   },
   "Elemental Cleaver": {
     "multiOptions": {
@@ -1527,6 +1520,26 @@ function rebuild_buffs(fullBuild = false){
          window.rollBuffs = window.rollBuffs.filter(d => !d.includes(i)); 
         }
         localStorage.setItem('rollBuffs' + window.PLAYER_ID, JSON.stringify(window.rollBuffs));
+		if(buffsDebuffs[i].condition != undefined) { // Allow buffsDebuffs with conditions to update player tokens
+			let setOnOff = 'removeCondition';
+			let condition = buffsDebuffs[i].condition;
+			if($(this).val() != '0'){
+				setOnOff = 'addCondition';
+			}
+			if (is_abovevtt_page()) {
+				const pc = find_pc_by_player_id(window.PLAYER_ID, false);
+				const token = window.all_token_objects[pc.sheet];
+				token[setOnOff](condition);
+				token.place_sync_persist();
+			} else {
+				tabCommunicationChannel.postMessage({
+					msgType: setOnOff, 
+					characterId: window.PLAYER_ID,
+					text: condition, 
+					sendTo: window.sendToTab
+				})
+			}
+		}
       })
       row.find('span.favorite').off('click.favorite').on('click.favorite', function(e){
         e.preventDefault();
@@ -1592,8 +1605,7 @@ function rebuild_buffs(fullBuild = false){
          window.rollBuffs = window.rollBuffs.filter(d => d != i); 
         }
         localStorage.setItem('rollBuffs' + window.PLAYER_ID, JSON.stringify(window.rollBuffs));
-		// Added by Lauriel April 2026
-		if(buffsDebuffs[i].condition != undefined) { // Allowing buffsDebuffs with conditions to update player tokens
+		if(buffsDebuffs[i].condition != undefined) { // Allow buffsDebuffs with conditions to update player tokens
 			let setOnOff = 'removeCondition';
 			let condition = buffsDebuffs[i].condition;
 			if($(this).is(':checked')){
@@ -1613,7 +1625,6 @@ function rebuild_buffs(fullBuild = false){
 				})
 			}
 		}
-		// End of section added by Lauriel April 2026
       })
       row.find('span.favorite').off('click.favorite').on('click.favorite', function(e){
         e.preventDefault();
