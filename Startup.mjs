@@ -137,6 +137,44 @@ $(function() {
         enable_dice_streaming_feature(window.JOINTHEDICESTREAM);
        
         tabCommunicationChannel.addEventListener ('message', (event) => {
+		  // Added by Lauriel April 2026
+		  // Sets a player token's condition on and off
+		  if(event.data.msgType == 'addCondition' || event.data.msgType == 'removeCondition'){
+			const tokenId = Object.keys(window.all_token_objects).find(key => key.includes(event.data.characterId));
+			const pcToken = window.all_token_objects[tokenId];
+			const pc = find_pc_by_player_id(event.data.characterId);
+			const condition = event.data.text;
+			const onRightPage = is_abovevtt_page();
+			
+			// DEBUGGING
+				let data = {
+					player: event.data.player,
+					img: event.data.img,
+					text: 'toggling ' + condition + ' on ' + pcToken.length + ' token(s) belonging to ' + pc.name + ' onRightPage = ' + onRightPage
+				};
+				window.MB.inject_chat(data);
+				notify_gamelog();			  
+
+			if(event.data.msgType == 'addCondition'){
+				for (let i = 0; i < pcToken.length; i++) { 
+					pcToken.addCondition(condition);
+				}
+//				pcToken.forEach(t => t.addCondition(condition));  
+			
+//			  pcToken.addCondition(condition);
+//			  window.TOKEN_OBJECTS[pc.sheet].addCondition(condition);
+			}
+			else {
+				for (let i = 0; i < pcToken.length; i++) { 
+					pcToken.removeCondition(condition);
+				}
+//				pcToken.forEach(t => t.removeCondition(condition));  
+//			  pcToken.removeCondition(condition);
+//			  window.TOKEN_OBJECTS[pc.sheet].removeCondition(condition);
+			}
+		    return;
+		  }
+		  // End of additions by Lauriel April 2026
           if(event.data.msgType == 'CharacterData' && !find_pc_by_player_id(event.data.characterId, false))
             return;
           if(event.data.msgType == 'roll'){

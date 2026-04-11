@@ -100,20 +100,24 @@ function getPB(){
   return parseInt($(".ct-proficiency-bonus-box__value").text());
 }
 
+// Modified by Lauriel April 2026
+// Added keyword 'condition' to link a buff to a character token's condition
 const buffsDebuffs = {
   "Bane": {
       "tohit": "-d4",
       "dmg": "0",
       "save": "-d4",
       "check": "0",
-      "type": "spell"
+      "type": "spell",
+	  "condition": "Baned",
   },
   "Bless": {
       "tohit": "+d4",
       "dmg": "0",
       "save": "+d4",
       "check": "0",
-      "type": "spell"
+      "type": "spell",
+	  "condition": "Blessed",
   },
   
   "Exhaustion": {
@@ -125,6 +129,7 @@ const buffsDebuffs = {
         "check": "0",
         "replace": /^1d20/gi,
         "newRoll": '1d20-2',
+		"condition": "Exhausted",
       },
       "-4": {
         "tohit": "0",
@@ -133,6 +138,7 @@ const buffsDebuffs = {
         "check": "0",
         "replace": /^1d20/gi,
         "newRoll": '1d20-4',
+		"condition": "Exhausted",
       },
       "-6": {
         "tohit": "0",
@@ -141,6 +147,7 @@ const buffsDebuffs = {
         "check": "0",
         "replace": /^1d20/gi,
         "newRoll": '1d20-6',
+		"condition": "Exhausted",
       },
       "-8": {
         "tohit": "0",
@@ -149,6 +156,7 @@ const buffsDebuffs = {
         "check": "0",
         "replace": /^1d20/gi,
         "newRoll": '1d20-8',
+		"condition": "Exhausted",
       },
       "-10": {
         "tohit": "0",
@@ -157,6 +165,7 @@ const buffsDebuffs = {
         "check": "0",
         "replace": /^1d20/gi,
         "newRoll": '1d20-10',
+		"condition": "Exhausted",
       }
     },
     "type": "2024condition",
@@ -185,6 +194,7 @@ const buffsDebuffs = {
     },
     "newRoll": '2d20kl1',
     "type": "2024condition",
+	"condition": "Blinded",
   },
   "Invisible": {
     "tohit": "0",
@@ -198,6 +208,7 @@ const buffsDebuffs = {
     },
     "newRoll": '2d20kl1',
     "type": "2024condition",
+	"condition": "Invisible"
   },
   "Poisoned": {
     "tohit": "0",
@@ -211,6 +222,7 @@ const buffsDebuffs = {
     },
     "newRoll": '2d20kl1',
     "type": "2024condition",
+	"condition": "Poisoned",
   },
   "Prone": {
     "tohit": "0",
@@ -223,6 +235,7 @@ const buffsDebuffs = {
     },
     "newRoll": '2d20kl1',
     "type": "2024condition",
+	"condition": "Prone",
   },
   "Restrained" :{
     "tohit": "0",
@@ -236,6 +249,7 @@ const buffsDebuffs = {
     },
     "newRoll": '2d20kl1',
     "type": "2024condition",
+	"condition": "Restrained",
   },
   "Rage": {
     "multiOptions": {
@@ -250,6 +264,7 @@ const buffsDebuffs = {
           "save": '.ddbc-saving-throws-summary__ability--str' 
         },
         "newRoll": '2d20kh1',
+		"condition": "Rage"
       },
       "+3": {
         "tohit": "0",
@@ -262,6 +277,7 @@ const buffsDebuffs = {
           "save": '.ddbc-saving-throws-summary__ability--str' 
         },
         "newRoll": '2d20kh1',
+		"condition": "Rage"
       },
       "+4": {
         "tohit": "0",
@@ -274,6 +290,7 @@ const buffsDebuffs = {
           "save": '.ddbc-saving-throws-summary__ability--str' 
         },
         "newRoll": '2d20kh1',
+		"condition": "Rage"
       },
     },
     "type": "class",
@@ -1575,6 +1592,21 @@ function rebuild_buffs(fullBuild = false){
          window.rollBuffs = window.rollBuffs.filter(d => d != i); 
         }
         localStorage.setItem('rollBuffs' + window.PLAYER_ID, JSON.stringify(window.rollBuffs));
+		// Added by Lauriel April 2026
+		// Allowing buffsDebuffs with conditions to update player tokens
+		if(buffsDebuffs[i].condition != undefined) {
+			let setOnOff = 'removeCondition';
+			if($(this).is(':checked')){
+				setOnOff = 'addCondition';
+			}
+			tabCommunicationChannel.postMessage({
+				msgType: setOnOff, 
+				characterId: window.PLAYER_ID,
+				text: buffsDebuffs[i].condition, 
+				sendTo: window.sendToTab
+			})
+		}
+		// End of section added by Lauriel April 2026
       })
       row.find('span.favorite').off('click.favorite').on('click.favorite', function(e){
         e.preventDefault();
