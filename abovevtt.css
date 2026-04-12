@@ -2773,7 +2773,8 @@ body:not(.encounter-builder-page) .sidebar__pane-content {
     right: 0;
     top: 28px;
     height: calc(100vh - 30px) !important;
-    width: var(--sidebar-width, 340px);
+    width: var(--sidebar-width, 340px) !important;
+    max-width: 600px !important;
 }
 body .gamelogcontainer .sidebar__pane-content {
     top: 0px !important;
@@ -2848,7 +2849,7 @@ body .gamelogcontainer .sidebar__pane-content {
 .sidebar__controls .tab-btn .sidebar-tab-image > div {
     width: 100%;
     height: 80%;
-    margin: 5% 0 0 0;
+    margin: 2px 0 0 0;
     background-color: #838383;
 }
 .avtt-sidebar-controls .tab-btn.selected-tab .sidebar-tab-image > div,
@@ -2861,7 +2862,7 @@ body .gamelogcontainer .sidebar__pane-content {
 .sidebar__controls .tab-btn .sidebar-tab-image > svg {
     width: 100%;
     height: 80%;
-    margin: 5% 0 0 0;
+    margin: 2px 0 0 0;
     color: #838383;
 }
 .avtt-sidebar-controls .tab-btn.selected-tab .sidebar-tab-image > svg,
@@ -7078,6 +7079,12 @@ button.avtt-roll-formula-button {
 }
 .ct-sidebar__inner .glc-game-log .abovevtt-sidebar-injected *{
     color: rgb(92, 112, 128);
+}
+.glc-game-log {
+    max-width: 600px !important;
+}
+[class*="GameLogEntry-Other-Flex"] {
+    height: fit-content !important;
 }
 .glc-game-log .popout-button{
     position: relative;
@@ -14783,7 +14790,7 @@ button#displayedDiceFormulaExit:hover {
 .mobileAVTTUI #zoom_buttons{
     display: flex;
     flex-direction: column-reverse !important;
-    right: 342px !important;
+    right: calc(var(--sidebar-width, 340px) + 2px) !important;
     top:26px;
     left:unset !important;
 }
