@@ -1033,15 +1033,6 @@ class MessageBroker {
 				window.REVEALED=msg.data;
 				redraw_fog();
 				check_token_visibility();
-			} else if (msg.eventType == "custom/myVTT/drawing") {
-				window.DRAWINGS.push(msg.data);
-				redraw_light_walls();		
-				redraw_drawings();
-				redraw_elev();
-				redraw_text();
-				redraw_drawn_light();
-				redraw_light();
-
 			} else if(msg.eventType=="custom/myVTT/drawdata"){
 				const wallsChanged = msg.data?.[0] == 'wallsChanged';
 				if(wallsChanged){
