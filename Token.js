@@ -29,7 +29,7 @@ const throttleLight = throttle((darknessMoved = false) => {
 	if (!window.walls || window.walls?.length < 5) {
 		redraw_light_walls();
 	} 
-	requestAnimationFrame(()=>{redraw_light(darknessMoved, 1000)})
+	redraw_light(darknessMoved, 1000)
 }, 1000/30);
 const throttleTokenCheck = mydebounce(throttle(do_check_token_visibility, 1000/4), 20);
 const debounceStoreExplored = mydebounce((exploredCanvas, sceneId) => {		
@@ -2050,7 +2050,7 @@ class Token {
 	 * @param placedToken token element in dom
 	 * @param ctx canvas context to check against moveable area.
 	 */
-	setTokenDragPos(tokenX, tokenY, placedToken, ctx){
+	setTokenDragPos(tokenX, tokenY, placedToken, ctxImageData){
 		try{
 			const token = this;
 			let canMove = true;
@@ -2063,13 +2063,11 @@ class Token {
 						`To fix this, have the DM delete your token and add it again. Refreshing the page will sometimes fix this as well.`
 					)
 				}									
-				const pixeldata = ctx.getImageData(left-2, top-2, 4, 4).data;			
+				const pixeldata = getPixelFromImageData(ctxImageData, left, top);	
+				
 				if(!token.isAoe()){
-					for(let i=0; i<pixeldata.length; i+=4){
-						if(pixeldata[i]<253 || pixeldata[i+1]<253 || pixeldata[i+2]<253){
-							canMove = false;
-							break;
-						}
+					if(pixeldata[0]<253 || pixeldata[1]<253 || pixeldata[2]<253){
+						canMove = false;
 					}
 					if (canMove){	
 						window.oldTokenPosition[token.options.id] = {
@@ -3050,8 +3048,7 @@ class Token {
 					x: 0,
 					y: 0
 				};
-			 	
-				let ctx;
+			 	let ctxImageData;
 				let dragStopTimer;
 				tok.draggable({
 					stop: function (event) {
@@ -3059,7 +3056,7 @@ class Token {
 							//$("#VTT").css('--grid-overlay-on-tmp', '0');	commented out as it's not consistent and is confusing can reasses if we enable other options for grid over			
 							window.DRAGGING = false;
 							window.enable_window_mouse_handlers();
-		
+							ctxImageData = null;
 							if(window.TOKEN_OBJECTS[self.options.id] != undefined){
 								self.sync();
 							}
@@ -3117,7 +3114,7 @@ class Token {
 								delete window.orig_zoom;
 							}, 200)
 							debounceAudioChecks();
-						},
+					},
 					start: function (event) {
 						event.stopPropagation();
 						//$("#VTT").css('--grid-overlay-on-tmp', '1'); commented out as it's not consistent and is confusing can reasses if we enable other options for grid over
@@ -3126,7 +3123,7 @@ class Token {
 						if (get_avtt_setting_value("allowTokenMeasurement")) {
 							$("#temp_overlay").css("z-index", "50");
 						}
-						ctx = window.moveOffscreenCanvasMaskContext
+					
 						window.DRAWFUNCTION = "select"
 						window.DRAGGING = true;
 						if (contextMenuLongPressTimer)
@@ -3252,7 +3249,7 @@ class Token {
 								
 								WaypointManager.setCanvas(canvas);
 						}
-
+						ctxImageData = window.moveOffscreenCanvasMaskContext.getImageData(0, 0, window.moveOffscreenCanvasMaskContext.canvas.width, window.moveOffscreenCanvasMaskContext.canvas.height);
 						remove_selected_token_bounding_box();
 					},
 
@@ -3272,12 +3269,8 @@ class Token {
 						let tinyToken = (Math.round(parseFloat(window.TOKEN_OBJECTS[this.dataset.id].options.gridSquares)*2)/2 < 1) || window.TOKEN_OBJECTS[this.dataset.id].isAoe();
 
 						if (should_snap_to_grid() && (window.CURRENT_SCENE_DATA.gridType == '2' || window.CURRENT_SCENE_DATA.gridType == '3')) { // ) {
-							//we really want the exact mouse position -
-							//someone fix this if there is a better way with this draggable impl
-							const scene = window.CURRENT_SCENE_DATA;
-							const rect = document.querySelector('#scene_map_container').getBoundingClientRect();
-							tokenX = (event.clientX - rect.left) * $("#scene_map").width() * scene.scale_factor / rect.width;
-							tokenY = (event.clientY - rect.top) * $("#scene_map").height() * scene.scale_factor / rect.height
+							tokenX = tokenX+self.sizeWidth()/2
+							tokenY = tokenY+self.sizeHeight()/2
 						}
 						//snap to where mouse is
 						let tokenPosition = snap_point_to_grid(tokenX, tokenY, undefined, tinyToken, self.options.size);
@@ -3293,8 +3286,10 @@ class Token {
 							left: Math.round(tokenPosition.x),
 							top: Math.round(tokenPosition.y)
 						};
-						
-						const canMove = self.setTokenDragPos(tokenPosition.x, tokenPosition.y, tok, ctx);
+						if(window.EXPERIMENTAL_SETTINGS.dragLight == true){
+							ctxImageData = window.moveOffscreenCanvasMaskContext.getImageData(0, 0, window.moveOffscreenCanvasMaskContext.canvas.width, window.moveOffscreenCanvasMaskContext.canvas.height);
+						}
+						const canMove = self.setTokenDragPos(tokenPosition.x, tokenPosition.y, tok, ctxImageData);
 
 						if (canMove){	
 							window.oldTokenPosition[self.options.id] = ui.position;				
@@ -3314,7 +3309,7 @@ class Token {
 									let curr = window.TOKEN_OBJECTS[id];
 									tokenX = offsetLeft + parseFloat(curr.orig_left);
 									tokenY = offsetTop + parseFloat(curr.orig_top);
-									curr.setTokenDragPos(tokenX, tokenY, tok, ctx);
+									curr.setTokenDragPos(tokenX, tokenY, tok, ctxImageData);
 								}
 							}													
 						}
