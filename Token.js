@@ -1591,7 +1591,7 @@ class Token {
 		const moreCond = $(`<div class='conditions' style='left:${bar_width}px;'/>`);
 		cond.css('left', "0");
 
-		const symbolSize = Math.min(bar_width >= 22 ? bar_width : (this.sizeWidth() / 4), 45);
+		const symbolSize = bar_width >= 22 ? bar_width : (this.sizeWidth() / 4);
 
 		moreCond.css('left', this.sizeWidth() - symbolSize);
 		[cond, moreCond].forEach(cond_bar => {
