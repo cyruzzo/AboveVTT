@@ -67,6 +67,32 @@ Mousetrap.bind('v', function () {       //video toggle
     $('#peerVideo_switch').click()
 });
 
+function fKeySaveLocation(e){
+    e.preventDefault();
+    window.savedLocations = {
+        ...window.savedLocations,
+        [e.key]: {
+            zoom: window.ZOOM,
+            scrollX: window.scrollX,
+            scrollY: window.scrollY
+        }
+    }
+    showTempMessage(`Location ${e.key} saved`, { fadeDelay:600, fadeTime:400 });
+}
+function fKeyGoToLocation(e){
+    e.preventDefault();
+    const locData = window.savedLocations?.[e.key];
+    if(!locData) return;
+    change_zoom(locData.zoom);
+    window.scrollTo({left: locData.scrollX, top: locData.scrollY, behavior: 'smooth'});
+}
+Mousetrap.bind(['shift+f1', 'shift+f2', 'shift+f3', 'shift+f4'], function (e) {    
+    fKeySaveLocation(e);
+})
+Mousetrap.bind(['f1', 'f2', 'f3', 'f4'], function (e) {    
+    fKeyGoToLocation(e);
+})
+
 Mousetrap.bind('shift+v', function () {    
     if(window.SelectedTokenVision == true && $('#selected_token_vision .ddbc-tab-options__header-heading--is-active').length==0){
         window.SelectedTokenVision = false;
@@ -259,7 +285,7 @@ Mousetrap.bind('shift+w', function () {
         $('#show_walls').toggleClass(['button-enabled', 'ddbc-tab-options__header-heading--is-active']);
         redraw_light_walls();
     }
-       
+
 });
 Mousetrap.bind('j', function () {
     if(window.DM){
@@ -290,22 +316,24 @@ Mousetrap.bind('shift+l', function () {
         $('#select_locked').click();
     }
 });
-
+if(is_spectator_page()){
+    Mousetrap.bind('shift+k', function () {
+        sendPointerEvent('#lock_view_button')
+    });
+}
 Mousetrap.bind('esc', function () {     //deselect all buttons
-
+    clear_temp_canvas();
     close_splash();
     $('#displayedDiceFormula').remove();
     delete window.numpadRollFormulaMod;
     delete window.numpadRollFormula;
 
-    stop_drawing();
-
-    if(!$("#wall_button").hasClass("button-enabled")){
-        $('#select-button').click();
-    }
-    else{
-        redraw_light_walls();
-    }
+    //reselect the current menu to trigger draw stop/reset, allows cancelling polygons or other drawings
+    //ensure menu stays open if it was open, as clicking the button again would close it
+    const enabledMenuHeader = $('.main-top-buttons>.drawbutton.button-enabled');
+    const visibleMenu = $('.top_menu.visible');
+    enabledMenuHeader.click();
+    visibleMenu.toggleClass('visible', true); 
 
     close_token_context_menu();
     $(".draggable-token-creation").addClass("drag-cancelled");
@@ -324,6 +352,7 @@ Mousetrap.bind('esc', function () {     //deselect all buttons
         // only close the sidebar if there isn't something on the screen explicitly trying to keep it open
         close_sidebar_modal();
     }
+    deselect_all_tokens();
     remove_tooltip();
     removeError();
 });

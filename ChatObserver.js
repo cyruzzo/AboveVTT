@@ -19,7 +19,7 @@ class ChatObserver {
                     return;
                 }
                 let slashCommandMatch = value.match(diceRollCommandRegex);
-                const timerCommandRegex = /^\/timer\s([\w\s\d]+\s)?(\d+):(\d+)/gi; 
+                const timerCommandRegex = /^\/timer\s([\p{L}\p{N}\p{M}\p{P}\s]+\s)?(\d+):(\d+)/giu;  
                 let timerCommandMatch = timerCommandRegex.exec(value);
                 if (slashCommandMatch !== null) {
                     if (self.#parseSlashCommand(value)) {

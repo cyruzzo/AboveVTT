@@ -243,18 +243,21 @@ function token_context_menu_expanded(tokenIds, e) {
 					 			 (doors[0][11] != undefined ? doors[0][11] : "")
 					];	
 					window.DRAWINGS.push(data);
-					window.wallUndo.push({
+					pushWallUndo({
 						undo: [data],
 						redo: [doors[0]]
 					})
 
 
-					redraw_light_walls();
-					redraw_drawn_light();
+					redraw_light_walls({wallsChanged: true});
+					redraw_drawn_light(); // could limit this to point line of sight tool drawings
+					redraw_drawings(); // could limit this to point line of sight tool drawings
+					redraw_fog(); // could limit this to point line of sight tool drawings
+					redraw_elev(); // could limit this to point line of sight tool drawings
 					redraw_light();
 
 
-					sync_drawings();
+					sync_drawings({wallsChanged: true});
 					if(window.TOKEN_OBJECTS[`${x1}${y1}${x2}${y2}${window.CURRENT_SCENE_DATA.id}`.replaceAll('.','')]  != undefined){
 						window.TOKEN_OBJECTS[`${x1}${y1}${x2}${y2}${window.CURRENT_SCENE_DATA.id}`.replaceAll('.','')].place_sync_persist();
 					}
@@ -411,7 +414,7 @@ function token_context_menu_expanded(tokenIds, e) {
 					 			 (doors[0][11] != undefined ? doors[0][11] : "")
 					 	]
 					 	window.DRAWINGS.push(data);
-					 	window.wallUndo.push({
+					 	pushWallUndo({
 							undo: [[...data]],
 						})
 						let clonePortalId = `${mouseX-5}${mouseY}${mouseX+5}${mouseY}${window.CURRENT_SCENE_DATA.id}`.replaceAll('.','') 
@@ -567,7 +570,7 @@ function token_context_menu_expanded(tokenIds, e) {
 					 			 (doors[0][11] != undefined ? doors[0][11] : "")
 					];	
 					window.DRAWINGS.push(data);
-					window.wallUndo.push({
+					pushWallUndo({
 						undo: [data],
 						redo: [doors[0]]
 					})
@@ -614,7 +617,7 @@ function token_context_menu_expanded(tokenIds, e) {
 				 			 (doors[0][11] != undefined ? doors[0][11] : "")
 				];	
 				window.DRAWINGS.push(data);
-				window.wallUndo.push({
+				pushWallUndo({
 					undo: [data],
 					redo: [doors[0]]
 				})
@@ -654,7 +657,7 @@ function token_context_menu_expanded(tokenIds, e) {
 				 			 (doors[0][11] != undefined ? doors[0][11] : "")
 				];	
 				window.DRAWINGS.push(data);
-				window.wallUndo.push({
+				pushWallUndo({
 					undo: [data],
 					redo: [doors[0]]
 				})

@@ -56,6 +56,7 @@ $(function() {
       .then(init_splash)              // show the splash screen; it reads from settings. That's why we show it here instead of earlier
       .then(harvest_campaign_secret)  // find our join link
       .then(set_campaign_secret)      // set it to window.CAMPAIGN_SECRET
+      .then(store_campaign_info)      // store gameId and campaign secret in localStorage for use on other pages
       .then(async () => {
         const maxRetries = 5
         const baseDelay = 500
@@ -136,6 +137,17 @@ $(function() {
         enable_dice_streaming_feature(window.JOINTHEDICESTREAM);
        
         tabCommunicationChannel.addEventListener ('message', (event) => {
+          if((event.data.msgType == 'addCondition' || event.data.msgType == 'removeCondition') && event.data.sendTo == window.PLAYER_ID){ // Sets a player token's condition on and off
+            const tokenId = Object.keys(window.all_token_objects).find(key => key.includes(event.data.characterId));
+            const pcToken = window.all_token_objects[tokenId];
+            if(!pcToken) return;
+            const condition = event.data.text;
+            const setOnOff = event.data.msgType;
+            
+            pcToken[setOnOff](condition);
+            pcToken.place_sync_persist();
+            return;
+          }
           if(event.data.msgType == 'CharacterData' && !find_pc_by_player_id(event.data.characterId, false))
             return;
           if(event.data.msgType == 'roll'){
@@ -1106,7 +1118,7 @@ async function start_above_vtt_for_players() {
     console.error("There isn't a player map! we need to display something!");
     startup_step("Start up complete. Waiting for DM to send us a map");
   }
-  if($('.dice-rolling-panel').length == 0){
+  if($('.dice-rolling-panel, [data-floating-ui-portal]').length == 0){
     showDiceDisabledWarning();
   }
 }

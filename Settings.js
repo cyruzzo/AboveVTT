@@ -354,6 +354,25 @@ function avtt_settings() {
 			class: 'ui',
 			global: 1
 		},
+		{	
+			name: "gridZoomConversion",
+			label: "Store Grid Visual Size",
+			description: "<p>This allows you to save a grid visual size. This is useful for in person play where you want to quickly set the grid size to match physical mini sizes.</p><p>The stored value will be based on the current scenes grid size and zoom level. It will then be able to calculate the correct zoom level to make the grid match the stored visual size on any scene. This may be different per device so you will have to store the value on the device you plan on adjusting zoom to match the stored visual size.</p><p>A quick toggle button will be added to the right side buttons when a value is stored</p>",
+			buttonText: ["Clear", "Store"],
+			type: "customButton",
+			customFunction: [
+				function (clickEvent, body) {
+					clear_avtt_setting('gridZoomConversion');
+					showTempMessage(`Grid visual size cleared`, { fadeDelay: 600, fadeTime: 400 });
+					$("#grid_zoom_conversion").css('display', 'none');
+				}, function (clickEvent, body) {
+					set_avtt_setting_value('gridZoomConversion', window.ZOOM*parseFloat(window.CURRENT_SCENE_DATA.hpps));
+					showTempMessage(`Grid visual size stored`, { fadeDelay: 600, fadeTime: 400 });
+					$("#grid_zoom_conversion").css('display', '');
+				}
+			],
+			class: 'ui'
+		},
 		{
 			name: "disableCombatText",
 			label: "Disable DM Damage Button Text",
@@ -1011,7 +1030,10 @@ function set_avtt_setting_value(name, newValue) {
 			break;
 	}
 }
-
+function clear_avtt_setting(name){
+	delete window.EXPERIMENTAL_SETTINGS[name];
+	persist_experimental_settings(window.EXPERIMENTAL_SETTINGS);
+}
 function is_valid_token_option_value(tokenOptionName, value) {
 	return token_setting_options().find(o => o.name === tokenOptionName)?.options?.map(value).includes(value);
 }

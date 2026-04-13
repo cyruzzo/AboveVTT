@@ -2005,17 +2005,18 @@ div#scene_properties form > div{
     pointer-events: none;
     max-width: 310px;
     white-space: pre-wrap;
-    transition: 0.1s linear 0.5s;
     position: fixed;
     display: inline-flex;
     transform: translate(58px, -25px);
     background-color: var(--background-color, rgb(249, 249, 249));
     border-radius: 10px;
     padding: 10px;
+    transition: 0.0s linear 0.0s;
 }
 #wall_menu [data-desc]:hover::after{
     opacity: 1;
     visibility: visible;
+    transition: 0.1s linear 1s;
 }
 .drawbutton.hasTooltip{
     position: relative;

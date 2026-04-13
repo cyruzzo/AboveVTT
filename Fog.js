@@ -1,4 +1,10 @@
 const POLYGON_CLOSE_DISTANCE = 15;
+const WALL_UNDO_MAX = 100;
+function pushWallUndo(entry) {
+	if (!window.wallUndo) window.wallUndo = [];
+	window.wallUndo.push(entry);
+	if (window.wallUndo.length > WALL_UNDO_MAX) window.wallUndo.shift();
+}
 const doorColors = {
 	0: {
 		'open': "rgba(255, 100, 255, 0.5)", // door
@@ -68,15 +74,21 @@ function sync_fog(){
 	window.MB.sendMessage("custom/myVTT/fogdata",window.REVEALED);
 }
 
-function sync_drawings(newDraw = true){
-
+function sync_drawings(options = {newDraw: true, wallsChanged: false}){
+	const {newDraw, wallsChanged} = {newDraw: true, wallsChanged: false, ...options};
 	if(!window.DM && newDraw == true){
 		if(window.playerDrawUndo == undefined)
 			window.playerDrawUndo = [];
 		window.playerDrawUndo.push(window.DRAWINGS[window.DRAWINGS.length-1]);
+		if (window.playerDrawUndo.length > WALL_UNDO_MAX) window.playerDrawUndo.shift();
 	}
-	
+	if(wallsChanged)
+		window.DRAWINGS.unshift("wallsChanged");
+
 	window.MB.sendMessage("custom/myVTT/drawdata",window.DRAWINGS);
+
+	if(wallsChanged)
+		window.DRAWINGS.shift();
 }
 
 
@@ -1305,7 +1317,7 @@ function redraw_grid(hpps=null, vpps=null, offsetX=null, offsetY=null, color=nul
 	draw_svg_grid(null, hpps, vpps, offsetX, offsetY, color, lineWidth, subdivide, dash);	
 }
 
-function draw_select_box(x0, y0, w, h, inside=false, selbox=false, group=false) {
+function draw_select_box(x0, y0, w, h, inside=false, selbox=false, group=false, aoeRotate=false) {
 	const sf = window.CURRENT_SCENE_DATA.scale_factor || 1.0;
 	$("#VTT").css({'--selbox-x': `${x0}`,
 		       '--selbox-y': `${y0}`,
@@ -1332,9 +1344,13 @@ function draw_select_box(x0, y0, w, h, inside=false, selbox=false, group=false) 
 	document.getElementById('selbox-rect')?.setAttribute('visibility', selbox ? 'visible' : 'hidden');
 	//$("#dragbox").css("mix-blend-mode", selbox ? "" : "difference"); //helps with visibility
 	if(selbox) {
-		if(group) {
+		if(group || aoeRotate) {
+			const aoeSvg = document.getElementById('aoeRotateSvg');
+			const regSvg = document.getElementById('groupRotateSvg');
 			rg2.setAttribute('transform', `translate(${(x0+w) / sf}, ${y0 / sf})`);
 			rg2.setAttribute('visibility','visible');
+			aoeSvg.setAttribute('visibility', aoeRotate ? 'visible' : 'hidden');
+			regSvg.setAttribute('visibility', !aoeRotate ? 'visible' : 'hidden');
 		} else {
 			rg2.setAttribute('visibility','hidden');
 		}
@@ -1350,6 +1366,8 @@ function hide_select_box() {
 	document.getElementById('selbox-rect')?.setAttribute('visibility', 'hidden');
 	document.getElementById('rot-grab')?.setAttribute('visibility', 'hidden');
 	document.getElementById('group-rot-grab')?.setAttribute('visibility', 'hidden');
+	document.getElementById('aoeRotateSvg')?.setAttribute('visibility', 'hidden');
+	document.getElementById('groupRotateSvg')?.setAttribute('visibility', 'hidden');
 }
 		
 function hide_wizarding_box() {
@@ -1408,6 +1426,16 @@ function reset_canvas(apply_zoom=true) {
 	const sceneMapWidth = $("#scene_map").width();
 	const sceneMapHeight = $("#scene_map").height();
 
+	if (!sceneMapWidth || !sceneMapHeight) {
+		showErrorMessage("Error loading scene.", `<p>Possible issues:</p>• The scene map link may be blank<br>• If using a video map ensure the "video map" toggle is enabled<br>• The file may not be publicly accessible (check share settings on host)<br>• The host may have rate limits on file access`);
+		set_default_vttwrapper_size();
+		$('#loadingStyles').remove();
+		$('.import-loading-indicator').remove();
+		remove_loading_overlay();
+		delete window.LOADING;
+		return false;
+	}
+
 	$('#darkness_layer').css({"width": sceneMapWidth, "height": sceneMapHeight});
 	$("#scene_map_container").css({"width": sceneMapWidth, "height": sceneMapHeight});
 	// grid overlay css tiling needs a container to fill that matches map
@@ -1436,7 +1464,7 @@ function reset_canvas(apply_zoom=true) {
 	if (!window.FOG_OF_WAR) {
 		const canvas = document.getElementById("fog_overlay");
 		canvas.getContext("2d").clearRect(0, 0, canvas.width, canvas.height);
-		return;
+		return true;
 	}
 
 	setVisionLightOffscreenCanvas(); //adding this here as it was previously being done every fill causing webgl issues
@@ -1448,9 +1476,6 @@ function reset_canvas(apply_zoom=true) {
 	redraw_elev();
 	set_weather_size(sceneMapWidth, sceneMapHeight);
 
-
- 	delete window.lightAuraClipPolygon;
- 	delete window.lineOfSightPolygons;
 
 	window.temp_canvas = document.getElementById("temp_overlay");;
 	window.temp_context = window.temp_canvas.getContext("2d");
@@ -1476,7 +1501,7 @@ function reset_canvas(apply_zoom=true) {
 	if(apply_zoom)
 		apply_zoom_from_storage();
 	redraw_text();
-	return;
+	return true;
 }
 function check_darkness_value(){
 	
@@ -1859,7 +1884,8 @@ function redraw_drawings() {
 			targetCtx.save();
 			targetCtx.filter = `blur(${lineBlur}px)`;
 		}
-		else if (shape == "eraser") {
+		
+		if (shape == "eraser") {
 			if (lineBlur != undefined) {
 				targetCtx.globalCompositeOperation = 'destination-out';
 				drawRect(targetCtx, x, y, width, height, '#000', true, 0);
@@ -2047,6 +2073,10 @@ function check_token_elev(tokenid, elevContext=undefined){
 
 function redraw_drawn_light(darknessMoved = false){
 	let lightCanvas = document.getElementById("light_overlay");
+	if (!lightCanvas?.width || !lightCanvas?.height) {
+		console.warn('Attempted light draw without scene being loaded or missing image');
+		return;
+	}
 	let lightCtx = lightCanvas.getContext("2d");
 	lightCtx.clearRect(0, 0, lightCanvas.width, lightCanvas.height);
 	const drawings = window.DRAWINGS.filter(d => d[1] == "light")
@@ -2152,7 +2182,28 @@ function setVisionLightOffscreenCanvas(){
 	create_or_set_offscreen_canvas('devilsightCanvas'); //devilsight canvas is used to combine with darkness aoe (or other magical darkness sources if implemented)
 	create_or_set_offscreen_canvas('truesightCanvas'); //this is stored and checked against in vision checks for invisible creatures (also works like devilsight for magical darkness)
 }
-function redraw_light_walls(clear=true, editingWallPoints = false){
+/*
+Clears and redraws all walls from window.DRAWINGS, also redraws wall heights if present.
+Rebuilds window.walls with Boundary objects for all walls.
+Places or adjusts door buttons with their current state.
+This stores line of sight data for 'point LoS' drawing tools, in draw, elev, light, fog menus.
+
+Options
+	clear: if true clears the canvas that shows the walls to the DM.
+			Used to force clearing this canvas when displayWalls is not expected to be true.
+			Most of the time we will want to clear this as we are immediately redrawing to that canvas. 
+			It also means less data stored in memory when not displaying walls as a cleared canvas is less memory then one with drawings on it
+	editingWallPoints: if true we have edit points selected, do reduced checks while we move/scale walls to prevent lag while editing.
+	wallsChanged: if true, force clearing the window.lightDrawingLosCache which stores line of sight data for 'point LoS' drawing tools, in draw, elev, light, fog menus. 
+					this is cleared on scene load already so this is only used when editing walls.
+*/
+function redraw_light_walls(options = {clearCanvas: true, editingWallPoints: false, wallsChanged: false}){
+	const {clearCanvas, editingWallPoints, wallsChanged} = {clearCanvas: true, editingWallPoints: false, wallsChanged: false, ...options};
+	if (wallsChanged){
+		window.lightDrawingLosCache = {};
+		window.lightAuraClipPolygon = {};
+		window.lineOfSightPolygons = {};
+	} 
 	let showWallsToggle = $('#show_walls').hasClass('button-enabled');
 	let canvas = document.getElementById("walls_layer");	
 
@@ -2168,7 +2219,7 @@ function redraw_light_walls(clear=true, editingWallPoints = false){
 	}
 	const { sceneWidth, sceneHeight } = getSceneMapSize();
 
-	if(displayWalls == true || clear)
+	if(displayWalls == true || clearCanvas)
 		ctx.clearRect(0, 0, canvas.width, canvas.height);
 
 
@@ -2216,7 +2267,7 @@ function redraw_light_walls(clear=true, editingWallPoints = false){
 
 		scale = (scale == undefined) ?  currentSceneScale/currentSceneConversion : scale/currentSceneConversion;
 		let adjustedScale = scale/currentSceneScale;
-		lineWidth = Math.min(lineWidth, Math.max(lineWidth/window.ZOOM/scale, 1));
+		lineWidth = Math.min(lineWidth, Math.max(lineWidth/window.ZOOM/currentSceneScale, 1));
 		if (displayWalls) {
 				
 			if(!editingWallPoints && ((wallBottom != undefined && wallBottom != '') || (wallTop != undefined && wallTop != ''))){
@@ -2382,7 +2433,7 @@ function redraw_light_walls(clear=true, editingWallPoints = false){
 										(doors[0][11] != undefined ? doors[0][11] : "")
 							];	
 							window.DRAWINGS.push(data);
-							window.wallUndo.push({
+							pushWallUndo({
 								undo: [[...data]],
 								redo: [[...doors[0]]]
 							})
@@ -2847,14 +2898,17 @@ function open_close_door(x1, y1, x2, y2, type=0){
 				 (doors[0][11] != undefined ? doors[0][11] : "")
 				];	
 	window.DRAWINGS.push(data);
-	window.wallUndo.push({
+	pushWallUndo({
 		undo: [[...data]],
 		redo: [[...doors[0]]]
 	})
-	redraw_light_walls();
-	redraw_drawn_light();
+	redraw_light_walls({wallsChanged: true});
+	redraw_drawn_light(); // could limit this to point line of sight tool drawings
+	redraw_drawings(); // could limit this to point line of sight tool drawings
+	redraw_fog(); // could limit this to point line of sight tool drawings
+	redraw_elev(); // could limit this to point line of sight tool drawings
 	debounceLightChecks();
-	sync_drawings();						
+	sync_drawings({wallsChanged: true});						
 }
 
 function stop_drawing() {
@@ -2870,6 +2924,8 @@ function stop_drawing() {
 	window.wallToStore = [];
 	window.selectedWalls = [];
 	window.wallsBeingDragged = [];
+	window.BEGIN_MOUSEX = undefined;
+	window.BEGIN_MOUSEY = undefined;
 }
 
 /**
@@ -2934,7 +2990,7 @@ function get_event_cursor_position(event, preventSnap = false) {
 		    window.DRAWSHAPE === 'line' ||
 			window.DRAWSHAPE === '3pointRect' ||
 			window.DRAWSHAPE === 'rect') &&
-	    $('#snap_walls').hasClass('button-enabled')
+	    window.SNAP_WALLS === true
     ) {
 	    return wall_snap(pointX, pointY);
     }
@@ -2974,6 +3030,11 @@ const [wall_snap, clear_wall_snap] = function () {
 			const adjustedScale =  walls[i][8]/adjustScale;
 			ret.push([walls[i][3]/adjustedScale,walls[i][4]/adjustedScale]);
 			ret.push([walls[i][5]/adjustedScale,walls[i][6]/adjustedScale]);		
+		}
+		// also snap to walls being drawn with shift or right click
+		for(let i=0; i<window.StoredWalls.length; i++){
+			ret.push([window.StoredWalls[i][0],window.StoredWalls[i][1]]);
+			ret.push([window.StoredWalls[i][2],window.StoredWalls[i][3]]);		
 		}
 		return ret;
 	}
@@ -3035,7 +3096,7 @@ function drawing_mousedown(e) {
 	window.DRAWLOCATION = data.location
 	window.DRAWSHAPE = window.drawAudioPolygon || window.drawTokenWallPolygon ? 'polygon' : data.shape;
 	window.DRAWFUNCTION = window.drawAudioPolygon ? 'audio-polygon' : window.drawTokenWallPolygon ? 'token-wall-polygon' : data.function;
-
+	window.SNAP_WALLS = Boolean(data.snap_walls);
 	//these are used with walls or elevation tool
 	window.wallTop = data.wall_top_height;
 	window.wallBottom = data.wall_base_height;
@@ -3246,7 +3307,7 @@ function drawing_mousedown(e) {
 				window.BEGIN_MOUSEY.push(pointY);
 				save3PointRect(e);
 				if(window.DRAWFUNCTION == 'wall')
-					redraw_light_walls(false);
+					redraw_light_walls({clearCanvas: false});
 				return;
 			} else {
 				window.BEGIN_MOUSEX.push(pointX);
@@ -3275,7 +3336,7 @@ function drawing_mousedown(e) {
 				window.BEGIN_MOUSEY.push(pointY);
 				save3PointRound(e);
 				if(window.DRAWFUNCTION == 'wall')
-					redraw_light_walls(false);
+					redraw_light_walls({clearCanvas: false});
 				return;
 			} else {
 				window.BEGIN_MOUSEX.push(pointX);
@@ -3486,11 +3547,7 @@ function drawing_mousemove(e) {
 
 					}
 				}
-	
-
-				
-				
-				redraw_light_walls(true, true);
+				redraw_light_walls({editingWallPoints: true});
 			}
 			else{
 				if (window.DRAWFUNCTION === "select" && e.button == 0){
@@ -4004,7 +4061,7 @@ function drawing_mouseup(e) {
 				 window.wallTop];
 			window.DRAWINGS.push(line4);
 
-			window.wallUndo.push({
+			pushWallUndo({
 				undo: [[...line1], [...line2], [...line3], [...line4]]
 			});
 		}
@@ -4033,12 +4090,12 @@ function drawing_mouseup(e) {
 						window.wallBottom,
 				 		window.wallTop];
 					window.DRAWINGS.push(data);
-					window.wallUndo.push({
+					pushWallUndo({
 						undo: [[...data]]
 					});
 			}
 			if(undoArray.length > 0){
-				window.wallUndo.push({
+				pushWallUndo({
 					undo: [...undoArray]
 				});
 			}
@@ -4046,13 +4103,14 @@ function drawing_mouseup(e) {
 			window.StoredWalls = [];
 			window.wallToStore = [];
 			window.MOUSEDOWN = false;
-			redraw_light_walls();
+			redraw_light_walls({wallsChanged:true});
 			redraw_light();
+			redraw_fog(); // could limit this to point line of sight tool drawings
 		}
 		redraw_elev();
 		redraw_drawn_light();
 		redraw_drawings();
-		sync_drawings();
+		sync_drawings({wallsChanged:window.DRAWFUNCTION == "wall" || window.DRAWFUNCTION == 'wall-door'});
 	}
 	else if (window.DRAWFUNCTION === "eraser"){
 		if (window.DRAWSHAPE === "rect"){
@@ -4446,15 +4504,18 @@ function drawing_mouseup(e) {
 				undoArray.push([...data]);
 			}					
 		}
- 		window.wallUndo.push({
+ 		pushWallUndo({
 			undo: [...undoArray],
 			redo: [...redoArray]
 		});
 
-		redraw_light_walls();
-        redraw_drawn_light();
+		redraw_light_walls({wallsChanged: true});
+       	redraw_drawn_light(); // could limit this to point line of sight tool drawings
+		redraw_drawings(); // could limit this to point line of sight tool drawings
+		redraw_fog(); // could limit this to point line of sight tool drawings
+		redraw_elev(); // could limit this to point line of sight tool drawings
         redraw_light();
-		sync_drawings();
+		sync_drawings({wallsChanged: true});
 	}
 	else if(window.DRAWFUNCTION === "wall-edit"){
 		if(window.DraggingWallPoints == undefined || window.DraggingWallPoints == false){
@@ -4574,13 +4635,16 @@ function drawing_mouseup(e) {
 				undoArray.push([...window.DRAWINGS[index]])
 				window.selectedWalls[i].wall = [...window.DRAWINGS[index]];	
 			}	
-			window.wallUndo.push({undo: [...undoArray], redo:[...redoArray], selectedWalls: originalSelected});
+			pushWallUndo({undo: [...undoArray], redo:[...redoArray], selectedWalls: originalSelected});
 		}
 
-      	redraw_light_walls();
-        redraw_drawn_light();
+      	redraw_light_walls({wallsChanged: true});
+        redraw_drawn_light(); // could limit this to point line of sight tool drawings
+		redraw_drawings(); // could limit this to point line of sight tool drawings
+		redraw_fog(); // could limit this to point line of sight tool drawings
+		redraw_elev(); // could limit this to point line of sight tool drawings
         redraw_light(true);
-		sync_drawings();
+		sync_drawings({wallsChanged: true});
 		window.MB.sendMessage("custom/myVTT/forceRedrawLight");
 		window.wallsBeingDragged = [];
 	
@@ -4677,6 +4741,30 @@ function drawing_contextmenu(e) {
 				window.DRAWCOLOR,
 				window.DRAWTYPE === "fill" || window.DRAWTYPE === "light",
 				1,
+				Math.round(((mousePosition.pageX - window.VTTMargin) * (1.0 / window.ZOOM))),
+				Math.round(((mousePosition.pageY - window.VTTMargin) * (1.0 / window.ZOOM)))
+			);
+		}
+		else{
+			// cancel polygon if on last point
+			clear_temp_canvas();
+		}
+	}
+	else if (window.DRAWSHAPE === "3pointRound") {
+		window.BEGIN_MOUSEX.pop();
+		window.BEGIN_MOUSEY.pop();
+		if(window.BEGIN_MOUSEX.length > 0){
+			let canvas = document.getElementById("temp_overlay");
+			let ctx = canvas.getContext("2d");
+			clear_temp_canvas();
+			draw3PointRound(
+				ctx,
+				joinPointsArray(
+					window.BEGIN_MOUSEX,
+					window.BEGIN_MOUSEY
+				),
+				window.DRAWCOLOR,
+				window.LINEWIDTH,
 				Math.round(((mousePosition.pageX - window.VTTMargin) * (1.0 / window.ZOOM))),
 				Math.round(((mousePosition.pageY - window.VTTMargin) * (1.0 / window.ZOOM)))
 			);
@@ -4903,8 +4991,8 @@ function handle_drawing_button_click() {
 		stop_drawing();
 		if(window.CURRENT_SCENE_DATA != undefined){
 			if($('#show_walls').hasClass('button-enabled') || $(clicked).is("#wall_button") || $("#wall_button").hasClass('ddbc-tab-options__header-heading--is-active')  || $('.top_menu.visible [data-shape="paint-bucket"]').hasClass('button-enabled')){
-				redraw_light_walls();
-				$('.hiddenDoor').css('display', 'block');	
+				redraw_light_walls(); 
+				$('.hiddenDoor').css('display', 'block');
 				$(`[id*='wallHeight']`).css('display', 'block');
 			}
 			else{
@@ -5296,9 +5384,10 @@ function draw3PointRound(ctx, points, style, lineWidth,
 	const ret = [];
 	const pts = (mouseX !== null && mouseY !== null) ? [...points, {x: mouseX, y: mouseY}] : points
 	if(pts.length < 2) return ret;
-	const radius = Math.sqrt(Math.pow(pts[0].x - pts[1].x, 2) + Math.pow(pts[0].y - pts[1].y, 2));
-	const startAngle = Math.atan2(pts[0].y - pts[1].y, pts[0].x - pts[1].x);
-	let endAngle = pts.length < 3 ? (startAngle - 2 * Math.PI) : Math.atan2(pts[2].y - pts[1].y, pts[2].x - pts[1].x);
+	const pt1 = {x:(pts[1].x + pts[0].x)/2, y:(pts[1].y + pts[0].y)/2}
+	const radius = Math.sqrt(Math.pow(pts[0].x - pts[1].x, 2) + Math.pow(pts[0].y - pts[1].y, 2))/2;
+	const startAngle = Math.atan2(pts[0].y - pt1.y, pts[0].x - pt1.x);
+	let endAngle = pts.length < 3 ? (startAngle - 2 * Math.PI) : Math.atan2(pts[2].y - pt1.y, pts[2].x - pt1.x);
 	while(endAngle <= startAngle) {
 		endAngle += 2 * Math.PI;
 	}
@@ -5315,8 +5404,8 @@ function draw3PointRound(ctx, points, style, lineWidth,
 	const segments = Math.min(density, Math.ceil(density * ((endAngle - startAngle) / (2 * Math.PI))));
 	for (let i = 0; i <= segments; i++) {
 		const currentAngle = startAngle + (endAngle - startAngle) * (i / segments);
-		const x = (pts[1].x + radius * Math.cos(currentAngle));
-		const y = (pts[1].y + radius * Math.sin(currentAngle));
+		const x = (pt1.x + radius * Math.cos(currentAngle));
+		const y = (pt1.y + radius * Math.sin(currentAngle));
 		if(ctx) {
 			ctx[ i === 0 ? "moveTo" : "lineTo"](x / scale, y / scale);
 		} else {
@@ -5553,14 +5642,17 @@ function save3PointRect(e){
 			undoArray.push([...data]);
 		}
 
-		window.wallUndo.push({
+		pushWallUndo({
 			undo: [...undoArray]
 		});
-			
+
 
 		window.MOUSEDOWN = false;
-		redraw_light_walls();
-        redraw_drawn_light();
+		redraw_light_walls({wallsChanged: true});
+        redraw_drawn_light(); // could limit this to point line of sight tool drawings
+		redraw_drawings(); // could limit this to point line of sight tool drawings
+		redraw_fog(); // could limit this to point line of sight tool drawings
+		redraw_elev(); // could limit this to point line of sight tool drawings
         redraw_light();
 	}
 	else if(window.DRAWFUNCTION === "elev"){
@@ -5601,7 +5693,7 @@ function save3PointRect(e){
 	clear_temp_canvas()
 
 	if (window.DRAWFUNCTION === "draw" || window.DRAWFUNCTION === "wall" || window.DRAWFUNCTION === 'elev') {
-		sync_drawings();
+		sync_drawings({wallsChanged: window.DRAWFUNCTION === "wall"});
 	} else {
 		sync_fog();
 	}
@@ -5629,15 +5721,18 @@ function save3PointRound(e){  //only used for wall currently
 		window.DRAWINGS.push(l);
 		undoArray.push(l);
 	}
-	window.wallUndo.push({
+	pushWallUndo({
 		undo: [...undoArray]
 	});
 	window.MOUSEDOWN = false;
-	redraw_light_walls();
-        redraw_drawn_light();
-        redraw_light();
+	redraw_light_walls({wallsChanged: true});
+	redraw_drawn_light(); // could limit this to point line of sight tool drawings
+	redraw_drawings(); // could limit this to point line of sight tool drawings
+	redraw_fog(); // could limit this to point line of sight tool drawings
+	redraw_elev(); // could limit this to point line of sight tool drawings
+	redraw_light();
 	clear_temp_canvas()
-	sync_drawings();
+	sync_drawings({wallsChanged: true});
 	window.BEGIN_MOUSEX = [];
 	window.BEGIN_MOUSEY = [];
 }
@@ -6255,7 +6350,7 @@ function init_draw_menu(buttons){
         	window.playerDrawUndo.splice(window.playerDrawUndo.length-1, 1)
 		    redraw_drawn_light();
             redraw_drawings()
-			sync_drawings(false)
+			sync_drawings({newDraw: false})
         }
         else{
 	        while (currentElement--) {
@@ -6263,7 +6358,7 @@ function init_draw_menu(buttons){
 	                window.DRAWINGS.splice(currentElement, 1)
 	                redraw_drawn_light();
 	                redraw_drawings()
-					sync_drawings()
+					sync_drawings({newDraw: false})
 	                break
 	            }
 	        }
@@ -6325,21 +6420,21 @@ function init_walls_menu(buttons){
 				 	Height Convert
 			</button>
 		</div>`);
-	wall_menu.append("<div class='wall-input menu-subtitle'>Wall Base</div>");
-	const wallBaseDesc = `Sets the elevation of the base of the wall. 
+			const wallBaseDesc = `Sets the elevation of the base of the wall. 
 Any token with elevation below this height will be able to see under the wall.
 When left blank it is treated as negative infinity, preventing tokens from seeing under the wall.`
+	wall_menu.append(`<div class='wall-input menu-subtitle' data-desc='${wallBaseDesc}'>Wall Base</div>`);
 	wall_menu.append(
-		`<div data-desc="${wallBaseDesc}">
+		`<div>
 			<input id='wall_base_height' type='number' step='5' data-required="wall_base_height" style='width:90%'
 			value='' >
 		</div>`);
 	const wallTopDesc = `Sets the elevation of the top of the wall. 
 Any token with elevation above this height will be able to see over the wall.
 When left blank it is treated as infinity, preventing tokens from seeing over the wall.`		
-	wall_menu.append("<div class='wall-input menu-subtitle'>Wall Top</div>");
+	wall_menu.append(`<div class='wall-input menu-subtitle' data-desc='${wallTopDesc}'>Wall Top</div>`);
 	wall_menu.append(
-		`<div data-desc="${wallTopDesc}">
+		`<div>
 			<input id='wall_top_height' type='number' step='5' data-required="wall_top_height" style='width:90%'
 			value=''>
 		</div>`);
@@ -6381,7 +6476,7 @@ When left blank it is treated as infinity, preventing tokens from seeing over th
 	const snapDesc = `Toggle to snap wall drawing to other nearby wall end points. This overrides grid snapping if enabled.`	
 	wall_menu.append(
 		`<div class='ddbc-tab-options--layout-pill menu-option' data-desc="${snapDesc}">
-			<button id='snap_walls' data-toggle='true' class='drawbutton menu-option ddbc-tab-options__header-heading ${(window.snapWallsToggle) ? "button-enabled" : ''}'>
+			<button id='snap_walls' data-key="snap_walls" data-value="true" data-toggle='true' class='drawbutton menu-option ddbc-tab-options__header-heading ${(window.snapWallsToggle) ? "button-enabled" : ''}'>
 				Join Snap
 			</button>
 		</div>`);
@@ -6405,7 +6500,7 @@ Example usage:
 		`<div class='ddbc-tab-options--layout-pill menu-option' data-desc="${hiddenIconsDesc}">
 			<button id='draw_door_hidden' class='drawbutton menu-option  ddbc-tab-options__header-heading'
 				data-key="hidden_icon" data-toggle="true" data-value="true">
-				 	Hidden Icon
+				 	Hidden Icons
 			</button>
 		</div>`);
 	const editWallDesc = `Select wall points to edit. Once selected you can drag to move them or shift+drag to scale them.`
@@ -6463,10 +6558,13 @@ Example usage:
 					window.TOKEN_OBJECTS[token].delete(true);
 				}
 			}
-			redraw_light_walls();
-			redraw_drawn_light();
+			redraw_light_walls({wallsChanged: true});
+			redraw_drawn_light(); // could limit this to point line of sight tool drawings
+			redraw_drawings(); // could limit this to point line of sight tool drawings
+			redraw_fog(); // could limit this to point line of sight tool drawings
+			redraw_elev(); // could limit this to point line of sight tool drawings
 			redraw_light();
-			sync_drawings();
+			sync_drawings({wallsChanged: true});
 		}
 	});
 	wall_menu.find("#wall_undo").click(function() {
@@ -6497,10 +6595,13 @@ Example usage:
 	        if(wallUndo.selectedWalls != undefined){
 	        	window.selectedWalls = [...wallUndo.selectedWalls]
 	        }
-          	redraw_light_walls();
-	        redraw_drawn_light();
+          	redraw_light_walls({wallsChanged: true});
+	        redraw_drawn_light(); // could limit this to point line of sight tool drawings
+			redraw_drawings(); // could limit this to point line of sight tool drawings
+			redraw_fog(); // could limit this to point line of sight tool drawings
+			redraw_elev(); // could limit this to point line of sight tool drawings
 	        redraw_light();
-			sync_drawings();
+			sync_drawings({wallsChanged: true});
         }   
 	});
 
@@ -6606,7 +6707,7 @@ function init_elev_menu(buttons){
             if (window.DRAWINGS[currentElement][1] == 'elev'){
                 window.DRAWINGS.splice(currentElement, 1)
                 redraw_elev();
-                redraw_light_walls();
+                redraw_light_walls(); 
 		        redraw_drawn_light();
 		        redraw_light();
 				sync_drawings()
