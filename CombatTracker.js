@@ -283,27 +283,7 @@ function init_combat_tracker(){
 			if(window.TOKEN_OBJECTS[currentTarget] != undefined){
 				window.TOKEN_OBJECTS[currentTarget].options.current = true;
 				window.TOKEN_OBJECTS[currentTarget].update_and_sync();
-				let combatSettingData = getCombatTrackerSettings();
-				let group = false;
-				if(window.TOKEN_OBJECTS[currentTarget].options.combatGroupToken){
-					group = Object.values(window.TOKEN_OBJECTS).find(d=> d.options.combatGroup == window.TOKEN_OBJECTS[currentTarget].options.combatGroup && !d.options.combatGroupToken);
-				}
-				if(combatSettingData['scroll_to_next'] == '1'){
-					if(group){
-						window.TOKEN_OBJECTS[group.options.id].highlight();
-					}
-					else{
-						window.TOKEN_OBJECTS[currentTarget].highlight();
-					}				
-				}	
-				if(combatSettingData['select_next'] == '1'){
-					if(group){
-						$(`#tokens .token[data-id='${group.options.id}']`).click();
-					}
-					else{
-						$(`#tokens .token[data-id='${currentTarget}']`).click();
-					}	
-				}
+
 			}
 
 		}
@@ -340,26 +320,7 @@ function init_combat_tracker(){
 				adjust_reaction_condition(window.TOKEN_OBJECTS[newTarget]);
 				window.TOKEN_OBJECTS[newTarget].place_sync_persist();
 				let combatSettingData = getCombatTrackerSettings();
-				let group = false;
-				if(window.TOKEN_OBJECTS[newTarget].options.combatGroupToken){
-					group = Object.values(window.TOKEN_OBJECTS).find(d=> d.options.combatGroup == window.TOKEN_OBJECTS[newTarget].options.combatGroup && !d.options.combatGroupToken);
-				}
-				if(combatSettingData['scroll_to_next'] == '1'){
-					if(group){
-						window.TOKEN_OBJECTS[group.options.id].highlight();
-					}
-					else{
-						window.TOKEN_OBJECTS[newTarget].highlight();
-					}				
-				}	
-				if(combatSettingData['select_next'] == '1'){
-					if(group){
-						$(`#tokens .token[data-id='${group.options.id}']`).click();
-					}
-					else{
-						$(`#tokens .token[data-id='${newTarget}']`).click();
-					}	
-				}
+				highlight_scroll_next(newTarget);
 			}
 
 		}
@@ -405,26 +366,7 @@ function init_combat_tracker(){
 				window.TOKEN_OBJECTS[newTarget].place_sync_persist();
 				window.TOKEN_OBJECTS[newTarget].build_conditions(prev, true);
 				let combatSettingData = getCombatTrackerSettings();
-				let group = false;
-				if(window.TOKEN_OBJECTS[newTarget].options.combatGroupToken){
-					group = Object.values(window.TOKEN_OBJECTS).find(d=> d.options.combatGroup == window.TOKEN_OBJECTS[newTarget].options.combatGroup && !d.options.combatGroupToken);
-				}
-				if(combatSettingData['scroll_to_next'] == '1'){
-					if(group){
-						window.TOKEN_OBJECTS[group.options.id].highlight();
-					}
-					else{
-						window.TOKEN_OBJECTS[newTarget].highlight();
-					}				
-				}	
-				if(combatSettingData['select_next'] == '1'){
-					if(group){
-						$(`#tokens .token[data-id='${group.options.id}']`).click();
-					}
-					else{
-						$(`#tokens .token[data-id='${newTarget}']`).click();
-					}	
-				}
+				highlight_scroll_next(newTarget);
 			}
 		}
 		debounceCombatPersist();
@@ -502,6 +444,32 @@ function init_combat_tracker(){
 	if(getCombatTrackerSettings().carousel == '1'){
 		init_carousel_combat_tracker()
 	}
+}
+function highlight_scroll_next(currentTarget){
+	let combatSettingData = getCombatTrackerSettings();
+	if(combatSettingData['scroll_to_next'] != '1' && combatSettingData['select_next'] != '1')
+		return;
+
+	let group = false;
+	if(window.TOKEN_OBJECTS[currentTarget].options.combatGroupToken){
+		group = Object.values(window.TOKEN_OBJECTS).find(d=> d.options.combatGroup == window.TOKEN_OBJECTS[currentTarget].options.combatGroup && !d.options.combatGroupToken);
+	}
+	const targetToken = group ? window.TOKEN_OBJECTS[group.options.id] : window.TOKEN_OBJECTS[currentTarget];
+	const tokenId = targetToken.options.id;
+	const domToken = $(`#tokens .token[data-id='${tokenId}']`)
+	const tokenVisible = window.DM || (targetToken.options.hidden !== true && domToken.is(':not(.notVisible)'));
+	const playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
+	const isPlayerToken = targetToken.isCurrentPlayer() || (playerTokenId == undefined && window.TOKEN_OBJECTS[tokenId].options.itemType == 'pc');
+	const tokenOwned = window.DM || isPlayerToken || targetToken.options.player_owned == true;
+	const tokenShared = tokenOwned || window.TOKEN_OBJECTS[tokenId].options.share_vision == true || window.TOKEN_OBJECTS[tokenId].options.share_vision == window.myUser || (window.TOKEN_OBJECTS[tokenId].options.share_vision && is_spectator_page()) 
+
+	if(combatSettingData['select_next'] == '1' && targetToken.selected == false && (tokenShared || tokenOwned)){
+		domToken.click();
+	}
+	if(combatSettingData['scroll_to_next'] == '1' && tokenVisible){	
+		targetToken.highlight();			
+	}	
+	
 }
 function init_carousel_combat_tracker(){
     $('#combat_carousel_container, #combat_area_carousel').remove();
@@ -1387,7 +1355,7 @@ function ct_add_token(token,persist=true,disablerolling=false, adv=false, dis=fa
 	}
 	else {
 		hp.off('click.message').on('click.message', function(){
-			showTempMessage('Player HP must be adjusted on the character sheet.')
+			showTempMfessage('Player HP must be adjusted on the character sheet.')
 		})
 		hp_input.keydown(function(e) { if (e.keyCode == '13') token.update_from_page(); e.preventDefault(); }); // DISABLE WITHOUT MAKING IT LOOK UGLY
 		maxhp_input.keydown(function(e) { if (e.keyCode == '13') token.update_from_page(); e.preventDefault(); });
@@ -1678,7 +1646,7 @@ function ct_load(data=null){
 					window.ROUND_NUMBER = data[i]['round_number'];
 					document.getElementById('round_number').value = window.ROUND_NUMBER;
 					const autoInit = trackerSettings.auto_init;
-					const tokenInCombat = $(`#combat_area tr[data-target='${window.pcs.find(d => d.sheet.includes(window.PLAYER_SHEET)).sheet}']`).length > 0;
+					const tokenInCombat = $(`#combat_area tr[data-target='${window.pcs.find(d => d.sheet.includes(window.PLAYER_SHEET))?.sheet}']`).length > 0;
 					if(autoInit == '1' && !window.DM && tokenInCombat == true){
 						$('.roll-init-button').click();
 					}
@@ -1711,26 +1679,7 @@ function ct_load(data=null){
 				if(data[i]['current']){				
 					$("#combat_area tr[data-target='"+data[i]['data-target']+"']").attr("data-current","1");
 					if(window.TOKEN_OBJECTS[data[i]['data-target']] != undefined){
-						let group = false;
-						if(window.TOKEN_OBJECTS[data[i]['data-target']].options.combatGroupToken){
-							group = Object.values(window.TOKEN_OBJECTS).find(d=> d.options.combatGroup == window.TOKEN_OBJECTS[data[i]['data-target']].options.combatGroup && !d.options.combatGroupToken);
-						}
-						if(trackerSettings['scroll_to_next'] == '1'){
-							if(group){
-								window.TOKEN_OBJECTS[group.options.id].highlight();
-							}
-							else{
-								window.TOKEN_OBJECTS[data[i]['data-target']].highlight();
-							}				
-						}	
-						if(trackerSettings['select_next'] == '1'){
-							if(group){
-								$(`#tokens .token[data-id='${group.options.id}']`).click();
-							}
-							else{
-								$(`#tokens .token[data-id='${data[i]['data-target']}']`).click();
-							}	
-						}
+						highlight_scroll_next(data[i]['data-target']);
 					}
 					if(window.all_token_objects[data[i]['data-target']].isCurrentPlayer() || window.all_token_objects[data[i]['data-target']].options.player_owned){
 						$("#endplayerturn").toggleClass('enabled', true);
