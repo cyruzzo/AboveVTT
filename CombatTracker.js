@@ -1352,6 +1352,20 @@ function ct_add_token(token,persist=true,disablerolling=false, adv=false, dis=fa
 		maxhp_input.click(function(e) {
 			$(e.target).select();
 		});
+		hp_input.on('wheel', function(e) {
+			e.preventDefault();
+			const delta = e.originalEvent.deltaY < 0 ? 1 : -1;
+			const current = parseInt(token.hp) || 0;
+			$(this).val(Math.max(0, current + delta));
+			$(this).trigger('change');
+		});
+		maxhp_input.on('wheel', function(e) {
+			e.preventDefault();
+			const delta = e.originalEvent.deltaY < 0 ? 1 : -1;
+			const current = parseInt(token.maxHp) || 0;
+			$(this).val(Math.max(1, current + delta));
+			$(this).trigger('change');
+		});
 	}
 	else {
 		hp.off('click.message').on('click.message', function(){
