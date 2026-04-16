@@ -1498,30 +1498,22 @@ function showErrorMessage(error, ...extraInfo) {
   
   const extraStrings = extraInfo.map(ei => {
     if (typeof ei === "object") {
-      if(JSON.stringify(ei).length>300)
-        return JSON.stringify(ei).substr(0, 300) + "...";
-      else
-        return JSON.stringify(ei)
+      return JSON.stringify(ei)
     } else {
-      if(ei?.toString().length>300)
-        return ei?.toString().substr(0, 300) + "...";
-      else
-        return ei?.toString()
+      return ei?.toString()
     }
   }).join('<br />');
   if(typeof error.message == 'object'){
     error.message = JSON.strigify(error.message);
   }
   let container = $("#above-vtt-error-message");
-  if(error.message.length > 300)
-    error.message = error.message.substr(0, 300) + "...";
   if ($('#error-message-stack').length == 0) {
     $("#above-vtt-error-message").remove();
     const container = $(`
       <div id="above-vtt-error-message">
         <h2>An unexpected error occurred!</h2>
         <h3 id="error-message">${error.message}</h3>
-        <div id="error-message-details">${extraStrings}</div>
+        <div id="error-message-details" style="max-height: 200px; overflow-y: auto;">${extraStrings}</div>
         <pre id="error-message-stack" style='max-height: 200px;'>${error.message}<br/>${extraStrings}</pre>
         <div id="error-github-issue"></div>
         <div class="error-message-buttons">
