@@ -437,14 +437,14 @@ function map_load_error_cb(e) {
 	$('#loadingStyles').remove();
 	console.error("map_load_error_cb src", src, e);
 	if (typeof src === "string") {
-		let specificMessage = `Please make sure the image is accessible to anyone on the internet.`;
 		if (src.includes("drive.google") || window.CURRENT_SCENE_DATA.map.includes("drive.google")) {
 			showGoogleDriveWarning();
 		}
-		else if (confirm(`Map could not be loaded!\n${specificMessage}\nYou may also need to disable ad blockers.\nWould you like to try loading the image in a separate tab to verify that it's accessible? If you are currently logged in to google, you will need to log out or open the image in a different browser or an incognito window to truly test it.`)) {
-			if (window.DM || confirm(`SPOILER ALERT!!!\nIf you click OK, you might see the entire map without fog of war. However, the map isn't loading at all so you will probably see a broken link. Are you sure you want to test this image?`)) {
-				window.open(window.CURRENT_SCENE_DATA.map, '_blank');
-			}
+		else {
+			let mapUrl = window.CURRENT_SCENE_DATA?.map || '';
+			let spoilerWarning = !window.DM ? '<br><b>Spoiler warning:</b> clicking this link may reveal the scene image if it is only failing to load in AboveVTT.<br>' : '';
+			let openLink = mapUrl ? `${spoilerWarning}<br><a target="_blank" href="${mapUrl}">Open map image in new tab</a>` : '';
+			showErrorMessage("Map could not be loaded.", `<p>Possible issues:</p>• The map URL may be blank or invalid<br>• If using a video map ensure the "video map" toggle is enabled<br>• The file may not be publicly accessible (check share settings on the host)<br>• The host may have rate limits or has removed the file<br>• An adblocker, VPN, or content filter may be blocking the image host${openLink}`);
 		}
 	}
 	delete window.LOADING;
