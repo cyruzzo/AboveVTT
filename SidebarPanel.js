@@ -736,7 +736,7 @@ class SidebarListItem {
     if(monsterData.img_main == null || monsterData.img_main == "http://api.open5e.com/"){
       monsterData.img_main = 'https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg'
     }
-    let item = new SidebarListItem(monsterData.slug, monsterData.name, monsterData.img_main, ItemType.Open5e, RootFolder.Open5e.path, RootFolder.Open5e.id);
+    let item = new SidebarListItem(monsterData.key, monsterData.name, monsterData.img_main, ItemType.Open5e, RootFolder.Open5e.path, RootFolder.Open5e.id);
     item.monsterData = monsterData;
     return item;
   }
@@ -2035,7 +2035,7 @@ function build_sidebar_list_row(listItem) {
       row.attr("data-monster", listItem.monsterData.id);
       subtitle.append(`<div class="subtitle-attibute"><span class="plain-text">CR</span>${convert_challenge_rating_id(listItem.monsterData.challengeRatingId)}</div>`);
       if (listItem.monsterData.isHomebrew === true) {
-        subtitle.append(`<div class="subtitle-attibute"><span class="material-icons" style="width: 15px;font-family: 'Material Symbols Outlined'; font-size:15px;">book_2</span>${listItem.monsterData.document__slug}</div>`);
+        subtitle.append(`<div class="subtitle-attibute"><span class="material-icons" style="width: 15px;font-family: 'Material Symbols Outlined'; font-size:15px;">book_2</span>${listItem.monsterData.document?.key}</div>`);
       } 
       break;
     case ItemType.BuiltinToken:
@@ -2230,7 +2230,7 @@ function did_click_row(clickEvent) {
         }
       }
       else {
-        console.log(`Opening open5e monster with id ${clickedItem.monsterData.slug}`);
+        console.log(`Opening open5e monster with id ${clickedItem.monsterData.key}`);
         open_monster_item(clickedItem, true);
       }
       break;
