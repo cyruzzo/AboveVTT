@@ -1311,6 +1311,9 @@ function ct_add_token(token,persist=true,disablerolling=false, adv=false, dis=fa
 	// bind update functions to hp inputs, same as Token.js
 	// token update logic for hp pulls hp from token hpbar, so update hp bar manually
 	if (!token.isPlayer()) {
+		const debounceChange = mydebounce(function(token){
+			token.update_and_sync();
+		}, 1500)
 		hp_input.change(function(e) {
 			let selector = "div[data-id='" + token.options.id + "']";
 			let old = $("#tokens").find(selector);
@@ -1323,10 +1326,11 @@ function ct_add_token(token,persist=true,disablerolling=false, adv=false, dis=fa
 
 			if(window.all_token_objects[token.options.id] != undefined){
 				window.all_token_objects[token.options.id].hp = $(this).val();
+				debounceChange(window.all_token_objects[token.options.id]);
 			}			
 			if(window.TOKEN_OBJECTS[token.options.id] != undefined){		
 				window.TOKEN_OBJECTS[token.options.id].hp = $(this).val();
-				window.TOKEN_OBJECTS[token.options.id].update_and_sync();
+				debounceChange(window.TOKEN_OBJECTS[token.options.id]);
 			}			
 		});
 		hp_input.click(function(e) {
@@ -1343,15 +1347,17 @@ function ct_add_token(token,persist=true,disablerolling=false, adv=false, dis=fa
 			old.find(".max_hp").val($(this).val().trim());
 			if(window.all_token_objects[token.options.id] != undefined){
 				window.all_token_objects[token.options.id].maxHp = $(this).val();
+				debounceChange(window.all_token_objects[token.options.id]);
 			}
 			if(window.TOKEN_OBJECTS[token.options.id] != undefined){		
 				window.TOKEN_OBJECTS[token.options.id].maxHp = $(this).val();
-				window.TOKEN_OBJECTS[token.options.id].update_and_sync();
+				debounceChange(window.TOKEN_OBJECTS[token.options.id]);
 			}			
 		});
 		maxhp_input.click(function(e) {
 			$(e.target).select();
 		});
+
 		hp_input.on('wheel', function(e) {
 			e.preventDefault();
 			const delta = e.originalEvent.deltaY < 0 ? 1 : -1;
