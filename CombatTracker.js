@@ -1311,6 +1311,9 @@ function ct_add_token(token,persist=true,disablerolling=false, adv=false, dis=fa
 	// bind update functions to hp inputs, same as Token.js
 	// token update logic for hp pulls hp from token hpbar, so update hp bar manually
 	if (!token.isPlayer()) {
+		const debounceChange = mydebounce(function(token){
+			token.update_and_sync();
+		}, 1500)
 		hp_input.change(function(e) {
 			let selector = "div[data-id='" + token.options.id + "']";
 			let old = $("#tokens").find(selector);
@@ -1323,10 +1326,11 @@ function ct_add_token(token,persist=true,disablerolling=false, adv=false, dis=fa
 
 			if(window.all_token_objects[token.options.id] != undefined){
 				window.all_token_objects[token.options.id].hp = $(this).val();
+				debounceChange(window.all_token_objects[token.options.id]);
 			}			
 			if(window.TOKEN_OBJECTS[token.options.id] != undefined){		
 				window.TOKEN_OBJECTS[token.options.id].hp = $(this).val();
-				window.TOKEN_OBJECTS[token.options.id].update_and_sync();
+				debounceChange(window.TOKEN_OBJECTS[token.options.id]);
 			}			
 		});
 		hp_input.click(function(e) {
@@ -1343,15 +1347,17 @@ function ct_add_token(token,persist=true,disablerolling=false, adv=false, dis=fa
 			old.find(".max_hp").val($(this).val().trim());
 			if(window.all_token_objects[token.options.id] != undefined){
 				window.all_token_objects[token.options.id].maxHp = $(this).val();
+				debounceChange(window.all_token_objects[token.options.id]);
 			}
 			if(window.TOKEN_OBJECTS[token.options.id] != undefined){		
 				window.TOKEN_OBJECTS[token.options.id].maxHp = $(this).val();
-				window.TOKEN_OBJECTS[token.options.id].update_and_sync();
+				debounceChange(window.TOKEN_OBJECTS[token.options.id]);
 			}			
 		});
 		maxhp_input.click(function(e) {
 			$(e.target).select();
 		});
+
 		hp_input.on('wheel', function(e) {
 			e.preventDefault();
 			const delta = e.originalEvent.deltaY < 0 ? 1 : -1;
@@ -1392,7 +1398,11 @@ function ct_add_token(token,persist=true,disablerolling=false, adv=false, dis=fa
 				window.TOKEN_OBJECTS[target].highlight();	     
 			}
 			else if(target in window.all_token_objects){
-				place_token_in_center_of_view(window.all_token_objects[target].options);
+				const tokenOptions = $.extend(true, {}, window.all_token_objects[target].options);
+				delete tokenOptions.size;
+				delete tokenOptions.left;
+				delete tokenOptions.top;
+				place_token_in_center_of_view(tokenOptions);
 			  	$(`#combat_area tr[data-target='${target}'] .findSVG`).remove();
 	           	let findSVG=$('<svg class="findSVG" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M0 0h24v24H0z" fill="none"/><path d="M12 11c1.33 0 4 .67 4 2v.16c-.97 1.12-2.4 1.84-4 1.84s-3.03-.72-4-1.84V13c0-1.33 2.67-2 4-2zm0-1c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm6 .2C18 6.57 15.35 4 12 4s-6 2.57-6 6.2c0 2.34 1.95 5.44 6 9.14 4.05-3.7 6-6.8 6-9.14zM12 2c4.2 0 8 3.22 8 8.2 0 3.32-2.67 7.25-8 11.8-5.33-4.55-8-8.48-8-11.8C4 5.22 7.8 2 12 2z"/></svg>');	
 	            $(`#combat_area tr[data-target='${target}'] .findTokenCombatButton`).append(findSVG);
