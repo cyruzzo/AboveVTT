@@ -4941,7 +4941,7 @@ function convert_open5e_monsterData(monsterData){
         if(monsterData.challenge_rating >= 1){
           monsterData.challengeRatingId = monsterData.challenge_rating + 4
         }
-        else if(monsterData.challenge_rating == 0){f
+        else if(monsterData.challenge_rating == 0){
           monsterData.challengeRatingId = 1
         }
         else if(monsterData.challenge_rating == 0.125){
