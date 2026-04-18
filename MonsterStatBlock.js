@@ -34,7 +34,7 @@ function build_and_display_stat_block_with_data(monsterData, container, tokenId,
         // is not as good as the data we get from fetching the monster directly so
         // build with what the listItem has on it, then fetch more details, then re-render it with the updated details
         display_stat_block_in_container(new MonsterStatBlock(monsterData), container, tokenId);
-        let monsterId = (monsterData.slug) ? monsterData.slug : monsterData.id
+        let monsterId = (monsterData.key) ? monsterData.key : monsterData.id
         fetch_and_cache_monsters([monsterId], function (open5e = false) {
           if(!open5e){
             display_stat_block_in_container(new MonsterStatBlock(cached_monster_items[monsterId].monsterData), container, tokenId);
@@ -48,7 +48,7 @@ function build_and_display_stat_block_with_data(monsterData, container, tokenId,
 
 function build_stat_block_for_copy(listItem, options, open5e = false){
   const monsterData = listItem.monsterData;
-  const monsterId = open5e == true ? monsterData.slug : monsterData.id
+  const monsterId = open5e == true ? monsterData.key : monsterData.id
   const cachedMonsterItem = open5e == true ? cached_open5e_items[monsterId] : cached_monster_items[monsterId];
   build_import_loading_indicator('Fetching Statblock Info');
   if (cachedMonsterItem) {
@@ -70,18 +70,18 @@ function build_stat_block_for_copy(listItem, options, open5e = false){
 
 async function display_stat_block_in_container(statBlock, container, tokenId, customStatBlock = undefined) {
     const token = window.TOKEN_OBJECTS[tokenId];
-    let html = (customStatBlock) ? $(`
-    <div class="container avtt-stat-block-container custom-stat-block">${customStatBlock}</div>`) : await build_monster_stat_block(statBlock, token);
+    let $html = (customStatBlock) ? $(`
+    <div class="container avtt-stat-block-container custom-stat-block">${customStatBlock}</div>`) : $(await build_monster_stat_block(statBlock, token));
     container.find("#noAccessToContent").remove(); // in case we're re-rendering with better data
     container.find(".avtt-stat-block-container").remove(); // in case we're re-rendering with better data
-    container.append(html);
-    if(customStatBlock){
-      await window.JOURNAL.translateHtmlAndBlocks(html);
-      add_journal_roll_buttons(html, tokenId);
-      window.JOURNAL.add_journal_tooltip_targets(html);
-
-      
+    container.append($html);
+    if(customStatBlock || statBlock.data?.open5e == true){
+      await window.JOURNAL.translateHtmlAndBlocks($html);
+      add_journal_roll_buttons($html, tokenId);
+      window.JOURNAL.add_journal_tooltip_targets($html);
       $(container).find('.add-input').each(function(){window.JOURNAL.addTrackedInputs($(this), {token})});
+    }
+    if(customStatBlock){
       let imageUrl = parse_img(token.options.imgsrc);
 
       if(token.options.imgsrc.startsWith('above-bucket-not-a-url')){
@@ -125,7 +125,7 @@ async function display_stat_block_in_container(statBlock, container, tokenId, cu
     }
       
     container.find("a").attr("target", "_blank"); // make sure we only open links in new tabs
-    if(!customStatBlock)
+    if(!customStatBlock && !statBlock.data?.open5e)
       scan_monster(container, statBlock, tokenId);
     else
       add_ability_tracker_inputs(container, tokenId)
@@ -1356,13 +1356,13 @@ class MonsterStatBlock {
         return this.findObj("creatureSizes", this.data.sizeId);
     }
     get sizeName() {
-        return this.data.size || this.sizeObj?.name || "";
+        return this.data.size?.name || this.data.size || this.sizeObj?.name || "";
     }
     get typeObj() {
         return this.findObj("monsterTypes", this.data.typeId);
     }
     get typeName() {
-        return this.data.type || this.typeObj?.name || "";
+        return this.data.type?.name ||this.data.type || this.typeObj?.name || "";
     }
     get monsterTypeHtml() {
         if (!this.data.subTypes || this.data.subTypes.length === 0) {
@@ -1555,24 +1555,27 @@ class MonsterStatBlock {
         return objects.map(obj => obj.name).join(", ");
     }
     get damageVulnerabilitiesHtml() {
-        if(this.data.damage_vulnerabilities){
-          return this.data.damage_vulnerabilities.replace(/(?:^|\s)\w/g, function(match) {
+      const damageVul = this.data.damage_vulnerabilities || this.data.resistances_and_immunities?.damage_vulnerabilities_display;
+        if(damageVul){
+          return damageVul.replace(/(?:^|\s)\w/g, function(match) {
               return match.toUpperCase();
           });
         }
         return this.damageAdjustmentsHtml(DAMAGE_ADJUSTMENT_TYPE_VULNERABILITIES);
     }
     get damageResistancesHtml() {
-        if(this.data.damage_resistances){
-          return this.data.damage_resistances.replace(/(?:^|\s)\w/g, function(match) {
+      const damageRes = this.data.damage_resistances || this.data.resistances_and_immunities?.damage_resistances_display;
+        if(damageRes){
+          return damageRes.replace(/(?:^|\s)\w/g, function(match) {
               return match.toUpperCase();
           });
         }
         return this.damageAdjustmentsHtml(DAMAGE_ADJUSTMENT_TYPE_RESISTANCE);
     }
     get damageImmunitiesHtml() {
-        if(this.data.damage_immunities){
-          return this.data.damage_immunities.replace(/(?:^|\s)\w/g, function(match) {
+      const damageImm = this.data.damage_immunities || this.data.resistances_and_immunities?.damage_immunities_display;
+        if(damageImm){
+          return damageImm.replace(/(?:^|\s)\w/g, function(match) {
               return match.toUpperCase();
           });
         }
@@ -1580,8 +1583,9 @@ class MonsterStatBlock {
     }
 
     get conditionImmunitiesHtml() {
-        if(this.data.condition_immunities){
-          return this.data.condition_immunities.replace(/(?:^|\s)\w/g, function(match) {
+        const condImm = this.data.condition_immunities || this.data.resistances_and_immunities?.condition_immunities_display;
+        if(condImm){
+          return condImm.replace(/(?:^|\s)\w/g, function(match) {
               return match.toUpperCase();
           });
         }
@@ -1659,12 +1663,12 @@ class MonsterStatBlock {
     get sourceBookHtml() {
         let html = `<p class="source monster-source">`;
         if (this.data.sourceId) {
-            if(!this.data.document__title){
+            if(!this.data.document?.name){
               const definition = this.findObj("sources", this.data.sourceId);
               html += definition.description;
             }
             else{
-              html += this.data.document__title;
+              html += this.data.document?.name;
             }
             
             if (this.data.sourcePageNumber) {

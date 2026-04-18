@@ -283,27 +283,7 @@ function init_combat_tracker(){
 			if(window.TOKEN_OBJECTS[currentTarget] != undefined){
 				window.TOKEN_OBJECTS[currentTarget].options.current = true;
 				window.TOKEN_OBJECTS[currentTarget].update_and_sync();
-				let combatSettingData = getCombatTrackerSettings();
-				let group = false;
-				if(window.TOKEN_OBJECTS[currentTarget].options.combatGroupToken){
-					group = Object.values(window.TOKEN_OBJECTS).find(d=> d.options.combatGroup == window.TOKEN_OBJECTS[currentTarget].options.combatGroup && !d.options.combatGroupToken);
-				}
-				if(combatSettingData['scroll_to_next'] == '1'){
-					if(group){
-						window.TOKEN_OBJECTS[group.options.id].highlight();
-					}
-					else{
-						window.TOKEN_OBJECTS[currentTarget].highlight();
-					}				
-				}	
-				if(combatSettingData['select_next'] == '1'){
-					if(group){
-						$(`#tokens .token[data-id='${group.options.id}']`).click();
-					}
-					else{
-						$(`#tokens .token[data-id='${currentTarget}']`).click();
-					}	
-				}
+
 			}
 
 		}
@@ -340,26 +320,7 @@ function init_combat_tracker(){
 				adjust_reaction_condition(window.TOKEN_OBJECTS[newTarget]);
 				window.TOKEN_OBJECTS[newTarget].place_sync_persist();
 				let combatSettingData = getCombatTrackerSettings();
-				let group = false;
-				if(window.TOKEN_OBJECTS[newTarget].options.combatGroupToken){
-					group = Object.values(window.TOKEN_OBJECTS).find(d=> d.options.combatGroup == window.TOKEN_OBJECTS[newTarget].options.combatGroup && !d.options.combatGroupToken);
-				}
-				if(combatSettingData['scroll_to_next'] == '1'){
-					if(group){
-						window.TOKEN_OBJECTS[group.options.id].highlight();
-					}
-					else{
-						window.TOKEN_OBJECTS[newTarget].highlight();
-					}				
-				}	
-				if(combatSettingData['select_next'] == '1'){
-					if(group){
-						$(`#tokens .token[data-id='${group.options.id}']`).click();
-					}
-					else{
-						$(`#tokens .token[data-id='${newTarget}']`).click();
-					}	
-				}
+				highlight_scroll_next(newTarget);
 			}
 
 		}
@@ -405,26 +366,7 @@ function init_combat_tracker(){
 				window.TOKEN_OBJECTS[newTarget].place_sync_persist();
 				window.TOKEN_OBJECTS[newTarget].build_conditions(prev, true);
 				let combatSettingData = getCombatTrackerSettings();
-				let group = false;
-				if(window.TOKEN_OBJECTS[newTarget].options.combatGroupToken){
-					group = Object.values(window.TOKEN_OBJECTS).find(d=> d.options.combatGroup == window.TOKEN_OBJECTS[newTarget].options.combatGroup && !d.options.combatGroupToken);
-				}
-				if(combatSettingData['scroll_to_next'] == '1'){
-					if(group){
-						window.TOKEN_OBJECTS[group.options.id].highlight();
-					}
-					else{
-						window.TOKEN_OBJECTS[newTarget].highlight();
-					}				
-				}	
-				if(combatSettingData['select_next'] == '1'){
-					if(group){
-						$(`#tokens .token[data-id='${group.options.id}']`).click();
-					}
-					else{
-						$(`#tokens .token[data-id='${newTarget}']`).click();
-					}	
-				}
+				highlight_scroll_next(newTarget);
 			}
 		}
 		debounceCombatPersist();
@@ -502,6 +444,32 @@ function init_combat_tracker(){
 	if(getCombatTrackerSettings().carousel == '1'){
 		init_carousel_combat_tracker()
 	}
+}
+function highlight_scroll_next(currentTarget){
+	let combatSettingData = getCombatTrackerSettings();
+	if(combatSettingData['scroll_to_next'] != '1' && combatSettingData['select_next'] != '1')
+		return;
+
+	let group = false;
+	if(window.TOKEN_OBJECTS[currentTarget].options.combatGroupToken){
+		group = Object.values(window.TOKEN_OBJECTS).find(d=> d.options.combatGroup == window.TOKEN_OBJECTS[currentTarget].options.combatGroup && !d.options.combatGroupToken);
+	}
+	const targetToken = group ? window.TOKEN_OBJECTS[group.options.id] : window.TOKEN_OBJECTS[currentTarget];
+	const tokenId = targetToken.options.id;
+	const domToken = $(`#tokens .token[data-id='${tokenId}']`)
+	const tokenVisible = window.DM || (targetToken.options.hidden !== true && domToken.is(':not(.notVisible)'));
+	const playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
+	const isPlayerToken = targetToken.isCurrentPlayer() || (playerTokenId == undefined && window.TOKEN_OBJECTS[tokenId].options.itemType == 'pc');
+	const tokenOwned = window.DM || isPlayerToken || targetToken.options.player_owned == true;
+	const tokenShared = tokenOwned || window.TOKEN_OBJECTS[tokenId].options.share_vision == true || window.TOKEN_OBJECTS[tokenId].options.share_vision == window.myUser || (window.TOKEN_OBJECTS[tokenId].options.share_vision && is_spectator_page()) 
+
+	if(combatSettingData['select_next'] == '1' && targetToken.selected == false && (tokenShared || tokenOwned)){
+		domToken.click();
+	}
+	if(combatSettingData['scroll_to_next'] == '1' && tokenVisible){	
+		targetToken.highlight();			
+	}	
+	
 }
 function init_carousel_combat_tracker(){
     $('#combat_carousel_container, #combat_area_carousel').remove();
@@ -1343,6 +1311,9 @@ function ct_add_token(token,persist=true,disablerolling=false, adv=false, dis=fa
 	// bind update functions to hp inputs, same as Token.js
 	// token update logic for hp pulls hp from token hpbar, so update hp bar manually
 	if (!token.isPlayer()) {
+		const debounceChange = mydebounce(function(token){
+			token.update_and_sync();
+		}, 1500)
 		hp_input.change(function(e) {
 			let selector = "div[data-id='" + token.options.id + "']";
 			let old = $("#tokens").find(selector);
@@ -1355,10 +1326,11 @@ function ct_add_token(token,persist=true,disablerolling=false, adv=false, dis=fa
 
 			if(window.all_token_objects[token.options.id] != undefined){
 				window.all_token_objects[token.options.id].hp = $(this).val();
+				debounceChange(window.all_token_objects[token.options.id]);
 			}			
 			if(window.TOKEN_OBJECTS[token.options.id] != undefined){		
 				window.TOKEN_OBJECTS[token.options.id].hp = $(this).val();
-				window.TOKEN_OBJECTS[token.options.id].update_and_sync();
+				debounceChange(window.TOKEN_OBJECTS[token.options.id]);
 			}			
 		});
 		hp_input.click(function(e) {
@@ -1375,14 +1347,30 @@ function ct_add_token(token,persist=true,disablerolling=false, adv=false, dis=fa
 			old.find(".max_hp").val($(this).val().trim());
 			if(window.all_token_objects[token.options.id] != undefined){
 				window.all_token_objects[token.options.id].maxHp = $(this).val();
+				debounceChange(window.all_token_objects[token.options.id]);
 			}
 			if(window.TOKEN_OBJECTS[token.options.id] != undefined){		
 				window.TOKEN_OBJECTS[token.options.id].maxHp = $(this).val();
-				window.TOKEN_OBJECTS[token.options.id].update_and_sync();
+				debounceChange(window.TOKEN_OBJECTS[token.options.id]);
 			}			
 		});
 		maxhp_input.click(function(e) {
 			$(e.target).select();
+		});
+
+		hp_input.on('wheel', function(e) {
+			e.preventDefault();
+			const delta = e.originalEvent.deltaY < 0 ? 1 : -1;
+			const current = parseInt(token.hp) || 0;
+			$(this).val(Math.max(0, current + delta));
+			$(this).trigger('change');
+		});
+		maxhp_input.on('wheel', function(e) {
+			e.preventDefault();
+			const delta = e.originalEvent.deltaY < 0 ? 1 : -1;
+			const current = parseInt(token.maxHp) || 0;
+			$(this).val(Math.max(1, current + delta));
+			$(this).trigger('change');
 		});
 	}
 	else {
@@ -1410,7 +1398,11 @@ function ct_add_token(token,persist=true,disablerolling=false, adv=false, dis=fa
 				window.TOKEN_OBJECTS[target].highlight();	     
 			}
 			else if(target in window.all_token_objects){
-				place_token_in_center_of_view(window.all_token_objects[target].options);
+				const tokenOptions = $.extend(true, {}, window.all_token_objects[target].options);
+				delete tokenOptions.size;
+				delete tokenOptions.left;
+				delete tokenOptions.top;
+				place_token_in_center_of_view(tokenOptions);
 			  	$(`#combat_area tr[data-target='${target}'] .findSVG`).remove();
 	           	let findSVG=$('<svg class="findSVG" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M0 0h24v24H0z" fill="none"/><path d="M12 11c1.33 0 4 .67 4 2v.16c-.97 1.12-2.4 1.84-4 1.84s-3.03-.72-4-1.84V13c0-1.33 2.67-2 4-2zm0-1c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm6 .2C18 6.57 15.35 4 12 4s-6 2.57-6 6.2c0 2.34 1.95 5.44 6 9.14 4.05-3.7 6-6.8 6-9.14zM12 2c4.2 0 8 3.22 8 8.2 0 3.32-2.67 7.25-8 11.8-5.33-4.55-8-8.48-8-11.8C4 5.22 7.8 2 12 2z"/></svg>');	
 	            $(`#combat_area tr[data-target='${target}'] .findTokenCombatButton`).append(findSVG);
@@ -1678,7 +1670,7 @@ function ct_load(data=null){
 					window.ROUND_NUMBER = data[i]['round_number'];
 					document.getElementById('round_number').value = window.ROUND_NUMBER;
 					const autoInit = trackerSettings.auto_init;
-					const tokenInCombat = $(`#combat_area tr[data-target='${window.pcs.find(d => d.sheet.includes(window.PLAYER_SHEET)).sheet}']`).length > 0;
+					const tokenInCombat = $(`#combat_area tr[data-target='${window.pcs.find(d => d.sheet.includes(window.PLAYER_SHEET))?.sheet}']`).length > 0;
 					if(autoInit == '1' && !window.DM && tokenInCombat == true){
 						$('.roll-init-button').click();
 					}
@@ -1711,26 +1703,7 @@ function ct_load(data=null){
 				if(data[i]['current']){				
 					$("#combat_area tr[data-target='"+data[i]['data-target']+"']").attr("data-current","1");
 					if(window.TOKEN_OBJECTS[data[i]['data-target']] != undefined){
-						let group = false;
-						if(window.TOKEN_OBJECTS[data[i]['data-target']].options.combatGroupToken){
-							group = Object.values(window.TOKEN_OBJECTS).find(d=> d.options.combatGroup == window.TOKEN_OBJECTS[data[i]['data-target']].options.combatGroup && !d.options.combatGroupToken);
-						}
-						if(trackerSettings['scroll_to_next'] == '1'){
-							if(group){
-								window.TOKEN_OBJECTS[group.options.id].highlight();
-							}
-							else{
-								window.TOKEN_OBJECTS[data[i]['data-target']].highlight();
-							}				
-						}	
-						if(trackerSettings['select_next'] == '1'){
-							if(group){
-								$(`#tokens .token[data-id='${group.options.id}']`).click();
-							}
-							else{
-								$(`#tokens .token[data-id='${data[i]['data-target']}']`).click();
-							}	
-						}
+						highlight_scroll_next(data[i]['data-target']);
 					}
 					if(window.all_token_objects[data[i]['data-target']].isCurrentPlayer() || window.all_token_objects[data[i]['data-target']].options.player_owned){
 						$("#endplayerturn").toggleClass('enabled', true);

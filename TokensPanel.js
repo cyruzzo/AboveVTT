@@ -73,12 +73,13 @@ async function getOpen5e(results = [], search = ''){
         15: 'Plant',
         16: 'Undead'
     }
-    const maxCR = (monster_search_filters?.challengeRatingMax) ? monster_search_filters?.challengeRatingMax : '';
-    const minCR = (monster_search_filters?.challengeRatingMin) ? monster_search_filters?.challengeRatingMin : '';
+    const maxCR = (monster_search_filters?.challengeRatingMax) ? convert_challenge_rating_id(monster_search_filters?.challengeRatingMax) : '';
+    const minCR = (monster_search_filters?.challengeRatingMin) ? convert_challenge_rating_id(monster_search_filters?.challengeRatingMin) : '';
     const monsterTypes = (monster_search_filters?.monsterTypes) ? monster_search_filters.monsterTypes.map(item=> item = ddbMonsterTypes[item]).toString() : '';
     
 
-    let api_url = `https://api.open5e.com/monsters/?slug__in=&slug__iexact=&slug=&name__iexact=&name=&cr=&cr__range=&cr__gt=${minCR}&cr__gte=&cr__lt=${maxCR}&cr__lte=&armor_class=&armor_class__range=&armor_class__gt=&armor_class__gte=&armor_class__lt=&armor_class__lte=&type__iexact=&type=&type__in=${monsterTypes}&type__icontains=&page_no=&page_no__range=&page_no__gt=&page_no__gte=&page_no__lt=&page_no__lte=&document__slug__iexact=&document__slug=&document__slug__in=&document__slug__not_in=&name__icontains=${search}&limit=10`
+    let api_url = `https://api.open5e.com/v2/creatures/?name__icontains=${search}&type=${monsterTypes}&challenge_rating__lte=${maxCR}&challenge_rating__gte=${minCR}&limit=10`
+
     let jsonData = {}
     await $.getJSON(api_url, function(data){
         jsonData = data;
@@ -94,8 +95,8 @@ async function getOpen5e(results = [], search = ''){
 
     return open5e_monsters;
 }
-async function getGroupOpen5e(slugin){
-    let api_url = `https://api.open5e.com/monsters/?ordering=name&slug__in=${slugin}&slug__iexact=&slug=&name__iexact=&name=&cr=&cr__range=&cr__gt=&cr__gte=&cr__lt=&cr__lte=&armor_class=&armor_class__range=&armor_class__gt=&armor_class__gte=&armor_class__lt=&armor_class__lte=&type__iexact=&type=&type__in=&type__icontains=&page_no=&page_no__range=&page_no__gt=&page_no__gte=&page_no__lt=&page_no__lte=&document__slug__iexact=&document__slug=&document__slug__in=&document__slug__not_in=&limit=10`
+async function getGroupOpen5e(keys){
+    let api_url = `https://api.open5e.com/v2/creatures/?key__in=${keys}&limit=10`
     let jsonData = {}
     await $.getJSON(api_url, function(data){
         jsonData = data;
@@ -1384,10 +1385,10 @@ async function create_and_place_token(listItem, hidden = undefined, specificImag
             }
             options.armorClass = listItem.monsterData.armorClass;
             options.monster = "open5e";
-            options.stat = listItem.monsterData.slug;
+            options.stat = listItem.monsterData.key;
             placedCount = 1;
             for (let tokenId in window.TOKEN_OBJECTS) {
-                if (window.TOKEN_OBJECTS[tokenId].options.monster === listItem.monsterData.slug || window.TOKEN_OBJECTS[tokenId].options.stat === listItem.monsterData.slug) {
+                if (window.TOKEN_OBJECTS[tokenId].options.monster === listItem.monsterData.key || window.TOKEN_OBJECTS[tokenId].options.stat === listItem.monsterData.key) {
                     placedCount++;
                 }
             }
@@ -4776,7 +4777,7 @@ function update_open5e_item_cache(newItems, callback=()=>{}) {
    
    const promise = new Promise((resolve, reject) =>{
         newItems.forEach(async (item, index, array) => {
-            cached_open5e_items[item.monsterData.slug] = item
+            cached_open5e_items[item.monsterData.key] = item
             if(index === array.length-1) {
               resolve();
             }
@@ -4787,31 +4788,32 @@ function update_open5e_item_cache(newItems, callback=()=>{}) {
 }
 function convert_open5e_monsterData(monsterData){
         monsterData.isHomebrew = true;
+        monsterData.open5e = true;
         monsterData.stats = [
         {
             "statId": 1,
             "name": null,
-            "value": monsterData.strength
+            "value": monsterData.ability_scores?.strength
         },
         {
             "statId": 2,
             "name": null,
-            "value": monsterData.dexterity
+            "value": monsterData.ability_scores?.dexterity
         },
         {
             "statId": 3,
             "name": null,
-            "value": monsterData.constitution
+            "value": monsterData.ability_scores?.constitution
         },
         {
             "statId": 4,
             "name": null,
-            "value": monsterData.intelligence
+            "value": monsterData.ability_scores?.intelligence
         },
         {
             "statId": 5,
             "name": null,
-            "value": monsterData.wisdom
+            "value": monsterData.ability_scores?.wisdom
         },
         {
             "statId": 6,
@@ -4819,93 +4821,48 @@ function convert_open5e_monsterData(monsterData){
             "value": monsterData.charisma
         }];
 
-        monsterData.passivePerception = monsterData.perception + 10;
-   
-
-        if(monsterData.special_abilities?.length>0){
-            monsterData.specialTraitsDescription = monsterData.special_abilities.map(action => {
+        monsterData.passivePerception = monsterData.passive_perception || monsterData.skill_bonuses_all?.perception + 10;
+        
+        const convertOpen5eEntry = (entry) => {
+          return entry.map(action => {
                 let desc = ``
                 if(action.desc == undefined && action.description != undefined){
                     action.desc = action.description;
                 }else if(action.desc == undefined){
                     action.desc ='';
                 }
-                if(action.name == 'Spellcasting'){
-                    actionDesc = action.desc.replace(/Cantrips|[0-9]+[A-Za-z][A-Za-z]-level|[0-9]+[A-Za-z][A-Za-z]\slevel/g, '</p><p>$&');
+                if(action.name.includes('Spellcasting')){
+                    actionDesc = action.desc.replaceAll(/_([^_]+)_/g, '$1').replaceAll(/(-\s+)?\*\*([^*]+)\*\*/g, '$2 ').replaceAll(/At Will|Cantrips|[0-9]+[A-Za-z][A-Za-z]-level|[0-9]+[A-Za-z][A-Za-z]\slevel|\d+\/Day/gi, '<br><br>$&');
                     desc = `<p><em><strong>${action.name}.</strong></em> ${actionDesc}</p>`;
                 }
                 else{
-                    desc = `<p><em><strong>${action.name}.</strong></em> ${action.desc.replace(/\n/g, `<br />`)}</p>`
+                    desc = `<p><em><strong>${action.name}.</strong></em> ${action.desc.replace(/\n/g, `<br />`).replaceAll(/_([^_]+)_/g, '<em>$1</em>').replaceAll(/(-\s+)?\*\*([^*]+)\*\*/g, '<strong>$2</strong>')}</p>`
                 }
                 desc = desc.replace(/\d\dd\d\d\s[+-]\s\d|\d\dd\d\s[+-]\s\d|\dd\d\d\s[+-]\s\d|\dd\d\s[+-]\s\d|\d\dd\d\d|\d\dd\d|\dd\d\d|\dd\d/g, `<span data-dicenotation='$&' data-rolltype='damage' data-rollaction='damage'>$&</span>`);
                 desc = desc.replace(/\s[+-]\d\d\s|\s[+-]\d\s/g, `<span data-dicenotation='1d20$&' data-rollaction='attack'>$&</span> `);
                 desc = desc.replace(`(<span`, `<span`).replace(`span>)`, `span>`);
                 return desc;
-            }).join("");
+            }).join(""); 
+        };
+
+
+        if(monsterData.traits?.length>0){
+            monsterData.specialTraitsDescription = convertOpen5eEntry(monsterData.traits);
         }
-               
+        
         if(monsterData.actions?.length>0){
-            monsterData.actionsDescription = monsterData.actions.map(action => {
-                if(action.desc == undefined && action.description != undefined){
-                    action.desc = action.description;
-                }else if(action.desc == undefined){
-                    action.desc ='';
-                }
-                let desc = `<p><em><strong>${action.name}.</strong></em> ${action.desc}</p>`
-                desc = desc.replace(/\d\dd\d\d\s[+-]\s\d|\d\dd\d\s[+-]\s\d|\dd\d\d\s[+-]\s\d|\dd\d\s[+-]\s\d|\d\dd\d\d|\d\dd\d|\dd\d\d|\dd\d/g, `<span data-dicenotation='$&' data-rolltype='damage' data-rollaction='damage'>$&</span>`);
-                desc = desc.replace(/\s[+-]\d\d\s|\s[+-]\d\s/g, `<span data-dicenotation='1d20$&' data-rollaction='attack'>$&</span> `);
-                desc = desc.replace(`(<span`, `<span`).replace(`span>)`, `span>`);
-                return desc;
-            }).join("");
+            const actions = monsterData.actions.filter(action => action.action_type == "ACTION");
+            const reactions = monsterData.actions.filter(action => action.action_type == "REACTION");
+            const bonusActions = monsterData.actions.filter(action => action.action_type == "BONUS_ACTION");
+            const legendaryActions = monsterData.actions.filter(action => action.action_type == "LEGENDARY_ACTION");
+            monsterData.actionsDescription = convertOpen5eEntry(actions);
+            monsterData.reactionsDescription = convertOpen5eEntry(reactions);
+            monsterData.bonusActionsDescription = convertOpen5eEntry(bonusActions);
+            monsterData.legendaryActionsDescription = convertOpen5eEntry(legendaryActions);
         }
-    
-        if(monsterData.bonus_actions?.length>0){
-            monsterData.bonusActionsDescription = monsterData.bonus_actions.map(action => {
-                if(action.desc == undefined && action.description != undefined){
-                    action.desc = action.description;
-                }else if(action.desc == undefined){
-                    action.desc ='';
-                }
-                let desc = `<p><em><strong>${action.name}.</strong></em> ${action.desc}</p>`
-                desc = desc.replace(/\d\dd\d\d\s[+-]\s\d|\d\dd\d\s[+-]\s\d|\dd\d\d\s[+-]\s\d|\dd\d\s[+-]\s\d|\d\dd\d\d|\d\dd\d|\dd\d\d|\dd\d/g, `<span data-dicenotation='$&' data-rolltype='damage' data-rollaction='damage'>$&</span>`);
-                desc = desc.replace(/\s[+-]\d\d\s|\s[+-]\d\s/g, `<span data-dicenotation='1d20$&' data-rollaction='attack'>$&</span> `);
-                desc = desc.replace(`(<span`, `<span`).replace(`span>)`, `span>`);
-                return desc;
-            }).join("");
-        }
-   
-        if(monsterData.reactions?.length>0){
-            monsterData.reactionsDescription = monsterData.reactions.map(action => {
-                if(action.desc == undefined && action.description != undefined){
-                    action.desc = action.description;
-                }else if(action.desc == undefined){
-                    action.desc ='';
-                }
-                let desc = `<p><em><strong>${action.name}.</strong></em> ${action.desc}</p>`
-                desc = desc.replace(/\d\dd\d\d\s[+-]\s\d|\d\dd\d\s[+-]\s\d|\dd\d\d\s[+-]\s\d|\dd\d\s[+-]\s\d|\d\dd\d\d|\d\dd\d|\dd\d\d|\dd\d/g, `<span data-dicenotation='$&' data-rolltype='damage' data-rollaction='damage'>$&</span>`);
-                desc = desc.replace(/\s[+-]\d\d\s|\s[+-]\d\s/g, `<span data-dicenotation='1d20$&' data-rollaction='attack'>$&</span> `);
-                desc = desc.replace(`(<span`, `<span`).replace(`span>)`, `span>`);
-                return desc;
-            }).join("");
-        }
- 
-        if(monsterData.legendary_actions?.length>0){
-            monsterData.legendaryActionsDescription = monsterData.legendary_actions.map(action => {
-                if(action.desc == undefined && action.description != undefined){
-                    action.desc = action.description;
-                }else if(action.desc == undefined){
-                    action.desc ='';
-                }
-                let desc = `<p><em><strong>${action.name}.</strong></em> ${action.desc}</p>`
-                desc = desc.replace(/\d\dd\d\d\s[+-]\s\d|\d\dd\d\s[+-]\s\d|\dd\d\d\s[+-]\s\d|\dd\d\s[+-]\s\d|\d\dd\d\d|\d\dd\d|\dd\d\d|\dd\d/g, `<span data-dicenotation='$&' data-rollaction='damage'>$&</span>`);
-                desc = desc.replace(/\s[+-]\d\d\s|\s[+-]\d\s/g, `<span data-dicenotation='1d20$&' data-rollaction='attack'>$&</span> `);
-                desc = desc.replace(`(<span`, `<span`).replace(`span>)`, `span>`);
-                return desc;
-            }).join("");
-        }
-       
+
         let convertedSkills = [];
-        Object.entries(monsterData.skills).forEach(([key, value]) => {  
+        Object.entries(monsterData.skill_bonuses).forEach(([key, value]) => {  
             if(key == "athletics"){
                 convertedSkills.push({skillId: 2, value: value, additionalBonus: null})
             }
@@ -4965,114 +4922,122 @@ function convert_open5e_monsterData(monsterData){
 
 
         let convertedSenses = [];
-
-        monsterData.senses = monsterData.senses.split(', ');
-        let sensesArray = [];
-        for(let i = 0; i < monsterData.senses.length; i++){
-            let currentSense = monsterData.senses[i].split(' ');
-            if(currentSense[0] == "blindsight"){
-                convertedSenses.push({senseId: 1, notes: `${currentSense[1]} ${currentSense[2]}`})
-            }
-            else if(currentSense[0] == "darkvision"){
-                convertedSenses.push({senseId: 2, notes: `${currentSense[1]} ${currentSense[2]}`})
-            }
-            else if(currentSense[0] == "tremorsense"){
-                convertedSenses.push({senseId: 3, notes: `${currentSense[1]} ${currentSense[2]}`})
-            }        
-            else if(currentSense[0] == "truesight"){
-                convertedSenses.push({senseId: 4, notes: `${currentSense[1]} ${currentSense[2]}`})
-            }  
-
+        
+        if(monsterData.blindsight_range){
+            convertedSenses.push({senseId: 1, notes: `${monsterData.blindsight_range} ft.`})
         }
+        if(monsterData.darkvision_range){
+            convertedSenses.push({senseId: 2, notes: `${monsterData.darkvision_range} ft.`})
+        }
+        if(monsterData.tremorsense_range){
+            convertedSenses.push({senseId: 3, notes: `${monsterData.tremorsense_range} ft.`})
+        }
+        if(monsterData.truesight_range){
+            convertedSenses.push({senseId: 4, notes: `${monsterData.truesight_range} ft.`})
+        }
+         
         monsterData.senses = convertedSenses;
 
-        if(monsterData.cr >= 1){
-          monsterData.challengeRatingId = monsterData.cr + 4
+        if(monsterData.challenge_rating >= 1){
+          monsterData.challengeRatingId = monsterData.challenge_rating + 4
         }
-        else if(monsterData.cr == 0){
+        else if(monsterData.challenge_rating == 0){
           monsterData.challengeRatingId = 1
         }
-        else if(monsterData.cr == 0.125){
+        else if(monsterData.challenge_rating == 0.125){
           monsterData.challengeRatingId = 2
         }
-        else if(monsterData.cr == 0.25){
+        else if(monsterData.challenge_rating == 0.25){
           monsterData.challengeRatingId = 3
         }
-        else if(monsterData.cr == 0.5){
+        else if(monsterData.challenge_rating == 0.5){
           monsterData.challengeRatingId = 4
         }
-        monsterData.sourceId = monsterData.document__title;    
-        monsterData.sourcePageNumber = monsterData.page_no;
+        monsterData.sourceId = monsterData.document?.key;    
         monsterData.hitPointDice = {};
+        if(!monsterData.hit_dice){
+            monsterData.hitPointDice.diceCount = 0;
+            monsterData.hitPointDice.diceValue = 0;
+            monsterData.hitPointDice.fixedValue = monsterData.hit_points;
+        }else{
+            const hitDiceMatch = monsterData.hit_dice.match(/(\d*)d(\d+)(\+(\d+))?/);
+            if(hitDiceMatch){
+                monsterData.hitPointDice.diceCount = hitDiceMatch[1] ? parseInt(hitDiceMatch[1]) : 1;
+                monsterData.hitPointDice.diceValue = parseInt(hitDiceMatch[2]);
+                if(hitDiceMatch[4]){
+                    monsterData.hitPointDice.fixedValue = parseInt(hitDiceMatch[4]);
+                }
+            }
+        }
+        
         monsterData.hitPointDice.diceString = monsterData.hit_dice;
         monsterData.averageHitPoints = monsterData.hit_points;
         monsterData.armorClass = monsterData.armor_class;
-        monsterData.armorClassDescription = monsterData.armor_desc;  
+        monsterData.armorClassDescription = monsterData.armor_detail;  
 
-        if(monsterData.size == 'Tiny'){
+        if(monsterData.size.name == 'Tiny'){
             monsterData.sizeId = 2
         }
-        else if(monsterData.size == 'Small' ){
+        else if(monsterData.size.name == 'Small' ){
             monsterData.sizeId = 3
         }
-        else if(monsterData.size == 'Medium' ){
+        else if(monsterData.size.name == 'Medium' ){
             monsterData.sizeId = 4
         }
-        else if(monsterData.size == 'Large' ){
+        else if(monsterData.size.name == 'Large' ){
             monsterData.sizeId = 5
         }
-        else if(monsterData.size == 'Huge' ){
+        else if(monsterData.size.name == 'Huge' ){
             monsterData.sizeId = 6
         }
-        else if(monsterData.size == 'Gargantuan' ){
+        else if(monsterData.size.name == 'Gargantuan' ){
             monsterData.sizeId = 7
         }
 
         monsterData.savingThrows = [];
-        if(monsterData.strength_save != null){
-            monsterData.savingThrows.push({statId: 1, bonusModifier: null})
-        }
-        if(monsterData.dexterity_save != null){
-            monsterData.savingThrows.push({statId: 2, bonusModifier: null})
-        }
-        if(monsterData.constitution_save != null){
-            monsterData.savingThrows.push({statId: 3, bonusModifier: null})
-        }
-        if(monsterData.intelligence_save != null){
-            monsterData.savingThrows.push({statId: 4, bonusModifier: null})
-        }
-        if(monsterData.wisdom_save != null){
-            monsterData.savingThrows.push({statId: 5, bonusModifier: null})
-        }
-        if(monsterData.charisma_save != null){
-            monsterData.savingThrows.push({statId: 6, bonusModifier: null})
-        }
-        
-        
-
-        monsterData.movements = [];
-        Object.entries(monsterData.speed).forEach(([key, value]) => {
-          key = key.replace(/\b[a-z]/g, function(letter) {
-            return letter.toUpperCase();
-          });
-          if(key == 'Walk'){
-            monsterData.movements.push({movementId: 1, speed: value, name: key})
-          }
-          else if(key == 'Burrow'){
-            monsterData.movements.push({movementId: 2, speed: value, name: key})
-          }
-          else if(key == 'Climb'){
-            monsterData.movements.push({movementId: 3, speed: value, name: key})
-          }
-          else if(key == 'Fly'){
-            monsterData.movements.push({movementId: 4, speed: value, name: key})
-          }
-          else if(key == 'Swim'){
-            monsterData.movements.push({movementId: 5, speed: value, name: key})
-          }
+        Object.entries(monsterData.saving_throws).forEach(([key, value]) => {
+            if(key == "strength"){
+                monsterData.savingThrows.push({statId: 1, bonusModifier: value})
+            }
+            else if(key == "dexterity"){
+                monsterData.savingThrows.push({statId: 2, bonusModifier: value})
+            }
+            else if(key == "constitution"){
+                monsterData.savingThrows.push({statId: 3, bonusModifier: value})
+            }
+            else if(key == "intelligence"){
+                monsterData.savingThrows.push({statId: 4, bonusModifier: value})
+            }
+            else if(key == "wisdom"){
+                monsterData.savingThrows.push({statId: 5, bonusModifier: value})
+            }
+            else if(key == "charisma"){
+                monsterData.savingThrows.push({statId: 6, bonusModifier: value})
+            }
         });
 
+        monsterData.movements = [];
+        const distanceUnit = monsterData.speed.unit;
+        const hover = monsterData.speed.hover;
+        Object.entries(monsterData.speed).forEach(([key, value]) => {
+            if(key == "walk"){
+                monsterData.movements.push({movementId: 1, speed: `${value} ${distanceUnit}`, name: "walk"})
+            }
+            else if(key == "burrow"){
+                monsterData.movements.push({movementId: 2, speed: `${value} ${distanceUnit}`, name: "burrow"})
+            }
+            else if(key == "climb"){
+                monsterData.movements.push({movementId: 3, speed: `${value} ${distanceUnit}`, name: "climb"})
+            }
+            else if(key == "fly"){
+                monsterData.movements.push({movementId: 4, speed: `${value} ${distanceUnit}`, name: hover == true ? "hover" : "fly"})
+            }
+            else if(key == "swim"){
+                monsterData.movements.push({movementId: 5, speed: `${value} ${distanceUnit}`, name: "swim"})
+            }
+        })
 
+        monsterData.languages = monsterData.languages.as_string;
 
         return monsterData;
 }
