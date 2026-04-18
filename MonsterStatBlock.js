@@ -34,7 +34,7 @@ function build_and_display_stat_block_with_data(monsterData, container, tokenId,
         // is not as good as the data we get from fetching the monster directly so
         // build with what the listItem has on it, then fetch more details, then re-render it with the updated details
         display_stat_block_in_container(new MonsterStatBlock(monsterData), container, tokenId);
-        let monsterId = (monsterData.slug) ? monsterData.slug : monsterData.id
+        let monsterId = (monsterData.key) ? monsterData.key : monsterData.id
         fetch_and_cache_monsters([monsterId], function (open5e = false) {
           if(!open5e){
             display_stat_block_in_container(new MonsterStatBlock(cached_monster_items[monsterId].monsterData), container, tokenId);
@@ -48,7 +48,7 @@ function build_and_display_stat_block_with_data(monsterData, container, tokenId,
 
 function build_stat_block_for_copy(listItem, options, open5e = false){
   const monsterData = listItem.monsterData;
-  const monsterId = open5e == true ? monsterData.slug : monsterData.id
+  const monsterId = open5e == true ? monsterData.key : monsterData.id
   const cachedMonsterItem = open5e == true ? cached_open5e_items[monsterId] : cached_monster_items[monsterId];
   build_import_loading_indicator('Fetching Statblock Info');
   if (cachedMonsterItem) {
@@ -1343,13 +1343,13 @@ class MonsterStatBlock {
         return this.findObj("creatureSizes", this.data.sizeId);
     }
     get sizeName() {
-        return this.data.size || this.sizeObj?.name || "";
+        return this.data.size?.name || this.data.size || this.sizeObj?.name || "";
     }
     get typeObj() {
         return this.findObj("monsterTypes", this.data.typeId);
     }
     get typeName() {
-        return this.data.type || this.typeObj?.name || "";
+        return this.data.type?.name ||this.data.type || this.typeObj?.name || "";
     }
     get monsterTypeHtml() {
         if (!this.data.subTypes || this.data.subTypes.length === 0) {
@@ -1646,12 +1646,12 @@ class MonsterStatBlock {
     get sourceBookHtml() {
         let html = `<p class="source monster-source">`;
         if (this.data.sourceId) {
-            if(!this.data.document__title){
+            if(!this.data.document?.name){
               const definition = this.findObj("sources", this.data.sourceId);
               html += definition.description;
             }
             else{
-              html += this.data.document__title;
+              html += this.data.document?.name;
             }
             
             if (this.data.sourcePageNumber) {
