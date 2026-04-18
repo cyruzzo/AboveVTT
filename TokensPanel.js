@@ -73,12 +73,12 @@ async function getOpen5e(results = [], search = ''){
         15: 'Plant',
         16: 'Undead'
     }
-    const maxCR = (monster_search_filters?.challengeRatingMax) ? monster_search_filters?.challengeRatingMax : '';
-    const minCR = (monster_search_filters?.challengeRatingMin) ? monster_search_filters?.challengeRatingMin : '';
+    const maxCR = (monster_search_filters?.challengeRatingMax) ? convert_challenge_rating_id(monster_search_filters?.challengeRatingMax) : '';
+    const minCR = (monster_search_filters?.challengeRatingMin) ? convert_challenge_rating_id(monster_search_filters?.challengeRatingMin) : '';
     const monsterTypes = (monster_search_filters?.monsterTypes) ? monster_search_filters.monsterTypes.map(item=> item = ddbMonsterTypes[item]).toString() : '';
     
 
-    let api_url = `https://api.open5e.com/v2/creatures/?name__icontains=${search}&type=${monsterTypes}&challenge_rating__lt=${maxCR}&challenge_rating__gt=${minCR}&limit=10`
+    let api_url = `https://api.open5e.com/v2/creatures/?name__icontains=${search}&type=${monsterTypes}&challenge_rating__lte=${maxCR}&challenge_rating__gte=${minCR}&limit=10`
 
     let jsonData = {}
     await $.getJSON(api_url, function(data){
@@ -4788,6 +4788,7 @@ function update_open5e_item_cache(newItems, callback=()=>{}) {
 }
 function convert_open5e_monsterData(monsterData){
         monsterData.isHomebrew = true;
+        monsterData.open5e = true;
         monsterData.stats = [
         {
             "statId": 1,
@@ -4830,12 +4831,12 @@ function convert_open5e_monsterData(monsterData){
                 }else if(action.desc == undefined){
                     action.desc ='';
                 }
-                if(action.name == 'Spellcasting'){
-                    actionDesc = action.desc.replace(/Cantrips|[0-9]+[A-Za-z][A-Za-z]-level|[0-9]+[A-Za-z][A-Za-z]\slevel/g, '</p><p>$&');
+                if(action.name.includes('Spellcasting')){
+                    actionDesc = action.desc.replaceAll(/_([^_]+)_/g, '$1').replaceAll(/(-\s+)?\*\*([^*]+)\*\*/g, '$2 ').replaceAll(/At Will|Cantrips|[0-9]+[A-Za-z][A-Za-z]-level|[0-9]+[A-Za-z][A-Za-z]\slevel|\d+\/Day/gi, '<br><br>$&');
                     desc = `<p><em><strong>${action.name}.</strong></em> ${actionDesc}</p>`;
                 }
                 else{
-                    desc = `<p><em><strong>${action.name}.</strong></em> ${action.desc.replace(/\n/g, `<br />`)}</p>`
+                    desc = `<p><em><strong>${action.name}.</strong></em> ${action.desc.replace(/\n/g, `<br />`).replaceAll(/_([^_]+)_/g, '<em>$1</em>').replaceAll(/(-\s+)?\*\*([^*]+)\*\*/g, '<strong>$2</strong>')}</p>`
                 }
                 desc = desc.replace(/\d\dd\d\d\s[+-]\s\d|\d\dd\d\s[+-]\s\d|\dd\d\d\s[+-]\s\d|\dd\d\s[+-]\s\d|\d\dd\d\d|\d\dd\d|\dd\d\d|\dd\d/g, `<span data-dicenotation='$&' data-rolltype='damage' data-rollaction='damage'>$&</span>`);
                 desc = desc.replace(/\s[+-]\d\d\s|\s[+-]\d\s/g, `<span data-dicenotation='1d20$&' data-rollaction='attack'>$&</span> `);
@@ -4954,6 +4955,21 @@ function convert_open5e_monsterData(monsterData){
         }
         monsterData.sourceId = monsterData.document?.key;    
         monsterData.hitPointDice = {};
+        if(!monsterData.hit_dice){
+            monsterData.hitPointDice.diceCount = 0;
+            monsterData.hitPointDice.diceValue = 0;
+            monsterData.hitPointDice.fixedValue = monsterData.hit_points;
+        }else{
+            const hitDiceMatch = monsterData.hit_dice.match(/(\d*)d(\d+)(\+(\d+))?/);
+            if(hitDiceMatch){
+                monsterData.hitPointDice.diceCount = hitDiceMatch[1] ? parseInt(hitDiceMatch[1]) : 1;
+                monsterData.hitPointDice.diceValue = parseInt(hitDiceMatch[2]);
+                if(hitDiceMatch[4]){
+                    monsterData.hitPointDice.fixedValue = parseInt(hitDiceMatch[4]);
+                }
+            }
+        }
+        
         monsterData.hitPointDice.diceString = monsterData.hit_dice;
         monsterData.averageHitPoints = monsterData.hit_points;
         monsterData.armorClass = monsterData.armor_class;

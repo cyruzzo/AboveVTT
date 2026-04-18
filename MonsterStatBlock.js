@@ -70,18 +70,18 @@ function build_stat_block_for_copy(listItem, options, open5e = false){
 
 async function display_stat_block_in_container(statBlock, container, tokenId, customStatBlock = undefined) {
     const token = window.TOKEN_OBJECTS[tokenId];
-    let html = (customStatBlock) ? $(`
-    <div class="container avtt-stat-block-container custom-stat-block">${customStatBlock}</div>`) : await build_monster_stat_block(statBlock, token);
+    let $html = (customStatBlock) ? $(`
+    <div class="container avtt-stat-block-container custom-stat-block">${customStatBlock}</div>`) : $(await build_monster_stat_block(statBlock, token));
     container.find("#noAccessToContent").remove(); // in case we're re-rendering with better data
     container.find(".avtt-stat-block-container").remove(); // in case we're re-rendering with better data
-    container.append(html);
-    if(customStatBlock){
-      await window.JOURNAL.translateHtmlAndBlocks(html);
-      add_journal_roll_buttons(html, tokenId);
-      window.JOURNAL.add_journal_tooltip_targets(html);
-
-      
+    container.append($html);
+    if(customStatBlock || statBlock.data?.open5e == true){
+      await window.JOURNAL.translateHtmlAndBlocks($html);
+      add_journal_roll_buttons($html, tokenId);
+      window.JOURNAL.add_journal_tooltip_targets($html);
       $(container).find('.add-input').each(function(){window.JOURNAL.addTrackedInputs($(this), {token})});
+    }
+    if(customStatBlock){
       let imageUrl = parse_img(token.options.imgsrc);
 
       if(token.options.imgsrc.startsWith('above-bucket-not-a-url')){
@@ -95,7 +95,6 @@ async function display_stat_block_in_container(statBlock, container, tokenId, cu
             <div style="display:flex;flex-direction:row;width:100%;justify-content:space-between;padding:10px;">
                 <a id="monster-image-to-gamelog-link" class="ddbeb-button monster-details-link" href="${imageUrl}" target='_blank' >Send Image To Gamelog</a>
             </div>`);
-
     }
     add_aoe_statblock_click(container, tokenId);
     container.find("#monster-image-to-gamelog-link").on("click", function (e) {
@@ -114,7 +113,7 @@ async function display_stat_block_in_container(statBlock, container, tokenId, cu
     }
       
     container.find("a").attr("target", "_blank"); // make sure we only open links in new tabs
-    if(!customStatBlock)
+    if(!customStatBlock && !statBlock.data?.open5e)
       scan_monster(container, statBlock, tokenId);
     else
       add_ability_tracker_inputs(container, tokenId)
@@ -1542,24 +1541,27 @@ class MonsterStatBlock {
         return objects.map(obj => obj.name).join(", ");
     }
     get damageVulnerabilitiesHtml() {
-        if(this.data.damage_vulnerabilities){
-          return this.data.damage_vulnerabilities.replace(/(?:^|\s)\w/g, function(match) {
+      const damageVul = this.data.damage_vulnerabilities || this.data.resistances_and_immunities?.damage_vulnerabilities_display;
+        if(damageVul){
+          return damageVul.replace(/(?:^|\s)\w/g, function(match) {
               return match.toUpperCase();
           });
         }
         return this.damageAdjustmentsHtml(DAMAGE_ADJUSTMENT_TYPE_VULNERABILITIES);
     }
     get damageResistancesHtml() {
-        if(this.data.damage_resistances){
-          return this.data.damage_resistances.replace(/(?:^|\s)\w/g, function(match) {
+      const damageRes = this.data.damage_resistances || this.data.resistances_and_immunities?.damage_resistances_display;
+        if(damageRes){
+          return damageRes.replace(/(?:^|\s)\w/g, function(match) {
               return match.toUpperCase();
           });
         }
         return this.damageAdjustmentsHtml(DAMAGE_ADJUSTMENT_TYPE_RESISTANCE);
     }
     get damageImmunitiesHtml() {
-        if(this.data.damage_immunities){
-          return this.data.damage_immunities.replace(/(?:^|\s)\w/g, function(match) {
+      const damageImm = this.data.damage_immunities || this.data.resistances_and_immunities?.damage_immunities_display;
+        if(damageImm){
+          return damageImm.replace(/(?:^|\s)\w/g, function(match) {
               return match.toUpperCase();
           });
         }
@@ -1567,8 +1569,9 @@ class MonsterStatBlock {
     }
 
     get conditionImmunitiesHtml() {
-        if(this.data.condition_immunities){
-          return this.data.condition_immunities.replace(/(?:^|\s)\w/g, function(match) {
+        const condImm = this.data.condition_immunities || this.data.resistances_and_immunities?.condition_immunities_display;
+        if(condImm){
+          return condImm.replace(/(?:^|\s)\w/g, function(match) {
               return match.toUpperCase();
           });
         }
