@@ -29,8 +29,8 @@ const throttleLight = throttle((darknessMoved = false) => {
 	if (!window.walls || window.walls?.length < 5) {
 		redraw_light_walls();
 	} 
-	redraw_light(darknessMoved, 1000)
-}, 1000/30);
+	requestAnimationFrame(() =>{redraw_light(darknessMoved, 1000)})
+});
 const throttleTokenCheck = mydebounce(throttle(do_check_token_visibility, 1000/4), 20);
 const debounceStoreExplored = mydebounce((exploredCanvas, sceneId) => {		
 	let dataURI = exploredCanvas.toDataURL('image/jpg')
@@ -2167,9 +2167,7 @@ class Token {
 
 			if (old.length > 0) {
 				const hasDraggable = old.hasClass('ui-draggable');
-				if (!hasDraggable) {
-					console.warn(`Token.place(): draggable not initialized for token ${this.options.id} — skipping draggable enable/disable`);
-				}
+				
 				if(this.options.type == 'door'){
 					this.options.size = 50;
 					setTokenLight(old, this.options);
@@ -2179,6 +2177,8 @@ class Token {
 						old.toggleClass('linked', true);
 					}
 					return;
+				} else if (!hasDraggable) {
+					console.warn(`Token.place(): draggable not initialized for token ${this.options.id} — skipping draggable enable/disable`);
 				}
 				if(window.CURRENT_SCENE_DATA.disableSceneVision == 1 && !window.DM)
 					check_single_token_visibility(this.options.id);
