@@ -4681,7 +4681,7 @@ function drawing_mouseup(e) {
 			const isCircle = curr.options.tokenStyleSelect == 'circle'
 			const size = curr.options.size * ((isCircle || curr.options.tokenStyleSelect == 'square' || $("#tokens>div[data-id='" + id + "']").hasClass("isAoe")) ? (curr.options.imageSize || 1) : 1);
 			const R = (isCircle ? 0 : curr.options.rotation) || 0;
-			curr.selected = (fullyInside ? isRotatedSquareInsideRect : intersectsRotatedSquare) (
+			curr.selected = shiftHeld && curr.selected == true || (fullyInside ? isRotatedSquareInsideRect : intersectsRotatedSquare) (
 				{x:x0, y:y0, width:x1-x0, height: y1-y0}, CX, CY, size, R);
 		}
 		$("#temp_overlay").css('z-index', '25');
