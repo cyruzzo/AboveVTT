@@ -12216,6 +12216,7 @@ div#playlistFields {
     border-style: solid; 
     margin-right: 3px;
     font-size:20px;
+    text-indent: 20px;
 }
 
 #chat-language option {
