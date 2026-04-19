@@ -2011,6 +2011,7 @@ function apply_sidebar_width(newWidth) {
 		$(".ct-sidebar__portal").css("width", "");
 	} else {
 		$(".sidebar--right").css("width", newWidth + "px");
+		$(".ct-sidebar__pane-content").css("width", newWidth + "px");
 	}
 	$(".sidebar__controls").width(newWidth);
 	const zoomOffset = $("#zoom_buttons").data("zoom-offset");
@@ -2043,6 +2044,7 @@ function init_sidebar_resize_handle() {
 			document.documentElement.style.setProperty('--sidebar-width', newWidth + 'px');
 			if (!is_characters_page()) {
 				$(".sidebar--right").css("width", newWidth + "px");
+				$(".ct-sidebar__pane-content").css("width", newWidth + "px");
 			}
 			$(".sidebar__controls").width(newWidth);
 			$('canvas.dice-rolling-panel__container, .roll-mod-container').css('--sidebar-width', newWidth + 'px');
