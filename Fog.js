@@ -8148,7 +8148,7 @@ function redraw_light(darknessMoved = false, limitActiveRays = 0) {
 				//when player token does not exist show vision for all pc tokens and shared vision for other tokens. Mostly used by DM's, streams and tabletop tv games.
 				//when player token does exist show your own vision and shared vision.
 				
-				if (window.DM !== true || window.SelectedTokenVision === true && (window.TOKEN_OBJECTS[auraId].options.sight === 'truesight' || window.TOKEN_OBJECTS[auraId].options.sight === 'devilsight')) {					
+				if (window.noDarknessPolygon?.length>1 && (window.DM !== true || window.SelectedTokenVision === true) && (window.TOKEN_OBJECTS[auraId].options.sight === 'truesight' || window.TOKEN_OBJECTS[auraId].options.sight === 'devilsight')) {					
 					clip_circle_with_polygon(devilsightCanvasContext, window.lightAuraClipPolygon[auraId].middle.x, window.lightAuraClipPolygon[auraId].middle.y, window.lightAuraClipPolygon[auraId].darkvision, '#fff', window.noDarknessPolygon)
 					if (window.TOKEN_OBJECTS[auraId].options.sight === 'truesight') {
 						clip_circle_with_polygon(truesightCanvasContext, window.lightAuraClipPolygon[auraId].middle.x, window.lightAuraClipPolygon[auraId].middle.y, window.lightAuraClipPolygon[auraId].darkvision, '#fff', window.noDarknessPolygon)
