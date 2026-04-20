@@ -359,7 +359,7 @@ Mousetrap.bind('esc', function () {     //deselect all buttons
 
 //Throttle so the token doesn't immediately fly off map if button is held and set trailing only we can register diagonal movement as 1 move.
 const throttleMoveRequest = throttle(() => {
-    requestAnimationFrame(moveKeyWatch);
+    moveKeyWatch();
 }, 25, {leading: false, trailing: true})
 
 

@@ -2494,7 +2494,7 @@ function init_zoom_buttons() {
 	zoom_section.append(youtube_controls_button);
 	if(window.DM) {
 		
-		const dm_screen_button = $(`<div id='dm_screen_button' class='ddbc-tab-options--layout-pill hasTooltip button-icon hideable' data-name='Show/Hide DM Screen'> 
+		const dm_screen_button = $(`<div id='dm_screen_button' class='ddbc-tab-options--layout-pill hasTooltip button-icon hideable' data-name='Open DM Screen'> 
 			<div class="ddbc-tab-options__header-heading">
 					<span class="material-symbols-outlined" style="font-size: 20px;">
 						scrollable_header
