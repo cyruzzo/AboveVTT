@@ -8104,15 +8104,17 @@ function redraw_light(darknessMoved = false, limitActiveRays = 0) {
 						drawPolygon(combineCtx, window.lightPolygon, "#000", false, 10);
 						offscreenContext.globalCompositeOperation = 'source-over';
 						offscreenContext.drawImage(offScreenCombine, 0, 0)
+
+						if (window.TOKEN_OBJECTS[auraId].options.sight === 'devilsight') {
+							devilsightCanvasContext.globalCompositeOperation = 'source-over';
+							devilsightCanvasContext.drawImage(offScreenCombine, 0, 0);
+						}
+						if (window.TOKEN_OBJECTS[auraId].options.sight === 'truesight') {
+							truesightCanvasContext.globalCompositeOperation = 'source-over';
+							truesightCanvasContext.drawImage(offScreenCombine, 0, 0);
+						}
 					}
-					if (window.TOKEN_OBJECTS[auraId].options.sight === 'devilsight') {
-						devilsightCanvasContext.globalCompositeOperation = 'source-over';
-						devilsightCanvasContext.drawImage(offScreenCombine, 0, 0);
-					}
-					if (window.TOKEN_OBJECTS[auraId].options.sight === 'truesight') {
-						truesightCanvasContext.globalCompositeOperation = 'source-over';
-						truesightCanvasContext.drawImage(offScreenCombine, 0, 0);
-					}
+
 
 				}
 

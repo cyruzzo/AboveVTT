@@ -260,6 +260,9 @@ function getRollData(rollButton){
     else if($rollButton.find('[class*="styles_numberDisplay"]').length > 0){
       expression = `1d20${$rollButton.text().replace(/\s/g, '')}`;
     }
+    else if($rollButton.closest('.ddbc-ability-summary__primary').length>0){
+        expression = `1d20${$rollButton.closest('.ddbc-ability-summary').find('[class*="styles_numberDisplay"]').text().replace(/\s/g, '')}`;
+    }
     else if($rollButton.hasClass('avtt-roll-button')){
       expression = `${$rollButton.attr('data-exp')}${$rollButton.attr('data-mod')}`
       rollTitle = $rollButton.attr('data-actiontype');

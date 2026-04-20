@@ -429,10 +429,47 @@ class JournalManager{
 		
 
 	}
+	show_rename_input(note_id, searchText=''){	
+		const self = this;
+				
+		const input_note_title=$(`
+			<input type='text' class='input-add-chapter' value='${self.notes[note_id].title}'>
+		`);
+		const rename_btn = $(`.sidebar-list-item-row[data-id='${note_id}'] button.save-rename`);
+		const edit_btn = $(`.sidebar-list-item-row[data-id='${note_id}'] button.edit-note`);
+		input_note_title.keypress(function(e){
+			if (e.which == 13 && input_note_title.val() !== "") {
+				self.notes[note_id].title = input_note_title.val();
+				self.sendNotes([self.notes[note_id]]);
+				self.persist();
+				self.build_journal(searchText);
+			}
+
+			// If the user presses escape, cancel the edit
+			if (e.which == 27) {
+				self.build_journal(searchText);
+			}
+
+		});
+		input_note_title.off('click').on('click', function(e){
+			e.stopPropagation();
+		})
+		input_note_title.blur(function(event){	
+			let e = $.Event('keypress');
+			e.which = 13;
+			input_note_title.trigger(e);
+		});
+		edit_btn.css('visibility', 'hidden');
+		rename_btn.show();
+		const entry_title = $(`.sidebar-list-item-row[data-id='${note_id}'] .sidebar-list-item-row-details-title`);
+		entry_title.replaceWith(input_note_title);
+		
+		input_note_title.focus();
+	}
 	build_journal(searchText){
 		console.log('build_journal');
 		let self=this;
-
+		
 		// Clear all elements from journal panel except the searchbar, which needs to stay in place between searches
 		journalPanel.body.children().not('#journal-control-container, #journal-control-container *').remove();
 		
@@ -1090,53 +1127,14 @@ class JournalManager{
 							render_source_chapter_in_iframe(self.notes[note_id].ddbsource);
 						});
 					}
-					let rename_btn = $("<button class='token-row-button'><img src='"+window.EXTENSION_PATH+"assets/icons/rename-icon.svg'></button>");
+					let rename_btn = $("<button style='display:none' class='token-row-button save-rename'><img src='"+window.EXTENSION_PATH+"assets/icons/save.svg'></button>");
 					
-					rename_btn.click(function(){
-						//Convert the note title to an input field and focus it
-						const input_note_title=$(`
-							<input type='text' class='input-add-chapter' value='${self.notes[note_id].title}'>
-						`);
-
-						input_note_title.keypress(function(e){
-							if (e.which == 13 && input_note_title.val() !== "") {
-								self.notes[note_id].title = input_note_title.val();
-								self.sendNotes([self.notes[note_id]]);
-								self.persist();
-								self.build_journal(searchText);
-							}
-
-							// If the user presses escape, cancel the edit
-							if (e.which == 27) {
-								self.build_journal(searchText);
-							}
-						});
-						input_note_title.off('click').on('click', function(e){
-							e.stopPropagation();
-						})
-						input_note_title.blur(function(event){	
-							let e = $.Event('keypress');
-							e.which = 13;
-							input_note_title.trigger(e);
-						});
-
-						entry_title.empty();
-						
-						entry_title.append(input_note_title);
-						entry_title.append(edit_btn);
-
-						input_note_title.focus();
-
-						// Convert the edit button to a save button
-						rename_btn.empty();
-						rename_btn.append(`
-							<img src='${window.EXTENSION_PATH}assets/icons/save.svg'>
-						`);
-					});
 
 
 
-					let edit_btn=$("<button class='token-row-button'><span class='material-symbols-outlined'>edit_note</span></button>");
+
+
+					let edit_btn=$("<button class='token-row-button edit-note'><span class='material-symbols-outlined'>edit_note</span></button>");
 					edit_btn.click(function(){
 						window.JOURNAL.edit_note(note_id);	
 					});
@@ -1497,37 +1495,7 @@ class JournalManager{
 		                name: "Rename",
 		                callback: function(itemKey, opt, originalEvent) {
 		                    //Convert the note title to an input field and focus it
-		                    const input_note_title=$(`
-		                    	<input type='text' class='input-add-chapter' value='${self.notes[note_id].title}'>
-		                    `);
-
-		                    input_note_title.keypress(function(e){
-		                    	if (e.which == 13 && input_note_title.val() !== "") {
-		                    		self.notes[note_id].title = input_note_title.val();
-		                    		self.sendNotes([self.notes[note_id]]);
-		                    		self.persist();
-		                    		self.build_journal(searchText);
-		                    	}
-
-		                    	// If the user presses escape, cancel the edit
-		                    	if (e.which == 27) {
-		                    		self.build_journal();
-		                    	}
-		                    });
-		                    input_note_title.off('click').on('click', function(e){
-		                    	e.stopPropagation();
-		                    })
-		                    input_note_title.blur(function(event){	
-		                    	let e = $.Event('keypress');
-		                        e.which = 13;
-		                        input_note_title.trigger(e);
-		                    });
-		              
-		                    let entry_title = $(element).find('.sidebar-list-item-row-details-title');
-							
-		                    entry_title.append(input_note_title);
-		                    input_note_title.focus();
-
+		                    self.show_rename_input(note_id, searchText);
 			            }   
 	            	};   
 	            	if(!self.notes[note_id].ddbsource){
