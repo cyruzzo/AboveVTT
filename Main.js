@@ -2106,11 +2106,6 @@ function init_ui() {
             <path id="dragbox-rect2" d="M 0 0 L 0 1 M 1 0 L 1 1 M 0 0 L 1 0 M 0 1 L 1 1"  class="drag-box-w"/>
             </g>
             <rect id="selbox-rect" class="sel-box" visibility="hidden" x="0" y="0" width="1" height="1" rx="0.01" />
-            <g id="dragbox-inside"  visibility="hidden">
-            <path class="drag-box-b"
-             d="M 0.01 0.01 L 0.01 0.80 M 0.01 0.01 L 0.80 0.01 M 0.99 0.99 L 0.99 0.20 M 0.99 0.99 L 0.20 0.99 "/>
-            <path stroke-dasharray="2" class="drag-box-w"
-             d="M 0.01 0.01 L 0.01 0.80 M 0.01 0.01 L 0.80 0.01 M 0.99 0.99 L 0.99 0.20 M 0.99 0.99 L 0.20 0.99 "/> </g>
         <g id="rot-grab" class="grabber" visibility="hidden"> <g class="grabber-icon-c">
             <circle fill="#ced9e080" cx="12.5" cy="12.5" r="12.5" />
             <path d="M12.5,17.125 c-2.59,0-4.695-2.1-4.695-4.697
