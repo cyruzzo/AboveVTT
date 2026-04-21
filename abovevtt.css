@@ -226,13 +226,13 @@ body > div {
 .party-item-table td.item-add-cell{
     min-width: 90px;
 }
-.note-text .ct-currency-button__currency-item-preview{
+:is(.note-text, .avtt-stat-block-container) .party-currency .ct-currency-button__currency-item-preview{
     width:16px;
     height:16px;
     position:relative;
     display:inline-block;
 }
-.note-text .party-currency {
+:is(.note-text, .avtt-stat-block-container) .party-currency {
     display: flex;
     align-items: center;
     justify-content: center;
