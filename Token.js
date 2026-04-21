@@ -2059,7 +2059,7 @@ class Token {
 				const top = (tokenY + (parseFloat(token.sizeHeight()) / 2)) / parseFloat(window.CURRENT_SCENE_DATA.scale_factor);
 				if(typeof left != 'number' || isNaN(left) || typeof top != 'number' || isNaN(top)){
 					showErrorMessage(
-						Error(`One of these values is not a number: Size: ${token.sizeWidth()}, Scene Scale: ${window.CURRENT_SCENE_DATA.scale_factor}, x: ${tokenX}, y: ${tokenY}`),
+						new Error(`One of these values is not a number: Size: ${token.sizeWidth()}, Scene Scale: ${window.CURRENT_SCENE_DATA.scale_factor}, x: ${tokenX}, y: ${tokenY}`),
 						`To fix this, have the DM delete your token and add it again. Refreshing the page will sometimes fix this as well.`
 					)
 				}									
@@ -3106,7 +3106,7 @@ class Token {
 							window.toggleSnap=false;
 
 							pauseCursorEventListener = false;
-							
+							clearTimeout(dragStopTimer);
 							dragStopTimer = setTimeout(() => {
 								$(".pause_click")?.removeClass("pause_click")
 								delete window.playerTokenAuraIsLight;
@@ -3123,13 +3123,12 @@ class Token {
 						if (get_avtt_setting_value("allowTokenMeasurement")) {
 							$("#temp_overlay").css("z-index", "50");
 						}
-					
+						window.dragSelectedTokens = $(`#tokens .token.tokenselected:not(.ui-draggable-disabled), #tokens .token[data-group-id='${self.options.groupId}']`); //set variable for selected tokens that we'll be looking at in drag, deleted in stop.
+						
 						window.DRAWFUNCTION = "select"
 						window.DRAGGING = true;
-						if (contextMenuLongPressTimer)
-							clearTimeout(contextMenuLongPressTimer);
-						if (dragStopTimer)
-							clearTimeout(dragStopTimer);
+						clearTimeout(contextMenuLongPressTimer);
+						clearTimeout(dragStopTimer);
 						window.oldTokenPosition = {};
 						
 						self.prepareWalkableArea()
@@ -3166,7 +3165,6 @@ class Token {
 						}
 						
 						window.playerTokenAuraIsLight = (window.CURRENT_SCENE_DATA.disableSceneVision == '1') ? false : (playerTokenId == undefined) ? true : window.TOKEN_OBJECTS[playerTokenId].options.auraislight; // used in drag to know if we should check for wall/LoS collision.
-						window.dragSelectedTokens = $(`#tokens .token.tokenselected:not(.ui-draggable-disabled), #tokens .token[data-group-id='${self.options.groupId}']`); //set variable for selected tokens that we'll be looking at in drag, deleted in stop.
 						const setDataPos = (id) =>{
 							const idReplaced = id.replaceAll("/", "");
 							let selEl = $(`#aura_${idReplaced}, #light_${idReplaced}, #vision_${idReplaced}, [data-darkness='darkness_${idReplaced}']`);
@@ -3260,7 +3258,6 @@ class Token {
 					 */
 					drag: function(event, ui) {
 						event.stopPropagation();
-						
 						let zoom = parseFloat(window.ZOOM);
 
 						let original = ui.originalPosition;
@@ -3296,7 +3293,7 @@ class Token {
 						}else{
 							ui.position = (window.oldTokenPosition[self.options.id] != undefined) ? window.oldTokenPosition[self.options.id] : {left: ui.originalPosition.left/zoom, top: ui.originalPosition.top/zoom};
 						}
-
+						console.assert(window.dragSelectedTokens != undefined, new Error('test'))
 						if (self.selected && window.dragSelectedTokens.length>1 && !shiftHeld) {
 							// if dragging on a selected token, we should move also the other selected tokens
 							// try to move other tokens by the same amount
@@ -3949,6 +3946,7 @@ function token_menu() {
 			event.preventDefault();
 			initialX = event.touches[0].pageX;
 			initialY = event.touches[0].pageY;
+			clearTimeout(contextMenuLongPressTimer);
 			contextMenuLongPressTimer = setTimeout(function() {
 			    console.log("context_menu_flyout contextmenu event", event);
 				if (window.DRAGGING || $(".pause_click").length > 0) {
