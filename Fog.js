@@ -1339,7 +1339,6 @@ function draw_select_box(x0, y0, w, h, inside=false, selbox=false, group=false, 
 	
 	// --
 
-	document.getElementById('dragbox-inside')?.setAttribute('visibility', inside ? 'visible' : 'hidden');
 	document.getElementById('dragbox-rect')?.setAttribute('visibility', !selbox ? 'visible' : 'hidden');
 	document.getElementById('selbox-rect')?.setAttribute('visibility', selbox ? 'visible' : 'hidden');
 	//$("#dragbox").css("mix-blend-mode", selbox ? "" : "difference"); //helps with visibility
@@ -1362,7 +1361,6 @@ function draw_select_box(x0, y0, w, h, inside=false, selbox=false, group=false, 
 }
 function hide_select_box() {
 	document.getElementById('dragbox-rect')?.setAttribute('visibility', 'hidden');
-	document.getElementById('dragbox-inside')?.setAttribute('visibility', 'hidden');	
 	document.getElementById('selbox-rect')?.setAttribute('visibility', 'hidden');
 	document.getElementById('rot-grab')?.setAttribute('visibility', 'hidden');
 	document.getElementById('group-rot-grab')?.setAttribute('visibility', 'hidden');
