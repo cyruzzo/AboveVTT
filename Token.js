@@ -3051,7 +3051,7 @@ class Token {
 					y: 0
 				};
 			 	let ctxImageData;
-				let dragStopTimer;
+				
 
 				tok.draggable({
 					stop: function (event) {
@@ -3109,8 +3109,8 @@ class Token {
 						window.toggleSnap=false;
 
 						pauseCursorEventListener = false;
-						clearTimeout(dragStopTimer);
-						dragStopTimer = setTimeout(() => {
+						clearTimeout(window.dragStopTimer);
+						window.dragStopTimer = setTimeout(() => {
 							$(".pause_click")?.removeClass("pause_click")
 							delete window.playerTokenAuraIsLight;
 							delete window.dragSelectedTokens;
@@ -3131,7 +3131,7 @@ class Token {
 							window.DRAWFUNCTION = "select"
 							window.DRAGGING = true;
 							clearTimeout(contextMenuLongPressTimer);
-							clearTimeout(dragStopTimer);
+							clearTimeout(window.dragStopTimer);
 							window.oldTokenPosition = {};
 							
 							self.prepareWalkableArea()
