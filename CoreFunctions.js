@@ -686,7 +686,7 @@ function deleteDB(){
     objectStoreRequest.onsuccess = function(event) {       
       $('#exploredCanvas').remove();
       redraw_light();
-      alert('This campaigns local explored vision data has been cleared.')
+      showTempMessage('This campaigns local explored vision data has been cleared.')
     };
   }
 }
@@ -707,7 +707,7 @@ function deleteExploredScene(sceneId){
       if(sceneId == window.CURRENT_SCENE_DATA.id){
         $('#exploredCanvas').remove();
         redraw_light();
-        alert('Scene Explore Trail Data Cleared')
+        showTempMessage('Scene Explore Trail Data Cleared')
       }        
     };
 }

@@ -2506,7 +2506,7 @@ class MessageBroker {
 				alertText = 'Check console warnings for more message data.'
 			}
 			
-			alert(`You reached the maximum message size for "${message.eventType.split('/')[message.eventType.split('/').length-1]}".\n\n${alertText}`);
+			showErrorMessage(`You reached the maximum message size for "${message.eventType.split('/')[message.eventType.split('/').length-1]}".\n\n${alertText}`);
 			return;
 		}
 
