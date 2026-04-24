@@ -2064,13 +2064,23 @@ class Token {
 					)
 					$(placedToken).trigger('mouseup');
 					return false;
-				}									
-				const pixeldata = getPixelFromImageData(ctxImageData, left, top);	
+				}				
+
+				
 				
 				if(!token.isAoe()){
-					if(pixeldata[0]<253 || pixeldata[1]<253 || pixeldata[2]<253){
-						canMove = false;
+					if(!window.DM && (ctxImageData.height < top || ctxImageData.width < left || left < 0 || top < 0)){
+						canMove=false
 					}
+					else{
+						const pixeldata = getPixelFromImageData(ctxImageData, left, top);	
+						
+						if(pixeldata[0]<253 || pixeldata[1]<253 || pixeldata[2]<253){
+							canMove = false;
+						}
+					}``
+
+					
 					if (canMove){	
 						window.oldTokenPosition[token.options.id] = {
 							left: tokenX,
