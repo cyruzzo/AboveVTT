@@ -5305,7 +5305,7 @@ function drawPolygon (
 ) {
 	if(fill && islight && replacefog){
 		
-		ctx.lineWidth = 6;
+
 		ctx.fillStyle = 'rgba(255,255,255,1)';
 		ctx.strokeStyle = 'rgba(0,0,0,1)';
 		
@@ -5324,13 +5324,12 @@ function drawPolygon (
 		}
 		ctx.closePath();
 		ctx.fill();
-
-		ctx.save();
-		ctx.globalCompositeOperation = 'destination-out';
-		ctx.stroke();
-		ctx.restore();
-		
-
+		if(lineWidth>0){
+			ctx.save();
+			ctx.globalCompositeOperation = 'destination-out';
+			ctx.stroke();
+			ctx.restore();
+		}
 	}
 	else{
 		ctx.save();
@@ -5373,6 +5372,7 @@ function drawPolygon (
 			ctx.strokeStyle = style;
 			ctx.stroke();
 		}
+		ctx.restore();
 	}
 
 }
@@ -5413,7 +5413,10 @@ function draw3PointRound(ctx, points, style, lineWidth,
 			ret.push({x:x,y:y});
 		}
 	}
-	if(ctx) ctx.stroke();
+	if(ctx) {
+		ctx.stroke()
+		ctx.restore();
+	};
 	return ret;
 }
 
@@ -5498,6 +5501,7 @@ function draw3PointRect(
 		ctx.strokeStyle = style;
 		ctx.stroke();
 	}
+	ctx.restore();
 }
 function calculateFourthPoint(point1, point2, point3) {
     let length = Math.sqrt(Math.pow(point2.x - point1.x, 2) + Math.pow(point2.y - point1.y, 2));
