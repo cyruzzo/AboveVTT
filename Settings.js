@@ -668,6 +668,23 @@ function avtt_settings() {
 		class: 'ui',
 		global: 1
 	})
+	
+	settings.push(
+	{
+		name: "exportRemind",
+		label: "Export Reminder",
+		type: "dropdown",
+		options: [
+			{ value: 0, label: "Never", description: `No reminder` },
+			{ value: 1, label: "Daily", description: `Daily reminder` },
+			{ value: 7, label: "Weekly", description: `Weekly reminder` },
+			{ value: 30, label: "Monthly", description: `Monthly reminder` }	
+		],
+		defaultValue: 0,
+		class: 'ui',
+		global: 1
+	})
+	
 	settings.push(
 	{
 		name: "monsterCritType",
@@ -1947,9 +1964,9 @@ function export_audio_csv() {
 
 
 
-function export_file() {
+function export_file(filePrefix="", saveDateStamp=false) {
 	build_import_loading_indicator('Preparing Export File');
-	let DataFile = {
+	const DataFile = {
 		version: 2,
 		scenes: [{}],
 		tokencustomizations: [],
@@ -1957,10 +1974,12 @@ function export_file() {
 		journalchapters: [],
 		soundpads: {}
 	};
-	let currentdate = new Date(); 
-	let datetime = `${currentdate.getFullYear()}-${(currentdate.getMonth()+1)}-${currentdate.getDate()}`
+	const currentdate = new Date(); 
+	const datetime = `${currentdate.getFullYear()}-${(currentdate.getMonth()+1)}-${currentdate.getDate()}`
+	const filename = `${filePrefix}${window.CAMPAIGN_INFO.name}-${datetime}.abovevtt`;
+	const storageKey = `AVTT-exportStamp-${window.CAMPAIGN_INFO.id}`;
 	let firstError = false;
-	AboveApi.exportScenes()
+	return AboveApi.exportScenes()
 		.then(scenes => {
 			DataFile.scenes = scenes;
 			DataFile.tokencustomizations = window.TOKEN_CUSTOMIZATIONS;
@@ -1969,7 +1988,9 @@ function export_file() {
 			DataFile.soundpads = window.SOUNDPADS;
 			DataFile.mixerstate = window.MIXER.state();
 			DataFile.tracklibrary = Array.from(window.TRACK_LIBRARY.map().entries());
-			download(b64EncodeUnicode(JSON.stringify(DataFile,null,"\t")),`${window.CAMPAIGN_INFO.name}-${datetime}.abovevtt`,"text/plain");
+			download(b64EncodeUnicode(JSON.stringify(DataFile,null,"\t")),filename,"text/plain");
+			localStorage.setItem(storageKey, Date.now().toString())
+			return true;
 		})
 		.catch(error => {	
 			firstError = true;	//data is probably too large to get from https - fallback on individually grabbing scenes.
@@ -1982,11 +2003,14 @@ function export_file() {
 				DataFile.soundpads = window.SOUNDPADS;
 				DataFile.mixerstate = window.MIXER.state();
 				DataFile.tracklibrary = Array.from(window.TRACK_LIBRARY.map().entries());
-				download(b64EncodeUnicode(JSON.stringify(DataFile,null,"\t")),`${window.CAMPAIGN_INFO.name}-${datetime}.abovevtt`,"text/plain");
-				$(".import-loading-indicator").remove();	
+				download(b64EncodeUnicode(JSON.stringify(DataFile,null,"\t")),filename,"text/plain");
+				$(".import-loading-indicator").remove();
+				localStorage.setItem(storageKey, Date.now().toString());	
+				return true;				
 			})
 			.catch(error2 => {
 				showError(error2, "export_scenes failed to fetch from the cloud");
+				return false;
 			})
 		})
 		.finally(() => {
