@@ -1279,7 +1279,7 @@ function redraw_settings_panel_token_examples(settings) {
 	let items = $(".example-tokens-wrapper .example-token");
 	for (let i = 0; i < items.length; i++) {
 		let item = $(items[i]);
-		mergedSettings.imgsrc = item.find(".token-image").attr("src");
+		mergedSettings.imgsrc = item.find(".token-image").attr("data-src");
 		item.replaceWith(build_example_token(mergedSettings, 90));
 	}
 }
