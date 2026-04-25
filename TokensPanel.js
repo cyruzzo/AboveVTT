@@ -4213,7 +4213,7 @@ function register_custom_token_image_context_menu() {
                     callback: function (itemKey, opt, originalEvent) {
                         let itemToPlace = find_sidebar_list_item(opt.$trigger);
                         let specificImage = undefined;
-                        let imgSrc = opt.$trigger.find(".token-image").attr("src");
+                        let imgSrc = opt.$trigger.find(".token-image").attr("data-src");
                         if (imgSrc !== undefined && imgSrc.length > 0) {
                             specificImage = imgSrc;
                         }
@@ -4225,7 +4225,7 @@ function register_custom_token_image_context_menu() {
                     callback: function (itemKey, opt, originalEvent) {
                         let itemToPlace = find_sidebar_list_item(opt.$trigger);
                         let specificImage = undefined;
-                        let imgSrc = opt.$trigger.find(".token-image").attr("src");
+                        let imgSrc = opt.$trigger.find(".token-image").attr("data-src");
                         if (imgSrc !== undefined && imgSrc.length > 0) {
                             specificImage = imgSrc;
                         }
