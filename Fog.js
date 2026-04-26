@@ -716,8 +716,8 @@ function is_door_in_visible_light(door, imageData){
 	if (imageData == undefined) {
 		return false;
 	}
-	const centerX = parseFloat($(door).css('--mid-x')) / window.CURRENT_SCENE_DATA.scale_factor;
-	const centerY = parseFloat($(door).css('--mid-y')) / window.CURRENT_SCENE_DATA.scale_factor;
+	const centerX = parseInt($(door).css('--mid-x')) / window.CURRENT_SCENE_DATA.scale_factor;
+	const centerY = parseInt($(door).css('--mid-y')) / window.CURRENT_SCENE_DATA.scale_factor;
 	let pixeldata;
 
 	for(let x=centerX-10; x<=centerX+10; x++){
@@ -5305,7 +5305,7 @@ function drawPolygon (
 ) {
 	if(fill && islight && replacefog){
 		
-		ctx.lineWidth = 6;
+
 		ctx.fillStyle = 'rgba(255,255,255,1)';
 		ctx.strokeStyle = 'rgba(0,0,0,1)';
 		
@@ -5323,11 +5323,13 @@ function drawPolygon (
 			ctx.lineTo(mouseX/adjustScale/window.CURRENT_SCENE_DATA.scale_factor, mouseY/adjustScale/window.CURRENT_SCENE_DATA.scale_factor);
 		}
 		ctx.closePath();
-		
-	
 		ctx.fill();
-		ctx.stroke();
-
+		if(lineWidth>0){
+			ctx.save();
+			ctx.globalCompositeOperation = 'destination-out';
+			ctx.stroke();
+			ctx.restore();
+		}
 	}
 	else{
 		ctx.save();
@@ -5370,6 +5372,7 @@ function drawPolygon (
 			ctx.strokeStyle = style;
 			ctx.stroke();
 		}
+		ctx.restore();
 	}
 
 }
@@ -5410,7 +5413,10 @@ function draw3PointRound(ctx, points, style, lineWidth,
 			ret.push({x:x,y:y});
 		}
 	}
-	if(ctx) ctx.stroke();
+	if(ctx) {
+		ctx.stroke()
+		ctx.restore();
+	};
 	return ret;
 }
 
@@ -5495,6 +5501,7 @@ function draw3PointRect(
 		ctx.strokeStyle = style;
 		ctx.stroke();
 	}
+	ctx.restore();
 }
 function calculateFourthPoint(point1, point2, point3) {
     let length = Math.sqrt(Math.pow(point2.x - point1.x, 2) + Math.pow(point2.y - point1.y, 2));
@@ -7502,7 +7509,6 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
 	const particlePosY = window.PARTICLE.pos.y;
 
 	const wallCache = [];
-	const wallThickness = 4; // stops doors and other objects close to walls from being visible if there is light behind them
 	for (let j = 0; j < walls.length; j++) {
 		const currWall = walls[j];
 		let wallTop = currWall.wallTop !== undefined && currWall.wallTop !== '' ? parseInt(currWall.wallTop) : Infinity;
@@ -7513,7 +7519,8 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
 		const isDarkness = currWall.darkness === true;
 		const doorId = tokenIsDoor ? `${currWall.a.x}${currWall.a.y}${currWall.b.x}${currWall.b.y}${sceneId}`.replaceAll('.', '') : '';
 
-		const wallOptions = {
+		wallCache.push({
+			wall: currWall,
 			wallTop: wallTop,
 			wallBottom: wallBottom,
 			blocksVision: blocksVision,
@@ -7522,47 +7529,7 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
 			isDarkness: isDarkness,
 			doorId: doorId,
 			tokenId: currWall.tokenId
-		}
-		if(currWall.radius !== undefined){
-			wallCache.push({
-				wall: { ...currWall, radius: currWall.radius+(wallThickness/2) },
-				...wallOptions
-			})
-			wallCache.push({
-				wall: { ...currWall, radius: currWall.radius-(wallThickness/2) },
-				...wallOptions
-			});
-		}else{
-			/*create 4 walls to emulate wall thickness here*/
-			let dirX = currWall.b.x - currWall.a.x;
-			let dirY = currWall.b.y - currWall.a.y;
-			let len = Math.sqrt(dirX * dirX + dirY * dirY);	
-
-			let perpX = -dirY / len * wallThickness / 2;
-			let perpY = dirX / len * wallThickness / 2;
-
-			let leftA = { x: currWall.a.x + perpX, y: currWall.a.y + perpY };
-			let leftB = { x: currWall.b.x + perpX, y: currWall.b.y + perpY };
-			let rightA = { x: currWall.a.x - perpX, y: currWall.a.y - perpY };
-			let rightB = { x: currWall.b.x - perpX, y: currWall.b.y - perpY };
-
-			wallCache.push({
-				wall: { ...currWall, a: leftA, b: leftB },
-				...wallOptions
-			})
-			wallCache.push({
-				wall: { ...currWall, a: rightA, b: rightB },
-				...wallOptions
-			});
-			wallCache.push({
-				wall: { ...currWall, a: leftA, b: rightA },
-				...wallOptions
-			});
-			wallCache.push({
-				wall: { ...currWall, a: leftB, b: rightB },
-				...wallOptions
-			});
-		}
+		})
 		
 	}
 	
@@ -7611,12 +7578,10 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
 				const recordLightFurtherThanNeed = Math.abs(recordLight - dist) > diffNeedForTerrainWalls;
 				const recordNoDarknessFurtherThanNeed = Math.abs(recordNoDarkness - dist) > diffNeedForTerrainWalls;
 				const recordMoveFurtherThanNeed = Math.abs(recordMove - dist) > diffNeedForTerrainWalls;
-
 				
 
 				if (dist < recordLight && wallData.blocksVision) {
-				  	if(!tokenIsDoor || auraId != wallData.doorId)
-						{
+				  	if(!tokenIsDoor || auraId != wallData.doorId) {
 						
 						if(recordLightFurtherThanNeed)
 							secondRecordLight = recordLight;
@@ -7652,16 +7617,12 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
 			   		
 		      		secondClosestLight = pt;
 
-			           
-		        	
-	        		secondClosestWall = currWall;	
-			        
+	        		secondClosestWall = currWall;			        
 				}
 
 				if(canSeeDarkness === true && !wallData.isDarkness){
 					if (dist < recordNoDarkness && wallData.blocksVision) {
-				      	if(!tokenIsDoor || auraId != wallData.doorId)
-						{
+				      	if(!tokenIsDoor || auraId != wallData.doorId) {
 							if(recordNoDarknessFurtherThanNeed)
 								secondRecordNoDarkness = recordNoDarkness;
 				          	recordNoDarkness = dist;         
@@ -7684,8 +7645,7 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
 			       		}
 			   	 	}
 					else if (dist < secondRecordNoDarkness && wallData.blocksVision && recordNoDarknessFurtherThanNeed) {
-	   	 		      	if(!tokenIsDoor || auraId != wallData.doorId)
-	   	 				{
+	   	 		      	if(!tokenIsDoor || auraId != wallData.doorId) {
 	   	 					secondRecordNoDarkness = dist;       
 	   	 		          	
 							if (dist == squaredRadius){
@@ -7710,8 +7670,7 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
 				    	if(recordMoveFurtherThanNeed)
 				    		secondRecordMove = recordMove;
 				    	recordMove = dist;
-			    		if(!tokenIsDoor || auraId != wallData.doorId)
-						{
+						if(!tokenIsDoor || auraId != wallData.doorId) {
 							if (dist == squaredRadius){
 					          	pt = {
 						          	x: particlePosX + ray.dir.x * lightRadius,
@@ -7730,8 +7689,7 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
 				    }
 				    else if(dist < secondRecordMove && recordMoveFurtherThanNeed){
 				    	secondRecordMove = dist;
-			    		if(!tokenIsDoor || auraId != wallData.doorId)
-						{
+			    		if(!tokenIsDoor || auraId != wallData.doorId) {
 							if (dist == squaredRadius){
 					          	pt = {
 						          	x: particlePosX + ray.dir.x * lightRadius,
@@ -7887,7 +7845,7 @@ function lineLine(x1, y1, x2, y2, x3, y3, x4, y4) {
 function detectInLos(x, y) {
 	let canvas = window.moveOffscreenCanvasMask;
 	let ctx = canvas.getContext("2d");
-	const pixeldata = ctx.getImageData((x-1)/window.CURRENT_SCENE_DATA.scale_factor, (y-1)/window.CURRENT_SCENE_DATA.scale_factor, 2, 2).data;
+	const pixeldata = ctx.getImageData(x/window.CURRENT_SCENE_DATA.scale_factor, y/window.CURRENT_SCENE_DATA.scale_factor, 1, 1).data;
 
 	for(let i=0; i<pixeldata.length; i+=4){
 		if(pixeldata[i] <= 5)
@@ -8118,8 +8076,8 @@ function redraw_light(darknessMoved = false, limitActiveRays = 0) {
 
 				$(`.aura-element-container-clip[id='${auraId}'] [id*='vision_']`).toggleClass('notVisible', false);
 			
-				drawPolygon(offscreenContext, window.lightPolygon, 'rgba(255, 255, 255, 1)', true, 6, undefined, undefined, undefined, true, true); //draw to offscreen canvas so we don't have to render every draw and use this for a mask	
-				drawPolygon(moveOffscreenCanvasMaskContext, window.movePolygon, 'rgba(255, 255, 255, 1)', true, 6, undefined, undefined, undefined, true, true); //draw to offscreen canvas so we don't have to render every draw and use this for a mask
+				drawPolygon(offscreenContext, window.lightPolygon, 'rgba(255, 255, 255, 1)', true, 2, undefined, undefined, undefined, true, true); //draw to offscreen canvas so we don't have to render every draw and use this for a mask	
+				drawPolygon(moveOffscreenCanvasMaskContext, window.movePolygon, 'rgba(255, 255, 255, 1)', true, 0, undefined, undefined, undefined, true, true); //draw to offscreen canvas so we don't have to render every draw and use this for a mask
 			}
 		}
 		if (drawDarkVision || window.lightAuraClipPolygon[auraId]?.light !== undefined) {

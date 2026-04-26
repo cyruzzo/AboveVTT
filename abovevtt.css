@@ -6298,6 +6298,7 @@ span.exhaustion-pip.last{
     right: 0px;
     bottom: 0px;
     background: rgb(235, 241, 245);
+    z-index: 10;
     /* easy debugging */
     /* opacity: 0.5; */
 }

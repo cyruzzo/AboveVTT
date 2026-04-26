@@ -1043,8 +1043,7 @@ async function init_characters_pages(container = $(document)) {
 
 const debounceConvertToRPGRoller =  mydebounce(() => {convertToRPGRoller()}, 20)
 function rollDiceButton(e, button){
-  if ($(this).parent().hasClass('ct-reset-pane__hitdie-manager-dice') || $(this).prev().text().trim().match(/^death saves$/gi))// allow hit dice and death saves roll to go through ddb for auto heals - maybe setup our own message by put to https://character-service.dndbeyond.com/character/v5/life/hp/damage-taken later
-    return;
+
   let rollData = {}
   rollData = getRollData(button);
   if (!rollData.expression.match(allDiceRegex) && window.EXPERIMENTAL_SETTINGS['rpgRoller'] != true) {

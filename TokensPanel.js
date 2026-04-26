@@ -3923,6 +3923,7 @@ function open_monster_item_iframe(listItem) {
         "border": "none",
         "z-index": 10
     });
+
     tokensPanel.container.append(iframe);
 
     let rowHtml = find_html_row(listItem, tokensPanel.body);
@@ -3934,14 +3935,43 @@ function open_monster_item_iframe(listItem) {
             // it was just created. no need to do anything until it actually loads something
             return;
         }
-
         let contents = $(event.target).contents();
-        contents.find("#site > footer").hide();
-        contents.find("#site-main > header.main").hide();
-        contents.find("#site-main").css("padding-top", 0);
-        contents.find(".site-bar").hide();
-        contents.find(".ad-container").hide();
-        contents.find(".homebrew-comments").hide();
+        contents.find("head").append(`
+			<style>
+                #site > footer,
+                #site-main > header.main,
+                .site-bar,
+                .ad-container,
+                .homebrew-comments,
+                #mega-menu-target {
+                    display:none !important;
+                }
+                #site-main{
+                    padding-top:0;
+                }
+                .more-info.details-more-info
+                {
+                    padding: 8;
+                }
+                .mon-stat-block{
+                    column-count:1
+                }
+                button.avtt-roll-button {
+                    /* lifted from DDB encounter stat blocks  */
+                    color: #b43c35;
+                    border: 1px solid #b43c35;
+                    border-radius: 4px;
+                    background-color: #fff;
+                    white-space: nowrap;
+                    font-size: 14px;
+                    font-weight: 600;
+                    font-family: Roboto Condensed,Open Sans,Helvetica,sans-serif;
+                    line-height: 18px;
+                    letter-spacing: 1px;
+                    padding: 1px 4px 0;
+                }
+			</style>
+		`);
 
         // move the image below the stat block
         let image = contents.find(".detail-content > .image");
@@ -3960,34 +3990,14 @@ function open_monster_item_iframe(listItem) {
             $("#monster-details-page-iframe").remove();
         });
 
-        contents.find(".main.content-container").attr("style", "padding:0!important");
-        contents.find(".more-info.details-more-info").css("padding", "8");
-        contents.find(".mon-stat-block").css("column-count", "1");
+        contents.find(".main.content-container").attr("style", "padding:0!important")
         contents.find("a").attr("target", "_blank");
 
         scan_creature_pane(contents, listItem.monsterData.name, listItem.monsterData.avatarUrl);
-
-        contents.find("body").append(`<style>
-            button.avtt-roll-button {
-                /* lifted from DDB encounter stat blocks  */
-                color: #b43c35;
-                border: 1px solid #b43c35;
-                border-radius: 4px;
-                background-color: #fff;
-                white-space: nowrap;
-                font-size: 14px;
-                font-weight: 600;
-                font-family: Roboto Condensed,Open Sans,Helvetica,sans-serif;
-                line-height: 18px;
-                letter-spacing: 1px;
-                padding: 1px 4px 0;
-            }
-            </style>
-        `);
-
+        tokensPanel.remove_sidebar_loading_indicator();
     });
 
-
+    tokensPanel.display_sidebar_loading_indicator('Loading Fallback Monster Sheet');
     iframe.attr("src", listItem.monsterData.url);
 }
 
@@ -4203,7 +4213,7 @@ function register_custom_token_image_context_menu() {
                     callback: function (itemKey, opt, originalEvent) {
                         let itemToPlace = find_sidebar_list_item(opt.$trigger);
                         let specificImage = undefined;
-                        let imgSrc = opt.$trigger.find(".token-image").attr("src");
+                        let imgSrc = opt.$trigger.find(".token-image").attr("data-src");
                         if (imgSrc !== undefined && imgSrc.length > 0) {
                             specificImage = imgSrc;
                         }
@@ -4215,7 +4225,7 @@ function register_custom_token_image_context_menu() {
                     callback: function (itemKey, opt, originalEvent) {
                         let itemToPlace = find_sidebar_list_item(opt.$trigger);
                         let specificImage = undefined;
-                        let imgSrc = opt.$trigger.find(".token-image").attr("src");
+                        let imgSrc = opt.$trigger.find(".token-image").attr("data-src");
                         if (imgSrc !== undefined && imgSrc.length > 0) {
                             specificImage = imgSrc;
                         }
