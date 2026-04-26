@@ -2102,31 +2102,43 @@ function build_token_light_inputs(tokenIds, door=false) {
 		auraRevealVisionEnabled = uniqueAuraRevealVisionValues[0];
 	}
 
-	let aura1Feet = tokens.map(t => t.options.light1.feet);
-	let uniqueAura1Feet = aura1Feet.length === 1 ? aura1Feet[0] : "";
-	let aura2Feet = tokens.map(t => t.options.light2.feet);
-	let uniqueAura2Feet = aura2Feet.length === 1 ? aura2Feet[0] : "";
-	let aura1Color = tokens.map(t => t.options.light1.color);
-	let uniqueAura1Color = aura1Color.length === 1 ? aura1Color[0] : window.TOKEN_SETTINGS?.light1?.color ? window.TOKEN_SETTINGS.light1.color : "";
-	let aura2Color = tokens.map(t => t.options.light2.color);
-	let uniqueAura2Color = aura2Color.length === 1 ? aura2Color[0] : window.TOKEN_SETTINGS?.light2?.color ? window.TOKEN_SETTINGS.light2.color : "";
-	let visionFeet = tokens.map(t => t.options.vision.feet);
-	let uniqueVisionFeet = visionFeet.length === 1 ? visionFeet[0] : "";
-	let visionColor = tokens.map(t => t.options.vision.color);
-	let uniqueVisionColor = visionColor.length === 1 ? visionColor[0] : window.TOKEN_SETTINGS?.vision?.color ? window.TOKEN_SETTINGS.vision.color : "";
+	const aura1Feet = tokens.map(t => t.options.light1.feet);
+	const uniqueAura1Feet = aura1Feet.length === 1 ? aura1Feet[0] : "";
+	const aura2Feet = tokens.map(t => t.options.light2.feet);
+	const uniqueAura2Feet = aura2Feet.length === 1 ? aura2Feet[0] : "";
+	const aura1Color = tokens.map(t => t.options.light1.color);
+	const uniqueAura1Color = aura1Color.length === 1 ? aura1Color[0] : window.TOKEN_SETTINGS?.light1?.color ? window.TOKEN_SETTINGS.light1.color : "";
+	const aura2Color = tokens.map(t => t.options.light2.color);
+	const uniqueAura2Color = aura2Color.length === 1 ? aura2Color[0] : window.TOKEN_SETTINGS?.light2?.color ? window.TOKEN_SETTINGS.light2.color : "";
+	const visionFeet = tokens.map(t => t.options.vision.feet);
+	const uniqueVisionFeet = visionFeet.length === 1 ? visionFeet[0] : "";
+	const visionColor = tokens.map(t => t.options.vision.color);
+	const uniqueVisionColor = visionColor.length === 1 ? visionColor[0] : window.TOKEN_SETTINGS?.vision?.color ? window.TOKEN_SETTINGS.vision.color : "";
+	
+	
+	const devilsightFeet = tokens.map(t => t.options.devilsight.feet);
+	const uniqueDevilsightFeet = devilsightFeet.length === 1 ? devilsightFeet[0] : "";
+	const devilsightColor = tokens.map(t => t.options.devilsight.color);
+	const uniqueDevilsightColor = devilsightColor.length === 1 ? devilsightColor[0] : window.TOKEN_SETTINGS?.devilsight?.color ? window.TOKEN_SETTINGS.devilsight.color : "";
 
-	let light1DaylightColor = tokens.map(t => t.options.light1.daylight);
-	let uniquelight1DaylightColor = light1DaylightColor.length === 1 ? light1DaylightColor[0] == true ? 'active-daylight' : '' : '';
+	const truesightFeet = tokens.map(t => t.options.truesight.feet);
+	const uniqueTruesightFeet = truesightFeet.length === 1 ? truesightFeet[0] : "";
+	const truesightColor = tokens.map(t => t.options.truesight.color);
+	const uniqueTruesightColor = truesightColor.length === 1 ? truesightColor[0] : window.TOKEN_SETTINGS?.truesight?.color ? window.TOKEN_SETTINGS.truesight.color : "";
 
-	let light2DaylightColor = tokens.map(t => t.options.light2.daylight);
-	let uniquelight2DaylightColor = light2DaylightColor.length === 1 ? light2DaylightColor[0] == true ? 'active-daylight' : '' : '';
+
+	const light1DaylightColor = tokens.map(t => t.options.light1.daylight);
+	const uniquelight1DaylightColor = light1DaylightColor.length === 1 ? light1DaylightColor[0] == true ? 'active-daylight' : '' : '';
+
+	const light2DaylightColor = tokens.map(t => t.options.light2.daylight);
+	const uniquelight2DaylightColor = light2DaylightColor.length === 1 ? light2DaylightColor[0] == true ? 'active-daylight' : '' : '';
 
 
 	let upsq = 'ft';
 	if (window.CURRENT_SCENE_DATA.upsq !== undefined && window.CURRENT_SCENE_DATA.upsq.length > 0) {
 		upsq = window.CURRENT_SCENE_DATA.upsq;
 	}
-	let wrapper = $(`
+	const wrapper = $(`
 		<div class="token-config-aura-input">
 
 			<div class="token-config-aura-wrapper">			
@@ -2137,12 +2149,6 @@ function build_token_light_inputs(tokenIds, door=false) {
 						<option value=""></option>
 					</select>
 				</div>
-				<div class="token-image-modal-footer-select-wrapper">
-					<div class="token-image-modal-footer-title">Darkvision Type</div>
-					<select class="token-config-visiontype-preset">
-						<option value=""></option>
-					</select>
-				</div>
 				<div class="token-image-modal-footer-select-wrapper">		
 					<div class="token-image-modal-footer-title">Preset</div>
 					<div class="token-image-modal-footer-title"><button id='editPresets'>Edit</button></div>
@@ -2150,6 +2156,7 @@ function build_token_light_inputs(tokenIds, door=false) {
 						<option value=""></option>
 					</select>
 				</div>
+				<h3 style="margin: 10px 5px 4px 0px;border-bottom: 1px solid #ddd;font-size: 12px;">Vision</h3>
 				<div class="menu-vision-aura">
 					<h3 style="margin-bottom:0px;">Darkvision</h3>
 					<div class="token-image-modal-footer-select-wrapper" style="padding-left: 2px">
@@ -2161,6 +2168,29 @@ function build_token_light_inputs(tokenIds, door=false) {
 						<input class="spectrum" name="visionColor" value="${uniqueVisionColor}" >
 					</div>
 				</div>
+				<div class="menu-vision-aura">
+					<h3 style="margin-bottom:0px;">Devilsight</h3>
+					<div class="token-image-modal-footer-select-wrapper" style="padding-left: 2px">
+						<div class="token-image-modal-footer-title">Radius (${upsq})</div>
+						<input class="vision-radius" name="devilsight" type="text" value="${uniqueDevilsightFeet}" style="width: 3rem" />
+					</div>
+					<div class="token-image-modal-footer-select-wrapper" style="padding-left: 2px">
+						<div class="token-image-modal-footer-title">Color</div>
+						<input class="spectrum" name="devilsightColor" value="${uniqueDevilsightColor}" >
+					</div>
+				</div>
+				<div class="menu-vision-aura">
+					<h3 style="margin-bottom:0px;">Truesight</h3>
+					<div class="token-image-modal-footer-select-wrapper" style="padding-left: 2px">
+						<div class="token-image-modal-footer-title">Radius (${upsq})</div>
+						<input class="vision-radius" name="truesight" type="text" value="${uniqueTruesightFeet}" style="width: 3rem" />
+					</div>
+					<div class="token-image-modal-footer-select-wrapper" style="padding-left: 2px">
+						<div class="token-image-modal-footer-title">Color</div>
+						<input class="spectrum" name="truesightColor" value="${uniqueTruesightColor}" >
+					</div>
+				</div>
+				<h3 style="margin: 10px 5px 4px 0px;border-bottom: 1px solid #ddd;font-size: 12px;">Light</h3>
 				<div class="menu-inner-aura">
 					<h3 style="margin-bottom:0px;">Inner Light</h3>
 					<div class="token-image-modal-footer-select-wrapper" style="padding-left: 2px">
@@ -2475,6 +2505,13 @@ function build_token_light_inputs(tokenIds, door=false) {
 		if(selectedPreset.vision.feet){
 			wrapper.find("input[name='vision']").val(selectedPreset.vision.feet);
 		}
+		if(selectedPreset.devilsight?.feet){
+			wrapper.find("input[name='devilsight']").val(selectedPreset.devilsight.feet);
+		}
+		if(selectedPreset.truesight?.feet){
+			wrapper.find("input[name='truesight']").val(selectedPreset.truesight.feet);
+		}
+
 
 		if(selectedPreset.light1.feet){
 			wrapper.find("input[name='light1']").val(selectedPreset.light1.feet);
@@ -2486,7 +2523,12 @@ function build_token_light_inputs(tokenIds, door=false) {
 		if(selectedPreset.vision.color){
 			wrapper.find("input[name='visionColor']").spectrum("set", selectedPreset.vision.color);
 		}
-
+		if(selectedPreset.devilsight?.feet){
+			wrapper.find("input[name='devilsight']").val(selectedPreset.devilsight.feet);
+		}
+		if(selectedPreset.truesight?.feet){
+			wrapper.find("input[name='truesight']").val(selectedPreset.truesight.feet);
+		}
 		if(selectedPreset.light1.color){
 			wrapper.find("input[name='light1Color']").spectrum("set", selectedPreset.light1.color);
 		}
@@ -2501,6 +2543,10 @@ function build_token_light_inputs(tokenIds, door=false) {
 		tokens.forEach(token => {
 			token.options.vision.feet = (selectedPreset.vision.feet) ? selectedPreset.vision.feet : token.options.vision.feet;
 			token.options.vision.color = (selectedPreset.vision.color) ? selectedPreset.vision.color : token.options.vision.color;
+			token.options.devilsight.feet = (selectedPreset.devilsight.feet) ? selectedPreset.devilsight?.feet : token.options.devilsight?.feet;
+			token.options.devilsight.color = (selectedPreset.devilsight.color) ? selectedPreset.devilsight?.color : token.options.devilsight?.color;
+			token.options.truesight.feet = (selectedPreset.truesight.feet) ? selectedPreset.truesight?.feet : token.options.truesight?.feet;
+			token.options.truesight.color = (selectedPreset.truesight.color) ? selectedPreset.truesight?.color : token.options.truesight?.color;
 			token.options.light1.feet = (selectedPreset.light1.feet) ? selectedPreset.light1.feet : token.options.light1.feet;
 			token.options.light2.feet = (selectedPreset.light2.feet) ? selectedPreset.light2.feet : token.options.light2.feet;
 			token.options.light1.color = (selectedPreset.light1.color) ? selectedPreset.light1.color : token.options.light1.color;
@@ -2703,6 +2749,12 @@ function create_light_presets_edit(){
 					Darkvision		
 				</th>
 				<th>
+					Devilsight		
+				</th>
+				<th>
+					Truesight		
+				</th>
+				<th>
 					Inner Light			
 				</th>
 				<th>
@@ -2727,6 +2779,26 @@ function create_light_presets_edit(){
 					<div class="token-image-modal-footer-select-wrapper" style="padding-left: 2px">
 						<div class="token-image-modal-footer-title">Color</div>
 						<input class="spectrum" name="visionColor" value="${(window.LIGHT_PRESETS[i].vision?.color) ? window.LIGHT_PRESETS[i].vision.color : `rgba(0, 0, 0, 0)`}" >
+					</div>
+				</td>
+				<td class="menu-devilsight-aura">
+					<div class="token-image-modal-footer-select-wrapper" style="padding-left: 2px">
+						<div class="token-image-modal-footer-title">Radius (${upsq})</div>
+						<input class="devilsight-radius" name="devilsight" type="text" value="${(window.LIGHT_PRESETS[i].devilsight?.feet) ? window.LIGHT_PRESETS[i].devilsight.feet : ``}" style="width: 3rem" />
+					</div>
+					<div class="token-image-modal-footer-select-wrapper" style="padding-left: 2px">
+						<div class="token-image-modal-footer-title">Color</div>
+						<input class="spectrum" name="devilsightColor" value="${(window.LIGHT_PRESETS[i].devilsight?.color) ? window.LIGHT_PRESETS[i].devilsight.color : `rgba(0, 0, 0, 0)`}" >
+					</div>
+				</td>
+				<td class="menu-truesight-aura">
+					<div class="token-image-modal-footer-select-wrapper" style="padding-left: 2px">
+						<div class="token-image-modal-footer-title">Radius (${upsq})</div>
+						<input class="truesight-radius" name="truesight" type="text" value="${(window.LIGHT_PRESETS[i].truesight?.feet) ? window.LIGHT_PRESETS[i].truesight.feet : ``}" style="width: 3rem" />
+					</div>
+					<div class="token-image-modal-footer-select-wrapper" style="padding-left: 2px">
+						<div class="token-image-modal-footer-title">Color</div>
+						<input class="spectrum" name="truesightColor" value="${(window.LIGHT_PRESETS[i].truesight?.color) ? window.LIGHT_PRESETS[i].truesight.color : `rgba(0, 0, 0, 0)`}" >
 					</div>
 				</td>
 				<td class="menu-inner-aura">
@@ -2798,6 +2870,10 @@ function create_light_presets_edit(){
 			name: 'New Preset',
 			vision: {
 			},
+			devilsight: {
+			},
+			truesight: {
+			},
 			light1: {
 			},
 			light2: {
@@ -2840,7 +2916,7 @@ function create_animation_presets_edit(isVision = false){
 					RPM
 				</th>
 				${isVision ? `<th>
-					Apply to Darkvision			
+					Apply to Vision			
 				</th>` : ``}
 			</tr>
 			`)
