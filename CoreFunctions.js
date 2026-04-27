@@ -2174,7 +2174,7 @@ function set_campaign_secret(campaignSecret) {
 function projector_scroll_event(event){
       event.stopImmediatePropagation();
       if($('#projector_toggle.enabled > [class*="is-active"]').length>0){
-            let sidebarSize = ($('#hide_rightpanel.point-right').length>0 ? 340 : 0);
+            let sidebarSize = ($('#hide_rightpanel.point-right').length>0 ? get_sidebar_width() : 0);
             let center = center_of_view(); 
 
 

@@ -26,7 +26,7 @@ function setDiceRemoteStream(stream, peerId) {
     let dicecanvas=$(`<canvas width='${video[0].videoWidth}' height='${video[0].videoHeight}' class='streamer-canvas' />`);
     dicecanvas.attr("id","streamer-canvas-"+peerId);
     //dicecanvas.css("opacity",0.5);
-    let sidebarWidth = $("#hide_rightpanel").hasClass("point-left") ? 0 : 340;
+    let sidebarWidth = $("#hide_rightpanel").hasClass("point-left") ? 0 : get_sidebar_width();
  
     dicecanvas.css({
         "position": "fixed",
@@ -56,7 +56,7 @@ function setDiceRemoteStream(stream, peerId) {
     
     video.off('resize.dice').on("resize.dice", function(){
         let videoAspectRatio = video[0].videoWidth / video[0].videoHeight
-        sidebarWidth = $("#hide_rightpanel").hasClass("point-left") ? 0 : 340;
+        sidebarWidth = $("#hide_rightpanel").hasClass("point-left") ? 0 : get_sidebar_width();
 
         if (video[0].videoWidth > video[0].videoHeight)
         {

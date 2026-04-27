@@ -2165,7 +2165,7 @@ function did_click_row(clickEvent) {
               : clickedItem.image;
             flyout.append(`<img class='list-item-image-flyout' src="${src}" alt="scene map preview" />`);
           }
-          flyout.css("right", "340px");
+          flyout.css("right", get_sidebar_width() + "px");
         });
         clickedRow.off("mouseleave").on("mouseleave", function (mouseleaveEvent) {
           $(mouseleaveEvent.currentTarget).off("mouseleave");

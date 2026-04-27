@@ -891,7 +891,7 @@ class Token {
 			
 			if(!dontscroll){
 				if($("#hide_rightpanel").hasClass("point-right")) {
-   					pageX += 190; // 190 = half gamelog + scrollbar
+   					pageX += (get_sidebar_width() / 2 + 20); // half sidebar + scrollbar offset
    				}
 				$("html,body").animate({
 					scrollTop: pageY + window.VTTMargin,
@@ -3683,7 +3683,7 @@ function default_options() {
 function center_of_view() {
 	let centerX = (window.innerWidth/2) + window.scrollX 
 	if($("#hide_rightpanel").hasClass("point-right")) {
-    centerX = centerX - 190; // 190 = half gamelog + scrollbar
+    centerX = centerX - (get_sidebar_width() / 2 + 20); // half sidebar + scrollbar offset
   }
 	let centerY = (window.innerHeight/2) + window.scrollY - 20 // 20 = scrollbar
 	return { x: centerX, y: centerY };

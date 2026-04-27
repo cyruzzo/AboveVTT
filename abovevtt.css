@@ -750,7 +750,7 @@ span.button-text{
 
 #sheet {
     left: auto;
-    right: 340px;
+    right: var(--sidebar-width, 340px);
     display: none;
     position: fixed !important;
     border-radius: 5px; 
@@ -912,6 +912,23 @@ select#doorTypeSelectUVTT{
     position: relative;
     display:inline-block;
 }
+#avtt-sidebar-resize-handle {
+    position: fixed;
+    top: 30px;
+    right: var(--sidebar-width, 340px);
+    width: 6px;
+    height: calc(100vh - 30px);
+    cursor: ew-resize;
+    z-index: 99999;
+    background: transparent;
+}
+#avtt-sidebar-resize-handle:hover {
+    background: rgba(100, 149, 237, 0.4);
+}
+body:has(#hide_rightpanel[data-visible="0"]) #avtt-sidebar-resize-handle {
+    display: none;
+}
+
 .iframeResizeCover {
     z-index:9999999;
     position:absolute;
@@ -2756,6 +2773,8 @@ body:not(.encounter-builder-page) .sidebar__pane-content {
     right: 0;
     top: 28px;
     height: calc(100vh - 30px) !important;
+    width: var(--sidebar-width, 340px) !important;
+    max-width: 600px !important;
 }
 body .gamelogcontainer .sidebar__pane-content {
     top: 0px !important;
@@ -2830,7 +2849,7 @@ body .gamelogcontainer .sidebar__pane-content {
 .sidebar__controls .tab-btn .sidebar-tab-image > div {
     width: 100%;
     height: 80%;
-    margin: 5% 0 0 0;
+    margin: 2px 0 0 0;
     background-color: #838383;
 }
 .avtt-sidebar-controls .tab-btn.selected-tab .sidebar-tab-image > div,
@@ -2843,7 +2862,7 @@ body .gamelogcontainer .sidebar__pane-content {
 .sidebar__controls .tab-btn .sidebar-tab-image > svg {
     width: 100%;
     height: 80%;
-    margin: 5% 0 0 0;
+    margin: 2px 0 0 0;
     color: #838383;
 }
 .avtt-sidebar-controls .tab-btn.selected-tab .sidebar-tab-image > svg,
@@ -4353,12 +4372,12 @@ div.token-image {
 }
 
 .ct-sidebar[class*='styles_sidebar'] {
-    min-width: 340px !important;
+    min-width: var(--sidebar-width, 340px) !important;
 }
 
 .ct-sidebar[class*='styles_sidebar'] [class*='styles_content'] {
-    min-width: 340px !important;
-    max-width: 340px !important;
+    min-width: var(--sidebar-width, 340px) !important;
+    max-width: var(--sidebar-width, 340px) !important;
 }
 
 .token:before{
@@ -4892,7 +4911,7 @@ body {
     padding: 10px;
     overflow-y: auto;
     background-color: rgb(235, 241, 245);
-    width: 340px;
+    width: var(--sidebar-width, 340px);
     top: 30px;
     right: 0px;
     left: auto;
@@ -4912,7 +4931,7 @@ body {
     position: fixed;
     top: 30px;
     right: 0px;
-    width: 340px;
+    width: var(--sidebar-width, 340px);
     z-index: -1;
     height: calc(-45px + 100vh);
 }
@@ -7061,6 +7080,12 @@ button.avtt-roll-formula-button {
 }
 .ct-sidebar__inner .glc-game-log .abovevtt-sidebar-injected *{
     color: rgb(92, 112, 128);
+}
+.glc-game-log {
+    max-width: 600px !important;
+}
+[class*="GameLogEntry-Other-Flex"] {
+    height: fit-content !important;
 }
 .glc-game-log .popout-button{
     position: relative;
@@ -14767,7 +14792,7 @@ button#displayedDiceFormulaExit:hover {
 .mobileAVTTUI #zoom_buttons{
     display: flex;
     flex-direction: column-reverse !important;
-    right: 342px !important;
+    right: calc(var(--sidebar-width, 340px) + 2px) !important;
     top:26px;
     left:unset !important;
 }
