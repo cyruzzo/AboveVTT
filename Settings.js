@@ -1767,7 +1767,7 @@ function recover_scenes(){
 					console.log("TODO: implement attemptRecovery", oldId);
 					attemptRecovery(oldId);
 				} else {
-					showError(undefined, "bad id");
+					alert("Secret does not match current Campaign");
 				}
 				recoverDialog.hide();
 			});
@@ -2236,22 +2236,26 @@ function import_process_datafile_text(fileText) {
 }
 
 function attemptRecovery(campaignSecret) {
-	build_import_loading_indicator('Preparing Import');
 	AboveApi.exportScenes(campaignSecret).then((scenes) => {
-		//console.log("SCENES", scenes);
-		//do we really want/need migrate here? or is there a better way?
-		AboveApi.migrateScenes(window.gameId, scenes)
-			.then(() => {
-				$(".import-loading-indicator .loading-status-indicator__subtext").addClass("complete");
-				setTimeout(() => {
-					alert("Migration (hopefully) completed. You need to Re-Join AboveVTT");
-					location.reload();
-				}, 2000);
-			})
-			.catch(error => {
-				showError(error, "cloud_migration failed");
-			});
+		if(scenes && scenes.length > 0) {
+			//do we really want/need migrate here? or is there a better way?
+			build_import_loading_indicator('Preparing Import');
+			AboveApi.migrateScenes(window.gameId, scenes)
+				.then(() => {
+					$(".import-loading-indicator .loading-status-indicator__subtext").addClass("complete");
+					setTimeout(() => {
+						alert("Migration (hopefully) completed. You need to Re-Join AboveVTT");
+						location.reload();
+					}, 2000);
+				})
+				.catch(error => {
+					showError(error, "cloud_migration failed");
+				});
+		} else {
+			alert("No scenes found");
+		}
 	});
+	
 }
 
 function import_readfile() {
