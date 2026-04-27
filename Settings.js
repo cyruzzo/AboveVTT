@@ -1072,7 +1072,7 @@ function b64DecodeUnicode(str) {
 
 
 
-function download(data, filename, type) {
+function download(data, filename, type, appendTo = document.body) {
     let file = new Blob([data], {type: type});
     if (window.navigator.msSaveOrOpenBlob) // IE10+
         window.navigator.msSaveOrOpenBlob(file, filename);
@@ -1081,10 +1081,11 @@ function download(data, filename, type) {
                 url = URL.createObjectURL(file);
         a.href = url;
         a.download = filename;
-        document.body.appendChild(a);
+		a.id = 'downloadAvttExportLink'
+        $(appendTo).append(a);
         a.click();
         setTimeout(function() {
-            document.body.removeChild(a);
+            $('#downloadAvttExportLink').remove();
             window.URL.revokeObjectURL(url);
         }, 0);
     }
@@ -1947,7 +1948,7 @@ function export_audio_csv() {
 
 
 
-function export_file() {
+function export_file(downloadAppendTo) {
 	build_import_loading_indicator('Preparing Export File');
 	let DataFile = {
 		version: 2,
@@ -1969,7 +1970,7 @@ function export_file() {
 			DataFile.soundpads = window.SOUNDPADS;
 			DataFile.mixerstate = window.MIXER.state();
 			DataFile.tracklibrary = Array.from(window.TRACK_LIBRARY.map().entries());
-			download(b64EncodeUnicode(JSON.stringify(DataFile,null,"\t")),`${window.CAMPAIGN_INFO.name}-${datetime}.abovevtt`,"text/plain");
+			download(b64EncodeUnicode(JSON.stringify(DataFile,null,"\t")),`${window.CAMPAIGN_INFO.name}-${datetime}.abovevtt`,"text/plain", downloadAppendTo);
 		})
 		.catch(error => {	
 			firstError = true;	//data is probably too large to get from https - fallback on individually grabbing scenes.

@@ -60,7 +60,7 @@
 			"DDBApi.js",
 			"AjaxQueueModule.js",
 			"CoreFunctions.js",
-			"CampaignPage.js",
+			"CampaignPage.mjs",
 			"Startup.mjs",
 			"CharactersPage.js",
 			"EncounterHandler.js",

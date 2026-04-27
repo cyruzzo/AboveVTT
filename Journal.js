@@ -266,7 +266,7 @@ class JournalManager{
 			if(is_abovevtt_page()){
 				this.build_journal();
 			}
-			if(window.DM && !is_gamelog_popout()){
+			if(window.DM && !is_gamelog_popout() && is_abovevtt_page()){
 				// also sync the journal
 				window.JOURNAL?.sync();
 			}
