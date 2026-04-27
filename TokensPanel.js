@@ -1188,6 +1188,8 @@ async function create_and_place_token(listItem, hidden = undefined, specificImag
 
     if(options.alternativeImagesCustomizations != undefined && options.alternativeImagesCustomizations[options.imgsrc] != undefined){
         const visionOptions = {
+            'devilsight': {...options.devilsight},
+            'truesight': {...options.truesight},
             'vision': {...options.vision},
             'light1': {...options.light1},
             'light2': {...options.light2}
@@ -1199,6 +1201,12 @@ async function create_and_place_token(listItem, hidden = undefined, specificImag
         }
         if(options.vision != undefined && options.vision?.feet == undefined && visionOptions?.vision?.feet != undefined){
             options.vision.feet = visionOptions.vision.feet;
+        }
+        if(options.devilsight != undefined && options.devilsight?.feet == undefined && devilsightOptions?.devilsight?.feet != undefined){
+            options.devilsight.feet = devilsightOptions.devilsight.feet;
+        }
+        if(options.truesight != undefined && options.truesight?.feet == undefined && truesightOptions?.truesight?.feet != undefined){
+            options.truesight.feet = truesightOptions.truesight.feet;
         }
          if(options.light1 != undefined && options.light1?.feet == undefined && visionOptions?.light1?.feet != undefined){
             options.light1.feet = visionOptions.light1.feet;
@@ -1345,6 +1353,7 @@ async function create_and_place_token(listItem, hidden = undefined, specificImag
                     break;
             }
             if(listItem.monsterData.senses.length > 0 && foundOptions.vision == undefined){
+                //TO DO VISION UPDATE: Get other monster vision types
                 let darkvision = 0;
                 for(let i=0; i < listItem.monsterData.senses.length; i++){
                     const ftPosition = listItem.monsterData.senses[i].notes.indexOf('ft.')
@@ -3041,7 +3050,19 @@ function display_aoe_token_configuration_modal(listItem, placedToken = undefined
     if (!specificBorderColorValue || (listItem.isTypePC() && targetOptions.playerThemeBorder != false)) {
         borderColorWrapper.hide();
     }
-
+    //TO DO VISION UPDATE: add detection for pc/monsters
+    if(customization.tokenOptions.devilsight?.feet == undefined){
+        customization.tokenOptions.devilsight = {
+            feet: '0',
+            color: window.TOKEN_SETTINGS?.devilsight?.color ? window.TOKEN_SETTINGS?.devilsight?.color : 'rgba(142, 142, 142, 1)'
+        }
+    }
+    if(customization.tokenOptions.truesight?.feet == undefined){
+        customization.tokenOptions.truesight = {
+            feet: '0',
+            color: window.TOKEN_SETTINGS?.truesight?.color ? window.TOKEN_SETTINGS?.truesight?.color : 'rgba(142, 142, 142, 1)'
+        }
+    }
     if(customization.tokenOptions.vision?.feet == undefined){
         if(listItem.isTypePC()){
             let pcData = find_pc_by_player_id(listItem.id);
@@ -3097,13 +3118,16 @@ function display_aoe_token_configuration_modal(listItem, placedToken = undefined
         }
     }
 
-
-    let uniqueVisionFeet = customization.tokenOptions.vision.feet;
-    let uniqueVisionColor = customization.tokenOptions.vision.color;
-    let uniqueLight1Feet = customization.tokenOptions.light1.feet;
-    let uniqueLight2Feet = customization.tokenOptions.light2.feet;
-    let uniqueLight1Color = customization.tokenOptions.light1.color;
-    let uniqueLight2Color = customization.tokenOptions.light2.color;
+    const uniqueDevilsightFeet = customization.tokenOptions.devilsight.feet;
+    const uniqueDevilsightColor = customization.tokenOptions.devilsight.color;
+    const uniqueTruesightFeet = customization.tokenOptions.truesight.feet;
+    const uniqueTruesightColor = customization.tokenOptions.truesight.color;
+    const uniqueVisionFeet = customization.tokenOptions.vision.feet;
+    const uniqueVisionColor = customization.tokenOptions.vision.color;
+    const uniqueLight1Feet = customization.tokenOptions.light1.feet;
+    const uniqueLight2Feet = customization.tokenOptions.light2.feet;
+    const uniqueLight1Color = customization.tokenOptions.light1.color;
+    const uniqueLight2Color = customization.tokenOptions.light2.color;
 
     const lightOption = {
     name: "auraislight",
@@ -3139,6 +3163,28 @@ function display_aoe_token_configuration_modal(listItem, placedToken = undefined
                     <div class="token-image-modal-footer-select-wrapper" style="padding-left: 2px">
                         <div class="token-image-modal-footer-title">Color</div>
                         <input class="spectrum" name="visionColor" value="${uniqueVisionColor}" >
+                    </div>
+                </div>
+                <div class="menu-vision-aura">
+                    <h3 style="margin-bottom:0px;">Devilsight</h3>
+                    <div class="token-image-modal-footer-select-wrapper" style="padding-left: 2px">
+                        <div class="token-image-modal-footer-title">Radius (${window.CURRENT_SCENE_DATA.upsq})</div>
+                        <input class="vision-radius" name="devilsight" type="text" value="${uniqueDevilsightFeet}" style="width: 3rem" />
+                    </div>
+                    <div class="token-image-modal-footer-select-wrapper" style="padding-left: 2px">
+                        <div class="token-image-modal-footer-title">Color</div>
+                        <input class="spectrum" name="devilsightColor" value="${uniqueDevilsightColor}" >
+                    </div>
+                </div>
+                <div class="menu-vision-aura">
+                    <h3 style="margin-bottom:0px;">Truesight</h3>
+                    <div class="token-image-modal-footer-select-wrapper" style="padding-left: 2px">
+                        <div class="token-image-modal-footer-title">Radius (${window.CURRENT_SCENE_DATA.upsq})</div>
+                        <input class="vision-radius" name="truesight" type="text" value="${uniqueTruesightFeet}" style="width: 3rem" />
+                    </div>
+                    <div class="token-image-modal-footer-select-wrapper" style="padding-left: 2px">
+                        <div class="token-image-modal-footer-title">Color</div>
+                        <input class="spectrum" name="truesightColor" value="${uniqueTruesightColor}" >
                     </div>
                 </div>
                 <div class="menu-inner-aura">
@@ -3346,9 +3392,13 @@ function display_aoe_token_configuration_modal(listItem, placedToken = undefined
     let tokenOptionsButton = build_override_token_options_button(sidebarPanel, listItem, placedToken, targetOptions, function(name, value) {
         customization.setTokenOption(name, value);
     }, function () {
+        let devilsightInput = $("input[name='devilsightColor']").spectrum("get");
+        let truesightInput = $("input[name='truesightColor']").spectrum("get");
         let visionInput = $("input[name='visionColor']").spectrum("get");
         let light1Input = $("input[name='light1Color']").spectrum("get");
         let light2Input = $("input[name='light2Color']").spectrum("get");
+        customization.setTokenOption('devilsight.color', `rgba(${devilsightInput._r}, ${devilsightInput._g}, ${devilsightInput._b}, ${devilsightInput._a})`);
+        customization.setTokenOption('truesight.color', `rgba(${truesightInput._r}, ${truesightInput._g}, ${truesightInput._b}, ${truesightInput._a})`);
         customization.setTokenOption('vision.color', `rgba(${visionInput._r}, ${visionInput._g}, ${visionInput._b}, ${visionInput._a})`);
         customization.setTokenOption(`light1.color`, `rgba(${light1Input._r}, ${light1Input._g}, ${light1Input._b}, ${light1Input._a})`);
         customization.setTokenOption(`light2.color`, `rgba(${light2Input._r}, ${light2Input._g}, ${light2Input._b}, ${light2Input._a})`);
@@ -4447,7 +4497,7 @@ function create_token_copy_inside(listItem, open5e = false){
         options.sizeId = listItem.monsterData.sizeId;
         // TODO: handle custom sizes
     }
-
+    //TO DO VISION UPDATE: other senses for vision
     let darkvision = 0;
     if(window.monsterListItems){
         let monsterSidebarListItem = open5e ? window.open5eListItems.filter((d) => listItem.id == d.id)[0] : window.monsterListItems.filter((d) => listItem.id == d.id)[0]; 
@@ -4932,7 +4982,7 @@ function convert_open5e_monsterData(monsterData){
 
 
         let convertedSenses = [];
-        
+        //TO DO VISION UPDATE: senseId's here to reference for fetching other senses
         if(monsterData.blindsight_range){
             convertedSenses.push({senseId: 1, notes: `${monsterData.blindsight_range} ft.`})
         }

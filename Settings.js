@@ -496,10 +496,14 @@ function avtt_settings() {
 								delete window.TOKEN_SETTINGS[name];
 							}
 						}, function() {
-							let visionInput = $("input[name='visionColor']").spectrum("get");
-			   				let light1Input = $("input[name='light1Color']").spectrum("get");
-			    			let light2Input = $("input[name='light2Color']").spectrum("get");
-			        		
+							const devilsightInput = $("input[name='devilsightColor']").spectrum("get");
+							const truesightInput = $("input[name='truesightColor']").spectrum("get");
+							const visionInput = $("input[name='visionColor']").spectrum("get");
+			   				const light1Input = $("input[name='light1Color']").spectrum("get");
+			    			const light2Input = $("input[name='light2Color']").spectrum("get");
+
+			        		window.TOKEN_SETTINGS.devilsight.color= `rgba(${devilsightInput._r}, ${devilsightInput._g}, ${devilsightInput._b}, ${devilsightInput._a})`;
+							window.TOKEN_SETTINGS.truesight.color= `rgba(${truesightInput._r}, ${truesightInput._g}, ${truesightInput._b}, ${truesightInput._a})`;
 			        		window.TOKEN_SETTINGS.vision.color= `rgba(${visionInput._r}, ${visionInput._g}, ${visionInput._b}, ${visionInput._a})`;
 			   				window.TOKEN_SETTINGS.light1.color = `rgba(${light1Input._r}, ${light1Input._g}, ${light1Input._b}, ${light1Input._a})`;
 			    			window.TOKEN_SETTINGS.light2.color = `rgba(${light2Input._r}, ${light2Input._g}, ${light2Input._b}, ${light2Input._a})`;
@@ -1438,18 +1442,33 @@ function build_sidebar_token_options_flyout(availableOptions, setValues, updateV
 
 
 	if(showExtraOptions){
-		
+		window.TOKEN_SETTINGS.truesight = (window.TOKEN_SETTINGS?.truesight) ? window.TOKEN_SETTINGS.truesight : {color: 'rgba(142, 142, 142, 1)'};
+		window.TOKEN_SETTINGS.devilsight = (window.TOKEN_SETTINGS?.devilsight) ? window.TOKEN_SETTINGS.devilsight : {color: 'rgba(142, 142, 142, 1)'};
 	    window.TOKEN_SETTINGS.vision = (window.TOKEN_SETTINGS?.vision) ? window.TOKEN_SETTINGS.vision : {color: 'rgba(142, 142, 142, 1)'};
 	    window.TOKEN_SETTINGS.light1 = (window.TOKEN_SETTINGS?.light1) ? window.TOKEN_SETTINGS.light1 : {color: 'rgba(255, 255, 255, 1)'};
 	   	window.TOKEN_SETTINGS.light2 = (window.TOKEN_SETTINGS?.light2) ? window.TOKEN_SETTINGS.light2 : {color: 'rgba(142, 142, 142, 1)'};
 	
 
 	    let lightInputs = `<div class="token-image-modal-footer-select-wrapper">
-	                    <div class="token-image-modal-footer-title">Darkvision Color</div>
+					<div class="token-image-modal-footer-title">Darkvision Color</div>
 	                    <div style="padding-left: 2px">
 	                        <input class="spectrum" name="visionColor" value="${window.TOKEN_SETTINGS.vision.color}" >
 	                    </div>
 	                </div>
+					<div class="token-image-modal-footer-select-wrapper">
+						<div class="token-image-modal-footer-title">Devilsight Color</div>
+							<div style="padding-left: 2px">
+								<input class="spectrum" name="devilsightColor" value="${window.TOKEN_SETTINGS.devilsight.color}" >
+							</div>
+						</div>
+					</div>
+					<div class="token-image-modal-footer-select-wrapper">
+						<div class="token-image-modal-footer-title">True Color</div>
+							<div style="padding-left: 2px">
+								<input class="spectrum" name="truesightColor" value="${window.TOKEN_SETTINGS.truesight.color}" >
+							</div>
+						</div>
+					</div>
 	                <div class="token-image-modal-footer-select-wrapper">
 	                    <div class="token-image-modal-footer-title">Inner Light Color</div>
 	                    <div style="padding-left: 2px">
@@ -1473,6 +1492,8 @@ function build_sidebar_token_options_flyout(availableOptions, setValues, updateV
 	        clickoutFiresChange: true,
 	        appendTo: "parent"
 	    });
+		container.find("input[name='devilsightColor']").spectrum("set", window.TOKEN_SETTINGS.devilsight.color);
+		container.find("input[name='truesightColor']").spectrum("set", window.TOKEN_SETTINGS.truesight.color);
 		container.find("input[name='visionColor']").spectrum("set", window.TOKEN_SETTINGS.vision.color);
 	    container.find("input[name='light1Color']").spectrum("set", window.TOKEN_SETTINGS.light1.color);
 	    container.find("input[name='light2Color']").spectrum("set", window.TOKEN_SETTINGS.light2.color);
@@ -1532,15 +1553,17 @@ function build_sidebar_token_options_flyout(availableOptions, setValues, updateV
 
 			let defaultTokenOptions = default_options();
 
-			if(showExtraOptions == true){
-				$("input[name='visionColor']").spectrum("set", defaultTokenOptions.light2.color);
+			if(showExtraOptions == true){	
 			    $("input[name='light1Color']").spectrum("set", defaultTokenOptions.light1.color);
-			    $("input[name='light2Color']").spectrum("set", defaultTokenOptions.light2.color);
+			    $("input[name='light2Color'], input[name='visionColor'], input[name='devilsightColor'], input[name='truesightColor']").spectrum("set", defaultTokenOptions.light2.color);
 			}
 			else{
+				$("input[name='devilsightColor']").spectrum("set", ((window.TOKEN_SETTINGS?.devilsight?.color) ? window.TOKEN_SETTINGS.devilsight.color : defaultTokenOptions.light2.color));
+				$("input[name='truesightColor']").spectrum("set", ((window.TOKEN_SETTINGS?.truesight?.color) ? window.TOKEN_SETTINGS.truesight.color : defaultTokenOptions.light2.color));
 				$("input[name='visionColor']").spectrum("set", ((window.TOKEN_SETTINGS?.vision?.color) ? window.TOKEN_SETTINGS.vision.color : defaultTokenOptions.light2.color));
 			    $("input[name='light1Color']").spectrum("set", ((window.TOKEN_SETTINGS?.light1?.color) ? window.TOKEN_SETTINGS.light1.color : defaultTokenOptions.light1.color));
 			    $("input[name='light2Color']").spectrum("set", ((window.TOKEN_SETTINGS?.light2?.color) ? window.TOKEN_SETTINGS.light2.color : defaultTokenOptions.light2.color));
+				
 			}
 
 
