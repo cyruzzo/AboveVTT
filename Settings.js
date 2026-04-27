@@ -1143,6 +1143,9 @@ function init_settings() {
 				<div id='export_current_scene_container'>
 					<button id='export_current_scene' onclick='export_current_scene();' class="sidebar-panel-footer-button sidebar-hover-text" data-hover="Download a file containing the current scene data including token notes">EXPORT CURRENT SCENE ONLY</button>
 				</div>
+				<div id='recover_scenes_container'>
+		<button id='recover_scenes' onclick='recover_scenes();' class="sidebar-panel-footer-button sidebar-hover-text" data-hover="Attempt Scene recovery from older campaign invite link"> Recover Scenes</button>
+				</div>
 				<div id='other_export_container'>
 					<span>Specific Local Data Exports:</span>
 					<button id='export_token' onclick='export_token_customization();' class="sidebar-panel-footer-button sidebar-hover-text" data-hover="Download a file containing your token customizations">TOKEN CUSTOMIZATIONS</button>
@@ -1709,6 +1712,69 @@ function persist_experimental_settings(settings) {
 	localStorage.setItem("ExperimentalSettings" + gameid, JSON.stringify(settings));
 }
 
+const DDB_JOIN_PREFIX='https://www.dndbeyond.com/campaigns/join/'
+function recover_scenes(){
+	//display any previously known links - or allow user to enter
+	function populateHistory() {
+		const menu = document.getElementById('history-menu');
+		const storageData = localStorage.getItem(`AVTT-CampaignInfo-${window.CAMPAIGN_INFO.id}-previous`);
+		if (storageData) {
+			menu.innerHTML = '';
+			storageData.split(',').forEach(item => {
+				const opt = document.createElement('option');
+				const url = DDB_JOIN_PREFIX+item;
+				opt.value = url;
+				opt.textContent = url;
+				menu.appendChild(opt);
+			});
+			$("#history-menu-div").css("display", "block");			
+		} else {
+			$("#history-menu-div").css("display", "none");
+		}
+	}
+	function showRecoverDialog() {
+		const recoverDialog = $(`#recoverDialog`);		
+		if (recoverDialog.length > 0){
+			populateHistory();
+			recoverDialog.show();
+		} else {
+			const recoverDialog = find_or_create_generic_draggable_window("recoverDialog", "Recover Scenes", false, false, '#recoverDialog', '40%', '30%', '10%', '10%', false, '', true);
+			recoverDialog.append(
+				$(`
+				<div style="padding: 20px; border: 1px solid #ccc; border-radius: 8px; background: #fff; font-family: sans-serif;">
+				<div style="margin-bottom: 15px;">
+				<label for="old-link" style="display: block; font-size: 12px; color: #666;">Enter an old invite link to attempt to recover previous scenes</label>
+				<input type="text" id="old-link" style="width: 100%; box-sizing: border-box; padding: 8px; margin-top: 5px;">
+				</div>
+				<div id="history-menu-div" style="margin-bottom: 15px;">
+				<label for="history-menu" style="display: block; font-size: 12px; color: #666;">Known Previously</label>
+				<select id="history-menu" style="width: 100%; padding: 5px;" onchange="document.getElementById('old-link').value = this.value">
+				</select>
+				</div>
+				<button type="button" style="width: 100%; padding: 10px; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;">
+				Recover
+    </button>
+</div>`));
+			//populate history: <option value="">Select a previous value...</option>
+			$('#recoverButton').click(function (e) {
+				e.stopPropagation();
+				const oldlink = document.getElementById('old-link').value;
+				//validate oldlink matches campaign id
+				if(oldlink.startsWith(DDB_JOIN_PREFIX+window.CAMPAIGN_INFO.id)) {
+					const oldId = oldlink.slice(DDB_JOIN_PREFIX.length)
+					console.log("TODO: implement attemptRecovery", oldId);
+					attemptRecovery(oldId);
+				}
+				hideExportReminder();
+			});
+			populateHistory();
+			recoverDialog.show();
+		}
+	}
+	// find previous options
+	showRecoverDialog();
+}
+  
 function export_current_scene(){
 	build_import_loading_indicator('Preparing Export File');
 	let currentSceneData = {
