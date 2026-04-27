@@ -1712,7 +1712,6 @@ function persist_experimental_settings(settings) {
 	localStorage.setItem("ExperimentalSettings" + gameid, JSON.stringify(settings));
 }
 
-const DDB_JOIN_PREFIX='https://www.dndbeyond.com/campaigns/join/'
 function recover_scenes(){
 	//display any previously known links - or allow user to enter
 	function populateHistory() {
@@ -1722,9 +1721,8 @@ function recover_scenes(){
 			menu.innerHTML = '';
 			storageData.split(',').forEach(item => {
 				const opt = document.createElement('option');
-				const url = DDB_JOIN_PREFIX+item;
-				opt.value = url;
-				opt.textContent = url;
+				opt.value = item;
+				opt.textContent = item;
 				menu.appendChild(opt);
 			});
 			$("#history-menu-div").css("display", "block");			
@@ -1743,8 +1741,11 @@ function recover_scenes(){
 				$(`
 				<div style="padding: 20px; border: 1px solid #ccc; border-radius: 8px; background: #fff; font-family: sans-serif;">
 				<div style="margin-bottom: 15px;">
-				<label for="old-link" style="display: block; font-size: 12px; color: #666;">Enter an old invite link to attempt to recover previous scenes</label>
-				<input type="text" id="old-link" style="width: 100%; box-sizing: border-box; padding: 8px; margin-top: 5px;">
+				<label for="old-link" style="display: block; font-size: 12px; color: #666;">Enter an old invite campaign id from link URL to attempt to recover previous scenes</label>
+				<div style="display: flex; align-items: center; margin-bottom: 10px;">
+				<span style="font-family: monospace;">https://www.dndbeyond.com/campaigns/join/
+				<input type="text" id="old-link" style="width: 180px; box-sizing: border-box; padding: 5px; margin-top: 5px; style="flex-grow: 1;"></span>
+				</div>
 				</div>
 				<div id="history-menu-div" style="margin-bottom: 15px;">
 				<label for="history-menu" style="display: block; font-size: 12px; color: #666;">Known Previously</label>
@@ -1758,10 +1759,9 @@ function recover_scenes(){
 			//populate history: <option value="">Select a previous value...</option>
 			$('#recoverButton').click(function (e) {
 				e.stopPropagation();
-				const oldlink = document.getElementById('old-link').value;
+				const oldId = document.getElementById('old-link').value;
 				//validate oldlink matches campaign id
-				if(oldlink.startsWith(DDB_JOIN_PREFIX+window.CAMPAIGN_INFO.id)) {
-					const oldId = oldlink.slice(DDB_JOIN_PREFIX.length)
+				if(oldId.startsWith(window.CAMPAIGN_INFO.id)) {
 					console.log("TODO: implement attemptRecovery", oldId);
 					attemptRecovery(oldId);
 				}
