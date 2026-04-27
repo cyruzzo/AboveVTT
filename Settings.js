@@ -1718,8 +1718,10 @@ function recover_scenes(){
 		const menu = document.getElementById('history-menu');
 		const storageData = localStorage.getItem(`AVTT-CampaignInfo-${window.CAMPAIGN_INFO.id}-previous`);
 		if (storageData) {
+			const items = storageData.split(',');
+			document.getElementById('old-link').value = items[0];			
 			menu.innerHTML = '';
-			storageData.split(',').forEach(item => {
+			items.forEach(item => {
 				const opt = document.createElement('option');
 				opt.value = item;
 				opt.textContent = item;
