@@ -1738,7 +1738,7 @@ function recover_scenes(){
 			populateHistory();
 			recoverDialog.show();
 		} else {
-			const recoverDialog = find_or_create_generic_draggable_window("recoverDialog", "Recover Scenes", false, false, '#recoverDialog', '40%', '30%', '10%', '10%', false, '', true);
+			const recoverDialog = find_or_create_generic_draggable_window("recoverDialog", "Recover Scenes", false, false, '#recoverDialog', '40%', '30%', '10%', '10%', false, 'input, select, option, button', true);
 			recoverDialog.append(
 				$(`
 				<div style="padding: 20px; border: 1px solid #ccc; border-radius: 8px; background: #fff; font-family: sans-serif;">
@@ -1751,7 +1751,7 @@ function recover_scenes(){
 				<select id="history-menu" style="width: 100%; padding: 5px;" onchange="document.getElementById('old-link').value = this.value">
 				</select>
 				</div>
-				<button type="button" style="width: 100%; padding: 10px; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;">
+				<button id="recoverButton" type="button" style="width: 100%; padding: 10px; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;">
 				Recover
     </button>
 </div>`));
