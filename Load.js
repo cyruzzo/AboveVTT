@@ -208,13 +208,19 @@
                   "ChatObserver.js",
                   "MonsterStatBlock.js",
                   "MonsterDice.js",
-                  "CampaignPage.js"
-              ] : pgType === "campaign" ? [      
+                  "CampaignPage.mjs"
+              ] : pgType === "campaign" ? [    
+                  "jquery-3.6.0.min.js",  
                   "environment.js",
                   "CoreFunctions.js", 		
-                  "DDBApi.js", 
+                  "DDBApi.js",
+                  "AboveApi.js",
+                  "audio/index.mjs",
+                  "Journal.js",
+                  "TokenCustomization.js",
+                  "ScenesHandler.js",
                   "Settings.js",
-                  "CampaignPage.js"
+                  "CampaignPage.mjs"
               ] : [
                     "Load.js",//load Loader on VTT full pages (for iframe inject - see below)
                     ...avttScripts,

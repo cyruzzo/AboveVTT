@@ -152,7 +152,8 @@ class Mixer extends EventTarget {
     constructor() {
         super();
         this._localStorageKey = `audio.mixer.${window.gameId}.${playerID()}`;
-        this.syncPlayers(false);
+        if(is_abovevtt_page())
+            this.syncPlayers(false);
     }
 
     /**
