@@ -265,7 +265,7 @@ async function avttFetchWithRetry(input, init = {}, options = {}) {
         if(response.status == 403){
           const json = await response.json();
           if (json.error && json.message)
-            alert(`${json.error}\n\s${json.message}`)
+            showErrorMessage(json.error, json.message)
         }
         
         return response;
@@ -1453,7 +1453,7 @@ async function avttResolveFolderDescendantConflicts(move, targetRootKey, conflic
           targetKey,
           deriveError,
         );
-        alert("Failed to generate a unique name. Skipping this item.");
+        showTempMessage("Failed to generate a unique name. Skipping this item.");
         skipDescendants.add(sourceKey);
         continue;
       }
@@ -1533,7 +1533,7 @@ async function avttResolveMoveConflicts(moves) {
         targetKey = await avttDeriveUniqueKey(targetKey);
       } catch (deriveError) {
         console.error("Failed to generate unique destination during move", deriveError);
-        alert("Failed to generate a unique name. Skipping this item.");
+        showTempMessage("Failed to generate a unique name. Skipping this item.");
         continue;
       }
     }
@@ -1828,7 +1828,7 @@ async function avttHandleToolbarAction(action) {
 
       } catch (error) {
         console.error("Failed to open file in new tab", error);
-        alert(error?.message || "Failed to open the file in a new tab.");
+        showErrorMessage(error?.message || "Failed to open the file in a new tab.");
       }
       handled = true;
       break;
@@ -1847,7 +1847,7 @@ async function avttHandleToolbarAction(action) {
         }
       } catch (error) {
         console.error("Failed to open file in new tab", error);
-        alert(error?.message || "Failed to open the file in a new tab.");
+        showErrorMessage(error?.message || "Failed to open the file in a new tab.");
       }
       handled = true;
       break;
@@ -1869,7 +1869,7 @@ async function avttHandleToolbarAction(action) {
         }
       } catch (error) {
         console.error("Failed to open file in new tab", error);
-        alert(error?.message || "Failed to open the file in a new tab.");
+        showErrorMessage(error?.message || "Failed to open the file in a new tab.");
       }
       handled = true;
       break;
@@ -2300,7 +2300,7 @@ async function avttHandleContextAction(action) {
         window.open(url, "_blank", "noopener,noreferrer");
       } catch (error) {
         console.error("Failed to open file in new tab", error);
-        alert(error?.message || "Failed to open the file in a new tab.");
+        showErrorMessage(error?.message || "Failed to open the file in a new tab.");
       }
       break; 
     } 
@@ -2329,7 +2329,7 @@ async function avttHandleContextAction(action) {
         display_url_embeded(url);
       } catch (error) {
         console.error("Failed to open file in new tab", error);
-        alert(error?.message || "Failed to open the file in a new tab.");
+        showErrorMessage(error?.message || "Failed to open the file in a new tab.");
       }
       break;
     } 
@@ -2361,7 +2361,7 @@ async function avttHandleContextAction(action) {
 
       } catch (error) {
         console.error("Failed to open file in new tab", error);
-        alert(error?.message || "Failed to open the file in a new tab.");
+        showErrorMessage(error?.message || "Failed to open the file in a new tab.");
       }
       break;
     } 
@@ -3531,7 +3531,7 @@ async function avttMoveEntries(moves, options = {}) {
       const normalizedError =
         error instanceof Error ? error : new Error(String(error ?? "Failed to move item(s)."));
       if (options?.suppressErrorAlert !== true) {
-        alert(normalizedError.message || "Failed to move item(s).");
+        showErrorMessage(normalizedError.message || "Failed to move item(s).");
       }
       if (options?.bubbleOnError) {
         throw normalizedError;
@@ -3571,7 +3571,7 @@ async function avttHandlePasteFromClipboard(destinationFolder = currentFolder) {
       destinationFolder &&
       destinationFolder.startsWith(entry.Key)
     ) {
-      alert("Cannot paste a folder inside itself.");
+      showTempMessage("Cannot paste a folder inside itself.");
       return;
     }
     const newKey = avttComputeNewKeyForDestination(entry, destinationFolder);
@@ -3624,7 +3624,7 @@ async function avttPromptRename(path, isFolder) {
       return false;
     }
     if (/[\\/]/.test(trimmedName)) {
-      alert("Names cannot contain slashes.");
+      showTempMessage("Names cannot contain slashes.");
       lastSuggestedName = trimmedName;
       continue;
     }
@@ -3633,7 +3633,7 @@ async function avttPromptRename(path, isFolder) {
       return false;
     }
     if (isFolder && newKey.startsWith(`${path}`)) {
-      alert("Cannot rename a folder into its own sub-path.");
+      showTempMessage("Cannot rename a folder into its own sub-path.");
       lastSuggestedName = trimmedName;
       continue;
     }
@@ -3655,11 +3655,11 @@ async function avttPromptRename(path, isFolder) {
     } catch (error) {
       const message = error?.message ? String(error.message) : "Failed to rename item(s).";
       if (/already exists/i.test(message)) {
-        alert("An item with that name already exists. Please choose a different name.");
+        showErrorMessage("An item with that name already exists. Please choose a different name.");
         lastSuggestedName = trimmedName;
         continue;
       }
-      alert(message);
+      showErrorMessage(message);
       return false;
     }
   }
@@ -3811,7 +3811,7 @@ async function avttHandleFolderDrop(event, destinationPath) {
       continue;
     }
     if (entry.isFolder && destinationPath.startsWith(entry.Key)) {
-      alert("Cannot move a folder inside itself.");
+      showTempMessage("Cannot move a folder inside itself.");
       avttHandleDragEnd();
       return;
     }
@@ -4760,7 +4760,7 @@ async function launchFilePicker(selectFunction = false, fileTypes = [], secondar
       readUploadedFileCache();
   } catch (error) {
     console.error("Patreon verification failed", error);
-    alert("Patreon login is required to open the AVTT File Uploader.");
+    showTempMessage("Patreon login is required to open the AVTT File Uploader.");
     return;
   }
 
@@ -5403,7 +5403,7 @@ async function launchFilePicker(selectFunction = false, fileTypes = [], secondar
     };
     const handler = exportHandlers[option];
     if (typeof handler !== "function") {
-      alert("Selected export option is not available.");
+      showTempMessage("Selected export option is not available.");
       return;
     }
     try {
@@ -5420,7 +5420,7 @@ async function launchFilePicker(selectFunction = false, fileTypes = [], secondar
       await uploadSelectedFiles([syntheticFile]);
     } catch (error) {
       console.error("Export upload failed", error);
-      alert(error?.message || "Failed to export data.");
+      showErrorMessage(error?.message || "Failed to export data.");
     } finally {   
      $(".import-loading-indicator").remove();
     }
@@ -5766,7 +5766,7 @@ async function launchFilePicker(selectFunction = false, fileTypes = [], secondar
       console.error("Failed to upload dropped files", error);
       if (error.message.includes('A requested file or directory could not be found at the time an operation was processed.'))
         return;
-      alert(error.message || "An unexpected error occurred while uploading dropped files.");
+      showErrorMessage(error.message || "An unexpected error occurred while uploading dropped files.");
       hideUploadingIndicator();
     }
   });
@@ -5858,16 +5858,16 @@ async function launchFilePicker(selectFunction = false, fileTypes = [], secondar
     }
     const trimmed = String(userInput).trim();
     if (!trimmed) {
-      alert("Folder name cannot be empty.");
+      showTempMessage("Folder name cannot be empty.");
       return;
     }
     if (/[\\/]/.test(trimmed)) {
-      alert("Folder names cannot contain slashes.");
+      showTempMessage("Folder names cannot contain slashes.");
       return;
     }
     const folderName = trimmed.replace(/\/+$/g, "");
     if (!folderName) {
-      alert("Folder name cannot be empty.");
+      showTempMessage("Folder name cannot be empty.");
       return;
     }
     try {
@@ -5887,7 +5887,7 @@ async function launchFilePicker(selectFunction = false, fileTypes = [], secondar
       );
     } catch (error) {
       console.error("Failed to create folder", error);
-      alert("Failed to create folder");
+      showErrorMessage("Failed to create folder");
     }
   });
 
@@ -6327,7 +6327,7 @@ async function avttProcessUploadQueue() {
             targetKey = await avttDeriveUniqueKey(targetKey);
           } catch (deriveError) {
             console.error("Failed to generate unique key for duplicate upload", deriveError);
-            alert("Failed to generate a unique name for a duplicate file. Skipping.");
+            showTempMessage("Failed to generate a unique name for a duplicate file. Skipping.");
             if (completionDeferred?.resolve) {
               completionDeferred.resolve(false);
             }
@@ -6348,7 +6348,7 @@ async function avttProcessUploadQueue() {
             activeUserLimit !== undefined &&
             prospectiveTotal + S3_Current_Size > activeUserLimit
           ) {
-            alert("Skipping File. This upload would exceed the storage limit for your Patreon tier. Delete some files before uploading more.");
+            showTempMessage("Skipping File. This upload would exceed the storage limit for your Patreon tier. Delete some files before uploading more.");
             if (completionDeferred?.resolve) {
               completionDeferred.resolve(false);
             }
@@ -6575,7 +6575,7 @@ async function avttProcessUploadQueue() {
         console.error('Upload task failed', error);
         if (!isAbortError) {
           if (isProxyUpload && error instanceof Error && error.message) {
-            alert(error.message);
+            showErrorMessage(error.message);
           }
         }
         if (completionDeferred?.reject) {
@@ -7257,7 +7257,7 @@ function refreshFiles(
                     importAvttSelections(paths, folderId, fullPath);
                   } catch (error) {
                     console.error("Failed to import from AVTT File Picker selection", error);
-                    alert(error?.message || "Failed to import selection from AVTT. See console for details.");
+                    showErrorMessage(error?.message || "Failed to import selection from AVTT. See console for details.");
                   }
                 }
                 else{
@@ -7265,7 +7265,7 @@ function refreshFiles(
                     importAvttSelections(paths, RootFolder.Scenes.id, RootFolder.Scenes.path);
                   } catch (error) {
                     console.error("Failed to import from AVTT File Picker selection", error);
-                    alert(error?.message || "Failed to import selection from AVTT. See console for details.");
+                    showErrorMessage(error?.message || "Failed to import selection from AVTT. See console for details.");
                   }
                 }
               }
@@ -7278,7 +7278,7 @@ function refreshFiles(
                   window.JOURNAL.importFilesAndFolders(paths, targetFolderId);
                 } catch (error) {
                   console.error("Failed to import from AVTT File Picker selection to Journal", error);
-                  alert(error?.message || "Failed to import selection from AVTT to Journal. See console for details.");
+                  showErrorMessage(error?.message || "Failed to import selection from AVTT to Journal. See console for details.");
                 }
               }
               else if (droppedOn.closest('#sounds-panel').length > 0){
@@ -7412,7 +7412,7 @@ function refreshFiles(
         if (err?.name === "AbortError") {
           return;
         }
-        alert("Error fetching folder listing. See console for details.");
+        showErrorMessage("Error fetching folder listing. See console for details.");
         console.error("Error fetching folder listing: ", err);
         $('#avtt-file-picker .sidebar-panel-loading-indicator').remove();
       }).finally(() => {
@@ -7879,7 +7879,7 @@ async function deleteFilesFromS3Folder(selections, fileTypes) {
       aborted = true;
     } else {
       console.error("Failed to delete files", error);
-      alert(error.message || "Failed to delete file(s).");
+      showErrorMessage(error.message || "Failed to delete file(s).");
       avttHideOperationIndicator(indicatorMode);
     }
   } finally {
