@@ -463,7 +463,7 @@ function remove_loading_overlay() {
 	$("#loading_overlay").animate({ "opacity": 0 }, 1000, function() {
 		$("#loading_overlay").hide();
 	});
-	//todo: find a better place
+	//convenient here to make the export before things get started and it's distracting
 	checkForExportRemind();
 }
 
