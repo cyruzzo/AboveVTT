@@ -668,6 +668,23 @@ function avtt_settings() {
 		class: 'ui',
 		global: 1
 	})
+	
+	settings.push(
+	{
+		name: "exportRemind",
+		label: "Export Reminder",
+		type: "dropdown",
+		options: [
+			{ value: 0, label: "Never", description: `No reminder` },
+			{ value: 1, label: "Daily", description: `Daily reminder` },
+			{ value: 7, label: "Weekly", description: `Weekly reminder` },
+			{ value: 30, label: "Monthly", description: `Monthly reminder` }	
+		],
+		defaultValue: 0,
+		class: 'ui',
+		global: 1
+	})
+	
 	settings.push(
 	{
 		name: "monsterCritType",
@@ -1125,6 +1142,9 @@ function init_settings() {
 				</div>
 				<div id='export_current_scene_container'>
 					<button id='export_current_scene' onclick='export_current_scene();' class="sidebar-panel-footer-button sidebar-hover-text" data-hover="Download a file containing the current scene data including token notes">EXPORT CURRENT SCENE ONLY</button>
+				</div>
+				<div id='recover_scenes_container'>
+		<button id='recover_scenes' onclick='recover_scenes();' class="sidebar-panel-footer-button sidebar-hover-text" data-hover="Attempt Scene recovery from older campaign invite link"> Recover Scenes</button>
 				</div>
 				<div id='other_export_container'>
 					<span>Specific Local Data Exports:</span>
@@ -1692,6 +1712,73 @@ function persist_experimental_settings(settings) {
 	localStorage.setItem("ExperimentalSettings" + gameid, JSON.stringify(settings));
 }
 
+function recover_scenes(){
+	//display any previously known links - or allow user to enter
+	function populateHistory() {
+		const menu = document.getElementById('history-menu');
+		const storageData = localStorage.getItem(`AVTT-CampaignInfo-${window.CAMPAIGN_INFO.id}-previous`);
+		if (storageData) {
+			const items = storageData.split(',');
+			document.getElementById('old-link').value = items[0];			
+			menu.innerHTML = '';
+			items.forEach(item => {
+				const opt = document.createElement('option');
+				opt.value = item;
+				opt.textContent = item;
+				menu.appendChild(opt);
+			});
+			$("#history-menu-div").css("display", "block");			
+		} else {
+			$("#history-menu-div").css("display", "none");
+		}
+	}
+	function showRecoverDialog() {
+		const recoverDialog = $(`#recoverDialog`);		
+		if (recoverDialog.length > 0){
+			populateHistory();
+			recoverDialog.show();
+		} else {
+			const recoverDialog = find_or_create_generic_draggable_window("recoverDialog", "Recover Scenes", false, false, '#recoverDialog', '40%', '30%', '10%', '10%', false, 'input, select, option, button', true);
+			recoverDialog.append(
+				$(`
+				<div style="padding: 20px; border: 1px solid #ccc; border-radius: 8px; background: #fff; font-family: sans-serif;">
+				<div style="margin-bottom: 15px;">
+				<label for="old-link" style="display: block; font-size: 12px; color: #666;">Enter an old invite campaign id from link URL to attempt to recover previous scenes</label>
+				<div style="display: flex; align-items: center; margin-bottom: 10px;">
+				<span style="font-family: monospace;">https://www.dndbeyond.com/campaigns/join/
+				<input type="text" id="old-link" style="width: 180px; box-sizing: border-box; padding: 5px; margin-top: 5px; style="flex-grow: 1;"></span>
+				</div>
+				</div>
+				<div id="history-menu-div" style="margin-bottom: 15px;">
+				<label for="history-menu" style="display: block; font-size: 12px; color: #666;">Known Previously</label>
+				<select id="history-menu" style="width: 100%; padding: 5px;" onchange="document.getElementById('old-link').value = this.value">
+				</select>
+				</div>
+				<button id="recoverButton" type="button" style="width: 100%; padding: 10px; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;">
+				Recover
+    </button>
+</div>`));
+			//populate history: <option value="">Select a previous value...</option>
+			$('#recoverButton').click(function (e) {
+				e.stopPropagation();
+				const oldId = document.getElementById('old-link').value;
+				//validate oldlink matches campaign id
+				if(oldId.startsWith(window.CAMPAIGN_INFO.id)) {
+					console.log("TODO: implement attemptRecovery", oldId);
+					attemptRecovery(oldId);
+				} else {
+					alert("Secret does not match current Campaign");
+				}
+				recoverDialog.hide();
+			});
+			populateHistory();
+			recoverDialog.show();
+		}
+	}
+	// find previous options
+	showRecoverDialog();
+}
+  
 function export_current_scene(){
 	build_import_loading_indicator('Preparing Export File');
 	let currentSceneData = {
@@ -1947,9 +2034,9 @@ function export_audio_csv() {
 
 
 
-function export_file() {
+function export_file(filePrefix="", saveDateStamp=false) {
 	build_import_loading_indicator('Preparing Export File');
-	let DataFile = {
+	const DataFile = {
 		version: 2,
 		scenes: [{}],
 		tokencustomizations: [],
@@ -1957,10 +2044,12 @@ function export_file() {
 		journalchapters: [],
 		soundpads: {}
 	};
-	let currentdate = new Date(); 
-	let datetime = `${currentdate.getFullYear()}-${(currentdate.getMonth()+1)}-${currentdate.getDate()}`
+	const currentdate = new Date(); 
+	const datetime = `${currentdate.getFullYear()}-${(currentdate.getMonth()+1)}-${currentdate.getDate()}`
+	const filename = `${filePrefix}${window.CAMPAIGN_INFO.name}-${datetime}.abovevtt`;
+	const storageKey = `AVTT-exportStamp-${window.CAMPAIGN_INFO.id}`;
 	let firstError = false;
-	AboveApi.exportScenes()
+	return AboveApi.exportScenes()
 		.then(scenes => {
 			DataFile.scenes = scenes;
 			DataFile.tokencustomizations = window.TOKEN_CUSTOMIZATIONS;
@@ -1969,7 +2058,9 @@ function export_file() {
 			DataFile.soundpads = window.SOUNDPADS;
 			DataFile.mixerstate = window.MIXER.state();
 			DataFile.tracklibrary = Array.from(window.TRACK_LIBRARY.map().entries());
-			download(b64EncodeUnicode(JSON.stringify(DataFile,null,"\t")),`${window.CAMPAIGN_INFO.name}-${datetime}.abovevtt`,"text/plain");
+			download(b64EncodeUnicode(JSON.stringify(DataFile,null,"\t")),filename,"text/plain");
+			localStorage.setItem(storageKey, Date.now().toString())
+			return true;
 		})
 		.catch(error => {	
 			firstError = true;	//data is probably too large to get from https - fallback on individually grabbing scenes.
@@ -1982,11 +2073,14 @@ function export_file() {
 				DataFile.soundpads = window.SOUNDPADS;
 				DataFile.mixerstate = window.MIXER.state();
 				DataFile.tracklibrary = Array.from(window.TRACK_LIBRARY.map().entries());
-				download(b64EncodeUnicode(JSON.stringify(DataFile,null,"\t")),`${window.CAMPAIGN_INFO.name}-${datetime}.abovevtt`,"text/plain");
-				$(".import-loading-indicator").remove();	
+				download(b64EncodeUnicode(JSON.stringify(DataFile,null,"\t")),filename,"text/plain");
+				$(".import-loading-indicator").remove();
+				localStorage.setItem(storageKey, Date.now().toString());	
+				return true;				
 			})
 			.catch(error2 => {
 				showError(error2, "export_scenes failed to fetch from the cloud");
+				return false;
 			})
 		})
 		.finally(() => {
@@ -2139,6 +2233,29 @@ function import_process_datafile_text(fileText) {
 	}
 
 	return DataFile;
+}
+
+function attemptRecovery(campaignSecret) {
+	AboveApi.exportScenes(campaignSecret).then((scenes) => {
+		if(scenes && scenes.length > 0) {
+			//do we really want/need migrate here? or is there a better way?
+			build_import_loading_indicator('Preparing Import');
+			AboveApi.migrateScenes(window.gameId, scenes)
+				.then(() => {
+					$(".import-loading-indicator .loading-status-indicator__subtext").addClass("complete");
+					setTimeout(() => {
+						alert("Migration (hopefully) completed. You need to Re-Join AboveVTT");
+						location.reload();
+					}, 2000);
+				})
+				.catch(error => {
+					showError(error, "cloud_migration failed");
+				});
+		} else {
+			alert("No scenes found");
+		}
+	});
+	
 }
 
 function import_readfile() {

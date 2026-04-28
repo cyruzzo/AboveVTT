@@ -227,6 +227,7 @@ function setupMBIntervals(){
 	window.pingInterval = setInterval(function() {
 		window.MB.sendPing();
 		window.MB.sendAbovePing();
+		checkForExportRemind();
 	}, 480000);
 }
 

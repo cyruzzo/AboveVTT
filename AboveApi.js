@@ -20,8 +20,9 @@ class AboveApiConfig {
 
 class AboveApi {
 
-  static #buildUrl(action, extraParams) {
-    const url = `${this.config.baseUrl}/services?action=${action}&campaign=${window.CAMPAIGN_SECRET}`;
+  static #buildUrl(action, extraParams, campaignSecret) {
+    const secret = campaignSecret || window.CAMPAIGN_SECRET;
+    const url = `${this.config.baseUrl}/services?action=${action}&campaign=${secret}`;
     const extraParamString = $.param(extraParams);
     if (extraParamString) {
       return `${url}&${extraParamString}`;
@@ -39,8 +40,8 @@ class AboveApi {
     }
   };
 
-  static async fetchJson(action, extraParams) {
-    const url = this.#buildUrl(action, extraParams);
+  static async fetchJson(action, extraParams, campaignSecret) {
+    const url = this.#buildUrl(action, extraParams, campaignSecret);
     let request;
     try {
       request = await fetch(url);
@@ -144,8 +145,8 @@ class AboveApi {
     return response;
   }
 
-  static async exportScenes() {
-    const response = await this.fetchJson("export_scenes");
+  static async exportScenes(campaignSecret) {
+    const response = await this.fetchJson("export_scenes", undefined, campaignSecret);
     console.log(`AboveApi.exportScenes`, response);
     return response;
   }

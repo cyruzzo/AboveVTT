@@ -463,6 +463,8 @@ function remove_loading_overlay() {
 	$("#loading_overlay").animate({ "opacity": 0 }, 1000, function() {
 		$("#loading_overlay").hide();
 	});
+	//convenient here to make the export before things get started and it's distracting
+	checkForExportRemind();
 }
 
 /**
@@ -2914,6 +2916,49 @@ function init_zoom_buttons() {
 		zoom_section.css("right","420px");
 	}
 }
+
+function checkForExportRemind() {
+	if(!window.DM) return;
+	function daysPassedSinceExport(campaignId) {
+		const storageKey = `AVTT-exportStamp-${campaignId || window.CAMPAIGN_INFO.id}`;	
+		const lastSaved = localStorage.getItem(storageKey);
+		return lastSaved ? (Date.now() - parseInt(lastSaved, 10)) / 86400000 : NaN;
+	}
+	function hideExportReminder() {
+		const exportReminder = $(`#exportReminder`);
+		if (exportReminder.length > 0){
+			exportReminder.hide();
+		}
+		
+	}
+	function showExportReminder() {
+		const exportReminder = $(`#exportReminder`);
+		if (exportReminder.length > 0){
+			exportReminder.show();
+		} else {
+			const exportReminder = find_or_create_generic_draggable_window("exportReminder", "Export Reminder", false, false, '#exportReminder', '40%', '10%', '10%', '10%', false, '', true);
+			const days = daysPassedSinceExport();
+			exportReminder.append(
+				$(`<div style="background: #fff">
+				It is time to do an export of this campaign.
+				<button id="exportRemindButton">Export</button>
+				</div>`)
+			);
+			$('#exportRemindButton').click(function (e) {
+				e.stopPropagation();
+				export_file('', true);
+				hideExportReminder();
+			});
+			exportReminder.show();
+		}
+	}
+	const remindSetting = get_avtt_setting_value('exportRemind');
+	const days = daysPassedSinceExport();
+	if(remindSetting && (isNaN(days) || days > parseInt(remindSetting))) {
+		showExportReminder();
+	}
+}
+
 
 /**
  * Show loading screen.
