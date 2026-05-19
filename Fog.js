@@ -720,8 +720,8 @@ function is_door_in_visible_light(door, imageData){
 	const centerY = parseInt($(door).css('--mid-y')) / window.CURRENT_SCENE_DATA.scale_factor;
 	let pixeldata;
 
-	for(let x=centerX-10; x<=centerX+10; x++){
-		for(let y=centerY-10; y<=centerY+10; y++){
+	for(let x=centerX-3; x<=centerX+3; x++){
+		for(let y=centerY-3; y<=centerY+3; y++){
 			pixeldata = getPixelFromImageData(imageData, x, y);
 			if(pixeldata[0]>=5 || pixeldata[1]>=5 || pixeldata[2]>=5)
 				return true;
@@ -5291,6 +5291,50 @@ function drawBrushArrow(ctx, points, style, lineWidth=6, scale=window.CURRENT_SC
 	drawPolygon(ctx, arrowPoints, style, false, Math.max(lineWidth, 1), undefined, undefined, scale);
 }
 
+function insetPolygonVertices(points, insetAmount) {
+    if (points.length < 3) return points;
+    
+    const insetPoints = [];
+    
+    for (let i = 0; i < points.length; i++) {
+        const prev = points[(i - 1 + points.length) % points.length];
+        const curr = points[i];
+        const next = points[(i + 1) % points.length];
+        
+        const prevDir = { x: curr.x - prev.x, y: curr.y - prev.y };
+        const nextDir = { x: next.x - curr.x, y: next.y - curr.y };
+        
+        const prevLen = Math.sqrt(prevDir.x * prevDir.x + prevDir.y * prevDir.y);
+        const nextLen = Math.sqrt(nextDir.x * nextDir.x + nextDir.y * nextDir.y);
+        
+        if (prevLen === 0 || nextLen === 0) {
+            insetPoints.push(curr);
+            continue;
+        }
+        
+        prevDir.x /= prevLen;
+        prevDir.y /= prevLen;
+        nextDir.x /= nextLen;
+        nextDir.y /= nextLen;
+        
+        const perpPrev = { x: prevDir.y, y: -prevDir.x };
+        const perpNext = { x: nextDir.y, y: -nextDir.x };
+        
+        const bisector = { x: perpPrev.x + perpNext.x, y: perpPrev.y + perpNext.y };
+        const bisectorLen = Math.sqrt(bisector.x * bisector.x + bisector.y * bisector.y);
+        
+        if (bisectorLen > 0.01) {
+            bisector.x /= bisectorLen;
+            bisector.y /= bisectorLen;
+            insetPoints.push({
+                x: curr.x - bisector.x * insetAmount,
+                y: curr.y - bisector.y * insetAmount
+            });
+        }
+    }
+    
+    return insetPoints;
+}
 function drawPolygon (
 	ctx,
 	points,
@@ -5305,13 +5349,10 @@ function drawPolygon (
 ) {
 	if(fill && islight && replacefog){
 		
-
+		ctx.save();
 		ctx.fillStyle = 'rgba(255,255,255,1)';
-		ctx.strokeStyle = 'rgba(0,0,0,1)';
-		
 		ctx.beginPath();
 		let adjustScale = (scale/window.CURRENT_SCENE_DATA.scale_factor)	
-		
 		ctx.moveTo(points[0].x/adjustScale/window.CURRENT_SCENE_DATA.scale_factor, points[0].y/adjustScale/window.CURRENT_SCENE_DATA.scale_factor);
 		ctx.lineWidth = lineWidth;
 		
@@ -5324,13 +5365,8 @@ function drawPolygon (
 		}
 		ctx.closePath();
 		ctx.fill();
-		if(lineWidth>0){
-			ctx.save();
-			ctx.globalCompositeOperation = 'destination-out';
-			ctx.stroke();
-			ctx.restore();
-		}
-	}
+		ctx.restore();
+	}	
 	else{
 		ctx.save();
 		ctx.beginPath();
@@ -7788,10 +7824,11 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
 			drawPolygon(ctx, lightPolygon, fogStyle, undefined, undefined, undefined, undefined, undefined, true);
 		}	
 	} 	
-	
-	window.lightPolygon = lightPolygon;
+	//inset polygon by wall width so light doesn't seep through walls or reveal doors outside of los.
+	const wallWidth = window.CURRENT_SCENE_DATA.scale_factor || 1;
+	window.lightPolygon = insetPolygonVertices(lightPolygon, wallWidth);
 	window.movePolygon = movePolygon;
-	window.noDarknessPolygon = noDarknessPolygon;
+	window.noDarknessPolygon = insetPolygonVertices(noDarknessPolygon, wallWidth);
 };
 
 function rectLineIntersection(x1, y1, x2, y2, rectx, rexty, rectw, recth) {
@@ -8066,14 +8103,10 @@ function redraw_light(darknessMoved = false, limitActiveRays = 0) {
 			if (!hideVisionWhenNoPlayerToken && !hideVisionWhenPlayerTokenExists) {
 				//when player token does not exist show vision for all pc tokens and shared vision for other tokens. Mostly used by DM's, streams and tabletop tv games.
 				//when player token does exist show your own vision and shared vision.
-				
-
-
-				
 
 				$(`.aura-element-container-clip[id='${auraId}'] [id*='vision_']`).toggleClass('notVisible', false);
 			
-				drawPolygon(offscreenContext, window.lightPolygon, 'rgba(255, 255, 255, 1)', true, 2, undefined, undefined, undefined, true, true); //draw to offscreen canvas so we don't have to render every draw and use this for a mask	
+				drawPolygon(offscreenContext, window.lightPolygon, 'rgba(255, 255, 255, 1)', true, 0, undefined, undefined, undefined, true, true); //draw to offscreen canvas so we don't have to render every draw and use this for a mask	
 				drawPolygon(moveOffscreenCanvasMaskContext, window.movePolygon, 'rgba(255, 255, 255, 1)', true, 0, undefined, undefined, undefined, true, true); //draw to offscreen canvas so we don't have to render every draw and use this for a mask
 				if(window.lightAuraClipPolygon[auraId] != undefined){
 					if (window.lightAuraClipPolygon[auraId].darkvision > 0) {
