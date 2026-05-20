@@ -9897,12 +9897,6 @@ button.journal-view-button.journal-button img {
     padding: 10px 5px;
     text-align: center
 }
-/* START - New quote box implementation */
-[class*='MessageContainer'] .tooltip-body{
-    padding: 0px;
-    width: 265px;
-    overflow-wrap: anywhere;
-}
 
 
 .note-text .text--quote-box {
@@ -10400,8 +10394,9 @@ button.journal-view-button.journal-button img {
 /* START - New quote box implementation */
 [class*='MessageContainer'] .tooltip-body{
     padding: 0px;
-    width: 265px;
+    min-width: 265px;
     overflow-wrap: anywhere;
+    width: 100%;
 }
 
 
