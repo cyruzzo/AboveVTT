@@ -2105,7 +2105,9 @@ padding-bottom: 5px;
     transform: none;
 }
 .labelToken.notVisible.hasTooltip:after,
-.labelToken.notVisible.hasTooltip:hover:after{
+.labelToken.notVisible.hasTooltip:hover:after,
+.door-button.notVisible[data-name]::after,
+.door-button.notVisible[data-name]:hover::after {
     visibility: hidden;
 }
 #token_map_items .labelToken.hasTooltip:after, 
@@ -9897,12 +9899,6 @@ button.journal-view-button.journal-button img {
     padding: 10px 5px;
     text-align: center
 }
-/* START - New quote box implementation */
-[class*='MessageContainer'] .tooltip-body{
-    padding: 0px;
-    width: 265px;
-    overflow-wrap: anywhere;
-}
 
 
 .note-text .text--quote-box {
@@ -10400,8 +10396,9 @@ button.journal-view-button.journal-button img {
 /* START - New quote box implementation */
 [class*='MessageContainer'] .tooltip-body{
     padding: 0px;
-    width: 265px;
+    min-width: 265px;
     overflow-wrap: anywhere;
+    width: 100%;
 }
 
 

@@ -1659,7 +1659,7 @@ class Token {
 				} else {
 					cond.append(conditionContainer);
 				}
-				let noteHover = `<div>
+				let noteHover = `<div style="width:100%">
 						<div class="tooltip-header">
 				       	 	<div class="tooltip-header-icon">
 				            
@@ -1811,7 +1811,7 @@ class Token {
 					}
 				}
 				if(conditionDescription != undefined){
-					let noteHover = `<div>
+					let noteHover = `<div style="width:100%">
 									<div class="tooltip-header">
 							       	 	<div class="tooltip-header-icon">
 							            
@@ -1918,7 +1918,7 @@ class Token {
 					window.JOURNAL.display_note(self.options.id);
 				})
 
-				let noteHover = `<div>
+				let noteHover = `<div style="width:100%"> 
 									<div class="tooltip-header">
 							       	 	<div class="tooltip-header-icon">
 							            
