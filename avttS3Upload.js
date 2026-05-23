@@ -6575,7 +6575,7 @@ async function avttProcessUploadQueue() {
         console.error('Upload task failed', error);
         if (!isAbortError) {
           if (isProxyUpload && error instanceof Error && error.message) {
-            showErrorMessage(error.message);
+            showTempMessage(`Proxy Upload Failed - the source site likely doesn't allow it: ${error.message}`);
           }
         }
         if (completionDeferred?.reject) {
