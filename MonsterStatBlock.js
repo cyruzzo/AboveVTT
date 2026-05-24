@@ -1762,7 +1762,7 @@ function get_monster_senses(senses, vision = {darkvision: 0, devilsight: 0, true
         const ftPosition = senses[i].notes.indexOf('ft.')
         
         const range = parseInt(senses[i].notes.slice(0, ftPosition));
-        if(monsterSenseIds[senseKey] == undefined && range>darkvision){
+        if(monsterSenseIds[senseKey] == undefined && range>vision.darkvision){
           vision.darkvision = range;
         } else{
           if(monsterSenseIds[senseKey] == 'darkvision'){
