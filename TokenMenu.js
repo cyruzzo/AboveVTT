@@ -221,6 +221,7 @@ function token_context_menu_expanded(tokenIds, e) {
 				};
 
 				window.ScenesHandler.create_update_token(options)
+				tokens = [window.TOKEN_OBJECTS[options.id]]
 			}
 			if(!isTeleporter){
 				let openButton = $(`<button class=" context-menu-icon-hidden door-open material-icons">Open/Close</button>`)
