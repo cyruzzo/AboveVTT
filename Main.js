@@ -3026,37 +3026,37 @@ function checkForExportRemind() {
 		const lastSaved = localStorage.getItem(storageKey);
 		return lastSaved ? (Date.now() - parseInt(lastSaved, 10)) / 86400000 : NaN;
 	}
-	function hideExportReminder() {
-		const exportReminder = $(`#exportReminder`);
-		if (exportReminder.length > 0){
-			exportReminder.hide();
-		}
-		
-	}
+
 	function showExportReminder() {
-		const exportReminder = $(`#exportReminder`);
-		if (exportReminder.length > 0){
-			exportReminder.show();
-		} else {
-			const exportReminder = find_or_create_generic_draggable_window("exportReminder", "Export Reminder", false, false, '#exportReminder', '40%', '10%', '10%', '10%', false, '', true);
-			const days = daysPassedSinceExport();
-			exportReminder.append(
-				$(`<div style="background: #fff">
-				It is time to do an export of this campaign.
-				<button id="exportRemindButton">Export</button>
-				</div>`)
-			);
-			$('#exportRemindButton').click(function (e) {
-				e.stopPropagation();
-				export_file('', true);
-				hideExportReminder();
-			});
-			exportReminder.show();
+		let exportReminder = $(`#exportReminder`);
+		if($(`#exportReminder`).length > 0) {
+			$(`#exportReminder`).show();
+			return;
 		}
+		exportReminder = find_or_create_generic_draggable_window("exportReminder", "Export Reminder", false, false, '#exportReminder', 'fit-content', '10%', '10%', '10%', false, '', false, true);	
+		exportReminder.append(
+			$(`<div style="background: #fff;
+								padding: 20px;
+								display: flex;
+								align-items: center;
+								flex-direction: column;
+								gap: 5px;
+								font-size: 16px;
+								font-weight: bold;
+							">
+			<span>It is time to do an export of this campaign.</span>
+			<button id="exportRemindButton">Export</button>
+			</div>`)
+		);
+		$('#exportRemindButton').click(function (e) {
+			e.stopPropagation();
+			export_file('', true);
+			$(`#exportReminder .title_bar_close_button`).click();
+		});
 	}
 	const remindSetting = get_avtt_setting_value('exportRemind');
 	const days = daysPassedSinceExport();
-	if(remindSetting && (isNaN(days) || days > parseInt(remindSetting))) {
+	if(remindSetting != 0 && (isNaN(days) || days > parseInt(remindSetting))) {
 		showExportReminder();
 	}
 }
