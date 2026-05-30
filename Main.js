@@ -227,15 +227,11 @@ function add_zoom_to_storage() {
 */
 function set_default_vttwrapper_size() {
 	const vttwrapper = $("#VTTWRAPPER");
-	const scene_map = $("#scene_map");
-	const black_layer = $("#black_layer");
-	const scalezoom = window.CURRENT_SCENE_DATA.scale_factor * window.ZOOM;
-	const w = $("#scene_map").width() * scalezoom;
-	const h = $("#scene_map").height() * scalezoom;
-	vttwrapper.width(w + 1400);
-	vttwrapper.height(h + 1400);
-	black_layer.width(w + 2000 + window.VTTMargin );
-	black_layer.height(h + 2000 + window.VTTMargin );
+	const sceneMapSize = getSceneMapSize();
+	const w = sceneMapSize.sceneWidth * window.ZOOM * window.CURRENT_SCENE_DATA.scale_factor;
+	const h = sceneMapSize.sceneHeight * window.ZOOM * window.CURRENT_SCENE_DATA.scale_factor;
+	vttwrapper.width(w + window.VTTMargin);
+	vttwrapper.height(h + window.VTTMargin);
 }
 
 /**
@@ -2349,23 +2345,20 @@ function init_ui() {
 	wrapper = $("<div id='VTTWRAPPER' class='TLA'/>");
 	wrapper.css("margin-left", `${window.VTTMargin}px`);
 	wrapper.css("margin-top", `${window.VTTMargin}px`);
-	wrapper.css("paddning-right", "200px");
+	wrapper.css("padding-right", "200px");
 	wrapper.css("padding-bottom", "200px");
-	wrapper.width(window.width);
-	wrapper.height(window.height);
+
 
 	wrapper.append(VTT);
 	$("body").append(wrapper);
 
-	black_layer = $("<div id='black_layer' class='TLA'/>");
-	black_layer.width(window.width+window.VTTMargin);
-	black_layer.height(window.height+window.VTTMargin);
+	black_layer = $("<div id='black_layer'/>");
 	black_layer.css("background", "black");
 	black_layer.css("opacity", "0");
 	$("body").append(black_layer);
 	black_layer.animate({ opacity: "1" }, 1000);
 	black_layer.css("z-index", "1");
-
+	black_layer.css({width: "100%", height: "100%", top: 0, left: 0, position: "fixed"});
 	black_layer.off('contextmenu').on('contextmenu', function(e){
 		e.preventDefault();
 	})
