@@ -1104,9 +1104,7 @@ class DiceRoller {
             const nextCritType = self.#pendingMessages[firstPending]?.pendingCritType;
             const nextDamageType = self.#pendingMessages[firstPending]?.pendingDamageType;
             setTimeout(function () {
-                if (newDice) {
-                    self.nextRoll(alteredMessage, nextCritRange, nextCritType, nextDamageType);
-                }
+                self.nextRoll(alteredMessage, nextCritRange, nextCritType, nextDamageType);
             }, 60)
         }
         this.#pendingMessages[firstPending] = null;
