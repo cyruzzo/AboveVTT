@@ -2349,7 +2349,6 @@ function init_ui() {
 	wrapper.css("margin-top", `${window.VTTMargin}px`);
 	wrapper.css("padding-right", "200px");
 	wrapper.css("padding-bottom", "200px");
-	wrapper.css("padding-bottom", "200px");
 
 
 	wrapper.append(VTT);
@@ -2361,7 +2360,6 @@ function init_ui() {
 	$("body").append(black_layer);
 	black_layer.animate({ opacity: "1" }, 1000);
 	black_layer.css("z-index", "1");
-	black_layer.css({width: "100%", height: "100%"});
 	black_layer.off('contextmenu').on('contextmenu', function(e){
 		e.preventDefault();
 	})
