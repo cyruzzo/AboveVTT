@@ -306,7 +306,8 @@ Other Commands:
     }
   });
 
-  
+  if(window.rollButtonObserver)
+    window.rollButtonObserver.disconnect();
   window.rollButtonObserver = new MutationObserver(function() {
       // Any time the DDB dice buttons change state, we want to synchronize our dice buttons to match theirs.
       if ($("[class*='AnchoredPopover_wrapper']").length>0 && window.diceRoller?.getWaitingForRoll())
@@ -355,7 +356,9 @@ Other Commands:
       }, 0);  
   })
 
-  let watchForDicePanel = new MutationObserver((mutations) => {
+  if(window.watchForDicePanel)
+    window.watchForDicePanel.disconnect();
+  window.watchForDicePanel = new MutationObserver((mutations) => {
    mutations.every(async (mutation) => {
       if (!mutation.addedNodes) return
 
@@ -366,20 +369,22 @@ Other Commands:
           const mutation_target = $(".dice-toolbar__dropdown, [class*='AnchoredPopover_wrapper']")[0];
           const mutation_config = { attributes: true, childList: true, characterData: true, subtree: true };
           window.rollButtonObserver.observe(mutation_target, mutation_config);
-          watchForDicePanel.disconnect();
+          window.watchForDicePanel.disconnect();
           return false;
         }
       }
       return true // must return true if doesn't break
     })
   });
+
   if (window.sendToDefaultObserver)
-    window.sendToDefaultObserver.disconnect();
-  if (window.diceResultsObserver)
     window.sendToDefaultObserver.disconnect();
   window.sendToDefaultObserver = new MutationObserver(function() {
     localStorage.setItem(`${window.gameId != undefined ? window.gameId : window.myUser}-sendToDefault`, gamelog_send_to_text());
   })
+
+  if (window.diceResultsObserver)
+    window.diceResultsObserver.disconnect();
   window.diceResultsObserver = new MutationObserver(function (mutations) {
     mutations.every((mutation) => {
       const firstAddedNode = $(mutation.addedNodes[0]);
@@ -391,7 +396,9 @@ Other Commands:
     })
   })
 
-  let gamelogObserver = new MutationObserver((mutations) => {
+  if(window.gamelogObserver)
+    window.gamelogObserver.disconnect();
+  window.gamelogObserver = new MutationObserver((mutations) => {
     mutations.every((mutation) =>{
       if (!mutation.addedNodes) return
       for (let i = 0; i < mutation.addedNodes.length; i++) {
@@ -1272,23 +1279,26 @@ function inject_dice(){
         </style>
     </div>
   `);
- window.encounterObserver = new MutationObserver(function(mutationList, observer) {
+  if(window.encounterObserver){
+    window.encounterObserver.disconnect();
+  }
+  window.encounterObserver = new MutationObserver(function(mutationList, observer) {
 
-  mutationList.forEach(mutation => {
-     try {
-       let mutationTarget = $(mutation.target);
-       
-       if(mutationTarget.is('.encounter-details, .encounter-builder, .release-indicator')){
-         mutationTarget.remove();
-       }
-       if($(mutation.addedNodes).is('.encounter-builder, .release-indicator')){
-         $(mutation.addedNodes).remove();
-       }
-     } catch(error){
-       console.warn("non_sheet_observer failed to parse mutation", error, mutation);
-     }
-   });
- })
+    mutationList.forEach(mutation => {
+      try {
+        let mutationTarget = $(mutation.target);
+        
+        if(mutationTarget.is('.encounter-details, .encounter-builder, .release-indicator')){
+          mutationTarget.remove();
+        }
+        if($(mutation.addedNodes).is('.encounter-builder, .release-indicator')){
+          $(mutation.addedNodes).remove();
+        }
+      } catch(error){
+        console.warn("non_sheet_observer failed to parse mutation", error, mutation);
+      }
+    });
+  })
 
  
  const mutation_target = $('#encounter-builder-root')[0];

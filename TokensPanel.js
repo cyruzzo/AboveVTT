@@ -4139,8 +4139,9 @@ function display_monster_filter_modal() {
         console.group("observe_filters")
         let mutation_target = $(event.target).contents()[0];
         let mutation_config = { attributes: false, childList: true, characterData: false, subtree: true };
-
-        let filter_observer = new MutationObserver(function() {
+        if(window.filter_observer)
+            window.filter_observer.disconnect();
+        window.filter_observer = new MutationObserver(function() {
             let filterButton = $(event.target).contents().find(".monster-listing__header button");
             let monsterListing = $(event.target).contents().find(".qa-monster-filters:not('above-loaded')")
             if (filterButton.length > 0 || monsterListing.length>0){
@@ -4206,7 +4207,7 @@ function display_monster_filter_modal() {
                 iframe.css({ "z-index": 10 });
             }
         });
-        filter_observer.observe(mutation_target,mutation_config);
+        window.filter_observer.observe(mutation_target,mutation_config);
         console.groupEnd()
     });
     iframe.attr("src", `https://www.dndbeyond.com/encounter-builder`);

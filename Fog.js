@@ -4934,7 +4934,7 @@ function get_draw_data(button, menu){
  * data-function - the drawing function, draw/erase/text-erase/measure/select/hide/reveal
  */
 function handle_drawing_button_click() {
-
+	stop_drawing();
 	$(".drawWidthSlider").on("input change blur", function() {
 		window.LINEWIDTH = parseInt($(this).val());
 	});
@@ -5009,6 +5009,7 @@ function handle_drawing_button_click() {
 			
 		}
 		let target =  $("#temp_overlay, #black_layer")
+
 		data = {
 			clicked:$(clicked),
 			menu:$(menu)

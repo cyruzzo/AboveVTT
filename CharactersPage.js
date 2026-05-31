@@ -1230,6 +1230,7 @@ function init_character_list_page_without_avtt() {
     window.location_href_observer.disconnect();
     delete window.location_href_observer;
   }
+
   window.location_href_observer = new MutationObserver(function(mutationList, observer) {
     if (oldHref !== document.location.href) {
       if(is_characters_builder_page()){
@@ -1740,10 +1741,15 @@ function observe_character_sheet_changes(documentToObserve) {
   if (window.character_sheet_observer) {
     window.character_sheet_observer.disconnect();
   }
+  if(window.sendToDefaultObserver)
+    window.sendToDefaultObserver.disconnect();
   window.sendToDefaultObserver = new MutationObserver(function () {
     localStorage.setItem(`${window.gameId != undefined ? window.gameId : window.myUser}-sendToDefault`, gamelog_send_to_text());
   })
-  let watchForNewDicePanel = new MutationObserver((mutations) => {
+
+ if(window.charWatchForNewDicePanel)
+    window.charWatchForNewDicePanel.disconnect();
+  window.charWatchForNewDicePanel = new MutationObserver((mutations) => {
     mutations.every(async (mutation) => {
       if (!mutation.addedNodes) return
 
@@ -1774,8 +1780,11 @@ function observe_character_sheet_changes(documentToObserve) {
       return true // must return true if doesn't break
     })
   });
-  watchForNewDicePanel.observe(document.body, { childList: true, subtree: true, attributes: false, characterData: false });
-  let gamelogObserver = new MutationObserver((mutations) => {
+  window.charWatchForNewDicePanel.observe(document.body, { childList: true, subtree: true, attributes: false, characterData: false });
+  
+  if(window.charGamelogObserver)
+    window.charGamelogObserver.disconnect();
+  window.charGamelogObserver = new MutationObserver((mutations) => {
     mutations.every((mutation) => {
       if (!mutation.addedNodes) return
       for (let i = 0; i < mutation.addedNodes.length; i++) {
@@ -1792,8 +1801,10 @@ function observe_character_sheet_changes(documentToObserve) {
     })
   });
 
-  gamelogObserver.observe(document.body, { childList: true, subtree: true, attributes: false, characterData: false });
+  window.charGamelogObserver.observe(document.body, { childList: true, subtree: true, attributes: false, characterData: false });
 
+  if(window.character_sheet_observer)
+    window.character_sheet_observer.disconnect();
   window.character_sheet_observer = new MutationObserver(function(mutationList, observer) {
     if(window.DRAGGING || (typeof arrowKeysHeld !== 'undefined' && (arrowKeysHeld[0] || arrowKeysHeld[1] || arrowKeysHeld[2] || arrowKeysHeld[3])))
       return;
@@ -3102,7 +3113,8 @@ function observe_character_sheet_changes(documentToObserve) {
 
 function observe_non_sheet_changes(documentToObserve) {
 
-
+  if(window.non_sheet_observer)
+    window.non_sheet_observer.disconnect();
   window.non_sheet_observer = new MutationObserver(function(mutationList, observer) {
     if(window.DRAGGING || (typeof arrowKeysHeld !== 'undefined' && (arrowKeysHeld[0] || arrowKeysHeld[1] || arrowKeysHeld[2] || arrowKeysHeld[3])))
       return;
