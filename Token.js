@@ -5278,7 +5278,7 @@ function paste_selected_tokens(x, y, teleporter = undefined, teleportedTokenData
 	if(teleporter){
 		for (let i in window.TELEPORTER_PASTE_BUFFER.tokens) {	
 			let options = $.extend(true, {}, window.TELEPORTER_PASTE_BUFFER.tokens[i].options);
-			window.all_token_objects[i].options = options;
+			window.all_token_objects[i] = new Token(options);
             const forceSize = true;
 			const animationDuration = 0;
 			place_token_at_map_point(options, x, y, forceSize, animationDuration);	

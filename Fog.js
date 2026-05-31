@@ -2345,7 +2345,15 @@ function redraw_light_walls(options = {clearCanvas: true, editingWallPoints: fal
 								
 							if(tokenObject?.options?.teleporterCoords?.linkedPortalId != undefined){
 								copy_selected_tokens(tokenObject.options.teleporterCoords.linkedPortalId);
-
+								forSelTokens((token,id) => {
+									token.selected = true;
+									token.options.deleteableByPlayers = true;
+								});
+								delete_selected_tokens();
+								
+								window.MB.sendMessage('custom/myVTT/highlight', {
+									id: tokenObject.options.id
+								});
 								if(!window.DM){
 									async function teleportScene(tokenObject){
 										let currentScene = await AboveApi.getCurrentScene(true);
@@ -2368,6 +2376,7 @@ function redraw_light_walls(options = {clearCanvas: true, editingWallPoints: fal
 										window.MB.sendMessage("custom/myVTT/update_dm_player_scenes", {splitPlayerScenes: window.splitPlayerScenes});
 									}
 									teleportScene(tokenObject);
+									
 								}
 								else{
 									window.MB.sendMessage("custom/myVTT/switch_scene", { sceneId: tokenObject.options.teleporterCoords.sceneId, switch_dm: true });
