@@ -157,17 +157,18 @@ function change_zoom(newZoom, x, y, reset = false) {
 	
     if(!window.WIZARDING)
 		draw_svg_grid(); // scale grid so lines are always visible
-	if(reset != true){
-		$(window).scrollLeft(pageX);
-		$(window).scrollTop(pageY);	
-	}
+
 
 	$('#VTTWRAPPER').css({
 		"--window-zoom": window.ZOOM,
 	})
 	debounce_font_change();	
 	set_default_vttwrapper_size();
-	if(reset == true){
+	if(reset != true){
+		$(window).scrollLeft(pageX);
+		$(window).scrollTop(pageY);	
+	}
+	else {
 		//this was changed from scrollIntoView to calculate the center and scrollTo as if loaded in an iframe it would scroll the parent window in firefox
 		const sceneMap = $("#scene_map")[0];
 
@@ -226,12 +227,13 @@ function add_zoom_to_storage() {
 * Sets default values for VTTWRAPPER and black_layer based off zoom.
 */
 function set_default_vttwrapper_size() {
-	const vttwrapper = $("#VTTWRAPPER");
+	const black_layer = $("#black_layer");
 	const sceneMapSize = getSceneMapSize();
 	const w = sceneMapSize.sceneWidth * window.ZOOM * window.CURRENT_SCENE_DATA.scale_factor;
 	const h = sceneMapSize.sceneHeight * window.ZOOM * window.CURRENT_SCENE_DATA.scale_factor;
-	vttwrapper.width(w + window.VTTMargin);
-	vttwrapper.height(h + window.VTTMargin);
+	black_layer.width(w + 2000 + window.VTTMargin);
+	black_layer.height(h + 2000 + window.VTTMargin);
+
 }
 
 /**
@@ -2347,18 +2349,19 @@ function init_ui() {
 	wrapper.css("margin-top", `${window.VTTMargin}px`);
 	wrapper.css("padding-right", "200px");
 	wrapper.css("padding-bottom", "200px");
+	wrapper.css("padding-bottom", "200px");
 
 
 	wrapper.append(VTT);
 	$("body").append(wrapper);
 
-	black_layer = $("<div id='black_layer'/>");
+	black_layer = $("<div id='black_layer' class='TLA'/>");
 	black_layer.css("background", "black");
 	black_layer.css("opacity", "0");
 	$("body").append(black_layer);
 	black_layer.animate({ opacity: "1" }, 1000);
 	black_layer.css("z-index", "1");
-	black_layer.css({width: "100%", height: "100%", top: 0, left: 0, position: "fixed"});
+	black_layer.css({width: "100%", height: "100%"});
 	black_layer.off('contextmenu').on('contextmenu', function(e){
 		e.preventDefault();
 	})
