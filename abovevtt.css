@@ -80,6 +80,17 @@ button#startScreenShare{
     scale: 1;
     opacity: 1 !important;
 }
+body.responsive-enabled div.container,
+body.responsive-enabled.burger-ready div.container{
+    -webkit-perspective: unset;
+    -moz-perspective: unset;
+    perspective: unset;
+    -webkit-transform: unset; 
+    -moz-transform: unset;
+    -ms-transform: unset;
+    -o-transform: unset;
+    transform: unset;
+}
 div#hide_interface_button [data-name]:after {
     position: relative;
     left: unset;
