@@ -1697,7 +1697,9 @@ function token_context_menu_expanded(tokenIds, e) {
 	if (window.DM || allPlayerOwned == true || allTokensAreAoe){
 		body.append(adjustmentsRow);
 	}
-	if(window.DM) {
+	const deleteableByPlayers = tokens.map(t => t.options.deleteableByPlayers);
+	const uniqueDeleteableByPlayers = [...new Set(deleteableByPlayers)];
+	if(window.DM || (uniqueDeleteableByPlayers.length === 1 && uniqueDeleteableByPlayers[0] == true)){
 		body.append(`<hr style="opacity: 0.3" />`);
 		let deleteTokenMenuButton = $("<button class='deleteMenuButton icon-close-red material-icons'>Delete</button>")
 	 	body.append(deleteTokenMenuButton);
