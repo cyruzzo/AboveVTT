@@ -237,8 +237,9 @@ function inject_dm_join_button() {
       
     $(e.currentTarget).removeClass("button-loading");
   });
-
-  const resetObserver = new MutationObserver(async (mutationList, observer) => {
+  if(window.resetObserver)
+    window.resetObserver.disconnect();
+  window.resetObserver = new MutationObserver(async (mutationList, observer) => {
      if($('.t-reset-campaign-modal').length>0 && $('.t-reset-campaign-modal #takeAbovevttExport').length == 0){
         const avttExportContainer = $(`<div id="avttExportContainer" style="margin: 15px;
               border: 1px solid #ddd;

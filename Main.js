@@ -1262,6 +1262,8 @@ const MAX_ZOOM_STEP = 20
  * Register event for mousewheel zoom.
  */
 function init_mouse_zoom() {
+	if(window.mouseZoomInitialized) return;
+	window.mouseZoomInitialized = true;
 	window.addEventListener('wheel', function (e) {
 		if (e.ctrlKey) {
 			e.preventDefault();
@@ -1554,8 +1556,9 @@ function observe_character_sheet_companion(documentToObserve){
 		let tokenName = $(this).parent().find('.ddbc-extra-name').find("span").text()
 		console.log("pretending to add a companion ", tokenName)
 	}
-
-	let companion_observer = new MutationObserver(function() {
+	if(window.companion_observer) 
+		window.companion_observer.disconnect();
+	window.companion_observer = new MutationObserver(function() {
 		let extras = documentToObserve.find(".ct-extra-row__preview:not('.above-vtt-visited')");
 		if (extras.length > 0){
 			extras.wrap(function() {
@@ -2381,8 +2384,8 @@ function init_ui() {
 	init_combat_tracker();
 
 	token_menu();
+	
 	install_grabbers(); //do it once instead of every time
-
 	// EXPERIMENTAL DRAG TO MOVE
 	let  curDown = false,
 		curYPos = 0,
