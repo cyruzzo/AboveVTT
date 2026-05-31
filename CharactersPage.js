@@ -1754,13 +1754,13 @@ function observe_character_sheet_changes(documentToObserve) {
       if (!mutation.addedNodes) return
 
       for (let i = 0; i < mutation.addedNodes.length; i++) {
-        if (watchForNewDicePanel.done)
+        if (window.charWatchForNewDicePanel.done)
           continue;
         let node = mutation.addedNodes[i]
         if ((node.className == 'dice-rolling-panel' || $('.dice-rolling-panel').length > 0)) {
           if ($('[data-floating-ui-portal]').length>0){
-            watchForNewDicePanel.done = 1;
-            watchForNewDicePanel.disconnect();
+            window.charWatchForNewDicePanel.done = 1;
+            window.charWatchForNewDicePanel.disconnect();
             $('[data-floating-ui-portal], .roll-mod-container').addClass('hidden');
             await $("[class*='DiceContainer_button']").click(); // initialize dice panel so first roll doesn't fail
             setTimeout(async () => {
@@ -1772,7 +1772,7 @@ function observe_character_sheet_changes(documentToObserve) {
                 })
               }, 200)
             }, 200);
-            watchForNewDicePanel.disconnect();
+            window.charWatchForNewDicePanel.disconnect();
             return false;
           }
         }
