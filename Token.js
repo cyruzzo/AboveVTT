@@ -4471,20 +4471,20 @@ function setTokenLight (token, options) {
 					<div class='aura-element darkvision' id="vision_${tokenId}" data-id='${options.id}' style='${visionStyles}'></div>
 				</div>
 			</div>
-			<div class='aura-clip-container devilsight vision'>
-				${parseInt(options.devilsight.feet) > 0 ? `
+			${parseInt(options.devilsight.feet) > 0 ? `
+				<div class='aura-clip-container devilsight vision'>
 					<div class='aura-element-container-clip vision devilsight' style='clip-path: ${devilsightClip};' id='${options.id}'>
 						<div class='aura-element devilsight' id="vision_devilsight_${tokenId}" data-id='${options.id}' style='${devilsightStyles}'></div>
-					</div>` : ""
-				}
-			</div>
-			<div class='aura-clip-container truesight vision'>
-				${parseInt(options.truesight.feet) > 0 ? `
-					<div class='aura-element-container-clip vision truesight' style='clip-path: ${devilsightClip};' id='${options.id}'>
-						<div class='aura-element truesight' id="vision_truesight_${tokenId}" data-id='${options.id}' style='${truesightStyles}'></div>
-					</div>` : ""
-				}
-			</div>`) 
+					</div>
+				</div>` : ""
+			}
+			${parseInt(options.truesight.feet) > 0 ? `<div class='aura-clip-container truesight vision'>
+				<div class='aura-element-container-clip vision truesight' style='clip-path: ${devilsightClip};' id='${options.id}'>
+					<div class='aura-element truesight' id="vision_truesight_${tokenId}" data-id='${options.id}' style='${truesightStyles}'></div>
+					</div>
+				</div>` : ""
+			}
+		`) 
 		
 
 		$("#light_container").prepend(lightElement);
