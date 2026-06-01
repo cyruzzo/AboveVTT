@@ -3176,7 +3176,7 @@ function drawing_mousedown(e) {
 		context.setLineDash([10, 5])
 		if (e.which == 1) {
 			$("#temp_overlay").css('cursor', 'crosshair');
-			$("#dragbox").css('z-index', '50');
+			$("#temp_overlay, #dragbox").css('z-index', '50');
 		}		
 	}
 	else if(window.DRAWFUNCTION === 'elev'){
@@ -4691,6 +4691,7 @@ function drawing_mouseup(e) {
 			curr.selected = (shiftHeld && curr.selected == true) || (fullyInside ? isRotatedSquareInsideRect : intersectsRotatedSquare) (
 				{x:x0, y:y0, width:x1-x0, height: y1-y0}, CX, CY, size, R);
 		}
+		$("#temp_overlay").css('z-index', '25');
 		$("#dragbox").css('z-index', '');
 		draw_selected_token_bounding_box();
 	}
