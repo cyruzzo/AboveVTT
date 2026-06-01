@@ -7980,21 +7980,19 @@ function redraw_light(darknessMoved = false, limitActiveRays = 0) {
 		moveOffscreenCanvasMaskContext.fillStyle = "white";
 	}
 
-	let light_auras = $(`.light:not([style*='display: none'])>.aura-element.islight:not([style*='visibility: hidden'])`).map(function () {
-		return $(this).attr("data-id");
-	}).get();
-
-
+	const lightAuraElements = document.querySelectorAll('.light:not([style*="display: none"]) > .aura-element.islight:not([style*="visibility: hidden"])');
+	let light_auras = Array.from(lightAuraElements, el => el.getAttribute('data-id')).filter(Boolean);
 
 	let selectedIds = [];
-	let selectedTokens = $('#tokens .tokenselected:not(.isAoe)');
+	let selectedTokens = document.querySelectorAll('#tokens .tokenselected:not(.isAoe)');
 
-	let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
+	const playerTokenElement = document.querySelector(`.token[data-id*='${window.PLAYER_ID}']`);
+	let playerTokenId = playerTokenElement?.getAttribute('data-id');
 
 
 	if (selectedTokens.length > 0) {
 		for (let j = 0; j < selectedTokens.length; j++) {
-			let tokenId = $(selectedTokens[j]).attr('data-id');
+			let tokenId = selectedTokens[j].getAttribute('data-id');
 
 			if (tokenId.includes(window.PLAYER_ID) || window.DM || window.TOKEN_OBJECTS[tokenId].options.share_vision == true || window.TOKEN_OBJECTS[tokenId].options.share_vision == window.myUser || (window.TOKEN_OBJECTS[tokenId].options.share_vision && is_spectator_page()) || (playerTokenId == undefined && window.TOKEN_OBJECTS[tokenId].options.itemType == 'pc'))
 				selectedIds.push(tokenId)
@@ -8009,23 +8007,24 @@ function redraw_light(darknessMoved = false, limitActiveRays = 0) {
 	const adjustScale = (window.CURRENT_SCENE_DATA.scale_factor != undefined) ? window.CURRENT_SCENE_DATA.scale_factor : 1;
 
 	if (window.elevContext == undefined) {
-		window.elevContext = $('#elev_overlay')[0].getContext('2d');
+		window.elevContext = document.getElementById('elev_overlay').getContext('2d');
 	}
 
 	const tokenWalls = getVisionBlockingTokenWalls();
 	const allWalls = [...walls, ...darknessBoundarys, ...tokenWalls];
-	const tokenVisionAuras = $(`.aura-element-container-clip [id*='vision_']`);
+	const tokenVisionAuras = document.querySelectorAll('.aura-element-container-clip [id*="vision_"]');
 
 	if (window.SelectedTokenVision === true) {
-		tokenVisionAuras.toggleClass('notVisible', true);
+		tokenVisionAuras.forEach(el => el.classList.add('notVisible'));
 	}
 	else if (window.DM && window.SelectedTokenVision !== true) {
-		tokenVisionAuras.toggleClass('notVisible', false);
+		tokenVisionAuras.forEach(el => el.classList.remove('notVisible'));
 	}
 	
 	for (let i = 0; i < light_auras.length; i++) {
 
 		let auraId = light_auras[i];
+		const auraClipContainers = document.querySelectorAll(`.aura-element-container-clip[id='${auraId}']`);
 
 		let found = selectedIds.includes(auraId);
 		let tokenHalfWidth = window.TOKEN_OBJECTS[auraId].sizeWidth() / 2;
@@ -8082,14 +8081,25 @@ function redraw_light(darknessMoved = false, limitActiveRays = 0) {
 				elev: window.TOKEN_OBJECTS[auraId].options.elev
 			}
 
-			$(`.aura-element-container-clip[id='${auraId}']:is(.light, .darkvision)`).css('clip-path', `polygon(${pts})`)
+			if (auraClipContainers.length) {
+				auraClipContainers.forEach(container => {
+					if (container.classList.contains('devilsight') || container.classList.contains('truesight')) return;
+					container.style.clipPath = `polygon(${pts})`
+				});
+			}
 
 			if (window.lineOfSightPolygons[auraId] !== undefined && (window.TOKEN_OBJECTS[auraId].options.devilsight?.feet > 0 || window.TOKEN_OBJECTS[auraId].options.truesight?.feet > 0)) {
 				let pts = window.noDarknessPolygon
 					.map(p => `${p.x / adjustScale}px ${p.y / adjustScale}px`)
 					.join(', ');
 				window.lineOfSightPolygons[auraId].devilsightClip = pts;
-				$(`.aura-element-container-clip[id='${auraId}'].vision:is(.devilsight, .truesight)`).css('clip-path', `polygon(${pts})`)
+				if (auraClipContainers.length) {
+					auraClipContainers.forEach(container => {
+						if (container.classList.contains('devilsight') || container.classList.contains('truesight')) {
+							container.style.clipPath = `polygon(${pts})`;
+						}
+					});
+				}
 
 			}
 
@@ -8114,7 +8124,9 @@ function redraw_light(darknessMoved = false, limitActiveRays = 0) {
 				//when player token does not exist show vision for all pc tokens and shared vision for other tokens. Mostly used by DM's, streams and tabletop tv games.
 				//when player token does exist show your own vision and shared vision.
 
-				$(`.aura-element-container-clip[id='${auraId}'] [id*='vision_']`).toggleClass('notVisible', false);
+				auraClipContainers.forEach(container => {
+					container.querySelectorAll('[id*="vision_"]').forEach(el => el.classList.remove('notVisible'));
+				});
 			
 				drawPolygon(offscreenContext, window.lightPolygon, 'rgba(255, 255, 255, 1)', true, 0, undefined, undefined, undefined, true, true); //draw to offscreen canvas so we don't have to render every draw and use this for a mask	
 				drawPolygon(moveOffscreenCanvasMaskContext, window.movePolygon, 'rgba(255, 255, 255, 1)', true, 0, undefined, undefined, undefined, true, true); //draw to offscreen canvas so we don't have to render every draw and use this for a mask
