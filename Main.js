@@ -3819,7 +3819,7 @@ function toggle_sidebar_visibility() {
  * It will also adjust the position of the character sheet .
  */
 function show_sidebar(dispatchResize = true) {
-
+	$('#avtt-sidebar-resize-handle').show();
 	let toggleButton = $("#hide_rightpanel");
 	toggleButton.addClass("point-right").removeClass("point-left");
 	toggleButton.attr('data-visible', 1);
@@ -3989,6 +3989,7 @@ function hide_sidebar(triggerResize = true) {
 	toggleButton.addClass("point-left").removeClass("point-right");
 	toggleButton.attr('data-visible', 0);
 	window.showPanel = false;
+	$('#avtt-sidebar-resize-handle').hide();
 	if (is_characters_page() && window.innerWidth < 1024) {
 		if($(`[class*='styles_mobileNav']>div`).length == 0)
 			$(`[class*='styles_mobileNav']>button`).click();

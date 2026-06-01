@@ -4487,7 +4487,6 @@ function setTokenLight (token, options) {
 			</div>`) 
 		
 
-		lightElement.contextmenu(function(){return false;});
 		$("#light_container").prepend(lightElement);
 		if(clippath == undefined){
 			debounceLightChecks();
@@ -4565,14 +4564,6 @@ function setTokenLight (token, options) {
 	else if(options.type == 'door'){
 		tokenVisionLightContainer.css("display", "")
 	}
-	/*
-	if ((options.sight == 'devilsight' || options.sight == 'truesight') && (options.share_vision == true || options.share_vision == window.myUser || (options.share_vision && is_spectator_page()) || options.id.includes(window.PLAYER_ID) || window.DM || (is_player_id(options.id) && playerTokenId == undefined))){
-		tokenGrandparent.find(`.aura-element-container-clip[id='${options.id}']`).toggleClass('devilsight', true);	
-		tokenGrandparent.find(`.aura-element-container-clip[id='${options.id}']`).toggleClass('truesight', options.sight=='truesight');
-	}
-	else{
-		tokenGrandparent.find(`.aura-element-container-clip[id='${options.id}']`).toggleClass(['devilsight', 'truesight'], false);
-	}*/
 
 }
 
