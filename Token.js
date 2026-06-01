@@ -1687,6 +1687,7 @@ class Token {
 				let hoverConditionTimer;
 				conditionContainer.on({
 					'mouseover': function(e){
+						clearTimeout(hoverConditionTimer);
 						hoverConditionTimer = setTimeout(function () {
 			            	build_and_display_sidebar_flyout(e.clientY, function (flyout) {
 					            flyout.addClass("prevent-sidebar-modal-close"); // clicking inside the tooltip should not close the sidebar modal that opened it
@@ -1747,7 +1748,8 @@ class Token {
 					
 					},
 					'mouseout': function(e){
-						clearTimeout(hoverConditionTimer)
+						clearTimeout(hoverConditionTimer);
+						hoverConditionTimer = undefined;
 						remove_tooltip(500);
 					}
 			
@@ -1839,6 +1841,7 @@ class Token {
 					let hoverConditionTimer;
 					conditionContainer.on({
 						'mouseover': function(e){
+							clearTimeout(hoverConditionTimer);
 							hoverConditionTimer = setTimeout(function () {
 				            	build_and_display_sidebar_flyout(e.clientY, function (flyout) {
 						            flyout.addClass("prevent-sidebar-modal-close"); // clicking inside the tooltip should not close the sidebar modal that opened it
@@ -1899,7 +1902,7 @@ class Token {
 						
 						},
 						'mouseout': function(e){
-							clearTimeout(hoverConditionTimer)
+							clearTimeout(hoverConditionTimer);
 							remove_tooltip(500);
 						}
 				
@@ -1947,6 +1950,7 @@ class Token {
 				const tokenId=this.options.id;
 				conditionContainer.on({
 					'mouseover': function(e){
+						clearTimeout(hoverNoteTimer);
 						hoverNoteTimer = setTimeout(function () {
 			            	build_and_display_sidebar_flyout(e.clientY, async function (flyout) {
 					            flyout.addClass("prevent-sidebar-modal-close"); // clicking inside the tooltip should not close the sidebar modal that opened it
@@ -2017,7 +2021,8 @@ class Token {
 					
 					},
 					'mouseout': function(e){
-						clearTimeout(hoverNoteTimer)
+						clearTimeout(hoverNoteTimer);
+						hoverNoteTimer = undefined;
 						remove_tooltip(500);
 					}
 			
@@ -2079,13 +2084,13 @@ class Token {
 					if(!window.DM && (ctxImageData.height < top || ctxImageData.width < left || left < 0 || top < 0)){
 						canMove=false
 					}
-					else{
-						const pixeldata = getPixelFromImageData(ctxImageData, left, top);	
+					else{							
+						const pixeldata = window.EXPERIMENTAL_SETTINGS.dragLight == true ? window.moveOffscreenCanvasMaskContext.getImageData(left, top, 1, 1).data : getPixelFromImageData(ctxImageData, left, top);	
 						
 						if(pixeldata[0]<253 || pixeldata[1]<253 || pixeldata[2]<253){
 							canMove = false;
 						}
-					}``
+					}
 
 					
 					if (canMove){	
@@ -3319,9 +3324,7 @@ class Token {
 								left: Math.round(tokenPosition.x),
 								top: Math.round(tokenPosition.y)
 							};
-							if(window.EXPERIMENTAL_SETTINGS.dragLight == true){
-								ctxImageData = window.moveOffscreenCanvasMaskContext.getImageData(0, 0, window.moveOffscreenCanvasMaskContext.canvas.width, window.moveOffscreenCanvasMaskContext.canvas.height);
-							}
+
 							const canMove = self.setTokenDragPos(tokenPosition.x, tokenPosition.y, tok, ctxImageData);
 							if (canMove){	
 								window.oldTokenPosition[self.options.id] = ui.position;				
