@@ -31,7 +31,7 @@ const throttleLight = throttle((darknessMoved = false) => {
 	} 
 	requestAnimationFrame(() =>{redraw_light(darknessMoved, 1000)})
 }, 1000/30);
-const throttleTokenCheck = mydebounce(throttle(do_check_token_visibility, 1000/4), 20);
+const throttleTokenCheck = throttle(do_check_token_visibility, 1000/4);
 const debounceStoreExplored = mydebounce((exploredCanvas, sceneId) => {		
 	let dataURI = exploredCanvas.toDataURL('image/jpg')
 
@@ -3078,6 +3078,8 @@ class Token {
 				
 
 				tok.draggable({
+					iframeFix: false,
+					grid: [1, 1],
 					stop: function (event) {
 						event.stopPropagation();
 						//$("#VTT").css('--grid-overlay-on-tmp', '0');	commented out as it's not consistent and is confusing can reasses if we enable other options for grid over			
