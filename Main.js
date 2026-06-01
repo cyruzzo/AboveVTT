@@ -2392,6 +2392,9 @@ function init_ui() {
 		curXPos = 0;
 
 	// Function separated so it can be dis/enabled
+	const throttleScroll = throttle((scrollOptions) => {
+		requestAnimationFrame(function(){window.scrollTo(scrollOptions)})
+	}, 30)
 	function mousemove(m) {
 		if (curDown) {
 			let scrollOptions = {
@@ -2399,9 +2402,7 @@ function init_ui() {
 				top: window.scrollY + curYPos - m.pageY,
 				behavior: "instant"
 			}
-			requestAnimationFrame(function(){
-				window.scrollTo(scrollOptions)
-			});
+			throttleScroll(scrollOptions)
 		}
 	}
 
