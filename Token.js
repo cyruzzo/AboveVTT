@@ -1,4 +1,4 @@
-const TOKEN_COLORS = ["1A6AFF", "FF7433", "FFD433", "884DFF", "5F0404", "EC8AFF", "00E5FF",
+﻿const TOKEN_COLORS = ["1A6AFF", "FF7433", "FFD433", "884DFF", "5F0404", "EC8AFF", "00E5FF",
 					"000000", "F032E6", "911EB4", //END OF NEW COLORS
 					"800000", "008000", "000080", "808000", "800080", "008080", "808080", "C00000", "00C000", "0000C0",
 					"C0C000", "C000C0", "00C0C0", "C0C0C0", "400000", "004000", "000040",
@@ -2105,37 +2105,31 @@ class Token {
 					}
 				}
 			}
-			const $placedToken = $(placedToken);
 			//we round css values at the final step to prevent sub pixel rendering which causes blurriness or stetching the token image
-			$placedToken.css({
-				'left': `${Math.round(tokenX)}px`,
-				'top': `${Math.round(tokenY)}px`
-			});
+			placedToken.style.left = `${Math.round(tokenX)}px`;
+			placedToken.style.top = `${Math.round(tokenY)}px`;
+
 			token.options.left = `${Math.round(tokenX)}px`;
 			token.options.top = `${Math.round(tokenY)}px`;
 								
 			const tokMidLeft = Math.round(tokenX) + parseFloat(token.sizeWidth())/2
 			const tokMidTop = Math.round(tokenY) + parseFloat(token.sizeHeight())/2
 			const idReplaced = token.options.id.replaceAll("/", "");
-			let selEl = $(`#aura_${idReplaced}, #light_${idReplaced}, #vision_${idReplaced}, #vision_devilsight_${idReplaced}, #vision_truesight_${idReplaced}, [data-darkness='darkness_${idReplaced}']`);
-			selEl.each((i, el) => {
-				const $el = $(el);
-				const selElWidth = parseFloat($el.css('width')) / 2;
-				const selElHeight = parseFloat($el.css('height')) / 2;
+			
+			const selEls = window.tokenVisionQuery[idReplaced] ? window.tokenVisionQuery[idReplaced].elements : document.querySelectorAll(`#aura_${idReplaced}, #light_${idReplaced}, #vision_${idReplaced}, #vision_devilsight_${idReplaced}, #vision_truesight_${idReplaced}, [data-darkness='darkness_${idReplaced}']`);
+			selEls.forEach((el) => {
+				const selElWidth = parseFloat(getComputedStyle(el).width) / 2;
+				const selElHeight = parseFloat(getComputedStyle(el).height) / 2;
 				const auraLeft = tokMidLeft / window.CURRENT_SCENE_DATA.scale_factor - selElWidth;
 				const auraTop = tokMidTop / window.CURRENT_SCENE_DATA.scale_factor - selElHeight;
-				$el.css({
-					'left': `${auraLeft}px`,
-					'top': `${auraTop}px`
-				});
+				el.style.left = `${auraLeft}px`;
+				el.style.top = `${auraTop}px`;
 			})
-			selEl = $(`[data-notatoken='notatoken_${token.options.id}']`);
-			if (selEl.length > 0) {
-				selEl.css({
-					'left': `${parseFloat(token.options.left) / window.CURRENT_SCENE_DATA.scale_factor}px`,
-					'top': `${parseFloat(token.options.top) / window.CURRENT_SCENE_DATA.scale_factor}px`
-				});
-			}	
+			const notATokenEls = window.tokenVisionQuery[idReplaced] ? window.tokenVisionQuery[idReplaced].notATokenElements : document.querySelectorAll(`[data-notatoken='notatoken_${token.options.id}']`);
+			notATokenEls.forEach((selEl) => {
+				selEl.style.left = `${parseFloat(token.options.left) / window.CURRENT_SCENE_DATA.scale_factor}px`,
+				selEl.style.top = `${parseFloat(token.options.top) / window.CURRENT_SCENE_DATA.scale_factor}px`
+			})	
 			return canMove;
 		} catch(error){
 			showError(error);
@@ -3090,6 +3084,7 @@ class Token {
 						//$("#VTT").css('--grid-overlay-on-tmp', '0');	commented out as it's not consistent and is confusing can reasses if we enable other options for grid over			
 						window.DRAGGING = false;
 						window.enable_window_mouse_handlers();
+						delete window.tokenVisionQuery;
 						ctxImageData = null;
 						if(window.TOKEN_OBJECTS[self.options.id] != undefined){
 							self.sync();
@@ -3200,29 +3195,32 @@ class Token {
 							
 							window.playerTokenAuraIsLight = (window.CURRENT_SCENE_DATA.disableSceneVision == '1') ? false : (playerTokenId == undefined) ? true : window.TOKEN_OBJECTS[playerTokenId].options.auraislight; // used in drag to know if we should check for wall/LoS collision.
 							window.dragSelectedTokens = $(`#tokens .token.tokenselected:not(.ui-draggable-disabled), #tokens .token[data-group-id='${self.options.groupId}']`); //set variable for selected tokens that we'll be looking at in drag, deleted in stop.
-							
+							window.tokenVisionQuery = {};
 							const setDataPos = (id) =>{
 								const idReplaced = id.replaceAll("/", "");
-								let selEl = $(`#aura_${idReplaced}, #light_${idReplaced}, #vision_${idReplaced}, #vision_devilsight_${idReplaced}, #vision_truesight_${idReplaced}, [data-darkness='darkness_${idReplaced}']`);
-								selEl.each((i, el) => {
-									const $el = $(el);
-									$el.attr({
-										'data-left': $el.css("left").replace("px", ""),
-										"data-top": $el.css("top").replace("px", "")
-									});
-								})
-								selEl = $(`[data-notatoken='notatoken_${id}']`);
-								if (selEl.length > 0) {
-									selEl.attr({
-										'data-left': selEl.css("left").replace("px", ""),
-										"data-top": selEl.css("top").replace("px", "")
-									});
-								}	
+								const selEls = document.querySelectorAll(`#aura_${idReplaced}, #light_${idReplaced}, #vision_${idReplaced}, #vision_devilsight_${idReplaced}, #vision_truesight_${idReplaced}, [data-darkness='darkness_${idReplaced}']`);
+								
+								selEls.forEach((el) => {
+									const style = getComputedStyle(el);
+									el.setAttribute('data-left', style.left.replace("px", ""));
+									el.setAttribute('data-top', style.top.replace("px", ""));
+								});
+								const notATokenEls = document.querySelectorAll(`[data-notatoken='notatoken_${id}']`);
+								notATokenEls.forEach((el) => {
+									const style = getComputedStyle(el);
+									el.setAttribute('data-left', style.left.replace("px", ""));
+									el.setAttribute('data-top', style.top.replace("px", ""));
+								});
+
+								window.tokenVisionQuery[id] = {
+									elements: selEls,
+									notATokenElements: notATokenEls
+								};
 							}
 							setDataPos(self.options.id);
 							if (self.selected && window.dragSelectedTokens.length>1 && !shiftHeld) {
 								for (let tok of window.dragSelectedTokens){
-									let id = $(tok).attr("data-id");
+									let id = tok.getAttribute("data-id");
 									window.TOKEN_OBJECTS[id].selected = true;
 									$(`:is(#combat_area, #combat_area_carousel) tr[data-target='${id}']`).toggleClass('selected-token', getCombatTrackerSettings().ct_selected_token == '1');
 							
@@ -3325,7 +3323,7 @@ class Token {
 								top: Math.round(tokenPosition.y)
 							};
 
-							const canMove = self.setTokenDragPos(tokenPosition.x, tokenPosition.y, tok, ctxImageData);
+							const canMove = self.setTokenDragPos(tokenPosition.x, tokenPosition.y, tok[0], ctxImageData);
 							if (canMove){	
 								window.oldTokenPosition[self.options.id] = ui.position;				
 							}else{
@@ -3338,7 +3336,7 @@ class Token {
 								let offsetTop = tokenPosition.y - parseFloat(self.orig_top);
 
 								for (let tok of window.dragSelectedTokens){
-									let id = $(tok).attr("data-id");
+									let id = tok.getAttribute("data-id");
 									if (id != self.options.id) {
 										let curr = window.TOKEN_OBJECTS[id];
 										tokenX = offsetLeft + parseFloat(curr.orig_left);
