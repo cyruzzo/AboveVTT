@@ -254,7 +254,8 @@ class MessageBroker {
 		if(is_gamelog_popout() || (!is_abovevtt_page()))
 			return;
 		let self=this;
-
+		if(window.pingInterval!=undefined)
+			clearInterval(window.pingInterval);
 		if (callback)
 			this.callbackAboveQueue.push(callback);
 		
@@ -316,6 +317,8 @@ class MessageBroker {
 			if(self.reconnectTimeout != undefined){
 				clearTimeout(self.reconnectTimeout);
 			}	
+			if(window.pingInterval!=undefined)
+				clearInterval(window.pingInterval);
 			console.log('Attempting reconnect to Above Websocket');
 			if(window.reconnectAttemptAbovews == undefined){
 				window.reconnectAttemptAbovews = 0;
