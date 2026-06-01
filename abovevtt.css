@@ -936,9 +936,7 @@ select#doorTypeSelectUVTT{
 #avtt-sidebar-resize-handle:hover {
     background: rgba(100, 149, 237, 0.4);
 }
-body:has(#hide_rightpanel[data-visible="0"]) #avtt-sidebar-resize-handle {
-    display: none;
-}
+
 
 .iframeResizeCover {
     z-index:9999999;
