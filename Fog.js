@@ -7561,31 +7561,7 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
 	const particlePosX = window.PARTICLE.pos.x;
 	const particlePosY = window.PARTICLE.pos.y;
 
-	const wallCache = wallsCache || [];
-	if (wallCache.length === 0) {
-		for (let j = 0; j < walls.length; j++) {
-			const currWall = walls[j];
-			let wallTop = currWall.wallTop !== undefined && currWall.wallTop !== '' ? parseInt(currWall.wallTop) : Infinity;
-			let wallBottom = currWall.wallBottom !== undefined && currWall.wallBottom !== '' ? parseInt(currWall.wallBottom) : -Infinity;
-			const blocksVision = !notBlockVision.includes(currWall.c);
-			const blocksMove = !notBlockMove.includes(currWall.c);
-			const isTerrainWall = currWall.terrainWall === true;
-			const isDarkness = currWall.darkness === true;
-			const doorId = tokenIsDoor ? `${currWall.a.x}${currWall.a.y}${currWall.b.x}${currWall.b.y}${sceneId}`.replaceAll('.', '') : '';
-
-			wallCache.push({
-				wall: currWall,
-				wallTop: wallTop,
-				wallBottom: wallBottom,
-				blocksVision: blocksVision,
-				blocksMove: blocksMove,
-				isTerrainWall: isTerrainWall,
-				isDarkness: isDarkness,
-				doorId: doorId,
-				tokenId: currWall.tokenId
-			})	
-		}
-	}
+	const wallCache = wallsCache || buildWallCache(walls);
 	
 
 	for (let i = 0; i < activeRays.length; i++) {
