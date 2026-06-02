@@ -1957,20 +1957,14 @@ class MessageBroker {
 						update_pc_token_rows();
 						$('.import-loading-indicator').remove();
 						delete window.LOADING;
-						
 
-
-
+						redraw_light();
 						do_check_token_visibility();
 						
 						$('#loadingStyles').remove();
 
-						console.groupEnd()
-
-						
+						console.groupEnd()	
 						window.MB.loadNextScene();	
-						
-						
 					});
 				}
 			}
@@ -1981,6 +1975,7 @@ class MessageBroker {
 			remove_loading_overlay();
 			showError(e);
 		}
+		
 		remove_loading_overlay();
 		// console.groupEnd()
 	}
