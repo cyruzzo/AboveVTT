@@ -7518,7 +7518,7 @@ function buildActiveRays(particle, walls, limit) {
 	return combined.map(function(entry){ return entry.ray; });
 }
 
-function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogType=0, draw=true, islight=false, auraId=undefined, blur=0, activeRayLimit=0) {
+function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogType=0, draw=true, islight=false, auraId=undefined, blur=0, activeRayLimit=0, wallsCache) {
 
 	let lightPolygon = [];
 	let movePolygon = [];
@@ -7561,29 +7561,30 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
 	const particlePosX = window.PARTICLE.pos.x;
 	const particlePosY = window.PARTICLE.pos.y;
 
-	const wallCache = [];
-	for (let j = 0; j < walls.length; j++) {
-		const currWall = walls[j];
-		let wallTop = currWall.wallTop !== undefined && currWall.wallTop !== '' ? parseInt(currWall.wallTop) : Infinity;
-		let wallBottom = currWall.wallBottom !== undefined && currWall.wallBottom !== '' ? parseInt(currWall.wallBottom) : -Infinity;
-		const blocksVision = !notBlockVision.includes(currWall.c);
-		const blocksMove = !notBlockMove.includes(currWall.c);
-		const isTerrainWall = currWall.terrainWall === true;
-		const isDarkness = currWall.darkness === true;
-		const doorId = tokenIsDoor ? `${currWall.a.x}${currWall.a.y}${currWall.b.x}${currWall.b.y}${sceneId}`.replaceAll('.', '') : '';
+	const wallCache = wallsCache || [];
+	if (wallCache.length === 0) {
+		for (let j = 0; j < walls.length; j++) {
+			const currWall = walls[j];
+			let wallTop = currWall.wallTop !== undefined && currWall.wallTop !== '' ? parseInt(currWall.wallTop) : Infinity;
+			let wallBottom = currWall.wallBottom !== undefined && currWall.wallBottom !== '' ? parseInt(currWall.wallBottom) : -Infinity;
+			const blocksVision = !notBlockVision.includes(currWall.c);
+			const blocksMove = !notBlockMove.includes(currWall.c);
+			const isTerrainWall = currWall.terrainWall === true;
+			const isDarkness = currWall.darkness === true;
+			const doorId = tokenIsDoor ? `${currWall.a.x}${currWall.a.y}${currWall.b.x}${currWall.b.y}${sceneId}`.replaceAll('.', '') : '';
 
-		wallCache.push({
-			wall: currWall,
-			wallTop: wallTop,
-			wallBottom: wallBottom,
-			blocksVision: blocksVision,
-			blocksMove: blocksMove,
-			isTerrainWall: isTerrainWall,
-			isDarkness: isDarkness,
-			doorId: doorId,
-			tokenId: currWall.tokenId
-		})
-		
+			wallCache.push({
+				wall: currWall,
+				wallTop: wallTop,
+				wallBottom: wallBottom,
+				blocksVision: blocksVision,
+				blocksMove: blocksMove,
+				isTerrainWall: isTerrainWall,
+				isDarkness: isDarkness,
+				doorId: doorId,
+				tokenId: currWall.tokenId
+			})	
+		}
 	}
 	
 
@@ -8027,7 +8028,7 @@ function redraw_light(darknessMoved = false, limitActiveRays = 0) {
 	else if (window.DM && window.SelectedTokenVision !== true) {
 		tokenVisionAuras.forEach(el => el.classList.remove('notVisible'));
 	}
-	
+	const wallsCache = buildWallCache(allWalls);
 	for (let i = 0; i < light_auras.length; i++) {
 
 		let auraId = light_auras[i];
@@ -8064,10 +8065,10 @@ function redraw_light(darknessMoved = false, limitActiveRays = 0) {
 
 			check_token_elev(auraId);
 			particleUpdate(tokenPos.x, tokenPos.y); // moves particle
-			if (!found){
+			if (!found || (window.EXPERIMENTAL_SETTINGS.dragLight == true && window.CURRENTLY_SELECTED_TOKENS.length>4)){
 				limitActiveRays = 0;
 			}
-			particleLook(context, allWalls, 100000, undefined, undefined, undefined, false, false, auraId, undefined, limitActiveRays);  // if the token has moved or walls have changed look for a new vision poly. This function takes a lot of processing time - so keeping this limited is prefered.
+			particleLook(context, allWalls, 100000, undefined, undefined, undefined, false, false, auraId, undefined, limitActiveRays, wallsCache);  // if the token has moved or walls have changed look for a new vision poly. This function takes a lot of processing time - so keeping this limited is prefered.
 
 			let pts = window.lightPolygon
 				.map(p => `${p.x / adjustScale}px ${p.y / adjustScale}px`)
@@ -8270,7 +8271,33 @@ function redraw_light(darknessMoved = false, limitActiveRays = 0) {
 		debounceAudioChecks();
 	}
 }
+function buildWallCache(walls) {
+	const sceneId = window.CURRENT_SCENE_DATA.id;
+	const wallCache = [];
+	for (let j = 0; j < walls.length; j++) {
+		const currWall = walls[j];
+		let wallTop = currWall.wallTop !== undefined && currWall.wallTop !== '' ? parseInt(currWall.wallTop) : Infinity;
+		let wallBottom = currWall.wallBottom !== undefined && currWall.wallBottom !== '' ? parseInt(currWall.wallBottom) : -Infinity;
+		const blocksVision = ![1, 3, 6, 7, 12, 13, '1', '3', '6', '7', '12', '13'].includes(currWall.c);
+		const blocksMove = ![8, 9, 10, 11, 12, 13, '8', '9', '10', '11', '12', '13'].includes(currWall.c);
+		const isTerrainWall = currWall.terrainWall === true;
+		const isDarkness = currWall.darkness === true;
+		const doorId = `${currWall.a.x}${currWall.a.y}${currWall.b.x}${currWall.b.y}${sceneId}`.replaceAll('.', '');
 
+		wallCache.push({
+			wall: currWall,
+			wallTop: wallTop,
+			wallBottom: wallBottom,
+			blocksVision: blocksVision,
+			blocksMove: blocksMove,
+			isTerrainWall: isTerrainWall,
+			isDarkness: isDarkness,
+			doorId: doorId,
+			tokenId: currWall.tokenId
+		});
+	}
+	return wallCache;
+}
 function getTokenVision(tokenId, darknessMoved){
 	if(window.lineOfSightPolygons[tokenId] !== undefined)
 		return window.lineOfSightPolygons[tokenId];
