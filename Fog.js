@@ -1639,7 +1639,8 @@ function redraw_fog() {
 
 	ctx.fillStyle = fogStyle;
 	ctx.fillRect(0, 0, canvas.width, canvas.height);
-
+	let wallCache = [];
+	let allWalls = [];
 	for (let i = 0; i < window.REVEALED.length; i++) {
 		let d = window.REVEALED[i];
 		let adjustedArray = [];
@@ -1675,8 +1676,15 @@ function redraw_fog() {
 				for(let adjusted = 0; adjusted < 2; adjusted++){
 					adjustedArray[adjusted] = d[adjusted] / (revealedScale);
 				}
-				// REVEAL BUCKET				
-				bucketFill(ctx, adjustedArray[0], adjustedArray[1]);
+				// REVEAL BUCKET	
+				if(wallCache.length == 0){					
+					const darknessBoundarys = getDarknessBoundarys();
+					const tokenWalls = getVisionBlockingTokenWalls();
+					allWalls = [...window.walls, ...darknessBoundarys, ...tokenWalls];
+					wallCache = buildWallCache(allWalls);
+				}
+						
+				bucketFill(ctx, adjustedArray[0], adjustedArray[1], undefined, undefined, undefined, undefined, undefined, undefined, undefined, allWalls, wallCache);
 			}
 			if (d[4] == 5) {
 				//HIDE 3 POINT RECT
@@ -1735,8 +1743,14 @@ function redraw_fog() {
 				for(let adjusted = 0; adjusted < 2; adjusted++){
 					adjustedArray[adjusted] = d[adjusted] / (revealedScale);
 				}
+				if(wallCache.length == 0){					
+					const darknessBoundarys = getDarknessBoundarys();
+					const tokenWalls = getVisionBlockingTokenWalls();
+					allWalls = [...window.walls, ...darknessBoundarys, ...tokenWalls];
+					wallCache = buildWallCache(allWalls);
+				}
 				// HIDE BUCKET
-				bucketFill(ctx, adjustedArray[0], adjustedArray[1], fogStyle, 1, false);			
+				bucketFill(ctx, adjustedArray[0], adjustedArray[1], fogStyle, 1, false, undefined, undefined, undefined, undefined, allWalls, wallCache);			
 			}
 			if (d[4] == 5) {
 				//HIDE 3 POINT RECT	
@@ -1845,7 +1859,8 @@ function redraw_drawings() {
 	offscreenDrawAboveFog.height = canvasAboveFog.height;
 	offscreenDrawBelowFog.width = canvasBelowFog.width;
 	offscreenDrawBelowFog.height = canvasBelowFog.height;
-
+	let wallCache = [];
+	let allWalls = [];
 	for (let i = 0; i < drawings.length; i++) {
 		let drawing_clone = $.extend(true, [], drawings[i]);
 		let [shape, fill, color, x, y, width, height, lineWidth, scale, location, lineBlur] = drawing_clone;
@@ -1922,7 +1937,13 @@ function redraw_drawings() {
 			drawBrushArrow(targetCtx, x, color, lineWidth, scale, fill);
 		}
 		else if(shape == "paint-bucket"){
-			bucketFill(targetCtx, x/window.CURRENT_SCENE_DATA.scale_factor, y/window.CURRENT_SCENE_DATA.scale_factor, color, 1, true, undefined, undefined, lineBlur);
+			if(wallCache.length == 0){					
+				const darknessBoundarys = getDarknessBoundarys();
+				const tokenWalls = getVisionBlockingTokenWalls();
+				allWalls = [...window.walls, ...darknessBoundarys, ...tokenWalls];
+				wallCache = buildWallCache(allWalls);
+			}
+			bucketFill(targetCtx, x/window.CURRENT_SCENE_DATA.scale_factor, y/window.CURRENT_SCENE_DATA.scale_factor, color, 1, true, undefined, undefined, lineBlur, undefined, allWalls, wallCache);
 		}
 		else if(shape == "3pointRect"){
 		 	draw3PointRect(targetCtx, x, color, isFilled, lineWidth, undefined, undefined, scale);	
@@ -1968,7 +1989,8 @@ function redraw_elev(openLegened = false) {
 	let minHeight = Math.min(...elevColorArr);
 	maxHeight = maxHeight == 0 && minHeight == 0 ? 50 : Math.max(Math.abs(minHeight), maxHeight);
 
-
+	let wallCache = [];
+	let allWalls = [];
 	for (let i = 0; i < drawings.length; i++) {
 		let drawing_clone = $.extend(true, [], drawings[i]);
 		let [shape, fill, color, x, y, width, height, lineWidth, scale] = drawing_clone;
@@ -2020,7 +2042,13 @@ function redraw_elev(openLegened = false) {
 		 	draw3PointRect(offscreenContext, x, color, isFilled, lineWidth, undefined, undefined, scale);	
 		}
 		if(shape == "paint-bucket"){
-			bucketFill(offscreenContext, x/window.CURRENT_SCENE_DATA.scale_factor, y/window.CURRENT_SCENE_DATA.scale_factor, color, 1, false);
+			if(wallCache.length == 0){
+				const darknessBoundarys = getDarknessBoundarys();
+				const tokenWalls = getVisionBlockingTokenWalls();
+				allWalls = [...window.walls, ...darknessBoundarys, ...tokenWalls];
+				wallCache = buildWallCache(allWalls);
+			}
+			bucketFill(offscreenContext, x/window.CURRENT_SCENE_DATA.scale_factor, y/window.CURRENT_SCENE_DATA.scale_factor, color, 1, false, undefined, undefined, undefined, undefined, allWalls, wallCache);
 		}
 					
 	}
@@ -2088,6 +2116,8 @@ function redraw_drawn_light(darknessMoved = false){
 	let offscreenDraw = new OffscreenCanvas(lightCanvas.width, lightCanvas.height);
 	let offscreenContext = offscreenDraw.getContext('2d');
 
+	let wallCache = [];
+	let allWalls = [];
 
 	for (let i = 0; i < drawings.length; i++) {
 		let drawing_clone = $.extend(true, [], drawings[i]);
@@ -2150,7 +2180,14 @@ function redraw_drawn_light(darknessMoved = false){
 			drawBrushstroke(offscreenContext, x, color, lineWidth, scale);
 		}
 		else if(shape == "paint-bucket"){
-			bucketFill(offscreenContext, x / window.CURRENT_SCENE_DATA.scale_factor, y / window.CURRENT_SCENE_DATA.scale_factor, color, 1, true, width, height, lineBlur, darknessMoved);
+			if(wallCache.length == 0){					
+				const darknessBoundarys = getDarknessBoundarys();
+				const tokenWalls = getVisionBlockingTokenWalls();
+				allWalls = [...window.walls, ...darknessBoundarys, ...tokenWalls];
+				wallCache = buildWallCache(allWalls);
+			}
+			
+			bucketFill(offscreenContext, x / window.CURRENT_SCENE_DATA.scale_factor, y / window.CURRENT_SCENE_DATA.scale_factor, color, 1, true, width, height, lineBlur, darknessMoved, allWalls, wallCache);
 		}
 		else if(shape == "3pointRect"){
 		 	draw3PointRect(offscreenContext, x, color, isFilled, lineWidth, undefined, undefined, scale);	
@@ -5567,19 +5604,20 @@ function clear_temp_canvas(playerId=window.PLAYER_ID){
 	window.temp_context.clearRect(0, 0, window.temp_canvas.width, window.temp_canvas.height); 
 }
 
-function bucketFill(ctx, mouseX, mouseY, fogStyle = 'rgba(0,0,0,0)', fogType = 0, islight = false, distance1 = 10000, distance2, blur = 0, darknessMoved = false){
+function bucketFill(ctx, mouseX, mouseY, fogStyle = 'rgba(0,0,0,0)', fogType = 0, islight = false, distance1 = 10000, distance2, blur = 0, darknessMoved = false, allWalls, wallCache){
 	if(window.PARTICLE == undefined){
 		initParticle(new Vector(200, 200), 1);
 	}
 
 	let fog = true;
   	particleUpdate(mouseX, mouseY); // moves particle
-  	let darknessBoundarys = getDarknessBoundarys();
-	let tokenWalls = getVisionBlockingTokenWalls();
-	const allWalls = [...window.walls, ...darknessBoundarys, ...tokenWalls];
+	
+  	
+
+	wallCache = wallCache ?? buildWallCache(allWalls);
 
 	if(!islight){
-		particleLook(ctx, allWalls, undefined, fog, fogStyle, fogType, true, islight, undefined, blur, 0); 
+		particleLook(ctx, allWalls, undefined, fog, fogStyle, fogType, true, islight, undefined, blur, 0, wallCache); 
 		return;
 	}
 
@@ -5631,7 +5669,7 @@ function bucketFill(ctx, mouseX, mouseY, fogStyle = 'rgba(0,0,0,0)', fogType = 0
 		drawPolygon(bucketFillCtx, cachedData.lightPolygon, "#000", true);
 	}
 	else {
-		particleLook(bucketFillCtx, allWalls, undefined, fog, undefined, fogType, false, islight, undefined, 0, 0);
+		particleLook(bucketFillCtx, allWalls, undefined, fog, undefined, fogType, false, islight, undefined, 0, 0, wallCache);
 		drawPolygon(bucketFillCtx, window.lightPolygon, "#000", true);
 		window.lightDrawingLosCache[cacheKey] = {
 			lightPolygon: window.lightPolygon,
@@ -7561,31 +7599,7 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
 	const particlePosX = window.PARTICLE.pos.x;
 	const particlePosY = window.PARTICLE.pos.y;
 
-	const wallCache = wallsCache || [];
-	if (wallCache.length === 0) {
-		for (let j = 0; j < walls.length; j++) {
-			const currWall = walls[j];
-			let wallTop = currWall.wallTop !== undefined && currWall.wallTop !== '' ? parseInt(currWall.wallTop) : Infinity;
-			let wallBottom = currWall.wallBottom !== undefined && currWall.wallBottom !== '' ? parseInt(currWall.wallBottom) : -Infinity;
-			const blocksVision = !notBlockVision.includes(currWall.c);
-			const blocksMove = !notBlockMove.includes(currWall.c);
-			const isTerrainWall = currWall.terrainWall === true;
-			const isDarkness = currWall.darkness === true;
-			const doorId = tokenIsDoor ? `${currWall.a.x}${currWall.a.y}${currWall.b.x}${currWall.b.y}${sceneId}`.replaceAll('.', '') : '';
-
-			wallCache.push({
-				wall: currWall,
-				wallTop: wallTop,
-				wallBottom: wallBottom,
-				blocksVision: blocksVision,
-				blocksMove: blocksMove,
-				isTerrainWall: isTerrainWall,
-				isDarkness: isDarkness,
-				doorId: doorId,
-				tokenId: currWall.tokenId
-			})	
-		}
-	}
+	const wallCache = wallsCache ?? buildWallCache(walls);
 	
 
 	for (let i = 0; i < activeRays.length; i++) {
