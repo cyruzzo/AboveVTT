@@ -115,8 +115,8 @@ function select_tokens_in_aoe(aoeTokens, selectPlayerTokens = true){
 			const isInAoe = (is_token_in_aoe_context(id, ctx)); 
 			
 			if (isInAoe && !window.TOKEN_OBJECTS[id].options.hidden && !window.TOKEN_OBJECTS[id].options.locked) {
-				let tokenDiv = $(`#tokens>div[data-id='${id}']`)
-				if(tokenDiv.css("pointer-events")!="none" && tokenDiv.css("display")!="none" && !tokenDiv.hasClass("ui-draggable-disabled")) {
+				let tokenDiv = document.querySelectorAll(`#tokens>div[data-id='${id}']`);
+				if(tokenDiv.style.pointerEvents!="none" && tokenDiv.style.display!="none" && !tokenDiv.classList.contains("ui-draggable-disabled")) {
 					window.TOKEN_OBJECTS[id].selected = true;
 				}
 			}		

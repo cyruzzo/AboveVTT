@@ -235,9 +235,9 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 
 					if ($('#gridType input:checked').val() != 1) {
 						
-							let left = parseInt($("#aligner1").css('left')) + parseInt($(event.target).css("top")) - parseInt($("#aligner1").css('top'))
-							left = (parseInt($(event.target).css("top")) - parseInt($("#aligner1").css('top'))) < 25 ? parseInt($("#aligner1").css('left')) + 25 : left
-							let top = (parseInt($(event.target).css("top")) - parseInt($("#aligner1").css('top'))) < 25 ? parseInt($("#aligner1").css('top')) + 25 : Math.round((event.clientY - click2.y + original.top) / zoom);
+							let left = parseInt($("#aligner1")[0].style.left) + parseInt(event.target.style.top) - parseInt($("#aligner1").css('top'))
+							left = (parseInt(event.target.style.top) - parseInt($("#aligner1").css('top'))) < 25 ? parseInt($("#aligner1").css('left')) + 25 : left
+							let top = (parseInt(event.target.style.top) - parseInt($("#aligner1").css('top'))) < 25 ? parseInt($("#aligner1").css('top')) + 25 : Math.round((event.clientY - click2.y + original.top) / zoom);
 					
 							ui.position = {
 								left: left,
@@ -249,14 +249,14 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 							let left;
 							let top;
 							if(ui.position.top - parseInt($("#aligner1").css('top')) > ui.position.left - parseInt($("#aligner1").css('left'))){
-								left = parseInt($("#aligner1").css('left')) + parseInt($(event.target).css("top")) - parseInt($("#aligner1").css('top'))
-								left = (parseInt($(event.target).css("top")) - parseInt($("#aligner1").css('top'))) < 25 ? parseInt($("#aligner1").css('left')) + 25 : left
-								top = (parseInt($(event.target).css("top")) - parseInt($("#aligner1").css('top'))) < 25 ? parseInt($("#aligner1").css('top')) + 25 : Math.round((event.clientY - click2.y + original.top) / zoom);
+								left = parseInt($("#aligner1")[0].style.left) + parseInt(event.target.style.top) - parseInt($("#aligner1").css('top'))
+								left = (parseInt(event.target.style.top) - parseInt($("#aligner1").css('top'))) < 25 ? parseInt($("#aligner1").css('left')) + 25 : left
+								top = (parseInt(event.target.style.top) - parseInt($("#aligner1").css('top'))) < 25 ? parseInt($("#aligner1").css('top')) + 25 : Math.round((event.clientY - click2.y + original.top) / zoom);
 							}
 							else {
-								top = parseInt($("#aligner1").css('top')) + parseInt($(event.target).css("left")) - parseInt($("#aligner1").css('left'))
-								top = (parseInt($(event.target).css("left")) - parseInt($("#aligner1").css('left'))) < 25 ? parseInt($("#aligner1").css('top')) + 25 : top
-								left = (parseInt($(event.target).css("left")) - parseInt($("#aligner1").css('left'))) < 25 ? parseInt($("#aligner1").css('left')) + 25 : Math.round((event.clientX - click2.x + original.left) / zoom);						
+								top = parseInt($("#aligner1")[0].style.top) + parseInt(event.target.style.left) - parseInt($("#aligner1").css('left'))
+								top = (parseInt(event.target.style.left) - parseInt($("#aligner1").css('left'))) < 25 ? parseInt($("#aligner1").css('top')) + 25 : top
+								left = (parseInt(event.target.style.left) - parseInt($("#aligner1").css('left'))) < 25 ? parseInt($("#aligner1").css('left')) + 25 : Math.round((event.clientX - click2.x + original.left) / zoom);						
 							}
 
 

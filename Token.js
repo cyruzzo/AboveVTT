@@ -616,8 +616,8 @@ class Token {
 	}
 	isSelectable() {
 		if ((!window.DM && this.options.hidden) || this.options.type == 'door' || this.options.combatGroupToken) return false;
-		const tokenDiv = this.isLineAoe() ? $(`#tokens>div[data-id='${this.options.id}'] [data-img]`) : $(`#tokens>div[data-id='${this.options.id}']`);
-		return tokenDiv.css("pointer-events") != "none" && tokenDiv.css("display") != "none" && !tokenDiv.hasClass("ui-draggable-disabled");
+		const tokenDiv = this.isLineAoe() ? document.querySelectorAll(`#tokens>div[data-id='${this.options.id}'] [data-img]`) : document.querySelector(`#tokens>div[data-id='${this.options.id}']`);
+		return tokenDiv.style.pointerEvents != "none" && tokenDiv.style.display != "none" && !tokenDiv.classList.contains("ui-draggable-disabled");
 	}
 	rotate(newRotation) {
 		if (this.isPlayerLocked()) return; // don't allow rotating if the token is locked
@@ -2118,8 +2118,8 @@ class Token {
 			
 			const selEls = window.tokenVisionQuery[idReplaced] ? window.tokenVisionQuery[idReplaced].elements : document.querySelectorAll(`#aura_${idReplaced}, #light_${idReplaced}, #vision_${idReplaced}, #vision_devilsight_${idReplaced}, #vision_truesight_${idReplaced}, [data-darkness='darkness_${idReplaced}']`);
 			selEls.forEach((el) => {
-				const selElWidth = parseFloat(getComputedStyle(el).width) / 2;
-				const selElHeight = parseFloat(getComputedStyle(el).height) / 2;
+				const selElWidth = parseFloat(el.style.width) / 2;
+				const selElHeight = parseFloat(el.style.height) / 2;
 				const auraLeft = tokMidLeft / window.CURRENT_SCENE_DATA.scale_factor - selElWidth;
 				const auraTop = tokMidTop / window.CURRENT_SCENE_DATA.scale_factor - selElHeight;
 				el.style.left = `${auraLeft}px`;
@@ -3269,7 +3269,7 @@ class Token {
 									window.BEGIN_MOUSEX = tokenMidX;
 									window.BEGIN_MOUSEY = tokenMidY;
 									if (!self.options.disableborder){
-										WaypointManager.drawStyle.color = window.color ? window.color : $(tok).css("--token-border-color");
+										WaypointManager.drawStyle.color = window.color ? window.color : tok[0].style["--token-border-color"];
 									}else{
 										WaypointManager.resetDefaultDrawStyle();
 									}

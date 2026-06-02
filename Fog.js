@@ -846,10 +846,10 @@ function do_check_token_visibility() {
 	console.log("do_check_token_visibility");
 	if(window.LOADING)
 		return;
-	if((window.DM && !window.SelectedTokenVision) || (window.DM && $('#tokens .tokenselected:not(.isAoe)').length == 0)){
-		$(`.token`).toggleClass('notVisible', false);
-		$(`.door-button`).toggleClass('notVisible', false);
-		$(`.aura-element`).toggleClass('notVisible', false);
+	if((window.DM && !window.SelectedTokenVision) || (window.DM && document.querySelectorAll('#tokens .tokenselected:not(.isAoe)').length == 0)){
+		document.querySelectorAll('.token').forEach(el => el.classList.remove('notVisible'));
+		document.querySelectorAll('.door-button').forEach(el => el.classList.remove('notVisible'));
+		document.querySelectorAll('.aura-element').forEach(el => el.classList.remove('notVisible'));
 		return;
 	}
 	if(!window.walls){
@@ -858,12 +858,17 @@ function do_check_token_visibility() {
 	}
 
 
-	let hideIds = $('');
-	let showTokenIds = $('');
-	let showAuraIds = $('');
-	let showDoors = $('');
-	let hideDoors = $('');
-	let dmSelectedTokens = $('');
+	const hideIds = new Set();
+	const showTokenIds = new Set();
+	const showAuraIds = new Set();
+	const showDoors = new Set();
+	const hideDoors = new Set();
+	const dmSelectedTokens = new Set();
+
+	const addElementsToSet = (target, elementSet) => {
+		if (!target) return;
+		target.get().forEach(el => elementSet.add(el));
+	};
 
 	if(window.fogCanvas == undefined){
 		window.fogCanvas = document.getElementById('fog_overlay');
@@ -876,7 +881,8 @@ function do_check_token_visibility() {
 	let lightContext = window.lightInLosContext;
 
 	
-	let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
+	const playerTokenEl = document.querySelector(`.token[data-id*='${window.PLAYER_ID}']`);
+	const playerTokenId = playerTokenEl?.getAttribute('data-id');
 	
 	let playerTokenHasVision;
 	const tokenObjectValues = Object.values(window.TOKEN_OBJECTS);
@@ -902,7 +908,7 @@ function do_check_token_visibility() {
 		offScreenCtx.fillRect(0, 0, offScreenCanvas.width, offScreenCanvas.height)
 	}
 
-	const truesightAuraExists = $(`.aura-element-container-clip.truesight`).length > 0;
+	const truesightAuraExists = document.querySelector('.aura-element-container-clip.truesight') !== null;
 
 	let truesightContext;
 	let truesightData;
@@ -946,40 +952,40 @@ function do_check_token_visibility() {
 		}
 
 		if (showThisPlayerToken !== true && ((hideThisTokenInFogOrDarkness === true && inVisibleLight !== true && dmSelected !== true) || (window.TOKEN_OBJECTS[id].options.hidden === true && inTruesight !== true && dmSelected !== true) || (hideInvisible === true && inTruesight !== true))) {
-			hideIds = hideIds.add(tokenSelector).add(auraSelector).add(darknessTokenSelector)
-		}	
+			addElementsToSet(tokenSelector, hideIds);
+			addElementsToSet(auraSelector, hideIds);
+			addElementsToSet(darknessTokenSelector, hideIds);
+		}   
 		else if (window.TOKEN_OBJECTS[id].options.hidden !== true || inTruesight === true) {
-			showTokenIds = showTokenIds.add(tokenSelector).add(darknessTokenSelector);
+			addElementsToSet(tokenSelector, showTokenIds);
+			addElementsToSet(darknessTokenSelector, showTokenIds);
 			if(window.TOKEN_OBJECTS[id].options.hideaura !== true || id === playerTokenId)
-				showAuraIds = showAuraIds.add(auraSelector);
+				addElementsToSet(auraSelector, showAuraIds);
 		}else if(dmSelected === true){
-			dmSelectedTokens = dmSelectedTokens.add(tokenSelector).add(darknessTokenSelector);
-		}	
-		
-	}
-
-	let doors = $('.door-button');
-	for(let i=0; i<doors.length; i++){
-		let door = doors[i];
-
-		const inVisibleLight = (is_door_in_visible_light(door, offscreenImageData) === true); 
-
-		if (!inVisibleLight || $(door).hasClass('secret')) {
-			hideDoors = hideDoors.add(door)
-		}
-		else {
-			showDoors = showDoors.add(door)
+			addElementsToSet(tokenSelector, dmSelectedTokens);
+			addElementsToSet(darknessTokenSelector, dmSelectedTokens);
 		}
 	}
-	
-	hideIds.toggleClass('notVisible', true);
-	showTokenIds.css({ 'opacity': 1 });
-	showTokenIds.toggleClass('notVisible', false);
-	showAuraIds.toggleClass('notVisible', false);
-	dmSelectedTokens.css({ 'display': 'flex' });
 
-	showDoors.toggleClass('notVisible', false);
-	hideDoors.toggleClass('notVisible', true);
+	document.querySelectorAll('.door-button').forEach(door => {
+		const inVisibleLight = (is_door_in_visible_light(door, offscreenImageData) === true);
+		if (!inVisibleLight || door.classList.contains('secret')) {
+			hideDoors.add(door);
+		} else {
+			showDoors.add(door);
+		}
+	});
+
+	hideIds.forEach(el => el.classList.add('notVisible'));
+	showTokenIds.forEach(el => {
+		el.style.opacity = '1';
+		el.classList.remove('notVisible');
+	});
+	showAuraIds.forEach(el => el.classList.remove('notVisible'));
+	dmSelectedTokens.forEach(el => el.style.display = 'flex');
+
+	showDoors.forEach(el => el.classList.remove('notVisible'));
+	hideDoors.forEach(el => el.classList.add('notVisible'));
 }
 
 function circle2(a, b) {
@@ -8347,10 +8353,10 @@ function getDarknessBoundarys(){
 	for(let i = 0; i<darknessAoes.length; i++){
 		const currentAoe = $(darknessAoes[i]);
 
-		const left = parseFloat(currentAoe.css('left'));
-		const top = parseFloat(currentAoe.css('top'));
-		const width = parseFloat(currentAoe.css('width'));
-		const height = parseFloat(currentAoe.css('height'));
+		const left = parseFloat(darknessAoes[i].style.left);
+		const top = parseFloat(darknessAoes[i].style.top);
+		const width = parseFloat(darknessAoes[i].style.width);
+		const height = parseFloat(darknessAoes[i].style.height);
 		const scale = window.CURRENT_SCENE_DATA.scale_factor != undefined ? window.CURRENT_SCENE_DATA.scale_factor : 1;
 		const cX = (left + width/2);
 		const cY = (top + height/2);
@@ -8424,10 +8430,10 @@ function draw_aoe_to_canvas(targetAoes, ctx, isDarkness = false){
 	for(let i = 0; i<targetAoes.length; i++){
 		let currentAoe = $(targetAoes[i]);
 
-		let left = parseFloat(currentAoe.css('left'));
-		let top = parseFloat(currentAoe.css('top'));
-		let width = parseFloat(currentAoe.css('width'));
-		let height = parseFloat(currentAoe.css('height'));
+		let left = parseFloat(targetAoes[i].style.left);
+		let top = parseFloat(targetAoes[i].style.top);
+		let width = parseFloat(targetAoes[i].style.width);
+		let height = parseFloat(targetAoes[i].style.height);
 		let scale = window.CURRENT_SCENE_DATA.scale_factor != undefined ? window.CURRENT_SCENE_DATA.scale_factor : 1;
 		let halfGrid = window.CURRENT_SCENE_DATA.hpps/2;
 		let divideScale = 1;
