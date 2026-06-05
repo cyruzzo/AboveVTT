@@ -2647,9 +2647,6 @@ function getVisionBlockingTokenWalls(){
 			(window.TOKEN_OBJECTS[tokenId].options.share_vision && is_spectator_page()) ||
 			(playerTokenId == undefined && window.TOKEN_OBJECTS[tokenId].options.itemType == 'pc') 
 		
-		if ((!window.SelectedTokenVision || window.CURRENTLY_SELECTED_TOKENS.includes(tokenId)) && sharedVision) {
-			continue;
-		}
 		
 	
 
@@ -7988,7 +7985,7 @@ function redraw_light(darknessMoved = false, limitActiveRays = 0) {
 	const devilsightCanvasContext = window.devilsightCanvasContext;
 	devilsightCanvasContext.clearRect(0,0,canvasWidth,canvasHeight);
 
-	let darknessBoundarys = getDarknessBoundarys();
+	
 	
 	if(window.walls?.length <= 4 && window.CURRENT_SCENE_DATA.darkness_filter == 0){
 		moveOffscreenCanvasMaskContext.fillStyle = "white";
@@ -8031,7 +8028,8 @@ function redraw_light(darknessMoved = false, limitActiveRays = 0) {
 	if (window.elevContext == undefined) {
 		window.elevContext = document.getElementById('elev_overlay').getContext('2d');
 	}
-
+	
+	let darknessBoundarys = getDarknessBoundarys();
 	const tokenWalls = getVisionBlockingTokenWalls();
 	const allWalls = [...walls, ...darknessBoundarys, ...tokenWalls];
 	const tokenVisionAuras = document.querySelectorAll('.aura-element-container-clip [id*="vision_"]');
@@ -8296,7 +8294,7 @@ function buildWallCache(walls) {
 		const blocksMove = ![8, 9, 10, 11, 12, 13, '8', '9', '10', '11', '12', '13'].includes(currWall.c);
 		const isTerrainWall = currWall.terrainWall === true;
 		const isDarkness = currWall.darkness === true;
-		const doorId = `${currWall.a.x}${currWall.a.y}${currWall.b.x}${currWall.b.y}${sceneId}`.replaceAll('.', '');
+		const doorId = currWall.b == undefined ? undefined : `${currWall.a.x}${currWall.a.y}${currWall.b.x}${currWall.b.y}${sceneId}`.replaceAll('.', '');
 
 		wallCache.push({
 			wall: currWall,
@@ -8396,8 +8394,8 @@ function getDarknessBoundarys(){
 
 		const left = parseFloat(darknessAoes[i].style.left);
 		const top = parseFloat(darknessAoes[i].style.top);
-		const width = parseFloat(darknessAoes[i].style.width);
-		const height = parseFloat(darknessAoes[i].style.height);
+		const width = parseFloat(darknessAoes[i].clientWidth);
+		const height = parseFloat(darknessAoes[i].clientHeight);
 		const scale = window.CURRENT_SCENE_DATA.scale_factor != undefined ? window.CURRENT_SCENE_DATA.scale_factor : 1;
 		const cX = (left + width/2);
 		const cY = (top + height/2);
