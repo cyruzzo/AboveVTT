@@ -93,7 +93,7 @@ const debounceHandleInjected = mydebounce(() => {
 							}
 							$("#qrm_clear_all").click();
 							forSelTokens((token, id) => {
-								add_to_quick_roll_menu(token)
+								add_to_quick_roll_menu(token, true)
 							})
 
 							$('#qrm_roll_button').click();
@@ -834,7 +834,7 @@ class MessageBroker {
 											}
 											$("#qrm_clear_all").click();
 											forSelTokens((token, id) => {
-												add_to_quick_roll_menu(token)
+												add_to_quick_roll_menu(token, true)
 											})
 
 											$('#qrm_roll_button').click();

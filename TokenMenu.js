@@ -85,12 +85,12 @@ function close_token_context_menu() {
 }
 
 
-function select_tokens_in_aoe(aoeTokens, selectPlayerTokens = true){
+function select_tokens_in_aoe(aoeTokens, selectPlayerTokens = true, callback = () => {}) {
 	deselect_all_tokens();
 	let rayCast = document.getElementById("raycastingCanvas");
 	let canvas = new OffscreenCanvas(rayCast.width, rayCast.height);
 	let ctx = canvas.getContext('2d', { willReadFrequently: true }); //rare case where we can allow cpu do so all the lifting since it is not rendered
-	
+	const tokensSelected = [];
 
 
 	ctx.globalCompositeOperation='source-over';
@@ -115,18 +115,21 @@ function select_tokens_in_aoe(aoeTokens, selectPlayerTokens = true){
 			const isInAoe = (is_token_in_aoe_context(id, ctx)); 
 			
 			if (isInAoe && !window.TOKEN_OBJECTS[id].options.hidden && !window.TOKEN_OBJECTS[id].options.locked) {
-				let tokenDiv = document.querySelectorAll(`#tokens>div[data-id='${id}']`);
+				let tokenDiv = document.querySelector(`#tokens>div[data-id='${id}']`);
 				if(tokenDiv.style.pointerEvents!="none" && tokenDiv.style.display!="none" && !tokenDiv.classList.contains("ui-draggable-disabled")) {
 					window.TOKEN_OBJECTS[id].selected = true;
+					tokensSelected.push(id);
 				}
 			}		
 			resolve();
 		}));
 	}
+
+	close_token_context_menu();
 	Promise.all(promises).then(()=>{
 		draw_selected_token_bounding_box();
+		callback(tokensSelected);
 	})
-	close_token_context_menu();
 }
 
 /**
@@ -1417,7 +1420,7 @@ function token_context_menu_expanded(tokenIds, e) {
 
 	// Start Quick Group Roll
 	if (window.DM) {
-		let quickRollMenu = $("<button class='material-icons open-menu'>Add/Remove from Quick Rolls</button>")
+		let quickRollMenu = $(`<button class='material-icons open-menu'>${allTokensAreAoe ? 'Add Tokens in AoE to Quick Roll' : 'Add/Remove from Quick Rolls'}</button>`)
 		body.append(quickRollMenu);
 		quickRollMenu.on("click", function(clickEvent){
 			if(!childWindows['Quick Roll Menu'])
@@ -1432,8 +1435,8 @@ function token_context_menu_expanded(tokenIds, e) {
 						remove_from_quick_roll_menu(token)
 					}
 					else {
-						add_to_quick_roll_menu(token)
 					}
+					add_to_quick_roll_menu(token)
 				})
 			})
 			if(childWindows['Quick Roll Menu']){
@@ -4881,7 +4884,7 @@ function open_quick_roll_menu(e, options = {left: e.clientX + "px", top: e.clien
 	frame_z_index_when_click(qrm, true);
 }
 
-function add_to_quick_roll_menu(token){
+function add_to_quick_roll_menu(token, autoRollAfterAoe = false) {
 	//Adds a specific target to the quick roll menu
 
 	window.TOKEN_OBJECTS[token.options.id].in_qrm = true
@@ -4889,7 +4892,20 @@ function add_to_quick_roll_menu(token){
 	if(token.options.name == "Not in the current map")
 		return;
 	if (token.isAoe()) {
-		return; // don't add aoe to combat tracker
+		const aoeTokens = select_tokens_in_aoe([token], true, (selectedTokens) => {
+			if (selectedTokens.length > 0) {
+				selectedTokens.forEach(tokenId => {
+					const token = window.TOKEN_OBJECTS[tokenId];
+					add_to_quick_roll_menu(token);
+				})
+				if(autoRollAfterAoe)
+					$('#qrm_roll_button').click();
+				if(childWindows['Quick Roll Menu']){
+					qrm_update_popout();
+				}
+			}
+		});
+		return; // don't add aoe to combat tracker - add tokens inside the aoe
 	}
 
 	qrm_entry=$("<tr/>");
