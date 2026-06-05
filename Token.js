@@ -2125,7 +2125,7 @@ class Token {
 				el.style.left = `${auraLeft}px`;
 				el.style.top = `${auraTop}px`;
 			})
-			const notATokenEls = window.tokenVisionQuery[idReplaced] ? window.tokenVisionQuery[idReplaced].notATokenElements : document.querySelectorAll(`[data-notatoken='notatoken_${token.options.id}']`);
+			const notATokenEls = window.tokenVisionQuery[idReplaced] ? window.tokenVisionQuery[idReplaced].notATokenElements : document.querySelectorAll(`[data-notatoken='notatoken_${token.options.id}'], [data-darkness='darkness__${token.options.id}']`);
 			notATokenEls.forEach((selEl) => {
 				selEl.style.left = `${parseFloat(token.options.left) / window.CURRENT_SCENE_DATA.scale_factor}px`,
 				selEl.style.top = `${parseFloat(token.options.top) / window.CURRENT_SCENE_DATA.scale_factor}px`
@@ -3101,7 +3101,7 @@ class Token {
 								let curr = window.TOKEN_OBJECTS[id];
 								if (curr != undefined){
 									curr.sync();
-									if (curr.options?.darkness === true)
+									if (curr.options?.darkness === true || curr.options.tokenWall)
 										darknessMoved = true;
 									if (window.CURRENT_SCENE_DATA.disableSceneVision == 1 && !window.DM)
 										check_single_token_visibility(curr.options?.id);
@@ -3109,12 +3109,8 @@ class Token {
 							}												
 						}
 						if(darknessMoved){
-							redraw_light(darknessMoved);
 							redraw_drawn_light(darknessMoved);
-							if(window.EXPERIMENTAL_SETTINGS.dragLight == true)
-								throttleLight();
-							else
-								debounceLightChecks()
+							redraw_light(darknessMoved);
 						}
 						//remove cover for smooth drag
 						$('.iframeResizeCover').remove();
@@ -3198,14 +3194,14 @@ class Token {
 							window.tokenVisionQuery = {};
 							const setDataPos = (id) =>{
 								const idReplaced = id.replaceAll("/", "");
-								const selEls = document.querySelectorAll(`#aura_${idReplaced}, #light_${idReplaced}, #vision_${idReplaced}, #vision_devilsight_${idReplaced}, #vision_truesight_${idReplaced}, [data-darkness='darkness_${idReplaced}']`);
+								const selEls = document.querySelectorAll(`#aura_${idReplaced}, #light_${idReplaced}, #vision_${idReplaced}, #vision_devilsight_${idReplaced}, #vision_truesight_${idReplaced}`);
 								
 								selEls.forEach((el) => {
 									const style = getComputedStyle(el);
 									el.setAttribute('data-left', style.left.replace("px", ""));
 									el.setAttribute('data-top', style.top.replace("px", ""));
 								});
-								const notATokenEls = document.querySelectorAll(`[data-notatoken='notatoken_${id}']`);
+								const notATokenEls = document.querySelectorAll(`[data-notatoken='notatoken_${id}'], [data-darkness='darkness_${id}']`);
 								notATokenEls.forEach((el) => {
 									const style = getComputedStyle(el);
 									el.setAttribute('data-left', style.left.replace("px", ""));
