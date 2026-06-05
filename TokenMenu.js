@@ -4452,7 +4452,7 @@ function updateScaleInputs(newScale, maxScale) {
 
 //Start Quick Roll Menu//
 
-function open_quick_roll_menu(e){
+function open_quick_roll_menu(e, options = {left: e.clientX + "px", top: e.clientY + "px"}) {
 	//opens a roll menu for group rolls 
 	console.log("Opening Roll menu")
 	$("#qrm_dialog").remove();
@@ -4460,8 +4460,9 @@ function open_quick_roll_menu(e){
 	let qrm = $("<div id='qrm_dialog'></div>");
 	qrm.css('background', "#f9f9f9");
 	qrm.css('width', '410px');
-	qrm.css('top', e.clientY+'px');
-	qrm.css('left', e.clientX+'px');
+	qrm.css('top', options.top);
+	qrm.css('left', options.left);
+	qrm.css('transform', options.transform || '');
 	qrm.css('height', '250px');
 	qrm.css('z-index', 49001);
 	qrm.css('border', 'solid 2px gray');
@@ -4556,7 +4557,6 @@ function open_quick_roll_menu(e){
 	save_type_dropdown.append($(`<option value="5" data-name="cha" data-style='url(https://www.dndbeyond.com/content/1-0-1849-0/skins/waterdeep/images/icons/abilities/charisma.svg)'>CHARISMA</option>`))
 	//save_type_dropdown.tooltip({show: { duration: 1000 }})
 	save_type_dropdown.attr('style', 'width: 22% !important');
-
 	$( function() {
 		$.widget( "custom.iconselectmenu", $.ui.selectmenu, {
 		_renderItem: function( ul, item ) {
@@ -4594,10 +4594,10 @@ function open_quick_roll_menu(e){
 		else {
 			_dmg.replace(/[^\d.-]/g, '')
 		}
-		$("#half_damage_save").val(Math.floor(_dmg/2));
+		$("#half_damage_save").val(Math.max(1, Math.floor(_dmg/2)));
 		qrm_update_popout();
 	});
-
+	
 	//Roll Button 
 	let qrm_roll=$("<button id='qrm_roll_button' >ROLL</button>");
 	qrm_roll.css('width', '13%');
@@ -4807,6 +4807,7 @@ function open_quick_roll_menu(e){
 	    'row-gap': '5px',
 	});
 
+
 	
 	qrm_footer.append(damage_input)
 	qrm_footer.append(half_damage_input)
@@ -4831,6 +4832,23 @@ function open_quick_roll_menu(e){
 	//footer
 	qrm.append(qrm_footer);
 	
+	if(options.save){
+		const saveValues = {
+			"str": 0,
+			"dex": 1,
+			"con": 2,
+			"int": 3,
+			"wis": 4,
+			"cha": 5
+		}
+		const save = options.save.type.toLowerCase();
+		save_type_dropdown.val(saveValues[save]);
+		const damageTotal = options.save.damage || "";
+		damage_input.val(damageTotal);
+		half_damage_input.val(Math.max(1, Math.floor(damageTotal/2)));
+		qrm_dc_input.val(options.save.dc);
+	}
+
 	qrm.css('opacity', '0.0');
 	qrm.animate({
 		opacity: '1.0'
