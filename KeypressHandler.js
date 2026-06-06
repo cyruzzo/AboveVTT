@@ -288,6 +288,7 @@ Mousetrap.bind('shift+w', function () {
 Mousetrap.bind('j', function () {
     if(window.DM){
         $('#snap_walls').toggleClass(['button-enabled', 'ddbc-tab-options__header-heading--is-active']);
+        window.SNAP_WALLS = $('#snap_walls').hasClass('button-enabled');
     }
 });
     
