@@ -906,6 +906,8 @@ function do_check_token_visibility() {
 	} else if (aPlayerToken == true || window.CURRENT_SCENE_DATA.disableSceneVision == 1){
 		offScreenCtx.fillStyle = 'rgba(255, 255, 255 , 1)';
 		offScreenCtx.fillRect(0, 0, offScreenCanvas.width, offScreenCanvas.height)
+	} else{
+		offScreenCtx.clearRect(0, 0, offScreenCanvas.width, offScreenCanvas.height);
 	}
 
 	const truesightAuraExists = document.querySelector('.aura-element-container-clip.truesight') !== null;
