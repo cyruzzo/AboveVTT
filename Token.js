@@ -616,7 +616,7 @@ class Token {
 	}
 	isSelectable() {
 		if ((!window.DM && this.options.hidden) || this.options.type == 'door' || this.options.combatGroupToken) return false;
-		const tokenDiv = this.isLineAoe() ? document.querySelectorAll(`#tokens>div[data-id='${this.options.id}'] [data-img]`) : document.querySelector(`#tokens>div[data-id='${this.options.id}']`);
+		const tokenDiv = this.isLineAoe() ? document.querySelector(`#tokens>div[data-id='${this.options.id}'] [data-img]`) : document.querySelector(`#tokens>div[data-id='${this.options.id}']`);
 		return tokenDiv.style.pointerEvents != "none" && tokenDiv.style.display != "none" && !tokenDiv.classList.contains("ui-draggable-disabled");
 	}
 	rotate(newRotation) {
