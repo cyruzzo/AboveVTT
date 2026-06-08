@@ -2128,6 +2128,11 @@ padding-bottom: 5px;
 .portal-listing .portal-show-name {
     margin-right:10px;
 }
+.portal-listing button.locate-portal {
+    width: 20px;
+    height: 20px;
+    padding: 0px;
+}
 .portal-entry {
     display:flex;
     justify-content: center;
