@@ -576,6 +576,11 @@ function token_context_menu_expanded(tokenIds, e) {
 				}
 				window.TOKEN_OBJECTS[tokenIds].options.name = newName;
 				window.TOKEN_OBJECTS[tokenIds].place_sync_persist();		
+
+				if($(`#portal_config_window`).length>0){
+					window.portalsInConfig[tokenIds].token.options.name = newName;
+					open_portal_config();
+				}
 			});
 			let nameWrapper = $(`
 				<div class="token-image-modal-url-label-wrapper">
@@ -591,10 +596,15 @@ function token_context_menu_expanded(tokenIds, e) {
 			
 		
 			let inputWrapper = build_toggle_input(setting, currentValue, function (name, newValue) {
+				const portalConfigOpen = $(`#portal_config_window`).length>0			
 				tokens.forEach(token => {
 					token.options[name] = newValue;
 					token.place_sync_persist();
+					if(portalConfigOpen)
+						window.portalsInConfig[tokenIds].token.options.name = newValue;
 				});
+				if(portalConfigOpen)
+					open_portal_config();
 			});
 			
 			body.append(inputWrapper);
