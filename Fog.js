@@ -6848,7 +6848,7 @@ Example usage:
 	const portalConfigDesc = `Open a window with this scenes portals and info on it. Will keep the window open as you switch scenes to help assign cross scene portal locations.`
 	wall_menu.append(
 		`<div class='ddbc-tab-options--layout-pill menu-option' data-skip="true" data-desc="${portalConfigDesc}">
-			<button id='portal_config' class='drawbutton menu-option ddbc-tab-options__header-heading'>
+			<button id='portal_config' class='menu-option ddbc-tab-options__header-heading'>
 				Portal Config
 			</button>
 		</div>`);
