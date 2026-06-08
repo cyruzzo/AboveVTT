@@ -2225,6 +2225,219 @@ function setVisionLightOffscreenCanvas(){
 	create_or_set_offscreen_canvas('devilsightCanvas'); //devilsight canvas is used to combine with darkness aoe (or other magical darkness sources if implemented)
 	create_or_set_offscreen_canvas('truesightCanvas'); //this is stored and checked against in vision checks for invisible creatures (also works like devilsight for magical darkness)
 }
+function open_portal_config(){
+
+	const container = find_or_create_generic_draggable_window('portal_config_window', 'Portal Configuration', false, false, undefined, '450px', 'fit-content', '30px', '317px', false, `input, button`, false, true, ()=>{window.portalsInConfig = undefined;});	
+	container.find('.portal-listing').remove();
+	if(window.portalsInConfig == undefined){
+		window.portalsInConfig = {};
+	}
+	const portals = window.DRAWINGS.filter(d => {
+		if(d[1] != "wall")
+			return false;
+		
+		const type = Object.keys(doorColors).find(key => Object.keys(doorColors[key]).find(key2 => doorColors[key][key2] === d[2]));
+		return type == 12;
+	});
+	const listing = $(`<div class='portal-listing'></div>`)
+	container.append(listing);
+	if(portals.length>0){
+		for(let i=0; i<portals.length; i++){
+			const portal_clone = $.extend(true, [], portals[i]);
+			const [shape, fill, color, x, y, width, height] = portal_clone;
+			const portalId = `${x}${y}${width}${height}${window.CURRENT_SCENE_DATA.id}`.replaceAll('.','');
+
+			if(window.TOKEN_OBJECTS[portalId] == undefined){
+				let portalDoorButton = $(`[data-id='${portalId}'].door-button`)
+				if(portalDoorButton.length == 0)
+					continue;
+				let options = {
+					...default_options(),
+					left: `${parseFloat(portalDoorButton.css('--mid-x')) - 25}px`,
+					top: `${parseFloat(portalDoorButton.css('--mid-y')) - 25}px`,
+					id: portalId,
+					vision:{
+						feet: 0,
+						color: `rgba(0, 0, 0, 0)`
+					},
+					devilsight:{
+						feet: 0,
+						color: `rgba(0, 0, 0, 0)`
+					},
+					truesight:{
+						feet: 0,
+						color: `rgba(0, 0, 0, 0)`
+					},
+					imgsrc: `data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=`,
+					type: 'door',
+					size: 50,
+					scaleCreated: window.CURRENT_SCENE_DATA.scale_factor,
+					auraislight: false,
+					alwaysshowname: window.TOKEN_SETTINGS.alwaysshowname != undefined ? window.TOKEN_SETTINGS.alwaysshowname : false
+				};
+				window.ScenesHandler.create_update_token(options);
+			}
+			if(window.all_token_objects[portalId] == undefined){
+				window.all_token_objects[portalId] = window.TOKEN_OBJECTS[portalId]	
+			}
+			const portalObject = {
+				id: portalId,
+				sceneId: window.CURRENT_SCENE_DATA.id,
+				token: $.extend(true, {}, window.TOKEN_OBJECTS[portalId]),
+				portalWall: portal_clone
+			};
+			window.portalsInConfig[portalId] = portalObject;
+		}
+	}
+	if(Object.keys(window.portalsInConfig).length > 0){
+		for(let portalId in window.portalsInConfig){
+			const portal = window.portalsInConfig[portalId];
+			const portalElement = $(`<div class='portal-entry' data-id='${portalId}'></div>`);
+			const nameInput = $(`<input type='text' class='portal-name' placeholder='Portal Name' value='${portal.token?.options?.name ?? ''}' />`);
+			const placeLinkedPortalButton = $(`<button class='place-linked-portal'>Place Linked Portal</button>`);
+			const checkboxShowName = $(`<label for="showName_${portalId}">Show Name: </label><input class="portal-show-name" type='checkbox' id="showName_${portalId}" ${portal.token?.options?.alwaysshowname ? 'checked' : ''}></input>`)
+			portalElement.append(nameInput, checkboxShowName, placeLinkedPortalButton);
+			listing.append(portalElement);
+		}
+	}
+	listing.off('click.linkedPortal').on('click.linkedPortal', '.place-linked-portal', function(){
+		const portalId = $(this).closest('.portal-entry').attr('data-id');
+		const portal = window.portalsInConfig[portalId];
+		
+		window.all_token_objects[portalId].sync($.extend(true, {}, portal.token.options), portal.sceneId);
+	
+		const wall = window.portalsInConfig[portalId].portalWall;
+		
+		let scale = window.CURRENT_SCENE_DATA.scale_factor != undefined ? window.CURRENT_SCENE_DATA.scale_factor/portal.token.options.scaleCreated : 1/portal.token.options.scaleCreated ;
+		$('#select-button').click();
+		$('#tokenOptionsClickCloseDiv').click();
+		let target = $("#temp_overlay, #fog_overlay, #VTT, #black_layer");	
+		$("#temp_overlay").css('z-index', '50');
+		let canvas = document.getElementById("temp_overlay");
+		let context = canvas.getContext("2d");
+		target.css('cursor', 'crosshair');
+		target.off('mousemove.drawTele').on('mousemove.drawTele', function(e){
+			clear_temp_canvas();
+			let brushpoints = [];
+			let [endX, endY] = get_event_cursor_position(e);
+			let [rectX, rectY] = [endX - window.CURRENT_SCENE_DATA.hpps/2, endY-window.CURRENT_SCENE_DATA.vpps/2]
+			context.setLineDash([5, 5])
+			drawRect(context, rectX, rectY, window.CURRENT_SCENE_DATA.hpps, window.CURRENT_SCENE_DATA.vpps, '#fff', false)
+			context.setLineDash([])
+		});
+		target.off('mouseup.setTele touchend.setTele').on('mouseup.setTele touchend.setTele', function(e){
+			if ( e.button == 2) {
+				return;
+			}
+
+			const [mouseX, mouseY] = get_event_cursor_position(e);
+			const [originX, originY] = [(parseInt(portal.token.options.left)+25)*scale, (parseInt(portal.token.options.top)+25)*scale]
+			
+			let data = ['line',
+						'wall',
+						wall[2],
+						mouseX-5,
+						mouseY,
+						mouseX+5,
+						mouseY,
+						12,
+						wall[8],
+						wall[9],
+						(wall[10] != undefined ? wall[10] : ""),
+						(wall[11] != undefined ? wall[11] : "")
+			]
+			window.DRAWINGS.push(data);
+			pushWallUndo({
+				undo: [[...data]],
+			})
+			let clonePortalId = `${mouseX-5}${mouseY}${mouseX+5}${mouseY}${window.CURRENT_SCENE_DATA.id}`.replaceAll('.','') 
+			let teleporterCoords;
+			if(window.CURRENT_SCENE_DATA.id != portal.sceneId){
+				teleporterCoords = {'linkedPortalId': portalId, 'sceneId': portal.sceneId}
+				const oldPortalCoords = {'linkedPortalId': clonePortalId, 'sceneId': window.CURRENT_SCENE_DATA.id};
+				portal.token.options.teleporterCoords = oldPortalCoords;
+				portal.token.debounceSyncMessage($.extend(true, {}, portal.token.options), portal.sceneId);
+				if(window.all_token_objects[portalId] != undefined){
+					window.all_token_objects[portalId].options.teleporterCoords = oldPortalCoords
+				}
+			} else{
+				teleporterCoords = {
+					'left': originX,
+					'top': originY,
+					'scale': window.CURRENT_SCENE_DATA.scale_factor != undefined ? window.CURRENT_SCENE_DATA.scale_factor : 1
+				}
+				window.TOKEN_OBJECTS[portalId].options.teleporterCoords = {'left': mouseX, 'top': mouseY, 'scale': window.CURRENT_SCENE_DATA.scale_factor != undefined ? window.CURRENT_SCENE_DATA.scale_factor : 1}
+				if(window.all_token_objects[portalId] != undefined){
+					window.all_token_objects[portalId].options.teleporterCoords = {'left': mouseX, 'top': mouseY, 'scale': window.CURRENT_SCENE_DATA.scale_factor != undefined ? window.CURRENT_SCENE_DATA.scale_factor : 1}
+				}
+				window.TOKEN_OBJECTS[portalId].place(0);
+				window.TOKEN_OBJECTS[portalId].sync();
+			}
+			
+			let options = {
+				...default_options(),
+				left: `${mouseX-25}px`,
+				top: `${mouseY-25}px`,
+				id: clonePortalId,
+				vision:{
+					feet: 0,
+					color: `rgba(0, 0, 0, 0)`
+				},
+				imgsrc: `data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=`,
+				type: 'door',
+				size: 50,
+				scaleCreated: window.CURRENT_SCENE_DATA.scale_factor,
+				teleporterCoords
+			};
+			if(window.TOKEN_OBJECTS[clonePortalId] == undefined){
+				window.ScenesHandler.create_update_token(options);
+			}else {
+				window.TOKEN_OBJECTS[clonePortalId] = options;
+			}
+			window.TOKEN_OBJECTS[clonePortalId].place(0);
+			window.TOKEN_OBJECTS[clonePortalId].sync();
+			redraw_light_walls();
+			sync_drawings();
+			open_portal_config();
+			clear_temp_canvas();
+			target.off('mouseup.setTele touchend.setTele');
+			target.off('mousemove.drawTele')
+			$("#temp_overlay").css('z-index', '25');
+		});
+
+	})
+	listing.off('change.name input.name').on('change.name', '.portal-name', function(){
+		const input = $(this);
+		const newName = input.val();
+		const portalId = input.closest('.portal-entry').attr('data-id');
+		const portal = window.portalsInConfig[portalId];
+		portal.token.options.name = newName;
+		portal.token.debounceSyncMessage($.extend(true, {}, portal.token.options), portal.sceneId);
+		if(window.all_token_objects[portalId] != undefined){
+			window.all_token_objects[portalId].options.name = newName;
+		}
+		if(window.TOKEN_OBJECTS[portalId] != undefined){
+			window.TOKEN_OBJECTS[portalId].options.name = newName;
+			window.TOKEN_OBJECTS[portalId].place(0);
+		}
+	})
+	listing.off('change.checkbox').on('change.checkbox', '.portal-show-name', function(){
+
+		const input = $(this);
+		const checked = input.prop('checked');
+		const portalId = input.closest('.portal-entry').attr('data-id');
+		const portal = window.portalsInConfig[portalId];
+		portal.token.options.alwaysshowname = checked;
+		portal.token.debounceSyncMessage($.extend(true, {}, portal.token.options), portal.sceneId);
+		if(window.all_token_objects[portalId] != undefined){
+			window.all_token_objects[portalId].options.alwaysshowname = checked;
+		}
+		if(window.TOKEN_OBJECTS[portalId] != undefined){
+			window.TOKEN_OBJECTS[portalId].options.alwaysshowname = checked;
+			window.TOKEN_OBJECTS[portalId].place(0);
+		}
+	})
+}
 /*
 Clears and redraws all walls from window.DRAWINGS, also redraws wall heights if present.
 Rebuilds window.walls with Boundary objects for all walls.
@@ -4155,6 +4368,9 @@ function drawing_mouseup(e) {
 			redraw_light_walls({wallsChanged:true});
 			redraw_light();
 			redraw_fog(); // could limit this to point line of sight tool drawings
+		}
+		if($('#portal_config_window').length>0){
+			open_portal_config();
 		}
 		redraw_elev();
 		redraw_drawn_light();
@@ -6575,7 +6791,7 @@ When left blank it is treated as infinity, preventing tokens from seeing over th
 				Join Snap
 			</button>
 		</div>`);
-		const objectWallDesc = `Toggle to draw Object Walls in place of regular walls. Object walls block vision at the 2nd wall of this type hit. Does not prevent movement into visible area.
+	const objectWallDesc = `Toggle to draw Object Walls in place of regular walls. Object walls block vision at the 2nd wall of this type hit. Does not prevent movement into visible area.
 
 Example usage: 
 
@@ -6627,6 +6843,13 @@ Example usage:
 		`<div class='ddbc-tab-options--layout-pill menu-option' data-skip="true" data-desc="${showWallsDesc}">
 			<button id='show_walls' data-toggle='true' class='drawbutton menu-option ddbc-tab-options__header-heading ${(window.showWallsToggle) ? "button-enabled" : ''}'>
 				Always Show
+			</button>
+		</div>`);
+	const portalConfigDesc = `Open a window with this scenes portals and info on it. Will keep the window open as you switch scenes to help assign cross scene portal locations.`
+	wall_menu.append(
+		`<div class='ddbc-tab-options--layout-pill menu-option' data-skip="true" data-desc="${portalConfigDesc}">
+			<button id='portal_config' class='drawbutton menu-option ddbc-tab-options__header-heading'>
+				Portal Config
 			</button>
 		</div>`);
 	wall_menu.append(`
@@ -6699,7 +6922,9 @@ Example usage:
 			sync_drawings({wallsChanged: true});
         }   
 	});
-
+	wall_menu.find("#portal_config").click(function() {
+		open_portal_config();
+	})
 	wall_menu.css("position", "fixed");
 	wall_menu.css("top", "50px");
 	wall_menu.css("width", "110px");

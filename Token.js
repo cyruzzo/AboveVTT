@@ -547,6 +547,12 @@ class Token {
 		delete window.CURRENT_SCENE_DATA.tokens[id];
 		delete window.TOKEN_OBJECTS[id];
 		delete window.ON_SCREEN_TOKENS[id];
+		if($('#portal_config_window').length>0){
+			delete  window.portalsInConfig[id];
+			open_portal_config();
+		}
+	
+		delete window.ON_SCREEN_TOKENS[id];
 		if(!is_player_id(this.options.id)){
 			delete window.all_token_objects[id];
 			if (id in window.JOURNAL.notes) {
@@ -857,12 +863,12 @@ class Token {
 
 
 	}
-	debounceSyncMessage = mydebounce(function(options) {				
-		window.MB.sendMessage('custom/myVTT/token', options);
+	debounceSyncMessage = mydebounce(function(options, forcedSceneId = undefined){				
+		window.MB.sendMessage('custom/myVTT/token', options, false, forcedSceneId);
 	}, 300);
-	sync(){
+	sync(forcedSceneId = undefined) {
 		const options = $.extend(true, {}, this.options)
-		this.debounceSyncMessage(options);
+		this.debounceSyncMessage(options, forcedSceneId);
 	}
 	place_sync_persist(animationDuration) {
 		this.place(animationDuration);

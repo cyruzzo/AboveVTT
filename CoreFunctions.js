@@ -852,6 +852,9 @@ function create_update_token(options, save = true) {
   
   window.TOKEN_OBJECTS[id].place(0);
   window.TOKEN_OBJECTS[id].sync($.extend(true, {}, options));
+  if(window.all_token_objects[id] == undefined){
+    window.all_token_objects[id] = window.TOKEN_OBJECTS[id]	
+  }
 
 }
 function add_journal_roll_buttons(target, tokenId=undefined, specificImage=undefined, specificName=undefined){
@@ -3075,7 +3078,7 @@ function createSendPlayerButton(parent, icon, hasPopupOption=false ) {
 }
 //-end- dialog menus 
 
-function find_or_create_generic_draggable_window(id, titleBarText, addLoadingIndicator = true, addPopoutButton = false, popoutSelector=``, width='80%', height='80%', top='10%', left='10%', showSlow = true, cancelClasses='', hideOnX = false, alwaysDisplayTitle = false) {
+function find_or_create_generic_draggable_window(id, titleBarText, addLoadingIndicator = true, addPopoutButton = false, popoutSelector=``, width='80%', height='80%', top='10%', left='10%', showSlow = true, cancelClasses='', hideOnX = false, alwaysDisplayTitle = false, onCloseCallback = () => {}) {
   console.log(`find_or_create_generic_draggable_window id: ${id}, titleBarText: ${titleBarText}, addLoadingIndicator: ${addLoadingIndicator}, addPopoutButton: ${addPopoutButton}`);
 
   const existing = $(`[id="${id.replace('#', '')}"]`);
@@ -3135,6 +3138,7 @@ function find_or_create_generic_draggable_window(id, titleBarText, addLoadingInd
       $(event.currentTarget).closest('.resize_drag_window').hide();
     }
     else{
+      onCloseCallback();
       close_and_cleanup_generic_draggable_window($(event.currentTarget).closest('.resize_drag_window').attr('id'));
     }
 
