@@ -2015,7 +2015,8 @@ class MessageBroker {
 
 						redraw_light();
 						do_check_token_visibility();
-						
+						if($('#portal_config_window').length>0)
+							open_portal_config();
 						$('#loadingStyles').remove();
 
 						console.groupEnd()	
@@ -2472,20 +2473,20 @@ class MessageBroker {
 	}
 
 
-	sendMessage(eventType, data,skipSceneId=false) {
+	sendMessage(eventType, data,skipSceneId=false, forceSceneId = undefined) {
 		let self = this;
 
 		//this.sendDDBMB(eventType,data); 
 
 		if(eventType.startsWith("custom")){
-			this.sendAboveMB(eventType,data,skipSceneId);
+			this.sendAboveMB(eventType,data,skipSceneId,forceSceneId);
 		}
 		else{
 			this.sendDDBMB(eventType,data);
 		}
 	}
 
-	sendAboveMB(eventType,data,skipSceneId=false){
+	sendAboveMB(eventType,data,skipSceneId=false, forceSceneId=undefined){
 		let self=this;
 		let message = {
 			action: "sendmessage",
@@ -2499,10 +2500,13 @@ class MessageBroker {
 
 		if(!["custom/myVTT/switch_scene","custom/myVTT/update_scene"].includes(eventType))
 			message.sequence=this.above_sequence++;
-
-		if(window.CURRENT_SCENE_DATA && !skipSceneId)
+		if(forceSceneId != undefined){
+			message.sceneId = forceSceneId;
+		} else if(window.CURRENT_SCENE_DATA && !skipSceneId){
 			message.sceneId=window.CURRENT_SCENE_DATA.id;
-		if(window.PLAYER_SCENE_ID)
+		}
+
+		if(forceSceneId == undefined && window.PLAYER_SCENE_ID)
 			message.playersSceneId = window.PLAYER_SCENE_ID;
 
 		const jsmessage=JSON.stringify(message);

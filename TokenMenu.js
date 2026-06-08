@@ -357,7 +357,7 @@ function token_context_menu_expanded(tokenIds, e) {
 							window.all_token_objects[tokenIds].options.teleporterCoords = {'left': mouseX, 'top': mouseY, 'scale': window.CURRENT_SCENE_DATA.scale_factor != undefined ? window.CURRENT_SCENE_DATA.scale_factor : 1}
 						}
 						window.TOKEN_OBJECTS[tokenIds].place(0);
-						window.TOKEN_OBJECTS[tokenIds].sync($.extend(true, {}, window.TOKEN_OBJECTS[tokenIds].options));
+						window.TOKEN_OBJECTS[tokenIds].sync();
 
 						clear_temp_canvas();
 						target.off('mouseup.setTele touchend.setTele');
@@ -462,7 +462,7 @@ function token_context_menu_expanded(tokenIds, e) {
 							window.all_token_objects[tokenIds].options.teleporterCoords = {'left': mouseX, 'top': mouseY, 'scale': window.CURRENT_SCENE_DATA.scale_factor != undefined ? window.CURRENT_SCENE_DATA.scale_factor : 1}
 						}
 						window.TOKEN_OBJECTS[tokenIds].place(0);
-						window.TOKEN_OBJECTS[tokenIds].sync($.extend(true, {}, window.TOKEN_OBJECTS[tokenIds].options));
+						window.TOKEN_OBJECTS[tokenIds].sync();
 
 						clear_temp_canvas();
 						target.off('mouseup.setTele touchend.setTele');
