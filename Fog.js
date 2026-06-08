@@ -2296,7 +2296,17 @@ function open_portal_config(){
 			const nameInput = $(`<input type='text' class='portal-name' placeholder='Portal Name' value='${portal.token?.options?.name ?? ''}' />`);
 			const placeLinkedPortalButton = $(`<button class='place-linked-portal'>Place Linked Portal</button>`);
 			const checkboxShowName = $(`<label for="showName_${portalId}">Show Name: </label><input class="portal-show-name" type='checkbox' id="showName_${portalId}" ${portal.token?.options?.alwaysshowname ? 'checked' : ''}></input>`)
+			
+			 
 			portalElement.append(nameInput, checkboxShowName, placeLinkedPortalButton);
+			if(portal.sceneId == window.CURRENT_SCENE_DATA.id){
+				const locatePortal = $(`<button class='locate-portal'>
+					<svg class="findSVG" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M0 0h24v24H0z" fill="none"/><path d="M12 11c1.33 0 4 .67 4 2v.16c-.97 1.12-2.4 1.84-4 1.84s-3.03-.72-4-1.84V13c0-1.33 2.67-2 4-2zm0-1c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm6 .2C18 6.57 15.35 4 12 4s-6 2.57-6 6.2c0 2.34 1.95 5.44 6 9.14 4.05-3.7 6-6.8 6-9.14zM12 2c4.2 0 8 3.22 8 8.2 0 3.32-2.67 7.25-8 11.8-5.33-4.55-8-8.48-8-11.8C4 5.22 7.8 2 12 2z"/></svg>
+				</button>`)
+				portalElement.prepend(locatePortal);
+			} else{
+				nameInput.css('margin-left', '25px')
+			}
 			listing.append(portalElement);
 		}
 	}
@@ -2436,6 +2446,10 @@ function open_portal_config(){
 			window.TOKEN_OBJECTS[portalId].options.alwaysshowname = checked;
 			window.TOKEN_OBJECTS[portalId].place(0);
 		}
+	})
+	listing.off('click.locatePortal').on('click.locatePortal', '.locate-portal', function(){
+		const id = $(this).closest('.portal-entry').attr('data-id');
+		window.TOKEN_OBJECTS[id]?.highlight()
 	})
 }
 /*
