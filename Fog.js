@@ -2240,6 +2240,10 @@ function open_portal_config(){
 		return type == 12;
 	});
 	const listing = $(`<div class='portal-listing'></div>`)
+	const table = $(`<table class='portal-table'></table>`)
+	const tableHeaders = $(`<tr><th>Find Portal</th><th>Name</th><th>Always Show Name</th><th>Place Linked Portal</th></tr>`)
+	table.append(tableHeaders);
+	listing.append(table);
 	container.append(listing);
 	if(portals.length>0){
 		for(let i=0; i<portals.length; i++){
@@ -2290,24 +2294,33 @@ function open_portal_config(){
 		}
 	}
 	if(Object.keys(window.portalsInConfig).length > 0){
+		function addPortalCell(row, $element){
+			const cell = $(`<td></td>`);
+			cell.append($element);
+			row.append(cell);
+		}
 		for(let portalId in window.portalsInConfig){
 			const portal = window.portalsInConfig[portalId];
-			const portalElement = $(`<div class='portal-entry' data-id='${portalId}'></div>`);
-			const nameInput = $(`<input type='text' class='portal-name' placeholder='Portal Name' value='${portal.token?.options?.name ?? ''}' />`);
-			const placeLinkedPortalButton = $(`<button class='place-linked-portal'>Place Linked Portal</button>`);
-			const checkboxShowName = $(`<label for="showName_${portalId}">Show Name: </label><input class="portal-show-name" type='checkbox' id="showName_${portalId}" ${portal.token?.options?.alwaysshowname ? 'checked' : ''}></input>`)
-			
-			 
-			portalElement.append(nameInput, checkboxShowName, placeLinkedPortalButton);
+			const portalRow = $(`<tr class='portal-entry' data-id='${portalId}'></tr>`);
+			let locatePortal;	
 			if(portal.sceneId == window.CURRENT_SCENE_DATA.id){
-				const locatePortal = $(`<button class='locate-portal'>
+				locatePortal = $(`<button class='locate-portal'>
 					<svg class="findSVG" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M0 0h24v24H0z" fill="none"/><path d="M12 11c1.33 0 4 .67 4 2v.16c-.97 1.12-2.4 1.84-4 1.84s-3.03-.72-4-1.84V13c0-1.33 2.67-2 4-2zm0-1c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm6 .2C18 6.57 15.35 4 12 4s-6 2.57-6 6.2c0 2.34 1.95 5.44 6 9.14 4.05-3.7 6-6.8 6-9.14zM12 2c4.2 0 8 3.22 8 8.2 0 3.32-2.67 7.25-8 11.8-5.33-4.55-8-8.48-8-11.8C4 5.22 7.8 2 12 2z"/></svg>
 				</button>`)
-				portalElement.prepend(locatePortal);
-			} else{
-				nameInput.css('margin-left', '25px')
-			}
-			listing.append(portalElement);
+				
+			} 
+			addPortalCell(portalRow, locatePortal);
+			
+			const nameInput = $(`<input type='text' class='portal-name' placeholder='Portal Name' value='${portal.token?.options?.name ?? ''}' />`);
+			addPortalCell(portalRow, nameInput);
+			
+			const checkboxShowName = $(`<input class="portal-show-name" type='checkbox' id="showName_${portalId}" ${portal.token?.options?.alwaysshowname ? 'checked' : ''}></input>`)
+			addPortalCell(portalRow, checkboxShowName);
+
+			const placeLinkedPortalButton = $(`<button class='place-linked-portal'><svg class="findSVG" width="24px" height="24px" viewBox="-2 -2 22 24" xmlns="http://www.w3.org/2000/svg" "=""><path fill-rule="evenodd" clip-rule="evenodd" d="M7.2 10.8V18h3.6v-7.2H18V7.2h-7.2V0H7.2v7.2H0v3.6h7.2z"></path></svg></button>`);
+			addPortalCell(portalRow, placeLinkedPortalButton);
+			
+			table.append(portalRow);
 		}
 	}
 	listing.off('click.linkedPortal').on('click.linkedPortal', '.place-linked-portal', function(){
