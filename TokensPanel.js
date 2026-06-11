@@ -1114,7 +1114,7 @@ async function create_and_place_token(listItem, hidden = undefined, specificImag
         console.warn("create_and_place_token was called without a listItem");
         return;
     }
-
+    
     if (listItem.isTypeFolder() || listItem.isTypeEncounter()) {
 
         let tokensToPlace = [];
@@ -1796,15 +1796,20 @@ function alternative_images_for_item(listItem) {
  * @returns {string} the url an image associated with the provided listItem
  */
 function random_image_for_item(listItem, specificImage) {
-    let validSpecifiedImage = parse_img(specificImage);
+    const validSpecifiedImage = parse_img(specificImage);
     if (validSpecifiedImage !== undefined && validSpecifiedImage.length > 0) {
         console.debug("random_image_for_item validSpecifiedImage", validSpecifiedImage);
         return validSpecifiedImage
     }
-
-    let alternativeImages = alternative_images_for_item(listItem);
+    const customizations = find_token_customization(listItem.type, listItem.id);
+    const validDefaultImage = parse_img(customizations?.tokenOptions?.defaultImage);
+    if (validDefaultImage !== undefined && validDefaultImage.length > 0) {
+        console.debug("random_image_for_item validDefaultImage", validDefaultImage);
+        return validDefaultImage
+    }
+    const alternativeImages = alternative_images_for_item(listItem);
     if (alternativeImages !== undefined && alternativeImages.length > 0) {
-        let randomIndex = getRandomInt(0, alternativeImages.length);
+        const randomIndex = getRandomInt(0, alternativeImages.length);
         console.debug("random_image_for_item", alternativeImages, randomIndex);
         return parse_img(alternativeImages[randomIndex]);
     } else {
@@ -3578,8 +3583,8 @@ function display_builtin_token_details_modal(listItem, placedToken) {
 }
 
 function build_token_div_for_sidebar_modal(imageUrl, listItem, placedToken) {
-    let parsedImage = parse_img(imageUrl);
     let options = find_token_options_for_list_item(listItem);
+    let parsedImage = parse_img(imageUrl);
     if (placedToken) {
         options = {...placedToken.options};
     }
@@ -3634,7 +3639,8 @@ function redraw_token_images_in_modal(sidebarPanel, listItem, placedToken, drawI
         alternativeImages = alternativeImages.concat(placedToken.options.alternativeImages);
     }
     alternativeImages = alternativeImages.concat(alternative_images_for_item(listItem).map(image => parse_img(image)));
-
+    const customization = find_token_customization(listItem.type, listItem.id);
+    const defaultImage = customization?.tokenOptions?.defaultImage;
     let placedImg = parse_img(placedToken?.options?.imgsrc);
     if (placedImg.length > 0 && !alternativeImages.includes(placedImg)) {
         // the placedToken image has been changed by the user so put it at the front
@@ -3642,6 +3648,8 @@ function redraw_token_images_in_modal(sidebarPanel, listItem, placedToken, drawI
         tokenDiv.attr("data-token-id", placedToken.options.id);
         if((currentlySelectedToken != undefined && tokenDiv.find('.div-token-image')?.attr('src') == currentlySelectedToken) || (selectedTokenImage != undefined && tokenDiv.find('.div-token-image')?.attr('src') == selectedTokenImage))
             tokenDiv.toggleClass('selected', true);
+        if(defaultImage != undefined && defaultImage == placedImg)
+            tokenDiv.toggleClass('default-token-image');
         modalBody.append(tokenDiv);
     }
 
@@ -3672,6 +3680,8 @@ function redraw_token_images_in_modal(sidebarPanel, listItem, placedToken, drawI
                     let tokenDiv = build_token_div_for_sidebar_modal(alternativeImages[index], listItem, placedToken);
                     if((currentlySelectedToken != undefined && tokenDiv.find('.div-token-image')?.attr('src') == currentlySelectedToken) || (selectedTokenImage != undefined && tokenDiv.find('.div-token-image')?.attr('src') == selectedTokenImage))
                         tokenDiv.toggleClass('selected', true);
+                    if(defaultImage != undefined && defaultImage == alternativeImages[index])
+                        tokenDiv.toggleClass('default-token-image');
                     modalBody.append(tokenDiv);
                     index++;
                 }
@@ -3693,6 +3703,8 @@ function redraw_token_images_in_modal(sidebarPanel, listItem, placedToken, drawI
     for (let i = 0; i < alternativeImages.length; i++) {
         if (drawInline) {
             let tokenDiv = build_token_div_for_sidebar_modal(alternativeImages[i], listItem, placedToken);
+            if(defaultImage != undefined && defaultImage == alternativeImages[i])
+                tokenDiv.toggleClass('default-token-image');
             modalBody.append(tokenDiv);
         } else {
             if(i<13){
@@ -4285,15 +4297,17 @@ function register_custom_token_image_context_menu() {
         selector: ".custom-token-image-item, #token-change-image-modal .example-token",
         build: function(element, e) {
             let items = {};
-            let foundElement = find_sidebar_list_item(element)
-            let tokenChangeImage = element.parents().find('#token-change-image-modal').length>0
+            let itemToPlace = find_sidebar_list_item(element)
+            let tokenChangeImage = element.parents().find('#token-change-image-modal').length>0;
             if (!element.hasClass("change-token-image-item") && !tokenChangeImage) {
+                const rootId = RootFolder.allValues().find(d => itemToPlace.folderPath.includes(d.path) && d.name !='')?.id;
+                const tokenCustomization = find_or_create_token_customization(itemToPlace.type, itemToPlace.id, itemToPlace.parentId, rootId);
+                const defaultImage = tokenCustomization?.tokenOptions?.defaultImage;
+                const imgSrc = element.find(".token-image").attr("data-src");
                 items.place = {
                     name: "Place Token",
                     callback: function (itemKey, opt, originalEvent) {
-                        let itemToPlace = find_sidebar_list_item(opt.$trigger);
                         let specificImage = undefined;
-                        let imgSrc = opt.$trigger.find(".token-image").attr("data-src");
                         if (imgSrc !== undefined && imgSrc.length > 0) {
                             specificImage = imgSrc;
                         }
@@ -4303,15 +4317,39 @@ function register_custom_token_image_context_menu() {
                 items.placeHidden = {
                     name: "Place Hidden Token",
                     callback: function (itemKey, opt, originalEvent) {
-                        let itemToPlace = find_sidebar_list_item(opt.$trigger);
                         let specificImage = undefined;
-                        let imgSrc = opt.$trigger.find(".token-image").attr("data-src");
                         if (imgSrc !== undefined && imgSrc.length > 0) {
                             specificImage = imgSrc;
                         }
                         create_and_place_token(itemToPlace, true, specificImage);
                     }
                 };
+                
+                const alternativeImages = alternative_images_for_item(itemToPlace);
+                if(alternativeImages?.length>1){
+                    items.setAsDefault = {
+                        name: defaultImage == imgSrc ? "Disable Default Image" : "Set as Default Image",
+                        callback: function (itemKey, opt, originalEvent) {
+                            let specificImage = undefined;
+                            const currentDefault = $('.default-token-image');
+                            currentDefault.addClass('removeTransition');
+                            currentDefault.removeClass('default-token-image');
+                            if (defaultImage != imgSrc && imgSrc !== undefined && imgSrc.length > 0) {
+                                tokenCustomization.tokenOptions.defaultImage = imgSrc;
+                                opt.$trigger.addClass('default-token-image');
+                            } else{
+                                delete tokenCustomization.tokenOptions.defaultImage
+                            }
+                            setTimeout(function(){
+                                currentDefault.removeClass('removeTransition');
+                            }, 200)
+                            const row = build_sidebar_list_row(itemToPlace);
+                            enable_draggable_token_creation(row);                  
+                            $(`.sidebar-list-item-row[id="${itemToPlace.id}"]`).replaceWith(row);
+                            persist_token_customization(tokenCustomization);
+                        }
+                    };
+                }
             }
             items.copy = {
                 name: "Copy Url",
@@ -4344,7 +4382,7 @@ function register_custom_token_image_context_menu() {
                     window.MB.inject_chat(msgdata)
                 }
             };
-            if (!$('.token-image-modal-url-label-add-wrapper .token-image-modal-footer-title').text().includes('Replace') && !element.hasClass("change-token-image-item") && foundElement?.type !== 'builtinToken' && foundElement?.type !== 'ddbToken') {
+            if (!$('.token-image-modal-url-label-add-wrapper .token-image-modal-footer-title').text().includes('Replace') && !element.hasClass("change-token-image-item") && itemToPlace?.type !== 'builtinToken' && itemToPlace?.type !== 'ddbToken') {
                 items.border = "---";
                 items.remove = {
                     name: "Remove",
