@@ -3329,7 +3329,9 @@ const [wall_snap, clear_wall_snap] = function () {
 	}
 	function wall_snap(x, y, limit) {
 		if(current_wall_snap_points === null) current_wall_snap_points = collect_wall_snap_points();
-    		if(!limit) limit = window.CURRENT_SCENE_DATA.hpps / 2;
+		    const zoom = Math.max(1, window.ZOOM);
+			const minLimit = Math.min(window.CURRENT_SCENE_DATA.hpps/2, 15 * window.CURRENT_SCENE_DATA.scale_factor)/zoom
+    		if(!limit) limit = Math.max(5, minLimit);
 		for(let i=0; i<current_wall_snap_points.length; i++) {
 			const [px, py] = current_wall_snap_points[i];
 			const pdist = Math.sqrt(Math.pow(px - x,2) + Math.pow(py - y, 2));
