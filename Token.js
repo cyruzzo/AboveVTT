@@ -2220,8 +2220,8 @@ class Token {
 		
 
 	}
-	place(animationDuration) {
-		try{
+	throttlePlace = throttle((animationDuration) => {
+				try{
 			if(!this.options.id.includes('exampleToken') && (isNaN(parseFloat(this.options.left)) || isNaN(parseInt(this.options.top)))){// prevent errors with NaN positioned tokens - delete them as catch all. 
 				this.options.deleteableByPlayers = true;
 				this.delete();
@@ -3579,9 +3579,9 @@ class Token {
 			// No scene loaded!
 			return;
 		}
-	
-
-
+	}, 1000)
+	place(animationDuration) {
+		this.throttlePlace(animationDuration);
 	}
 
 	// key: String, numberRemaining: Number; example: track_ability("1stlevel", 2) // means they have 2 1st level spell slots remaining
