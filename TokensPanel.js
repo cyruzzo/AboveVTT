@@ -2725,7 +2725,7 @@ function display_aoe_token_configuration_modal(listItem, placedToken = undefined
             token = window.TOKEN_OBJECTS[id]
             if (token){
                 token.options.alternativeImages = customization.tokenOptions.alternativeImages;
-                token.sync(await $.extend(true, {}, token.options))
+                token.sync()
             }
         }
         if(['.mp4', '.webm', '.m4v'].some(d => type.includes(d))){

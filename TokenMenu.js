@@ -506,7 +506,7 @@ function token_context_menu_expanded(tokenIds, e) {
 					}
 					
 					window.TOKEN_OBJECTS[tokenIds].place(0);
-					window.TOKEN_OBJECTS[tokenIds].sync($.extend(true, {}, window.TOKEN_OBJECTS[tokenIds].options));
+					window.TOKEN_OBJECTS[tokenIds].sync();
 					redraw_light_walls();
 				})
 
