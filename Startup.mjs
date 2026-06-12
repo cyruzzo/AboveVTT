@@ -133,9 +133,9 @@ $(function() {
 
         window.STREAMPEERS = {};
         window.MYSTREAMID = uuid();
-        window.JOINTHEDICESTREAM = window.EXPERIMENTAL_SETTINGS['streamDiceRolls'];
+        window.JOINTHEDICESTREAM = window.EXPERIMENTAL_SETTINGS['streamDiceRolls'] == true;
         enable_dice_streaming_feature(window.JOINTHEDICESTREAM);
-       
+
         tabCommunicationChannel.addEventListener ('message', (event) => {
           if((event.data.msgType == 'addCondition' || event.data.msgType == 'removeCondition') && event.data.sendTo == window.PLAYER_ID){ // Sets a player token's condition on and off
             const tokenId = Object.keys(window.all_token_objects).find(key => key.includes(event.data.characterId));
@@ -316,6 +316,72 @@ $(function() {
         sendBeyond20Event('register-generic-tab', {action:'register-generic-tab'});
         if (is_encounters_page()) {
           window.dispatchEvent(new Event('resize'));
+        }
+      }).then(async ()=>{
+        if (navigator.brave && typeof navigator.brave.isBrave === 'function') {
+          if (localStorage.getItem("BraveShieldsWarningDismissed") === "true") {
+            return;
+          }
+          function isBraveFingerprintEnabled() {
+            try {
+              const canvas = document.createElement('canvas');
+              const size = 16;
+              canvas.width = size;
+              canvas.height = size;
+
+              const ctx = canvas.getContext('2d');
+              if (!ctx) return false;
+
+              ctx.fillStyle = '#000000';
+              ctx.fillRect(0, 0, size, size);
+
+              const imageData = ctx.getImageData(0, 0, size, size);
+              const data = imageData.data;
+
+              for (let i = 0; i < data.length; i += 4) {
+                if (data[i] !== 0 || data[i + 1] !== 0 || data[i + 2] !== 0) {
+                  return true;
+                }
+                if (data[i + 3] !== 255) {
+                  return true;
+                }
+              }
+
+              return false;
+            } catch (e) {
+              console.warn('Canvas fingerprint check failed', e);
+              return false;
+            }
+          }
+          function showBraveShieldsWarning() {
+            $("#above-vtt-error-message").remove();
+            const container = $(`
+              <div id="above-vtt-error-message">
+                <h2>Brave Shields is enabled</h2>
+                <div id="error-message-details">
+                  <p>Brave Shields blocks fingerprinting by adjusting canvas colors, which interferes with vision and elevation in AboveVTT.</p>
+                  <p>For full functionality, at minimum, block fingerprinting for canvas must be disabled in Brave Shields advanced settings. </p>
+                </div>
+                <label style="display:flex;align-items:center;margin-top:0.75rem;cursor:pointer;">
+                  <input id="brave-shields-warning-hide" type="checkbox" style="margin-right:0.5rem;">
+                  Do not show again
+                </label>
+                <div class="error-message-buttons">
+                  <button id="close-error-button">Close</button>
+                </div>
+              </div>
+            `);
+            $(document.body).append(container);
+            $("#close-error-button").on("click", () => {
+              if ($("#brave-shields-warning-hide").is(":checked")) {
+                localStorage.setItem("BraveShieldsWarningDismissed", "true");
+              }
+              removeError();
+            });
+          }
+          if(isBraveFingerprintEnabled()){
+            showBraveShieldsWarning();
+          }
         }
       })
       .catch((error) => {
