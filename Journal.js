@@ -2595,28 +2595,40 @@ class JournalManager{
             	let eachNumberFound = (input.match(/(?<!<[^>]+)\d+\/day( each)?/gi)) ? parseInt(input.match(/(?<!<[^>]+)[0-9]+(?![0-9]?px)/gi)[0]) : undefined;
             	let slotsNumberFound = (input.match(/(?<!<[^>]+)\d+\w+ level \(\d slots?\)\:/gi)) ? parseInt(input.match(/(?<!<[^>]+)[0-9]+/gi)[1]) : undefined;
             	let spellLevelFound = (slotsNumberFound) ? input.match(/\d+\w+ level/gi)[0] : undefined;
-                let parts = input.split(/((?<!<[^>]+):)/i);
-                let i = parts.length - 1;
-                parts[i] = parts[i].split(/(?<!<[^>]+),(?![^(]*\))/gm);
-                for (let p in parts[i]) {
+				
+				let parts = input.replace(/<(?!\/?(?:span|a)\b)[^>]*>/gi, '').split(/((?<!<[^>]+):)/gi)
+				
+                for (let p=0; p<parts.length; p++) {
+					if(p<=1){
+						parts[p] = `<strong>${parts[p]}</strong>`
+						continue;
+					}
 
-                	if(parts[i][p].match(/^((\s+?)?(<a|<span))/gi) && $(parts[i][p])?.is('a, span[data-spell]'))
-                		continue;
-                	parts[i][p] = parts[i][p].replace(/<(\/)?em>|<(\/)?b>|<(\/)?strong>/gi, '')
-                	let spellName = (parts[i][p].match(/^<a|ignore-abovevtt-formating/gi)) ? $(parts[i][p]).text() : parts[i][p].replace(/<\/?p[a-zA-z'"0-9\s]+?>/g, '').replace(/\s?\[spell\]\s?|\s?\[\/spell\]\s?/g, '').replace('[/spell]', '').	replace(/\s|&nbsp;/g, '');
+					const splitParts = parts[p].split(/(?<!<[^>]+),(?![^(]*\))/gm);
+					for(let part in splitParts){
+						let spellName = (splitParts[part].match(/^(\s+)?<[^>]+>/gi)) ? $(splitParts[part]).text() : splitParts[part].replace(/(\s+)?<[^>]+>/g, '').replace(/\s?\[spell\]\s?|\s?\[\/spell\]\s?/g, '').replace('[/spell]', '').replace(/\s|&nbsp;/g, '');
+						if(splitParts[part].match(/^((\s+?)?(<a|<span))|^$/gi) && $(splitParts[part])?.is('a, span[data-spell]')){
+							if(eachNumberFound){
+								splitParts[part] = `<span class="add-input each" data-number="${eachNumberFound}" data-spell="${spellName}">${splitParts[part]}</span>`
+							}
+							continue;
+						}
+						splitParts[part] = splitParts[part].replace(/<(\/)?[^>]+>/gi, '')
+						
+						if( !(splitParts[part].startsWith('<') || splitParts[part].startsWith('[spell]')) && splitParts[part] && typeof splitParts[part] === 'string') {
+							splitParts[part] = splitParts[part].split('<')[0]
+								.replace(/^/gm, `[spell]`)
+								.replace(/( \(|(?<!\))$)/gm, `[/spell]$1`);
+						}
 
-                   	if( !(parts[i][p].startsWith('<') || parts[i][p].startsWith('[spell]')) && parts[i][p] && typeof parts[i][p] === 'string') {
-                        parts[i][p] = parts[i][p].split('<')[0]
-                            .replace(/^/gm, `[spell]`)
-                            .replace(/( \(|(?<!\))$)/gm, '[/spell]');
-                    }
+						if(eachNumberFound){
+							splitParts[part] = `<span class="add-input each" data-number="${eachNumberFound}" data-spell="${spellName}">${splitParts[part]}</span>`
+						}
+					}
+					parts[p] = splitParts.join(', ');
 
-                    if(eachNumberFound){
-                    	parts[i][p] = `<span class="add-input each" data-number="${eachNumberFound}" data-spell="${spellName}">${parts[i][p]}</span>`
-                    }
                 }
 
-                parts[i] = parts[i].join(', ');
                	input = parts.join('');
                 if(slotsNumberFound){
                 	input = `<span class="add-input slots" data-number="${slotsNumberFound}" data-spell="${spellLevelFound}">${input}</span>`

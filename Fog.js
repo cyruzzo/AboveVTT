@@ -2327,7 +2327,7 @@ function open_portal_config(){
 		const portalId = $(this).closest('.portal-entry').attr('data-id');
 		const portal = window.portalsInConfig[portalId];
 		
-		window.all_token_objects[portalId].sync($.extend(true, {}, portal.token.options), portal.sceneId);
+		window.all_token_objects[portalId].sync(portal.sceneId);
 	
 		const wall = window.portalsInConfig[portalId].portalWall;
 		
@@ -2680,17 +2680,20 @@ function redraw_light_walls(options = {clearCanvas: true, editingWallPoints: fal
 									curr.place(0);
 									let optionsClone = $.extend(true, {}, curr.options);
 									if(shiftHeld){
-										optionsClone.speedAnim = true;
+										curr.options.speedAnim = true;
 									}
 									
 									if(!alreadyHighlighted){
 										if(shiftHeld){					
-											optionsClone.highlightCenter = true;
+											curr.options.highlightCenter = true;
 										}
 										alreadyHighlighted = true;
 										curr.highlight();
 									}
-									curr.sync(optionsClone);
+									
+									curr.sync();
+									delete curr.options.speedAnim;
+									delete curr.options.highlightCenter 
 								})
 							}
 							return;
@@ -4921,7 +4924,7 @@ function drawing_mouseup(e) {
 				}
 				else if(window.TOKEN_OBJECTS[tokenId] !== undefined){
 					window.TOKEN_OBJECTS[tokenId].options.scaleCreated = window.DRAWINGS[index][8];
-					window.TOKEN_OBJECTS[tokenId].sync($.extend(true, {}, window.TOKEN_OBJECTS[tokenId].options));		
+					window.TOKEN_OBJECTS[tokenId].sync();		
 
 					window.selectedWalls[i].pt1 = {'x':x1*adjustedScale, 'y':y1*adjustedScale};
 					window.selectedWalls[i].pt2 = {'x':x2*adjustedScale, 'y':y2*adjustedScale}
