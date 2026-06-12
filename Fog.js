@@ -2678,7 +2678,6 @@ function redraw_light_walls(options = {clearCanvas: true, editingWallPoints: fal
 								
 
 									curr.place(0);
-									let optionsClone = $.extend(true, {}, curr.options);
 									if(shiftHeld){
 										curr.options.speedAnim = true;
 									}

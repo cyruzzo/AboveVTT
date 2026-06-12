@@ -851,7 +851,7 @@ function create_update_token(options, save = true) {
   }
   
   window.TOKEN_OBJECTS[id].place(0);
-  window.TOKEN_OBJECTS[id].sync($.extend(true, {}, options));
+  window.TOKEN_OBJECTS[id].sync();
   if(window.all_token_objects[id] == undefined){
     window.all_token_objects[id] = window.TOKEN_OBJECTS[id]	
   }
