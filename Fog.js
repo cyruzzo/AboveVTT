@@ -2364,7 +2364,7 @@ function open_portal_config(){
 						mouseX+5,
 						mouseY,
 						12,
-						wall[8],
+						window.CURRENT_SCENE_DATA.scale_factor,
 						wall[9],
 						(wall[10] != undefined ? wall[10] : ""),
 						(wall[11] != undefined ? wall[11] : "")
