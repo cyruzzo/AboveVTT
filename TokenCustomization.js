@@ -467,6 +467,19 @@ class TokenCustomization {
     findParent() {
         return window.TOKEN_CUSTOMIZATIONS.find(tc => tc.id === this.parentId);
     }
+    findChildren() {
+        return window.TOKEN_CUSTOMIZATIONS.filter(tc => tc.parentId === this.id);
+    }
+    findDecendantsIds(found = []){
+        found.push(this.id);
+        if(this.isTypeFolder()){
+            const children = this.findChildren();
+            for(const child of children){
+                child.findDecendantsIds(found);
+            }
+        }
+        return found;
+    }
     findAncestors(found = []) {
         found.push(this);
         let parent = this.findParent();
@@ -1046,7 +1059,8 @@ function delete_token_customization_by_parent_id(parentId, callback) {
             : window.TOKEN_CUSTOMIZATIONS.find(d => d.id == parentId)?.fullPath()
     if(!path)
         return;
-    let tokensToBeDeleted = window.TOKEN_CUSTOMIZATIONS.filter(tc => tc.fullPath().includes(path));
+    const decendantIds = window.TOKEN_CUSTOMIZATIONS.find(d => d.id == parentId)?.findDecendantsIds();
+    let tokensToBeDeleted = window.TOKEN_CUSTOMIZATIONS.filter(tc => decendantIds.includes(tc.id));
     for(i = 0; i < tokensToBeDeleted.length; i++){
         let statBlockID = tokensToBeDeleted[i].tokenOptions?.statBlock;
         if(statBlockID){
@@ -1056,7 +1070,7 @@ function delete_token_customization_by_parent_id(parentId, callback) {
             window.JOURNAL.persist();
         }
     }
-    window.TOKEN_CUSTOMIZATIONS = window.TOKEN_CUSTOMIZATIONS.filter(tc => !tc.fullPath().includes(path));
+    window.TOKEN_CUSTOMIZATIONS = window.TOKEN_CUSTOMIZATIONS.filter(tc => !decendantIds.includes(tc.id));
 
     persist_all_token_customizations(window.TOKEN_CUSTOMIZATIONS, callback);
 }
