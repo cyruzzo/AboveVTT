@@ -883,7 +883,7 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 		}
 		
 		window.TOKEN_OBJECTS[id].place(0);
-		window.TOKEN_OBJECTS[id].sync($.extend(true, {}, options));
+		window.TOKEN_OBJECTS[id].sync();
 
 	}
 
@@ -952,6 +952,7 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 		window.MB.sendMessage("custom/myVTT/delete_scene",{ id: sceneId });
 		let sceneIndex = window.ScenesHandler.scenes.findIndex(s => s.id === sceneId);
 		window.ScenesHandler.scenes.splice(sceneIndex, 1);
+		remove_zoom_from_storage(sceneId);
 		if (window.JOURNAL.notes[sceneId] != undefined){
 			delete window.JOURNAL.notes[sceneId];
 			window.JOURNAL.persist();
