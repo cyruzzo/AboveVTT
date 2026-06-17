@@ -198,8 +198,8 @@ function add_zoom_to_storage() {
 	console.group("add_zoom_to_storage");
 	console.log("storing zoom");
 
-	
-	const zooms = JSON.parse(localStorage.getItem('zoom'))?.filter(z=> !z.title) || []; // filter out old data that used to be based on scene title rather then id - can be removed eventually
+	const currentDate = Date.now();
+	const zooms = JSON.parse(localStorage.getItem('zoom'))?.filter(z=> !z.title && z.expiryDate != undefined && z.expiryDate>currentDate) || []; // filter out old data that used to be based on scene title rather then id - can be removed eventually
 	const zoomIndex = zooms.findIndex(zoom => zoom.id == window.CURRENT_SCENE_DATA.id);
 	const centerView = center_of_view(); 
 	const sidebarSize = ($('#hide_rightpanel.point-right').length>0 ? get_sidebar_width() : 0);
@@ -208,6 +208,7 @@ function add_zoom_to_storage() {
 		saved.zoom = window.ZOOM;
 		saved.leftOffset = window.scrollX + window.innerWidth/2 - sidebarSize/2;
 		saved.topOffset = window.scrollY + window.innerHeight/2;
+		saved.expiryDate = currentDate + (30 * 24 * 60 * 60 * 1000) ;
 	}
 	else{
 		// zoom doesn't exist
@@ -215,7 +216,8 @@ function add_zoom_to_storage() {
 			"zoom":window.ZOOM,
 			"leftOffset": window.scrollX + window.innerWidth/2 - sidebarSize/2,
 			"topOffset": window.scrollY + window.innerHeight/2,
-			"id": window.CURRENT_SCENE_DATA.id
+			"id": window.CURRENT_SCENE_DATA.id,
+			"expiryDate": currentDate + (30 * 24 * 60 * 60 * 1000) // 30 days from now
 		});
 	}
 	localStorage.setItem('zoom', JSON.stringify(zooms));
@@ -241,7 +243,8 @@ function set_default_vttwrapper_size() {
  * Removes the zoom for the current scene from local storage, applied when user click "fit zoom" button.
  */
 function remove_zoom_from_storage(sceneId = window.CURRENT_SCENE_DATA.id) {
-	const zooms = JSON.parse(localStorage.getItem('zoom'))?.filter(z=> !z.title) || [];
+	const currentDate = Date.now();
+	const zooms = JSON.parse(localStorage.getItem('zoom'))?.filter(z=> !z.title && z.expiryDate != undefined && z.expiryDate>currentDate) || [];
 	const zoomIndex = zooms.findIndex(zoom => zoom.id === sceneId);
 	if (zoomIndex !== -1) {
 		console.log("removing zoom from storage", zooms[zoomIndex]);
@@ -268,7 +271,8 @@ function apply_zoom_from_storage() {
 	else{
 		const zoomState = localStorage.getItem("zoom");
 		if (zoomState != null) {
-			const zooms = JSON.parse(zoomState)?.filter(z => !z.title);
+			const currentDate = Date.now();
+			const zooms = JSON.parse(zoomState)?.filter(z => !z.title && z.expiryDate != undefined && z.expiryDate>currentDate) || [];
 			const zoomIndex = zooms.findIndex(zoom => zoom.id === window.CURRENT_SCENE_DATA.id);
 			if(zoomIndex !== -1) {
 				console.log("restoring zoom level", zooms[zoomIndex]);
