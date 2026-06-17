@@ -2224,7 +2224,7 @@ class MessageBroker {
 
 		const centerView = data.highlightCenter == true;
 		delete msg.data.highlightCenter;
-
+		const ignoredSyncProperties = ["left", "top", "hidden", "scaleCreated", "groupId"]
 		if (msg.sceneId != window.CURRENT_SCENE_DATA.id || msg.loading) {
 			let gridSquares = parseFloat(data.gridSquares);
 			if (!isNaN(gridSquares)) {
@@ -2234,7 +2234,7 @@ class MessageBroker {
 			}
 			if (data.id in window.all_token_objects) {
 				for (let property in window.all_token_objects[data.id].options) {		
-					if(property == "left" || property == "top" || property == "hidden" || property == "scaleCreated")
+					if(ignoredSyncProperties.includes(property))
 						continue;
 					if(msg.loading){
 						data[property] = window.all_token_objects[data.id].options[property];
@@ -2266,8 +2266,9 @@ class MessageBroker {
 					delete window.visionBlockingTokenCache[data.id];
 				}
 			}
+			
 			for (let property in data) {
-				if(msg.sceneId != window.CURRENT_SCENE_DATA.id && (property == "left" || property == "top" || property == "hidden" || property == "scaleCreated"))
+				if(msg.sceneId != window.CURRENT_SCENE_DATA.id && ignoredSyncProperties.includes(property))
 					continue;	
 				if(window.all_token_objects[data.id] == undefined){
 					window.all_token_objects[data.id] = window.TOKEN_OBJECTS[data.id]	
