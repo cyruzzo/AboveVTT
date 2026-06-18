@@ -2128,12 +2128,17 @@ padding-bottom: 5px;
 .portal-listing .portal-show-name {
     margin-right:10px;
 }
-.portal-listing button.locate-portal {
+.portal-listing button:is(.locate-portal, .go-to-scene-portal, .delete-portal) {
     width: 20px;
     padding: 0px;
     height: 20px;
     vertical-align: middle;
 }
+.go-to-scene-portal span.material-symbols-outlined{
+    font-size:16px;
+    color: rgb(27, 154, 240);
+}
+
 table.portal-table,
 table.portal-table :is(td, th){
   border: 1px solid #ddd;
@@ -2636,7 +2641,23 @@ padding-top:10px;
     border-radius: calc(2px * var(--scene-scale, 1));
     pointer-events: none;
 }
+@keyframes march {
+  to { background-position: 10px 0, -10px 100%, 0 -10px, 100% 10px; }
+}
 
+.door-button.tokenselected::before {
+    top: -2px;
+    bottom: -8px;
+    left: -2px;
+    right: -2px;
+    border-radius: 4px;
+    border: none;
+    background-image: linear-gradient(90deg, #000d 50%, #fffd 50%), linear-gradient(90deg, #000d 50%, #fffd 50%), linear-gradient(0deg, #000d 50%, #fffd 50%), linear-gradient(0deg, #000d 50%, #fffd 50%);
+    background-repeat: repeat-x, repeat-x, repeat-y, repeat-y;
+    background-size: 5px 2px, 5px 2px, 2px 5px, 2px 5px;
+    background-position: 0 0, 0 100%, 0 0, 100% 0;
+    animation: march 1s linear infinite;
+}
 .tokenselected.ui-draggable-disabled::before{
     border: 5px #f7bfbfd5 solid
 }
