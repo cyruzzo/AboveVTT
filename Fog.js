@@ -2241,7 +2241,7 @@ function open_portal_config(){
 	});
 	const listing = $(`<div class='portal-listing'></div>`)
 	const table = $(`<table class='portal-table'></table>`)
-	const tableHeaders = $(`<tr><th>Find Portal</th><th>Name</th><th>Always Show Name</th><th>Place Linked Portal</th></tr>`)
+	const tableHeaders = $(`<tr><th>Find Portal</th><th>Name</th><th>Always Show Name</th><th>Place Linked Portal</th><th>Delete Portal</th></tr>`)
 	table.append(tableHeaders);
 	listing.append(table);
 	container.append(listing);
@@ -2302,13 +2302,16 @@ function open_portal_config(){
 		for(let portalId in window.portalsInConfig){
 			const portal = window.portalsInConfig[portalId];
 			const portalRow = $(`<tr class='portal-entry' data-id='${portalId}'></tr>`);
-			let locatePortal;	
-			if(portal.sceneId == window.CURRENT_SCENE_DATA.id){
-				locatePortal = $(`<button class='locate-portal'>
+			const locatePortal = portal.sceneId == window.CURRENT_SCENE_DATA.id 
+				? $(`<button class='locate-portal'>
 					<svg class="findSVG" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M0 0h24v24H0z" fill="none"/><path d="M12 11c1.33 0 4 .67 4 2v.16c-.97 1.12-2.4 1.84-4 1.84s-3.03-.72-4-1.84V13c0-1.33 2.67-2 4-2zm0-1c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm6 .2C18 6.57 15.35 4 12 4s-6 2.57-6 6.2c0 2.34 1.95 5.44 6 9.14 4.05-3.7 6-6.8 6-9.14zM12 2c4.2 0 8 3.22 8 8.2 0 3.32-2.67 7.25-8 11.8-5.33-4.55-8-8.48-8-11.8C4 5.22 7.8 2 12 2z"/></svg>
-				</button>`)
-				
-			} 
+				</button>`)	
+				: $(`<button class='go-to-scene-portal'>
+					<span class="material-symbols-outlined">
+						map_search
+					</span>
+				</button>`)	
+
 			addPortalCell(portalRow, locatePortal);
 			
 			const nameInput = $(`<input type='text' class='portal-name' placeholder='Portal Name' value='${portal.token?.options?.name ?? ''}' />`);
@@ -2319,6 +2322,10 @@ function open_portal_config(){
 
 			const placeLinkedPortalButton = $(`<button class='place-linked-portal'><svg class="findSVG" width="24px" height="24px" viewBox="-2 -2 22 24" xmlns="http://www.w3.org/2000/svg" "=""><path fill-rule="evenodd" clip-rule="evenodd" d="M7.2 10.8V18h3.6v-7.2H18V7.2h-7.2V0H7.2v7.2H0v3.6h7.2z"></path></svg></button>`);
 			addPortalCell(portalRow, placeLinkedPortalButton);
+			const deletePortalButton = portal.sceneId == window.CURRENT_SCENE_DATA.id 
+				? $('<button class="delete-portal" style="font-size:10px;"><svg class="delSVG" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M16 9v10H8V9h8m-1.5-6h-5l-1 1H5v2h14V4h-3.5l-1-1zM18 7H6v12c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7z"/></svg></button>')
+				: '';	
+			addPortalCell(portalRow, deletePortalButton);
 			
 			table.append(portalRow);
 		}
@@ -2346,6 +2353,22 @@ function open_portal_config(){
 			let [rectX, rectY] = [endX - window.CURRENT_SCENE_DATA.hpps/2, endY-window.CURRENT_SCENE_DATA.vpps/2]
 			context.setLineDash([5, 5])
 			drawRect(context, rectX, rectY, window.CURRENT_SCENE_DATA.hpps, window.CURRENT_SCENE_DATA.vpps, '#fff', false)
+			if(window.TOKEN_OBJECTS[portalId] != undefined){
+				let [originX, originY] = [(parseInt(window.TOKEN_OBJECTS[portalId].options.left)+25)*scale, (parseInt(window.TOKEN_OBJECTS[portalId].options.top)+25)*scale]
+							
+				endX = endX - (endX-originX)*0.03;
+				endY = endY - (endY-originY)*0.03;
+				brushpoints.push({x:originX, y:originY}); // 4 points so arrow head works
+				brushpoints.push({x:originX, y:originY});
+				brushpoints.push({x:originX, y:originY});
+				brushpoints.push({x:originX, y:originY});
+				// draw a dot
+				brushpoints.push({x:endX, y:endY});
+				
+
+				drawBrushArrow(context, brushpoints,'#fff',6, undefined, 'dash');
+			}
+
 			context.setLineDash([])
 		});
 		target.off('mouseup.setTele touchend.setTele').on('mouseup.setTele touchend.setTele', function(e){
@@ -2429,6 +2452,7 @@ function open_portal_config(){
 		});
 
 	})
+
 	listing.off('change.name input.name').on('change.name', '.portal-name', function(){
 		const input = $(this);
 		const newName = input.val();
@@ -2464,6 +2488,42 @@ function open_portal_config(){
 		const id = $(this).closest('.portal-entry').attr('data-id');
 		window.TOKEN_OBJECTS[id]?.highlight()
 	})
+	listing.off('click.goToPortalScene').on('click.goToPortalScene', '.go-to-scene-portal', function(){
+		const id = $(this).closest('.portal-entry').attr('data-id');
+		const sceneId = window.portalsInConfig[id].sceneId;
+		window.MB.sendMessage("custom/myVTT/switch_scene", { sceneId: sceneId, switch_dm: true });
+		window.TELEPORTER_PASTE_BUFFER = {
+			'targetToken': id,
+			'tokens': {}
+		}
+		$("#scenes-panel .dm_scenes_button.selected-scene").removeClass("selected-scene");
+		$(`#scenes-panel [data-scene-id="${sceneId}"] .dm_scenes_button`).addClass("selected-scene");				
+	})
+	listing.off('mouseenter.locatePortal, focusin.locatePortal').on('mouseenter.locatePortal, focusin.locatePortal', '.portal-entry', function(){
+		const row = $(this);
+		const id = row.attr('data-id');
+		$(`.door-button[data-id="${id}"]`).addClass('tokenselected');
+	})
+	listing.off('mouseleave.locatePortal, focusout.locatePortal').on('mouseleave.locatePortal, focusout.locatePortal', '.portal-entry', function(){
+		const row = $(this);
+		const id = row.attr('data-id');
+		if(row.find('input:focus').length>0)
+			return;
+		$(`.door-button[data-id="${id}"]`).removeClass('tokenselected');
+	})
+	listing.off('click.deletePortal').on('click.deletePortal', '.delete-portal', function(){
+		const id = $(this).closest('.portal-entry').attr('data-id');
+		const portalWall = window.portalsInConfig[id].portalWall;
+		window.TOKEN_OBJECTS[id].delete(true);
+		window.DRAWINGS = window.DRAWINGS.filter(d => (d.length !== portalWall.length || !d.every((val, i) => {return val === portalWall[i] })))
+ 		pushWallUndo({
+			undo: [[]],
+			redo: [[...portalWall]]
+		});
+		redraw_light_walls();
+	})
+
+	
 }
 /*
 Clears and redraws all walls from window.DRAWINGS, also redraws wall heights if present.
@@ -2665,6 +2725,8 @@ function redraw_light_walls(options = {clearCanvas: true, editingWallPoints: fal
 								}
 								else{
 									window.MB.sendMessage("custom/myVTT/switch_scene", { sceneId: tokenObject.options.teleporterCoords.sceneId, switch_dm: true });
+									$("#scenes-panel .dm_scenes_button.selected-scene").removeClass("selected-scene");
+									$(`#scenes-panel [data-scene-id="${tokenObject.options.teleporterCoords.sceneId}"] .dm_scenes_button`).addClass("selected-scene");
 								}
 							}
 							else if(tokenObject?.options?.teleporterCoords != undefined){

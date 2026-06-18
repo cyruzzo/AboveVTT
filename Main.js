@@ -199,12 +199,11 @@ function add_zoom_to_storage() {
 	console.log("storing zoom");
 
 	const currentDate = Date.now();
-	const zooms = JSON.parse(localStorage.getItem('zoom'))?.filter(z=> !z.title && z.expiryDate != undefined && z.expiryDate>currentDate) || []; // filter out old data that used to be based on scene title rather then id - can be removed eventually
-	const zoomIndex = zooms.findIndex(zoom => zoom.id == window.CURRENT_SCENE_DATA.id);
+	const zooms = JSON.parse(localStorage.getItem('zoom'))?.filter(z=> !z.title && z.expiryDate != undefined && z.expiryDate>currentDate) || []; // filter out old data that used to be based on scene title rather then id and remove older data to prevent long term storage issues
 	const centerView = center_of_view(); 
 	const sidebarSize = ($('#hide_rightpanel.point-right').length>0 ? get_sidebar_width() : 0);
-	if (zoomIndex !== -1) {
-		const saved = zooms[zoomIndex];
+	const saved = zooms.find(zoom => zoom.id === window.CURRENT_SCENE_DATA.id);
+	if (saved != undefined) {
 		saved.zoom = window.ZOOM;
 		saved.leftOffset = window.scrollX + window.innerWidth/2 - sidebarSize/2;
 		saved.topOffset = window.scrollY + window.innerHeight/2;
@@ -3290,6 +3289,10 @@ function init_help_menu() {
 						<dl>
 							<dt>${getShiftKeyName()}+W</dt>
 							<dd>Toggle always show walls. Will also show 'hidden icon' doors/windows.</dd>
+						</dl>
+						<dl>
+							<dt>${getShiftKeyName()}+P</dt>
+							<dd>Open portal config window.</dd>
 						</dl>
 						<dl>
 							<dt>${getShiftKeyName()}+E</dt>

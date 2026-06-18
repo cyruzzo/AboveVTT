@@ -2069,7 +2069,6 @@ function build_sidebar_list_row(listItem) {
         $("#scenes-panel .dm_scenes_button.selected-scene").removeClass("selected-scene");
         $(clickEvent.currentTarget).addClass("selected-scene");
         window.MB.sendMessage("custom/myVTT/switch_scene", { sceneId: listItem.id, switch_dm: true });
-        add_zoom_to_storage();
       });
       let switch_players = $(`<button class='player_scenes_button token-row-button' title="Move Players To This Scene"></button>`);
       switch_players.append(svg_everyone());
@@ -2088,7 +2087,6 @@ function build_sidebar_list_row(listItem) {
         }
         window.splitPlayerScenes = {};
         $('#scenes-panel .sidebar-list-item-row-details~img').remove();
-        add_zoom_to_storage()
       });
       rowItem.append(switch_dm);
       rowItem.append(switch_players);

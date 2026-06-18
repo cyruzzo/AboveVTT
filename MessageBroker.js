@@ -1680,6 +1680,7 @@ class MessageBroker {
 		}
 	}
 	async handleScene (msg, forceRefresh=false) {
+		
 		console.debug("handlescene", msg);
 		window.LOADING = true;
 		window.MB.checkHideSceneFromPlayers();
@@ -1710,6 +1711,9 @@ class MessageBroker {
 			
 			const isSameTokenLight = window.CURRENT_SCENE_DATA.disableSceneVision == msg.data.disableSceneVision;																		
 			
+			if(!isCurrentScene){
+				add_zoom_to_storage();
+			}
 
 			if(isSameScaleAndMaps && !forceRefresh){
 				delete window.LOADING;

@@ -539,7 +539,9 @@ Mousetrap.bind('mod+c', function(e) {
     }
     
 });
-
+Mousetrap.bind('shift+p', function(e) {
+   open_portal_config();
+});
 
 Mousetrap.bind('mod+v', async function(e) {
     if (await avttHandleFilePickerPaste(e)) {
