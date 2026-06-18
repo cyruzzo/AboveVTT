@@ -2227,7 +2227,7 @@ function setVisionLightOffscreenCanvas(){
 }
 function open_portal_config(){
 
-	const container = find_or_create_generic_draggable_window('portal_config_window', 'Portal Configuration', false, false, undefined, '450px', 'fit-content', '30px', '317px', false, `input, button`, false, true, ()=>{window.portalsInConfig = undefined;});	
+	const container = find_or_create_generic_draggable_window('portal_config_window', 'Portal Configuration', false, false, undefined, '470px', 'fit-content', '30px', '317px', false, `input, button`, false, true, ()=>{window.portalsInConfig = undefined;});	
 	container.find('.portal-listing').remove();
 	if(window.portalsInConfig == undefined){
 		window.portalsInConfig = {};
@@ -2244,6 +2244,94 @@ function open_portal_config(){
 	const tableHeaders = $(`<tr><th>Find Portal</th><th>Name</th><th>Always Show Name</th><th>Place Linked Portal</th><th>Delete Portal</th></tr>`)
 	table.append(tableHeaders);
 	listing.append(table);
+	const addPortal = $(`<button id='addPortal'>Add Portal</button>`)
+	listing.append(addPortal);
+	addPortal.off('pointerdown.addPortal').on('pointerdown.addPortal', function(){
+	
+		$('#select-button').click();
+		$('#tokenOptionsClickCloseDiv').click();
+		let target = $("#temp_overlay, #fog_overlay, #VTT, #black_layer");	
+		$("#temp_overlay").css('z-index', '50');
+		let canvas = document.getElementById("temp_overlay");
+		let context = canvas.getContext("2d");
+		target.css('cursor', 'crosshair');
+		target.off('mousemove.drawTele').on('mousemove.drawTele', function(e){
+			clear_temp_canvas();
+			let brushpoints = [];
+			let [endX, endY] = get_event_cursor_position(e);
+			let [rectX, rectY] = [endX - window.CURRENT_SCENE_DATA.hpps/2, endY-window.CURRENT_SCENE_DATA.vpps/2]
+			context.setLineDash([5, 5])
+			drawRect(context, rectX, rectY, window.CURRENT_SCENE_DATA.hpps, window.CURRENT_SCENE_DATA.vpps, '#fff', false)
+
+			context.setLineDash([])
+		});
+		target.off('mouseup.setTele touchend.setTele').on('mouseup.setTele touchend.setTele', function(e){
+			if ( e.button == 2) {
+				return;
+			}
+
+			const [mouseX, mouseY] = get_event_cursor_position(e);
+		
+			let data = ['line',
+						'wall',
+						'rgba(25, 25, 180, 1)',
+						mouseX-5,
+						mouseY,
+						mouseX+5,
+						mouseY,
+						12,
+						window.CURRENT_SCENE_DATA.scale_factor,
+						false, 
+						'', 
+						''
+			]
+			window.DRAWINGS.push(data);
+			pushWallUndo({
+				undo: [[...data]],
+			})
+			let newPortalId = `${mouseX-5}${mouseY}${mouseX+5}${mouseY}${window.CURRENT_SCENE_DATA.id}`.replaceAll('.','') 
+
+			
+			let options = {
+				...default_options(),
+				left: `${mouseX-25}px`,
+				top: `${mouseY-25}px`,
+				id: newPortalId,
+				vision:{
+					feet: 0,
+					color: `rgba(0, 0, 0, 0)`
+				},
+				devilsight:{
+					feet: 0,
+					color: `rgba(0, 0, 0, 0)`
+				},
+				truesight:{
+					feet: 0,
+					color: `rgba(0, 0, 0, 0)`
+				},
+				imgsrc: `data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=`,
+				type: 'door',
+				size: 50,
+				scaleCreated: window.CURRENT_SCENE_DATA.scale_factor,
+				auraislight: false,
+				alwaysshowname: window.TOKEN_SETTINGS.alwaysshowname != undefined ? window.TOKEN_SETTINGS.alwaysshowname : false
+			};
+			if(window.TOKEN_OBJECTS[newPortalId] == undefined){
+				window.ScenesHandler.create_update_token(options);
+			}else {
+				window.TOKEN_OBJECTS[newPortalId] = options;
+			}
+			window.TOKEN_OBJECTS[newPortalId].place(0);
+			window.TOKEN_OBJECTS[newPortalId].sync();
+			redraw_light_walls();
+			sync_drawings();
+			open_portal_config();
+			clear_temp_canvas();
+			target.off('mouseup.setTele touchend.setTele');
+			target.off('mousemove.drawTele')
+			$("#temp_overlay").css('z-index', '25');
+		});
+	})
 	container.append(listing);
 	if(portals.length>0){
 		for(let i=0; i<portals.length; i++){
@@ -2330,7 +2418,7 @@ function open_portal_config(){
 			table.append(portalRow);
 		}
 	}
-	listing.off('click.linkedPortal').on('click.linkedPortal', '.place-linked-portal', function(){
+	listing.off('pointerdown.linkedPortal').on('pointerdown.linkedPortal', '.place-linked-portal', function(){
 		const portalId = $(this).closest('.portal-entry').attr('data-id');
 		const portal = window.portalsInConfig[portalId];
 		
@@ -2429,10 +2517,20 @@ function open_portal_config(){
 					feet: 0,
 					color: `rgba(0, 0, 0, 0)`
 				},
+				devilsight:{
+					feet: 0,
+					color: `rgba(0, 0, 0, 0)`
+				},
+				truesight:{
+					feet: 0,
+					color: `rgba(0, 0, 0, 0)`
+				},
 				imgsrc: `data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=`,
 				type: 'door',
 				size: 50,
 				scaleCreated: window.CURRENT_SCENE_DATA.scale_factor,
+				auraislight: false,
+				alwaysshowname: window.TOKEN_SETTINGS.alwaysshowname != undefined ? window.TOKEN_SETTINGS.alwaysshowname : false,
 				teleporterCoords
 			};
 			if(window.TOKEN_OBJECTS[clonePortalId] == undefined){
@@ -2484,11 +2582,11 @@ function open_portal_config(){
 			window.TOKEN_OBJECTS[portalId].place(0);
 		}
 	})
-	listing.off('click.locatePortal').on('click.locatePortal', '.locate-portal', function(){
+	listing.off('pointerdown.locatePortal').on('pointerdown.locatePortal', '.locate-portal', function(){
 		const id = $(this).closest('.portal-entry').attr('data-id');
 		window.TOKEN_OBJECTS[id]?.highlight()
 	})
-	listing.off('click.goToPortalScene').on('click.goToPortalScene', '.go-to-scene-portal', function(){
+	listing.off('pointerdown.goToPortalScene').on('pointerdown.goToPortalScene', '.go-to-scene-portal', function(){
 		const id = $(this).closest('.portal-entry').attr('data-id');
 		const sceneId = window.portalsInConfig[id].sceneId;
 		window.MB.sendMessage("custom/myVTT/switch_scene", { sceneId: sceneId, switch_dm: true });
@@ -2507,11 +2605,11 @@ function open_portal_config(){
 	listing.off('mouseleave.locatePortal, focusout.locatePortal').on('mouseleave.locatePortal, focusout.locatePortal', '.portal-entry', function(){
 		const row = $(this);
 		const id = row.attr('data-id');
-		if(row.find('input:focus').length>0)
+		if(row.find('input.portal-name:focus').length>0)
 			return;
 		$(`.door-button[data-id="${id}"]`).removeClass('tokenselected');
 	})
-	listing.off('click.deletePortal').on('click.deletePortal', '.delete-portal', function(){
+	listing.off('pointerdown.deletePortal').on('pointerdown.deletePortal', '.delete-portal', function(){
 		const id = $(this).closest('.portal-entry').attr('data-id');
 		const portalWall = window.portalsInConfig[id].portalWall;
 		window.TOKEN_OBJECTS[id].delete(true);
@@ -2521,6 +2619,7 @@ function open_portal_config(){
 			redo: [[...portalWall]]
 		});
 		redraw_light_walls();
+		sync_drawings();
 	})
 
 	

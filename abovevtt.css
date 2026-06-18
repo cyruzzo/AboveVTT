@@ -2109,15 +2109,22 @@ padding-bottom: 5px;
         0px 0px 5px #000;
     pointer-events:none;
 }
+#portal_config_window{
+    min-height: 220px;
+}
+#portal_config_window #addPortal{
+    margin:10px 0px;
+}
 .portal-listing{
     background: var(--background-color, #fff);
-    left: 10px;
+    left: 0;
+    top: -5px;
     border: 1px solid #ddd;
     border-radius: 5px;
-    padding-top: 13px;
-    min-height: 250px;
+    margin: 0;
+    min-height: 200px;
     width: 100%;
-    height: 100%;
+    height: calc(100% - 20px);
     position: relative;
     display: flex;
     overflow: auto;
@@ -2141,7 +2148,9 @@ padding-bottom: 5px;
 
 table.portal-table,
 table.portal-table :is(td, th){
-  border: 1px solid #ddd;
+    border-collapse: unset;
+    border-spacing: 1px;
+    margin-top: 5px;
 }
 button.place-linked-portal {
     width: 20px;
