@@ -1504,6 +1504,7 @@ class JournalManager{
 			                callback: function(itemKey, opt, originalEvent) {
 			                	const copyLink = `[note]${note_id};${self.notes[note_id].title}[/note]`
 			                    navigator.clipboard.writeText(copyLink);
+								showTempMessage('Note tooltip link copied to clipboard');
 				            }   
 		            	};   
 		            	menuItems["copyEmbed"] = {
@@ -1511,6 +1512,7 @@ class JournalManager{
 			                callback: function(itemKey, opt, originalEvent) {
 			                	const copyLink = `[note embed]${note_id};${self.notes[note_id].title}[/note]`
 			                    navigator.clipboard.writeText(copyLink);
+								showTempMessage('Note embed link copied to clipboard');
 				            }   
 		            	};
 	            	}

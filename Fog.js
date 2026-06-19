@@ -2241,7 +2241,7 @@ function open_portal_config(){
 	});
 	const listing = $(`<div class='portal-listing'></div>`)
 	const table = $(`<table class='portal-table'></table>`)
-	const tableHeaders = $(`<tr><th>Find Portal</th><th>Name</th><th class='show-name-portal-title'>Always Show Name</th><th class='linked-portal-title'>Place Linked Portal</th><th>Delete Portal</th><th>More</th></tr>`)
+	const tableHeaders = $(`<tr><th>Find Portal</th><th>Name</th><th class='show-name-portal-title'>Always Show Name</th><th class='linked-portal-title'>Place Linked Portal</th><th>Copy ID</th><th>More</th></tr>`)
 	table.append(tableHeaders);
 	listing.append(table);
 	const addPortal = $(`<button id='addPortal'>Add Portal</button>`)
@@ -2410,13 +2410,11 @@ function open_portal_config(){
 
 			const placeLinkedPortalButton = $(`<button class='place-linked-portal portalButton'><svg class="findSVG" width="24px" height="24px" viewBox="-2 -2 22 24" xmlns="http://www.w3.org/2000/svg" "=""><path fill-rule="evenodd" clip-rule="evenodd" d="M7.2 10.8V18h3.6v-7.2H18V7.2h-7.2V0H7.2v7.2H0v3.6h7.2z"></path></svg></button>`);
 			addPortalCell(portalRow, placeLinkedPortalButton);
-			const deletePortalButton = portal.sceneId == window.CURRENT_SCENE_DATA.id 
-				? $('<button class="delete-portal portalButton" style="font-size:10px;"><svg class="delSVG" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M16 9v10H8V9h8m-1.5-6h-5l-1 1H5v2h14V4h-3.5l-1-1zM18 7H6v12c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7z"/></svg></button>')
-				: '';	
-			addPortalCell(portalRow, deletePortalButton);
-			const portalSettingsButton = portal.sceneId == window.CURRENT_SCENE_DATA.id 
-				? $(`<button class="portal-settings portalButton" style="font-size:10px;"><span class="material-symbols-outlined">more_vert</span></button>`)
-				: '';
+			const copyPortalButton = $('<button class="copy-portal-id portalButton" style="font-size:10px;"><span class="material-symbols-outlined">link</span></button>')
+					
+			addPortalCell(portalRow, copyPortalButton);
+			const portalSettingsButton = $(`<button class="portal-settings portalButton" style="font-size:10px;"><span class="material-symbols-outlined">more_vert</span></button>`);
+				
 			addPortalCell(portalRow, portalSettingsButton);
 			table.append(portalRow);
 		}
@@ -2601,24 +2599,26 @@ function open_portal_config(){
 		}
 	};
 
-	const deletePortal = function(el){
-		const id = $(el).closest('.portal-entry').attr('data-id');
-		const portalWall = window.portalsInConfig[id].portalWall;
-		window.TOKEN_OBJECTS[id].delete(true);
-		window.DRAWINGS = window.DRAWINGS.filter(d => (d.length !== portalWall.length || !d.every((val, i) => {return val === portalWall[i] })))
- 		pushWallUndo({
-			undo: [[]],
-			redo: [[...portalWall]]
-		});
-		redraw_light_walls();
-		sync_drawings();
+	const copyPortalId = function(el){
+		const id = $(el).closest('.portal-entry').attr('data-id');	
+		const sceneId = window.portalsInConfig[id].sceneId;
+		navigator.clipboard.writeText(`${id};${sceneId}`);
+		showTempMessage('Portal ID copied to clipboard');
 	}
 	const portalSettings = function(el, e){
 		e.stopPropagation();
 		const id = $(el).closest('.portal-entry').attr('data-id');
 		const sceneId = window.portalsInConfig[id].sceneId;
+
+		//have menu open to the right of click instead of left as it would for tokens
+		if(e.touches != undefined){
+			e.touches[0].clientX += 230;
+		}else{
+			e.clientX += 230;
+		}
+
 		if(sceneId != window.CURRENT_SCENE_DATA.id){
-			console.warn('More settings for portals not on scene not implemented. Button should not be available');
+			token_context_menu_expanded([id], e, window.portalsInConfig[id])
 			return;
 		}
 		token_context_menu_expanded([id], e)
@@ -2638,7 +2638,7 @@ function open_portal_config(){
 		}
 	})
 
-	listing.off('pointerdown.portalButtons').on('pointerdown.portalButtons', '.locate-portal, .go-to-scene-portal, .delete-portal, .place-linked-portal, .portal-settings', function(event){
+	listing.off('pointerdown.portalButtons').on('pointerdown.portalButtons', '.locate-portal, .go-to-scene-portal, .copy-portal-id, .place-linked-portal, .portal-settings', function(event){
 		const classList = this.classList;
 		if(classList.contains('locate-portal')){
 			locatePortal(this);
@@ -2649,8 +2649,8 @@ function open_portal_config(){
 		} else if(classList.contains('place-linked-portal')){
 			placeLinkedPortal(this);
 			return;
-		} else if(classList.contains('delete-portal')){
-			deletePortal(this);
+		} else if(classList.contains('copy-portal-id')){
+			copyPortalId(this);
 			return;
 		} else if(classList.contains('portal-settings')){
 			portalSettings(this, event);
