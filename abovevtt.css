@@ -2112,6 +2112,9 @@ padding-bottom: 5px;
 #portal_config_window{
     min-height: 220px;
 }
+#portal_config_window:has(>.minimized){
+    min-height:0px;
+}
 #portal_config_window #addPortal{
     margin:10px 0px;
 }
