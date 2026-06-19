@@ -2135,29 +2135,28 @@ padding-bottom: 5px;
 .portal-listing .portal-show-name {
     margin-right:10px;
 }
-.portal-listing button:is(.locate-portal, .go-to-scene-portal, .delete-portal) {
+.portal-listing button.portalButton {
     width: 20px;
     padding: 0px;
     height: 20px;
     vertical-align: middle;
+    span.material-symbols-outlined {
+        font-size: 16px;
+        color: rgb(27, 154, 240);
+    }
 }
-.go-to-scene-portal span.material-symbols-outlined{
-    font-size:16px;
-    color: rgb(27, 154, 240);
+.portal-listing .linked-portal-title,
+.portal-listing .show-name-portal-title{
+    min-width: 80px;
 }
 
 table.portal-table,
 table.portal-table :is(td, th){
-    border-collapse: unset;
-    border-spacing: 1px;
-    margin-top: 5px;
+    border-collapse: collapse;
+    border-spacing: 0px;
+    border: 6px solid transparent;
 }
-button.place-linked-portal {
-    width: 20px;
-    height: 20px;
-    padding: 0px;
-    vertical-align: middle;
-}
+
 .portal-entry td {
     display: table-cell;
     align-content: center;
