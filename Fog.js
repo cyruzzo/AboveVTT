@@ -2227,7 +2227,7 @@ function setVisionLightOffscreenCanvas(){
 }
 function open_portal_config(){
 
-	const container = find_or_create_generic_draggable_window('portal_config_window', 'Portal Configuration', false, false, undefined, '470px', 'fit-content', '30px', '317px', false, `input, button`, false, true, ()=>{window.portalsInConfig = undefined;});	
+	const container = find_or_create_generic_draggable_window('portal_config_window', 'Portal Configuration', false, false, undefined, '500px', 'fit-content', '30px', '317px', false, `input, button`, false, true, ()=>{window.portalsInConfig = undefined;});	
 	container.find('.portal-listing').remove();
 	if(window.portalsInConfig == undefined){
 		window.portalsInConfig = {};
@@ -2241,7 +2241,7 @@ function open_portal_config(){
 	});
 	const listing = $(`<div class='portal-listing'></div>`)
 	const table = $(`<table class='portal-table'></table>`)
-	const tableHeaders = $(`<tr><th>Find Portal</th><th>Name</th><th>Always Show Name</th><th>Place Linked Portal</th><th>Delete Portal</th></tr>`)
+	const tableHeaders = $(`<tr><th>Find Portal</th><th>Name</th><th class='show-name-portal-title'>Always Show Name</th><th class='linked-portal-title'>Place Linked Portal</th><th>Delete Portal</th><th>More</th></tr>`)
 	table.append(tableHeaders);
 	listing.append(table);
 	const addPortal = $(`<button id='addPortal'>Add Portal</button>`)
@@ -2391,10 +2391,10 @@ function open_portal_config(){
 			const portal = window.portalsInConfig[portalId];
 			const portalRow = $(`<tr class='portal-entry' data-id='${portalId}'></tr>`);
 			const locatePortal = portal.sceneId == window.CURRENT_SCENE_DATA.id 
-				? $(`<button class='locate-portal'>
+				? $(`<button class='locate-portal portalButton'>
 					<svg class="findSVG" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M0 0h24v24H0z" fill="none"/><path d="M12 11c1.33 0 4 .67 4 2v.16c-.97 1.12-2.4 1.84-4 1.84s-3.03-.72-4-1.84V13c0-1.33 2.67-2 4-2zm0-1c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm6 .2C18 6.57 15.35 4 12 4s-6 2.57-6 6.2c0 2.34 1.95 5.44 6 9.14 4.05-3.7 6-6.8 6-9.14zM12 2c4.2 0 8 3.22 8 8.2 0 3.32-2.67 7.25-8 11.8-5.33-4.55-8-8.48-8-11.8C4 5.22 7.8 2 12 2z"/></svg>
 				</button>`)	
-				: $(`<button class='go-to-scene-portal'>
+				: $(`<button class='go-to-scene-portal portalButton'>
 					<span class="material-symbols-outlined">
 						map_search
 					</span>
@@ -2408,21 +2408,40 @@ function open_portal_config(){
 			const checkboxShowName = $(`<input class="portal-show-name" type='checkbox' id="showName_${portalId}" ${portal.token?.options?.alwaysshowname ? 'checked' : ''}></input>`)
 			addPortalCell(portalRow, checkboxShowName);
 
-			const placeLinkedPortalButton = $(`<button class='place-linked-portal'><svg class="findSVG" width="24px" height="24px" viewBox="-2 -2 22 24" xmlns="http://www.w3.org/2000/svg" "=""><path fill-rule="evenodd" clip-rule="evenodd" d="M7.2 10.8V18h3.6v-7.2H18V7.2h-7.2V0H7.2v7.2H0v3.6h7.2z"></path></svg></button>`);
+			const placeLinkedPortalButton = $(`<button class='place-linked-portal portalButton'><svg class="findSVG" width="24px" height="24px" viewBox="-2 -2 22 24" xmlns="http://www.w3.org/2000/svg" "=""><path fill-rule="evenodd" clip-rule="evenodd" d="M7.2 10.8V18h3.6v-7.2H18V7.2h-7.2V0H7.2v7.2H0v3.6h7.2z"></path></svg></button>`);
 			addPortalCell(portalRow, placeLinkedPortalButton);
 			const deletePortalButton = portal.sceneId == window.CURRENT_SCENE_DATA.id 
-				? $('<button class="delete-portal" style="font-size:10px;"><svg class="delSVG" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M16 9v10H8V9h8m-1.5-6h-5l-1 1H5v2h14V4h-3.5l-1-1zM18 7H6v12c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7z"/></svg></button>')
+				? $('<button class="delete-portal portalButton" style="font-size:10px;"><svg class="delSVG" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M16 9v10H8V9h8m-1.5-6h-5l-1 1H5v2h14V4h-3.5l-1-1zM18 7H6v12c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7z"/></svg></button>')
 				: '';	
 			addPortalCell(portalRow, deletePortalButton);
-			
+			const portalSettingsButton = portal.sceneId == window.CURRENT_SCENE_DATA.id 
+				? $(`<button class="portal-settings portalButton" style="font-size:10px;"><span class="material-symbols-outlined">more_vert</span></button>`)
+				: '';
+			addPortalCell(portalRow, portalSettingsButton);
 			table.append(portalRow);
 		}
 	}
-	listing.off('pointerdown.linkedPortal').on('pointerdown.linkedPortal', '.place-linked-portal', function(){
-		const portalId = $(this).closest('.portal-entry').attr('data-id');
+
+	const locatePortal = function(el){
+		const id = $(el).closest('.portal-entry').attr('data-id');
+		window.TOKEN_OBJECTS[id]?.highlight()
+	};
+	const goToScene = function(el){
+		const id = $(el).closest('.portal-entry').attr('data-id');
+		const sceneId = window.portalsInConfig[id].sceneId;
+		window.MB.sendMessage("custom/myVTT/switch_scene", { sceneId: sceneId, switch_dm: true });
+		window.TELEPORTER_PASTE_BUFFER = {
+			'targetToken': id,
+			'tokens': {}
+		}
+		$("#scenes-panel .dm_scenes_button.selected-scene").removeClass("selected-scene");
+		$(`#scenes-panel [data-scene-id="${sceneId}"] .dm_scenes_button`).addClass("selected-scene");				
+	};
+
+
+	const placeLinkedPortal = function(el){
+		const portalId = $(el).closest('.portal-entry').attr('data-id');
 		const portal = window.portalsInConfig[portalId];
-		
-		window.all_token_objects[portalId].sync(portal.sceneId);
 	
 		const wall = window.portalsInConfig[portalId].portalWall;
 		
@@ -2549,10 +2568,9 @@ function open_portal_config(){
 			$("#temp_overlay").css('z-index', '25');
 		});
 
-	})
-
-	listing.off('change.name input.name').on('change.name', '.portal-name', function(){
-		const input = $(this);
+	};
+	const changeName = function(el){
+		const input = $(el);
 		const newName = input.val();
 		const portalId = input.closest('.portal-entry').attr('data-id');
 		const portal = window.portalsInConfig[portalId];
@@ -2565,10 +2583,10 @@ function open_portal_config(){
 			window.TOKEN_OBJECTS[portalId].options.name = newName;
 			window.TOKEN_OBJECTS[portalId].place(0);
 		}
-	})
-	listing.off('change.checkbox').on('change.checkbox', '.portal-show-name', function(){
+	}
+	const changeShowName = function(el){
 
-		const input = $(this);
+		const input = $(el);
 		const checked = input.prop('checked');
 		const portalId = input.closest('.portal-entry').attr('data-id');
 		const portal = window.portalsInConfig[portalId];
@@ -2581,22 +2599,69 @@ function open_portal_config(){
 			window.TOKEN_OBJECTS[portalId].options.alwaysshowname = checked;
 			window.TOKEN_OBJECTS[portalId].place(0);
 		}
-	})
-	listing.off('pointerdown.locatePortal').on('pointerdown.locatePortal', '.locate-portal', function(){
-		const id = $(this).closest('.portal-entry').attr('data-id');
-		window.TOKEN_OBJECTS[id]?.highlight()
-	})
-	listing.off('pointerdown.goToPortalScene').on('pointerdown.goToPortalScene', '.go-to-scene-portal', function(){
-		const id = $(this).closest('.portal-entry').attr('data-id');
+	};
+
+	const deletePortal = function(el){
+		const id = $(el).closest('.portal-entry').attr('data-id');
+		const portalWall = window.portalsInConfig[id].portalWall;
+		window.TOKEN_OBJECTS[id].delete(true);
+		window.DRAWINGS = window.DRAWINGS.filter(d => (d.length !== portalWall.length || !d.every((val, i) => {return val === portalWall[i] })))
+ 		pushWallUndo({
+			undo: [[]],
+			redo: [[...portalWall]]
+		});
+		redraw_light_walls();
+		sync_drawings();
+	}
+	const portalSettings = function(el, e){
+		e.stopPropagation();
+		const id = $(el).closest('.portal-entry').attr('data-id');
 		const sceneId = window.portalsInConfig[id].sceneId;
-		window.MB.sendMessage("custom/myVTT/switch_scene", { sceneId: sceneId, switch_dm: true });
-		window.TELEPORTER_PASTE_BUFFER = {
-			'targetToken': id,
-			'tokens': {}
+		if(sceneId != window.CURRENT_SCENE_DATA.id){
+			console.warn('More settings for portals not on scene not implemented. Button should not be available');
+			return;
 		}
-		$("#scenes-panel .dm_scenes_button.selected-scene").removeClass("selected-scene");
-		$(`#scenes-panel [data-scene-id="${sceneId}"] .dm_scenes_button`).addClass("selected-scene");				
+		token_context_menu_expanded([id], e)
+		return;
+	}
+
+	
+
+	listing.off('change.portalInputs input.portalInputs').on('change.portalInputs input.portalInputs', '.portal-name, .portal-show-name', function(){
+		const classList = this.classList;
+		if(classList.contains('portal-name')){
+			changeName(this);
+			return;
+		} else if(classList.contains('portal-show-name')){
+			changeShowName(this);
+			return;
+		}
 	})
+
+	listing.off('pointerdown.portalButtons').on('pointerdown.portalButtons', '.locate-portal, .go-to-scene-portal, .delete-portal, .place-linked-portal, .portal-settings', function(event){
+		const classList = this.classList;
+		if(classList.contains('locate-portal')){
+			locatePortal(this);
+			return;
+		} else if(classList.contains('go-to-scene-portal')){
+			goToScene(this);
+			return;
+		} else if(classList.contains('place-linked-portal')){
+			placeLinkedPortal(this);
+			return;
+		} else if(classList.contains('delete-portal')){
+			deletePortal(this);
+			return;
+		} else if(classList.contains('portal-settings')){
+			portalSettings(this, event);
+			return;
+		}
+		
+	})
+	listing.off('pointerdown.closeTokenMenu').on('pointerdown.closeTokenMenu', function(event){
+		close_token_context_menu();
+	})
+	
 	listing.off('mouseenter.locatePortal, focusin.locatePortal').on('mouseenter.locatePortal, focusin.locatePortal', '.portal-entry', function(){
 		const row = $(this);
 		const id = row.attr('data-id');
@@ -2609,18 +2674,7 @@ function open_portal_config(){
 			return;
 		$(`.door-button[data-id="${id}"]`).removeClass('tokenselected');
 	})
-	listing.off('pointerdown.deletePortal').on('pointerdown.deletePortal', '.delete-portal', function(){
-		const id = $(this).closest('.portal-entry').attr('data-id');
-		const portalWall = window.portalsInConfig[id].portalWall;
-		window.TOKEN_OBJECTS[id].delete(true);
-		window.DRAWINGS = window.DRAWINGS.filter(d => (d.length !== portalWall.length || !d.every((val, i) => {return val === portalWall[i] })))
- 		pushWallUndo({
-			undo: [[]],
-			redo: [[...portalWall]]
-		});
-		redraw_light_walls();
-		sync_drawings();
-	})
+
 
 	
 }
