@@ -495,7 +495,7 @@ function token_context_menu_expanded(tokenIds, e, crossScenePortalData) {
 	 				crossSceneInput.val(`${targetToken.options.teleporterCoords.linkedPortalId};${targetToken.options.teleporterCoords.sceneId}`)
 	 			}
 
-				crossSceneInput.off().on("change.edit focusout.edit input.edit", function(event){
+				crossSceneInput.off().on("change.edit focusout.edit", function(event){
 					const values = $(this).val().split(';')
 					const portalTokenId = values[0];
 					const sceneId = values[1];
