@@ -215,7 +215,7 @@ window.importAvttAudioSelections = importAvttAudioSelections;
  */
 
 const debounceSearch = mydebounce((searchFilter) => {      
-        window.TRACK_LIBRARY.filterTrackLibrary(searchFilter)
+    window.TRACK_LIBRARY.filterTrackLibrary(searchFilter)
 }, 500);
 
 
