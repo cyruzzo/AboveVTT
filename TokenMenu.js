@@ -195,6 +195,11 @@ function token_context_menu_expanded(tokenIds, e, crossScenePortalData) {
 
 	if(crossScenePortalData || door?.length == 1){
 
+		let x1 = parseInt(door.attr('data-x1'));
+		let x2 = parseInt(door.attr('data-x2'));
+		let y1 = parseInt(door.attr('data-y1'));
+		let y2 = parseInt(door.attr('data-y2'));
+		
 		if(window.DM) {
 			const isTeleporter = door.find('.teleporter').length>0;
 			if(!crossScenePortalData){
@@ -367,6 +372,9 @@ function token_context_menu_expanded(tokenIds, e, crossScenePortalData) {
 							target.off('mouseup.setTele touchend.setTele');
 							target.off('mousemove.drawTele')
 							$("#temp_overlay").css('z-index', '25');
+							if($(`#portal_config_window`).length>0){
+								open_portal_config();
+							}
 						});
 					});
 					
@@ -472,6 +480,9 @@ function token_context_menu_expanded(tokenIds, e, crossScenePortalData) {
 							target.off('mouseup.setTele touchend.setTele');
 							target.off('mousemove.drawTele')
 							$("#temp_overlay").css('z-index', '25');
+							if($(`#portal_config_window`).length>0){
+								open_portal_config();
+							}
 						});
 					});
 					body.append(teleportTwoWayButton);
@@ -548,10 +559,6 @@ function token_context_menu_expanded(tokenIds, e, crossScenePortalData) {
 				}
 		
 
-				let x1 = parseInt(door.attr('data-x1'));
-				let x2 = parseInt(door.attr('data-x2'));
-				let y1 = parseInt(door.attr('data-y1'));
-				let y2 = parseInt(door.attr('data-y2'));
 
 				let locked = door.hasClass('locked');
 				let secret = door.hasClass('secret');
