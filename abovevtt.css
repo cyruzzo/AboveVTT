@@ -2111,6 +2111,7 @@ padding-bottom: 5px;
 }
 #portal_config_window{
     min-height: 220px;
+    min-width: 475px;
 }
 #portal_config_window:has(>.minimized){
     min-height:0px;
@@ -2129,7 +2130,7 @@ padding-bottom: 5px;
     margin-left: var(--name-width-overflow);
 }
 .portal-listing div.connected-portal-container {
-    width: 120px;
+    width: 100%;
     display: inline-block;
     overflow: hidden;
     white-space: nowrap;
@@ -2169,6 +2170,10 @@ padding-bottom: 5px;
         font-size: 16px;
         color: rgb(27, 154, 240);
     }
+}
+
+table.portal-table{
+    table-layout: fixed;
 }
 table.portal-table tr.portal-entry:hover {
     background: color-mix(in srgb, #d9eeff 20%, var(--background-color, #d9eeff) 80%);
