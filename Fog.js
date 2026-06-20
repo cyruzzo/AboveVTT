@@ -2242,8 +2242,17 @@ function open_portal_config(){
 	});
 	const listing = $(`<div class='portal-listing'></div>`)
 	const table = $(`<table class='portal-table'></table>`)
-	const tableHeaders = $(`<tr><th>Find Portal</th><th>Name</th><th class='show-name-portal-title'>Always Show Name</th><th class='linked-portal-title'>Place Linked Portal</th><th class='current-linked-portal-title'>Linked To</th><th>Copy ID</th><th>More</th></tr>`)
-	table.append(tableHeaders);
+	const colGroup = $(`<colgroup>
+						<col style="width: 40px"> 
+						<col style="width: 200px;">  
+						<col style="width: 50px;"> 
+						<col style="width: 50px;"> 
+						<col style="width: auto;"> 
+						<col style="width: 40px;">
+						<col style="width: 40px;"> 
+					</colgroup>`)
+	const tableHeaders = $(`<tr><th>Find Portal</th><th>Name</th><th>Always Show Name</th><th>Place Linked Portal</th><th>Linked To</th><th>Copy ID</th><th>More</th></tr>`)
+	table.append(colGroup, tableHeaders);
 	listing.append(table);
 	const addPortal = $(`<button id='addPortal'>Add Portal</button>`)
 	listing.append(addPortal);
@@ -2702,7 +2711,7 @@ function open_portal_config(){
         const text_calc = $('body>div.track-name:first');
         text_calc.html(`${text}.....`);
         const nameWidth = text_calc.width();
-        const overflowVal = 120;
+        const overflowVal = target.closest('td').width() + 10;
 
         target.css({
             "--name-width-overflow": (overflowVal - nameWidth < 0) ? overflowVal - 10 - nameWidth+'px' : 0,
@@ -2876,7 +2885,7 @@ function redraw_light_walls(options = {clearCanvas: true, editingWallPoints: fal
 							let tokenObject = window.TOKEN_OBJECTS[`${x}${y}${width}${height}${window.CURRENT_SCENE_DATA.id}`.replaceAll('.','')]
 
 								
-							if(tokenObject?.options?.teleporterCoords?.linkedPortalId != undefined){
+							if(tokenObject?.options?.teleporterCoords?.linkedPortalId != undefined && tokenObject.options.teleporterCoords.sceneId != window.CURRENT_SCENE_DATA.id){
 								copy_selected_tokens(tokenObject.options.teleporterCoords.linkedPortalId);
 								forSelTokens((token,id) => {
 									token.selected = true;
@@ -2918,13 +2927,21 @@ function redraw_light_walls(options = {clearCanvas: true, editingWallPoints: fal
 								}
 							}
 							else if(tokenObject?.options?.teleporterCoords != undefined){
-
+								let coords = tokenObject.options.teleporterCoords;
+								if(tokenObject.options.teleporterCoords.sceneId == window.CURRENT_SCENE_DATA.id){
+									const teleporterTokenId = tokenObject.options.teleporterCoords.linkedPortalId
+									const targetPortal = window.TOKEN_OBJECTS[teleporterTokenId];
+									const top = (parseInt(targetPortal.options.top) + 25);
+									const left = (parseInt(targetPortal.options.left) + 25);
+									const scale = targetPortal.options.scaleCreated ?? 1;
+									coords = {left, top, scale};
+								}
 								forSelTokens((curr) => {
 									if(!window.DM && (curr.options.restrictPlayerMove || curr.options.locked) && !curr.isCurrentPlayer() && curr.options.groupId == undefined) return
 										
-									const scaleCoversion = window.CURRENT_SCENE_DATA.scale_factor != undefined ? window.CURRENT_SCENE_DATA.scale_factor / tokenObject.options.teleporterCoords.scale : 1 / tokenObject.options.teleporterCoords.scale;
-									curr.options.left = `${tokenObject.options.teleporterCoords.left*scaleCoversion - curr.options.size/2}px`;
-									curr.options.top = `${tokenObject.options.teleporterCoords.top*scaleCoversion - curr.options.size/2}px`
+									const scaleCoversion = window.CURRENT_SCENE_DATA.scale_factor != undefined ? window.CURRENT_SCENE_DATA.scale_factor / coords.scale : 1 / coords.scale;
+									curr.options.left = `${coords.left*scaleCoversion - curr.options.size/2}px`;
+									curr.options.top = `${coords.top*scaleCoversion - curr.options.size/2}px`
 								
 
 									curr.place(0);

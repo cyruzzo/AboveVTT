@@ -5265,7 +5265,7 @@ function copy_selected_tokens(teleporterTokenId=undefined) {
 	
 }
 
-function paste_selected_tokens(x, y, teleporter = undefined, teleportedTokenData=undefined) {
+function paste_selected_tokens(x, y, teleporter = undefined) {
 	if (!teleporter && !window.DM) return;
 	if (window.TOKEN_PASTE_BUFFER == undefined) {
 		window.TOKEN_PASTE_BUFFER = [];
