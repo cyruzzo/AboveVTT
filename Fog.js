@@ -2227,7 +2227,7 @@ function setVisionLightOffscreenCanvas(){
 }
 function open_portal_config(){
 
-	const container = find_or_create_generic_draggable_window('portal_config_window', 'Portal Configuration', false, false, undefined, '500px', 'fit-content', '30px', '317px', false, `input, button`, false, true, ()=>{window.portalsInConfig = undefined;});	
+	const container = find_or_create_generic_draggable_window('portal_config_window', 'Portal Configuration', false, false, undefined, '605px', 'fit-content', '30px', '317px', false, `input, button`, false, true, ()=>{window.portalsInConfig = undefined;});	
 	container.find('.portal-listing').remove();
 	if(window.portalsInConfig == undefined){
 		window.portalsInConfig = {};
@@ -2241,7 +2241,7 @@ function open_portal_config(){
 	});
 	const listing = $(`<div class='portal-listing'></div>`)
 	const table = $(`<table class='portal-table'></table>`)
-	const tableHeaders = $(`<tr><th>Find Portal</th><th>Name</th><th class='show-name-portal-title'>Always Show Name</th><th class='linked-portal-title'>Place Linked Portal</th><th>Copy ID</th><th>More</th></tr>`)
+	const tableHeaders = $(`<tr><th>Find Portal</th><th>Name</th><th class='show-name-portal-title'>Always Show Name</th><th class='linked-portal-title'>Place Linked Portal</th><th class='current-linked-portal-title'>Linked To</th><th>Copy ID</th><th>More</th></tr>`)
 	table.append(tableHeaders);
 	listing.append(table);
 	const addPortal = $(`<button id='addPortal'>Add Portal</button>`)
@@ -2401,21 +2401,39 @@ function open_portal_config(){
 				</button>`)	
 
 			addPortalCell(portalRow, locatePortal);
-			
-			const nameInput = $(`<input type='text' class='portal-name' placeholder='Portal Name' value='${portal.token?.options?.name ?? ''}' />`);
+			const portalOptions = portal.token?.options;
+			const nameInput = $(`<input type='text' class='portal-name' placeholder='Portal Name' value='${portalOptions?.name ?? ''}' />`);
 			addPortalCell(portalRow, nameInput);
 			
-			const checkboxShowName = $(`<input class="portal-show-name" type='checkbox' id="showName_${portalId}" ${portal.token?.options?.alwaysshowname ? 'checked' : ''}></input>`)
+			const checkboxShowName = $(`<input class="portal-show-name" type='checkbox' id="showName_${portalId}" ${portalOptions?.alwaysshowname ? 'checked' : ''}></input>`)
 			addPortalCell(portalRow, checkboxShowName);
-
+	
 			const placeLinkedPortalButton = $(`<button class='place-linked-portal portalButton'><svg class="findSVG" width="24px" height="24px" viewBox="-2 -2 22 24" xmlns="http://www.w3.org/2000/svg" "=""><path fill-rule="evenodd" clip-rule="evenodd" d="M7.2 10.8V18h3.6v-7.2H18V7.2h-7.2V0H7.2v7.2H0v3.6h7.2z"></path></svg></button>`);
 			addPortalCell(portalRow, placeLinkedPortalButton);
-			const copyPortalButton = $('<button class="copy-portal-id portalButton" style="font-size:10px;"><span class="material-symbols-outlined">link</span></button>')
-					
+			
+			let connectedText = '';
+			const teleportCoords = portalOptions?.teleporterCoords;
+			if(teleportCoords?.left != undefined){
+				connectedText = `<span class='connected-portal'>x: ${teleportCoords.left}, y:${teleportCoords.top}</span>`
+			}else if(teleportCoords?.linkedPortalId != undefined){
+				const linkedPortalId = teleportCoords.linkedPortalId;
+				const linkedPortal = window.portalsInConfig[teleportCoords.linkedPortalId]?.token ?? window.all_token_objects[teleportCoords.linkedPortalId];
+				const name = linkedPortal?.options?.name;
+				const sceneId = teleportCoords.sceneId;
+				const scene = window.ScenesHandler.scenes.find(d => d.id == sceneId);
+				connectedText = `${name != undefined ? `<span class='connected-portal'>Portal: ${name}</span><br>` : ``}<span class='connected-portal'>Scene: ${scene.title}</span>`
+			}
+			
+
+			const currentLinkedPortalButton = $(`<div class='connected-portal-container'>${connectedText}</div>`);
+			addPortalCell(portalRow, currentLinkedPortalButton);
+
+			const copyPortalButton = $('<button class="copy-portal-id portalButton" style="font-size:10px;"><span class="material-symbols-outlined">link</span></button>')		
 			addPortalCell(portalRow, copyPortalButton);
+			
 			const portalSettingsButton = $(`<button class="portal-settings portalButton" style="font-size:10px;"><span class="material-symbols-outlined">more_vert</span></button>`);
-				
 			addPortalCell(portalRow, portalSettingsButton);
+
 			table.append(portalRow);
 		}
 	}
@@ -2674,6 +2692,21 @@ function open_portal_config(){
 			return;
 		$(`.door-button[data-id="${id}"]`).removeClass('tokenselected');
 	})
+
+	listing.off('mouseover.overflowName').on('mouseover.overflowName', '.connected-portal', function(e){
+        const target = $(e.currentTarget)
+        
+        const text = $(e.currentTarget).text();
+        const text_calc = $('body>div.track-name:first');
+        text_calc.html(`${text}.....`);
+        const nameWidth = text_calc.width();
+        const overflowVal = 120;
+
+        target.css({
+            "--name-width-overflow": (overflowVal - nameWidth < 0) ? overflowVal - 10 - nameWidth+'px' : 0,
+            "--overflow-speed": (overflowVal - nameWidth < 0) ? parseInt(nameWidth)*10+'ms' : 800+'ms'
+        });   
+    })
 
 
 	
