@@ -2227,7 +2227,8 @@ function setVisionLightOffscreenCanvas(){
 }
 function open_portal_config(){
 
-	const container = find_or_create_generic_draggable_window('portal_config_window', 'Portal Configuration', false, false, undefined, '605px', 'fit-content', '30px', '317px', false, `input, button`, false, true, ()=>{window.portalsInConfig = undefined;});	
+	const container = find_or_create_generic_draggable_window('portal_config_window', 'Portal Configuration', false, false, undefined, '560px', 'fit-content', '6px', '150px', false, `input, button`, false, true, ()=>{window.portalsInConfig = undefined;});	
+	container.css('max-height', 'calc(100% - 25px)')
 	container.find('.portal-listing').remove();
 	if(window.portalsInConfig == undefined){
 		window.portalsInConfig = {};
@@ -2599,6 +2600,7 @@ function open_portal_config(){
 			window.TOKEN_OBJECTS[portalId].options.name = newName;
 			window.TOKEN_OBJECTS[portalId].place(0);
 		}
+		open_portal_config();
 	}
 	const changeShowName = function(el){
 
@@ -2645,7 +2647,7 @@ function open_portal_config(){
 
 	
 
-	listing.off('change.portalInputs input.portalInputs').on('change.portalInputs input.portalInputs', '.portal-name, .portal-show-name', function(){
+	listing.off('change.portalInputs focusout.portalInputs').on('change.portalInputs focusout.portalInputs', '.portal-name, .portal-show-name', function(){
 		const classList = this.classList;
 		if(classList.contains('portal-name')){
 			changeName(this);
@@ -2677,7 +2679,7 @@ function open_portal_config(){
 		
 	})
 	listing.off('pointerdown.closeTokenMenu').on('pointerdown.closeTokenMenu', function(event){
-		close_token_context_menu();
+		setTimeout(close_token_context_menu,  50);
 	})
 	
 	listing.off('mouseenter.locatePortal, focusin.locatePortal').on('mouseenter.locatePortal, focusin.locatePortal', '.portal-entry', function(){
