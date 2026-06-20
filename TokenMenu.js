@@ -38,6 +38,7 @@ function context_menu_flyout(id, hoverEvent, buildFunction) {
 	if (hoverEvent.type === "mouseenter") {
 		window.contextFlyoutTimeout = setTimeout(() => {
 			let flyout = $(`<div id='${id}' class='context-menu-flyout'></div>`);
+			$(`.context-menu-flyout :focus`).blur();
 			$(`.context-menu-flyout`).remove(); // never duplicate
 
 			buildFunction(flyout);
