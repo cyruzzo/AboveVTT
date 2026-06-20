@@ -2424,7 +2424,7 @@ function open_portal_config(){
 			let connectedText = '';
 			const teleportCoords = portalOptions?.teleporterCoords;
 			if(teleportCoords?.left != undefined){
-				connectedText = `<span class='connected-portal'>x: ${teleportCoords.left}, y:${teleportCoords.top}</span>`
+				connectedText = `<span class='connected-portal'>x: ${teleportCoords.left}, y: ${teleportCoords.top}</span>`
 			}else if(teleportCoords?.linkedPortalId != undefined){
 				const linkedPortalId = teleportCoords.linkedPortalId;
 				const linkedPortal = window.portalsInConfig[teleportCoords.linkedPortalId]?.token ?? window.all_token_objects[teleportCoords.linkedPortalId];
@@ -2641,9 +2641,9 @@ function open_portal_config(){
 
 		//have menu open to the right of click instead of left as it would for tokens
 		if(e.touches != undefined){
-			e.touches[0].clientX += 230;
+			e.touches[0].clientX += 250;
 		}else{
-			e.clientX += 230;
+			e.clientX += 250;
 		}
 
 		if(sceneId != window.CURRENT_SCENE_DATA.id){
