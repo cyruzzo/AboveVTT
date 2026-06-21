@@ -1008,7 +1008,11 @@ function update_pc_token_rows() {
             });    
             let customizations = find_token_customization(listItem.type, listItem.id);
             
-            let rowImage = (customizations?.tokenOptions?.alternativeImages?.length > 0) ? customizations?.tokenOptions?.alternativeImages[0] : pc.image;
+            let rowImage =  customizations?.tokenOptions?.defaultImage != undefined 
+                                ? customizations.tokenOptions.defaultImage 
+                                : (customizations?.tokenOptions?.alternativeImages?.length > 0) 
+                                    ? customizations?.tokenOptions?.alternativeImages[0] 
+                                    : pc.image;
             if (rowImage.startsWith('above-bucket-not-a-url')){
                 getAvttStorageUrl(avttTokensApplyThumbnailPrefix(rowImage), true).then((url) => {
                     row.find(".token-image").attr('src', url)
@@ -1279,6 +1283,9 @@ async function create_and_place_token(listItem, hidden = undefined, specificImag
                 options = {...options, ...window.all_token_objects[options.id].options}
                 if (specificImage) { 
                     options = { ...options, ...options.alternativeImagesCustomizations?.[specificImage], imgsrc: chosenImage };
+                }       
+                else if (options.defaultImage !== undefined) {
+                     options = { ...options, ...options.alternativeImagesCustomizations?.[specificImage], imgsrc: chosenImage };
                 }
             }
             options.color = color_from_pc_object(pc);
