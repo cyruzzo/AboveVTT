@@ -1327,6 +1327,26 @@ class Token {
 		hpbar.append(divider);
 		hpbar.append(maxhp_input);
 		if (!this.isPlayer()) {
+			hp_input.on('wheel', function(e) {
+				const input = $(this);
+				if(!input.is(':focus'))
+					return;
+				e.preventDefault();
+				const delta = e.originalEvent.deltaY < 0 ? 1 : -1;
+				const current = parseInt(self.hp) || 0;
+				input.val(Math.max(0, current + delta));
+				input.trigger('change');
+			});
+			maxhp_input.on('wheel', function(e) {
+				const input = $(this);
+				if(!input.is(':focus'))
+					return;
+				e.preventDefault();
+				const delta = e.originalEvent.deltaY < 0 ? 1 : -1;
+				const current = parseInt(self.maxHp) || 0;
+				input.val(Math.max(1, current + delta));
+				input.trigger('change');
+			});
 			hp_input.change(function(e) {
 				$(this).val($(this).val().trim());
 				self.update_and_sync(e);
