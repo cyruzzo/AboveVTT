@@ -2617,7 +2617,7 @@ class JournalManager{
 						}
 						splitParts[part] = splitParts[part].replace(/<(\/)?[^>]+>/gi, '')
 						
-						if( !(splitParts[part].startsWith('<') || splitParts[part].startsWith('[spell]')) && splitParts[part] && typeof splitParts[part] === 'string') {
+						if( !(splitParts[part].match(/^\s*(<|\[spell\])/gi)) && splitParts[part] && typeof splitParts[part] === 'string') {
 							splitParts[part] = splitParts[part].split('<')[0]
 								.replace(/^/gm, `[spell]`)
 								.replace(/( \(|(?<!\))$)/gm, `[/spell]$1`);
