@@ -770,7 +770,7 @@ async function enable_draggable_token_creation(html, specificImage = undefined) 
                     helper.attr("src", specificImage);
                 } else {      
                     let src = random_image_for_item(draggedItem);
-                    if(draggedItem.type == ItemType.PC){
+                    if(draggedItem.type == ItemType.PC && find_token_customization(draggedItem.type, draggedItem.id)?.tokenOptions?.defaultImage != undefined){
                         src = window.all_token_objects?.[draggedItem.id]?.options?.imgsrc || src;
                     }  
                     helper.attr("data-src", src);
