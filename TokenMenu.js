@@ -233,8 +233,8 @@ function token_context_menu_expanded(tokenIds, e, crossScenePortalData) {
 					tokens = [window.TOKEN_OBJECTS[options.id]]
 				}
 				if(!isTeleporter){
+					let openButton = $(`<button class=" context-menu-icon-hidden door-open material-icons">Open/Close</button>`)
 					openButton.off().on("click", function(clickEvent){
-						let openButton = $(`<button class=" context-menu-icon-hidden door-open material-icons">Open/Close</button>`)
 						let clickedItem = $(this);
 						let locked = door.hasClass('locked');
 						let secret = door.hasClass('secret');
