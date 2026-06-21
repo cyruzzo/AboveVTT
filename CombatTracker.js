@@ -1359,18 +1359,24 @@ function ct_add_token(token,persist=true,disablerolling=false, adv=false, dis=fa
 		});
 
 		hp_input.on('wheel', function(e) {
+			const input = $(this);
+			if(!input.is(':focus'))
+				return;
 			e.preventDefault();
 			const delta = e.originalEvent.deltaY < 0 ? 1 : -1;
 			const current = parseInt(token.hp) || 0;
-			$(this).val(Math.max(0, current + delta));
-			$(this).trigger('change');
+			input.val(Math.max(0, current + delta));
+			input.trigger('change');
 		});
 		maxhp_input.on('wheel', function(e) {
+			const input = $(this);
+			if(!input.is(':focus'))
+				return;
 			e.preventDefault();
 			const delta = e.originalEvent.deltaY < 0 ? 1 : -1;
 			const current = parseInt(token.maxHp) || 0;
-			$(this).val(Math.max(1, current + delta));
-			$(this).trigger('change');
+			input.val(Math.max(1, current + delta));
+			input.trigger('change');
 		});
 	}
 	else {
