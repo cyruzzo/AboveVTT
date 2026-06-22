@@ -2609,7 +2609,7 @@ class JournalManager{
 					const splitParts = parts[p].split(/(?<!<[^>]+),(?![^(]*\))/gm);
 					for(let part in splitParts){
 						let spellName = (splitParts[part].match(/^(\s+)?<[^>]+>/gi)) ? $(splitParts[part]).text() : splitParts[part].replace(/(\s+)?<[^>]+>/g, '').replace(/\s?\[spell\]\s?|\s?\[\/spell\]\s?/g, '').replace('[/spell]', '').replace(/\s|&nbsp;/g, '');
-						if(splitParts[part].match(/^((\s+?)?(<a|<span))|^$/gi) && $(splitParts[part])?.is('a, span[data-spell]')){
+						if(splitParts[part].match(/^((\s+?)?(<a|<span))|^$/gi) && $(splitParts[part])?.is('a, span[data-spell], span.ignore-abovevtt-formating:has(a.tooltip-hover)')){
 							if(eachNumberFound){
 								splitParts[part] = `<span class="add-input each" data-number="${eachNumberFound}" data-spell="${spellName}">${splitParts[part]}</span>`
 							}
@@ -2617,7 +2617,7 @@ class JournalManager{
 						}
 						splitParts[part] = splitParts[part].replace(/<(\/)?[^>]+>/gi, '')
 						
-						if( !(splitParts[part].match(/^\s*(<|\[spell\])/gi)) && splitParts[part] && typeof splitParts[part] === 'string') {
+						if(!(splitParts[part].match(/^\s*(<|\[spell\])/gi)) && splitParts[part] && typeof splitParts[part] === 'string') {
 							splitParts[part] = splitParts[part].split('<')[0]
 								.replace(/^/gm, `[spell]`)
 								.replace(/( \(|(?<!\))$)/gm, `[/spell]$1`);
