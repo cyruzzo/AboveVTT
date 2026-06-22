@@ -1584,7 +1584,7 @@ class JournalManager{
 
 	addTrackedInputs(target, id = {noteId: undefined, token: undefined}){
 		let numberFound = target.attr('data-number');
-		const spellName = target.attr('data-spell');
+		let spellName = target.attr('data-spell');
 		const remainingText = target.hasClass('each') ? '' : `${spellName} slots remaining`
 		const {noteId, token} = id;
 
@@ -1607,6 +1607,12 @@ class JournalManager{
 				
 			}
 		}
+		const partyLootTable = target.closest('.party-item-table');
+		if(partyLootTable.length>0){
+			const rowNumber = target.closest('tr').index();
+			spellName = `${spellName}-${rowNumber}`;
+		}
+
 		if (noteId && window.JOURNAL.notes[noteId].abilityTracker?.[spellName] >= 0) {
 			numberFound = window.JOURNAL.notes[noteId].abilityTracker[spellName]
 		}
@@ -1626,7 +1632,7 @@ class JournalManager{
 		if (!window.DM && playerDisabled) {
 			input.prop('disabled', true);
 		}
-		const partyLootTable = target.closest('.party-item-table');
+		
 		if (partyLootTable.length > 0) {
 			if (partyLootTable.hasClass('shop') && numberFound > 0) {
 				target.closest('tr').find('td>.item-quantity-take-input').val(1);
