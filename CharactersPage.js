@@ -1048,7 +1048,7 @@ const buffsDebuffs = {
         "replaceType": {
           "damage": 'button:has(.ddbc-damage--versatile), .ddbc-combat-item-attack--melee:has(.ddbc-note-components__component:contains("Two-Handed"))' //looks for versatile 2 hand button or two-handed trait in item note
         },
-        "newRoll": '$1min3',//replace original roll with min3
+        "newRoll": '$1min3',//replace with original roll with minimum roll of 3
       },
       "Legacy": {
         "tohit": "0",
