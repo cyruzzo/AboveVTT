@@ -463,6 +463,21 @@ function inject_monster_tokens(searchTerm, skip, addedList=[]) {
             if(window.ownedMonstersOnly && !item.monsterData.isReleased && item.monsterData.homebrewStatus == 0){
                 continue;   
             }
+            const sourceList = {};
+            const sourceCategory = window.ddbConfigJson.sources.map((s) => {
+                 sourceList[s.id] = s.sourceCategoryId;
+            });
+            
+            if(Array.isArray(window.sourceCategoryMonsterFilter) && window.sourceCategoryMonsterFilter.length>0){
+  
+                const sourceIdMap = item.monsterData.sources.map(s => { return sourceList[s.sourceId] })
+                const set = new Set(window.sourceCategoryMonsterFilter);
+                const hasMatch = sourceIdMap.some(value => set.has(`${value}`) || set.has(value)); 
+                if(!hasMatch)
+                    continue;
+            }
+                
+
             window.monsterListItems.push(item);
             listItems.push(item);
         }
@@ -4165,7 +4180,8 @@ function display_monster_filter_modal() {
             let monsterListing = $(event.target).contents().find(".qa-monster-filters:not('above-loaded')")
             if (filterButton.length > 0 || monsterListing.length>0){
                 filter_observer.disconnect();
-                $(event.target).contents().find("head").append(
+                const contents = $(event.target).contents();
+                contents.find("head").append(
                 `<style>
                     .input-select .input-select__dropdown-wrapper {
                         transition: max-height 0.5s ease 0.1s;
@@ -4185,12 +4201,12 @@ function display_monster_filter_modal() {
                     }
                 </style>`
                 );
-                $(event.target).contents().find("body").addClass("prevent-sidebar-modal-close");
+                contents.find("body").addClass("prevent-sidebar-modal-close");
 
-                $(event.target).contents().find(".monster-listing__header button").click();
-                $(event.target).contents().find('.qa-monster-filters').toggleClass('above-loaded', true);
-                $(event.target).contents().find(".popup-overlay").css("background", "rgb(235, 241, 245)");
-                $(event.target).contents().find(".popup-content").css({
+                contents.find(".monster-listing__header button").click();
+                contents.find('.qa-monster-filters').toggleClass('above-loaded', true);
+                contents.find(".popup-overlay").css("background", "rgb(235, 241, 245)");
+                contents.find(".popup-content").css({
                     "width": "100%",
                     "height": "100%",
                     "max-width": "100%",
@@ -4207,8 +4223,110 @@ function display_monster_filter_modal() {
                         <path class="svg-center" d="M10.9545457,13.4909096 L8.00000021,11.2727278 C7.5983384,10.9714815 7.0285184,11.0528842 6.72727294,11.454546 C6.42602658,11.8562078 6.5074293,12.4260278 6.90909113,12.7272733 L11.227273,15.9636369 L17.2363639,8.95454602 C17.562714,8.57296782 17.5179421,7.99908236 17.136364,7.67272782 C16.7547858,7.34637782 16.1809003,7.39114963 15.8545458,7.77272782 L10.9545457,13.4909096 Z"></path>
                     </svg>
                     <span class="input-checkbox__text">Only show monsters I have access to</span>
-                </label>`).insertAfter($(event.target).contents().find(".qa-monster-filters_remember"));
+                </label>`).insertAfter(contents.find(".qa-monster-filters_remember"));
+                
+                const savedSourceCategories = localStorage.getItem(`${gameId}-sourceCategoryMonsterFilter`) != null ? JSON.parse(localStorage.getItem(`${gameId}-sourceCategoryMonsterFilter`)) : [];
+                
+                const createDropdownOption = function(name, value){
+                    return $(`<li aria-selected="false" class="input-select__dropdown-option" role="option">
+                        <label class="input-checkbox input-checkbox-label qa-input-checkbox_label input-select__dropdown-option-input-checkbox">
+                            <input class="input-checkbox__input qa-input-checkbox_input" tabindex="0" value="${value}" type="checkbox" ${savedSourceCategories.includes(`${value}`) ? 'checked': ''}>
+                            <div class="input-checkbox__focus-indicator"></div>
+                            <svg class="input-checkbox__icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" overflow="visible" focusable="false">
+                                <path class="svg-border" d="M5.63636382,2.00000055 C3.62805456,2.00000064 2,3.62805509 2,5.63636419 C2,5.63636419 2,9.87878843 2,18.3636369 C1.9999997,20.3719455 3.62805456,22 5.63636367,22 L18.3636365,22 C20.3719454,22.0000001 22,20.3719455 22,18.3636364 L22,5.63636364 C22,3.62805455 20.3719454,2 18.3636363,2 L5.63636382,2.00000055 Z M19,17.25 C19,18.2164987 18.2164979,19 17.25,19 L6.75000007,19 C5.78350125,19 5,18.2164979 5,17.25 C5,17.25 5,17.25 5,17.25 L5,6.74999977 L5,6.75000003 C4.99999985,5.78350126 5.78350125,5 6.74999999,5 L17.2499999,5 C18.2164986,4.99999996 18.9999998,5.78350126 18.9999998,6.75000003 L19,17.25 Z"></path>
+                                <path class="svg-center" d="M10.9545457,13.4909096 L8.00000021,11.2727278 C7.5983384,10.9714815 7.0285184,11.0528842 6.72727294,11.454546 C6.42602658,11.8562078 6.5074293,12.4260278 6.90909113,12.7272733 L11.227273,15.9636369 L17.2363639,8.95454602 C17.562714,8.57296782 17.5179421,7.99908236 17.136364,7.67272782 C16.7547858,7.34637782 16.1809003,7.39114963 15.8545458,7.77272782 L10.9545457,13.4909096 Z"></path>
+                            </svg>
+                            <span class="input-checkbox__text">${name}</span>
+                        </label>
+                    </li>`)
+                }
+
+                const dropdownFilter = $(`<div class="input-select qa-input-select-dropdown qa-monster-filters_source_category input-select--list input-select--multi">
+                                            <div aria-haspopup="true" class="input-select__button qa-input-select-dropdown_button" type="button" role="button" tabindex="0">
+                                                <div class="input-select__button-text"><span style="flex: 1 1 0%; text-align: start;"><span style="flex: 1 1 0%; text-align: start;">Source Category</span></span></div>
+                                                <div class="input-select__button-icon">
+                                                    <svg class="" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" overflow="visible">
+                                                        <path d="M 0 25 L 50 75 L 100 25" stroke-width="15" fill="none"></path>
+                                                    </svg>
+                                                </div>
+                                            </div>
+                                            <input class="input-select__input-cache qa-input-select-dropdown_input-cache" title="Search Source Category Options" type="text" value="">
+                                            <div aria-hidden="true" class="input-select__dropdown-wrapper">
+                                                <ul class="input-select__dropdown" role="listbox">
+                                                   
+                                                </ul>
+                                            </div>
+                                        </div>`);
+                const sourceCategories = window.ddbConfigJson.sourceCategories;
+                const list = dropdownFilter.find('ul.input-select__dropdown[role="listbox"]')
+                for (const category of sourceCategories){
+                    const option = createDropdownOption(category.name, category.id);
+                    list.append(option);
+                }
+                list.find('li').sort(function(a,b){
+                    return $(a).find('.input-checkbox__text').text().localeCompare($(b).find('.input-checkbox__text').text(), "en", { sensitivity: 'base' });
+                }).appendTo(list);
+                const sourceDropdown = contents.find('.monster-filters>.input-select:nth-of-type(2)');
+                sourceDropdown.after(dropdownFilter);
+
+                dropdownFilter.find('.qa-input-select-dropdown_input-cache').off('input.search').on('input.search', function(e) {
+                    const query = e.target.value.toLowerCase();
+                    const listItems = list.find('li')
+                    listItems.filter(function() {
+                        const text = $(this).find('.input-checkbox__text').text().toLowerCase();
+                        $(this).toggle(text.trim() == '' || text.indexOf(query) > -1);
+                    });
+                });
+                dropdownFilter.off('pointerdown.open').on('pointerdown.open', (e)=>{
+                    const target = $(e.target);
+                    if(target.closest('.input-select__clear-button').length>0) return;
                     
+                    if(target.closest('.input-select__button-icon').length>0){
+                        dropdownFilter.toggleClass('is-open');
+                    } else{
+                        dropdownFilter.addClass('is-open');
+                    }
+
+                    if(dropdownFilter.hasClass('is-open')){
+                        const filterBody = contents.find('body');
+                        filterBody.off('click.closeFilter').on('click.closeFilter', function(e){
+                            if($(e.target).closest('.qa-monster-filters_source_category').length>0){
+                                return;
+                            }
+                            dropdownFilter.removeClass('is-open');
+                            filterBody.off('click.closeFilter');
+                        })
+                    } else{
+                        filterBody.off('click.closeFilter');
+                    }
+                   
+                })
+                const setNumberOfFilterText = function(filter, filterName){
+                    const numberOfChecked = filter.find(".input-select__dropdown input:checked").length;
+                    
+                    filter.find('.input-select__button-text-count').remove();
+                    filter.find('.input-select__clear-button').remove();
+                    if(numberOfChecked == 0) return;
+                    
+
+                    const textCount = $(`<span aria-label="${numberOfChecked} selected" class="input-select__button-text-count">(${numberOfChecked})</span>`)
+                    filter.find('.input-select__button-text>span').append(textCount);
+
+                    const clearButton = $(`<button class="input-select__clear-button qa-input-select-dropdown_clear-button" title="Clear ${filterName}" type="button"><svg class="" xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><g transform="rotate(-45 50 50)"><rect x="0" y="40" width="100" height="20"></rect></g><g transform="rotate(45 50 50)"><rect x="0" y="40" width="100" height="20"></rect></g></svg></button>`)
+                    clearButton.off('pointerdown.clearFilter').on('pointerdown.clearFilter', (e) =>{
+                        filter.find(".input-select__dropdown input:checked").prop("checked", false);
+                        filter.find('.input-select__button-text-count').remove();
+                        filter.find('.input-select__clear-button').remove();
+                    })    
+                    filter.find('.input-select__button-text').append(clearButton);
+                }
+                dropdownFilter.off('input.showNumber').on('input.showNumber', 'input[type="checkbox"]', function(){
+                    setNumberOfFilterText(dropdownFilter, "Source Category");
+                })
+                setNumberOfFilterText(dropdownFilter, "Source Category");
+                dropdownFilter.off('blur.close').on('blur.close', (e)=>{
+                    dropdownFilter.removeClass('is-open');
+                })
                 let closeButton = build_close_button();
                 closeButton.css({
                     "position": "absolute",
@@ -4220,7 +4338,7 @@ function display_monster_filter_modal() {
                     clickEvent.stopPropagation();
                     close_monster_filter_iframe();
                 });
-                $(event.target).contents().find(".qa-monster-filters").prepend(closeButton);
+                contents.find(".qa-monster-filters").prepend(closeButton);
 
                 tokensPanel.remove_sidebar_loading_indicator();
                 iframe.css({ "z-index": 10 });
@@ -4236,11 +4354,17 @@ function display_monster_filter_modal() {
 function close_monster_filter_iframe() {
     let sidebarMonsterFilter = $("#monster-filter-iframe");
     let ownedFilter = sidebarMonsterFilter.contents().find('.qa-monster-filters_accessible-content input')[0]?.checked 
+    const checkedSourceCategories = sidebarMonsterFilter.contents().find('.qa-monster-filters_source_category input[type="checkbox"]:checked').map(function() {
+            return $(this).val();
+        }).get();
+    
    
     if(localStorage.getItem('DDBEB-monster-filters') != null) {
         // the user has the "remember filters" option checked... let's grab our data and move on
-        if(ownedFilter != undefined)
+        if(ownedFilter != undefined)      
             localStorage.setItem(`${gameId}-ownedMonsterFilter`, ownedFilter);
+        if(checkedSourceCategories?.length>0)
+            localStorage.setItem(`${gameId}-sourceCategoryMonsterFilter`, JSON.stringify(checkedSourceCategories))
         read_local_monster_search_filters();
         sidebarMonsterFilter.remove();
         tokensPanel.remove_sidebar_loading_indicator(); // if the user double clicks, we might remove iframe before dismissing the loading indicator
@@ -4253,8 +4377,10 @@ function close_monster_filter_iframe() {
         rememberButton.click();
         setTimeout(function() { // make sure we let the "remember filter" click propagate before we harvest that data
             read_local_monster_search_filters();
-            localStorage.removeItem(`${gameId}-ownedMonsterFilter`, ownedFilter);
+            localStorage.removeItem(`${gameId}-ownedMonsterFilter`);
+            localStorage.removeItem(`${gameId}-sourceCategoryMonsterFilter`)
             window.ownedMonstersOnly = ownedFilter; 
+            window.sourceCategoryMonsterFilter = checkedSourceCategories?.length>0 ? checkedSourceCategories : [];
             rememberButton.click();
             sidebarMonsterFilter.remove();
             tokensPanel.remove_sidebar_loading_indicator(); // if the user double clicks, we might remove iframe before dismissing the loading indicator
@@ -4270,6 +4396,8 @@ function read_local_monster_search_filters() {
         monster_search_filters = $.parseJSON(localStorage.getItem('DDBEB-monster-filters'))    
         if(localStorage.getItem(`${gameId}-ownedMonsterFilter`) != 'undefined' && $.parseJSON(localStorage.getItem(`${gameId}-ownedMonsterFilter`)) != null)
             window.ownedMonstersOnly = $.parseJSON(localStorage.getItem(`${gameId}-ownedMonsterFilter`));
+        if(localStorage.getItem(`${gameId}-sourceCategoryMonsterFilter`) != 'undefined' && JSON.parse(localStorage.getItem(`${gameId}-sourceCategoryMonsterFilter`)) != null)
+            window.sourceCategoryMonsterFilter = JSON.parse(localStorage.getItem(`${gameId}-sourceCategoryMonsterFilter`));
     } else {
         monster_search_filters = {};
     }
