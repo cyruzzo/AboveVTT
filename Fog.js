@@ -8567,8 +8567,12 @@ function redraw_light(darknessMoved = false, limitActiveRays = 0) {
 	}
 	const wallsCache = buildWallCache(allWalls);
 	for (let i = 0; i < light_auras.length; i++) {
-
+		
 		let auraId = light_auras[i];
+		if(!window.TOKEN_OBJECTS[auraId]){
+			console.warn('Token not found after finding a light aura for it. Most likely during scene change')
+			return;
+		}
 		const auraClipContainers = document.querySelectorAll(`.aura-element-container-clip[id='${auraId}']`);
 
 		let found = selectedIds.includes(auraId);

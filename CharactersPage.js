@@ -713,6 +713,330 @@ const buffsDebuffs = {
     "newRoll": '1d20+10',
     "type": "spell",
   },
+  "Mark of Detection":{
+    "multiOptions": {
+      "d4": {
+        "tohit": "0",
+        "dmg": "0",
+        "save": "0",
+        "check": "0",
+        "replace": /(.)$/gi,//last character
+        "replaceType": {
+          "check": '.ct-skills__item:contains("Investigation"), .ct-skills__item:contains("Insight")' 
+        },
+        "newRoll": '$1+1d4',
+      },
+      "d6": {
+        "tohit": "0",
+        "dmg": "0",
+        "save": "0",
+        "check": "0",
+        "replace": /(.)$/gi,//last character
+        "replaceType": {
+          "check": '.ct-skills__item:contains("Investigation"), .ct-skills__item:contains("Insight")' 
+        },
+        "newRoll": '$1+1d6',
+      }
+    },
+    "type": "feat",
+  },
+  "Mark of Finding":{
+    "multiOptions": {
+      "d4": {
+        "tohit": "0",
+        "dmg": "0",
+        "save": "0",
+        "check": "0",
+        "replace": /(.)$/gi,//last character
+        "replaceType": {
+          "check": '.ct-skills__item:contains("Perception"), .ct-skills__item:contains("Survival")' 
+        },
+        "newRoll": '$1+1d4',
+      },
+      "d6": {
+        "tohit": "0",
+        "dmg": "0",
+        "save": "0",
+        "check": "0",
+        "replace": /(.)$/gi,//last character
+        "replaceType": {
+          "check": '.ct-skills__item:contains("Perception"), .ct-skills__item:contains("Survival")' 
+        },
+        "newRoll": '$1+1d6',
+      }
+    },
+    "type": "feat",
+  },
+  "Mark of Handling":{
+    "multiOptions": {
+      "d4": {
+        "tohit": "0",
+        "dmg": "0",
+        "save": "0",
+        "check": "0",
+        "replace": /(.)$/gi,//last character
+        "replaceType": {
+          "check": '.ct-skills__item:contains("Nature"), .ct-skills__item:contains("Animal Handling")' 
+        },
+        "newRoll": '$1+1d4',
+      },
+      "d6": {
+        "tohit": "0",
+        "dmg": "0",
+        "save": "0",
+        "check": "0",
+        "replace": /(.)$/gi,//last character
+        "replaceType": {
+          "check": '.ct-skills__item:contains("Nature"), .ct-skills__item:contains("Animal Handling")' 
+        },
+        "newRoll": '$1+1d6',
+      }
+    },
+    "type": "feat",
+  },
+  "Mark of Healing":{
+    "multiOptions": {
+      "d4": {
+        "tohit": "0",
+        "dmg": "0",
+        "save": "0",
+        "check": "0",
+        "replace": /(.)$/gi,//last character
+        "replaceType": {
+          "check": '.ct-skills__item:contains("Medicine"), .ct-skills__item:contains("Herbalism Kit")' 
+        },
+        "newRoll": '$1+1d4',
+      },
+      "d6": {
+        "tohit": "0",
+        "dmg": "0",
+        "save": "0",
+        "check": "0",
+        "replace": /(.)$/gi,//last character
+        "replaceType": {
+          "check": '.ct-skills__item:contains("Medicine"), .ct-skills__item:contains("Herbalism Kit")' 
+        },
+        "newRoll": '$1+1d6',
+      }
+    },
+    "type": "feat",
+  },
+  "Mark of Hospitality":{
+    "multiOptions": {
+      "d4": {
+        "tohit": "0",
+        "dmg": "0",
+        "save": "0",
+        "check": "0",
+        "replace": /(.)$/gi,//last character
+        "replaceType": {
+          "check": `.ct-skills__item:contains("Persuasion"), .ct-skills__item:contains("Brewer's Supplies"), .ct-skills__item:contains("Cook's Utensils")` 
+        },
+        "newRoll": '$1+1d4',
+      },
+      "d6": {
+        "tohit": "0",
+        "dmg": "0",
+        "save": "0",
+        "check": "0",
+        "replace": /(.)$/gi,//last character
+        "replaceType": {
+          "check": `.ct-skills__item:contains("Persuasion"), .ct-skills__item:contains("Brewer's Supplies"), .ct-skills__item:contains("Cook's Utensils")`
+        },
+        "newRoll": '$1+1d6',
+      }
+    },
+    "type": "feat",
+  },
+  "Mark of Making":{
+    "multiOptions": {
+      "d4": {
+        "tohit": "0",
+        "dmg": "0",
+        "save": "0",
+        "check": "0",
+        "replace": /(.)$/gi,//last character
+        "replaceType": {
+          "check": `.ct-skills__item:contains("Arcana"), .ct-skills__item:contains("Artisan's Tools")` 
+        },
+        "newRoll": '$1+1d4',
+      },
+      "d6": {
+        "tohit": "0",
+        "dmg": "0",
+        "save": "0",
+        "check": "0",
+        "replace": /(.)$/gi,//last character
+        "replaceType": {
+          "check": `.ct-skills__item:contains("Arcana"), .ct-skills__item:contains("Artisan's Tools")`
+        },
+        "newRoll": '$1+1d6',
+      }
+    },
+    "type": "feat",
+  },
+  "Mark of Passage":{
+    "multiOptions": {
+      "d4": {
+        "tohit": "0",
+        "dmg": "0",
+        "save": "0",
+        "check": "0",
+        "replace": /(.)$/gi,//last character
+        "replaceType": {
+          "check": `.ct-skills__item:contains("Athletics"), .ct-skills__item:contains("Acrobatics")` 
+        },
+        "newRoll": '$1+1d4',
+      },
+      "d6": {
+        "tohit": "0",
+        "dmg": "0",
+        "save": "0",
+        "check": "0",
+        "replace": /(.)$/gi,//last character
+        "replaceType": {
+          "check": `.ct-skills__item:contains("Athletics"), .ct-skills__item:contains("Acrobatics")`
+        },
+        "newRoll": '$1+1d6',
+      }
+    },
+    "type": "feat",
+  },
+  "Mark of Scribing":{
+    "multiOptions": {
+      "d4": {
+        "tohit": "0",
+        "dmg": "0",
+        "save": "0",
+        "check": "0",
+        "replace": /(.)$/gi,//last character
+        "replaceType": {
+          "check": `.ct-skills__item:contains("Intelligence"), .ct-skills__item:contains("Calligrapher's Supplies")` 
+        },
+        "newRoll": '$1+1d4',
+      },
+      "d6": {
+        "tohit": "0",
+        "dmg": "0",
+        "save": "0",
+        "check": "0",
+        "replace": /(.)$/gi,//last character
+        "replaceType": {
+          "check": `.ct-skills__item:contains("Intelligence"), .ct-skills__item:contains("Calligrapher's Supplies")`
+        },
+        "newRoll": '$1+1d6',
+      }
+    },
+    "type": "feat",
+  },
+  "Mark of Sentinel":{
+    "multiOptions": {
+      "d4": {
+        "tohit": "0",
+        "dmg": "0",
+        "save": "0",
+        "check": "0",
+        "replace": /(.)$/gi,//last character
+        "replaceType": {
+          "check": `.ct-skills__item:contains("Insight"), .ct-skills__item:contains("Perception")` 
+        },
+        "newRoll": '$1+1d4',
+      },
+      "d6": {
+        "tohit": "0",
+        "dmg": "0",
+        "save": "0",
+        "check": "0",
+        "replace": /(.)$/gi,//last character
+        "replaceType": {
+          "check": `.ct-skills__item:contains("Insight"), .ct-skills__item:contains("Perception")`
+        },
+        "newRoll": '$1+1d6',
+      }
+    },
+    "type": "feat",
+  },
+  "Mark of Shadow":{
+    "multiOptions": {
+      "d4": {
+        "tohit": "0",
+        "dmg": "0",
+        "save": "0",
+        "check": "0",
+        "replace": /(.)$/gi,//last character
+        "replaceType": {
+          "check": `.ct-skills__item:contains("Stealth"), .ct-skills__item:contains("Performance")` 
+        },
+        "newRoll": '$1+1d4',
+      },
+      "d6": {
+        "tohit": "0",
+        "dmg": "0",
+        "save": "0",
+        "check": "0",
+        "replace": /(.)$/gi,//last character
+        "replaceType": {
+          "check": `.ct-skills__item:contains("Stealth"), .ct-skills__item:contains("Performance")`
+        },
+        "newRoll": '$1+1d6',
+      }
+    },
+    "type": "feat",
+  },
+  "Mark of Storm":{
+    "multiOptions": {
+      "d4": {
+        "tohit": "0",
+        "dmg": "0",
+        "save": "0",
+        "check": "0",
+        "replace": /(.)$/gi,//last character
+        "replaceType": {
+          "check": `.ct-skills__item:contains("Acrobatics"), .ct-skills__item:contains("Navigator's Tools")` 
+        },
+        "newRoll": '$1+1d4',
+      },
+      "d6": {
+        "tohit": "0",
+        "dmg": "0",
+        "save": "0",
+        "check": "0",
+        "replace": /(.)$/gi,//last character
+        "replaceType": {
+          "check": `.ct-skills__item:contains("Acrobatics"), .ct-skills__item:contains("Navigator's Tools")`
+        },
+        "newRoll": '$1+1d6',
+      }
+    },
+    "type": "feat",
+  },
+  "Mark of Warding":{
+    "multiOptions": {
+      "d4": {
+        "tohit": "0",
+        "dmg": "0",
+        "save": "0",
+        "check": "0",
+        "replace": /(.)$/gi,//last character
+        "replaceType": {
+          "check": `.ct-skills__item:contains("Investigation"), .ct-skills__item:contains("Thieves' Tools")` 
+        },
+        "newRoll": '$1+1d4',
+      },
+      "d6": {
+        "tohit": "0",
+        "dmg": "0", 
+        "save": "0",
+        "check": "0",
+        "replace": /(.)$/gi,//last character
+        "replaceType": {
+          "check": `.ct-skills__item:contains("Investigation"), .ct-skills__item:contains("Thieves' Tools")`
+        },
+        "newRoll": '$1+1d6',
+      }
+    },
+    "type": "feat",
+  },
   "Great Weapon Fighting": {
     "multiOptions": {
       "2024": { 
