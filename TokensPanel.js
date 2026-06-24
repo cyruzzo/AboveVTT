@@ -4286,9 +4286,9 @@ function display_monster_filter_modal() {
                     } else{
                         dropdownFilter.addClass('is-open');
                     }
-
+                    const filterBody = contents.find('body');
                     if(dropdownFilter.hasClass('is-open')){
-                        const filterBody = contents.find('body');
+                        
                         filterBody.off('click.closeFilter').on('click.closeFilter', function(e){
                             if($(e.target).closest('.qa-monster-filters_source_category').length>0){
                                 return;
@@ -4363,8 +4363,9 @@ function close_monster_filter_iframe() {
         // the user has the "remember filters" option checked... let's grab our data and move on
         if(ownedFilter != undefined)      
             localStorage.setItem(`${gameId}-ownedMonsterFilter`, ownedFilter);
-        if(checkedSourceCategories?.length>0)
+        if(checkedSourceCategories != undefined)
             localStorage.setItem(`${gameId}-sourceCategoryMonsterFilter`, JSON.stringify(checkedSourceCategories))
+   
         read_local_monster_search_filters();
         sidebarMonsterFilter.remove();
         tokensPanel.remove_sidebar_loading_indicator(); // if the user double clicks, we might remove iframe before dismissing the loading indicator
