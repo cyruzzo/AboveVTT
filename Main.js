@@ -3031,8 +3031,8 @@ function checkForExportRemind() {
 
 	function showExportReminder() {
 		let exportReminder = $(`#exportReminder`);
-		if($(`#exportReminder`).length > 0) {
-			$(`#exportReminder`).show();
+		if(exportReminder.length > 0) {
+			exportReminder.show();
 			return;
 		}
 		exportReminder = find_or_create_generic_draggable_window("exportReminder", "Export Reminder", false, false, '#exportReminder', 'fit-content', '10%', '10%', '10%', false, '', false, true);	
