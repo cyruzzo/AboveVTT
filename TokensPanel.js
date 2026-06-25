@@ -4267,7 +4267,7 @@ function display_monster_filter_modal() {
                 const sourceCategories = window.ddbConfigJson.sourceCategories;
                 const list = dropdownFilter.find('ul.input-select__dropdown[role="listbox"]')
                 for (const category of sourceCategories){
-                    if(!category.isEnabledByDefault)
+                    if((!category.isEnabledByDefault && category.name != "Subscriber Content") || category.name == "Internal")
                         continue;
                     const option = createDropdownOption(category.name, category.id);
                     list.append(option);
