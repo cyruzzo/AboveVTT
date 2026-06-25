@@ -40,7 +40,7 @@ class WeatherOverlay {
         const weatherData = getWeatherTypes()[this.type];
         this.intensity = intensity || weatherData?.default || 120;
         //start or optimize canvas away
-        const weatherExists = (this.type && this.type != '0');
+        const weatherExists = (this.type && this.type != '0' && this.type != 'none' && this.intensity != 0);
         this.resizeCtx(this.ctx, this.canvas, weatherExists);
         this.resizeCtx(this.offscreenCtx, this.offscreenCanvas, weatherExists);
         this.resizeCtx(this.lightCtx, this.lightCanvas, weatherExists && weatherData?.lit);
