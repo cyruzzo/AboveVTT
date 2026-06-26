@@ -2605,13 +2605,9 @@ class JournalManager{
             	let spellLevelFound = (slotsNumberFound) ? input.match(/\d+\w+ level/gi)[0] : undefined;
 				
 				let parts = input.replace(/<(?!\/?(?:span|a)\b)[^>]*>/gi, '').split(/((?<!<[^>]+):)/gi)
-				
-                for (let p=0; p<parts.length; p++) {
-					if(p<=1){
-						parts[p] = `<strong>${parts[p]}</strong>`
-						continue;
-					}
-
+				parts[0] = `<strong>${parts[0]}`;
+				parts[1] = `${parts[1]}</strong>`;
+                for (let p=2; p<parts.length; p++) {
 					const splitParts = parts[p].split(/(?<!<[^>]+),(?![^(]*\))/gm);
 					for(let part in splitParts){
 						let spellName = (splitParts[part].match(/^(\s+)?<[^>]+>/gi)) ? $(splitParts[part]).text() : splitParts[part].replace(/(\s+)?<[^>]+>/g, '').replace(/\s?\[spell\]\s?|\s?\[\/spell\]\s?/g, '').replace('[/spell]', '').replace(/\s|&nbsp;/g, '');
