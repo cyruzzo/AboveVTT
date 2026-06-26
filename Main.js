@@ -3112,8 +3112,8 @@ function init_help_menu() {
 				<div class="help-tabs">
 					<ul>
 						<li class="active"><a href="#tab1">Keyboard/Mouse shortcuts</a></li>
-						<li><a href="#tab19" class='popout' data-href="https://github.com/cyruzzo/AboveVTT/wiki" data-name='AboveVTT Wiki'>Wiki ${linkSvg}</a></li>
-						<li><a href="#tab20" class="popout" data-href="https://www.youtube.com/watch?v=AaSClv4jSbk&list=PLW0tvNe3gIM00xQCReTWi8CPrXBJyDQmG" data-name="AboveVTT Tutorial Playlist">Video Tutorial Playlist ${linkSvg}</a></li>
+						<li><a href="#" class='popout' data-href="https://github.com/cyruzzo/AboveVTT/wiki" data-name='AboveVTT Wiki'>Wiki ${linkSvg}</a></li>
+						<li><a href="#" class="popout" data-href="https://www.youtube.com/watch?v=AaSClv4jSbk&list=PLW0tvNe3gIM00xQCReTWi8CPrXBJyDQmG" data-name="AboveVTT Tutorial Playlist">Video Tutorial Playlist ${linkSvg}</a></li>
 						<li><a href="#tab2">FAQ</a></li>
 						<li><a href="#tab3">Scene Creation</a></li>
 						<li><a href="#tab4">Player UI</a></li>

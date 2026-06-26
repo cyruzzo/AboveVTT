@@ -192,23 +192,37 @@ function token_context_menu_expanded(tokenIds, e, crossScenePortalData) {
 
 		}
 	});
-
+	
 	if(crossScenePortalData || door?.length == 1){
+		let x1,
+		x2,
+		y1,
+		y2,
+		locked,
+		secret,
+		isDoor,
+		isWindow,
+		isCurtain,
+		doors,
+		color,
+		isOpen
+		if(door?.length == 1){
+			x1 = parseInt(door.attr('data-x1'));
+			x2 = parseInt(door.attr('data-x2'));
+			y1 = parseInt(door.attr('data-y1'));
+			y2 = parseInt(door.attr('data-y2'));
+			locked = door.hasClass('locked');
+			secret = door.hasClass('secret');
 
-		let x1 = parseInt(door.attr('data-x1'));
-		let x2 = parseInt(door.attr('data-x2'));
-		let y1 = parseInt(door.attr('data-y1'));
-		let y2 = parseInt(door.attr('data-y2'));
-		let locked = door.hasClass('locked');
-		let secret = door.hasClass('secret');
+			isDoor = door.children('.door').length>0;
+			isWindow = door.children('.window').length>0;
+			isCurtain = door.children('.curtain').length>0;
 
-		let isDoor = door.children('.door').length>0;
-		let isWindow = door.children('.window').length>0;
-		let isCurtain = door.children('.curtain').length>0;
+			doors = window.DRAWINGS.filter(d => (d[1] == "wall" && doorColorsArray.includes(d[2]) && parseInt(d[3]) == x1 && parseInt(d[4]) == y1 && parseInt(d[5]) == x2 && parseInt(d[6]) == y2))  
+			color = doors[0][2];
+			isOpen = (/rgba.*0\.5\)/g).test(color) ? 'open' : 'closed';
+		}
 
-		let doors = window.DRAWINGS.filter(d => (d[1] == "wall" && doorColorsArray.includes(d[2]) && parseInt(d[3]) == x1 && parseInt(d[4]) == y1 && parseInt(d[5]) == x2 && parseInt(d[6]) == y2))  
-		let color = doors[0][2];
-		let isOpen = (/rgba.*0\.5\)/g).test(color) ? 'open' : 'closed';
 
 		
 		if(window.DM) {
