@@ -1894,9 +1894,6 @@ function build_sidebar_list_row(listItem) {
         const cr = window.JOURNAL.getCustomCR(statBlock);
         subtitle.append(`<div class="subtitle-attibute challenge-rating"><span class="plain-text">CR</span>${cr}</div>`)
       }
-     
-      // TODO: Style specifically for My Tokens
-      row.css("cursor", "default");
       break;
     case ItemType.PC:
       const pc = find_pc_by_player_id(listItem.sheet, false);
@@ -3279,7 +3276,7 @@ async function list_item_image_flyout(hoverEvent) {
   }
 }
 
-function  disable_draggable_change_folder() {
+function  disable_draggable_change_folder(skipHide=false) {
 
   $(document).off("click.clearSelectScenes").on('click.clearSelectScenes', function(e) { 
     const target = $(e.target);
@@ -3288,7 +3285,7 @@ function  disable_draggable_change_folder() {
     }
   });
     
-  if(window.reorderState != undefined){
+  if(window.reorderState != undefined && !skipHide){
     window.reorderState = undefined;
     $(".token-row-drag-handle").remove();
 
@@ -3394,7 +3391,7 @@ function add_expand_collapse_buttons_to_header(sidebarPanel, addHideButton=false
  */
 async function enable_draggable_change_folder(listItemType) {
 
-  await disable_draggable_change_folder();
+  await disable_draggable_change_folder(true);
   window.reorderState = listItemType; // if you move the current scene, it will reload. When that happens, we need to know to re-enter this state.
   const droppableOptions = {
     greedy: true,
@@ -3436,7 +3433,6 @@ async function enable_draggable_change_folder(listItemType) {
             persist_token_customization(customization);
           }
           rebuild_token_items_list();
-          enable_draggable_change_folder(ItemType.PC);
         } else {
           console.warn("Unable to reorder item by dropping it on the body", window.reorderState, draggedItem);
         }
