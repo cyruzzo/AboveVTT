@@ -212,7 +212,7 @@ async function build_monster_stat_block(statBlock, token) {
     : token?.options?.imgsrc == statBlock.data.avatarUrl || token?.options?.imgsrc == undefined
       ? statBlock.data.largeAvatarUrl
       : token.options.imgsrc
-  if (get_avtt_setting_value('statBlockStyle') == 0 && statBlock.data.initiativeBonus != null || get_avtt_setting_value('statBlockStyle') == 2) {
+  if (get_avtt_setting_value('statBlockStyle') == 0 && (statBlock.data.initiativeBonus != null || statBlock.data['5.5e'] == true) || get_avtt_setting_value('statBlockStyle') == 2) {
     statblockData = `
     <div class="container avtt-stat-block-container ${(statBlock.data.slug) ? 'open5eMonster' : ''}">
       <div id="content" class="main content-container" style="padding:0!important">
