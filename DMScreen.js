@@ -51,6 +51,7 @@ async function buildDMScreen(container) {
                     <div class='dmScreenPageButtons'>
                         <button id="addDmScreenPageButton" title="Add DM Screen Page">+</button>
                         <button id="editDmScreenPageButton" style='display:none' title="Edit DM Screen Page">✎</button>
+                        <button id="exportDmScreenPageButton" style='display:none;' title="Export DM Screen Page"><span class="material-symbols-outlined" style=" font-size: 20px; padding: 0px; left: -1px; position: relative;">download</span></button>
                         <button id="removeDmScreenPageButton" style='display:none' title="Remove DM Screen Page"><svg class="delSVG" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M16 9v10H8V9h8m-1.5-6h-5l-1 1H5v2h14V4h-3.5l-1-1zM18 7H6v12c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7z"/></svg></button>
                     </div>
                 </div>
@@ -94,6 +95,33 @@ async function buildDMScreen(container) {
                 const noteId = customBlock.attr('data-note-id');     
                 window.JOURNAL.edit_note(noteId);
             });
+            $('#exportDmScreenPageButton').off('click.exportDmPage').on('click.exportDmPage', function () { 
+                const customBlock = dmScreenBlocks.find('.dmScreenCustomBlock');
+                const noteId = customBlock.attr('data-note-id');     
+                const note_export = function(notes) {
+                    build_import_loading_indicator('Preparing Export File');
+                    const DataFile = {
+                        version: 2,
+                        scenes: [{}],
+                        tokencustomizations: [],
+                        notes: {},
+                        journalchapters: [],
+                        soundpads: {}
+                    };
+                    const currentdate = new Date(); 
+                    const datetime = `${currentdate.getFullYear()}-${(currentdate.getMonth()+1)}-${currentdate.getDate()}`
+                    
+                    DataFile.notes = notes;
+                    download(b64EncodeUnicode(JSON.stringify(DataFile,null,"\t")),`${window.CAMPAIGN_INFO.name}-${datetime}-note.abovevtt`,"text/plain");
+                        
+                    $(".import-loading-indicator").remove();        
+                }
+
+                const exportNote = {
+                    [noteId]: window.JOURNAL.notes[noteId]
+                };
+                note_export(exportNote);
+            });
             $('#removeDmScreenPageButton').off('click.removeDmPage').on('click.removeDmPage', function () { 
                 const customBlock = dmScreenBlocks.find('.dmScreenCustomBlock');
                 const noteId = customBlock.attr('data-note-id');
@@ -136,9 +164,7 @@ async function buildDMScreen(container) {
                 const blockTitle = $(e.target).text();
 
                 $('.dmScreenTitle').html(`${blockTitle} <span>▼</span>`);
-                $('.dmScreenDropdown').hide();
-                $('#editDmScreenPageButton').hide();
-                $('#removeDmScreenPageButton').hide();
+                $('.dmScreenDropdown, #editDmScreenPageButton, #exportDmScreenPageButton, #removeDmScreenPageButton').hide();
                 // Clear current blocks and load the selected one
                 dmScreenBlocks.empty();
                 switch (blockType) {
@@ -175,8 +201,7 @@ async function buildDMScreen(container) {
                     case 'custom':
                         const pageId = $(e.target).attr('data-id'); 
                         const journalPage = window.JOURNAL.notes[pageId];
-                        $('#editDmScreenPageButton').show();
-                        $('#removeDmScreenPageButton').show();
+                        $('#editDmScreenPageButton, #exportDmScreenPageButton, #removeDmScreenPageButton').show();
                         if (journalPage) {
                             const pageContent = journalPage.text || "";
                             const customBlock = $(`
