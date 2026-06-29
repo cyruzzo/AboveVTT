@@ -108,7 +108,7 @@ async function fetch_monsters(monsterIds, callback, open5e=false) {
 
 	   		        monsterData[i].treasure = treasure;
 	   		        monsterData[i].gear = gear;
-	   		       
+	   		       	monsterData[i]['5.5e'] = $(moreInfo)?.find('[class*="mon-stat-block-2024"]').length>0;
 
 	   		       resolve();
 		       }))

@@ -469,13 +469,13 @@ function inject_monster_tokens(searchTerm, skip, addedList=[]) {
             if(window.ownedMonstersOnly && !item.monsterData.isReleased && item.monsterData.homebrewStatus == 0){
                 continue;   
             }
-            const sourceList = {};
-            const sourceCategory = window.ddbConfigJson.sources.map((s) => {
-                 sourceList[s.id] = s.sourceCategoryId;
-            });
+
             
             if(Array.isArray(window.sourceCategoryMonsterFilter) && window.sourceCategoryMonsterFilter.length>0){
-  
+                const sourceList = {};
+                const sourceCategory = window.ddbConfigJson.sources.map((s) => {
+                    sourceList[s.id] = s.sourceCategoryId;
+                });
                 const sourceIdMap = item.monsterData.sources.map(s => { return sourceList[s.sourceId] })
                 const set = new Set(window.sourceCategoryMonsterFilter);
                 const hasMatch = sourceIdMap.some(value => set.has(`${value}`) || set.has(value)); 
