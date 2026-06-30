@@ -2035,12 +2035,9 @@ function redraw_elev(openLegened = false) {
 			drawCircle(offscreenContext,x, y, radius, color, isFilled, lineWidth);
 		}
 		if (shape == "polygon") {
-			clearPolygon(offscreenContext, x, scale,true);
-			drawPolygon(offscreenContext, x, color, isFilled, lineWidth, undefined, undefined, scale);
-			// ctx.stroke();
+			drawPolygon(offscreenContext, x, color, isFilled, lineWidth, undefined, undefined, scale, undefined, undefined);
 		}
-		if(shape == "3pointRect"){
-			clear3PointRect(offscreenContext, x, scale,true);	
+		if(shape == "3pointRect"){	
 		 	draw3PointRect(offscreenContext, x, color, isFilled, lineWidth, undefined, undefined, scale);	
 		}
 		if(shape == "paint-bucket"){
@@ -2092,7 +2089,17 @@ function close_elev_legend(){
 
 function check_token_elev(tokenid, elevContext=undefined){
 	if(elevContext == undefined){
-		elevContext = $('#elev_overlay')[0].getContext('2d');
+		elevContext = $('#elev_overlay')[0].getContext('2d', {willReadFrequently: true});
+	}
+	function check_elevation_around_position(x, y){
+		let mapElev;
+		let pixeldata = elevContext.getImageData(left-1, top-1, 2, 2).data;
+		for(let i = 0; i<pixeldata.length; i+=4){
+			const mapElev =`rgba(${pixeldata[i]},${pixeldata[i+1]},${pixeldata[i+2]},1)`;
+			if(window.elevHeights[mapElev] != undefined && window.elevHeights[mapElev] != '')
+				return mapElev;
+		}
+		return false;
 	}
 	let token = window.TOKEN_OBJECTS[tokenid];
 	let left = (parseInt(token.options.left) + (token.options.size / 2)) / window.CURRENT_SCENE_DATA.scale_factor;
@@ -2101,7 +2108,12 @@ function check_token_elev(tokenid, elevContext=undefined){
 	let mapElev =`rgba(${pixeldata[0]},${pixeldata[1]},${pixeldata[2]},1)`;
 
 	if(window.elevHeights != undefined && mapElev != undefined){
-		token.options.mapElev = window.elevHeights[mapElev] != undefined && window.elevHeights[mapElev] != '' ? window.elevHeights[mapElev] : 0;
+		if(window.elevHeights[mapElev] != undefined && window.elevHeights[mapElev] != '' ){
+			token.options.mapElev = window.elevHeights[mapElev];
+		} else{
+			const nearByElevation = check_elevation_around_position(left, top);
+			token.options.mapElev = nearByElevation != false ? window.elevHeights[nearByElevation] : 0;
+		}
 	}
 }
 
@@ -5914,42 +5926,28 @@ function drawPolygon (
 	replacefog = false,
 	islight = false
 ) {
-	if(fill && islight && replacefog){
-		
-		ctx.save();
-		ctx.fillStyle = 'rgba(255,255,255,1)';
-		ctx.beginPath();
-		let adjustScale = (scale/window.CURRENT_SCENE_DATA.scale_factor)	
-		ctx.moveTo(points[0].x/adjustScale/window.CURRENT_SCENE_DATA.scale_factor, points[0].y/adjustScale/window.CURRENT_SCENE_DATA.scale_factor);
-		ctx.lineWidth = lineWidth;
-		
-		for(let vertice of points){
-			ctx.lineTo(vertice.x/adjustScale/window.CURRENT_SCENE_DATA.scale_factor, vertice.y/adjustScale/window.CURRENT_SCENE_DATA.scale_factor);
-		}
+	ctx.save();
+	ctx.imageSmoothingEnabled = false;
 
-		if (mouseX !== null && mouseY !== null) {
-			ctx.lineTo(mouseX/adjustScale/window.CURRENT_SCENE_DATA.scale_factor, mouseY/adjustScale/window.CURRENT_SCENE_DATA.scale_factor);
-		}
-		ctx.closePath();
+	ctx.beginPath();
+	let adjustScale = (scale/window.CURRENT_SCENE_DATA.scale_factor)	
+	
+	ctx.moveTo(points[0].x/adjustScale/window.CURRENT_SCENE_DATA.scale_factor, points[0].y/adjustScale/window.CURRENT_SCENE_DATA.scale_factor);
+	ctx.lineWidth = lineWidth;
+		
+	for(let vertice of points) {
+		ctx.lineTo(vertice.x/adjustScale/window.CURRENT_SCENE_DATA.scale_factor, vertice.y/adjustScale/window.CURRENT_SCENE_DATA.scale_factor);
+	}
+
+	if (mouseX !== null && mouseY !== null) {
+		ctx.lineTo(mouseX/adjustScale/window.CURRENT_SCENE_DATA.scale_factor, mouseY/adjustScale/window.CURRENT_SCENE_DATA.scale_factor);
+	}
+	ctx.closePath();
+	if(fill && islight && replacefog){
+		ctx.fillStyle = 'rgba(255,255,255,1)';
 		ctx.fill();
-		ctx.restore();
 	}	
 	else{
-		ctx.save();
-		ctx.beginPath();
-		let adjustScale = (scale/window.CURRENT_SCENE_DATA.scale_factor)	
-		
-		ctx.moveTo(points[0].x/adjustScale/window.CURRENT_SCENE_DATA.scale_factor, points[0].y/adjustScale/window.CURRENT_SCENE_DATA.scale_factor);
-		ctx.lineWidth = lineWidth;
-			
-		for(let vertice of points) {
-			ctx.lineTo(vertice.x/adjustScale/window.CURRENT_SCENE_DATA.scale_factor, vertice.y/adjustScale/window.CURRENT_SCENE_DATA.scale_factor);
-		}
-
-		if (mouseX !== null && mouseY !== null) {
-			ctx.lineTo(mouseX/adjustScale/window.CURRENT_SCENE_DATA.scale_factor, mouseY/adjustScale/window.CURRENT_SCENE_DATA.scale_factor);
-		}
-		ctx.closePath();
 		// draw a line between first 2 points
 		if (points.length < 2){
 			ctx.strokeStyle = style;
@@ -5975,9 +5973,9 @@ function drawPolygon (
 			ctx.strokeStyle = style;
 			ctx.stroke();
 		}
-		ctx.restore();
 	}
 
+	ctx.restore();
 }
 
 //just returns points if ctx==null
@@ -8551,7 +8549,7 @@ function redraw_light(darknessMoved = false, limitActiveRays = 0) {
 	const adjustScale = (window.CURRENT_SCENE_DATA.scale_factor != undefined) ? window.CURRENT_SCENE_DATA.scale_factor : 1;
 
 	if (window.elevContext == undefined) {
-		window.elevContext = document.getElementById('elev_overlay').getContext('2d');
+		window.elevContext = document.getElementById('elev_overlay').getContext('2d', {willReadFrequently: true});
 	}
 	
 	let darknessBoundarys = getDarknessBoundarys();
