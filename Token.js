@@ -2240,8 +2240,12 @@ class Token {
 		
 
 	}
-	throttlePlace = throttle((animationDuration) => {
-				try{
+	throttlePlace = throttle((animationDuration, sceneId = window.CURRENT_SCENE_DATA.id) => {
+		if(sceneId != window.CURRENT_SCENE_DATA.id){
+			console.warn('Attempted to add token not part of this scene. Most likely due to fast map swaps and the throttle time on token placement.', this, 'From:', sceneId, 'On:', window.CURRENT_SCENE_DATA);
+			return;
+		}
+		try{
 			if(!this.options.id.includes('exampleToken') && (isNaN(parseFloat(this.options.left)) || isNaN(parseInt(this.options.top)))){// prevent errors with NaN positioned tokens - delete them as catch all. 
 				this.options.deleteableByPlayers = true;
 				this.delete();
@@ -2844,7 +2848,6 @@ class Token {
 			}
 			else { // adding a new token
 				// console.group("new token")
-
 				let tok = $("<div/>");
 				
 				let bar_height = Math.floor(this.sizeHeight() * 0.2);
@@ -3600,8 +3603,8 @@ class Token {
 			return;
 		}
 	}, 1000)
-	place(animationDuration) {
-		this.throttlePlace(animationDuration);
+	place(animationDuration, sceneId = window.CURRENT_SCENE_DATA.id) {
+		this.throttlePlace(animationDuration, sceneId);
 	}
 
 	// key: String, numberRemaining: Number; example: track_ability("1stlevel", 2) // means they have 2 1st level spell slots remaining
@@ -4403,8 +4406,8 @@ function setTokenLight (token, options) {
 		const opacity2Value = options?.light2?.color ? options.light2.color.replace(/[a-zA-Z\(\)\s]/g, '').split(',').splice(3, 1) : 1;
 		const daylightOpacityValue = window.CURRENT_SCENE_DATA?.daylight ? window.CURRENT_SCENE_DATA.daylight.replace(/[a-zA-Z\(\)\s]/g, '').split(',').splice(3, 1) : 1;
 
-		let clippath = window.lineOfSightPolygons ? `polygon(${window.lineOfSightPolygons[options.id]?.clippath})` : undefined;
-		let devilsightClip = window.lineOfSightPolygons ? `polygon(${window.lineOfSightPolygons[options.id]?.devilsightClip})` : undefined;
+		let clippath = window.lineOfSightPolygons?.[options.id]?.clippath !== undefined ? `polygon(${window.lineOfSightPolygons[options.id]?.clippath})` : undefined;
+		let devilsightClip = window.lineOfSightPolygons?.[options.id]?.devilsightClip !== undefined ? `polygon(${window.lineOfSightPolygons[options.id]?.devilsightClip})` : undefined;
 
 		const lightStyles = `width:${totalSize }px;
 							height:${totalSize }px;
@@ -4425,7 +4428,7 @@ function setTokenLight (token, options) {
 
 
 		const visionRadius = visionSize ? (visionSize + (optionsSize / 2)) : 0;
-		const visionBg = `radial-gradient(${options.vision.color ? options.vision.color : `rgba(142, 142, 142, 1)`} ${visionRadius}px, #00000000 ${visionRadius}px)`;
+		const visionBg = `radial-gradient(${options.vision?.color ?? `rgba(142, 142, 142, 1)`} ${visionRadius}px, #00000000 ${visionRadius}px)`;
 		const totalVisionSize = optionsSize + (2 * visionSize);
 		const visionAbsPosOffset = (optionsSize - totalVisionSize) / 2;
 		const visionStyles = `width:${totalVisionSize }px;
@@ -4442,7 +4445,7 @@ function setTokenLight (token, options) {
 		
 		const devilsightRadius = devilsightSize ? (devilsightSize + (optionsSize / 2)) : 0;
 	
-		const devilsightBg = `radial-gradient(${options.devilsight.color ? options.devilsight.color : `rgba(142, 142, 142, 1)`} ${devilsightRadius}px, #00000000 ${devilsightRadius}px)`;
+		const devilsightBg = `radial-gradient(${options.devilsight?.color ?? `rgba(142, 142, 142, 1)`} ${devilsightRadius}px, #00000000 ${devilsightRadius}px)`;
 		const totalDevilsightSize = optionsSize + (2 * devilsightSize);
 		const devilsightAbsPosOffset = (optionsSize - totalDevilsightSize) / 2;
 		const devilsightStyles = `width:${totalDevilsightSize }px;
@@ -4458,7 +4461,7 @@ function setTokenLight (token, options) {
 							`;
 		
 		const truesightRadius = truesightSize ? (truesightSize + (optionsSize / 2)) : 0;
-		const truesightBg = `radial-gradient(${options.truesight.color ? options.truesight.color : `rgba(142, 142, 142, 1)`} ${truesightRadius}px, #00000000 ${truesightRadius}px)`;
+		const truesightBg = `radial-gradient(${options.truesight?.color ?? `rgba(142, 142, 142, 1)`} ${truesightRadius}px, #00000000 ${truesightRadius}px)`;
 		const totaltruesightSize = optionsSize + (2 * truesightSize);
 		const truesightAbsPosOffset = (optionsSize - totaltruesightSize) / 2;
 		const truesightStyles = `width:${totaltruesightSize }px;
