@@ -8599,15 +8599,7 @@ function redraw_light(darknessMoved = false, limitActiveRays = 0) {
 			lightPolygon = window.lineOfSightPolygons[auraId].polygon;  // if the token hasn't moved and walls haven't changed don't look for a new poly.
 			movePolygon = window.lineOfSightPolygons[auraId].move;  // if the token hasn't moved and walls haven't changed don't look for a new poly.
 			noDarknessPolygon = window.lineOfSightPolygons[auraId].noDarkness;
-			if(!window.lightAuraClipPolygon[auraId] ||
-				window.lightAuraClipPolygon[auraId].light1?.range !== window.TOKEN_OBJECTS[auraId].options.light1?.feet ||
-				window.lightAuraClipPolygon[auraId].light2?.range !== window.TOKEN_OBJECTS[auraId].options.light2?.feet ||
-				window.lightAuraClipPolygon[auraId].devilsight?.range !== window.TOKEN_OBJECTS[auraId].options.devilsight?.feet ||
-				window.lightAuraClipPolygon[auraId].truesight?.range !== window.TOKEN_OBJECTS[auraId].options.truesight?.feet ||
-				window.lightAuraClipPolygon[auraId].vision?.range !== window.TOKEN_OBJECTS[auraId].options.vision?.feet
-			){
-				clipped_light(auraId, window.lightPolygon, playerTokenId, canvasWidth, canvasHeight, darknessBoundarys, selectedIds.length);
-			}
+			clipped_light(auraId, window.lightPolygon, playerTokenId, canvasWidth, canvasHeight, darknessBoundarys, selectedIds.length);
 		}
 		else {
 
@@ -9196,7 +9188,7 @@ function clipped_light(auraId, maskPolygon, playerTokenId, canvasWidth = getScen
 			color: light1Color
 		},
 		light2: {
-			range: light2Range > 0 ? (parseInt(light1Range) + parseInt(light2Range)) * window.CURRENT_SCENE_DATA.hpps / window.CURRENT_SCENE_DATA.fpsq + (window.TOKEN_OBJECTS[auraId].options.size / 2) : 0,
+			range: light2Range > 0 ? (light1Range + light2Range) * window.CURRENT_SCENE_DATA.hpps / window.CURRENT_SCENE_DATA.fpsq + (window.TOKEN_OBJECTS[auraId].options.size / 2) : 0,
 			color: light2Color
 		},
 		vision: {
