@@ -783,6 +783,10 @@ async function popout_all_selected_token_stat(){
 	forSelTokensAsync(async (token) => {
 		let container;
 		if(token.isPlayer()) return;
+
+		const allowedToOpen = window.DM || token.options.player_owned;
+		if(!allowedToOpen)
+			return;
 		if (token.options.statBlock) {
 			const {customStatBlock, pcURL} = token.getCustomPcUrl();
 			if (pcURL) return;
@@ -816,9 +820,13 @@ function open_selected_token_stat() {
 	const selectedTokens = window.CURRENTLY_SELECTED_TOKENS;
 	if (!selectedTokens || selectedTokens.length < 1)
 		return;
-
+	
 	const token = window.TOKEN_OBJECTS[selectedTokens[0]];
-	if (token.isPlayer()) {
+	const isPlayerToken = token.isPlayer();
+	const allowedToOpen = window.DM || isPlayerToken || token.options.player_owned;
+	if(!allowedToOpen)
+		return;
+	if (isPlayerToken) {
 		open_player_sheet(token.options.sheet, undefined, token.options.name);
 	}
 	else if (token.options.statBlock) {
