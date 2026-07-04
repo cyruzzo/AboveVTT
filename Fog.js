@@ -2302,7 +2302,7 @@ function open_portal_config(){
 						mouseX+5,
 						mouseY,
 						12,
-						window.CURRENT_SCENE_DATA.scale_factor,
+						window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion,
 						false, 
 						'', 
 						''
@@ -2334,7 +2334,7 @@ function open_portal_config(){
 				imgsrc: `data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=`,
 				type: 'door',
 				size: 50,
-				scaleCreated: window.CURRENT_SCENE_DATA.scale_factor,
+				scaleCreated: window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion,
 				auraislight: false,
 				alwaysshowname: window.TOKEN_SETTINGS.alwaysshowname != undefined ? window.TOKEN_SETTINGS.alwaysshowname : false
 			};
@@ -2385,7 +2385,7 @@ function open_portal_config(){
 					imgsrc: `data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=`,
 					type: 'door',
 					size: 50,
-					scaleCreated: window.CURRENT_SCENE_DATA.scale_factor,
+					scaleCreated: window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion,
 					auraislight: false,
 					alwaysshowname: window.TOKEN_SETTINGS.alwaysshowname != undefined ? window.TOKEN_SETTINGS.alwaysshowname : false
 				};
@@ -2532,7 +2532,7 @@ function open_portal_config(){
 						mouseX+5,
 						mouseY,
 						12,
-						window.CURRENT_SCENE_DATA.scale_factor,
+						window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion,
 						wall[9],
 						(wall[10] != undefined ? wall[10] : ""),
 						(wall[11] != undefined ? wall[11] : "")

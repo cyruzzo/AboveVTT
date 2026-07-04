@@ -459,7 +459,7 @@ function token_context_menu_expanded(tokenIds, e, crossScenePortalData) {
 									mouseX+5,
 									mouseY,
 									12,
-									doors[0][8],
+									window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion,
 									doors[0][9],
 									(doors[0][10] != undefined ? doors[0][10] : ""),
 									(doors[0][11] != undefined ? doors[0][11] : "")
