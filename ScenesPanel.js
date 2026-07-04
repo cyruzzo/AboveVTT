@@ -2389,7 +2389,7 @@ async function redraw_scene_list(searchTerm) {
        enable_draggable_change_folder(ItemType.Scene)
 }
 
-async function create_scene_inside(parentId, fullPath = RootFolder.Scenes.path, sceneName = "New Scene", mapUrl = "") {
+async function create_scene_inside(parentId, fullPath = RootFolder.Scenes.path, sceneName = "New Scene", mapUrl = "", sceneArray = undefined) {
 	const sanitizedFullPath = sanitize_folder_path(fullPath || RootFolder.Scenes.path);
 	const existingNames = new Set(
 		window.ScenesHandler.scenes
@@ -2400,7 +2400,10 @@ async function create_scene_inside(parentId, fullPath = RootFolder.Scenes.path, 
 	const sceneData = await build_scene_data_payload(parentId, sanitizedFullPath, sceneName, mapUrl, existingNames);
 
 	window.ScenesHandler.scenes.push(sceneData);
-
+	if(Array.isArray(sceneArray)){
+		sceneArray.push(sceneData);
+		return sceneArray;
+	}
 	await AboveApi.migrateScenes(window.gameId, [sceneData]);
 
 	const sceneIndex = window.ScenesHandler.scenes.findIndex((scene) => scene.id === sceneData.id);
@@ -3305,9 +3308,20 @@ async function create_scene_root_container(fullPath, parentId) {
 		"player_map": "",
 	}, `${window.EXTENSION_PATH}images/Dropbox_Icon.svg`, false);
 
-	const dropboxOptionsImport = dropBoxOptions(function(files){
-		create_scene_inside(parentId, fullPath, files[0].name, files[0].link);
-	});
+	const dropboxOptionsImport = dropBoxOptions(async function(files){
+		const sceneArray = [];
+		for(let i=0; i<files.length; i++){
+			await create_scene_inside(parentId, fullPath, files[i].name, files[i].link, sceneArray);
+		}
+		await AboveApi.migrateScenes(window.gameId, sceneArray);
+		if(sceneArray.length == 1){
+			const sceneIndex = window.ScenesHandler.scenes.findIndex((scene) => scene.id === sceneArray[0].id);
+			if (sceneIndex >= 0) {
+				edit_scene_dialog(sceneIndex, true);
+			}
+		}
+		did_update_scenes();
+	}, true);
 	dropboxImport.css("width", "25%");
 	sectionHtml.find("ul").append(dropboxImport);
 	dropboxImport.find(".listing-card__callout").hide();
@@ -3357,9 +3371,20 @@ async function create_scene_root_container(fullPath, parentId) {
 	onedriveImport.find("a.listing-card__link").click(function (e) {
 		e.stopPropagation();
 		e.preventDefault();
-    	launchPicker(e, function(files){
-			create_scene_inside(parentId, fullPath, files[0].name, files[0].link);
-		}, 'single', ['photo', '.webp']);
+    	launchPicker(e, async function(files){
+			const sceneArray = [];
+			for(let i=0; i<files.length; i++){
+				await create_scene_inside(parentId, fullPath, files[i].name, files[i].link, sceneArray);
+			}
+			await AboveApi.migrateScenes(window.gameId, sceneArray);
+			if(sceneArray.length == 1){
+				const sceneIndex = window.ScenesHandler.scenes.findIndex((scene) => scene.id === sceneArray[0].id);
+				if (sceneIndex >= 0) {
+					edit_scene_dialog(sceneIndex, true);
+				}
+			}
+			did_update_scenes();
+		}, 'multiple', ['photo', '.webp']);
 	});
 
 
