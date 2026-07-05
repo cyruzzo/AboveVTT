@@ -736,6 +736,9 @@ function token_context_menu_expanded(tokenIds, e, crossScenePortalData) {
 					clickedItem.removeClass("single-active all-active some-active active-condition");
 
 					clickedItem.addClass(`${!secret ? 'single-active active-condition' : ''}`);
+					if($(`#portal_config_window`).length>0){
+						open_portal_config();
+					}
 				});
 				body.append(secretButton);
 
@@ -776,6 +779,9 @@ function token_context_menu_expanded(tokenIds, e, crossScenePortalData) {
 					clickedItem.removeClass("single-active all-active some-active active-condition");
 
 					clickedItem.addClass(`${!hidden ? 'single-active active-condition' : ''}`);
+					if($(`#portal_config_window`).length>0){
+						open_portal_config();
+					}
 				});
 				body.append(hideButton);
 
