@@ -591,6 +591,10 @@ class TokenCustomization {
                 combinedOptions = {...combinedOptions, ...tc.tokenOptions};
             }
         });
+        if(this.name() != "undefined" )
+            combinedOptions.name = this.name();
+        else
+            delete combinedOptions.name;
         return combinedOptions;
     }
 
