@@ -1361,6 +1361,7 @@ function build_example_token(options, size=90) {
 		mergedOptions.age = 1;
 	}
 	mergedOptions.exampleToken = true;
+	delete mergedOptions.name; // don't display example token names
 	// TODO: this is horribly inneficient. Clean up token.place and then update this
 	let token = new Token(mergedOptions);
 	token.place(0);
