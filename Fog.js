@@ -2250,7 +2250,7 @@ function open_portal_config(){
 			return false;
 		
 		const type = Object.keys(doorColors).find(key => Object.keys(doorColors[key]).find(key2 => doorColors[key][key2] === d[2]));
-		return type == 12;
+		return type == 12 || type == 13;
 	});
 	const listing = $(`<div class='portal-listing'></div>`)
 	const table = $(`<table class='portal-table'></table>`)
