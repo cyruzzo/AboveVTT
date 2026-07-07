@@ -11850,7 +11850,11 @@ table#light_presets_properties div.token-image-modal-footer-title{
     width: 10px;
     transform: translate(45px, 10px);
 }
-
+td.animation-aura .light-animation-select,
+td.animation-aura .aura-animation-select {
+    min-width:100%;
+    max-width:100%;
+}
 #light_presets_properties div.removePreset,
 #animation_presets_properties div.removePreset,
 #aura_presets_properties div.removePreset{
