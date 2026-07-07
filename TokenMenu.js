@@ -2127,6 +2127,8 @@ function build_token_auras_inputs(tokenIds) {
 	let radiusInputs = wrapper.find('input.aura-radius');
 	radiusInputs.on('keyup', function(event) {
 		let newRadius = event.target.value;
+		if(newRadius.match(/\.(.*,)|^[^\.]+,[^\.]+$/))
+			newRadius = newRadius.replace(/\.(.*,)/g, '$1').replace(/(.*),/, '$1.');
 		if (event.key == "Enter" && newRadius !== undefined && newRadius.length > 0) {
 			tokens.forEach(token => {
 				token.options[event.target.name]['feet'] = newRadius;
@@ -2136,6 +2138,8 @@ function build_token_auras_inputs(tokenIds) {
 	});
 	radiusInputs.on('focusout', function(event) {
 		let newRadius = event.target.value;
+		if(newRadius.match(/\.(.*,)|^[^\.]+,[^\.]+$/))
+			newRadius = newRadius.replace(/\.(.*,)/g, '$1').replace(/(.*),/, '$1.');
 		if (newRadius !== undefined && newRadius.length > 0) {
 			tokens.forEach(token => {
 				token.options[event.target.name]['feet'] = newRadius;
@@ -2594,7 +2598,9 @@ function build_token_light_inputs(tokenIds, door=false) {
 
 	let radiusInputs = wrapper.find('input.light-radius, input.vision-radius');
 	radiusInputs.on('keyup', function(event) {
-		let newRadius = event.target.value;
+		let newRadius = event.target.value
+		if(newRadius.match(/\.(.*,)|^[^\.]+,[^\.]+$/))
+			newRadius = newRadius.replace(/\.(.*,)/g, '$1').replace(/(.*),/, '$1.');
 		if (event.key == "Enter" && newRadius !== undefined && newRadius.length > 0) {
 			tokens.forEach(token => {
 				token.options[event.target.name]['feet'] = newRadius;
@@ -2606,6 +2612,8 @@ function build_token_light_inputs(tokenIds, door=false) {
 	radiusInputs.on('focusout', function(event) {
 		let newRadius = event.target.value;
 		if (newRadius !== undefined && newRadius.length > 0) {
+			if(newRadius.match(/\.(.*,)|^[^\.]+,[^\.]+$/))
+				newRadius = newRadius.replace(/\.(.*,)/g, '$1').replace(/(.*),/, '$1.');
 			tokens.forEach(token => {
 				token.options[event.target.name]['feet'] = newRadius;
 				token.place_sync_persist();
@@ -4308,6 +4316,8 @@ function build_token_num_input(startingScale=1, tokens, name, min=0.1, max=10, s
 
 	imageInput.on('keyup', function(event) {
 		let value = event.target.value;	
+		if(value.match(/\.(.*,)|^[^\.]+,[^\.]+$/))
+			value = value.replace(/\.(.*,)/g, '$1').replace(/(.*),/, '$1.');
 		if (event.key === "Enter") {
 			imageInput.val(value);
 			didUpdate(value, true);
@@ -4317,11 +4327,15 @@ function build_token_num_input(startingScale=1, tokens, name, min=0.1, max=10, s
 	});
 	imageInput.on('focusout', function(event) {
 		let value = event.target.value;		
+		if(value.match(/\.(.*,)|^[^\.]+,[^\.]+$/))
+			value = value.replace(/\.(.*,)/g, '$1').replace(/(.*),/, '$1.');
 		imageInput.val(value);	
 		didUpdate(value, true);
 	});
 	imageInput.on('input change', function(){
 		let value = event.target.value;	
+		if(value.match(/\.(.*,)|^[^\.]+,[^\.]+$/))
+			value = value.replace(/\.(.*,)/g, '$1').replace(/(.*),/, '$1.');
 		imageInput.val(value);
 		didUpdate(value);
 	});
