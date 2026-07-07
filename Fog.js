@@ -2903,7 +2903,7 @@ function redraw_light_walls(options = {clearCanvas: true, editingWallPoints: fal
 									token.selected = true;
 									token.options.deleteableByPlayers = true;
 								});
-								delete_selected_tokens();
+								delete_selected_tokens(false);
 								
 								window.MB.sendMessage('custom/myVTT/highlight', {
 									id: tokenObject.options.id

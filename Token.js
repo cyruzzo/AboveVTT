@@ -533,7 +533,7 @@ class Token {
 		this.place_sync_persist()
 		debounceCombatPersist();
 	}
-	delete(persist=true) {
+	delete(persist=true, removeFromCombatTracker=true) {
 		if (!window.DM && this.options.deleteableByPlayers != true) {
 			// only allow the DM to delete tokens unless the token specifies deleteableByPlayers == true which is used by AoE tokens and maybe others
 			return;
@@ -553,13 +553,16 @@ class Token {
 		}
 	
 		delete window.ON_SCREEN_TOKENS[id];
-		if(!is_player_id(this.options.id)){
-			delete window.all_token_objects[id];
-			if (id in window.JOURNAL.notes) {
-				delete window.JOURNAL.notes[id];
-				window.JOURNAL.persist();
+		if(removeFromCombatTracker == true){
+			if(!is_player_id(this.options.id)){
+				delete window.all_token_objects[id];
+				if (id in window.JOURNAL.notes) {
+					delete window.JOURNAL.notes[id];
+					window.JOURNAL.persist();
+				}
 			}
 		}
+
 
 
 		
@@ -571,42 +574,45 @@ class Token {
 		if(this.options?.audioChannel?.audioId != undefined){
 			window.MIXER.deleteChannel(this.options.audioChannel.audioId)
 		}
-		if(this.options.combatGroupToken && window.DM){
-			for(let i in window.TOKEN_OBJECTS){
-				if(i == this.options.combatGroupToken)
-					continue;
+		if(removeFromCombatTracker == true){
+			if(this.options.combatGroupToken && window.DM){
+				for(let i in window.TOKEN_OBJECTS){
+					if(i == this.options.combatGroupToken)
+						continue;
 
-				
-				if(window.TOKEN_OBJECTS[i].options.combatGroup == this.options.combatGroupToken){
-					delete window.TOKEN_OBJECTS[i].options.combatGroup;
-					delete window.TOKEN_OBJECTS[i].options.ct_show;
-					if(window.all_token_objects[i] != undefined){
-						delete window.all_token_objects[i].options.combatGroup;
-						delete window.all_token_objects[i].options.ct_show;
+					
+					if(window.TOKEN_OBJECTS[i].options.combatGroup == this.options.combatGroupToken){
+						delete window.TOKEN_OBJECTS[i].options.combatGroup;
+						delete window.TOKEN_OBJECTS[i].options.ct_show;
+						if(window.all_token_objects[i] != undefined){
+							delete window.all_token_objects[i].options.combatGroup;
+							delete window.all_token_objects[i].options.ct_show;
+						}
+						ct_remove_token(window.TOKEN_OBJECTS[i], false);
+						window.TOKEN_OBJECTS[i].update_and_sync();
 					}
-					ct_remove_token(window.TOKEN_OBJECTS[i], false);
-					window.TOKEN_OBJECTS[i].update_and_sync();
 				}
 			}
-		}
-		if(this.options.combatGroup && !this.options.combatGroupToken){
-			let count = 0;
-			for(let i in window.TOKEN_OBJECTS){
-				if(window.TOKEN_OBJECTS[i].options.combatGroup == this.options.combatGroup){
-					count++;
+			if(this.options.combatGroup && !this.options.combatGroupToken){
+				let count = 0;
+				for(let i in window.TOKEN_OBJECTS){
+					if(window.TOKEN_OBJECTS[i].options.combatGroup == this.options.combatGroup){
+						count++;
+					}
 				}
-			}
-			if(count == 1){
-				window.TOKEN_OBJECTS[this.options.combatGroup].delete();
+				if(count == 1){
+					window.TOKEN_OBJECTS[this.options.combatGroup].delete();
+				}
 			}
 		}
 		if (this.options.darkness || this.options.tokenWall){
 			redraw_drawn_light();
 		}
-
-		ct_remove_token(this, false);
+		if(removeFromCombatTracker == true){
+			ct_remove_token(this, false);
+		}
 		if (persist == true) {	
-			window.MB.sendMessage("custom/myVTT/delete_token",{id:id});
+			window.MB.sendMessage("custom/myVTT/delete_token",{id, removeFromCombatTracker});
 		}
 		debounceLightChecks();
 		update_pc_token_rows();
@@ -5392,7 +5398,7 @@ function delete_selected_walls() {
 		sync_drawings({wallsChanged: true});
 	}
 }
-function delete_selected_tokens() {
+function delete_selected_tokens(removeFromCombatTracker = true) {
 	// move all the tokens into a separate list so the DM can "undo" the deletion
 	let tokensToDelete = [];
 	forTokens((token) => {
@@ -5406,9 +5412,8 @@ function delete_selected_tokens() {
 	if (tokensToDelete.length == 0) return;
 	window.TOKEN_OBJECTS_RECENTLY_DELETED = {};
 	tokensToDelete.forEach(t => window.TOKEN_OBJECTS_RECENTLY_DELETED[t.options.id] = Object.assign({}, t.options));
-
 	for (let i = 0; i < tokensToDelete.length; i++) {
-		tokensToDelete[i].delete(true);
+		tokensToDelete[i].delete(true, removeFromCombatTracker);
 	}
 	draw_selected_token_bounding_box(); // redraw the selection box
 }
