@@ -2959,7 +2959,7 @@ function display_aoe_token_configuration_modal(listItem, placedToken = undefined
     inputWrapper.append(tokenSizeInput);
 
     // image scale
-    let startingScale = targetOptions.imageSize || 1;
+    let startingScale = targetOptions.imageSize ?? 1;
     let imageScaleWrapper = build_token_image_scale_input(startingScale, false, function (imageSize) {
         customization.setTokenOption("imageSize", imageSize);
         persist_token_customization(customization);
@@ -2967,7 +2967,7 @@ function display_aoe_token_configuration_modal(listItem, placedToken = undefined
     });
     inputWrapper.append(imageScaleWrapper);
 
-    let startingOffsetX = targetOptions.offset?.x || 0;
+    let startingOffsetX = targetOptions.offset?.x ?? 0;
     let offsetXWrapper = build_token_num_input(startingOffsetX, false, 'Image Offset X', "", "", 1, function (offsetX) {
 
         if(targetOptions.offset == undefined)
@@ -2978,7 +2978,7 @@ function display_aoe_token_configuration_modal(listItem, placedToken = undefined
     });
     inputWrapper.append(offsetXWrapper);
 
-    let startingOffsetY = targetOptions.offset?.y || 0;
+    let startingOffsetY = targetOptions.offset?.y ?? 0;
     let offsetYWrapper = build_token_num_input(startingOffsetY, false, 'Image Offset Y', "", "", 1, function (offsetY) {
         if(targetOptions.offset == undefined)
             customization.setTokenOption('offset', {x: 0, y: 0})
@@ -2989,7 +2989,7 @@ function display_aoe_token_configuration_modal(listItem, placedToken = undefined
     inputWrapper.append(offsetYWrapper);
 
 
-    let startingImageZoom = targetOptions.imageZoom || 0;
+    let startingImageZoom = targetOptions.imageZoom ?? 0;
     let imageZoomWrapper = build_token_num_input(startingImageZoom, false, 'Image Zoom %', -100, '', 5, function (imageZoom) { 
         customization.setTokenOption("imageZoom", imageZoom);
         persist_token_customization(customization);
@@ -2997,7 +2997,7 @@ function display_aoe_token_configuration_modal(listItem, placedToken = undefined
     });
     inputWrapper.append(imageZoomWrapper);
 
-    let startingTokenFlip = targetOptions.tokenFlip || 0;
+    let startingTokenFlip = targetOptions.tokenFlip ?? 0;
     let tokenFlipWrapper = build_token_flip_input(startingTokenFlip, function (tokenFlip) { 
         customization.setTokenOption("tokenFlip", tokenFlip);
         persist_token_customization(customization);
@@ -3005,7 +3005,7 @@ function display_aoe_token_configuration_modal(listItem, placedToken = undefined
     });
     inputWrapper.append(tokenFlipWrapper);
      
-    let startingOpacity = targetOptions.imageOpacity || 1;
+    let startingOpacity = targetOptions.imageOpacity ?? 1;
     let opacityWrapper = build_token_num_input(startingOpacity, tokens,  'Image Opacity', 0, 1, 0.1, function (opacity) {
         customization.setTokenOption("imageOpacity", opacity);
         persist_token_customization(customization);
@@ -3013,7 +3013,7 @@ function display_aoe_token_configuration_modal(listItem, placedToken = undefined
     });
     inputWrapper.append(opacityWrapper);
 
-    let startingHeading = targetOptions.imageHeading || 0;
+    let startingHeading = targetOptions.imageHeading ?? 0;
     let headingWrapper = build_token_num_input(startingHeading, tokens,  'Image Heading', 0, 360, 1, function (heading) {
         customization.setTokenOption("imageHeading", heading);
         persist_token_customization(customization);

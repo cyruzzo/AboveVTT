@@ -2247,6 +2247,8 @@ class Token {
 
 	}
 	throttlePlace = throttle((animationDuration, sceneId = window.CURRENT_SCENE_DATA.id) => {
+		if(window.all_token_objects?.[this.options.id] != undefined)
+			window.all_token_objects[this.options.id].options = $.extend(true, {}, this.options);
 		if(sceneId != window.CURRENT_SCENE_DATA.id){
 			console.warn('Attempted to add token not part of this scene. Most likely due to fast map swaps and the throttle time on token placement.', this, 'From:', sceneId, 'On:', window.CURRENT_SCENE_DATA);
 			return;
