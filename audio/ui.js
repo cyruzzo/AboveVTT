@@ -646,8 +646,21 @@ function init_mixer() {
             "--overflow-speed": (overflowVal - nameWidth < 0) ? parseInt(nameWidth)*10+'ms' : 800+'ms'
         });   
     })
-    $("#sounds-panel .sidebar-panel-header").append(header, playlistInput, addPlaylistButton, copyPlaylistButton, removePlaylistButton, playlistFields, masterVolumeSlider(), mixerChannels);
+    const soundPanelHeader = $("#sounds-panel .sidebar-panel-header");
+    soundPanelHeader.append(header, playlistInput, addPlaylistButton, copyPlaylistButton, removePlaylistButton, playlistFields, masterVolumeSlider(), mixerChannels);
     $('#master-volume').append(clear, sequentialPlay, crossFade, playPause);
+    soundPanelHeader.resizable({
+        addClasses: false,
+        handles: "s",
+        containment: "#windowContainment",
+        start: function (event, ui) {
+            $(event.currentTarget).append($('<div class="iframeResizeCover"></div>'));
+        },
+        stop: function (event, ui) {
+            $('.iframeResizeCover').remove();
+        },
+        minHeight: 0
+    });
 }
 
 
