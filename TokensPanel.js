@@ -1293,7 +1293,7 @@ async function create_and_place_token(listItem, hidden = undefined, specificImag
                 case 'none':
                     break;
                 case 'random':
-                    const base = appendedNumbers.length + 100;
+                    let base = appendedNumbers.length + 100;
                     let randomNumber = Math.floor(Math.random() * base) ;
                     while (appendedNumbers.includes(randomNumber)) {
                         randomNumber = Math.floor(Math.random() * base) ;
@@ -1398,7 +1398,7 @@ async function create_and_place_token(listItem, hidden = undefined, specificImag
                 case 'none':
                     break;
                 case 'random':
-                    const base = appendedNumbers.length + 100;
+                    let base = appendedNumbers.length + 100;
                     let randomNumber = Math.floor(Math.random() * base);
                     while (appendedNumbers.includes(randomNumber)) {
                         randomNumber = Math.floor(Math.random() * base);
@@ -1490,7 +1490,7 @@ async function create_and_place_token(listItem, hidden = undefined, specificImag
                 case 'none':
                     break;
                 case 'random':
-                    const base = appendedNumbers.length + 100;
+                    let base = appendedNumbers.length + 100;
                     let randomNumber = Math.floor(Math.random() * base);
                     while (appendedNumbers.includes(randomNumber)) {
                         randomNumber = Math.floor(Math.random() * base);
@@ -1544,7 +1544,7 @@ async function create_and_place_token(listItem, hidden = undefined, specificImag
                 case 'none':
                     break;
                 case 'random':
-                    const base = appendedNumbers.length + 100;
+                    let base = appendedNumbers.length + 100;
                     let randomNumber = Math.floor(Math.random() * base);
                     while (appendedNumbers.includes(randomNumber)) {
                         randomNumber = Math.floor(Math.random() * base);
