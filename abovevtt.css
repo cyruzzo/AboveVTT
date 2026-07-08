@@ -6705,10 +6705,12 @@ button.avtt-roll-formula-button {
 }
 
 #sounds-panel .sidebar-panel-header {
-    padding: 4px;
+    padding: 0px 0px 0px 4px;
     border-bottom: 1px solid #2b2b2b;
 }
-
+#sounds-panel .sidebar-panel-header .audio-row {
+ padding: 0px 8px 0px 0px
+}
 #sounds-panel .audio-row  {
     height: 25px;
 }
@@ -12127,9 +12129,13 @@ li.audio-row:hover .channel-progress-bar-total
 
 }
 #mixer-channels{
-    max-height: 400px;
     overflow-y: auto;
     padding-bottom: 2px;
+    max-height: calc(100% - 85px);
+}
+#sounds-panel .sidebar-panel-header{
+    height: 236px;
+    max-height: calc(100% - 16px);
 }
 #mixer-channels .volume-control{
     left: 0;
@@ -12192,7 +12198,7 @@ li.audio-row:hover .channel-progress-bar-total
     fill: #000;
 }
 div#sounds-panel {
-    overflow-y: visible;
+    overflow-y: hidden;
 }
 
 
