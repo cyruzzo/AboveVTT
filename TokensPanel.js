@@ -1294,7 +1294,7 @@ async function create_and_place_token(listItem, hidden = undefined, specificImag
                     break;
                 case 'random':
                     const base = appendedNumbers.length + 100;
-                    const randomNumber = Math.floor(Math.random() * base) ;
+                    let randomNumber = Math.floor(Math.random() * base) ;
                     while (appendedNumbers.includes(randomNumber)) {
                         randomNumber = Math.floor(Math.random() * base) ;
                         base+=10;
@@ -1399,7 +1399,7 @@ async function create_and_place_token(listItem, hidden = undefined, specificImag
                     break;
                 case 'random':
                     const base = appendedNumbers.length + 100;
-                    const randomNumber = Math.floor(Math.random() * base);
+                    let randomNumber = Math.floor(Math.random() * base);
                     while (appendedNumbers.includes(randomNumber)) {
                         randomNumber = Math.floor(Math.random() * base);
                         base+=10;
@@ -1491,7 +1491,7 @@ async function create_and_place_token(listItem, hidden = undefined, specificImag
                     break;
                 case 'random':
                     const base = appendedNumbers.length + 100;
-                    const randomNumber = Math.floor(Math.random() * base);
+                    let randomNumber = Math.floor(Math.random() * base);
                     while (appendedNumbers.includes(randomNumber)) {
                         randomNumber = Math.floor(Math.random() * base);
                         base+=10;
@@ -1545,7 +1545,7 @@ async function create_and_place_token(listItem, hidden = undefined, specificImag
                     break;
                 case 'random':
                     const base = appendedNumbers.length + 100;
-                    const randomNumber = Math.floor(Math.random() * base);
+                    let randomNumber = Math.floor(Math.random() * base);
                     while (appendedNumbers.includes(randomNumber)) {
                         randomNumber = Math.floor(Math.random() * base);
                         base+=10;
