@@ -1228,11 +1228,11 @@ async function create_and_place_token(listItem, hidden = undefined, specificImag
         if(options.vision != undefined && options.vision?.feet == undefined && visionOptions?.vision?.feet != undefined){
             options.vision.feet = visionOptions.vision.feet;
         }
-        if(options.devilsight != undefined && options.devilsight?.feet == undefined && devilsightOptions?.devilsight?.feet != undefined){
-            options.devilsight.feet = devilsightOptions.devilsight.feet;
+        if(options.devilsight != undefined && options.devilsight?.feet == undefined && visionOptions?.devilsight?.feet != undefined){
+            options.devilsight.feet = visionOptions.devilsight.feet;
         }
-        if(options.truesight != undefined && options.truesight?.feet == undefined && truesightOptions?.truesight?.feet != undefined){
-            options.truesight.feet = truesightOptions.truesight.feet;
+        if(options.truesight != undefined && options.truesight?.feet == undefined && visionOptions?.truesight?.feet != undefined){
+            options.truesight.feet = visionOptions.truesight.feet;
         }
          if(options.light1 != undefined && options.light1?.feet == undefined && visionOptions?.light1?.feet != undefined){
             options.light1.feet = visionOptions.light1.feet;
@@ -2746,24 +2746,24 @@ function display_aoe_token_configuration_modal(listItem, placedToken = undefined
             return; // no need to do anything if the image wasn't added. This can happen if they accidentally hit enter a few times which would try to add the same url multiple times
         }
         if(listItem.type == ItemType.PC ){
-            const id = customization.tokenOptions.id;
+            const id = targetOptions.id;
             let token = window.all_token_objects[id]
             if (token)
-                window.all_token_objects[id].options.alternativeImages = customization.tokenOptions.alternativeImages;
+                window.all_token_objects[id].options.alternativeImages = targetOptions.alternativeImages;
            
             token = window.TOKEN_OBJECTS[id]
             if (token){
-                token.options.alternativeImages = customization.tokenOptions.alternativeImages;
+                token.options.alternativeImages = targetOptions.alternativeImages;
                 token.sync()
             }
         }
         if(['.mp4', '.webm', '.m4v'].some(d => type.includes(d))){
-            customization.tokenOptions.videoToken = true;
+            targetOptions.videoToken = true;
         }
         persist_token_customization(customization);
         if (redraw) {
             debounceRedrawToken(sidebarPanel, listItem, placedToken);
-            let listingImage = (customization.tokenOptions?.alternativeImages && customization.tokenOptions?.alternativeImages[0] != undefined) ? customization.tokenOptions?.alternativeImages[0] : listItem.image;     
+            let listingImage = (targetOptions?.alternativeImages && targetOptions?.alternativeImages[0] != undefined) ? targetOptions?.alternativeImages[0] : listItem.image;     
            
 
             let rowImage;
@@ -2847,7 +2847,7 @@ function display_aoe_token_configuration_modal(listItem, placedToken = undefined
             
             let rowImage;
             let alt = $(`.sidebar-list-item-row[id='${listItem.id}'] .token-image`).attr('alt')
-            let listingImage = (customization.tokenOptions?.alternativeImages && customization.tokenOptions?.alternativeImages[0] != undefined) ? customization.tokenOptions?.alternativeImages[0] : listItem.image;
+            let listingImage = (targetOptions?.alternativeImages && targetOptions?.alternativeImages[0] != undefined) ? targetOptions?.alternativeImages[0] : listItem.image;
             
             let video=false;
             if(isVideoValue || (['.mp4', '.webm', '.m4v'].some(d => listingImage.includes(d)))){
@@ -3093,14 +3093,14 @@ function display_aoe_token_configuration_modal(listItem, placedToken = undefined
         borderColorWrapper.hide();
     }
     //TO DO VISION UPDATE: add detection for pc/monsters
-    if(customization.tokenOptions.devilsight?.feet == undefined){
-        customization.tokenOptions.devilsight = {
+    if(targetOptions.devilsight?.feet == undefined){
+        targetOptions.devilsight = {
             feet: '0',
             color: window.TOKEN_SETTINGS?.devilsight?.color ? window.TOKEN_SETTINGS?.devilsight?.color : 'rgba(142, 142, 142, 1)'
         }
     }
-    if(customization.tokenOptions.truesight?.feet == undefined){
-        customization.tokenOptions.truesight = {
+    if(targetOptions.truesight?.feet == undefined){
+        targetOptions.truesight = {
             feet: '0',
             color: window.TOKEN_SETTINGS?.truesight?.color ? window.TOKEN_SETTINGS?.truesight?.color : 'rgba(142, 142, 142, 1)'
         }
@@ -3129,53 +3129,52 @@ function display_aoe_token_configuration_modal(listItem, placedToken = undefined
                     vision[pcSenses[name]] = range;
             }
         }
-
     }
     else if(listItem.isTypeMonster() || listItem.isTypeOpen5eMonster()){
         vision = get_monster_senses(listItem.monsterData.senses);
     }
-    if(customization.tokenOptions.vision?.feet == undefined){
-        customization.tokenOptions.vision = {
+    if(targetOptions.vision?.feet == undefined){
+        targetOptions.vision = {
             feet: vision.darkvision.toString(),
             color: window.TOKEN_SETTINGS?.vision?.color ? window.TOKEN_SETTINGS?.vision?.color : 'rgba(142, 142, 142, 1)'
         }
     }
-    if(customization.tokenOptions.truesight?.feet == undefined){
-        customization.tokenOptions.truesight = {
+    if(targetOptions.truesight?.feet == undefined){
+        targetOptions.truesight = {
             feet: vision.truesight.toString(),
             color: (window.TOKEN_SETTINGS?.truesight?.color) ? window.TOKEN_SETTINGS.truesight.color : 'rgba(142, 142, 142, 1)'
         }
     }
-    if(customization.tokenOptions.devilsight?.feet == undefined){
+    if(targetOptions.devilsight?.feet == undefined){
 
-        customization.tokenOptions.devilsight = {
+        targetOptions.devilsight = {
             feet: vision.devilsight.toString(),
             color: (window.TOKEN_SETTINGS?.devilsight?.color) ? window.TOKEN_SETTINGS.devilsight.color : 'rgba(142, 142, 142, 1)'
         }
     }
-    if(customization.tokenOptions.light1?.feet == undefined){
-        customization.tokenOptions.light1 = {
+    if(targetOptions.light1?.feet == undefined){
+        targetOptions.light1 = {
             feet: '0',
             color: window.TOKEN_SETTINGS?.light1?.color ? window.TOKEN_SETTINGS?.light1?.color : 'rgba(255, 255, 255, 1)'
         }
     }
-    if(customization.tokenOptions.light2?.feet == undefined){
-        customization.tokenOptions.light2 = {
+    if(targetOptions.light2?.feet == undefined){
+        targetOptions.light2 = {
             feet: '0',
             color: window.TOKEN_SETTINGS?.light2?.color ? window.TOKEN_SETTINGS?.light2?.color : 'rgba(142, 142, 142, 1)'
         }
     }
 
-    const uniqueDevilsightFeet = customization.tokenOptions.devilsight.feet;
-    const uniqueDevilsightColor = customization.tokenOptions.devilsight.color;
-    const uniqueTruesightFeet = customization.tokenOptions.truesight.feet;
-    const uniqueTruesightColor = customization.tokenOptions.truesight.color;
-    const uniqueVisionFeet = customization.tokenOptions.vision.feet;
-    const uniqueVisionColor = customization.tokenOptions.vision.color;
-    const uniqueLight1Feet = customization.tokenOptions.light1.feet;
-    const uniqueLight2Feet = customization.tokenOptions.light2.feet;
-    const uniqueLight1Color = customization.tokenOptions.light1.color;
-    const uniqueLight2Color = customization.tokenOptions.light2.color;
+    const uniqueDevilsightFeet = targetOptions.devilsight.feet;
+    const uniqueDevilsightColor = targetOptions.devilsight.color;
+    const uniqueTruesightFeet = targetOptions.truesight.feet;
+    const uniqueTruesightColor = targetOptions.truesight.color;
+    const uniqueVisionFeet = targetOptions.vision.feet;
+    const uniqueVisionColor = targetOptions.vision.color;
+    const uniqueLight1Feet = targetOptions.light1.feet;
+    const uniqueLight2Feet = targetOptions.light2.feet;
+    const uniqueLight1Color = targetOptions.light1.color;
+    const uniqueLight2Color = targetOptions.light2.color;
 
     const lightOption = {
     name: "auraislight",
@@ -3187,7 +3186,7 @@ function display_aoe_token_configuration_modal(listItem, placedToken = undefined
     ],
     defaultValue: false
     };
-    let auraIsLightEnabled = (customization.tokenOptions.auraislight != undefined) ? customization.tokenOptions.auraislight : true;
+    let auraIsLightEnabled = (targetOptions.auraislight != undefined) ? targetOptions.auraislight : true;
     let enabledLightInput = build_toggle_input( lightOption, auraIsLightEnabled, function(name, newValue) {
         console.log(`${name} setting is now ${newValue}`);
         customization.setTokenOption("auraislight", newValue);
@@ -3272,7 +3271,7 @@ function display_aoe_token_configuration_modal(listItem, placedToken = undefined
         ],
         defaultValue: false
     };
-    let auraRevealVisionEnabled = (customization.tokenOptions.share_vision != undefined) ? customization.tokenOptions.share_vision : false;
+    let auraRevealVisionEnabled = (targetOptions.share_vision != undefined) ? targetOptions.share_vision : false;
     for(let i=0; i<window.playerUsers.length; i++){
         if(!revealvisionOption.options.some(d => d.value == window.playerUsers[i].userId)){
             let option = {value: window.playerUsers[i].userId, label: window.playerUsers[i].userName, desciption: `Token vision is shared with ${window.playerUsers[i].userName}`};
@@ -3314,24 +3313,24 @@ function display_aoe_token_configuration_modal(listItem, placedToken = undefined
     });
 
 
-    if(customization.tokenOptions.aura1?.feet == undefined){
-        customization.tokenOptions.aura1 = {
+    if(targetOptions.aura1?.feet == undefined){
+        targetOptions.aura1 = {
             feet: '0',
             color: window.TOKEN_SETTINGS?.aura1?.color ? window.TOKEN_SETTINGS?.aura1?.color : 'rgba(255, 255, 100, 0.5)'
         }
     }
-    if(customization.tokenOptions.aura2?.feet == undefined){
-        customization.tokenOptions.aura2 = {
+    if(targetOptions.aura2?.feet == undefined){
+        targetOptions.aura2 = {
             feet: '0',
             color: window.TOKEN_SETTINGS?.aura2?.color ? window.TOKEN_SETTINGS?.aura2?.color : 'rgba(255, 255, 100, 0.5)'
         }
     }
 
 
-    let uniqueAura1Feet = customization.tokenOptions.aura1.feet;
-    let uniqueAura2Feet = customization.tokenOptions.aura2.feet;
-    let uniqueAura1Color = customization.tokenOptions.aura1.color;
-    let uniqueAura2Color = customization.tokenOptions.aura2.color;
+    let uniqueAura1Feet = targetOptions.aura1.feet;
+    let uniqueAura2Feet = targetOptions.aura2.feet;
+    let uniqueAura1Color = targetOptions.aura1.color;
+    let uniqueAura2Color = targetOptions.aura2.color;
 
     const auraOption = {
         name: "auraVisible",
@@ -3343,7 +3342,7 @@ function display_aoe_token_configuration_modal(listItem, placedToken = undefined
         ],
         defaultValue: false
     };
-    let auraIsEnabled = (customization.tokenOptions.auraVisible != undefined) ? customization.tokenOptions.auraVisible : false;
+    let auraIsEnabled = (targetOptions.auraVisible != undefined) ? targetOptions.auraVisible : false;
     let enabledAuraInput = build_toggle_input( auraOption, auraIsEnabled, function(name, newValue) {
         console.log(`${name} setting is now ${newValue}`);
         customization.setTokenOption("auraVisible", newValue);
@@ -3453,7 +3452,8 @@ function display_aoe_token_configuration_modal(listItem, placedToken = undefined
 
         persist_token_customization(customization);
         redraw_settings_panel_token_examples(customization.tokenOptions);
-        decorate_modal_images(sidebarPanel, listItem, placedToken);
+        const selectedTokenImage = $('.example-token.selected .div-token-image').attr('data-src');
+        display_token_configuration_modal(listItem, placedToken, selectedTokenImage, redrawPanel)
     });
 
     inputWrapper.append(tokenOptionsButton);
