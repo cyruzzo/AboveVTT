@@ -1326,7 +1326,7 @@ async function create_and_place_token(listItem, hidden = undefined, specificImag
                 options.hitPointInfo = pc.hitPointInfo;
                 options.armorClass = pc.armorClass;
             }
-            options = {...options, ...foundOptions, name: listItem.name};
+            options.name = listItem.name;
             break;
         case ItemType.Monster:
             switch (options['defaultmaxhptype']) {
@@ -1703,9 +1703,9 @@ async function create_and_place_token(listItem, hidden = undefined, specificImag
         }
         options.monster = 'customStat'
     }
-    if(foundOptions.color != undefined){
-        options.color = foundOptions.color;
-    }
+    
+    options.color = options.color ?? foundOptions.color;
+    
 
 
 
