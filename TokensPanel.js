@@ -3112,11 +3112,7 @@ function display_aoe_token_configuration_modal(listItem, placedToken = undefined
     }
     if(listItem.isTypePC()){
         let pcData = find_pc_by_player_id(listItem.id);
-        let vision = {
-            darkvision: 0,
-            devilsight: 0,
-            truesight: 0
-        }
+
         if(pcData.senses.length > 0)
         {
             const pcSenses = {
@@ -3133,18 +3129,7 @@ function display_aoe_token_configuration_modal(listItem, placedToken = undefined
                     vision[pcSenses[name]] = range;
             }
         }
-        customization.tokenOptions.vision = {
-            feet: vision.darkvision.toString(),
-            color: window.TOKEN_SETTINGS?.vision?.color ? window.TOKEN_SETTINGS?.vision?.color : 'rgba(142, 142, 142, 1)'
-        }
-        customization.tokenOptions.truesight = {
-            feet: vision.truesight.toString(),
-            color: (window.TOKEN_SETTINGS?.truesight?.color) ? window.TOKEN_SETTINGS.truesight.color : 'rgba(142, 142, 142, 1)'
-        }
-        customization.tokenOptions.devilsight = {
-            feet: vision.devilsight.toString(),
-            color: (window.TOKEN_SETTINGS?.devilsight?.color) ? window.TOKEN_SETTINGS.devilsight.color : 'rgba(142, 142, 142, 1)'
-        }
+
     }
     else if(listItem.isTypeMonster() || listItem.isTypeOpen5eMonster()){
         vision = get_monster_senses(listItem.monsterData.senses);
