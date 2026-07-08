@@ -250,9 +250,10 @@ function token_setting_options() {
 			label: "Token Name Adjustment",
 			type: 'dropdown',
 			options: [
-				{ value: "count", label: "Count", description: "Tokens's name have a number appended to them." },
-				{ value: "personality", label: "Personality Trait", description: "Tokens's name have a personaility trait prepended." },
-				{ value: "none", label: "None", description: "Tokens's name will not be modified." }
+				{ value: "count", label: "Count", description: "Tokens names have an ascending number appended to them." },
+				{ value: "random", label: "Random Number", description: "Tokens names have a random number appended to them." },
+				{ value: "personality", label: "Personality Trait", description: "Tokens names have a personaility trait prepended." },
+				{ value: "none", label: "None", description: "Tokens names will not be modified." }
 			],
 			defaultValue: "count"
 		},
