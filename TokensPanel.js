@@ -1250,6 +1250,7 @@ async function create_and_place_token(listItem, hidden = undefined, specificImag
     let hpVal;
     let placedCount;
     let color;
+    let appendedNumbers = [];
     switch (listItem.type) {
         case ItemType.Folder:
             console.log("TODO: place all tokens in folder?", listItem);
@@ -1269,9 +1270,16 @@ async function create_and_place_token(listItem, hidden = undefined, specificImag
                 options.tokenSize = tokenSize;
             }
             placedCount = 1;
+            
             for (let tokenId in window.TOKEN_OBJECTS) {
                 if (window.TOKEN_OBJECTS[tokenId].options.itemId === listItem.id) {
                     placedCount++;
+                    if(options.placeType == 'random'){
+                        const nameNumberMatch = window.TOKEN_OBJECTS[tokenId].options.name.match(/(\d+)$/);
+                        if (nameNumberMatch) {
+                            appendedNumbers.push(parseInt(nameNumberMatch[1]));
+                        }
+                    }
                 }
             }
             color = TOKEN_COLORS[(placedCount - 1) % 54];
@@ -1283,6 +1291,15 @@ async function create_and_place_token(listItem, hidden = undefined, specificImag
                     options.name = ` ${personailityTrait} ${listItem.name}`;
                     break;
                 case 'none':
+                    break;
+                case 'random':
+                    const base = appendedNumbers.length + 100;
+                    const randomNumber = Math.floor(Math.random() * base) ;
+                    while (appendedNumbers.includes(randomNumber)) {
+                        randomNumber = Math.floor(Math.random() * base) ;
+                        base+=10;
+                    }
+                    options.name = `${listItem.name} ${randomNumber}`;
                     break;
                 case 'count': 
                 default:    
@@ -1358,9 +1375,16 @@ async function create_and_place_token(listItem, hidden = undefined, specificImag
             options.stat = listItem.monsterData.id;
 
             placedCount = 1;
+            appendedNumbers = [];
             for (let tokenId in window.TOKEN_OBJECTS) {
                 if (window.TOKEN_OBJECTS[tokenId].options.monster === listItem.monsterData.id || window.TOKEN_OBJECTS[tokenId].options.stat === listItem.monsterData.id) {
                     placedCount++;
+                    if(options.placeType == 'random'){
+                        const nameNumberMatch = window.TOKEN_OBJECTS[tokenId].options.name.match(/(\d+)$/);
+                        if (nameNumberMatch) {
+                            appendedNumbers.push(parseInt(nameNumberMatch[1]));
+                        }
+                    }
                 }
             }
             color = TOKEN_COLORS[(placedCount - 1) % 54];
@@ -1372,6 +1396,15 @@ async function create_and_place_token(listItem, hidden = undefined, specificImag
                     options.name = ` ${personailityTrait} ${listItem.name}`;
                     break;
                 case 'none':
+                    break;
+                case 'random':
+                    const base = appendedNumbers.length + 100;
+                    const randomNumber = Math.floor(Math.random() * base);
+                    while (appendedNumbers.includes(randomNumber)) {
+                        randomNumber = Math.floor(Math.random() * base);
+                        base+=10;
+                    }
+                    options.name = `${listItem.name} ${randomNumber}`;
                     break;
                 case 'count': 
                 default:    
@@ -1433,9 +1466,16 @@ async function create_and_place_token(listItem, hidden = undefined, specificImag
             options.monster = "open5e";
             options.stat = listItem.monsterData.key;
             placedCount = 1;
+            appendedNumbers = [];
             for (let tokenId in window.TOKEN_OBJECTS) {
                 if (window.TOKEN_OBJECTS[tokenId].options.monster === listItem.monsterData.key || window.TOKEN_OBJECTS[tokenId].options.stat === listItem.monsterData.key) {
                     placedCount++;
+                    if(options.placeType == 'random'){
+                        const nameNumberMatch = window.TOKEN_OBJECTS[tokenId].options.name.match(/(\d+)$/);
+                        if (nameNumberMatch) {
+                            appendedNumbers.push(parseInt(nameNumberMatch[1]));
+                        }
+                    }
                 }
             }
             color = TOKEN_COLORS[(placedCount - 1) % 54];
@@ -1448,6 +1488,15 @@ async function create_and_place_token(listItem, hidden = undefined, specificImag
                     options.name = ` ${personailityTrait} ${listItem.name}`;
                     break;
                 case 'none':
+                    break;
+                case 'random':
+                    const base = appendedNumbers.length + 100;
+                    const randomNumber = Math.floor(Math.random() * base);
+                    while (appendedNumbers.includes(randomNumber)) {
+                        randomNumber = Math.floor(Math.random() * base);
+                        base+=10;
+                    }
+                    options.name = `${listItem.name} ${randomNumber}`;
                     break;
                 case 'count': 
                 default:    
@@ -1472,9 +1521,16 @@ async function create_and_place_token(listItem, hidden = undefined, specificImag
                 options.tokenSize = tokenSize;
             }
             placedCount = 1;
+            appendedNumbers = [];
             for (let tokenId in window.TOKEN_OBJECTS) {
                 if (window.TOKEN_OBJECTS[tokenId].options.itemId === listItem.id) {
-                    placedCount++;
+                    placedCount++;          
+                    if(options.placeType == 'random'){
+                        const nameNumberMatch = window.TOKEN_OBJECTS[tokenId].options.name.match(/(\d+)$/);
+                        if (nameNumberMatch) {
+                            appendedNumbers.push(parseInt(nameNumberMatch[1]));
+                        }
+                    }
                 }
             }
             color = TOKEN_COLORS[(placedCount - 1) % 54];
@@ -1486,6 +1542,15 @@ async function create_and_place_token(listItem, hidden = undefined, specificImag
                     options.name = ` ${personailityTrait} ${listItem.name}`;
                     break;
                 case 'none':
+                    break;
+                case 'random':
+                    const base = appendedNumbers.length + 100;
+                    const randomNumber = Math.floor(Math.random() * base);
+                    while (appendedNumbers.includes(randomNumber)) {
+                        randomNumber = Math.floor(Math.random() * base);
+                        base+=10;
+                    }
+                    options.name = `${listItem.name} ${randomNumber}`;
                     break;
                 case 'count': 
                 default:    
