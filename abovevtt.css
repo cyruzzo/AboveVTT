@@ -5222,13 +5222,19 @@ h5.token-image-modal-footer-title:after {
     background-color: #979AA4;
     display: block;
 }
+.sidebar-panel-footer .token-config-aura-wrapper h3
+ {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    margin-left: 4px;
+}
 .avtt-settings-section h4~div>h5.token-image-modal-footer-title:after {
     margin: 0px;
 }
 
 .sidebar-panel-footer input,
 .token-image-modal-footer input {
-    margin-bottom: 6px;
     width: auto;
 }
 .sidebar-panel-footer-horizontal-wrapper,
@@ -7399,6 +7405,15 @@ button.avtt-roll-formula-button {
 .menu-vision-aura{
     margin: 2px 0px;
 }
+.menu-outer-aura .token-image-modal-footer-title,
+.menu-inner-aura .token-image-modal-footer-title,
+.menu-vision-aura .token-image-modal-footer-title{
+    margin: 0px 3px 0px 8px;
+    display: flex;
+    justify-content: flex-end;
+    text-align: end;
+}
+
 #tokenOptionsContainer div.token-image-modal-url-label-wrapper{
     display: flex;
     align-self: center;

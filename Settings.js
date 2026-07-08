@@ -1589,9 +1589,11 @@ function build_sidebar_token_options_flyout(availableOptions, setValues, updateV
 			// We're about to call updateValue a bunch of times and only need to update the UI (or do anything else really) one time
 
 			availableOptions.forEach(option => updateValue(option.name, undefined));
-			updateValue('vision', {});
-			updateValue('light1', {});
-			updateValue('light2', {});
+			updateValue('vision', null);
+			updateValue('devilsight', null);
+			updateValue('truesight', null);
+			updateValue('light1', null);
+			updateValue('light2', null);
 
 			let defaultTokenOptions = default_options();
 
