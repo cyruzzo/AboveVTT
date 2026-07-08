@@ -3839,6 +3839,7 @@ function place_token_at_map_point(tokenObject, x, y, forcePlaceAndSize = false, 
 	};
 	forcePlaceAndSize = forcePlaceAndSize || 
 		options.alternativeImagesCustomizations?.[options.imgsrc]?.tokenSize != undefined;
+
 	if(window.all_token_objects[options.id] !== undefined && options.alternativeImages){
 		if(!(window.all_token_objects[options.id].options.imgsrc in options.alternativeImages)){
 			window.all_token_objects[options.id].options.imgsrc = options.imgsrc;
@@ -3850,6 +3851,7 @@ function place_token_at_map_point(tokenObject, x, y, forcePlaceAndSize = false, 
 			alternativeImages: alternativeImages
 		};
 	}
+
 	// aoe tokens have classes instead of images
 	if (typeof options.imgsrc === "string" && !options.imgsrc.startsWith("class")) {
 		options.imgsrc = parse_img(options.imgsrc);
@@ -3860,7 +3862,9 @@ function place_token_at_map_point(tokenObject, x, y, forcePlaceAndSize = false, 
 	}
 
 	if (options.size == undefined || forcePlaceAndSize) {
-		
+		if(forcePlaceAndSize){
+			options.gridSquares = null;
+		}
 
 		if (options.gridSquares != undefined && parseFloat(options.gridSquares) != NaN){
 			options.size = window.CURRENT_SCENE_DATA.hpps * parseFloat(options.gridSquares);
