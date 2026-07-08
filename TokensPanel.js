@@ -1121,6 +1121,16 @@ function update_pc_token_rows() {
     });
 }
 
+function random_number_suffix(suffixNumbers = []) {
+    let base = suffixNumbers.length + 100
+    let randomNumber = Math.floor(Math.random() * base);
+    while (suffixNumbers.includes(randomNumber)) {
+        randomNumber = Math.floor(Math.random() * base);
+        base+=10;
+    }
+    return randomNumber;
+}
+
 /**
  * Creates a {Token} object and places it on the scene.
  * @param listItem {SidebarListItem} the item to create a token from
@@ -1293,12 +1303,7 @@ async function create_and_place_token(listItem, hidden = undefined, specificImag
                 case 'none':
                     break;
                 case 'random':
-                    let base = appendedNumbers.length + 100;
-                    let randomNumber = Math.floor(Math.random() * base) ;
-                    while (appendedNumbers.includes(randomNumber)) {
-                        randomNumber = Math.floor(Math.random() * base) ;
-                        base+=10;
-                    }
+                    const randomNumber = random_number_suffix(appendedNumbers);
                     options.name = `${listItem.name} ${randomNumber}`;
                     break;
                 case 'count': 
@@ -1398,12 +1403,7 @@ async function create_and_place_token(listItem, hidden = undefined, specificImag
                 case 'none':
                     break;
                 case 'random':
-                    let base = appendedNumbers.length + 100;
-                    let randomNumber = Math.floor(Math.random() * base);
-                    while (appendedNumbers.includes(randomNumber)) {
-                        randomNumber = Math.floor(Math.random() * base);
-                        base+=10;
-                    }
+                    const randomNumber = random_number_suffix(appendedNumbers);
                     options.name = `${listItem.name} ${randomNumber}`;
                     break;
                 case 'count': 
@@ -1490,12 +1490,7 @@ async function create_and_place_token(listItem, hidden = undefined, specificImag
                 case 'none':
                     break;
                 case 'random':
-                    let base = appendedNumbers.length + 100;
-                    let randomNumber = Math.floor(Math.random() * base);
-                    while (appendedNumbers.includes(randomNumber)) {
-                        randomNumber = Math.floor(Math.random() * base);
-                        base+=10;
-                    }
+                    const randomNumber = random_number_suffix(appendedNumbers);
                     options.name = `${listItem.name} ${randomNumber}`;
                     break;
                 case 'count': 
@@ -1544,12 +1539,7 @@ async function create_and_place_token(listItem, hidden = undefined, specificImag
                 case 'none':
                     break;
                 case 'random':
-                    let base = appendedNumbers.length + 100;
-                    let randomNumber = Math.floor(Math.random() * base);
-                    while (appendedNumbers.includes(randomNumber)) {
-                        randomNumber = Math.floor(Math.random() * base);
-                        base+=10;
-                    }
+                    const randomNumber = random_number_suffix(appendedNumbers);
                     options.name = `${listItem.name} ${randomNumber}`;
                     break;
                 case 'count': 
