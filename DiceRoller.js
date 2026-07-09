@@ -848,7 +848,7 @@ class DiceRoller {
             console.warn("clickDiceButtons was called without a diceRoll object")
             return;
         }
-        if(!is_abovevtt_page()){
+        if(!is_abovevtt_page() && !window.unlockSidebar){
             const lockSidebarButton = $(".ct-sidebar__control--unlock, [class*='styles_controls'] [aria-label='Unlocked']");
             window.unlockSidebar = lockSidebarButton.length > 0;
             await lockSidebarButton.click();
@@ -888,11 +888,12 @@ class DiceRoller {
         clearTimeout(this.diceRollButtonHide);
         this.diceRollButtonHide = setTimeout(()=>{
             $('[data-floating-ui-portal], .roll-mod-container').removeClass('hidden');
+            if(!is_abovevtt_page() && window.unlockSidebar == true){
+                delete window.unlockSidebar;
+                $(".ct-sidebar__control--unlock, [class*='styles_controls'] [aria-label='Locked']").click();
+            }
         }, 500)
-        if(!is_abovevtt_page() && window.unlockSidebar == true){
-            delete window.unlockSidebar;
-            $(".ct-sidebar__control--unlock, [class*='styles_controls'] [aria-label='Locked']").click();
-        }
+
     }
     send_ddb_dice_message(expression, displayName, imgUrl, rollType = "roll", damageType, actionType = "custom", sendTo = "") {
         let diceRoll = new DiceRoll(expression);
