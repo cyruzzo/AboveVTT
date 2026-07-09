@@ -3164,7 +3164,7 @@ class Token {
 						}	
 													
 						draw_selected_token_bounding_box();
-						window.toggleSnap=false;
+						
 
 						pauseCursorEventListener = false;
 						clearTimeout(window.dragStopTimer);
