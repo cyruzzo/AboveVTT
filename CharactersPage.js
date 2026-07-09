@@ -3145,7 +3145,9 @@ function observe_character_sheet_changes(documentToObserve) {
                 background: #ced9e0 !important;
               }
 
-
+              .ct-sidebar__inner [class*='styles_creatureBlock'] [class*='styles_statTable'] .avtt-roll-button {
+                  padding: 0px 2px !important;
+              }
               .ct-sidebar__inner [class*='ddbc-creature-block'] .avtt-roll-button,
               .ct-sidebar__inner [class*='styles_creatureBlock'] .avtt-roll-button,
               .ct-sidebar__inner [class*='styles_creatureBlock'] .avtt-aoe-button,
