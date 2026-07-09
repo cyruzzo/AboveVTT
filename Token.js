@@ -2246,7 +2246,7 @@ class Token {
 		
 
 	}
-	throttlePlace = throttle((animationDuration, sceneId = window.CURRENT_SCENE_DATA.id) => {
+	throttlePlace = throttle((animationDuration, sceneId = window.CURRENT_SCENE_DATA.id, callback=()=>{}) => {
 		if(window.all_token_objects?.[this.options.id] != undefined)
 			window.all_token_objects[this.options.id].options = $.extend(true, {}, this.options);
 		if(sceneId != window.CURRENT_SCENE_DATA.id){
@@ -2391,7 +2391,7 @@ class Token {
 				let tokenBorderWidth = (this.options.underDarkness == true) ? (this.sizeWidth() / window.CURRENT_SCENE_DATA.hpps * 2 / window.CURRENT_SCENE_DATA.scale_factor)+"px" : (this.sizeWidth() / window.CURRENT_SCENE_DATA.hpps * 2)+"px";
 				old.find(".token-image").css("--token-border-width", tokenBorderWidth);
 
-				if (old.attr('width') !== this.sizeWidth() || old.attr('height') !== this.sizeHeight()) {
+				if (old.width() !== this.sizeWidth() || old.height() !== this.sizeHeight()) {
 					// NEED RESIZING			
 					old.find(".token-image").css({
 						"max-width": this.sizeWidth(),
@@ -2726,9 +2726,9 @@ class Token {
 						'max-height': `var(--token-height)`,
 						'--z-index-diff': old.css('--z-index-diff'),
 						'--token-scale': old.css('--token-scale'),
-	    					'--token-rotation': old.css('--token-rotation'),
-	    					'--token-heading': old.css('--token-heading'),						
-	    					'--token-flip-x': old.css('--token-flip-x')						
+						'--token-rotation': old.css('--token-rotation'),
+						'--token-heading': old.css('--token-heading'),						
+						'--token-flip-x': old.css('--token-flip-x')						
 					})
 					copyImage.animate({
 							left: parseFloat(this.options.left) / window.CURRENT_SCENE_DATA.scale_factor,
@@ -2838,7 +2838,7 @@ class Token {
 						const copyImage = oldImage.clone();
 						underDarkToken.append(copyImage);
 						
-							if (this.options.imgsrc.startsWith('above-bucket-not-a-url')) {
+						if (this.options.imgsrc.startsWith('above-bucket-not-a-url')) {
 							const fileSrc = this.options.imgsrc.replace('above-bucket-not-a-url', '');
 							if (!copyImage.attr('src')?.includes(encodeURI(fileSrc))) {
 								updateTokenSrc(this.options.imgsrc, copyImage, this.options.videoToken);
@@ -2847,7 +2847,6 @@ class Token {
 						else if(copyImage.attr('src') != parse_img(this.options.imgsrc)){
 							updateTokenSrc(parse_img(this.options.imgsrc), copyImage, this.options.videoToken);
 						}
-
 				}  	
 				else{
 		    		$(`[data-notatoken='notatoken_${this.options.id}']`).remove();
@@ -3600,7 +3599,7 @@ class Token {
 		    });  
 			$(`[data-notatoken='notatoken_${this.options.id}']`).children('div:not(.base):not(.token-image):not(.hpvisualbar):not(.dead)').remove();
 
-
+			callback();
 			return true;
 		}
 		catch (e) {
@@ -3611,8 +3610,8 @@ class Token {
 			return;
 		}
 	}, 1000)
-	place(animationDuration, sceneId = window.CURRENT_SCENE_DATA.id) {
-		this.throttlePlace(animationDuration, sceneId);
+	place(animationDuration, sceneId = window.CURRENT_SCENE_DATA.id, callback=()=>{}) {
+		this.throttlePlace(animationDuration, sceneId, callback);
 	}
 
 	// key: String, numberRemaining: Number; example: track_ability("1stlevel", 2) // means they have 2 1st level spell slots remaining
@@ -3733,9 +3732,9 @@ function default_options() {
 function center_of_view() {
 	let centerX = (window.innerWidth/2) + window.scrollX 
 	if($("#hide_rightpanel").hasClass("point-right")) {
-    centerX = centerX - (get_sidebar_width() / 2 + 20); // half sidebar + scrollbar offset
+    centerX = centerX - (get_sidebar_width() / 2);
   }
-	let centerY = (window.innerHeight/2) + window.scrollY - 20 // 20 = scrollbar
+	let centerY = (window.innerHeight/2) + window.scrollY 
 	return { x: centerX, y: centerY };
 }
 
@@ -3782,20 +3781,19 @@ function snap_point_to_grid(mapX, mapY, forceSnap = false, tinyToken = false, to
 	}
 }
 
-function convert_point_from_view_to_map(pageX, pageY, forceNoSnap = false, ignoreOffset = false) {
-	// adjust for map offset and zoom
-	const startX = ignoreOffset == false ? window.CURRENT_SCENE_DATA.offsetx : 0;
-	const startY = ignoreOffset == false ? window.CURRENT_SCENE_DATA.offsety : 0;
-	let mapX = ((pageX - window.VTTMargin) * (1.0 / window.ZOOM)) - startX;
-	let mapY = ((pageY - window.VTTMargin) * (1.0 / window.ZOOM)) - startY;
+function convert_point_from_view_to_map(pageX, pageY, forceNoSnap = false) {
+	// adjust for map zoom
+
+	let mapX = ((pageX - window.VTTMargin) * (1.0 / window.ZOOM));
+	let mapY = ((pageY - window.VTTMargin) * (1.0 / window.ZOOM));
 	if (forceNoSnap === true) {
 		return { x: mapX, y: mapY };
 	}
 	let snapped = snap_point_to_grid(mapX, mapY, forceNoSnap);
 
 	return {
-		x: snapped.x + startX,
-		y: snapped.y + startY
+		x: snapped.x,
+		y: snapped.y
 	};
 }
 
@@ -4900,7 +4898,7 @@ function grouprotate_commit(angle) {
 			sceneToken.css('rotate',`-${(angle+parseFloat(sceneToken.css('--token-rotation')))%360}deg`);
 			currentplace = sceneToken.find('.token-image').offset();
 		}
-		newCoords = convert_point_from_view_to_map(currentplace.left, currentplace.top, true, true)
+		newCoords = convert_point_from_view_to_map(currentplace.left, currentplace.top, true)
 		token.options.left = `${newCoords.x}px`;
 		token.options.top = `${newCoords.y}px`;
 	});
