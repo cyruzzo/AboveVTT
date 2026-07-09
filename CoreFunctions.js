@@ -2955,13 +2955,12 @@ function makeDialogMenuTrigger(element, trigger, menuId, createMenu, onShow) {
       dialog.close();
     } else {
       if(onShow) onShow(e, dialog, elementId); //before show callback
-      //right now using show (but could decide that showModal is better)
-      dialog.show(); //so we can get dimensions 
+
       $(dialog).attr("data-whichbutton", elementId) //remember who triggered
       const rect = $(e.target)[0].getBoundingClientRect();
-      const menuRect = $(dialog)[0].getBoundingClientRect();
-      const winW = window.innerWidth;
-      const winH = window.innerHeight;
+      const menuRect = {height: $(dialog).height(), width:  $(dialog).width()};
+      const winW = e.target.ownerDocument.defaultView.innerWidth;
+      const winH = e.target.ownerDocument.defaultView.innerHeight;
       const top = Math.max(10, (rect.bottom + menuRect.height > winH) 
         ? rect.top - menuRect.height 
         : rect.bottom);
@@ -2973,6 +2972,8 @@ function makeDialogMenuTrigger(element, trigger, menuId, createMenu, onShow) {
         top: top + 'px',
         left: left + 'px',
       });
+      dialog.show(); 
+
     }
   });
   return element;
@@ -3032,7 +3033,7 @@ function createSendPlayerMenu(menuId, target) {
     const dialog = $(e.target).closest(".js-popup")?.[0];      
     const options = $(e.target).closest(".js-popup-options")?.[0];
     const selected = $(options).find('.js-popup--is-active').map((i, el) => el.getAttribute('data-id')).get().filter((a)=> !a.startsWith('_'));
-    const theTriggeringButton = $(`#${$(dialog).attr("data-whichbutton")}`);
+    const theTriggeringButton = $(`button#${$(dialog).attr("data-whichbutton")}`, e.target.ownerDocument);
     //todo: if selected is everyone then use undefined here:
     ((verb === 'pop') ? sendPopElement : sendClonedElement)(theTriggeringButton.parent(), selected);
     $(e.target).removeClass('js-popup--is-active');
@@ -3061,7 +3062,7 @@ function createSendPlayerMenu(menuId, target) {
 }
 
 function setPlayerButtonSetPopupStatus(e, dialog, buttonId) {
-  const hasPopupOption = $("#"+buttonId).attr("data-haspopup");
+  const hasPopupOption = $(`button#${buttonId}`, e.target.ownerDocument).attr("data-haspopup");
   $("#send-player-menu__pop", e.target.ownerDocument).css("display", hasPopupOption ? "" : "none"); 
 }
 function createSendPlayerButton(parent, icon, hasPopupOption=false ) {

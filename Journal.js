@@ -2253,9 +2253,12 @@ class JournalManager{
 	    }
 	}
 	block_send_to_buttons(target){
-		const blocks = target.find('img:not(.mon-stat-block__separator-img), video, .text--quote-box, .rules-text, .block-torn-paper, .read-aloud-text, .dmScreenChunk')
+		const blocks = target.find('img:not(.mon-stat-block__separator-img), video, .text--quote-box, .rules-text, .block-torn-paper, .read-aloud-text, .dmScreenChunk, aside')
 
    		blocks.wrap(function(i){
+			if($(this).closest('#lightbox').length > 0)
+				return;
+			
 			const container = $(`<div class='note-text' style='position:relative;max-width: 100%;'></div>`)
 			if(blocks[i] instanceof HTMLImageElement){
 				container.css({
@@ -2267,7 +2270,7 @@ class JournalManager{
 			return container;
 		});
 		blocks.each((i, block) => {
-			createSendPlayerButton(block, "login", block instanceof HTMLImageElement || block instanceof HTMLVideoElement).insertAfter(block);			
+			createSendPlayerButton(block, "login", block instanceof HTMLImageElement || block instanceof HTMLVideoElement || block.tagName === 'IMG' ||  block.tagName === 'VIDEO').insertAfter(block);			
 		});
 
 		const tables = target.find('table');
@@ -4839,6 +4842,9 @@ function render_source_chapter_in_iframe(url) {
 			})
 			if(monsterIds.length >0)
 				fetch_and_cache_monsters(monsterIds);
+	
+			window.JOURNAL.block_send_to_buttons(iframeContents);
+			
 		}, 2000)
 
 		iframeContents.find("head").append('<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons"></link>');
@@ -4850,6 +4856,119 @@ function render_source_chapter_in_iframe(url) {
 			background-position: center 0px !important;
 		}
 		#site-main header.main[role="banner"]{
+			display:none;
+		}
+		
+		.block-send-to-game-log {
+			position: absolute;
+			display: flex;
+			border-radius: 5px;
+			border: none;
+			outline: none !important;
+			align-items: center;
+			padding: 0px;
+			margin: 0px;
+			background: #eee;
+			opacity: 0.5;
+			right: 4px;
+			top: 4px;
+			cursor: pointer;
+		}
+
+		.block-send-to-game-log:hover {
+			background-color: #888;
+			opacity: 1;    
+		}
+
+		/*todo: not sure what this style is for?*/
+		td button.block-send-to-game-log {
+			position: absolute;
+			display: flex;
+			float: unset;
+			top:50%;
+			right: 2px;
+			transform: translate(0px, -50%);
+		}
+		/*size of send-to button*/
+		td button.block-send-to-game-log span{
+			font-size:18px !important;
+		}
+		/*size of send-to button when in table*/
+		td > button.block-send-to-game-log > span {
+			font-size:12px !important;
+		}
+		.text--quote-box ~ .block-send-to-game-log{
+			right:25px;
+			top:-8px
+		}
+		.rules-text ~ .block-send-to-game-log{
+			right:5px;
+			top: 15px
+		}
+					
+		.js-popup-options {
+			margin: 2px;
+		}
+		.js-popup-option {
+			width: 100%;
+			display: inline-flex;
+			align-items: center;
+			border: 1px;
+			flex-wrap: wrap;
+			font-family: Roboto Condensed,Roboto,Helvetica,sans-serif;
+			cursor: pointer;
+			color: #838383;
+			line-height: 1;
+			font-weight: 700;
+			font-size: 12px;
+			gap: 4px;    
+			text-transform: uppercase;
+			background-color: #f2f2f2;
+			border-radius: 3px;
+			padding: 5px 7px;
+			margin: 1px;
+			white-space: nowrap;
+			background-image: unset;
+		}
+		.js-popup-decoration {
+			width: 100%;
+			display: block;
+			font-family: Roboto Condensed,Roboto,Helvetica,sans-serif;
+			color: black; 
+			font-weight: bold;
+			font-size: 12px;
+			text-transform: uppercase;
+			background-color: #f2f2f2;
+			margin: 1px;
+			white-space: nowrap;
+			background-image: unset;
+			text-align: center;
+			padding: 0;
+			border: 0;
+			border-top: 1px solid #ccc;
+		}
+		.js-popup {
+			padding: 0;
+			z-index: 10000000;
+			position: absolute;
+			width: fit-content;
+			height: fit-content;
+			margin: 0;
+			border: none;
+		}
+		.js-popup form {
+			margin: 0px;
+			width: 120px;
+		}
+		.js-popup-option:hover {
+			color: #f2f2f2;
+			background-color: #5d5d5d;
+		}
+		.js-popup--is-active {
+			color: #fff;
+			background-color: #c53131;
+		}
+		#lightbox .block-send-to-game-log{
 			display:none;
 		}
 		</style>`))
