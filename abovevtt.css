@@ -8391,7 +8391,6 @@ button span.onedrive-btn-status{
 #token-configuration-modal .token>.token-image.freeform{
     border: 0px;
     box-shadow: none;
-    transition: max-height 0.2s linear, max-width 0.2s linear, min-height 0.2s linear, min-width 0.2s linear;
     min-height: 0px;
     min-width: 0px;
     --aura-width: max(1px, calc(1px / var(--window-zoom)));

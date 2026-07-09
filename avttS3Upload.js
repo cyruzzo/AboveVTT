@@ -3834,7 +3834,7 @@ async function avttHandleFolderDrop(event, destinationPath) {
 
 async function avttHandleMapDrop(event, listItemArray) {
   if (listItemArray.length == 1){
-    create_and_place_token(listItemArray[0].listItem, event.shiftKey, listItemArray[0].url, event.pageX, event.pageY, false, undefined, undefined, { tokenStyleSelect: "definitelyNotAToken" });
+    create_and_place_token(listItemArray[0].listItem, event.shiftKey, listItemArray[0].url, event.pageX, event.pageY, true, undefined, undefined, { tokenStyleSelect: "definitelyNotAToken" });
   }
   else if (listItemArray.length < 10 || confirm(`This will add ${listItemArray.length} tokens which could lead to unexpected results. Are you sure you want to add all of these tokens?`)) {
     let distanceFromCenter = window.CURRENT_SCENE_DATA.hpps * window.ZOOM * (listItemArray.length / 8); 
@@ -3843,7 +3843,7 @@ async function avttHandleMapDrop(event, listItemArray) {
       let radius = index / listItemArray.length;
       let left = event.pageX + (distanceFromCenter * Math.cos(2 * Math.PI * radius));
       let top = event.pageY + (distanceFromCenter * Math.sin(2 * Math.PI * radius));
-      create_and_place_token(item.listItem, event.shiftKey, item.url, left, top, false, undefined, undefined, { tokenStyleSelect: "definitelyNotAToken" });
+      create_and_place_token(item.listItem, event.shiftKey, item.url, left, top, true, undefined, undefined, { tokenStyleSelect: "definitelyNotAToken" });
     }
   }
 }
