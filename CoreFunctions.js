@@ -865,11 +865,11 @@ function add_journal_roll_buttons(target, tokenId=undefined, specificImage=undef
   for(let i=0; i<pastedButtons.length; i++){
     $(pastedButtons[i]).replaceWith($(pastedButtons[i]).text());
   }
+  const tokenExists = tokenId != undefined && window.all_token_objects[tokenId] != undefined;
+  const rollImage = specificImage ? specificImage : tokenExists ? window.all_token_objects[tokenId].options.imgsrc : window.PLAYER_IMG
+  const rollName = specificName ? specificName : tokenExists ? window.all_token_objects[tokenId].options.revealname == true || window.all_token_objects[tokenId].options.player_owned ? window.all_token_objects[tokenId].options.name : '' : window.PLAYER_NAME
 
-  const rollImage = specificImage ? specificImage : (tokenId) ? window.all_token_objects[tokenId].options.imgsrc : window.PLAYER_IMG
-  const rollName = specificName ? specificName : (tokenId) ? window.all_token_objects[tokenId].options.revealname == true || window.all_token_objects[tokenId].options.player_owned ? window.all_token_objects[tokenId].options.name : '' : window.PLAYER_NAME
-
-  const clickHandler = function(clickEvent) {
+  const clickHandler = function(clickEvent) { 
     clickEvent.stopPropagation();
     roll_button_clicked(clickEvent, rollName, rollImage, tokenId ? "monster" : undefined, tokenId)
   };
