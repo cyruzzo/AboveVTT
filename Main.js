@@ -3932,6 +3932,9 @@ function popoutGamelogCleanup(){
 			--sidebar-width: 100%;
 			max-width: 100% !important;
 		}
+		body.body-rpgcampaign-details .gamelogcontainer>.sidebar {
+			top: 0 !important;
+		}
 		.sidebar__inner,
 		.sidebar,
 		.sidebar__pane-content,
