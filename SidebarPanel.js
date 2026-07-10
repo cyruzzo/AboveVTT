@@ -3254,12 +3254,21 @@ function position_flyout_right_of(container, flyout) {
 function remove_sidebar_flyout(removeHoverNote) {
   console.log("remove_sidebar_flyout");
   let flyouts = $(`.sidebar-flyout`)
-  let hovered = $(`.tooltip-flyout:hover`).length>0 == true;
+  
   if(removeHoverNote == false){
     flyouts = $(`.sidebar-flyout:not('.note-flyout')`)
   }
-  if(!hovered)
-    flyouts.remove();
+  flyouts.each(function(i, flyout) {
+    const parentsData = $(flyout).attr("data-parents-id");
+    const dataId = $(flyout).attr("data-id");
+    const flyoutParentsIdArray = parentsData ? JSON.parse(parentsData) : [];
+    const hovered = (flyoutParentsIdArray.length == 0 
+                      ? $(`.sidebar-flyout:hover`).length>0 
+                      : $(flyout).is(":hover")) || $(`.sidebar-flyout[data-parents-id*="${dataId}"]:hover`).length>0;
+    
+    if(!hovered)
+      $(flyout).remove();
+  });
 }
 
 async function list_item_image_flyout(hoverEvent) {

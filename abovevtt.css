@@ -1965,8 +1965,11 @@ div#scene_properties form > div{
 
 .tooltip-body {
     overflow-y: auto;
+    padding-bottom:55px;
 }
-
+.tooltip::after{
+    pointer-events:none;
+}
 .drag-cancelled {
     display: none;
 }
@@ -3572,6 +3575,53 @@ body .note-visibility-toggle-container {
     width:80%;
 }
 
+.tooltip-hover.action-tooltip {
+    color: var(--compendium-action-tooltip,var(--compendium-default-tooltip,#11884c))!important
+}
+
+.tooltip-hover.condition-tooltip {
+    color: var(--compendium-condition-tooltip,var(--compendium-default-tooltip,#5a8100))!important
+}
+
+.tooltip-hover.item-tooltip {
+    color: var(--compendium-item-tooltip,#774521)!important
+}
+
+.tooltip-hover.lore-tooltip {
+    color: var(--compendium-lore-tooltip,#a83e3e)!important
+}
+
+.tooltip-hover.monster-tooltip {
+    color: var(--compendium-monster-tooltip,#bc0f0f)!important
+}
+
+.tooltip-hover.magic-item-tooltip {
+    color: var(--compendium-magic-item-tooltip,#0f5cbc)!important
+}
+
+.tooltip-hover.rule-tooltip {
+    color: var(--compendium-rule-tooltip,#9b740b)!important
+}
+
+.tooltip-hover.sense-tooltip {
+    color: var(--compendium-sense-tooltip,var(--compendium-default-tooltip,#a41b96))!important
+}
+
+.tooltip-hover.spell-tooltip {
+    color: var(--compendium-spell-tooltip,#704cd9)!important
+}
+
+.tooltip-hover.skill-tooltip {
+    color: var(--compendium-skill-tooltip,var(--compendium-default-tooltip,#11884c))!important
+}
+
+.tooltip-hover.weapon-properties-tooltip {
+    color: var(--compendium-wprop-tooltip,var(--compendium-default-tooltip,#11884c))!important
+}
+
+.tooltip-hover.vehicle-tooltip {
+    color: var(--compendium-vehicle-tooltip,#1b9af0)!important
+}
 #dmScreenContainer {
     overflow: hidden;
     height: calc(100% - 35px);
@@ -6580,11 +6630,7 @@ button.avtt-roll-button,
     letter-spacing: 1px;
     padding: 1px 4px 0;
 }
-.tooltip .tooltip-body-statblock-item-value{
-    display:flex;
-    flex-direction: row;
-    align-items: center;
-}
+
 .tooltip .above-aoe.integrated-dice__container,
 .avtt-aoe-button {
     display: inline-flex;
