@@ -2113,7 +2113,7 @@ function init_ui() {
 	$(".sidebar").css("z-index", 9999);
 	// $(".ct-sidebar__control").width(340);
 	$("body").css("overflow", "scroll");
-
+	$('#lightbox, #lightboxOverlay').remove();
 	apply_sidebar_width(get_sidebar_width());
 	init_sidebar_resize_handle();
 
