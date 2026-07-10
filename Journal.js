@@ -2125,78 +2125,81 @@ class JournalManager{
 					create_and_place_token(window.cached_monster_items[monsterId], event.shiftKey)
 				});
 			})
-			tokenIcon.draggable({
-				addClasses: false,
-				scroll: true,
-				cursorAt: { left: 0, top: 0 },
-				containment: "#windowContainment",
-				distance: 5,
-				appendTo: 'body',
-				zIndex: 10000000,
-				helper: (event) => {
-					const helper = $(`<img class='draggable-token-creation' style='pointer-events:none;width:${defaultSize}; height:${defaultSize}'; src='${defaultAvatarUrl}'/>`)
-					const setHelper = () => {
-						tokenImgSrc = random_image_for_item(window.cached_monster_items[monsterId]);
-						helper.attr("data-src", tokenImgSrc);
-						if (tokenImgSrc.startsWith('above-bucket-not-a-url')) {
-							getAvttStorageUrl(tokenImgSrc).then((url) => {
-								helper.attr("src", url);
-							})
+			if(target.ownerDocument === window.document){
+				tokenIcon.draggable({
+					addClasses: false,
+					scroll: true,
+					cursorAt: { left: 0, top: 0 },
+					containment: "#windowContainment",
+					distance: 5,
+					appendTo: 'body',
+					zIndex: 10000000,
+					helper: (event) => {
+						const helper = $(`<img class='draggable-token-creation' style='pointer-events:none;width:${defaultSize}; height:${defaultSize}'; src='${defaultAvatarUrl}'/>`)
+						const setHelper = () => {
+							tokenImgSrc = random_image_for_item(window.cached_monster_items[monsterId]);
+							helper.attr("data-src", tokenImgSrc);
+							if (tokenImgSrc.startsWith('above-bucket-not-a-url')) {
+								getAvttStorageUrl(tokenImgSrc).then((url) => {
+									helper.attr("src", url);
+								})
+							}
+							else {
+								helper.attr("src", tokenImgSrc);
+							}
+							let [helperWidth, helperHeight] = get_helper_size(window.cached_monster_items[monsterId])
+							$(helper).css({
+								'width': `${helperWidth}px`,
+								'height': `${helperHeight}px`
+							});
 						}
-						else {
-							helper.attr("src", tokenImgSrc);
-						}
-						let [helperWidth, helperHeight] = get_helper_size(window.cached_monster_items[monsterId])
-						$(helper).css({
-							'width': `${helperWidth}px`,
-							'height': `${helperHeight}px`
-						});
-					}
-					if (window.cached_monster_items[monsterId]) {
-						setHelper();
-						return helper;
-					}
-					fetch_and_cache_monsters([monsterId], function () {
-						setHelper();
-					});
-					return helper;
-				},
-				start: function (event, ui) {
-					$("#resizeDragMon, .note:has(iframe) form .mce-container-body, #sheet").append($('<div class="iframeResizeCover"></div>'));;
-					window.orig_zoom = window.ZOOM;
-				},
-				drag: function (event, ui) {
-					if (event.shiftKey) {	
-						$(ui.helper).css("opacity", 0.5);
-					} else {
-						$(ui.helper).css("opacity", 1);
-					}
-					const setHelperPosition = () => {
-						let [helperWidth, helperHeight] = get_helper_size(window.cached_monster_items[monsterId])
-						ui.position = {
-							left: (ui.position.left - (helperWidth / 2)),
-							top: (ui.position.top - (helperHeight / 2))
-						};
-					}
-					if (window.cached_monster_items[monsterId]) {
-						setHelperPosition();
-						return;
-					}
-				},
-				stop: function (event, ui) {
-					$(".iframeResizeCover").remove();
-					let droppedOn = $(document.elementFromPoint(event.clientX, event.clientY));
-					if (droppedOn.closest('#VTT').length > 0) {
 						if (window.cached_monster_items[monsterId]) {
-							create_and_place_token(window.cached_monster_items[monsterId], event.shiftKey, tokenImgSrc, event.pageX, event.pageY)
-							return;
+							setHelper();
+							return helper;
 						}
 						fetch_and_cache_monsters([monsterId], function () {
-							create_and_place_token(window.cached_monster_items[monsterId], event.shiftKey)
+							setHelper();
 						});
-					}
-				},
-			})
+						return helper;
+					},
+					start: function (event, ui) {
+						$("#resizeDragMon, .note:has(iframe) form .mce-container-body, #sheet").append($('<div class="iframeResizeCover"></div>'));;
+						window.orig_zoom = window.ZOOM;
+					},
+					drag: function (event, ui) {
+						if (event.shiftKey) {	
+							$(ui.helper).css("opacity", 0.5);
+						} else {
+							$(ui.helper).css("opacity", 1);
+						}
+						const setHelperPosition = () => {
+							let [helperWidth, helperHeight] = get_helper_size(window.cached_monster_items[monsterId])
+							ui.position = {
+								left: (ui.position.left - (helperWidth / 2)),
+								top: (ui.position.top - (helperHeight / 2))
+							};
+						}
+						if (window.cached_monster_items[monsterId]) {
+							setHelperPosition();
+							return;
+						}
+					},
+					stop: function (event, ui) {
+						$(".iframeResizeCover").remove();
+						let droppedOn = $(document.elementFromPoint(event.clientX, event.clientY));
+						if (droppedOn.closest('#VTT').length > 0) {
+							if (window.cached_monster_items[monsterId]) {
+								create_and_place_token(window.cached_monster_items[monsterId], event.shiftKey, tokenImgSrc, event.pageX, event.pageY)
+								return;
+							}
+							fetch_and_cache_monsters([monsterId], function () {
+								create_and_place_token(window.cached_monster_items[monsterId], event.shiftKey)
+							});
+						}
+					},
+				})
+			}
+
 		}
 	}
 	async getDataTooltip(url, callback){
@@ -4821,27 +4824,7 @@ function render_source_chapter_in_iframe(url) {
 		}
 
 		setTimeout(()=>{
-			const monsterIds = [];
-			iframeContents.find('.monster-tooltip').each((i, ele) => {
-				const $target = $(ele);
-				const monsterId = $target.attr('data-tooltip-href').match(/monsters\/(\d+)/i)?.[1];
-				if(monsterId){
-					monsterIds.push(monsterId);
-					const tokenIcon = $(`<span class="material-symbols-outlined" style="user-select: none;display: inline-block;cursor: pointer;font-size: 91%;margin-left: 1px;padding-bottom: 3px;vertical-align: middle;">person_add</span>`)
-					$target.after(tokenIcon);
-					tokenIcon.off('pointerup.droptoken').on('pointerup.droptoken', function (event) {
-						if (window.top.cached_monster_items[monsterId]) {
-							create_and_place_token(window.cached_monster_items[monsterId], event.shiftKey)
-							return;
-						}
-						fetch_and_cache_monsters([monsterId], function () {
-							create_and_place_token(window.top.cached_monster_items[monsterId], event.shiftKey)
-						});
-					})
-				}
-			})
-			if(monsterIds.length >0)
-				fetch_and_cache_monsters(monsterIds);
+
 			
 			if(this.src.includes('dndbeyond.com/sources')){
 				const iframeContentContainer = iframeContents.find('#content.main.content-container>section.primary-content');
@@ -4854,6 +4837,7 @@ function render_source_chapter_in_iframe(url) {
 				iframeContents.find('#content.main.content-container>section.secondary-content .sidebar-menu~.sidebar-menu').remove();
 				window.JOURNAL.block_send_to_buttons(iframeContentContainer);
 				$('.lightbox, .lightboxOverlay').remove(); //if added to main window remove
+				$('.p-article-content>.nav-select ~ .nav-select', iframeContents).remove(); 
 			}
 		}, 2000)
 
