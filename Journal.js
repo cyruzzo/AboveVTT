@@ -4843,12 +4843,14 @@ function render_source_chapter_in_iframe(url) {
 			if(monsterIds.length >0)
 				fetch_and_cache_monsters(monsterIds);
 			
-			const iframeContentContainer = iframeContents.find('#content.main.content-container>section.primary-content');
-			if(iframeContentContainer.length > 0)
-				add_journal_roll_buttons(iframeContentContainer);
-			iframeContents.find('#content.main.content-container>section.secondary-content .sidebar-menu~.sidebar-menu').remove();
-			window.JOURNAL.block_send_to_buttons(iframeContentContainer);
-			$('.lightbox, .lightboxOverlay').remove(); //if added to main window remove
+			if(this.src.includes('dndbeyond.com/sources')){
+				const iframeContentContainer = iframeContents.find('#content.main.content-container>section.primary-content');
+				if(iframeContentContainer.length > 0)
+					add_journal_roll_buttons(iframeContentContainer);
+				iframeContents.find('#content.main.content-container>section.secondary-content .sidebar-menu~.sidebar-menu').remove();
+				window.JOURNAL.block_send_to_buttons(iframeContentContainer);
+				$('.lightbox, .lightboxOverlay').remove(); //if added to main window remove
+			}
 		}, 2000)
 
 		iframeContents.find("head").append('<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons"></link>');
