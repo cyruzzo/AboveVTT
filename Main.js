@@ -3930,6 +3930,7 @@ function popoutGamelogCleanup(){
 
 		body .sidebar__pane-content {
 			--sidebar-width: 100%;
+			max-width: 100% !important;
 		}
 		.sidebar__inner,
 		.sidebar,
