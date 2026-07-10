@@ -4842,9 +4842,13 @@ function render_source_chapter_in_iframe(url) {
 			})
 			if(monsterIds.length >0)
 				fetch_and_cache_monsters(monsterIds);
-	
-			window.JOURNAL.block_send_to_buttons(iframeContents);
 			
+			const iframeContentContainer = iframeContents.find('#content.main.content-container>section.primary-content');
+			if(iframeContentContainer.length > 0)
+				add_journal_roll_buttons(iframeContentContainer);
+			iframeContents.find('#content.main.content-container>section.secondary-content .sidebar-menu~.sidebar-menu').remove();
+			window.JOURNAL.block_send_to_buttons(iframeContentContainer);
+			$('.lightbox, .lightboxOverlay').remove(); //if added to main window remove
 		}, 2000)
 
 		iframeContents.find("head").append('<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons"></link>');
@@ -4858,7 +4862,37 @@ function render_source_chapter_in_iframe(url) {
 		#site-main header.main[role="banner"]{
 			display:none;
 		}
-		
+		button.avtt-roll-button:has(button.avtt-roll-button) {
+			border:0 !important;
+			margin: 0px !important;
+			padding: 0px !important;
+		}
+		button.avtt-roll-button,
+		.avtt-ability-roll-button{
+			/* lifted from DDB encounter stat blocks  */
+			color: #b43c35;
+			border: 1px solid #b43c35;
+			border-radius: 4px;
+			background-color: #fff;
+			white-space: nowrap;
+			font-size: 14px;
+			font-weight: 600;
+			font-family: Roboto Condensed,Open Sans,Helvetica,sans-serif;
+			line-height: 18px;
+			letter-spacing: 1px;
+			padding: 0px 0px;
+		}
+		button.avtt-roll-button:has(button.avtt-roll-button) {
+			border:0 !important;
+			margin: 0px !important;
+			padding: 0px !important;
+		}
+
+		.ddbc-snippet p.above-vtt-visited button.avtt-roll-button{
+			font-size:unset;
+			font-weight:unset;
+		}
+
 		.block-send-to-game-log {
 			position: absolute;
 			display: flex;
