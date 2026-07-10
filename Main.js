@@ -3927,6 +3927,10 @@ function popoutGamelogCleanup(){
 		body{
 			overflow: hidden !important;
 		}
+
+		body .sidebar__pane-content {
+			--sidebar-width: 100%;
+		}
 		.sidebar__inner,
 		.sidebar,
 		.sidebar__pane-content,
