@@ -1940,7 +1940,7 @@ const fetch_tooltip = mydebounce(async (dataTooltipHref, name, callback) => {
         }
         
         window.ajaxQueue.addRequest({
-          url: `https://www.dndbeyond.com/${typeAndId}/tooltip-json`,
+          url: `https://www.dndbeyond.com/${typeAndId}/tooltip`,
           beforeSend: function() {
             // only make the call if we don't have it cached.
             // This prevents the scenario where a user triggers `mouseenter`, and `mouseleave` multiple times before the first network request finishes
@@ -1953,15 +1953,21 @@ const fetch_tooltip = mydebounce(async (dataTooltipHref, name, callback) => {
           },
           success: async function (response) {
             console.log("fetch_tooltip success", response);
+            let responseJSON;
+            try{
+              responseJSON = JSON.parse(response.replace(/^[^{]*|[^}]*$/g, ""));
+            }
+            catch{
+              if(typeof response === 'string'){
 
-            if(typeof response === 'string'){
-
-              homebrewTooltip()
-              return;
+                homebrewTooltip()
+                return;
+              }
             }
 
-            window.tooltipCache[typeAndId] = response;
-            callback(response);
+
+            window.tooltipCache[typeAndId] = responseJSON;
+            callback(responseJSON);
           },
           error: function (error) {
             console.warn("fetch_tooltip error - attmpting more info link for homebrew/sources", error);
