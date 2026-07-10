@@ -2045,14 +2045,24 @@ function display_tooltip(tooltipJson, container, clientY, tokenId=undefined) {
 
         console.log("container", container)
         const tooltipHtmlString = tooltipJson.Tooltip.replaceAll(/<script>[\S\s]+<\/script>/gi, '');
+        const containerParentIdArray = container.attr("data-parents-id") != undefined ? JSON.parse(container.attr("data-parents-id")) : [];
+        if(container.attr("data-id") != undefined){
+          containerParentIdArray.push(container.attr("data-id"));
+        }
 
         build_and_display_sidebar_flyout(clientY, function (flyout) {
             flyout.addClass("prevent-sidebar-modal-close"); // clicking inside the tooltip should not close the sidebar modal that opened it
             flyout.addClass("tooltip-flyout")
+            const flyoutId = uuid();
+            flyout.attr("data-id", flyoutId);
+            flyout.attr("data-parents-id", JSON.stringify(containerParentIdArray));
             const tooltipHtml = $(tooltipHtmlString);
             add_journal_roll_buttons(tooltipHtml, tokenId);
             add_aoe_statblock_click(tooltipHtml, tokenId);
             add_tooltip_aoe_buttons(tooltipHtml, tokenId);
+            window.JOURNAL.add_journal_tooltip_targets(tooltipHtml);
+            window.JOURNAL.block_send_to_buttons(tooltipHtml);
+            add_stat_block_hover(tooltipHtml);
             flyout.append(tooltipHtml);
             let sendToGamelogButton = $(`<a class="ddbeb-button" href="#">Send To Gamelog</a>`);
             sendToGamelogButton.css({ "float": "right" });
@@ -2091,12 +2101,7 @@ function display_tooltip(tooltipJson, container, clientY, tokenId=undefined) {
             }
 
             flyout.hover(function (hoverEvent) {
-                if (hoverEvent.type === "mouseenter") {
-                    clearTimeout(removeToolTipTimer);
-                    removeToolTipTimer = undefined;
-                } else {
-                    remove_tooltip(500);
-                }
+                remove_tooltip(500);
             });
             flyout.css("background-color", "#fff");
         });
@@ -2105,18 +2110,12 @@ function display_tooltip(tooltipJson, container, clientY, tokenId=undefined) {
 
 var removeToolTipTimer = undefined;
 function remove_tooltip(delay = 0, removeHoverNote = true) {
+    clearTimeout(removeToolTipTimer);
     if (delay > 0) {
-      if($('.prevent-sidebar-modal-close:hover').length>0){
-        clearTimeout(removeToolTipTimer);
-        removeToolTipTimer = undefined;
-      }
-      else{
-        removeToolTipTimer = setTimeout(function(){remove_sidebar_flyout(removeHoverNote)}, delay);
-      } 
+      removeToolTipTimer = setTimeout(function(){remove_sidebar_flyout(removeHoverNote)}, delay);
     } else {
-        clearTimeout(removeToolTipTimer);
-        removeToolTipTimer = undefined;
-        remove_sidebar_flyout(removeHoverNote);
+      removeToolTipTimer = undefined;
+      remove_sidebar_flyout(removeHoverNote);
     }
 }
 
