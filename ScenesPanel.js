@@ -3598,13 +3598,10 @@ async function build_source_book_chapter_import_section(sceneSet) {
 				parentId: parentId,
 				...get_custom_scene_settings()
 			}
-			if(Array.isArray(sceneData[i].tokens)){
+			if(sceneData[i].tokens !== null && typeof sceneData[i].tokens === 'object'){
 				let tokensObject = {}
-				for(let token in sceneData[i].tokens){
-
-					let tokenId = sceneData[i].tokens[token].id;
-					let statBlockID = sceneData[i].tokens[token].statBlock
-					tokensObject[tokenId] = sceneData[i].tokens[token];		
+				for(let token of Object.values(sceneData[i].tokens)){
+					tokensObject[token.id] = token;		
 				}	
 				sceneData[i].tokens = tokensObject;
 			}
@@ -3881,12 +3878,10 @@ function build_tutorial_import_list_item(scene, logo, allowMagnific = true) {
 			parentId: parentId,
 			...get_custom_scene_settings()
 		};
-		if(Array.isArray(importData.tokens)){
+		if(importData.tokens !== null && typeof importData.tokens === 'object'){
 			let tokensObject = {}
-			for(let token in importData.tokens){
-
-				let tokenId = importData.tokens[token].id;
-				tokensObject[tokenId] = importData.tokens[token];		
+			for(let token of Object.values(importData.tokens)){
+				tokensObject[token.id] = token;		
 			}	
 			importData.tokens = tokensObject;
 		}

@@ -160,12 +160,10 @@ class AboveApi {
       throw new Error(`AboveApi.migrateScenes received an empty list of scenes`);
     }
     for(let i = 0; i<scenes.length; i++){
-      if(Array.isArray(scenes[i].tokens)){
+      if(scenes[i].tokens !== null && typeof scenes[i].tokens === 'object'){
         let tokensObject = {}
-        for(let token in scenes[i].tokens){
-
-          let tokenId = scenes[i].tokens[token].id;
-          tokensObject[tokenId] = scenes[i].tokens[token];   
+        for(let token of Object.values(scenes[i].tokens)){
+          tokensObject[token.id] = token;   
         } 
         scenes[i].tokens = tokensObject;
       }
