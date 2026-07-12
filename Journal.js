@@ -1735,7 +1735,7 @@ class JournalManager{
 					'mouseover': function(e){
 						hoverNoteTimer = setTimeout(function () {
 			            	build_and_display_sidebar_flyout(e.clientY, async function (flyout) {
-								setup_tooltip_flyout(flyout, noteHover, ['note-flyout'], {id: noteId, event:e})
+								setup_tooltip_flyout(flyout, noteHover, ['note-flyout'], e, {id: noteId})
 					        });
 			        	}, 500);		
 					
@@ -1939,7 +1939,7 @@ class JournalManager{
 						'mouseover': function(e){
 							hoverNoteTimer = setTimeout(function () {
 								build_and_display_sidebar_flyout(e.clientY, async function (flyout) {
-									setup_tooltip_flyout(flyout, noteHover, ['note-flyout'], {id: noteId, event:e})
+									setup_tooltip_flyout(flyout, noteHover, ['note-flyout'], e, {id: noteId})
 						        });
 				        	}, 500);		
 						
@@ -4729,6 +4729,17 @@ function render_source_chapter_in_iframe(url) {
 			border:0 !important;
 			margin: 0px !important;
 			padding: 0px !important;
+		}
+		.tooltip-hover.loading-tooltip:hover:after {
+			position  : fixed;
+			left: var(--cursor-offsetX);
+			top: var(--cursor-offsetY);
+			z-index   : 1000000;
+			width     : 20px;
+			height    : 20px;
+			background: url(https://dndbeyond.com/content/1-0-3132-0/skins/waterdeep/images/character-sheet/loading-ring.svg) no-repeat;
+			background-size: contain;
+			content: '';
 		}
 		button.avtt-roll-button,
 		.avtt-ability-roll-button{

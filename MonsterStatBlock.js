@@ -2039,7 +2039,7 @@ function add_tooltip_aoe_buttons(html, tokenId){
   }  
 }
 
-function display_tooltip(tooltipJson, container, clientY, tokenId=undefined) {
+function display_tooltip(tooltipJson, container, hoverEvent, tokenId=undefined) {
     if (typeof tooltipJson?.Tooltip === "string") {
         remove_tooltip(0, false);
 
@@ -2047,8 +2047,8 @@ function display_tooltip(tooltipJson, container, clientY, tokenId=undefined) {
         const tooltipHtmlString = tooltipJson.Tooltip.replaceAll(/<script>[\S\s]+<\/script>/gi, '');
 
 
-        build_and_display_sidebar_flyout(clientY, function (flyout) {
-            setup_tooltip_flyout(flyout, tooltipHtmlString, ['tooltip-flyout'],{id: tokenId, container});
+        build_and_display_sidebar_flyout(hoverEvent.clientY, function (flyout) {
+            setup_tooltip_flyout(flyout, tooltipHtmlString, ['tooltip-flyout'], hoverEvent, {id: tokenId, container});
             flyout.css("background-color", "#fff");
         });
     }
@@ -2106,7 +2106,7 @@ function add_stat_block_hover(statBlockContainer, tokenId) {
                     container = is_characters_page() ? $(".ct-sidebar__inner [class*='styles_content']") : $(".sidebar__pane-content");
                 }
 
-                display_tooltip(tooltipJson, container, hoverEvent.clientY, tokenId);   
+                display_tooltip(tooltipJson, container, hoverEvent, tokenId);   
             };
             if(window.tooltipCache == undefined)
               window.tooltipCache = {};

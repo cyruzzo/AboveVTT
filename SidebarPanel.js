@@ -3211,15 +3211,16 @@ function build_and_display_sidebar_flyout(clientY, buildFunction) {
   });
 }
 
-async function setup_tooltip_flyout(flyout, tooltipHtmlString, classes = [], options = {id: undefined, token: undefined, container: undefined, event: undefined}) {
-  if(options.container == undefined && options.event == undefined){
-    console.warn('container or event required for tooltip flyout');
+async function setup_tooltip_flyout(flyout, tooltipHtmlString, classes = [], event, options = {id: undefined, token: undefined, container: undefined}) {
+  if(event == undefined){
+    console.warn('Event required for tooltip flyout', event);
     return;
   }
   let container = options.container;
+  let currentTarget = $(event.currentTarget);
+  currentTarget.toggleClass('loading-tooltip', true);
   if(container == undefined && options.event != undefined){
-    let currentTarget = $(options.event.currentTarget);
-    currentTarget.toggleClass('loading-tooltip', false);
+
     currentTarget.off('mousemove.cursor');
     container = currentTarget.closest(".sidebar-flyout");
     if(container.find('.tooltip-header').length === 0){
@@ -3285,7 +3286,7 @@ async function setup_tooltip_flyout(flyout, tooltipHtmlString, classes = [], opt
   flyout.append(buttonFooter);
   buttonFooter.append(sendToGamelogButton);
   if(options.container == undefined){
-      let flyoutLeft = options.event.clientX+20
+      let flyoutLeft = event.clientX+20
         if(flyoutLeft + 400 > window.innerWidth){
           flyoutLeft = window.innerWidth - 420
         }
@@ -3293,14 +3294,6 @@ async function setup_tooltip_flyout(flyout, tooltipHtmlString, classes = [], opt
         left: flyoutLeft,
         width: '400px'
       })
-      let flyoutTop = options.event.clientY;
-      let flyoutHeight = flyout.height() + 25;
-      let bottom = (options.event.clientY + flyoutHeight);
-
-      if (bottom > window.innerHeight) {
-        flyoutTop = flyoutTop - (bottom - window.innerHeight) - 25;
-      }
-      flyout.css('top', flyoutTop);
   }else{
     const didResize = position_flyout_on_best_side_of(container, flyout);
     if (didResize) {
@@ -3311,13 +3304,22 @@ async function setup_tooltip_flyout(flyout, tooltipHtmlString, classes = [], opt
             "min-width": "100%"
         });
     }
-  }
 
+  }
+  let flyoutTop = event.clientY;
+  let flyoutHeight = flyout.height() + 25;
+  let bottom = (event.clientY + flyoutHeight);
+  
+  if (bottom > window.innerHeight) {
+    flyoutTop = flyoutTop - (bottom - window.innerHeight) - 25;
+  }
+  flyout.css('top', flyoutTop);
 
   flyout.hover(function (hoverEvent) {
       remove_tooltip(500);
   });
   flyout.css("background-color", "#fff");
+  currentTarget.toggleClass('loading-tooltip', false);
 }
 
 function position_flyout_on_best_side_of(container, flyout, resizeFlyoutToFit = true) {

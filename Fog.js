@@ -3369,7 +3369,7 @@ function door_note_icon(id){
 							        </div>
 							    </div>
 							</div>`
-							setup_tooltip_flyout(flyout,  noteHover, ['note-flyout'], {id, event:e});						
+							setup_tooltip_flyout(flyout,  noteHover, ['note-flyout'], e, {id});						
 				        });
 		        	}, 500);		
 				

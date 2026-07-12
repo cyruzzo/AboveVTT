@@ -2261,7 +2261,7 @@ async function redraw_scene_list(searchTerm) {
 											</div>
 										</div>
 									</div>`
-									setup_tooltip_flyout(flyout, noteHover, ['note-flyout'], {id: noteId, event:e})
+									setup_tooltip_flyout(flyout, noteHover, ['note-flyout'], e, {id: noteId})
 								});
 							}, 500);
 
