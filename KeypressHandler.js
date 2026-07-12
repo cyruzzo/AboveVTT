@@ -675,12 +675,21 @@ function key_rotation(angle) {
         key_rotation_angle = 0;
         grouprotate_create();
     }
-    key_rotation_done = setTimeout(() => {
+    const commitRotate = function(){
+        clearTimeout(key_rotation_done);
         window.key_rotation_pause = true;
         key_rotation_done = null;
         grouprotate_commit(key_rotation_angle);
-        draw_selected_token_bounding_box();	        
-    }, 1000);
+        draw_selected_token_bounding_box();	
+    }
+    key_rotation_done = setTimeout(commitRotate, 1000);
+
+    $(document).off('pointerdown.commitRotate').one('pointerdown.commitRotate', function(){
+        $(document).off('pointerdown.commitRotate');
+        if(key_rotation_done == null)
+            return;
+        commitRotate()    
+    })
     key_rotation_angle += (360 + angle) % 360;
     grouprotate_rotate(key_rotation_angle);
 }
