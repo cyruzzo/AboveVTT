@@ -3219,7 +3219,7 @@ async function setup_tooltip_flyout(flyout, tooltipHtmlString, classes = [], eve
   let container = options.container;
   let currentTarget = $(event.currentTarget);
   currentTarget.toggleClass('loading-tooltip', true);
-  if(container == undefined && options.event != undefined){
+  if(container == undefined){
 
     currentTarget.off('mousemove.cursor');
     container = currentTarget.closest(".sidebar-flyout");
