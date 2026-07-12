@@ -2045,64 +2045,10 @@ function display_tooltip(tooltipJson, container, clientY, tokenId=undefined) {
 
         console.log("container", container)
         const tooltipHtmlString = tooltipJson.Tooltip.replaceAll(/<script>[\S\s]+<\/script>/gi, '');
-        const containerParentIdArray = container.attr("data-parents-id") != undefined ? JSON.parse(container.attr("data-parents-id")) : [];
-        if(container.attr("data-id") != undefined){
-          containerParentIdArray.push(container.attr("data-id"));
-        }
+
 
         build_and_display_sidebar_flyout(clientY, function (flyout) {
-            flyout.addClass("prevent-sidebar-modal-close"); // clicking inside the tooltip should not close the sidebar modal that opened it
-            flyout.addClass("tooltip-flyout")
-            const flyoutId = uuid();
-            flyout.attr("data-id", flyoutId);
-            flyout.attr("data-parents-id", JSON.stringify(containerParentIdArray));
-            const tooltipHtml = $(tooltipHtmlString);
-            add_journal_roll_buttons(tooltipHtml, tokenId);
-            add_aoe_statblock_click(tooltipHtml, tokenId);
-            add_tooltip_aoe_buttons(tooltipHtml, tokenId);
-            window.JOURNAL.add_journal_tooltip_targets(tooltipHtml);
-            window.JOURNAL.block_send_to_buttons(tooltipHtml);
-            add_stat_block_hover(tooltipHtml);
-            flyout.append(tooltipHtml);
-            let sendToGamelogButton = $(`<a class="ddbeb-button" href="#">Send To Gamelog</a>`);
-            sendToGamelogButton.css({ "float": "right" });
-            sendToGamelogButton.on("click", function(ce) {
-                ce.stopPropagation();
-                ce.preventDefault();
-                const tooltipWithoutButton = $(tooltipHtmlString);
-                tooltipWithoutButton.css({
-                    "width": "100%",
-                    "max-width": "100%",
-                    "min-width": "100%"
-                });
-                let outerHtml = $(tooltipWithoutButton[0].outerHTML);
-                outerHtml.find('style').remove();
-                send_html_to_gamelog(outerHtml[0].outerHTML);
-            });
-
-            const buttonFooter = $("<div></div>");
-            buttonFooter.css({
-                height: "40px",
-                width: "100%",
-                position: "relative",
-                background: "#fff"
-            });
-            flyout.append(buttonFooter);
-            buttonFooter.append(sendToGamelogButton);
-
-            const didResize = position_flyout_on_best_side_of(container, flyout);
-            if (didResize) {
-                // only mess with the html that DDB gave us if we absolutely have to
-                tooltipHtml.css({
-                    "width": "100%",
-                    "max-width": "100%",
-                    "min-width": "100%"
-                });
-            }
-
-            flyout.hover(function (hoverEvent) {
-                remove_tooltip(500);
-            });
+            setup_tooltip_flyout(flyout, tooltipHtmlString, ['tooltip-flyout'],{id: tokenId, container});
             flyout.css("background-color", "#fff");
         });
     }
