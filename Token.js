@@ -629,6 +629,10 @@ class Token {
 	isSelectable() {
 		if ((!window.DM && this.options.hidden) || this.options.type == 'door' || this.options.combatGroupToken) return false;
 		const tokenDiv = this.isLineAoe() ? document.querySelector(`#tokens>div[data-id='${this.options.id}'] [data-img]`) : document.querySelector(`#tokens>div[data-id='${this.options.id}']`);
+		if(tokenDiv == undefined){
+			console.warn('Token not found on scene', this)
+			return false;
+		}
 		return tokenDiv.style.pointerEvents != "none" && tokenDiv.style.display != "none" && !tokenDiv.classList.contains("ui-draggable-disabled");
 	}
 	rotate(newRotation) {
