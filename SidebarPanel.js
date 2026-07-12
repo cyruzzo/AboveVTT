@@ -3211,6 +3211,115 @@ function build_and_display_sidebar_flyout(clientY, buildFunction) {
   });
 }
 
+async function setup_tooltip_flyout(flyout, tooltipHtmlString, classes = [], options = {id: undefined, token: undefined, container: undefined, event: undefined}) {
+  if(options.container == undefined && options.event == undefined){
+    console.warn('container or event required for tooltip flyout');
+    return;
+  }
+  let container = options.container;
+  if(container == undefined && options.event != undefined){
+    let currentTarget = $(options.event.currentTarget);
+    currentTarget.toggleClass('loading-tooltip', false);
+    currentTarget.off('mousemove.cursor');
+    container = currentTarget.closest(".sidebar-flyout");
+    if(container.find('.tooltip-header').length === 0){
+      container = currentTarget.closest("#resizeDragMon");
+    }
+    if (container.length === 0) {
+        container = currentTarget.closest(".token");
+    }
+    if (container.length === 0) {
+        container = currentTarget.closest(".sidebar-modal");
+    }
+    if (container.length === 0) {
+        container = is_characters_page() ? $(".ct-sidebar__inner [class*='styles_content']") : $(".sidebar__pane-content");
+    }
+  }
+  const containerParentIdArray = container?.attr("data-parents-id") != undefined ? JSON.parse(container.attr("data-parents-id")) : [];
+  if(container?.attr("data-id") != undefined){
+    containerParentIdArray.push(container.attr("data-id"));
+  }
+  flyout.addClass(classes)
+  const flyoutId = uuid();
+  flyout.attr("data-id", flyoutId);
+  flyout.attr("data-parents-id", JSON.stringify(containerParentIdArray));
+  const tooltipHtml = $(tooltipHtmlString);
+  await window.JOURNAL.translateHtmlAndBlocks(tooltipHtml, options.id)
+  add_journal_roll_buttons(tooltipHtml, options.id);
+  add_aoe_statblock_click(tooltipHtml, options.id);
+  add_tooltip_aoe_buttons(tooltipHtml, options.id);
+  window.JOURNAL.add_journal_tooltip_targets(tooltipHtml);
+  window.JOURNAL.block_send_to_buttons(tooltipHtml);
+  add_stat_block_hover(tooltipHtml);
+  if(options.id != undefined || options.token != undefined)
+    tooltipHtml.find('.add-input').each(function(){window.JOURNAL.addTrackedInputs($(this), {noteId: options.id, token: options.token})})
+  flyout.find("a").attr("target", "_blank");
+  flyout.off('click').on('click', '.tooltip-hover[href*="https://www.dndbeyond.com/sources/dnd/"], .int_source_link ', function (event) {
+    event.preventDefault();
+    render_source_chapter_in_iframe(event.target.href);
+  });
+  flyout.append(tooltipHtml);
+  let sendToGamelogButton = $(`<a class="ddbeb-button" href="#">Send To Gamelog</a>`);
+  sendToGamelogButton.css({ "float": "right" });
+  sendToGamelogButton.on("click", function(ce) {
+      ce.stopPropagation();
+      ce.preventDefault();
+      const tooltipWithoutButton = $(tooltipHtmlString);
+      tooltipWithoutButton.css({
+          "width": "100%",
+          "max-width": "100%",
+          "min-width": "100%"
+      });
+      let outerHtml = $(tooltipWithoutButton[0].outerHTML);
+      outerHtml.find('style').remove();
+      send_html_to_gamelog(outerHtml[0].outerHTML);
+  });
+
+  const buttonFooter = $("<div></div>");
+  buttonFooter.css({
+      height: "40px",
+      width: "100%",
+      position: "relative",
+      background: "#fff"
+  });
+  flyout.append(buttonFooter);
+  buttonFooter.append(sendToGamelogButton);
+  if(options.container == undefined){
+      let flyoutLeft = options.event.clientX+20
+        if(flyoutLeft + 400 > window.innerWidth){
+          flyoutLeft = window.innerWidth - 420
+        }
+      flyout.css({
+        left: flyoutLeft,
+        width: '400px'
+      })
+      let flyoutTop = options.event.clientY;
+      let flyoutHeight = flyout.height() + 25;
+      let bottom = (options.event.clientY + flyoutHeight);
+
+      if (bottom > window.innerHeight) {
+        flyoutTop = flyoutTop - (bottom - window.innerHeight) - 25;
+      }
+      flyout.css('top', flyoutTop);
+  }else{
+    const didResize = position_flyout_on_best_side_of(container, flyout);
+    if (didResize) {
+        // only mess with the html that DDB gave us if we absolutely have to
+        tooltipHtml.css({
+            "width": "100%",
+            "max-width": "100%",
+            "min-width": "100%"
+        });
+    }
+  }
+
+
+  flyout.hover(function (hoverEvent) {
+      remove_tooltip(500);
+  });
+  flyout.css("background-color", "#fff");
+}
+
 function position_flyout_on_best_side_of(container, flyout, resizeFlyoutToFit = true) {
   let didResize = false;
   if (!container || container.length === 0 || !flyout || flyout.length === 0) {

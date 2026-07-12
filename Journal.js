@@ -1735,71 +1735,7 @@ class JournalManager{
 					'mouseover': function(e){
 						hoverNoteTimer = setTimeout(function () {
 			            	build_and_display_sidebar_flyout(e.clientY, async function (flyout) {
-					            flyout.addClass("prevent-sidebar-modal-close"); // clicking inside the tooltip should not close the sidebar modal that opened it
-					            flyout.addClass('note-flyout');
-					            const tooltipHtml = $(noteHover);
-								await window.JOURNAL.translateHtmlAndBlocks(tooltipHtml, noteId);
-								add_journal_roll_buttons(tooltipHtml);
-								window.JOURNAL.add_journal_tooltip_targets(tooltipHtml);
-								add_stat_block_hover(tooltipHtml);
-								add_aoe_statblock_click(tooltipHtml);
-
-								$(tooltipHtml).find('.add-input').each(function(){window.JOURNAL.addTrackedInputs($(this), {noteId})})
-								flyout.append(tooltipHtml);
-								let sendToGamelogButton = $(`<a class="ddbeb-button" href="#">Send To Gamelog</a>`);
-								sendToGamelogButton.css({ "float": "right" });
-								sendToGamelogButton.on("click", function (ce) {
-									ce.stopPropagation();
-									ce.preventDefault();
-
-									send_html_to_gamelog(noteHover);
-								});
-								let flyoutLeft = e.clientX + 20
-								if (flyoutLeft + 400 > window.innerWidth) {
-									flyoutLeft = window.innerWidth - 420
-								}
-								flyout.css({
-									left: flyoutLeft,
-									width: '400px'
-								})
-								let flyoutTop = e.clientY;
-								let flyoutHeight = flyout.height() + 25;
-								let bottom = (e.clientY + flyoutHeight);
-
-								if (bottom > window.innerHeight) {
-									flyoutTop = flyoutTop - (bottom - window.innerHeight) - 25;
-								}
-								flyout.css('top', flyoutTop);
-
-								const buttonFooter = $("<div></div>");
-								buttonFooter.css({
-									height: "40px",
-									width: "100%",
-									position: "relative",
-									background: "#fff"
-								});
-								window.JOURNAL.block_send_to_buttons(flyout);
-								flyout.append(buttonFooter);
-								buttonFooter.append(sendToGamelogButton);
-								flyout.find("a").attr("target", "_blank");
-								flyout.off('click').on('click', '.tooltip-hover[href*="https://www.dndbeyond.com/sources/dnd/"], .int_source_link ', function (event) {
-									event.preventDefault();
-									render_source_chapter_in_iframe(event.target.href);
-								});
-
-
-								flyout.hover(function (hoverEvent) {
-									if (hoverEvent.type === "mouseenter") {
-										clearTimeout(removeToolTipTimer);
-										removeToolTipTimer = undefined;
-									} else {
-										remove_tooltip(500);
-									}
-								});
-
-								flyout.css("background-color", "#fff");
-								
-
+								setup_tooltip_flyout(flyout, noteHover, ['note-flyout'], {id: noteId, event:e})
 					        });
 			        	}, 500);		
 					
@@ -2003,70 +1939,7 @@ class JournalManager{
 						'mouseover': function(e){
 							hoverNoteTimer = setTimeout(function () {
 								build_and_display_sidebar_flyout(e.clientY, async function (flyout) {
-						            flyout.addClass("prevent-sidebar-modal-close"); // clicking inside the tooltip should not close the sidebar modal that opened it
-						            flyout.addClass('note-flyout');
-						            $self.toggleClass('loading-tooltip', false);
-						            const tooltipHtml = $(noteHover);
-									await window.JOURNAL.translateHtmlAndBlocks(tooltipHtml, noteId);
-									add_journal_roll_buttons(tooltipHtml);
-									window.JOURNAL.add_journal_tooltip_targets(tooltipHtml);
-									add_stat_block_hover(tooltipHtml);
-									add_aoe_statblock_click(tooltipHtml);
-									flyout.append(tooltipHtml);
-									let sendToGamelogButton = $(`<a class="ddbeb-button" href="#">Send To Gamelog</a>`);
-									sendToGamelogButton.css({ "float": "right" });
-									sendToGamelogButton.on("click", function (ce) {
-										ce.stopPropagation();
-										ce.preventDefault();
-
-										send_html_to_gamelog(noteHover);
-									});
-									let flyoutLeft = e.clientX + 20
-									if (flyoutLeft + 400 > window.innerWidth) {
-										flyoutLeft = window.innerWidth - 420
-									}
-									flyout.css({
-										left: flyoutLeft,
-										width: '400px'
-									})
-									let flyoutTop = e.clientY;
-									let flyoutHeight = flyout.height() + 25;
-									let bottom = (e.clientY + flyoutHeight);
-
-									if (bottom > window.innerHeight) {
-										flyoutTop = flyoutTop - (bottom - window.innerHeight) - 25;
-									}
-									flyout.css('top', flyoutTop);
-
-									const buttonFooter = $("<div></div>");
-									buttonFooter.css({
-										height: "40px",
-										width: "100%",
-										position: "relative",
-										background: "#fff"
-									});
-									window.JOURNAL.block_send_to_buttons(flyout);
-									flyout.append(buttonFooter);
-									buttonFooter.append(sendToGamelogButton);
-									flyout.find("a").attr("target", "_blank");
-									flyout.off('click').on('click', '.tooltip-hover[href*="https://www.dndbeyond.com/sources/dnd/"], .int_source_link ', function (event) {
-										event.preventDefault();
-										render_source_chapter_in_iframe(event.target.href);
-									});
-
-
-									flyout.hover(function (hoverEvent) {
-										if (hoverEvent.type === "mouseenter") {
-											clearTimeout(removeToolTipTimer);
-											removeToolTipTimer = undefined;
-										} else {
-											remove_tooltip(500);
-										}
-									});
-
-									flyout.css("background-color", "#fff");
-										
-
+									setup_tooltip_flyout(flyout, noteHover, ['note-flyout'], {id: noteId, event:e})
 						        });
 				        	}, 500);		
 						
