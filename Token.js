@@ -1722,7 +1722,7 @@ class Token {
 						clearTimeout(hoverConditionTimer);
 						hoverConditionTimer = setTimeout(function () {
 			            	build_and_display_sidebar_flyout(e.clientY, function (flyout) {
-					           setup_tooltip_flyout(flyout, noteHover, ['note-flyout'], {event:e})
+					           setup_tooltip_flyout(flyout, noteHover, ['note-flyout'], e)
 					        });
 			        	}, 500);		
 					
@@ -1824,7 +1824,7 @@ class Token {
 							clearTimeout(hoverConditionTimer);
 							hoverConditionTimer = setTimeout(function () {
 				            	build_and_display_sidebar_flyout(e.clientY, function (flyout) {
-									setup_tooltip_flyout(flyout, noteHover, ['note-flyout'], {event:e})
+									setup_tooltip_flyout(flyout, noteHover, ['note-flyout'], e)
 						        });
 				        	}, 500);		
 						
@@ -1881,7 +1881,7 @@ class Token {
 						clearTimeout(hoverNoteTimer);
 						hoverNoteTimer = setTimeout(function () {
 			            	build_and_display_sidebar_flyout(e.clientY, async function (flyout) {
-					            setup_tooltip_flyout(flyout, noteHover, ['note-flyout'], {id:noteId, token:self, event:e});
+					            setup_tooltip_flyout(flyout, noteHover, ['note-flyout'], e, {id:noteId, token:self});
 					        });
 			        	}, 500);		
 					
