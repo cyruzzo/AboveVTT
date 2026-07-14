@@ -12,7 +12,7 @@ function init_sidebar_tabs() {
     startup_step(`Loading Token Panel`);
     $("#tokens-panel").remove();
     tokensPanel = new SidebarPanel("tokens-panel", false);
-    sidebarContent.append(tokensPanel.build());
+    sidebarContent.append(tokensPanel.build());+
     init_tokens_panel();
     startup_step(`Loading Scenes Panel`);
     $("#scenes-panel").remove();
@@ -2958,6 +2958,29 @@ function display_folder_configure_modal(listItem) {
               </div>`;
 
   sidebarModal.body.append(folderColorInput);
+  if(listItem.id == RootFolder.Monsters.id){
+    const customization = find_or_create_token_customization(ItemType.Folder, listItem.id, listItem.parentId, RootFolder.MyTokens.id);
+    const includeDDBImage = {
+        name: "includeDDB",
+        label: "Include DDB Image",
+        type: 'dropdown',
+        options: [
+            { value: 'fullAvatarImage', label: 'Full Size and Token/Avatar Image', description: "Include monster's default avatar and/or full image when enabled. When disabled will only have the avatar image if no custom images are added." },
+            { value: 'fullImage', label: 'Full Size Image', description: "Include monster's default avatar and/or full image when enabled. When disabled will only have the avatar image if no custom images are added." },
+            { value: 'avatarImage', label: 'Token/Avatar Image', description: "Include monster's default avatar and/or full image when enabled. When disabled will only have the avatar image if no custom images are added." },
+            { value: false, label: 'Disabled', description: "Include monster's default avatar and/or full image when enabled. When disabled will only have the avatar image if no custom images are added." }
+        ],
+        defaultValue: false
+    };
+    const isIncludeDDB = customization?.allCombinedOptions()?.includeDDB;
+    const includeDDBToggle = build_dropdown_input(includeDDBImage, isIncludeDDB, function (key, value) {
+        customization.setTokenOption(key, value);
+        persist_token_customization(customization);     
+        redraw_token_images_in_modal(sidebarPanel, listItem, placedToken);
+    });
+    sidebarModal.body.append(includeDDBToggle);
+}
+
   let colorPickers = sidebarModal.body.find('input.spectrum');
   colorPickers.spectrum({
       type: "color",
