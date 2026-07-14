@@ -21,15 +21,25 @@ const availableToAoe = [
 //reused transform definition
 const imageTransform = 'scale(var(--token-scale)) rotate(calc(var(--token-rotation) + var(--token-heading))) scaleX(var(--token-flip-x, 1))';
 function tokenFlipX(token) { return ((token.options.tokenFlip || 0) & 1) ? -1 : 1; }
-
+let lightFrameQueued = false;
+let pendingLightDarknessMoved = false;
 const throttleLight = throttle((darknessMoved = false) => {
-	if (window.LOADING) 
+	pendingLightDarknessMoved = darknessMoved;
+
+	if (lightFrameQueued || window.LOADING) {
 		return;
+	}
+
+	lightFrameQueued = true;
 
 	requestAnimationFrame(() => {
-		if (!window.walls || window.walls?.length < 5) 
+		lightFrameQueued = false;
+
+		if (!window.walls || window.walls?.length < 5) {
 			redraw_light_walls();
-		redraw_light(darknessMoved, 1000);
+		}
+
+		redraw_light(pendingLightDarknessMoved, 1000);
 	});
 }, 1000/30);
 const throttleTokenCheck = throttle(do_check_token_visibility, 1000/4);

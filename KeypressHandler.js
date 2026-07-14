@@ -9,6 +9,14 @@ const sb_scroll_style = "avtt-scroll-hidden"
 
 function init_keypress_handler(){
 
+document.addEventListener('keydown', (e) => {
+  if (!window.DRAGGING) return;
+
+  if (e.repeat && !['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
+    e.preventDefault();
+    e.stopImmediatePropagation();
+  }
+}, true);
 Mousetrap.bind('c', function () {       //combat tracker
     $('#combat_button').click()
 });
