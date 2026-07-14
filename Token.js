@@ -21,15 +21,26 @@ const availableToAoe = [
 //reused transform definition
 const imageTransform = 'scale(var(--token-scale)) rotate(calc(var(--token-rotation) + var(--token-heading))) scaleX(var(--token-flip-x, 1))';
 function tokenFlipX(token) { return ((token.options.tokenFlip || 0) & 1) ? -1 : 1; }
-
+let lightFrameQueued = false;
+let pendingLightDarknessMoved = false;
 const throttleLight = throttle((darknessMoved = false) => {
-	if(window.LOADING){
+	pendingLightDarknessMoved = darknessMoved;
+
+	if (lightFrameQueued || window.LOADING) {
 		return;
 	}
-	if (!window.walls || window.walls?.length < 5) {
+
+	lightFrameQueued = true;
+
+	requestAnimationFrame(() => {
+		lightFrameQueued = false;
+
+		if (!window.walls || window.walls?.length < 5) {
 		redraw_light_walls();
-	} 
-	requestAnimationFrame(() =>{redraw_light(darknessMoved, 1000)})
+		}
+
+		redraw_light(pendingLightDarknessMoved, 1000);
+	});
 }, 1000/30);
 const throttleTokenCheck = throttle(do_check_token_visibility, 1000/4);
 const debounceStoreExplored = mydebounce((exploredCanvas, sceneId) => {		
@@ -2084,6 +2095,7 @@ class Token {
 		
 
 	}
+
 	throttlePlace = throttle((animationDuration, sceneId = window.CURRENT_SCENE_DATA.id, callback=()=>{}) => {
 		if(window.all_token_objects?.[this.options.id] != undefined)
 			window.all_token_objects[this.options.id].options = $.extend(true, {}, this.options);
@@ -2947,8 +2959,10 @@ class Token {
 					x: 0,
 					y: 0
 				};
-			 	let ctxImageData;
 				
+			 	let ctxImageData;
+				let dragFrameRequest = null;
+				let pendingDragState = null;
 
 				tok.draggable({
 					iframeFix: false,
@@ -2958,6 +2972,13 @@ class Token {
 						//$("#VTT").css('--grid-overlay-on-tmp', '0');	commented out as it's not consistent and is confusing can reasses if we enable other options for grid over			
 						window.DRAGGING = false;
 						window.enable_window_mouse_handlers();
+						if (dragFrameRequest) {
+							cancelAnimationFrame(dragFrameRequest);
+							dragFrameRequest = null;
+						}
+						if (pendingDragState) {
+							pendingDragState = null;
+						}
 						delete window.tokenVisionQuery;
 						ctxImageData = null;
 						if(window.TOKEN_OBJECTS[self.options.id] != undefined){
@@ -3023,7 +3044,6 @@ class Token {
 							if (get_avtt_setting_value("allowTokenMeasurement")) {
 								$("#temp_overlay").css("z-index", "50");
 							}
-
 							window.DRAWFUNCTION = "select"
 							window.DRAGGING = true;
 							clearTimeout(contextMenuLongPressTimer);
@@ -3165,81 +3185,109 @@ class Token {
 					 * @param {Object} ui UI-object
 					 */
 					drag: function(event, ui) {
-						try{
+						try {
 							event.stopPropagation();
+
 							let zoom = parseFloat(window.ZOOM);
 
-							let original = ui.originalPosition;
-							let tokenX = (ui.position.left - ((zoom-parseFloat(window.orig_zoom)) * parseFloat(self.sizeWidth())/2)) / zoom;
-							let tokenY = (ui.position.top - ((zoom-parseFloat(window.orig_zoom)) * parseFloat(self.sizeHeight())/2)) / zoom;
-							let tinyToken = (Math.round(parseFloat(window.TOKEN_OBJECTS[this.dataset.id].options.gridSquares)*2)/2 < 1) || window.TOKEN_OBJECTS[this.dataset.id].isAoe();
+							let tokenX = (ui.position.left - ((zoom - parseFloat(window.orig_zoom)) * parseFloat(self.sizeWidth()) / 2)) / zoom;
+							let tokenY = (ui.position.top - ((zoom - parseFloat(window.orig_zoom)) * parseFloat(self.sizeHeight()) / 2)) / zoom;
+							let tinyToken = (Math.round(parseFloat(window.TOKEN_OBJECTS[this.dataset.id].options.gridSquares) * 2) / 2 < 1) || window.TOKEN_OBJECTS[this.dataset.id].isAoe();
 
-							if (should_snap_to_grid() && (window.CURRENT_SCENE_DATA.gridType == '2' || window.CURRENT_SCENE_DATA.gridType == '3')) { // ) {
-								tokenX = tokenX+self.sizeWidth()/2
-								tokenY = tokenY+self.sizeHeight()/2
+							if (should_snap_to_grid() && (window.CURRENT_SCENE_DATA.gridType == '2' || window.CURRENT_SCENE_DATA.gridType == '3')) {
+								tokenX = tokenX + self.sizeWidth() / 2;
+								tokenY = tokenY + self.sizeHeight() / 2;
 							}
-							//snap to where mouse is
+
 							let tokenPosition = snap_point_to_grid(tokenX, tokenY, undefined, tinyToken, self.options.size);
 
-							if(self.walkableArea.bottom != null && self.walkableArea.right != null){ // need to figure out what's causing these to be null but this is a workaround for the error for now
-								// Constrain token within scene
+							if (self.walkableArea.bottom != null && self.walkableArea.right != null) {
 								tokenPosition.x = clamp(tokenPosition.x, self.walkableArea.left, self.walkableArea.right);
 								tokenPosition.y = clamp(tokenPosition.y, self.walkableArea.top, self.walkableArea.bottom);
 							}
-					
-							//we round css values to prevent sub pixel rendering which causes blurriness or stetching the token image
+
 							ui.position = {
 								left: Math.round(tokenPosition.x),
 								top: Math.round(tokenPosition.y)
 							};
 
-							const canMove = self.setTokenDragPos(tokenPosition.x, tokenPosition.y, tok[0], ctxImageData);
-							if (canMove){	
-								window.oldTokenPosition[self.options.id] = ui.position;				
-							}else{
-								ui.position = (window.oldTokenPosition[self.options.id] != undefined) ? window.oldTokenPosition[self.options.id] : {left: ui.originalPosition.left/zoom, top: ui.originalPosition.top/zoom};
-							}
-							if (self.selected && window.dragSelectedTokens.length>1 && !shiftHeld) {
-								// if dragging on a selected token, we should move also the other selected tokens
-								// try to move other tokens by the same amount
-								let offsetLeft = tokenPosition.x - parseFloat(self.orig_left);
-								let offsetTop = tokenPosition.y - parseFloat(self.orig_top);
+							pendingDragState = {
+								tokenPosition,
+								uiPosition: ui.position,
+								uiOriginalPosition: ui.originalPosition,
+								zoom
+							};
 
-								for (let tok of window.dragSelectedTokens){
-									let id = tok.getAttribute("data-id");
-									if (id != self.options.id) {
-										let curr = window.TOKEN_OBJECTS[id];
-										tokenX = offsetLeft + parseFloat(curr.orig_left);
-										tokenY = offsetTop + parseFloat(curr.orig_top);
-										curr.setTokenDragPos(tokenX, tokenY, tok, ctxImageData);
+							if (!dragFrameRequest) {
+								dragFrameRequest = requestAnimationFrame(() => {
+									dragFrameRequest = null;
+
+									const currState = pendingDragState;
+									pendingDragState = null;
+									if (!currState) return;
+
+									const canMove = self.setTokenDragPos(
+									currState.tokenPosition.x,
+									currState.tokenPosition.y,
+									tok[0],
+									ctxImageData
+									);
+
+									if (canMove) {
+										window.oldTokenPosition[self.options.id] = currState.uiPosition;
+									} else {
+										ui.position = window.oldTokenPosition[self.options.id] != undefined
+											? window.oldTokenPosition[self.options.id]
+											: { left: currState.uiOriginalPosition.left / currState.zoom, top: currState.uiOriginalPosition.top / currState.zoom };
 									}
-								}													
-							}
 
-							const allowTokenMeasurement = get_avtt_setting_value("allowTokenMeasurement")
-							
-							if (allowTokenMeasurement) {				
-								if(self.isAoe() && self.options.imgsrc.match(/aoe-shape-cone|aoe-shape-line|aoe-shape-square/gi) && (window.dragSelectedTokens.length == 1 || shiftHeld)){					
-									let origin = getOrigin(self)
+								
+										
+									if (self.selected && window.dragSelectedTokens.length > 1 && !shiftHeld) {
+										let offsetLeft = currState.tokenPosition.x - parseFloat(self.orig_left);
+										let offsetTop = currState.tokenPosition.y - parseFloat(self.orig_top);
+
+										for (let selectedTok of window.dragSelectedTokens) {
+											let id = selectedTok.getAttribute("data-id");
+											if (id != self.options.id) {
+												let curr = window.TOKEN_OBJECTS[id];
+												let tokenX = offsetLeft + parseFloat(curr.orig_left);
+												let tokenY = offsetTop + parseFloat(curr.orig_top);
+												curr.setTokenDragPos(tokenX, tokenY, selectedTok, ctxImageData);
+											}
+										}
+									}
 									
-									WaypointManager.storeWaypoint(WaypointManager.currentWaypointIndex, window.BEGIN_MOUSEX/window.CURRENT_SCENE_DATA.scale_factor, window.BEGIN_MOUSEY/window.CURRENT_SCENE_DATA.scale_factor, origin.x/window.CURRENT_SCENE_DATA.scale_factor, origin.y/window.CURRENT_SCENE_DATA.scale_factor);		
-									WaypointManager.draw(origin.x/window.CURRENT_SCENE_DATA.scale_factor, origin.y/window.CURRENT_SCENE_DATA.scale_factor);	
-								}
-								else{
-									let tokenMidX = tokenPosition.x + Math.round(self.sizeWidth() / 2);
-									let tokenMidY = tokenPosition.y + Math.round(self.sizeHeight() / 2);
+									const allowTokenMeasurement = get_avtt_setting_value("allowTokenMeasurement");
 
-									WaypointManager.storeWaypoint(WaypointManager.currentWaypointIndex, window.BEGIN_MOUSEX/window.CURRENT_SCENE_DATA.scale_factor, window.BEGIN_MOUSEY/window.CURRENT_SCENE_DATA.scale_factor, tokenMidX/window.CURRENT_SCENE_DATA.scale_factor, tokenMidY/window.CURRENT_SCENE_DATA.scale_factor);		
-									WaypointManager.draw(Math.round(tokenPosition.x + (self.sizeWidth() / 2))/window.CURRENT_SCENE_DATA.scale_factor, Math.round(tokenPosition.y + self.sizeHeight() + 10)/window.CURRENT_SCENE_DATA.scale_factor);
-								}
+									if (allowTokenMeasurement) {				
+										if(self.isAoe() && self.options.imgsrc.match(/aoe-shape-cone|aoe-shape-line|aoe-shape-square/gi) && (window.dragSelectedTokens.length == 1 || shiftHeld)){					
+											let origin = getOrigin(self)
+											
+											WaypointManager.storeWaypoint(WaypointManager.currentWaypointIndex, window.BEGIN_MOUSEX/window.CURRENT_SCENE_DATA.scale_factor, window.BEGIN_MOUSEY/window.CURRENT_SCENE_DATA.scale_factor, origin.x/window.CURRENT_SCENE_DATA.scale_factor, origin.y/window.CURRENT_SCENE_DATA.scale_factor);		
+											WaypointManager.draw(origin.x/window.CURRENT_SCENE_DATA.scale_factor, origin.y/window.CURRENT_SCENE_DATA.scale_factor);	
+										}
+										else{
+											let tokenMidX = tokenPosition.x + Math.round(self.sizeWidth() / 2);
+											let tokenMidY = tokenPosition.y + Math.round(self.sizeHeight() / 2);
+
+
+
+											WaypointManager.storeWaypoint(WaypointManager.currentWaypointIndex, window.BEGIN_MOUSEX/window.CURRENT_SCENE_DATA.scale_factor, window.BEGIN_MOUSEY/window.CURRENT_SCENE_DATA.scale_factor, tokenMidX/window.CURRENT_SCENE_DATA.scale_factor, tokenMidY/window.CURRENT_SCENE_DATA.scale_factor);		
+											WaypointManager.draw(Math.round(tokenPosition.x + (self.sizeWidth() / 2))/window.CURRENT_SCENE_DATA.scale_factor, Math.round(tokenPosition.y + self.sizeHeight() + 10)/window.CURRENT_SCENE_DATA.scale_factor);
+										}
+									}
+
+									if (!self.options.hidden) {
+										sendTokenPositionToPeers(currState.tokenPosition.x, currState.tokenPosition.y, self.options.id, allowTokenMeasurement);
+									}
+
+									if (window.EXPERIMENTAL_SETTINGS.dragLight == true) {
+										throttleLight();
+									}
+								});
 							}
-						
-							if (!self.options.hidden) {
-								sendTokenPositionToPeers(tokenPosition.x, tokenPosition.y, self.options.id, allowTokenMeasurement);
-							}
-							if(window.EXPERIMENTAL_SETTINGS.dragLight == true)
-								throttleLight();
-						} catch(e){
+						} catch (e) {
 							showError(e);
 							$(tok).trigger('mouseup');
 						}
