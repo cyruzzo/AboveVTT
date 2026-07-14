@@ -633,7 +633,7 @@ class Token {
 		return (Math.round(parseFloat(this.options.gridSquares)*2)/2 < 1) || this.isAoe();
 	}
 	isPlayerLocked() {
-		return !window.DM && (this.options.restrictPlayerMove || this.options.locked) && !this.isCurrentPlayer();
+		return !window.DM && ((this.options.restrictPlayerMove && this.options.share_vision != window.myUser && this.options.share_vision != true) || this.options.locked) && !this.isCurrentPlayer();
 	}
 	isDMLocked() {
 		return window.DM && this.options.locked && !$('#select_locked .ddbc-tab-options__header-heading').hasClass('ddbc-tab-options__header-heading--is-active');
@@ -4527,7 +4527,6 @@ function setTokenBase(token, options) {
 		options.square = true;
 		options.legacyaspectratio = false;
 		if(options.tokenStyleSelect === "definitelyNotAToken" || options.tokenStyleSelect === "labelToken"){
-			options.restrictPlayerMove = true;
 			options.disablestat = true;
 			options.disableborder = true;
 			options.disableaura = true;
