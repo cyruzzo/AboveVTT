@@ -33,16 +33,36 @@ const throttleLight = throttle((darknessMoved = false) => {
 	lightFrameQueued = true;
 
 	requestAnimationFrame(() => {
-		lightFrameQueued = false;
 
-		if (!window.walls || window.walls?.length < 5) {
-			redraw_light_walls();
+		try{
+			if(!window.walls || window.walls?.length < 5) 
+				redraw_light_walls();		
+
+			redraw_light(pendingLightDarknessMoved, 1000);
+			lightFrameQueued = false;
 		}
-
-		redraw_light(pendingLightDarknessMoved, 1000);
+		catch{
+			lightFrameQueued = false;
+		}
 	});
 }, 1000/30);
-const throttleTokenCheck = throttle(do_check_token_visibility, 1000/4);
+
+let tokenCheckQueued = false;
+const throttleTokenCheck = throttle(()=>{
+	if(tokenCheckQueued)
+		return;
+	tokenCheckQueued = true;
+	requestAnimationFrame(() =>{
+		try{
+			do_check_token_visibility();
+			tokenCheckQueued = false;
+		}
+		catch{
+			tokenCheckQueued = false;
+		}
+	})
+}, 1000/30);
+
 const debounceStoreExplored = mydebounce((exploredCanvas, sceneId) => {		
 	let dataURI = exploredCanvas.toDataURL('image/jpg')
 
