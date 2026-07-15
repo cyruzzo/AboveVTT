@@ -4928,7 +4928,9 @@ function display_change_image_modal(placedToken) {
                                 ...token.options,
                                 ...token.options.alternativeImagesCustomizations[imgSrc],
                             }
-                            const newSize = token.options.size ?? token.options.tokenSize * hpps;
+                            const newSize = token.options.tokenSize 
+                                                ? token.options.tokenSize * hpps 
+                                                : token.options.size ?? hpps ;
                             token.size(newSize);
                         }
                         token.options.imgsrc = imgSrc; 
