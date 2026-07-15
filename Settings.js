@@ -1595,7 +1595,7 @@ function build_sidebar_token_options_flyout(availableOptions, setValues, updateV
 			updateValue('truesight', null);
 			updateValue('light1', null);
 			updateValue('light2', null);
-
+			updateValue('includeDDB', null);	
 			let defaultTokenOptions = default_options();
 
 			if(showExtraOptions == true){	

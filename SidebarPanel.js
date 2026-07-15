@@ -12,7 +12,7 @@ function init_sidebar_tabs() {
     startup_step(`Loading Token Panel`);
     $("#tokens-panel").remove();
     tokensPanel = new SidebarPanel("tokens-panel", false);
-    sidebarContent.append(tokensPanel.build());+
+    sidebarContent.append(tokensPanel.build());
     init_tokens_panel();
     startup_step(`Loading Scenes Panel`);
     $("#scenes-panel").remove();
@@ -2976,7 +2976,6 @@ function display_folder_configure_modal(listItem) {
     const includeDDBToggle = build_dropdown_input(includeDDBImage, isIncludeDDB, function (key, value) {
         customization.setTokenOption(key, value);
         persist_token_customization(customization);     
-        redraw_token_images_in_modal(sidebarPanel, listItem, placedToken);
     });
     sidebarModal.body.append(includeDDBToggle);
 }
