@@ -3027,7 +3027,7 @@ function display_aoe_token_configuration_modal(listItem, placedToken = undefined
     }
      console.log("TOKENSIZES", tokenSizes);
      let tokenSizeInput = build_token_size_input(tokenSizes, function (newSize) {
-              console.log("TOKEN NEW SIZES", newSize);
+        console.log("TOKEN NEW SIZES", newSize);
         customization.setTokenOption("tokenSize", newSize);
         persist_token_customization(customization);
         decorate_modal_images(sidebarPanel, listItem, placedToken);
@@ -3045,9 +3045,15 @@ function display_aoe_token_configuration_modal(listItem, placedToken = undefined
 
     let startingOffsetX = targetOptions.offset?.x ?? 0;
     let offsetXWrapper = build_token_num_input(startingOffsetX, false, 'Image Offset X', "", "", 1, function (offsetX) {
-
-        if(targetOptions.offset == undefined)
-            customization.setTokenOption('offset', {x: 0, y: 0})
+        const selectedTokenImage = $('.example-token.selected .div-token-image').attr('data-src');
+        const options = customization.tokenOptions;
+        if(selectedTokenImage){
+            options.alternativeImagesCustomizations = options.alternativeImagesCustomizations ?? {}
+            options.alternativeImagesCustomizations[selectedTokenImage] = options.alternativeImagesCustomizations[selectedTokenImage] ?? {}
+            options.alternativeImagesCustomizations[selectedTokenImage].offset = options.alternativeImagesCustomizations[selectedTokenImage].offset ?? {x: 0, y: 0}
+        } else{
+            options.offset = options.offset ?? {x: 0, y: 0}
+        }
         customization.setTokenOption('offset.x', offsetX)
         persist_token_customization(customization);
         decorate_modal_images(sidebarPanel, listItem, placedToken);
@@ -3056,8 +3062,15 @@ function display_aoe_token_configuration_modal(listItem, placedToken = undefined
 
     let startingOffsetY = targetOptions.offset?.y ?? 0;
     let offsetYWrapper = build_token_num_input(startingOffsetY, false, 'Image Offset Y', "", "", 1, function (offsetY) {
-        if(targetOptions.offset == undefined)
-            customization.setTokenOption('offset', {x: 0, y: 0})
+        const selectedTokenImage = $('.example-token.selected .div-token-image').attr('data-src');
+        const options = customization.tokenOptions;
+        if(selectedTokenImage){
+            options.alternativeImagesCustomizations = options.alternativeImagesCustomizations ?? {}
+            options.alternativeImagesCustomizations[selectedTokenImage] = options.alternativeImagesCustomizations[selectedTokenImage] ?? {}
+            options.alternativeImagesCustomizations[selectedTokenImage].offset = options.alternativeImagesCustomizations[selectedTokenImage].offset ?? {x: 0, y: 0}
+        } else{
+            options.offset = options.offset ?? {x: 0, y: 0}
+        }
         customization.setTokenOption('offset.y', offsetY)
         persist_token_customization(customization);
         decorate_modal_images(sidebarPanel, listItem, placedToken);
