@@ -1865,7 +1865,7 @@ function alternative_images_for_item(listItem) {
             alternativeImages = listItem.tokenOptions.alternativeImages;
             break;
     }
-
+    includeDDBImages(alternativeImages, listItem, customization);
     if (alternativeImages === undefined) {
         alternativeImages = [];
     }
@@ -2880,7 +2880,27 @@ function display_aoe_token_configuration_modal(listItem, placedToken = undefined
 
         
     }
-
+    if(listItem?.isTypeMonster()){
+        const includeDDBImage = {
+            name: "includeDDB",
+            label: "Include DDB Image",
+            type: 'dropdown',
+            options: [
+                { value: 'fullAvatarImage', label: 'Full Size and Token/Avatar Image', description: "Include monster's default avatar and/or full image when enabled. When disabled will only have the avatar image if no custom images are added." },
+                { value: 'fullImage', label: 'Full Size Image', description: "Include monster's default avatar and/or full image when enabled. When disabled will only have the avatar image if no custom images are added." },
+                { value: 'avatarImage', label: 'Token/Avatar Image', description: "Include monster's default avatar and/or full image when enabled. When disabled will only have the avatar image if no custom images are added." },
+                { value: false, label: 'Disabled', description: "Include monster's default avatar and/or full image when enabled. When disabled will only have the avatar image if no custom images are added." }
+            ],
+            defaultValue: false
+        };
+        const isIncludeDDB = customization?.allCombinedOptions()?.includeDDB;
+        const includeDDBToggle = build_dropdown_input(includeDDBImage, isIncludeDDB, function (key, value) {
+            customization.setTokenOption(key, value);
+            persist_token_customization(customization);     
+            redraw_token_images_in_modal(sidebarPanel, listItem, placedToken);
+        });
+        inputWrapper.append(includeDDBToggle);
+    }
 
 
     if(!listItem?.isTypeBuiltinToken() && !listItem?.isTypeDDBToken()){
@@ -3672,7 +3692,29 @@ function build_token_div_for_sidebar_modal(imageUrl, listItem, placedToken) {
     enable_draggable_token_creation(tokenDiv, parsedImage);
     return tokenDiv;
 }
+function includeDDBImages(alternativeImages = [], listItem, customization){
+    if (!listItem?.isTypeMonster() || !customization)
+        return alternativeImages;
 
+    const includeDDB = customization?.allCombinedOptions()?.includeDDB;
+    const { basicAvatarUrl: fullImage, avatarUrl: avatarImage } = listItem.monsterData ?? {};
+
+    if (includeDDB === "fullAvatarImage") {
+        if (fullImage) alternativeImages.push(fullImage);
+        if (avatarImage) alternativeImages.push(avatarImage);
+    } else if (includeDDB === "fullImage") {
+        if (fullImage) {
+            if (alternativeImages.length === 0) {
+                listItem.image = fullImage;
+            } else {
+                alternativeImages.push(fullImage);
+            }
+        }
+    } else if (includeDDB === "avatarImage" && alternativeImages.length > 0 && avatarImage) {
+        alternativeImages.push(avatarImage);
+    }
+    return alternativeImages;
+}
 /**
  * Clears the body of the given sidebarPanel and adds a new element for every alternative image the listItem has
  * @param sidebarPanel {SidebarPanel} the modal to display objects in
@@ -3721,6 +3763,7 @@ function redraw_token_images_in_modal(sidebarPanel, listItem, placedToken, drawI
             tokenDiv.toggleClass('default-token-image');
         modalBody.append(tokenDiv);
     }
+
 
     if (alternativeImages.length === 0 && placedImg !== parse_img(listItem?.image)) {
         // if we don't have any alternative images, show the default image
@@ -4510,7 +4553,7 @@ function register_custom_token_image_context_menu() {
                     }
                 };
                 
-                const alternativeImages = alternative_images_for_item(itemToPlace);
+                let alternativeImages = alternative_images_for_item(itemToPlace);
                 if(alternativeImages?.length>1){
                     items.setAsDefault = {
                         name: defaultImage == imgSrc ? "Disable Default Image" : "Set as Default Image",
