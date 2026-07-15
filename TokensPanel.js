@@ -3530,7 +3530,7 @@ function display_aoe_token_configuration_modal(listItem, placedToken = undefined
         persist_token_customization(customization);
         redraw_settings_panel_token_examples(customization.tokenOptions);
         const selectedTokenImage = $('.example-token.selected .div-token-image').attr('data-src');
-        display_token_configuration_modal(listItem, placedToken, selectedTokenImage, redrawPanel)
+        redraw_token_images_in_modal(sidebarPanel, listItem, placedToken, undefined, selectedTokenImage);
     });
 
     inputWrapper.append(tokenOptionsButton);
@@ -3599,7 +3599,10 @@ function build_override_token_options_button(sidebarPanel, listItem, placedToken
     tokenOptionsButton.on("click", function (clickEvent) {
 
         build_and_display_sidebar_flyout(clickEvent.clientY, function (flyout) {
-            const options = find_token_customization(listItem.type, listItem.id)?.tokenOptions;
+            let options = find_token_options_for_list_item(listItem);
+            const selectedTokenImage = $('.example-token.selected .div-token-image').attr('data-src');
+            if(selectedTokenImage)
+                options = {...options, ...options.alternativeImagesCustomizations[selectedTokenImage]}
             const overrideOptions = listItem.isTypeAoe() ? 
                 token_setting_options().filter(option=> availableToAoe.includes(option.name))
                  .map(option => convert_option_to_override_dropdown(option)) 
