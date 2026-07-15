@@ -3701,7 +3701,7 @@ function includeDDBImages(alternativeImages = [], listItem, options) {
     }
 
     const includeDDB = options.includeDDB;
-    const { basicAvatarUrl: fullImage, avatarUrl: avatarImage } = listItem.monsterData ?? {};
+    const { largeAvatarUrl: fullImage, avatarUrl: avatarImage } = listItem.monsterData ?? {};
     if(includeDDB)
         alternativeImages = alternativeImages.filter(image => image != fullImage && image != avatarImage);
     const pushUniqueImage = (image) => {
