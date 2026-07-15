@@ -3827,7 +3827,7 @@ function build_adjustments_flyout_menu(tokenIds) {
 			tokens.forEach(token => {
 				let underdarknessDivisor = token.options.underDarkness ? parseInt(window.CURRENT_SCENE_DATA.scale_factor) : 1;
 				if(token.options.offset == undefined)
-				token.options.offset = {x: 0, y:0};
+					token.options.offset = {x: 0, y:0};
 				token.options.offset.x = offsetX;
 				$(`.VTTToken[data-id='${token.options.id}']`).css({
 					"--offsetX": `${parseFloat(offsetX) / 90 * token.options.size}px`,
