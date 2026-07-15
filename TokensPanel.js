@@ -1220,7 +1220,8 @@ async function create_and_place_token(listItem, hidden = undefined, specificImag
     options = {...options, ...foundOptions}; // we may need to put this in specific places within the switch statement below
     const chosenImage = random_image_for_item(listItem, specificImage);
     options.imgsrc = chosenImage;
-
+    options.alternativeImages = includeDDBImages(options.alternativeImages, listItem, options);
+            
 
     if(options.alternativeImagesCustomizations != undefined && options.alternativeImagesCustomizations[options.imgsrc] != undefined){
         const visionOptions = {
@@ -1865,7 +1866,7 @@ function alternative_images_for_item(listItem) {
             alternativeImages = listItem.tokenOptions.alternativeImages;
             break;
     }
-    alternativeImages = includeDDBImages(alternativeImages, listItem, customization);
+    alternativeImages = includeDDBImages(alternativeImages, listItem, find_token_options_for_list_item(listItem));
     if (alternativeImages === undefined) {
         alternativeImages = [];
     }
@@ -2896,7 +2897,7 @@ function display_aoe_token_configuration_modal(listItem, placedToken = undefined
         const isIncludeDDB = customization?.allCombinedOptions()?.includeDDB;
         const includeDDBToggle = build_dropdown_input(includeDDBImage, isIncludeDDB, function (key, value) {
             customization.setTokenOption(key, value);
-            persist_token_customization(customization);     
+            persist_token_customization(customization);
             redraw_token_images_in_modal(sidebarPanel, listItem, placedToken);
         });
         inputWrapper.append(includeDDBToggle);
@@ -3692,15 +3693,17 @@ function build_token_div_for_sidebar_modal(imageUrl, listItem, placedToken) {
     set_list_item_identifier(tokenDiv, listItem);
     enable_draggable_token_creation(tokenDiv, parsedImage);
     return tokenDiv;
+
 }
-function includeDDBImages(alternativeImages = [], listItem, customization) {
-    if (!listItem?.isTypeMonster() || !customization) {
+function includeDDBImages(alternativeImages = [], listItem, options) {
+    if (!listItem?.isTypeMonster() || !options) {
         return alternativeImages;
     }
 
-    const includeDDB = customization?.allCombinedOptions()?.includeDDB;
+    const includeDDB = options.includeDDB;
     const { basicAvatarUrl: fullImage, avatarUrl: avatarImage } = listItem.monsterData ?? {};
-    alternativeImages = alternativeImages.filter(image => image != fullImage && image != avatarImage);
+    if(includeDDB)
+        alternativeImages = alternativeImages.filter(image => image != fullImage && image != avatarImage);
     const pushUniqueImage = (image) => {
         if (image && !alternativeImages.includes(image)) {
             alternativeImages.push(image);
