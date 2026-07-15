@@ -1550,7 +1550,7 @@ function token_context_menu_expanded(tokenIds, e, crossScenePortalData) {
 			const imageSrc = token.options.imgsrc.startsWith('above-bucket-not-a-url') ? await getAvttStorageUrl(token.options.imgsrc) : token.options.imgsrc;
 			let tokenImage = $(`<div class="image" style="display: block; max-width:100%;"><${(token.options.videoToken == true || ['.mp4', '.webm', '.m4v'].some(d => imageSrc.includes(d))) ? 'video disableremoteplayback muted' : 'img'} class='magnify' style='max-width:100%;' href='${imageSrc}' src='${imageSrc}'/>  </div>`);
 			
-			if(typeof token.options.monster == 'number' && token.options.itemType == 'monster' && token.options.alternativeImages == undefined){
+			if(typeof token.options.monster == 'number' && token.options.itemType == 'monster' && (token.options.alternativeImages == undefined || token.options.imgsrc == cached_monster_items[token.options.monster]?.monsterData?.avatarUrl)){
 
 				if(cached_monster_items[token.options.monster] != undefined){
 					setImageAttr(tokenImage, token);
@@ -3827,7 +3827,7 @@ function build_adjustments_flyout_menu(tokenIds) {
 			tokens.forEach(token => {
 				let underdarknessDivisor = token.options.underDarkness ? parseInt(window.CURRENT_SCENE_DATA.scale_factor) : 1;
 				if(token.options.offset == undefined)
-				token.options.offset = {x: 0, y:0};
+					token.options.offset = {x: 0, y:0};
 				token.options.offset.x = offsetX;
 				$(`.VTTToken[data-id='${token.options.id}']`).css({
 					"--offsetX": `${parseFloat(offsetX) / 90 * token.options.size}px`,

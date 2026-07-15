@@ -1220,7 +1220,8 @@ async function create_and_place_token(listItem, hidden = undefined, specificImag
     options = {...options, ...foundOptions}; // we may need to put this in specific places within the switch statement below
     const chosenImage = random_image_for_item(listItem, specificImage);
     options.imgsrc = chosenImage;
-
+    options.alternativeImages = includeDDBImages(options.alternativeImages, listItem, options);
+            
 
     if(options.alternativeImagesCustomizations != undefined && options.alternativeImagesCustomizations[options.imgsrc] != undefined){
         const visionOptions = {
@@ -1865,7 +1866,7 @@ function alternative_images_for_item(listItem) {
             alternativeImages = listItem.tokenOptions.alternativeImages;
             break;
     }
-
+    alternativeImages = includeDDBImages(alternativeImages, listItem, find_token_options_for_list_item(listItem));
     if (alternativeImages === undefined) {
         alternativeImages = [];
     }
@@ -2880,7 +2881,27 @@ function display_aoe_token_configuration_modal(listItem, placedToken = undefined
 
         
     }
-
+    if(listItem?.isTypeMonster()){
+        const includeDDBImage = {
+            name: "includeDDB",
+            label: "Include DDB Image",
+            type: 'dropdown',
+            options: [
+                { value: 'fullAvatarImage', label: 'Full Size and Token/Avatar Image', description: "Include monster's default avatar and/or full image when enabled. When disabled will only have the avatar image if no custom images are added." },
+                { value: 'fullImage', label: 'Full Size Image', description: "Include monster's default avatar and/or full image when enabled. When disabled will only have the avatar image if no custom images are added." },
+                { value: 'avatarImage', label: 'Token/Avatar Image', description: "Include monster's default avatar and/or full image when enabled. When disabled will only have the avatar image if no custom images are added." },
+                { value: false, label: 'Disabled', description: "Include monster's default avatar and/or full image when enabled. When disabled will only have the avatar image if no custom images are added." }
+            ],
+            defaultValue: false
+        };
+        const isIncludeDDB = customization?.allCombinedOptions()?.includeDDB;
+        const includeDDBToggle = build_dropdown_input(includeDDBImage, isIncludeDDB, function (key, value) {
+            customization.setTokenOption(key, value);
+            persist_token_customization(customization);
+            redraw_token_images_in_modal(sidebarPanel, listItem, placedToken);
+        });
+        inputWrapper.append(includeDDBToggle);
+    }
 
 
     if(!listItem?.isTypeBuiltinToken() && !listItem?.isTypeDDBToken()){
@@ -3006,7 +3027,7 @@ function display_aoe_token_configuration_modal(listItem, placedToken = undefined
     }
      console.log("TOKENSIZES", tokenSizes);
      let tokenSizeInput = build_token_size_input(tokenSizes, function (newSize) {
-              console.log("TOKEN NEW SIZES", newSize);
+        console.log("TOKEN NEW SIZES", newSize);
         customization.setTokenOption("tokenSize", newSize);
         persist_token_customization(customization);
         decorate_modal_images(sidebarPanel, listItem, placedToken);
@@ -3024,9 +3045,15 @@ function display_aoe_token_configuration_modal(listItem, placedToken = undefined
 
     let startingOffsetX = targetOptions.offset?.x ?? 0;
     let offsetXWrapper = build_token_num_input(startingOffsetX, false, 'Image Offset X', "", "", 1, function (offsetX) {
-
-        if(targetOptions.offset == undefined)
-            customization.setTokenOption('offset', {x: 0, y: 0})
+        const selectedTokenImage = $('.example-token.selected .div-token-image').attr('data-src');
+        const options = customization.tokenOptions;
+        if(selectedTokenImage){
+            options.alternativeImagesCustomizations = options.alternativeImagesCustomizations ?? {}
+            options.alternativeImagesCustomizations[selectedTokenImage] = options.alternativeImagesCustomizations[selectedTokenImage] ?? {}
+            options.alternativeImagesCustomizations[selectedTokenImage].offset = options.alternativeImagesCustomizations[selectedTokenImage].offset ?? {x: 0, y: 0}
+        } else{
+            options.offset = options.offset ?? {x: 0, y: 0}
+        }
         customization.setTokenOption('offset.x', offsetX)
         persist_token_customization(customization);
         decorate_modal_images(sidebarPanel, listItem, placedToken);
@@ -3035,8 +3062,15 @@ function display_aoe_token_configuration_modal(listItem, placedToken = undefined
 
     let startingOffsetY = targetOptions.offset?.y ?? 0;
     let offsetYWrapper = build_token_num_input(startingOffsetY, false, 'Image Offset Y', "", "", 1, function (offsetY) {
-        if(targetOptions.offset == undefined)
-            customization.setTokenOption('offset', {x: 0, y: 0})
+        const selectedTokenImage = $('.example-token.selected .div-token-image').attr('data-src');
+        const options = customization.tokenOptions;
+        if(selectedTokenImage){
+            options.alternativeImagesCustomizations = options.alternativeImagesCustomizations ?? {}
+            options.alternativeImagesCustomizations[selectedTokenImage] = options.alternativeImagesCustomizations[selectedTokenImage] ?? {}
+            options.alternativeImagesCustomizations[selectedTokenImage].offset = options.alternativeImagesCustomizations[selectedTokenImage].offset ?? {x: 0, y: 0}
+        } else{
+            options.offset = options.offset ?? {x: 0, y: 0}
+        }
         customization.setTokenOption('offset.y', offsetY)
         persist_token_customization(customization);
         decorate_modal_images(sidebarPanel, listItem, placedToken);
@@ -3504,11 +3538,12 @@ function display_aoe_token_configuration_modal(listItem, placedToken = undefined
         customization.setTokenOption('vision.color', `rgba(${visionInput._r}, ${visionInput._g}, ${visionInput._b}, ${visionInput._a})`);
         customization.setTokenOption(`light1.color`, `rgba(${light1Input._r}, ${light1Input._g}, ${light1Input._b}, ${light1Input._a})`);
         customization.setTokenOption(`light2.color`, `rgba(${light2Input._r}, ${light2Input._g}, ${light2Input._b}, ${light2Input._a})`);
-
+        if(customization.tokenOptions.includeDDB == null)
+            delete customization.tokenOptions.includeDDB 
         persist_token_customization(customization);
         redraw_settings_panel_token_examples(customization.tokenOptions);
         const selectedTokenImage = $('.example-token.selected .div-token-image').attr('data-src');
-        display_token_configuration_modal(listItem, placedToken, selectedTokenImage, redrawPanel)
+        redraw_token_images_in_modal(sidebarPanel, listItem, placedToken, undefined, selectedTokenImage);
     });
 
     inputWrapper.append(tokenOptionsButton);
@@ -3577,7 +3612,10 @@ function build_override_token_options_button(sidebarPanel, listItem, placedToken
     tokenOptionsButton.on("click", function (clickEvent) {
 
         build_and_display_sidebar_flyout(clickEvent.clientY, function (flyout) {
-            const options = find_token_customization(listItem.type, listItem.id)?.tokenOptions;
+            let options = find_token_options_for_list_item(listItem);
+            const selectedTokenImage = $('.example-token.selected .div-token-image').attr('data-src');
+            if(selectedTokenImage)
+                options = {...options, ...options.alternativeImagesCustomizations[selectedTokenImage]}
             const overrideOptions = listItem.isTypeAoe() ? 
                 token_setting_options().filter(option=> availableToAoe.includes(option.name))
                  .map(option => convert_option_to_override_dropdown(option)) 
@@ -3671,8 +3709,46 @@ function build_token_div_for_sidebar_modal(imageUrl, listItem, placedToken) {
     set_list_item_identifier(tokenDiv, listItem);
     enable_draggable_token_creation(tokenDiv, parsedImage);
     return tokenDiv;
-}
 
+}
+function includeDDBImages(alternativeImages = [], listItem, options) {
+    if (!listItem?.isTypeMonster() || !options) {
+        return alternativeImages;
+    }
+
+    const includeDDB = options.includeDDB;
+    const { largeAvatarUrl: fullImage, avatarUrl: avatarImage } = listItem.monsterData ?? {};
+    if(includeDDB)
+        alternativeImages = alternativeImages.filter(image => image != fullImage && image != avatarImage);
+    const pushUniqueImage = (image) => {
+        if (image && !alternativeImages.includes(image)) {
+            alternativeImages.push(image);
+        }
+    };
+    listItem.image = avatarImage;
+    switch (includeDDB) {
+        case "fullAvatarImage":
+            pushUniqueImage(fullImage);
+            pushUniqueImage(avatarImage);
+            break;
+        case "fullImage":
+            if (fullImage) {
+                if (alternativeImages.length === 0) {
+                    listItem.image = fullImage;
+                } else {
+                    pushUniqueImage(fullImage);
+                }
+            }
+            break;
+        case "avatarImage":
+            if (alternativeImages.length > 0) {
+                pushUniqueImage(avatarImage);
+            }
+            break;
+    }
+    return alternativeImages;
+    
+}
 /**
  * Clears the body of the given sidebarPanel and adds a new element for every alternative image the listItem has
  * @param sidebarPanel {SidebarPanel} the modal to display objects in
@@ -3721,6 +3797,7 @@ function redraw_token_images_in_modal(sidebarPanel, listItem, placedToken, drawI
             tokenDiv.toggleClass('default-token-image');
         modalBody.append(tokenDiv);
     }
+
 
     if (alternativeImages.length === 0 && placedImg !== parse_img(listItem?.image)) {
         // if we don't have any alternative images, show the default image
@@ -4870,7 +4947,9 @@ function display_change_image_modal(placedToken) {
                                 ...token.options,
                                 ...token.options.alternativeImagesCustomizations[imgSrc],
                             }
-                            const newSize = token.options.tokenSize * hpps
+                            const newSize = token.options.tokenSize 
+                                                ? token.options.tokenSize * hpps 
+                                                : token.options.size ?? hpps ;
                             token.size(newSize);
                         }
                         token.options.imgsrc = imgSrc; 
