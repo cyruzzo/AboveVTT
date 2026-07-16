@@ -3075,12 +3075,16 @@ function load_sources_iframe_for_map_import(hidden = false) {
 			.ad-container,
 			.ddb-site-banner,
 			[href*='marketplace.dndbeyond.com'],
-			[src*='marketplace.dndbeyond.com']{
+			[src*='marketplace.dndbeyond.com'],
+			[class*='NavigationMenu_wrapper__']{
 				display:none !important;
 			}
 			.ddb-collapsible-filter{
 				top:0px;
 				position:sticky !important;
+			}
+			[class*="SourcesContents_contents"]>[class*="Header_header"]{
+				margin-top:20px;
 			}
 			</style>`);
 
@@ -3110,7 +3114,12 @@ function load_sources_iframe_for_map_import(hidden = false) {
 			event.stopPropagation();
 			event.preventDefault();
 		})
-		add_scene_importer_back_button(sourcesBody);
+		const observer = new MutationObserver((mutations) => {
+			if(sourcesBody.find('.quick-menu-item-link.importer-back-button').length>0)
+				return;			
+			add_scene_importer_back_button(sourcesBody);
+		})
+		observer.observe(sourcesBody.find('body')[0], { childList: true, subtree: true, attributes: false, characterData: false })
 	});
 
 	iframe.attr("src", `/en/library?ownership=owned-shared`);
@@ -3599,15 +3608,22 @@ function add_scene_importer_back_button(container) {
 	});
 
 	backButton.css({
-		"height": "22px",
+		"height": "24px",
 		"font-size": "18px",
 		"margin-top": "auto",
 		"margin-bottom": "auto",
 		"background-image": "url(https://www.dndbeyond.com/file-attachments/0/737/chevron-left-green.svg)",
 		"background-repeat": "no-repeat",
-		"display": "inline",
-		"padding": "0px 20px 0px 20px",
-		"font-weight": "600"
+		"background-position": "0px 3px, 0px 0px",
+		"background-size": "18px 18px, 100%",
+		"display": "block",
+		"padding": "0px 5px 0px 18px",
+		"font-weight": "600",
+		"border-radius": "5px",
+		"position": "absolute",
+		"text-decoration": "none",
+		"border": "1px solid #ddd",
+		"color": "#000"
 	});
 }
 
