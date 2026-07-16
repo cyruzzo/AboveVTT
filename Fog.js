@@ -156,7 +156,21 @@ class WaypointManagerClass {
 			backgroundColor: "rgba(255, 255, 255, 0.7)"
 		}
 		this.playerId = window.PLAYER_ID;
-		this.throttleDraw = throttle((callback) => {requestAnimationFrame(callback)}, 1000/24);
+		this.throttleDrawQueued = false;
+		this.throttleDraw = throttle((callback) => {
+			if(this.throttleDrawQueued == true)
+				return;
+			this.throttleDrawQueued = true
+			requestAnimationFrame(()=>{
+				try{
+					callback();
+					this.throttleDrawQueued = false;
+				}catch{
+					this.throttleDrawQueued = false;
+				}
+
+			})
+		}, 1000/60);
 	}
 
 	resetDefaultDrawStyle(){

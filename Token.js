@@ -61,7 +61,7 @@ const throttleTokenCheck = throttle(()=>{
 			tokenCheckQueued = false;
 		}
 	})
-}, 1000/30);
+}, 1000/8);
 
 const debounceStoreExplored = mydebounce((exploredCanvas, sceneId) => {		
 	let dataURI = exploredCanvas.toDataURL('image/jpg')
