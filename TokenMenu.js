@@ -3383,7 +3383,7 @@ function build_menu_stat_inputs(tokenIds) {
 					return;
 				let newAC = newValue;
 				if(newValue.indexOf("+") == 0 || newValue.indexOf("-") == 0){
-					newAC = parseInt(token.options.ac) + parseInt(newValue);
+					newAC = parseInt(token.ac) + parseInt(newValue);
 				}
 				token.ac = newAC;
 				token.place_sync_persist();
@@ -3406,7 +3406,7 @@ function build_menu_stat_inputs(tokenIds) {
 				return;
 			let newAC = newValue;
 			if(newValue.indexOf("+") == 0 || newValue.indexOf("-") == 0){
-				newAC = parseInt(token.options.ac) + parseInt(newValue);
+				newAC = parseInt(token.ac) + parseInt(newValue);
 			}
 			token.ac = newAC;
 			token.place_sync_persist();
