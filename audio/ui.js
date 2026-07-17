@@ -443,10 +443,10 @@ function init_mixer() {
                     setTimeout(function () { waitForPlayer(id, callback)}, 250);
                 }
             }
-
+            mixerChannels.append(item);
             waitForPlayer(id, () => {
                 $(item).append(channelNameDiv, window.MIXER.channelVolumeSlider(id), channel_play_pause, loop, remove, window.MIXER.channelProgressBar(id));
-                mixerChannels.append(item);
+                
                 if (channel.paused) {
                     play_svg.css('display', 'block');
                     pause_svg.css('display', 'none');
@@ -710,7 +710,7 @@ function init_trackLibrary() {
     const header = document.createElement("h3");
     header.textContent = "Track Library";
 
-    const searchTrackLibary = $(`<input type='search' placeholder='Search' style='margin-bottom: 5px; width: 97%;'></input>`)
+    const searchTrackLibary = $(`<input type='search' placeholder='Search' style='margin-bottom: 5px; width: 97%;position: sticky; top: -11px; z-indeX: 1;'></input>`)
     searchTrackLibary.off().on('change keyup blur search', (e) => {      
         debounceSearch(e.target.value);
     });

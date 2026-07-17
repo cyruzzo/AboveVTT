@@ -12179,7 +12179,6 @@ li.audio-row:hover .channel-progress-bar-total
     max-height: calc(100% - 85px);
 }
 #sounds-panel .sidebar-panel-header{
-    height: 236px;
     max-height: calc(100% - 16px);
 }
 #mixer-channels .volume-control{
