@@ -398,11 +398,11 @@ function adjustRollWithRollBuffs(expression, rollType, $rollButton){
 
         const multiReplaceRegex = targetMultiOptions?.replace;
         const multiReplaceSelector = targetMultiOptions?.replaceType
-        const validMultiButton = (multiReplaceSelector == undefined || multiReplaceSelector?.[rollType] != undefined && $rollButton.closest(multiReplaceSelector[rollType]).length > 0);
+        const validMultiButton = (multiReplaceSelector == undefined || multiReplaceSelector?.[rollBuffKey] != undefined && $rollButton.closest(multiReplaceSelector[rollBuffKey]).length > 0);
         
         const singleReplaceRegex = singleTarget?.replace;
         const singleReplaceSelector = singleTarget?.replaceType;
-        const validSingleButton = singleReplaceSelector == undefined || (singleReplaceSelector?.[rollType] != undefined && $rollButton.closest(singleReplaceSelector[rollType]).length > 0);
+        const validSingleButton = singleReplaceSelector == undefined || (singleReplaceSelector?.[rollBuffKey] != undefined && $rollButton.closest(singleReplaceSelector[rollBuffKey]).length > 0);
        
         if (multiReplaceRegex != undefined && validMultiButton) {
             expression = `${expression.replace(multiReplaceRegex, targetMultiOptions.newRoll)}`   
