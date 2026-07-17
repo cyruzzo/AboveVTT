@@ -1831,7 +1831,7 @@ const token_size_for_item = function () {
             return listItem.size;
         default:
             const options = find_token_options_for_list_item(listItem);
-            const tokenSize = parseFloat((selectedTokenImage && options.alternativeImagesCustomizations[selectedTokenImage]?.tokenSize) || options.tokenSize);
+            const tokenSize = parseFloat(options.alternativeImagesCustomizations?.[selectedTokenImage]?.tokenSize ?? options.tokenSize ?? 1);
             return roundTokenSize(parseFloat(tokenSize),
                 tokenSizeDefault(listItem.type, listItem?.monsterData?.sizeId));
         }
