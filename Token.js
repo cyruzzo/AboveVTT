@@ -160,9 +160,7 @@ class Token {
 	get baseHp() {
 		if (!isNaN(this.options.hitPointInfo?.current)) {
 			return parseInt(this.options.hitPointInfo.current);
-		} else if (!isNaN((this.options.hp))) {
-			return parseInt(this.options.hp);
-		}
+		} 
 		return 0;
 	}
 	set baseHp(newValue) {
@@ -185,7 +183,6 @@ class Token {
 			};
 			window.MB.inject_chat(msgdata);
 		}
-		this.options.hp = newValue; // backwards compatibility
 	}
 
 
@@ -193,8 +190,6 @@ class Token {
 	get tempHp() {
 		if (!isNaN(this.options.hitPointInfo?.temp)) {
 			return parseInt(this.options.hitPointInfo.temp);
-		} else if (!isNaN(this.options.temp_hp)) {
-			return parseInt(this.options.temp_hp);
 		}
 		return 0;
 	}
@@ -208,7 +203,7 @@ class Token {
 				temp: newValue
 			};
 		}
-		this.options.temp_hp = newValue; // backwards compatibility
+
 	}
 
 	/** @return {number} the percentage of this token's temp HP divided by it's max hp */
@@ -220,8 +215,6 @@ class Token {
 	get maxHp() {
 		if (!isNaN(this.options.hitPointInfo?.maximum)) {
 			return parseInt(this.options.hitPointInfo.maximum);
-		} else if (!isNaN((this.options.max_hp))) {
-			return parseInt(this.options.max_hp);
 		}
 		return 0;
 	}
@@ -235,21 +228,17 @@ class Token {
 				temp: this.tempHp
 			};
 		}
-		this.options.max_hp = newValue; // backwards compatibility
 	}
 
 	/** @return {number} the value of this token's AC */
 	get ac() {
 		if (!isNaN(this.options.armorClass)) {
 			return parseInt(this.options.armorClass);
-		} else if (!isNaN(this.options.ac)) {
-			return parseInt(this.options.ac);
-		}
+		} 
 		return 0;
 	}
 	set ac(newValue) {
 		this.options.armorClass = newValue;
-		this.options.ac = newValue; // backwards compatibility
 	}
 
 	/** @return {string[]} the names of the conditions currently active on the token */
@@ -1444,7 +1433,7 @@ class Token {
 	build_ac() {
 		let bar_height = this.sizeHeight() * 0.2;
 		bar_height = Math.ceil(bar_height);
-		let acValue = (this.options.armorClass != undefined) ? this.options.armorClass : this.options.ac
+		let acValue = this.ac;
 		let ac = $("<div class='ac'/>");
 		ac.css("position", "absolute");
 		ac.css('right', "-1px");
@@ -1560,7 +1549,7 @@ class Token {
 					token.find(".hpbar").css("--temp-hp", this.tempHp);
 				}
 			}
-			if (!this.options.ac && !this.options.armorClass) { // even if we are supposed to show it, only show them if they have something to show.
+			if (!this.ac) { // even if we are supposed to show it, only show them if they have something to show.
 				token.find(".ac").hide();
 			} else {
 				token.find(".ac").show();
