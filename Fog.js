@@ -8841,7 +8841,8 @@ function getTokenVision(tokenId, darknessMoved){
 		numberofwalls: walls.length+darknessBoundarys.length,
 		clippath: path,
 		visionType: window.TOKEN_OBJECTS[tokenId].options.sight,
-		scaleCreated: window.TOKEN_OBJECTS[tokenId].options.scaleCreated
+		scaleCreated: window.TOKEN_OBJECTS[tokenId].options.scaleCreated,
+		elev: window.TOKEN_OBJECTS[tokenId].options.elev
 	}
 	if(window.lineOfSightPolygons[tokenId] !== undefined &&(window.TOKEN_OBJECTS[tokenId].options.devilsight?.feet > 0 || window.TOKEN_OBJECTS[tokenId].options.truesight?.feet > 0)){
 		let path = "";
