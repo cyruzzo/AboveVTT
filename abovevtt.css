@@ -6754,6 +6754,7 @@ button.avtt-roll-formula-button {
     padding: 0px 0px 0px 4px;
     border-bottom: 1px solid #2b2b2b;
 }
+
 #sounds-panel .sidebar-panel-header .audio-row {
  padding: 0px 8px 0px 0px
 }
@@ -12222,6 +12223,18 @@ li.audio-row:hover .channel-progress-bar-total
 #sounds-panel .sidebar-panel-header {
     background: #ebf1f5;
     color: #000;
+    box-sizing: border-box;
+    position: relative;
+    z-index: 2;
+    overflow: visible;
+    flex-shrink: 0;
+}
+#sounds-panel .sidebar-panel-header .ui-resizable-s {
+    z-index: 3 !important;
+}
+#sounds-panel .sidebar-panel-body {
+    position: relative;
+    z-index: 1;
 }
 #sounds-panel .sidebar-panel-header button{
     border-radius: 5px;

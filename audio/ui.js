@@ -649,6 +649,8 @@ function init_mixer() {
     const soundPanelHeader = $("#sounds-panel .sidebar-panel-header");
     soundPanelHeader.append(header, playlistInput, addPlaylistButton, copyPlaylistButton, removePlaylistButton, playlistFields, masterVolumeSlider(), mixerChannels);
     $('#master-volume').append(clear, sequentialPlay, crossFade, playPause);
+  
+    let size, resizeQueued;
     soundPanelHeader.resizable({
         addClasses: false,
         handles: "s",
@@ -656,10 +658,21 @@ function init_mixer() {
         start: function (event, ui) {
             $(event.currentTarget).append($('<div class="iframeResizeCover"></div>'));
         },
+        resize: function (event, ui) {
+            size = Math.round(ui.size.height);
+            if(resizeQueued)
+                return;
+            resizeQueued = true;
+            requestAnimationFrame(()=>{
+                const mixerListHeight = Math.max(0, size - 85);
+                $('#mixer-channels').css('max-height', `${mixerListHeight}px`);
+                resizeQueued = false;
+            });
+        },
         stop: function (event, ui) {
             $('.iframeResizeCover').remove();
         },
-        minHeight: 0
+        minHeight: 236
     });
 }
 
