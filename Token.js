@@ -654,7 +654,7 @@ class Token {
 			console.warn('Token not found on scene', this)
 			return false;
 		}
-		return tokenDiv.style.pointerEvents != "none" && tokenDiv.style.display != "none" && !tokenDiv.classList.contains("ui-draggable-disabled");
+		return tokenDiv.style.pointerEvents != "none" && tokenDiv.style.display != "none" && !tokenDiv.classList.contains("ui-draggable-disabled") && !tokenDiv.classList.contains('notVisible');
 	}
 	rotate(newRotation) {
 		if (this.isPlayerLocked()) return; // don't allow rotating if the token is locked
