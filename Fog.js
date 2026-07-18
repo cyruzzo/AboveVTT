@@ -8383,9 +8383,8 @@ function lineLine(x1, y1, x2, y2, x3, y3, x4, y4) {
 
 //Checks if a pixel is in line of current line of sight
 function detectInLos(x, y) {
-	let canvas = window.moveOffscreenCanvasMask;
-	let ctx = canvas.getContext("2d");
-	const pixeldata = ctx.getImageData(x/window.CURRENT_SCENE_DATA.scale_factor, y/window.CURRENT_SCENE_DATA.scale_factor, 1, 1).data;
+	const ctx = window.moveOffscreenCanvasMaskContext
+	const pixeldata = ctx.getImageData(Math.floor(x/window.CURRENT_SCENE_DATA.scale_factor)-1, Math.floor(y/window.CURRENT_SCENE_DATA.scale_factor)-1, 2, 2).data;
 
 	for(let i=0; i<pixeldata.length; i+=4){
 		if(pixeldata[i] <= 5)
