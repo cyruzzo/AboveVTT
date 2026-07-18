@@ -140,6 +140,16 @@ class Token {
 		if (typeof options.conditions == "undefined") {
 			this.options.conditions = [];
 		}
+		if(!this.options.hitPointInfo){
+			this.options.hitPointInfo = {
+				"maximum": this.options.max_hp ?? 0,
+				"current": this.options.hp ?? 0,
+				"temp": this.options.temp_hp ?? 0
+			}
+		}
+		delete this.options.max_hp;
+		delete this.options.hp;
+		delete this.options.temp_hp;
 	}
 
 	/** @return {number} the total of this token's HP and temp HP */
@@ -1358,6 +1368,9 @@ class Token {
 		hpbar.append(divider);
 		hpbar.append(maxhp_input);
 		if (!this.isPlayer()) {
+			const debounceChange = mydebounce((e) => {
+				self.update_and_sync(e)
+			}, 1500)
 			hp_input.on('wheel', function(e) {
 				const input = $(this);
 				if(!input.is(':focus'))
@@ -1379,16 +1392,15 @@ class Token {
 				input.trigger('change');
 			});
 			hp_input.change(function(e) {
-				$(this).val($(this).val().trim());
-				self.update_and_sync(e);
+				$(this).val($(this).val().trim());		
 				let tokenID = $(this).parent().parent().attr("data-id");
 				if(window.all_token_objects[tokenID] != undefined){
 					window.all_token_objects[tokenID].hp = $(this).val();
 				}			
 				if(window.TOKEN_OBJECTS[tokenID] != undefined){		
 					window.TOKEN_OBJECTS[tokenID].hp = $(this).val();
-					window.TOKEN_OBJECTS[tokenID].update_and_sync()
 				}
+				debounceChange(e);
 			});
 			hp_input.on('mouseup', function(e) {
 				e.preventDefault();
@@ -1397,14 +1409,13 @@ class Token {
 			});
 			maxhp_input.change(function(e) {
 				$(this).val($(this).val().trim());
-				self.update_and_sync(e);
 				if(window.all_token_objects[tokenID] != undefined){
 					window.all_token_objects[tokenID].maxHp = $(this).val();
 				}
 				if(window.TOKEN_OBJECTS[tokenID] != undefined){		
 					window.TOKEN_OBJECTS[tokenID].maxHp = $(this).val();
-					window.TOKEN_OBJECTS[tokenID].update_and_sync()
 				}
+				debounceChange(e);
 			});
 			maxhp_input.on('mouseup', function(e) {
 				e.preventDefault();

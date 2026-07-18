@@ -3278,9 +3278,36 @@ function build_menu_stat_inputs(tokenIds) {
 	body.append(hpMenuInput);
 	body.append(maxHpMenuInput);
 
+	const debouceChangeInput = mydebounce((token)=>{
+		token.place_sync_persist();
+	})
+	if(!isNaN(hp) && !isNaN(max_hp)){
+		hpMenuInput.find('input').on('wheel', function(e) {
+			const input = $(this);
+			if(!input.is(':focus'))
+				return;
+			e.preventDefault();
+			const delta = e.originalEvent.deltaY < 0 ? 1 : -1;
+			const current = parseInt(tokens[0].hp) || 0;
+			input.val(Math.max(0, current + delta));
+			const keyboardEvent = $.Event('keyup');
+			keyboardEvent.key = 'Enter'; 
+			input.trigger(keyboardEvent);
+		});
+		maxHpMenuInput.find('input').on('wheel', function(e) {
+			const input = $(this);
+			if(!input.is(':focus'))
+				return;
+			e.preventDefault();
+			const delta = e.originalEvent.deltaY < 0 ? 1 : -1;
+			const current = parseInt(tokens[0].maxHp) || 0;
+			input.val(Math.max(1, current + delta));
+			const keyboardEvent = $.Event('keyup');
+			keyboardEvent.key = 'Enter'; 
+			input.trigger(keyboardEvent);
+		});
+	}
 
-
-	
 	hpMenuInput.find('input').on('keyup', function(event) {
 		let newValue = event.target.value;
 		if($(event.target).prop('readonly') || newValue == '')
@@ -3294,7 +3321,7 @@ function build_menu_stat_inputs(tokenIds) {
 					newHP = token.hp + parseInt(newValue);
 				}
 				token.hp = newHP - token.tempHp;
-				token.place_sync_persist();
+				debouceChangeInput(token);
 				if(tokens.length == 1){
 					$(".hpMenuInput").val(newHP);
 				}
@@ -3340,7 +3367,7 @@ function build_menu_stat_inputs(tokenIds) {
 					newMaxHP = token.maxHp + parseInt(newValue);
 				}
 				token.maxHp = newMaxHP;
-				token.place_sync_persist();
+				debouceChangeInput(token);
 				if(tokens.length == 1){
 					$(".maxHpMenuInput").val(newMaxHP);
 				}
@@ -5243,6 +5270,29 @@ function add_to_quick_roll_menu(token, autoRollAfterAoe = false) {
 	maxhp_input.val(token.maxHp);
 
 	if (!token.isPlayer()) {
+		const debounceChange = mydebounce((token) => {
+			token.update_and_sync()
+		}, 1500)
+		hp_input.on('wheel', function(e) {
+			const input = $(this);
+			if(!input.is(':focus'))
+				return;
+			e.preventDefault();
+			const delta = e.originalEvent.deltaY < 0 ? 1 : -1;
+			const current = parseInt(token.hp) || 0;
+			input.val(Math.max(0, current + delta));
+			input.trigger('change');
+		});
+		maxhp_input.on('wheel', function(e) {
+			const input = $(this);
+			if(!input.is(':focus'))
+				return;
+			e.preventDefault();
+			const delta = e.originalEvent.deltaY < 0 ? 1 : -1;
+			const current = parseInt(token.maxHp) || 0;
+			input.val(Math.max(1, current + delta));
+			input.trigger('change');
+		});
 		hp_input.change(function(e) {
 			let selector = "div[data-id='" + token.options.id + "']";
 			let old = $("#tokens").find(selector);
@@ -5258,7 +5308,7 @@ function add_to_quick_roll_menu(token, autoRollAfterAoe = false) {
 			}			
 			if(window.TOKEN_OBJECTS[token.options.id] != undefined){		
 				window.TOKEN_OBJECTS[token.options.id].hp = hp_input.val();	
-				window.TOKEN_OBJECTS[token.options.id].update_and_sync();
+				debounceChange(window.TOKEN_OBJECTS[token.options.id]);
 			}			
 			qrm_update_popout();
 		});
@@ -5279,7 +5329,7 @@ function add_to_quick_roll_menu(token, autoRollAfterAoe = false) {
 			}
 			if(window.TOKEN_OBJECTS[token.options.id] != undefined){		
 				window.TOKEN_OBJECTS[token.options.id].maxHp = maxhp_input.val();	
-				window.TOKEN_OBJECTS[token.options.id].update_and_sync();
+				debounceChange(window.TOKEN_OBJECTS[token.options.id]);
 			}			
 			qrm_update_popout();
 		});
