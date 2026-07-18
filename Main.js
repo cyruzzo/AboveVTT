@@ -2403,10 +2403,17 @@ function init_ui() {
 		curYPos = 0,
 		curXPos = 0;
 
-	// Function separated so it can be dis/enabled
+	let scrollRequested = false;
 	const throttleScroll = throttle((scrollOptions) => {
-		requestAnimationFrame(function(){window.scrollTo(scrollOptions)})
-	}, 30)
+		if(scrollRequested)
+			return;
+		scrollRequested = true;
+		requestAnimationFrame(function(){
+			window.scrollTo(scrollOptions);
+			scrollRequested = false; 
+		})
+	}, 1000/240);
+	// Function separated so it can be dis/enabled
 	function mousemove(m) {
 		if (curDown) {
 			let scrollOptions = {
@@ -2414,7 +2421,7 @@ function init_ui() {
 				top: window.scrollY + curYPos - m.pageY,
 				behavior: "instant"
 			}
-			throttleScroll(scrollOptions)
+			throttleScroll(scrollOptions);
 		}
 	}
 

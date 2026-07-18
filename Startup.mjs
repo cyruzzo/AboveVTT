@@ -393,13 +393,13 @@ $(function() {
 
 
 const throttleProjectionScroll = throttle(async (f) => {
-    if(window.Projecting == undefined){
-      await f();
-      setTimeout(function(){
-        delete window.Projecting;
-      }, 1000/60)     
-    }
-}, 1000/60)
+    if(window.Projecting != undefined)
+      return;
+    await f();
+    setTimeout(function(){
+      delete window.Projecting;
+    }, 1000/60)     
+}, 1000/240)
 
 
 function addBeyond20EventListener(name, callback) {
