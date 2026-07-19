@@ -2720,14 +2720,14 @@ function open_portal_config(){
 	listing.off('mouseenter.locatePortal, focusin.locatePortal').on('mouseenter.locatePortal, focusin.locatePortal', '.portal-entry', function(){
 		const row = $(this);
 		const id = row.attr('data-id');
-		$(`.door-button[data-id="${id}"]`).addClass('tokenselected');
+		$(`.door-button[data-id="${id}"]`).addClass('portalHighlight');
 	})
 	listing.off('mouseleave.locatePortal, focusout.locatePortal').on('mouseleave.locatePortal, focusout.locatePortal', '.portal-entry', function(){
 		const row = $(this);
 		const id = row.attr('data-id');
 		if(row.find('input.portal-name:focus').length>0)
 			return;
-		$(`.door-button[data-id="${id}"]`).removeClass('tokenselected');
+		$(`.door-button[data-id="${id}"]`).removeClass('portalHighlight');
 	})
 
 	listing.off('mouseover.overflowName').on('mouseover.overflowName', '.connected-portal', function(e){

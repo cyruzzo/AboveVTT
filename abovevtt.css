@@ -2685,7 +2685,7 @@ padding-top:10px;
   to { background-position: 10px 0, -10px 100%, 0 -10px, 100% 10px; }
 }
 
-.door-button.tokenselected::before {
+.door-button.portalHighlight::before {
     top: -2px;
     bottom: -8px;
     left: -2px;
@@ -2697,6 +2697,9 @@ padding-top:10px;
     background-size: 5px 2px, 5px 2px, 2px 5px, 2px 5px;
     background-position: 0 0, 0 100%, 0 0, 100% 0;
     animation: march 1s linear infinite;
+    pointer-events: none;
+    position:absolute;
+    content:"";
 }
 .tokenselected.ui-draggable-disabled::before{
     border: 5px #f7bfbfd5 solid
