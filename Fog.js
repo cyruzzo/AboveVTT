@@ -8471,17 +8471,11 @@ function redraw_light(darknessMoved = false, limitActiveRays = 0) {
 	if(window.CURRENT_SCENE_DATA.darkness_filter == 0){
 		moveOffscreenCanvasMaskContext.fillStyle = "white";
 	}
-
-	const lightAuraElements = document.querySelectorAll('.light:not([style*="display: none"]) > .aura-element.islight:not([style*="visibility: hidden"])');
-	let light_auras = Array.from(lightAuraElements, el => el.getAttribute('data-id')).filter(Boolean);
-
-	let selectedIds = [];
-	let selectedTokens = document.querySelectorAll('#tokens .tokenselected:not(.isAoe)');
-
 	const playerTokenElement = document.querySelector(`.token[data-id*='${window.PLAYER_ID}']`);
 	let playerTokenId = playerTokenElement?.getAttribute('data-id');
 
-
+	let selectedIds = [];
+	let selectedTokens = document.querySelectorAll('#tokens .tokenselected:not(.isAoe)');
 	if (selectedTokens.length > 0) {
 		for (let j = 0; j < selectedTokens.length; j++) {
 			let tokenId = selectedTokens[j].getAttribute('data-id');
@@ -8490,6 +8484,11 @@ function redraw_light(darknessMoved = false, limitActiveRays = 0) {
 				selectedIds.push(tokenId)
 		}
 	}
+
+	let notSelector = window.SelectedTokenVision == true && selectedIds.length > 0 ? `:not([style*="visibility: hidden"]):not([style*="display: none"])` : `:not([style*="visibility: hidden"])`;
+	const lightAuraElements = document.querySelectorAll(`.light:not([style*="display: none"]) > .aura-element.islight${notSelector}`);
+	let light_auras = Array.from(lightAuraElements, el => el.getAttribute('data-id')).filter(Boolean);
+
 	if (window.SelectedTokenVision == true && selectedIds.length > 0) {
 		light_auras = [...new Set(light_auras.concat(selectedIds))];
 	}
