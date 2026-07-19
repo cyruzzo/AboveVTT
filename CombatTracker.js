@@ -1312,7 +1312,7 @@ function ct_add_token(token,persist=true,disablerolling=false, adv=false, dis=fa
 	// token update logic for hp pulls hp from token hpbar, so update hp bar manually
 	if (!token.isPlayer()) {
 		const debounceChange = mydebounce(function(token){
-			token.update_and_sync();
+			token.sync();
 		}, 1500)
 		hp_input.change(function(e) {
 			let selector = "div[data-id='" + token.options.id + "']";
@@ -1325,13 +1325,15 @@ function ct_add_token(token,persist=true,disablerolling=false, adv=false, dis=fa
 			old.find(".hp").val($(this).val().trim());	
 
 			if(window.all_token_objects[token.options.id] != undefined){
-				window.all_token_objects[token.options.id].hp = $(this).val();
 				debounceChange(window.all_token_objects[token.options.id]);
 			}			
 			if(window.TOKEN_OBJECTS[token.options.id] != undefined){		
-				window.TOKEN_OBJECTS[token.options.id].hp = $(this).val();
+				window.TOKEN_OBJECTS[token.options.id].update_from_page();
 				debounceChange(window.TOKEN_OBJECTS[token.options.id]);
-			}			
+			}							
+				
+			window.all_token_objects[token.options.id].update_combat_tracker()
+			window.all_token_objects[token.options.id].update_quick_roll();	
 		});
 		hp_input.click(function(e) {
 			$(e.target).select();
@@ -1351,8 +1353,11 @@ function ct_add_token(token,persist=true,disablerolling=false, adv=false, dis=fa
 			}
 			if(window.TOKEN_OBJECTS[token.options.id] != undefined){		
 				window.TOKEN_OBJECTS[token.options.id].maxHp = $(this).val();
+				window.TOKEN_OBJECTS[token.options.id].update_from_page();
 				debounceChange(window.TOKEN_OBJECTS[token.options.id]);
-			}			
+			}							
+			window.all_token_objects[token.options.id].update_combat_tracker()
+			window.all_token_objects[token.options.id].update_quick_roll();		
 		});
 		maxhp_input.click(function(e) {
 			$(e.target).select();
