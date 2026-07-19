@@ -1787,7 +1787,6 @@ class MessageBroker {
 					if(i == msg.data.tokens[i].id)
 						continue;
 					msg.data.tokens[msg.data.tokens[i].id] = msg.data.tokens[i];
-					msg.data.tokens[msg.data.tokens[i].id].resyncId = i;
 					delete msg.data.tokens[i];
 				}
 				msg.data.tokens = Object.fromEntries(Object.entries(msg.data.tokens).filter(([_, v]) => v != null));
@@ -2222,10 +2221,7 @@ class MessageBroker {
 
 		if(data.id == undefined)
 			return;
-		if(data.resyncId){
-			window.MB.sendMessage("custom/myVTT/delete_token",{id: data.resyncId});
-			delete data.resyncId;
-		}
+
 		const animationDuration = data.speedAnim == true ? 0 : undefined;
 		delete msg.data.speedAnim;
 
