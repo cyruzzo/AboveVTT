@@ -1241,9 +1241,17 @@ class Token {
 		if ( ( (!(this.options.monster > 0)) || window.DM || (!window.DM && this.options.player_owned)) && old.has(".hp").length > 0) {
 			if (old.find(".hp").val().trim().startsWith("+") || old.find(".hp").val().trim().startsWith("-")) {
 				old.find(".hp").val(Math.max(0, this.hp + parseInt(old.find(".hp").val())));
+			}else{
+				const sanitizedString = old.find(".hp").val().replaceAll(/[^\d+-/*().]/gi, '');
+				const value = eval(sanitizedString);
+				old.find(".hp").val(Math.max(0, parseInt(value)));
 			}
 			if (old.find(".max_hp").val().trim().startsWith("+") || old.find(".max_hp").val().trim().startsWith("-")) {
 				old.find(".max_hp").val(Math.max(0, this.maxHp + parseInt(old.find(".max_hp").val())));
+			}else{
+				const sanitizedString = old.find(".max_hp").val().replaceAll(/[^\d+-/*().]/gi, '');
+				const value = eval(sanitizedString);
+				old.find(".max_hp").val(Math.max(0, parseInt(value)));
 			}
 			this.hp = parseInt(old.find(".hp").val()) - this.tempHp;
 			this.maxHp = parseInt(old.find(".max_hp").val());
@@ -1394,16 +1402,21 @@ class Token {
 			});
 			hp_input.change(function(e) {
 				let tokenID = $(this).parent().parent().attr("data-id");
-				$(this).val($(this).val().trim());	
-				if ($(this).val().trim().startsWith("+") || $(this).val().trim().startsWith("-")) {
-					$(this).val(Math.max(0, parseInt(window.all_token_objects[tokenID].hp) + parseInt($(this).val())));
-				}	
+				let value = $(this).val().trim();	
+				if (value.startsWith("+") || value.startsWith("-")) {
+					value = Math.max(0, parseInt(window.all_token_objects[tokenID].hp) + parseInt(value));
+					$(this).val(value);
+				} else{
+					const sanitizedString = value.replaceAll(/[^\d+-/*().]/gi, '');
+					value = Math.max(0, parseInt(eval(sanitizedString)));
+					$(this).val(value);
+				}
 				
 				if(window.all_token_objects[tokenID] != undefined){
-					window.all_token_objects[tokenID].hp = $(this).val();
+					window.all_token_objects[tokenID].hp = value;
 				}			
 				if(window.TOKEN_OBJECTS[tokenID] != undefined){		
-					window.TOKEN_OBJECTS[tokenID].hp = $(this).val();
+					window.TOKEN_OBJECTS[tokenID].hp = value;
 					window.TOKEN_OBJECTS[tokenID].update_from_page();
 				}
 				window.all_token_objects[tokenID].update_combat_tracker()
@@ -1417,15 +1430,20 @@ class Token {
 			});
 			maxhp_input.change(function(e) {
 				let tokenID = $(this).parent().parent().attr("data-id");
-				$(this).val($(this).val().trim());
-				if ($(this).val().trim().startsWith("+") || $(this).val().trim().startsWith("-")) {
-					$(this).val(Math.max(0, parseInt(window.all_token_objects[tokenID].maxHp) + parseInt($(this).val())));
+				let value = $(this).val().trim();
+				if (value.startsWith("+") || value.startsWith("-")) {
+					value = Math.max(0, parseInt(window.all_token_objects[tokenID].maxHp) + parseInt(value))
+					$(this).val(value);
+				} else{
+					const sanitizedString = value.replaceAll(/[^\d+-/*().]/gi, '');
+					value = Math.max(0, parseInt(eval(sanitizedString)));
+					$(this).val(value);
 				}
 				if(window.all_token_objects[tokenID] != undefined){
-					window.all_token_objects[tokenID].maxHp = $(this).val();
+					window.all_token_objects[tokenID].maxHp = value;
 				}
 				if(window.TOKEN_OBJECTS[tokenID] != undefined){		
-					window.TOKEN_OBJECTS[tokenID].maxHp = $(this).val();
+					window.TOKEN_OBJECTS[tokenID].maxHp = value;
 					window.TOKEN_OBJECTS[tokenID].update_from_page();;
 				}
 				window.all_token_objects[tokenID].update_combat_tracker()
