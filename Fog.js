@@ -8571,12 +8571,10 @@ function redraw_light(darknessMoved = false, limitActiveRays = 0) {
 			}
 			particleLook(context, allWalls, 100000, undefined, undefined, undefined, false, false, auraId, undefined, limitActiveRays, wallsCache);  // if the token has moved or walls have changed look for a new vision poly. This function takes a lot of processing time - so keeping this limited is prefered.
 
-			let pts = window.lightPolygon
+			let visionPath = window.lightPolygon
 				.map(p => `${p.x / adjustScale}px ${p.y / adjustScale}px`)
 				.join(', ');
-
-
-
+			
 			window.lineOfSightPolygons[auraId] = {
 				polygon: window.lightPolygon,
 				move: window.movePolygon,
@@ -8584,7 +8582,7 @@ function redraw_light(darknessMoved = false, limitActiveRays = 0) {
 				x: tokenPos.x,
 				y: tokenPos.y,
 				numberofwalls: allWalls.length,
-				clippath: pts,
+				clippath: visionPath,
 				visionType: hasDevilOrTruesight,
 				scaleCreated: window.TOKEN_OBJECTS[auraId].options.scaleCreated,
 				elev: window.TOKEN_OBJECTS[auraId].options.elev
@@ -8592,21 +8590,20 @@ function redraw_light(darknessMoved = false, limitActiveRays = 0) {
 
 			if (auraClipContainers.length) {
 				auraClipContainers.forEach(container => {
-					if (container.classList.contains('devilsight') || container.classList.contains('truesight')) return;
-					container.style.clipPath = `polygon(${pts})`
+					if (container.classList.contains('devilsight') || container.classList.contains('truesight') || container.style.clipPath == visionPath) return;
+					container.style.clipPath = `polygon(${visionPath})`;
 				});
 			}
 
 			if (window.lineOfSightPolygons[auraId] !== undefined && (window.TOKEN_OBJECTS[auraId].options.devilsight?.feet > 0 || window.TOKEN_OBJECTS[auraId].options.truesight?.feet > 0)) {
-				let pts = window.noDarknessPolygon
+				let noDarknessVisionPath = window.noDarknessPolygon
 					.map(p => `${p.x / adjustScale}px ${p.y / adjustScale}px`)
 					.join(', ');
-				window.lineOfSightPolygons[auraId].devilsightClip = pts;
+					window.lineOfSightPolygons[auraId].devilsightClip = noDarknessVisionPath;
 				if (auraClipContainers.length) {
 					auraClipContainers.forEach(container => {
-						if (container.classList.contains('devilsight') || container.classList.contains('truesight')) {
-							container.style.clipPath = `polygon(${pts})`;
-						}
+						if (!container.classList.contains('devilsight') && !container.classList.contains('truesight') || container.style.clipPath == noDarknessVisionPath ) return;
+						container.style.clipPath = `polygon(${noDarknessVisionPath})`;
 					});
 				}
 
@@ -8827,10 +8824,12 @@ function getTokenVision(tokenId, darknessMoved){
 	particleUpdate(tokenPos.x, tokenPos.y); // moves particle
 	particleLook(undefined, allWalls, 100000, undefined, undefined, undefined, false, false, tokenId);  // if the token has moved or walls have changed look for a new vision poly. This function takes a lot of processing time - so keeping this limited is prefered.
 	const adjustScale = (window.CURRENT_SCENE_DATA.scale_factor != undefined) ? window.CURRENT_SCENE_DATA.scale_factor : 1;
-	let path = "";
-	for (let i = 0; i < window.lightPolygon.length; i++){
-		path += (i && "L" || "M") + window.lightPolygon[i].x / adjustScale + ',' + window.lightPolygon[i].y/adjustScale
-	}
+	let visionPath = window.lightPolygon
+		.map(p => `${p.x / adjustScale}px ${p.y / adjustScale}px`)
+		.join(', ');
+	let noDarknessVisionPath = window.noDarknessPolygon
+		.map(p => `${p.x / adjustScale}px ${p.y / adjustScale}px`)
+		.join(', ');
 	window.lineOfSightPolygons[tokenId] = {
 		polygon: window.lightPolygon,
 		move: window.movePolygon,
@@ -8838,18 +8837,13 @@ function getTokenVision(tokenId, darknessMoved){
 		x: tokenPos.x,
 		y: tokenPos.y,
 		numberofwalls: walls.length+darknessBoundarys.length,
-		clippath: path,
+		clippath: visionPath,
+		devilsightClip: noDarknessVisionPath,
 		visionType: window.TOKEN_OBJECTS[tokenId].options.sight,
 		scaleCreated: window.TOKEN_OBJECTS[tokenId].options.scaleCreated,
 		elev: window.TOKEN_OBJECTS[tokenId].options.elev
 	}
-	if(window.lineOfSightPolygons[tokenId] !== undefined &&(window.TOKEN_OBJECTS[tokenId].options.devilsight?.feet > 0 || window.TOKEN_OBJECTS[tokenId].options.truesight?.feet > 0)){
-		let path = "";
-		for (let i = 0; i < window.noDarknessPolygon.length; i++){
-			path += (i && "L" || "M") + window.noDarknessPolygon[i].x / adjustScale + ',' + window.noDarknessPolygon[i].y/adjustScale
-		}
-		window.lineOfSightPolygons[tokenId].devilsightClip = path;
-	}
+	
 
 	return window.lineOfSightPolygons[tokenId];
 		

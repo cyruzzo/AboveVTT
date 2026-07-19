@@ -3236,7 +3236,6 @@ class Token {
 							};
 							if (!dragFrameRequest) {
 								dragFrameRequest = requestAnimationFrame(() => {
-									dragFrameRequest = null;
 									const currState = pendingDragState;
 									pendingDragState = null;
 									if (!currState) return;
@@ -3294,6 +3293,7 @@ class Token {
 									if (window.EXPERIMENTAL_SETTINGS.dragLight == true) {
 										throttleLight();
 									}
+									dragFrameRequest = null;
 								});
 							}
 						} catch (e) {
