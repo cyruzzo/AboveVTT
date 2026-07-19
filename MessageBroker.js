@@ -1680,8 +1680,7 @@ class MessageBroker {
 		}
 	}
 	async handleScene (msg, forceRefresh=false) {
-		
-		console.debug("handlescene", msg);
+		console.log("handleScene", msg);
 		window.LOADING = true;
 		window.MB.checkHideSceneFromPlayers();
 		if(window.WIZARDING){
@@ -1772,14 +1771,14 @@ class MessageBroker {
 				window.videoTokenOld = {};
 				let data = msg.data;
 				let self=this;
-
+				let loadMap = "";
 				if(data.dm_map_usable=="1"){ // IN THE CLOUD WE DON'T RECEIVE WIDTH AND HEIGT. ALWAYS LOAD THE DM_MAP FIRST, AS TO GET THE PROPER WIDTH
-					data.map=data.dm_map;
+					loadMap=data.dm_map;
 					if(data.dm_map_is_video=="1" || data.dm_map?.includes('youtube.com') || data.dm_map?.includes("youtu.be"))
 						data.is_video=true;
 				}
 				else{
-					data.map=data.player_map;
+					loadMap=data.player_map;
 					if(data.player_map_is_video=="1")
 						data.is_video=true;
 				}
@@ -1820,28 +1819,28 @@ class MessageBroker {
 					build_import_loading_indicator("Loading UVTT Map");
 					try{
 						if (window.DM && data.dm_map && data.dm_map_usable == '1'){
-							data.map = await get_map_from_uvtt_file(data.map)
+							loadMap = await get_map_from_uvtt_file(loadMap)
 						}
 						else{
-							data.map = await get_map_from_uvtt_file(data.player_map);
+							loadMap = await get_map_from_uvtt_file(data.player_map);
 						}			
 					}
 					catch{
 						console.log('non-UVTT file found for map')
 						if (window.DM && data.dm_map && data.dm_map_usable == '1'){
-							data.map = data.dm_map;
+							loadMap = data.dm_map;
 						}
 						else{
-							data.map = data.player_map;
+							loadMap = data.player_map;
 						}
 					}
 				}
 				else{
 					if (window.DM && data.dm_map && data.dm_map_usable == '1') {
-						data.map = data.dm_map;
+						loadMap = data.dm_map;
 					}
 					else {
-						data.map = data.player_map;
+						loadMap = data.player_map;
 					}
 					await build_import_loading_indicator(`Loading ${window.DM ? data.title : 'Scene'}`);		
 				}
@@ -1868,7 +1867,7 @@ class MessageBroker {
 					if (!window.CURRENT_SCENE_DATA.fpsq || window.CURRENT_SCENE_DATA.fpsq == "" ){
 						window.CURRENT_SCENE_DATA.fpsq = 5;
 					}
-					load_scenemap(data.map, data.is_video, data.width, data.height, data.UVTTFile, async function() {
+					load_scenemap(loadMap, data.is_video, data.width, data.height, data.UVTTFile, async function() {
 						
 						console.group("load_scenemap callback")
 						if(!window.CURRENT_SCENE_DATA.scale_factor)
@@ -1881,7 +1880,7 @@ class MessageBroker {
 	
 						window.CURRENT_SCENE_DATA.conversion = 1;
 						
-						if (!data.map?.includes('youtube.com') && (mapHeight > 2500 || mapWidth > 2500)){
+						if (!loadMap?.includes('youtube.com') && (mapHeight > 2500 || mapWidth > 2500)){
 							let conversion = 2;
 							if(mapWidth >= mapHeight){
 								conversion = 1980 / mapWidth;

@@ -439,7 +439,7 @@ function map_load_error_cb(e) {
 	$('#loadingStyles').remove();
 	console.error("map_load_error_cb src", src, e);
 	if (typeof src === "string") {
-		if (src.includes("drive.google") || window.CURRENT_SCENE_DATA.map.includes("drive.google")) {
+		if (src.includes("drive.google")) {
 			showGoogleDriveWarning();
 		}
 		else {

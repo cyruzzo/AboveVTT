@@ -75,7 +75,8 @@ class AboveApi {
     if (!window.DM) return;
     const response = await this.fetchJson("getSceneList");
     if (response.Items && Array.isArray(response.Items)) {
-      console.log("AboveApi.getSceneList", response.Items);
+      console.log("AboveApi.getSceneList");
+      response.Items = await normalize_scene_urls(response.Items);
       return response.Items.map(item => item.data);
     } else {
       console.log("AboveApi.getSceneList returned an empty list");
