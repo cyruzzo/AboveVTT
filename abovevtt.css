@@ -5374,6 +5374,18 @@ div#importer_area>div>div:first-of-type {
     white-space: nowrap;
     padding: 0px 5px;
 }
+.quick-menu-item-link.importer-back-button:before {
+    content: '';
+    border-width: 2px 0px 0px 2px;
+    transform: rotate(-45deg);
+    border-color: #000;
+    border-style: solid;
+    width: 8px;
+    height: 8px;
+    display: inline-block;
+    position: relative;
+    top: -2px;
+}
 .sidebar-panel-footer-button {
     appearance: none;
     font-weight: 700;

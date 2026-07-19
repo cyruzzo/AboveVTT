@@ -3086,6 +3086,18 @@ function load_sources_iframe_for_map_import(hidden = false) {
 			[class*="SourcesContents_contents"]>[class*="Header_header"]{
 				margin-top:20px;
 			}
+			.quick-menu-item-link.importer-back-button:before {
+				content: '';
+				border-width: 2px 0px 0px 2px;
+				transform: rotate(-45deg);
+				border-color: #000;
+				border-style: solid;
+				width: 8px;
+				height: 8px;
+				display: inline-block;
+				position: relative;
+				top: -2px;
+			}
 			</style>`);
 
 		sourcesBody.find("#site-main > .container").css({
@@ -3114,6 +3126,7 @@ function load_sources_iframe_for_map_import(hidden = false) {
 			event.stopPropagation();
 			event.preventDefault();
 		})
+		add_scene_importer_back_button(sourcesBody);
 		const observer = new MutationObserver((mutations) => {
 			if(sourcesBody.find('.quick-menu-item-link.importer-back-button').length>0)
 				return;			
@@ -3614,17 +3627,12 @@ function add_scene_importer_back_button(container) {
 		"font-size": "18px",
 		"margin-top": "auto",
 		"margin-bottom": "auto",
-		"background-image": "url(https://www.dndbeyond.com/file-attachments/0/737/chevron-left-green.svg)",
-		"background-repeat": "no-repeat",
-		"background-position": "0px 3px, 0px 0px",
-		"background-size": "18px 18px, 100%",
 		"display": "block",
-		"padding": "0px 5px 0px 18px",
+		"padding": "0px 5px 0px 4px",
 		"font-weight": "600",
 		"border-radius": "5px",
-		"position": "absolute",
+		"position": "relative",
 		"text-decoration": "none",
-		"border": "1px solid #ddd",
 		"color": "#000"
 	});
 }
@@ -3880,33 +3888,30 @@ function build_tutorial_import_list_item(scene, logo, allowMagnific = true) {
 function build_import_container() {
 	const container = $(`
 	<div class="container" style="height: 100%">
-  <div id="content" class="main content-container" style="height: 100%;overflow: auto">
-    <section class="primary-content" role="main">
+  		<div id="content" class="main content-container" style="height: 100%;overflow: auto">
+			<section class="primary-content" role="main">
 
 
-      <div class="static-container">
+				<div class="static-container">
 
-        <div class="ddb-collapsible-filter j-collapsible__search" style='display: flex;justify-content: space-between;'>
-          <div class="ddb-collapsible-filter__box">
-            <div class="ddb-collapsible-filter__search-icon"></div>
-            <input type="search" class="j-collapsible__search-input ddb-collapsible-filter__input" id="collapsible-search-input" placeholder="Search by Name or Source">
-            <div class="ddb-collapsible-filter__clear ddb-collapsible-filter__clear--hidden j-collapsible__search-clear">Clear X</div>
-          </div>
-        </div>
+					<div class="ddb-collapsible-filter j-collapsible__search" style='display: flex;justify-content: space-between;'>
+						<div class="ddb-collapsible-filter__box">
+							<div class="ddb-collapsible-filter__search-icon"></div>
+							<input type="search" class="j-collapsible__search-input ddb-collapsible-filter__input" id="collapsible-search-input" placeholder="Search by Name or Source">
+							<div class="ddb-collapsible-filter__clear ddb-collapsible-filter__clear--hidden j-collapsible__search-clear">Clear X</div>
+						</div>
+					</div>
 
-				<!--		build_import_collapsible_section objects go here		-->
-
-
-
-        <div class="ddb-collapsible-filter__no-results ddb-collapsible-filter__no-results--hidden no-results">
-          You Rolled a 1
-        </div>
-      </div>
+							<!--		build_import_collapsible_section objects go here		-->
+					<div class="ddb-collapsible-filter__no-results ddb-collapsible-filter__no-results--hidden no-results">
+						You Rolled a 1
+					</div>
+				</div>
 
 
-    </section>
-  </div>
-</div>
+			</section>
+		</div>
+	</div>
 	`);
 
 	container.find(".ddb-collapsible-filter__clear").click(function(e) {
