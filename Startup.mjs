@@ -658,7 +658,6 @@ async function start_above_vtt_for_spectator() {
     window.startupSceneId = currentSceneData.playerscene;
     window.LOADING = true;
     const activeScene = await AboveApi.getScene(currentSceneData.playerscene);
-    console.log("attempting to handle scene", activeScene);
     startup_step("Loading Scene");
     window.MB.handleScene(activeScene);
     startup_step("Start up complete");
@@ -1176,7 +1175,6 @@ async function start_above_vtt_for_players() {
     window.startupSceneId = currentSceneData.playerscene;
     window.LOADING = true;
     const activeScene = await AboveApi.getScene(currentSceneData.playerscene);
-    console.log("attempting to handle scene", activeScene);
     startup_step("Loading Scene");
     window.MB.handleScene(activeScene);
     startup_step("Start up complete");
@@ -1267,12 +1265,10 @@ async function fetch_sceneList_and_scenes() {
   if (currentSceneData.dmscene && window.ScenesHandler.scenes.find(s => s.id === currentSceneData.dmscene)) {
     window.LOADING = true;
     activeScene = await AboveApi.getScene(currentSceneData.dmscene);
-    console.log("attempting to handle scene", activeScene);
     // window.MB.handleScene(activeScene);
   } else if (window.ScenesHandler.scenes.length > 0) {
     window.LOADING = true;
     activeScene = await AboveApi.getScene(window.ScenesHandler.scenes[0].id);
-    console.log("attempting to handle scene", activeScene);
   }
   if(activeScene)
     window.MB.handleScene(activeScene);

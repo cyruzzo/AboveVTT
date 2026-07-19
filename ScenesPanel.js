@@ -3549,6 +3549,7 @@ async function build_source_book_chapter_import_section(sceneSet) {
 				parentId: parentId,
 				...get_custom_scene_settings()
 			}
+			delete sceneData[i].map;
 			if(sceneData[i].tokens !== null && typeof sceneData[i].tokens === 'object'){
 				let tokensObject = {}
 				for(let token of Object.values(sceneData[i].tokens)){
@@ -3570,6 +3571,7 @@ async function build_source_book_chapter_import_section(sceneSet) {
 						delete sceneData[i].notes;
 						
 					}
+					delete sceneData[i].map;
 				}
 				if(journalUpdated == true)
 					window.JOURNAL.persist();

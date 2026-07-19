@@ -1931,7 +1931,7 @@ function search_monsters(searchTerm, skip, callback) {
     window.ajaxQueue.addDDBRequest({
         url: `https://monster-service.dndbeyond.com/v1/Monster?skip=${offset}&take=100${searchParam}`,
         success: function (responseData) {
-            console.log(`search_monsters succeeded`, responseData);
+            console.log(`search_monsters succeeded`);
             callback(responseData);
         },
         failure: function (errorMessage) {

@@ -888,7 +888,7 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 	}
 
 
-	persist_scene(scene_index,isnew=false){ // CLOUD ONLY FUNCTION
+	async persist_scene(scene_index,isnew=false){ // CLOUD ONLY FUNCTION
 		let sceneData=Object.assign({},this.scenes[scene_index]);
 		if(!sceneData.scale_check){
 
@@ -912,7 +912,8 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 		
 		if(isnew)
 			sceneData.isnewscene=true;
-
+		sceneData = await normalize_scene_urls([sceneData]);
+		sceneData = sceneData[0];
 		this.scenes[scene_index] = sceneData;
 
 		window.MB.sendMessage("custom/myVTT/update_scene",sceneData);
@@ -922,7 +923,7 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 		}     
 	}
 
-	persist_current_scene(dontswitch=false){
+	async persist_current_scene(dontswitch=false){
 		let scene_index = window.ScenesHandler.scenes.findIndex(s => s.id === window.CURRENT_SCENE_DATA.id);
 		window.ScenesHandler.scenes[scene_index] = window.CURRENT_SCENE_DATA;
 		window.ScenesHandler.scene = window.CURRENT_SCENE_DATA;
@@ -937,6 +938,8 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 		}
 
 		sceneData.isnewscene=false;
+		sceneData = await normalize_scene_urls([sceneData]);
+		sceneData = sceneData[0];
 		window.MB.sendMessage("custom/myVTT/update_scene",sceneData,dontswitch);
 		const currentPlayerScenes = Object.values(window.splitPlayerScenes);
 		if(window.DM && dontswitch == false && currentPlayerScenes.includes(sceneData.id)){

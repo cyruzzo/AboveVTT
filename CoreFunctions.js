@@ -2355,6 +2355,7 @@ async function normalize_scene_urls(scenes) {
       if (sceneData?.itemType === ItemType.Folder) {
         return sceneData;
       }
+      delete sceneData.map;
       return Object.assign(sceneData, {
         dm_map: await parse_img(sceneData.dm_map),
         player_map: await parse_img(sceneData.player_map),
