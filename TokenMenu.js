@@ -3319,7 +3319,11 @@ function build_menu_stat_inputs(tokenIds) {
 				let newHP = newValue;
 				if(newValue.indexOf("+") == 0 || newValue.indexOf("-") == 0){
 					newHP = token.hp + parseInt(newValue);
+				} else{
+					const sanitizedString = newHP.replaceAll(/[^\d+-/*().]/gi, '');
+					newHP = Math.max(0, parseInt(eval(sanitizedString)));
 				}
+
 				token.hp = newHP - token.tempHp;
 				debouceChangeInput(token);
 				if(tokens.length == 1){
@@ -3341,6 +3345,9 @@ function build_menu_stat_inputs(tokenIds) {
 			let newHP = newValue;
 			if(newValue.indexOf("+") == 0 || newValue.indexOf("-") == 0){
 				newHP = token.hp + parseInt(newValue);
+			} else{
+				const sanitizedString = newHP.replaceAll(/[^\d+-/*().]/gi, '');
+				newHP = Math.max(0, parseInt(eval(sanitizedString)));
 			}
 			token.hp = newHP - token.tempHp;
 			token.place_sync_persist();
@@ -3365,6 +3372,9 @@ function build_menu_stat_inputs(tokenIds) {
 				let newMaxHP = newValue;
 				if(newValue.indexOf("+") == 0 || newValue.indexOf("-") == 0){
 					newMaxHP = token.maxHp + parseInt(newValue);
+				} else{
+					const sanitizedString = newHP.replaceAll(/[^\d+-/*().]/gi, '');
+					newMaxHP = Math.max(0, parseInt(eval(sanitizedString)));
 				}
 				token.maxHp = newMaxHP;
 				debouceChangeInput(token);
@@ -3388,6 +3398,9 @@ function build_menu_stat_inputs(tokenIds) {
 			let newMaxHP = newValue;
 			if(newValue.indexOf("+") == 0 || newValue.indexOf("-") == 0){
 				newMaxHP = token.maxHp + parseInt(newValue);
+			} else{
+				const sanitizedString = newHP.replaceAll(/[^\d+-/*().]/gi, '');
+				newMaxHP = Math.max(0, parseInt(eval(sanitizedString)));
 			}
 			token.maxHp = newMaxHP;
 			token.place_sync_persist();
@@ -5296,18 +5309,23 @@ function add_to_quick_roll_menu(token, autoRollAfterAoe = false) {
 		hp_input.change(function(e) {
 			let selector = "div[data-id='" + token.options.id + "']";
 			let old = $("#tokens").find(selector);
-		
-			if (hp_input.val().trim().startsWith("+") || hp_input.val().trim().startsWith("-")) {
-				hp_input.val(Math.max(0, parseInt(token.hp) + parseInt(hp_input.val())));
+			let value = hp_input.val().trim();
+			if (value.startsWith("+") || value.trim().startsWith("-")) {
+				value = Math.max(0, parseInt(token.hp) + parseInt(value));
+				hp_input.val(value);
+			} else{
+				const sanitizedString = value.replaceAll(/[^\d+-/*().]/gi, '');
+				value = Math.max(0, parseInt(eval(sanitizedString)));
+				hp_input.val(value);
 			}
 
-			old.find(".hp").val(hp_input.val().trim());	
+			old.find(".hp").val(value);	
 
 			if(window.all_token_objects[token.options.id] != undefined){
-				window.all_token_objects[token.options.id].hp = hp_input.val();
+				window.all_token_objects[token.options.id].hp = value;
 			}			
 			if(window.TOKEN_OBJECTS[token.options.id] != undefined){		
-				window.TOKEN_OBJECTS[token.options.id].hp = hp_input.val();	
+				window.TOKEN_OBJECTS[token.options.id].hp = value;	
 				window.TOKEN_OBJECTS[token.options.id].update_from_page()
 				debounceChange(window.TOKEN_OBJECTS[token.options.id]);
 			}			
@@ -5321,17 +5339,22 @@ function add_to_quick_roll_menu(token, autoRollAfterAoe = false) {
 		maxhp_input.change(function(e) {
 			let selector = "div[data-id='" + token.options.id + "']";
 			let old = $("#tokens").find(selector);
-
-			if (maxhp_input.val().trim().startsWith("+") || maxhp_input.val().trim().startsWith("-")) {
-				maxhp_input.val(Math.max(0, parseInt(token.hp) + parseInt(maxhp_input.val())));
+			let value = maxhp_input.val().trim();
+			if (value.startsWith("+") || value.startsWith("-")) {
+				value = Math.max(0, parseInt(token.hp) + parseInt(value));
+				maxhp_input.val(value);
+			} else{
+				const sanitizedString = value.replaceAll(/[^\d+-/*().]/gi, '');
+				value = Math.max(0, parseInt(eval(sanitizedString)));
+				maxhp_input.val(value);
 			}
 
-			old.find(".max_hp").val(maxhp_input.val().trim());
+			old.find(".max_hp").val(value);
 			if(window.all_token_objects[token.options.id] != undefined){
-				window.all_token_objects[token.options.id].maxHp = maxhp_input.val();
+				window.all_token_objects[token.options.id].maxHp = value;
 			}
 			if(window.TOKEN_OBJECTS[token.options.id] != undefined){		
-				window.TOKEN_OBJECTS[token.options.id].maxHp = maxhp_input.val();	
+				window.TOKEN_OBJECTS[token.options.id].maxHp = value;	
 				window.TOKEN_OBJECTS[token.options.id].update_from_page()
 				debounceChange(window.TOKEN_OBJECTS[token.options.id]);
 			}			

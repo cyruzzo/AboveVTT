@@ -1317,17 +1317,25 @@ function ct_add_token(token,persist=true,disablerolling=false, adv=false, dis=fa
 		hp_input.change(function(e) {
 			let selector = "div[data-id='" + token.options.id + "']";
 			let old = $("#tokens").find(selector);
-		
-			if ($(this).val().trim().startsWith("+") || $(this).val().trim().startsWith("-")) {
-				$(this).val(Math.max(0, parseInt(token.hp) + parseInt($(this).val())));
+			let value = $(this).val().trim();
+			if (value.startsWith("+") || value.startsWith("-")) {
+				value = Math.max(0, parseInt(token.hp) + parseInt(value));
+				$(this).val(value);
+			} else{
+				const sanitizedString = value.replaceAll(/[^\d+-/*().]/gi, '');
+				value = Math.max(0, parseInt(eval(sanitizedString)));
+				$(this).val(value);
 			}
 
-			old.find(".hp").val($(this).val().trim());	
+			old.find(".hp").val(value);	
 
 			if(window.all_token_objects[token.options.id] != undefined){
+				window.all_token_objects[token.options.id].hp = value;
+
 				debounceChange(window.all_token_objects[token.options.id]);
 			}			
 			if(window.TOKEN_OBJECTS[token.options.id] != undefined){		
+				window.TOKEN_OBJECTS[token.options.id].hp = value;
 				window.TOKEN_OBJECTS[token.options.id].update_from_page();
 				debounceChange(window.TOKEN_OBJECTS[token.options.id]);
 			}							
@@ -1341,18 +1349,23 @@ function ct_add_token(token,persist=true,disablerolling=false, adv=false, dis=fa
 		maxhp_input.change(function(e) {
 			let selector = "div[data-id='" + token.options.id + "']";
 			let old = $("#tokens").find(selector);
-
-			if ($(this).val().trim().startsWith("+") || $(this).val().trim().startsWith("-")) {
-				$(this).val(Math.max(0, token.maxHp + parseInt($(this).val())));
+			let value = $(this).val().trim();
+			if (value.startsWith("+") || value.startsWith("-")) {
+				value = Math.max(0, token.maxHp + parseInt(value));
+				$(this).val(value);
+			} else{
+				const sanitizedString = value.replaceAll(/[^\d+-/*().]/gi, '');
+				value = Math.max(0, parseInt(eval(sanitizedString)));
+				$(this).val(value)
 			}
 
-			old.find(".max_hp").val($(this).val().trim());
+			old.find(".max_hp").val(value);
 			if(window.all_token_objects[token.options.id] != undefined){
-				window.all_token_objects[token.options.id].maxHp = $(this).val();
+				window.all_token_objects[token.options.id].maxHp = value;
 				debounceChange(window.all_token_objects[token.options.id]);
 			}
 			if(window.TOKEN_OBJECTS[token.options.id] != undefined){		
-				window.TOKEN_OBJECTS[token.options.id].maxHp = $(this).val();
+				window.TOKEN_OBJECTS[token.options.id].maxHp = value;
 				window.TOKEN_OBJECTS[token.options.id].update_from_page();
 				debounceChange(window.TOKEN_OBJECTS[token.options.id]);
 			}							
