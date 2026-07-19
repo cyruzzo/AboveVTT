@@ -1495,7 +1495,9 @@ function ct_add_token(token,persist=true,disablerolling=false, adv=false, dis=fa
 				if(pcURL){
 					open_player_sheet(pcURL, undefined, token.options.name);
 				}else{
-					load_monster_stat(undefined, token.options.id, customStatBlock)
+					const monsterId = !customStatBlock && token.options.statBlock == token.options.monster ? token.options.monster : undefined;
+					if(!customStatBlock && !monsterId) return;
+					load_monster_stat(monsterId, token.options.id, customStatBlock)
 				}
 
 				return;

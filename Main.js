@@ -813,20 +813,27 @@ function open_selected_token_stat() {
  * @param {Number} monsterId given monster ID
  * @param {UUID} tokenId selected token ID
  */
-function load_monster_stat(monsterId, tokenId, customStatBlock=undefined) {
+async function load_monster_stat(monsterId, tokenId, customStatBlock=undefined) {
+	const token = window.TOKEN_OBJECTS[tokenId] || window.all_token_objects[tokenId];
+	if (!token) {
+		return null;
+	}
 	if(customStatBlock){
 		let container = build_draggable_monster_window(tokenId);
-		display_stat_block_in_container(customStatBlock, container, tokenId, customStatBlock);
+		await display_stat_block_in_container(customStatBlock, container, tokenId, customStatBlock);
 		$(".sidebar-panel-loading-indicator").remove();
-		container.attr('data-name', window.all_token_objects[tokenId].options.name);
+		container.attr('data-name', token.options.name);
 		return container;
 	}
-	if(window.all_token_objects[tokenId].options.monster == 'open5e'){
+	if(token.options.monster == 'open5e'){
 		let container = build_draggable_monster_window(tokenId);
-		build_and_display_stat_block_with_id(window.all_token_objects[tokenId].options.stat, container, tokenId, function () {
-			$(".sidebar-panel-loading-indicator").remove();
-			container.attr('data-name', window.all_token_objects[tokenId].options.name);
-		}, true);
+		await new Promise((resolve) => {
+			build_and_display_stat_block_with_id(token.options.stat, container, tokenId, function () {
+				$(".sidebar-panel-loading-indicator").remove();
+				container.attr('data-name', token.options.name);
+				resolve();
+			}, true);
+		});
 
 		return container;
 	}
@@ -837,9 +844,12 @@ function load_monster_stat(monsterId, tokenId, customStatBlock=undefined) {
 		return container;
 	}
 	let container = build_draggable_monster_window(tokenId);
-	build_and_display_stat_block_with_id(monsterId, container, tokenId, function () {
-		$(".sidebar-panel-loading-indicator").remove();
-		container.attr('data-name', window.all_token_objects[tokenId].options.name);
+	await new Promise((resolve) => {
+		build_and_display_stat_block_with_id(monsterId, container, tokenId, function () {
+			$(".sidebar-panel-loading-indicator").remove();
+			container.attr('data-name', token.options.name);
+			resolve();
+		});
 	});
 	return container;
 }

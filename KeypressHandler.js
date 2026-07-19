@@ -159,6 +159,7 @@ Mousetrap.bind('b', function () {       //zoom plus
 });
 Mousetrap.bind('shift+b', function () {       //zoom plus
     popout_all_selected_token_stat();
+    shiftHeld = false;
 });
 Mousetrap.bind('h', function () {       //zoom plus
     const selectedTokens = window.CURRENTLY_SELECTED_TOKENS;
