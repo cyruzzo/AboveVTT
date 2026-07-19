@@ -3236,7 +3236,6 @@ class Token {
 							};
 							if (!dragFrameRequest) {
 								dragFrameRequest = requestAnimationFrame(() => {
-									dragFrameRequest = null;
 									const currState = pendingDragState;
 									pendingDragState = null;
 									if (!currState) return;
@@ -3294,6 +3293,7 @@ class Token {
 									if (window.EXPERIMENTAL_SETTINGS.dragLight == true) {
 										throttleLight();
 									}
+									dragFrameRequest = null;
 								});
 							}
 						} catch (e) {
@@ -4000,17 +4000,12 @@ function deselect_all_tokens(ignoreVisionUpdate = false) {
 
 	if(ignoreVisionUpdate == false){
 		check_darkness_value();
-	   	if($('#selected_token_vision .ddbc-tab-options__header-heading--is-active').length==0){
-	   		if(window.SelectedTokenVision == true){
-	   			window.SelectedTokenVision = false;
-	   			if(window.DM)
-            		do_check_token_visibility(); 
-	   		}
-	   		
-	   	}	   	
-  		
-  	
+	   	if(window.SelectedTokenVision == true && $('#selected_token_vision .ddbc-tab-options__header-heading--is-active').length==0){
+	   		window.SelectedTokenVision = false;
+	   	}	  
+		throttleLight();
   	}
+
 }
 
 function token_health_aura(hpPercentage, auraType) {
