@@ -1262,12 +1262,13 @@ class Token {
 	update_and_sync(e) {
 		self = this;
 		self.update_from_page();
+		
 		self.sync();//create deep copy so we don't send data when tokens are updated too quickly
 
 		/* UPDATE COMBAT TRACKER */
-		this.update_combat_tracker()
+		self.update_combat_tracker()
 		/* UPDATE QUICK ROLL MENU */
-		this.update_quick_roll()
+		self.update_quick_roll()
 	}
 	update_combat_tracker(){
 		/* UPDATE COMBAT TRACKER */
@@ -1368,8 +1369,8 @@ class Token {
 		hpbar.append(divider);
 		hpbar.append(maxhp_input);
 		if (!this.isPlayer()) {
-			const debounceChange = mydebounce((e) => {
-				self.update_and_sync(e)
+			const debounceChange = mydebounce(() => {
+				self.sync()
 			}, 1500)
 			hp_input.on('wheel', function(e) {
 				const input = $(this);
@@ -1392,15 +1393,22 @@ class Token {
 				input.trigger('change');
 			});
 			hp_input.change(function(e) {
-				$(this).val($(this).val().trim());		
 				let tokenID = $(this).parent().parent().attr("data-id");
+				$(this).val($(this).val().trim());	
+				if ($(this).val().trim().startsWith("+") || $(this).val().trim().startsWith("-")) {
+					$(this).val(Math.max(0, parseInt(window.all_token_objects[tokenID].hp) + parseInt($(this).val())));
+				}	
+				
 				if(window.all_token_objects[tokenID] != undefined){
 					window.all_token_objects[tokenID].hp = $(this).val();
 				}			
 				if(window.TOKEN_OBJECTS[tokenID] != undefined){		
 					window.TOKEN_OBJECTS[tokenID].hp = $(this).val();
+					window.TOKEN_OBJECTS[tokenID].update_from_page();
 				}
-				debounceChange(e);
+				window.all_token_objects[tokenID].update_combat_tracker()
+				window.all_token_objects[tokenID].update_quick_roll();
+				debounceChange();
 			});
 			hp_input.on('mouseup', function(e) {
 				e.preventDefault();
@@ -1408,14 +1416,21 @@ class Token {
 				$(e.target).select();
 			});
 			maxhp_input.change(function(e) {
+				let tokenID = $(this).parent().parent().attr("data-id");
 				$(this).val($(this).val().trim());
+				if ($(this).val().trim().startsWith("+") || $(this).val().trim().startsWith("-")) {
+					$(this).val(Math.max(0, parseInt(window.all_token_objects[tokenID].maxHp) + parseInt($(this).val())));
+				}
 				if(window.all_token_objects[tokenID] != undefined){
 					window.all_token_objects[tokenID].maxHp = $(this).val();
 				}
 				if(window.TOKEN_OBJECTS[tokenID] != undefined){		
 					window.TOKEN_OBJECTS[tokenID].maxHp = $(this).val();
+					window.TOKEN_OBJECTS[tokenID].update_from_page();;
 				}
-				debounceChange(e);
+				window.all_token_objects[tokenID].update_combat_tracker()
+				window.all_token_objects[tokenID].update_quick_roll();
+				debounceChange();
 			});
 			maxhp_input.on('mouseup', function(e) {
 				e.preventDefault();

@@ -5271,7 +5271,7 @@ function add_to_quick_roll_menu(token, autoRollAfterAoe = false) {
 
 	if (!token.isPlayer()) {
 		const debounceChange = mydebounce((token) => {
-			token.update_and_sync()
+			token.sync();
 		}, 1500)
 		hp_input.on('wheel', function(e) {
 			const input = $(this);
@@ -5308,9 +5308,12 @@ function add_to_quick_roll_menu(token, autoRollAfterAoe = false) {
 			}			
 			if(window.TOKEN_OBJECTS[token.options.id] != undefined){		
 				window.TOKEN_OBJECTS[token.options.id].hp = hp_input.val();	
+				window.TOKEN_OBJECTS[token.options.id].update_from_page()
 				debounceChange(window.TOKEN_OBJECTS[token.options.id]);
 			}			
-			qrm_update_popout();
+
+			window.all_token_objects[token.options.id].update_combat_tracker()
+			window.all_token_objects[token.options.id].update_quick_roll();
 		});
 		hp_input.click(function(e) {
 			$(e.target).select();
@@ -5329,9 +5332,11 @@ function add_to_quick_roll_menu(token, autoRollAfterAoe = false) {
 			}
 			if(window.TOKEN_OBJECTS[token.options.id] != undefined){		
 				window.TOKEN_OBJECTS[token.options.id].maxHp = maxhp_input.val();	
+				window.TOKEN_OBJECTS[token.options.id].update_from_page()
 				debounceChange(window.TOKEN_OBJECTS[token.options.id]);
 			}			
-			qrm_update_popout();
+			window.all_token_objects[token.options.id].update_combat_tracker()
+			window.all_token_objects[token.options.id].update_quick_roll();
 		});
 		maxhp_input.click(function(e) {
 			$(e.target).select();
