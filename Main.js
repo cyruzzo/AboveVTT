@@ -744,42 +744,64 @@ function should_use_iframes_for_monsters() {
 	return window.fetchMonsterStatBlocks;
 }
 
-async function popout_all_selected_token_stat(){
-	forSelTokensAsync(async (token) => {
-		let container;
-		if(token.isPlayer()) return;
 
-		const allowedToOpen = window.DM || token.options.player_owned;
-		if(!allowedToOpen)
-			return;
+
+async function popout_all_selected_token_stat(){
+	const fetchMonsters =[];
+	const tokens = [];
+	forSelTokens((token) => {
 		if (token.options.statBlock) {
 			const {customStatBlock, pcURL} = token.getCustomPcUrl();
-			if (pcURL) return;
-			container = await load_monster_stat(undefined, token.options.id, customStatBlock);
+			if (pcURL || customStatBlock) return;
 		}
-		else if(token.options.monster){
-			container = await load_monster_stat(token.options.monster, token.options.id);
+		if(token.options.monster){
+			fetchMonsters.push(token.options.monster)
 		}
-		const windowName = `${token.options.name}_${token.options.id}`.replaceAll(/(\r\n|\n|\r)/gi, "").trim();
-		popoutWindow(windowName, container.find(".avtt-stat-block-container"));
-		$(window.childWindows[windowName].document).find(".avtt-roll-button").on("contextmenu", function (contextmenuEvent) {
-			$(window.childWindows[windowName].document).find("body").append($("div[role='presentation']").clone(true, true));
-			let popoutContext = $(window.childWindows[windowName].document).find(".dcm-container");
-			let maxLeft = window.childWindows[windowName].innerWidth - popoutContext.width();
-			let maxTop = window.childWindows[windowName].innerHeight - popoutContext.height();
-			if (parseInt(popoutContext.css("left")) > maxLeft) {
-				popoutContext.css("left", maxLeft)
+		tokens.push(token);
+
+	})
+	fetch_and_cache_monsters(fetchMonsters, function () {
+		tokens.every(async (token) => {
+			let container = $(`<div class='popout-prep'></div>`);
+			if(token.isPlayer()) return;
+
+			const allowedToOpen = window.DM || token.options.player_owned;
+			if(!allowedToOpen)
+				return;
+			if (token.options.statBlock) {
+				const {customStatBlock, pcURL} = token.getCustomPcUrl();
+				if (pcURL) return;
+				const monsterId = !customStatBlock && token.options.statBlock == token.options.monster ? token.options.monster : undefined;
+				if(!customStatBlock && !monsterId)
+					return;
+				await load_monster_stat(monsterId, token.options.id, customStatBlock, container);
 			}
-			if (parseInt(popoutContext.css("top")) > maxTop) {
-				popoutContext.css("top", maxTop)
+			else if(token.options.monster){
+				await load_monster_stat(token.options.monster, token.options.id, undefined, container);
 			}
-			$(window.childWindows[windowName].document).find("div[role='presentation']").on("click", function (clickEvent) {
-				$(window.childWindows[windowName].document).find("div[role='presentation']").remove();
+			await async_sleep(1);
+			const windowName = `${token.options.name}_${token.options.id}`.replaceAll(/(\r\n|\n|\r)/gi, "").trim();
+			popoutWindow(windowName, container.find(".avtt-stat-block-container"));
+			$(window.childWindows[windowName].document).find(".avtt-roll-button").on("contextmenu", function (contextmenuEvent) {
+				$(window.childWindows[windowName].document).find("body").append($("div[role='presentation']").clone(true, true));
+				let popoutContext = $(window.childWindows[windowName].document).find(".dcm-container");
+				let maxLeft = window.childWindows[windowName].innerWidth - popoutContext.width();
+				let maxTop = window.childWindows[windowName].innerHeight - popoutContext.height();
+				if (parseInt(popoutContext.css("left")) > maxLeft) {
+					popoutContext.css("left", maxLeft)
+				}
+				if (parseInt(popoutContext.css("top")) > maxTop) {
+					popoutContext.css("top", maxTop)
+				}
+				$(window.childWindows[windowName].document).find("div[role='presentation']").on("click", function (clickEvent) {
+					$(window.childWindows[windowName].document).find("div[role='presentation']").remove();
+				});
+				$(".dcm-backdrop").remove();
 			});
-			$(".dcm-backdrop").remove();
+			close_player_monster_stat_block();
 		});
-		close_player_monster_stat_block();
 	});
+	
 }
 function open_selected_token_stat() {
 	const selectedTokens = window.CURRENTLY_SELECTED_TOKENS;
@@ -813,20 +835,19 @@ function open_selected_token_stat() {
  * @param {Number} monsterId given monster ID
  * @param {UUID} tokenId selected token ID
  */
-async function load_monster_stat(monsterId, tokenId, customStatBlock=undefined) {
+async function load_monster_stat(monsterId, tokenId, customStatBlock=undefined, container) {
 	const token = window.TOKEN_OBJECTS[tokenId] || window.all_token_objects[tokenId];
 	if (!token) {
 		return null;
 	}
+	container = container ?? build_draggable_monster_window(tokenId)
 	if(customStatBlock){
-		let container = build_draggable_monster_window(tokenId);
 		await display_stat_block_in_container(customStatBlock, container, tokenId, customStatBlock);
 		$(".sidebar-panel-loading-indicator").remove();
 		container.attr('data-name', token.options.name);
 		return container;
 	}
 	if(token.options.monster == 'open5e'){
-		let container = build_draggable_monster_window(tokenId);
 		await new Promise((resolve) => {
 			build_and_display_stat_block_with_id(token.options.stat, container, tokenId, function () {
 				$(".sidebar-panel-loading-indicator").remove();
@@ -834,16 +855,13 @@ async function load_monster_stat(monsterId, tokenId, customStatBlock=undefined) 
 				resolve();
 			}, true);
 		});
-
 		return container;
 	}
 	if (should_use_iframes_for_monsters()) {
-		const container = build_draggable_monster_window(tokenId);
 		container.find('.avtt-stat-block-container').remove();
 		container.append(load_monster_stat_iframe(monsterId, tokenId));
 		return container;
 	}
-	let container = build_draggable_monster_window(tokenId);
 	await new Promise((resolve) => {
 		build_and_display_stat_block_with_id(monsterId, container, tokenId, function () {
 			$(".sidebar-panel-loading-indicator").remove();
