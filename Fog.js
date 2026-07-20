@@ -860,10 +860,20 @@ function do_check_token_visibility() {
 	console.log("do_check_token_visibility");
 	if(window.LOADING)
 		return;
-	if((window.DM && !window.SelectedTokenVision) || (window.DM && document.querySelectorAll('#tokens .tokenselected:not(.isAoe)').length == 0)){
+
+	const noSelectedTokensWithVision = window.DM && forSelTokens((token)=>{return token.options.auraislight}) == 0;
+	if((window.DM && !window.SelectedTokenVision) || noSelectedTokensWithVision){
+
 		document.querySelectorAll('.token').forEach(el => el.classList.remove('notVisible'));
 		document.querySelectorAll('.door-button').forEach(el => el.classList.remove('notVisible'));
-		document.querySelectorAll('.aura-element').forEach(el => el.classList.remove('notVisible'));
+		if(noSelectedTokensWithVision && window.CURRENTLY_SELECTED_TOKENS.length>0){
+			document.querySelectorAll('.vision>.aura-element').forEach(el => el.classList.add('notVisible'));
+			document.querySelectorAll('.aura-element.islight').forEach(el => el.classList.remove('notVisible'));
+		} else{
+			document.querySelectorAll('.aura-element').forEach(el => el.classList.remove('notVisible'));
+		}
+		
+
 		return;
 	}
 	if(!window.walls){
@@ -1532,18 +1542,12 @@ function check_darkness_value(){
 	$('#raycastingCanvas').css('visibility', '');
 
 	let tokenHasSharedVision = false;
-	if(selectedTokens.length>0){
-		for(let j = 0; j < selectedTokens.length; j++){
-		  	let tokenId = $(selectedTokens[j]).attr('data-id');
-			if (window.TOKEN_OBJECTS[tokenId] == undefined)
-				continue;
-			if (tokenId.includes(window.PLAYER_ID) || window.DM || window.TOKEN_OBJECTS[tokenId].options.share_vision == true || window.TOKEN_OBJECTS[tokenId].options.share_vision == window.myUser || (window.TOKEN_OBJECTS[tokenId].options.share_vision && is_spectator_page()) || (playerTokenId == undefined && window.TOKEN_OBJECTS[tokenId].options.itemType == 'pc')){
-				tokenHasSharedVision = true;
-				break;
-			}
-		}	  
-	}	
-
+	const selectedTokensWithLight = forSelTokens((token) =>{
+		if (!tokenHasSharedVision && (token.options.id.includes(window.PLAYER_ID) || window.DM || token.options.share_vision == true || token.options.share_vision == window.myUser || (token.options.share_vision && is_spectator_page()) || (playerTokenId == undefined && token.options.itemType == 'pc'))){
+			tokenHasSharedVision = true;
+		}
+		return token.options.auraislight;
+	})
 
 	const rayCanvas = $('#raycastingCanvas');
 	const lightContainer = $('#light_container');
@@ -1556,7 +1560,11 @@ function check_darkness_value(){
 			if(window.CURRENT_SCENE_DATA.darkness_filter > 0){
 				$('#VTT').css('--darkness-filter', `${100 - window.CURRENT_SCENE_DATA.darkness_filter}%`)
 			}
-	  		rayCanvas.css('opacity', '1');
+			if(selectedTokensWithLight == 0){
+				rayCanvas.css('opacity', '0');
+			}else{
+				rayCanvas.css('opacity', '1');
+			}
 	  		
 		 	lightContainer.css({
 	 			'opacity': '1'
@@ -8480,7 +8488,7 @@ function redraw_light(darknessMoved = false, limitActiveRays = 0) {
 		for (let j = 0; j < selectedTokens.length; j++) {
 			let tokenId = selectedTokens[j].getAttribute('data-id');
 
-			if (tokenId.includes(window.PLAYER_ID) || window.DM || window.TOKEN_OBJECTS[tokenId].options.share_vision == true || window.TOKEN_OBJECTS[tokenId].options.share_vision == window.myUser || (window.TOKEN_OBJECTS[tokenId].options.share_vision && is_spectator_page()) || (playerTokenId == undefined && window.TOKEN_OBJECTS[tokenId].options.itemType == 'pc'))
+			if (window.TOKEN_OBJECTS[tokenId].options.auraislight && (tokenId.includes(window.PLAYER_ID) || window.DM || window.TOKEN_OBJECTS[tokenId].options.share_vision == true || window.TOKEN_OBJECTS[tokenId].options.share_vision == window.myUser || (window.TOKEN_OBJECTS[tokenId].options.share_vision && is_spectator_page()) || (playerTokenId == undefined && window.TOKEN_OBJECTS[tokenId].options.itemType == 'pc')))
 				selectedIds.push(tokenId)
 		}
 	}
@@ -8492,8 +8500,8 @@ function redraw_light(darknessMoved = false, limitActiveRays = 0) {
 	if (window.SelectedTokenVision == true && selectedIds.length > 0) {
 		light_auras = [...new Set(light_auras.concat(selectedIds))];
 	}
-	if (selectedIds.length > 0 || selectedTokens.length == 0)
-		check_darkness_value();
+
+	check_darkness_value();
 
 	const adjustScale = (window.CURRENT_SCENE_DATA.scale_factor != undefined) ? window.CURRENT_SCENE_DATA.scale_factor : 1;
 
@@ -8619,7 +8627,7 @@ function redraw_light(darknessMoved = false, limitActiveRays = 0) {
 			clip_circle_with_polygon(lightInLosContext, window.lightAuraClipPolygon[auraId].middle.x, window.lightAuraClipPolygon[auraId].middle.y, window.lightAuraClipPolygon[auraId].light2.range, window.lightAuraClipPolygon[auraId].light2.color, window.lightPolygon);
 			clip_circle_with_polygon(lightInLosContext, window.lightAuraClipPolygon[auraId].middle.x, window.lightAuraClipPolygon[auraId].middle.y, window.lightAuraClipPolygon[auraId].light1.range, window.lightAuraClipPolygon[auraId].light1.color, window.lightPolygon);
 		}
-		if (selectedIds.length === 0 || found || (window.SelectedTokenVision !== true && !window.DM)) {
+		if ((selectedIds.length === 0 && selectedTokens.length === 0) || found || (window.SelectedTokenVision !== true && !window.DM)) {
 
 			let hideVisionWhenNoPlayerToken = (playerTokenId === undefined && !window.TOKEN_OBJECTS[auraId].options.share_vision && !window.DM && window.TOKEN_OBJECTS[auraId].options.itemType !== 'pc')
 		
@@ -8627,8 +8635,7 @@ function redraw_light(darknessMoved = false, limitActiveRays = 0) {
 			let hideVisionWhenPlayerTokenExists = (auraId.includes(window.PLAYER_ID) !== true && window.DM !== true && window.TOKEN_OBJECTS[auraId].options.share_vision !== true && window.TOKEN_OBJECTS[auraId].options.share_vision != window.myUser && playerTokenId !== undefined)
 			if (!hideVisionWhenNoPlayerToken && !hideVisionWhenPlayerTokenExists) {
 				//when player token does not exist show vision for all pc tokens and shared vision for other tokens. Mostly used by DM's, streams and tabletop tv games.
-				//when player token does exist show your own vision and shared vision.
-
+				//when player token does exist show your own vision and shared vision.	
 				auraClipContainers.forEach(container => {
 					container.querySelectorAll('[id*="vision_"]').forEach(el => el.classList.remove('notVisible'));
 				});
