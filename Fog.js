@@ -860,13 +860,16 @@ function do_check_token_visibility() {
 	console.log("do_check_token_visibility");
 	if(window.LOADING)
 		return;
-
-	const noSelectedTokensWithVision = window.DM && forSelTokens((token)=>{return token.options.auraislight}) == 0;
+	let isAoeTokenSelected = false;
+	const noSelectedTokensWithVision = window.DM && forSelTokens((token)=>{
+		isAoeTokenSelected = isAoeTokenSelected || token.isAoe();
+		return token.options.auraislight
+	}) == 0;
 	if((window.DM && !window.SelectedTokenVision) || noSelectedTokensWithVision){
 
 		document.querySelectorAll('.token').forEach(el => el.classList.remove('notVisible'));
 		document.querySelectorAll('.door-button').forEach(el => el.classList.remove('notVisible'));
-		if(noSelectedTokensWithVision && window.CURRENTLY_SELECTED_TOKENS.length>0){
+		if(noSelectedTokensWithVision && window.CURRENTLY_SELECTED_TOKENS.length>0 && !isAoeTokenSelected){
 			document.querySelectorAll('.vision>.aura-element').forEach(el => el.classList.add('notVisible'));
 			document.querySelectorAll('.aura-element.islight').forEach(el => el.classList.remove('notVisible'));
 		} else{
@@ -8500,7 +8503,7 @@ function redraw_light(darknessMoved = false, limitActiveRays = 0) {
 	if (window.SelectedTokenVision == true && selectedIds.length > 0) {
 		light_auras = [...new Set(light_auras.concat(selectedIds))];
 	}
-
+	
 	check_darkness_value();
 
 	const adjustScale = (window.CURRENT_SCENE_DATA.scale_factor != undefined) ? window.CURRENT_SCENE_DATA.scale_factor : 1;
