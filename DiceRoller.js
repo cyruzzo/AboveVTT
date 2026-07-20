@@ -1,8 +1,8 @@
 /** DiceRoller.js - DDB dice rolling functions */
 
-const allDiceRegex = /\d+d(?:100|20|12|10|8|6|4)((?:kh|kl|ro(<|<=|>|>=|=)|min)\d+)*/gi; // ([numbers]d[diceTypes]kh[numbers] or [numbers]d[diceTypes]kl[numbers]) or [numbers]d[diceTypes]
-const rpgDiceRegex = /\d+d(?:\d+)((?:kh|kl|ro(<|<=|>|>=|=)|min)\d+)*|^\d+|^[-+]?\d+[+-]\d+$/gi; 
-const validExpressionRegex = /^[dkhlromin<=>\s\d+\-\(\)]*$/gi; // any of these [d, kh, kl, spaces, numbers, +, -] // Should we support [*, /] ?
+const allDiceRegex = /\d+d(?:100|20|12|10|8|6|4)((?:kh|kl|ro(<|<=|>|>=|=)|min)\d+)*|^\d+|^([-+]?\d+)+$/gi; // ([numbers]d[diceTypes]kh[numbers] or [numbers]d[diceTypes]kl[numbers]) or [numbers]d[diceTypes]
+const rpgDiceRegex = /\d+d(?:\d+)((?:kh|kl|ro(<|<=|>|>=|=)|min)\d+)*|^\d+|^([-+]?\d+)+$/gi; 
+const validExpressionRegex = /^[dkhlromin<=>\s\d+\-\(\)]+$/gi; // any of these [d, kh, kl, spaces, numbers, +, -] // Should we support [*, /] ?
 const validModifierSubstitutions = /(?<!\w)(str|dex|con|int|wis|cha|pb)(?!\w)/gi // case-insensitive shorthand for stat modifiers as long as there are no letters before or after the match. For example `int` and `STR` would match, but `mint` or `strong` would not match.
 const diceRollCommandRegex = /^\/(r|roll|save|hit|dmg|skill|heal)\s/gi; // matches only the slash command. EG: `/r 1d20` would only match `/r`
 const multiDiceRollCommandRegex = /\/(ir|r|roll|save|hit|dmg|skill|heal) [^\/]*/gi; // globally matches the full command. EG: `note: /r 1d20 /r2d4` would find ['/r 1d20', '/r2d4']
@@ -373,7 +373,7 @@ function adjustRollWithRollBuffs(expression, rollType, $rollButton){
     const rollBuffKey = rollTypeKeys[rollType]?.buff || rollType;
     if(charRollKey != undefined ){
         const addToRoll = window.CHARACTER_AVTT_SETTINGS?.[charRollKey]?.replace('PB', getPB());// used to check for custom entered numbers in character roll settings
-        const addToRollValid = (addToRoll?.match(allowedExpressionCharactersRegex));
+        const addToRollValid = (addToRoll?.match(validExpressionRegex));
         if(addToRollValid)
             expression = `${expression}${addToRoll.match(/^[+-]/g) ? '' : '+'}${addToRoll}`;
     }
@@ -1289,6 +1289,8 @@ class DiceRoller {
                 let replacedExpression = pendingDiceRoll.expression.toString().replaceAll(/(\D)0+(\d)/gi, '$1$2'); // make sure we have a new string that we alter so we don't accidentally mess up the original
                 let replacedValues = []; // will go into the roll object and DDB also parses these.
                 pendingDiceRoll.diceExpressions.forEach(diceExpression => {
+                    if(diceExpression.match(/^\d+$/gi))
+                        return;
                     let diceType = diceExpression.match(/d\d+/g);
                     let numberOfDice = parseInt(diceExpression.split("d")[0]);
                     const includesReroll = diceExpression.includes("ro");
