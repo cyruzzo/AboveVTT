@@ -4585,6 +4585,8 @@ function setTokenBase(token, options) {
 			}
 			else{
 				token.toggleClass('labelToken', true);
+				options.revealname = true;
+				options.alwaysshowname = true;
 			}
 		}
 
@@ -4618,7 +4620,6 @@ function setTokenBase(token, options) {
 		token.toggleClass("inPersonMini", true);
 	}
 
-	
 	token.toggleClass('labelToken', (options.tokenStyleSelect == 'labelToken' || options.alwaysshowname == true ));
 
 
