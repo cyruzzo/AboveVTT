@@ -822,7 +822,8 @@ function open_selected_token_stat() {
 			open_player_sheet(pcURL, undefined, token.options.name);
 		}
 		else{
-			load_monster_stat(undefined, token.options.id, customStatBlock);
+			const monsterId = !customStatBlock && token.options.statBlock == token.options.monster ? token.options.monster : undefined;
+			load_monster_stat(monsterId, token.options.id, customStatBlock);
 		}
 	}
 	else if (token.options.monster) {
