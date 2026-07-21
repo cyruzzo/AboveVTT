@@ -3033,7 +3033,7 @@ function addDialogCloser(element) {
 }
 
 function sendPopElement(element, whisper) {
-  const what = element.find(".magnify, .monster-image, video");
+  const what = element.find("img, video, .magnify, .monster-image");
   const src = what.find('source').length>0 ? what.find('source').attr('src') : what.attr("src");
   const video = what.prop('nodeName') === 'VIDEO';  
   if(src) {
