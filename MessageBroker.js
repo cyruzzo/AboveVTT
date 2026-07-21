@@ -1204,6 +1204,8 @@ class MessageBroker {
 				}
 			} else if(msg.eventType=="custom/myVTT/JournalChapters"){
 				if(!window.DM){
+					if(msg.data.override == true) 
+						window.JOURNAL.notes = {};
 					window.JOURNAL.chapters=msg.data.chapters;
 					window.JOURNAL.build_journal();
 					window.JOURNAL.persist(true);
@@ -2388,17 +2390,17 @@ class MessageBroker {
 				window.MB.sendMessage("custom/myVTT/soundpad", data); // refresh soundpad
 			}
 			else if(window.MIXER){
-	        const state = window.MIXER.remoteState();
-          console.log('pushing mixer state to players', state);
-          window.MB.sendMessage('custom/myVTT/mixer', state);
-          if (window.YTPLAYER) {
-          		window.YTPLAYER.volume = $("#youtube_volume").val();
-              window.YTPLAYER.setVolume(window.YTPLAYER.volume*$("#master-volume input").val());
-              data={
-                  volume: window.YTPLAYER.volume
-              };
-              window.MB.sendMessage("custom/myVTT/changeyoutube",data);
-          }
+				const state = window.MIXER.remoteState();
+				console.log('pushing mixer state to players', state);
+				window.MB.sendMessage('custom/myVTT/mixer', state);
+				if (window.YTPLAYER) {
+						window.YTPLAYER.volume = $("#youtube_volume").val();
+					window.YTPLAYER.setVolume(window.YTPLAYER.volume*$("#master-volume input").val());
+					data={
+						volume: window.YTPLAYER.volume
+					};
+					window.MB.sendMessage("custom/myVTT/changeyoutube",data);
+				}
 			}
 			window.MB.sendMessage("custom/myVTT/DMAvatar", {
 				avatar: dmAvatarUrl
@@ -2412,14 +2414,14 @@ class MessageBroker {
 	handleAudioPlayingSync(msg){
 		if(window.DM){
 			for(let i = 0; i<$("audio").length; i++){
-		    if($("audio")[i].paused == false){
-		    	let data={
-						channel: i,
-						time: $("audio")[i].currentTime,
-						volume: $("audio")[i].volume,
-					}
-					window.MB.sendMessage("custom/myVTT/playchannel",data);
-		    }
+				if($("audio")[i].paused == false){
+					let data={
+							channel: i,
+							time: $("audio")[i].currentTime,
+							volume: $("audio")[i].volume,
+						}
+						window.MB.sendMessage("custom/myVTT/playchannel",data);
+				}
 			}
 		}
 	}

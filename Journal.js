@@ -337,6 +337,8 @@ class JournalManager{
 	
 
 	sync = mydebounce(() => {
+		if(!window.DM)
+			return;
 		let self = this;
 		const isAnyParentShared = function (chapter) {
 			let parentShared = false;
@@ -348,24 +350,25 @@ class JournalManager{
 			}
 			return parentShared;
 		}
-		if (window.DM) {
-			window.MB.sendMessage('custom/myVTT/JournalChapters', {
-				chapters: self.chapters
-			});
-			let sendNotes = [];
+		
+		window.MB.sendMessage('custom/myVTT/JournalChapters', {
+			chapters: self.chapters,
+			override: true
+		});
+		let sendNotes = [];
 
 
-			for (let i in self.notes) {
-				const parentFolder = self.chapters.find(d => d.notes.includes(i));
-				if (self.notes[i].player || parentFolder?.shareWithPlayer || isAnyParentShared(parentFolder)) {
-					self.notes[i].id = i;
-					sendNotes.push(self.notes[i])
-				}
+		for (let i in self.notes) {
+			const parentFolder = self.chapters.find(d => d.notes.includes(i));
+			if (self.notes[i].player || parentFolder?.shareWithPlayer || isAnyParentShared(parentFolder)) {
+				self.notes[i].id = i;
+				sendNotes.push(self.notes[i])
 			}
-
-			self.sendNotes(sendNotes)
-
 		}
+
+		self.sendNotes(sendNotes)
+
+		
 	}, 5000);
 	sendNotes(sendNotes){
 
