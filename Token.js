@@ -4619,7 +4619,7 @@ function setTokenBase(token, options) {
 	}
 
 	
-	token.toggleClass('labelToken', (options.tokenStyleSelect == 'f' || options.alwaysshowname == true ));
+	token.toggleClass('labelToken', (options.tokenStyleSelect == 'labelToken' || options.alwaysshowname == true ));
 
 
 	if(options.tokenStyleSelect != 'definitelyNotAToken'){
