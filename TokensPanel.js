@@ -753,9 +753,9 @@ function get_helper_size(draggedItem){
  * @param html {*|jQuery|HTMLElement} the html that corresponds to an item (like a row in the list of tokens)
  * @param specificImage {string} the url of the image to use. If nothing is provided, an image will be selected at random from the token's specified alternative-images.
  */
-async function enable_draggable_token_creation(html, specificImage = undefined) {
+async function enable_draggable_token_creation(html, specificImage = undefined, highPriority = false) {
     if(specificImage && specificImage.startsWith('above-bucket-not-a-url')){
-        specificImage = await getAvttStorageUrl(avttTokensApplyThumbnailPrefix(specificImage))
+        specificImage = await getAvttStorageUrl(avttTokensApplyThumbnailPrefix(specificImage), highPriority)
     }
     $(document).off('click.clearSelectTokens').on('click.clearSelectTokens', function(e) {
         if(!$(e.target).closest('#tokens-panel').length){
@@ -3706,7 +3706,7 @@ function build_token_div_for_sidebar_modal(imageUrl, listItem, placedToken) {
         tokenDiv.attr("data-monster", placedToken.options.monster);
     }
     set_list_item_identifier(tokenDiv, listItem);
-    enable_draggable_token_creation(tokenDiv, parsedImage);
+    enable_draggable_token_creation(tokenDiv, parsedImage, true);
     return tokenDiv;
 
 }
@@ -3790,7 +3790,7 @@ function redraw_token_images_in_modal(sidebarPanel, listItem, placedToken, drawI
         // the placedToken image has been changed by the user so put it at the front
         let tokenDiv = build_token_div_for_sidebar_modal(placedImg, listItem, placedToken);
         tokenDiv.attr("data-token-id", placedToken.options.id);
-        if((currentlySelectedToken != undefined && tokenDiv.find('.div-token-image')?.attr('src') == currentlySelectedToken) || (selectedTokenImage != undefined && tokenDiv.find('.div-token-image')?.attr('src') == selectedTokenImage))
+        if((currentlySelectedToken != undefined && placedImg == currentlySelectedToken) || (selectedTokenImage != undefined && placedImg == selectedTokenImage))
             tokenDiv.toggleClass('selected', true);
         if(defaultImage != undefined && defaultImage == placedImg)
             tokenDiv.toggleClass('default-token-image');
@@ -3806,7 +3806,8 @@ function redraw_token_images_in_modal(sidebarPanel, listItem, placedToken, drawI
             listItem.image = pc.image;
         }
         let tokenDiv = build_token_div_for_sidebar_modal(listItem?.image, listItem, placedToken);
-        if((currentlySelectedToken != undefined && tokenDiv.find('.div-token-image')?.attr('src') == currentlySelectedToken) || (selectedTokenImage != undefined && tokenDiv.find('.div-token-image')?.attr('src') == selectedTokenImage))
+        const image = parse_img(listItem.image);
+        if((currentlySelectedToken != undefined && image == currentlySelectedToken) || (selectedTokenImage != undefined && image == selectedTokenImage))
             tokenDiv.toggleClass('selected', true);
         modalBody.append(tokenDiv);
     }
@@ -3823,7 +3824,8 @@ function redraw_token_images_in_modal(sidebarPanel, listItem, placedToken, drawI
             setTimeout(function(){
                 if(index < alternativeImages.length){
                     let tokenDiv = build_token_div_for_sidebar_modal(alternativeImages[index], listItem, placedToken);
-                    if((currentlySelectedToken != undefined && tokenDiv.find('.div-token-image')?.attr('src') == currentlySelectedToken) || (selectedTokenImage != undefined && tokenDiv.find('.div-token-image')?.attr('src') == selectedTokenImage))
+                    const image = parse_img(alternativeImages[index]);
+                    if((currentlySelectedToken != undefined &&  image == currentlySelectedToken) || (selectedTokenImage != undefined && image == selectedTokenImage))
                         tokenDiv.toggleClass('selected', true);
                     if(defaultImage != undefined && defaultImage == alternativeImages[index])
                         tokenDiv.toggleClass('default-token-image');
