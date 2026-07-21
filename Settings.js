@@ -1331,7 +1331,7 @@ function redraw_settings_panel_token_examples(settings) {
 }
 
 function build_example_token(options, size=90) {
-	let mergedOptions = {...default_options(), ...window.TOKEN_SETTINGS, ...options};
+	let mergedOptions = $.extend(true, {}, default_options(), window.TOKEN_SETTINGS, options);
 	let hpnum;
 	switch (mergedOptions['defaultmaxhptype']) {
 		case 'max':
