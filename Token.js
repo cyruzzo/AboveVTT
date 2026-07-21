@@ -3771,11 +3771,11 @@ function place_token_at_map_point(tokenObject, x, y, forcePlaceAndSize = false, 
 			window.all_token_objects[options.id].options.imgsrc = options.imgsrc;
 		}
 		let alternativeImages = [...options.alternativeImages];
-		options = {
-			...options,
-			...window.all_token_objects[options.id].options,
-			alternativeImages: alternativeImages
-		};
+		options = $.extend(true, {}, 
+			options, 
+			window.all_token_objects[options.id].options,
+			{alternativeImages: alternativeImages}
+		);
 	}
 
 	// aoe tokens have classes instead of images
@@ -3784,7 +3784,7 @@ function place_token_at_map_point(tokenObject, x, y, forcePlaceAndSize = false, 
 	}
 
 	if (options.alternativeImagesCustomizations?.[options.imgsrc] != undefined){
-		options = { ...options, ...options.alternativeImagesCustomizations[options.imgsrc]};
+		options = $.extend(true, {}, options, options.alternativeImagesCustomizations[options.imgsrc]);
 	}
 
 	if (options.size == undefined || forcePlaceAndSize) {
