@@ -2746,7 +2746,7 @@ function display_aoe_token_configuration_modal(listItem, placedToken = undefined
     // close any that are already open just to be safe
     let sidebarPanel;
     let name = listItem.name;
-    if(!selectedTokenImage && !redrawPanel){ // we just want to redraw the panel options not the images since we selected a token image to edit
+    if(!selectedTokenImage && !redrawPanel){ 
         close_sidebar_modal();
         sidebarPanel = new SidebarPanel("token-configuration-modal");
         
@@ -3526,6 +3526,8 @@ function display_aoe_token_configuration_modal(listItem, placedToken = undefined
     // token options override
     let tokenOptionsButton = build_override_token_options_button(sidebarPanel, listItem, placedToken, targetOptions, function(name, value) {
         customization.setTokenOption(name, value);
+        const selectedTokenImage = $('.example-token.selected .div-token-image').attr('data-src');
+        redraw_token_images_in_modal(sidebarPanel, listItem, placedToken, undefined, selectedTokenImage);
     }, function () {
         let devilsightInput = $("input[name='devilsightColor']").spectrum("get");
         let truesightInput = $("input[name='truesightColor']").spectrum("get");
@@ -3542,7 +3544,8 @@ function display_aoe_token_configuration_modal(listItem, placedToken = undefined
         persist_token_customization(customization);
         redraw_settings_panel_token_examples(customization.tokenOptions);
         const selectedTokenImage = $('.example-token.selected .div-token-image').attr('data-src');
-        redraw_token_images_in_modal(sidebarPanel, listItem, placedToken, undefined, selectedTokenImage);
+        display_token_configuration_modal(listItem, placedToken, selectedTokenImage, sidebarPanel);
+
     });
 
     inputWrapper.append(tokenOptionsButton);
@@ -4117,7 +4120,7 @@ function inject_encounter_monsters() {
 function did_change_mytokens_items() {
     rebuild_token_items_list();
     filter_token_list($('[name="token-search"]').val() ? $('[name="token-search"]').val() : "");
-}
+}   
 
 /**
  * creates an iframe that loads a monster stat block for the given item
