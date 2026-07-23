@@ -4919,10 +4919,10 @@ function display_change_image_modal(placedToken) {
             let html;
             let video = false;
             if(token?.options.videoToken == true || (['.mp4', '.webm', '.m4v'].some(d => imgUrl.includes(d)))){
-                html = $(`<video disableRemotePlayback muted autoplay='false' data-src='${imgUrl}'  class="example-token" data-token-id='${token?.options.id}' loading="lazy" alt="alternative image" />`);  
+                html = $(`<video disableRemotePlayback muted autoplay='false' data-src='${imgUrl}'  class="example-token" data-token-id='${token?.options.id}' alt="alternative image" />`);  
                 video = true;   
             } else{
-                html = $(`<img class="example-token" loading="lazy" data-src='${imgUrl}' data-token-id='${token?.options.id}' alt="alternative image" />`);
+                html = $(`<img class="example-token" data-src='${imgUrl}' data-token-id='${token?.options.id}' alt="alternative image" />`);
             }
             updateImgSrc(imgUrl, html, video);
             // the user is changing their token image, allow them to simply click an image
