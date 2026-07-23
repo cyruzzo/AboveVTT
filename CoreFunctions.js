@@ -2404,35 +2404,67 @@ async function getAvttStorageUrl(url, highPriority = false){
   return await getFileFromS3(url.replace('above-bucket-not-a-url/', ''), highPriority);
 }
 async function updateImgSrc(url, container, video, highPriority = true, callback = () =>{}){
-  if(video == true && url?.includes('onedrive')){
-    container.attr('src', url.replace('embed?', 'download?'));
-  }
-  else if(url.includes("https://1drv.ms/"))
-  {
-    if(url.split('/')[4].length == 1){
-      url = url;
-    }
-    else{
-      url = "https://api.onedrive.com/v1.0/shares/u!" + btoa(url) + "/root/content";
-    }
-    container.attr('src', url);
+  
+    container.attr('data-url', url);
+    const handleIntersection = (entries, observer) => {
+      entries.forEach(async (entry) => {
+        if (entry.isIntersecting) {
+          const targetContainer = $(entry.target);
+          let url = targetContainer.attr('data-url');
+          targetContainer.removeAttr('data-url');
+          if(video == true && url?.includes('onedrive')){
+              targetContainer.attr('src', url.replace('embed?', 'download?'));
+            }
+            else if(url.includes("https://1drv.ms/"))
+            {
+              if(url.split('/')[4].length == 1){
+                url = url;
+              }
+              else{
+                url = "https://api.onedrive.com/v1.0/shares/u!" + btoa(url) + "/root/content";
+              }
+              targetContainer.attr('src', url);
 
-  }
-  else if(url?.includes('google')){
-    throttleImgSrc(() => {
-      container.attr('src', parse_img(url));
-    })
-  }
-  else if(url.startsWith('above-bucket-not-a-url'))
-  {
-    url = await getAvttStorageUrl(url, highPriority)
-    container.attr('src', url);
-    callback();
-  }
-  else{
-    url = parse_img(url);
-    container.attr('src', url);
-  }
+            }
+            else if(url?.includes('google')){
+              throttleImgSrc(() => {
+                targetContainer.attr('src', parse_img(url));
+              })
+            }
+            else if(url.startsWith('above-bucket-not-a-url'))
+            {
+              url = await getAvttStorageUrl(url, true)
+              targetContainer.attr('src', url);
+              callback();
+            }
+            else{
+              url = parse_img(url);
+              targetContainer.attr('src', url);
+            }
+          
+          observer.unobserve(entry.target);
+        }
+      });
+    };
+
+   
+    const options = {
+      root: null, // uses the default browser viewport
+      rootMargin: '200px 200px 200px 200px',
+      threshold: 0.1 // triggers when at least 10% of the image is visible
+    };
+
+    if(!window.inViewObserver)
+      window.inViewObserver = new IntersectionObserver(handleIntersection, options);
+
+
+
+    window.inViewObserver.observe(container[0]);
+    
+
+
+
+  
 }
 async function updateTokenSrc(url, container, video=false){
   url = await parse_img(url)

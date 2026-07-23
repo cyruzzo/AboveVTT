@@ -1615,10 +1615,10 @@ function build_sidebar_list_row(listItem) {
     </svg>`)
     }
     else if (!isAvttBucketFile && (tokenCustomizations?.tokenOptions?.videoToken == true || ['.mp4', '.webm','.mkv'].some(d => listingImage?.includes(d)))){
-        img = $(`<video disableRemotePlayback muted src="" loading="lazy" alt="${listItem.name} image" class="token-image video-listing" />`);   
+        img = $(`<video disableRemotePlayback muted src="" alt="${listItem.name} image" class="token-image video-listing" />`);   
         video = true;
     } else{
-        img = $(`<img src="" loading="lazy" alt="${listItem.name} image" class="token-image" />`);
+        img = $(`<img src="" alt="${listItem.name} image" class="token-image" />`);
     }
     updateImgSrc(listingImage, img, video, false);
     imgHolder.append(img);
