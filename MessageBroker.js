@@ -1888,6 +1888,7 @@ class MessageBroker {
 										<p>Player Map and DM map are not the same size. This mostly occurs with old adventures where VTTs were not taken into consideration.This will cause most things to be out of alignment between player and DM view.</p>	
 										<p>Option 1: Disable the DM map. Use hidden number tokens or text tool to label areas.</p>
 										<p>Option 2: Resize / Align the maps in something like Photoshop/gimp</p>
+										<p>If needed walls can be rescaled by using the 'Edit Points' tool -> ${getModKeyName()}+A to select all points -> ${getShiftKeyName()}+DRAG up/down to rescale the walls to fit.
 									</div>
 									<div class="error-message-buttons">
 									<button id="close-error-button">Close</button>
