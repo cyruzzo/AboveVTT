@@ -1878,7 +1878,61 @@ class MessageBroker {
 						// Store current scene width and height
 						let mapHeight = await $("#scene_map").height();
 						let mapWidth = await $("#scene_map").width();
+						if (window.DM && data.dm_map && data.dm_map_usable == '1' && data.player_map && !data.UVTTFile && !data.is_video) {
+							function showMapWarning() {
+								$("#above-vtt-error-message").remove();
+								const container = $(`
+								<div id="above-vtt-error-message">
+									<h2>Warning: Player and DM maps do not align</h2>
+									<div id="error-message-details">
+										<p>Player Map and DM map are not the same size. This mostly occurs with old adventures where VTTs were not taken into consideration.This will cause most things to be out of alignment between player and DM view.</p>	
+										<p>Option 1: Disable the DM map. Use hidden number tokens or text tool to label areas.</p>
+										<p>Option 2: Resize / Align the maps in something like Photoshop/gimp</p>
+									</div>
+									<div class="error-message-buttons">
+									<button id="close-error-button">Close</button>
+									</div>
+								</div>
+								`);
+								$(document.body).append(container);
+								$("#close-error-button").on("click", () => {
+									removeError();
+								});
+							}
+							const playerMap = new Image();
 
+							function removeEvents(){
+								playerMap.removeEventListener('load');
+								playerMap.removeEventListener('error');
+								playerMap = null;
+							}
+
+							function onLoad() {
+								const width = playerMap.naturalWidth;
+								const height = playerMap.naturalHeight;
+								if(width != mapWidth || height != mapHeight)
+									showMapWarning();
+								removeEvents();
+							}
+
+							function onError() {
+								console.warn('Failed to load player comparison map.')
+								removeEvents();
+							}
+
+							playerMap.addEventListener('load', onLoad, { once: true });
+							playerMap.addEventListener('error', onError, { once: true });
+
+							let playerUrl = data.player_map;
+
+							if(playerUrl.startsWith('above-bucket-not-a-url')){
+								playerUrl = await getAvttStorageUrl(playerUrl, true);
+							} else{
+								playerUrl = await getGoogleDriveAPILink(playerUrl)
+							}
+
+							playerMap.src = await parse_img(playerUrl);
+						}
 	
 						window.CURRENT_SCENE_DATA.conversion = 1;
 						
