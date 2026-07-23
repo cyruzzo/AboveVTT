@@ -262,11 +262,13 @@ function init_mixer() {
             playlistInput.append(option);
         });
         mixerChannels.innerHTML = "";
+
+        const docFragment = $(document.createDocumentFragment());
         let youtube_section= $("<li class='audio-row map-audio-row'></li>");;    
         let channelNameDiv = $(`<div class='channelNameOverflow'><div class='channelName'>Animated Map Audio</div>`)
         let youtube_volume = $(`<input type="range" min="0" max="100" value="${window.MIXER.state()?.animatedMap?.volume != undefined ? window.MIXER.state().animatedMap.volume : window.YTPLAYER ? window.YTPLAYER.volume : 25}" step="1" class="volume-control" id="youtube_volume">`);
         $(youtube_section).append(channelNameDiv, youtube_volume);
-        $(mixerChannels).append(youtube_section);
+        docFragment.append(youtube_section);
         youtube_volume.on("change", function() {
             const newVolume = $("#youtube_volume").val();
             const masterVolume = $("#master-volume input").val();
@@ -395,7 +397,7 @@ function init_mixer() {
                     channel.paused = true;
                     window.MIXER.updateChannel(id, channel);
                 }
-            });``
+            });
 
             if(channel.loop) {
                 loop.toggleClass('pressed', true);
@@ -443,7 +445,7 @@ function init_mixer() {
                     setTimeout(function () { waitForPlayer(id, callback)}, 250);
                 }
             }
-            mixerChannels.append(item);
+            docFragment.append(item)
             waitForPlayer(id, () => {
                 $(item).append(channelNameDiv, window.MIXER.channelVolumeSlider(id), channel_play_pause, loop, remove, window.MIXER.channelProgressBar(id));
                 
@@ -467,8 +469,9 @@ function init_mixer() {
                 }
             })
         });
-
-        $(mixerChannels).sortable({
+        const $mixerChannels = $(mixerChannels);
+        $mixerChannels.append(docFragment);
+        $mixerChannels.sortable({
             cancel:'.map-audio-row, .tokenTrack, input, .channel-progress-bar-progress, .channel-progress-bar-total',
             distance: 10,
             axis: 'y',
@@ -664,7 +667,7 @@ function init_mixer() {
                 return;
             resizeQueued = true;
             requestAnimationFrame(()=>{
-                const mixerListHeight = Math.max(0, size - 85);
+                const mixerListHeight = Math.max(0, size - 68);
                 $('#mixer-channels').css('max-height', `${mixerListHeight}px`);
                 resizeQueued = false;
             });
@@ -672,7 +675,7 @@ function init_mixer() {
         stop: function (event, ui) {
             $('.iframeResizeCover').remove();
         },
-        minHeight: 236
+        minHeight: 150
     });
 }
 

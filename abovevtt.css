@@ -12192,10 +12192,11 @@ li.audio-row:hover .channel-progress-bar-total
 #mixer-channels{
     overflow-y: auto;
     padding-bottom: 2px;
-    max-height: calc(100% - 85px);
+    max-height: calc(100% - 68px);
 }
 #sounds-panel .sidebar-panel-header{
     max-height: calc(100% - 16px);
+    min-height: 150px;
 }
 #mixer-channels .volume-control{
     left: 0;
