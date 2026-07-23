@@ -647,6 +647,7 @@ function redraw_token_list(searchTerm, enableDraggable = true, leaveEmpty=false)
         // don't do anything on startup
         return;
     }
+   
     console.group("redraw_token_list");
     update_token_folders_remembered_state();
     let list = $(`<div class="custom-token-list"></div>`);
@@ -2746,7 +2747,7 @@ function display_aoe_token_configuration_modal(listItem, placedToken = undefined
     // close any that are already open just to be safe
     let sidebarPanel;
     let name = listItem.name;
-    if(!selectedTokenImage && !redrawPanel){ // we just want to redraw the panel options not the images since we selected a token image to edit
+    if(!selectedTokenImage && !redrawPanel){ 
         close_sidebar_modal();
         sidebarPanel = new SidebarPanel("token-configuration-modal");
         
@@ -3526,6 +3527,8 @@ function display_aoe_token_configuration_modal(listItem, placedToken = undefined
     // token options override
     let tokenOptionsButton = build_override_token_options_button(sidebarPanel, listItem, placedToken, targetOptions, function(name, value) {
         customization.setTokenOption(name, value);
+        const selectedTokenImage = $('.example-token.selected .div-token-image').attr('data-src');
+        redraw_token_images_in_modal(sidebarPanel, listItem, placedToken, undefined, selectedTokenImage);
     }, function () {
         let devilsightInput = $("input[name='devilsightColor']").spectrum("get");
         let truesightInput = $("input[name='truesightColor']").spectrum("get");
@@ -3542,7 +3545,8 @@ function display_aoe_token_configuration_modal(listItem, placedToken = undefined
         persist_token_customization(customization);
         redraw_settings_panel_token_examples(customization.tokenOptions);
         const selectedTokenImage = $('.example-token.selected .div-token-image').attr('data-src');
-        redraw_token_images_in_modal(sidebarPanel, listItem, placedToken, undefined, selectedTokenImage);
+        display_token_configuration_modal(listItem, placedToken, selectedTokenImage, sidebarPanel);
+
     });
 
     inputWrapper.append(tokenOptionsButton);
@@ -3817,48 +3821,37 @@ function redraw_token_images_in_modal(sidebarPanel, listItem, placedToken, drawI
           return `class=aoe-token-tileable aoe-style-${aoeStyle.toLowerCase()} aoe-shape-${listItem.shape}`
         })
     }
+    const exampleImageChunkSize = 14;
+    let nextIndex = 0;
 
-    function* addExampleToken(index) {
-        
-        while(index < index+8 && index<alternativeImages.length){
-            setTimeout(function(){
-                if(index < alternativeImages.length){
-                    let tokenDiv = build_token_div_for_sidebar_modal(alternativeImages[index], listItem, placedToken);
-                    const image = parse_img(alternativeImages[index]);
-                    if((currentlySelectedToken != undefined &&  image == currentlySelectedToken) || (selectedTokenImage != undefined && image == selectedTokenImage))
-                        tokenDiv.toggleClass('selected', true);
-                    if(defaultImage != undefined && defaultImage == alternativeImages[index])
-                        tokenDiv.toggleClass('default-token-image');
-                    modalBody.append(tokenDiv);
-                    index++;
-                }
-            })
-            yield
-        }
-       
+    function appendNextBatch() {
+        const batch = alternativeImages.slice(nextIndex, nextIndex + exampleImageChunkSize);
+        const fragment = document.createDocumentFragment();
+
+        batch.forEach(imageUrl => {
+            const tokenDiv = build_token_div_for_sidebar_modal(imageUrl, listItem, placedToken);
+            const image = parse_img(imageUrl);
+            if ((currentlySelectedToken && image === currentlySelectedToken) || (selectedTokenImage && image === selectedTokenImage)) {
+                tokenDiv.toggleClass('selected', true);
+            }
+            if (defaultImage && defaultImage === imageUrl) {
+                tokenDiv.toggleClass('default-token-image');
+            }
+            fragment.appendChild(tokenDiv[0]);
+        });
+
+        modalBody.append(fragment);
+        nextIndex += batch.length;
     }
-    let buildToken = addExampleToken(0);
+
     const debounceExampleToken = mydebounce(() => {
         if (modalBody.scrollTop() + 300 >=
             modalBody[0].scrollHeight) {
-            for (let i = 0; i < 8; i++) {
-                buildToken.next()
-            }
+            appendNextBatch();
         }
     }, 50)
     modalBody.off('scroll.exampleToken').on('scroll.exampleToken', debounceExampleToken);
-    for (let i = 0; i < alternativeImages.length; i++) {
-        if (drawInline) {
-            let tokenDiv = build_token_div_for_sidebar_modal(alternativeImages[i], listItem, placedToken);
-            if(defaultImage != undefined && defaultImage == alternativeImages[i])
-                tokenDiv.toggleClass('default-token-image');
-            modalBody.append(tokenDiv);
-        } else {
-            if(i<13){
-                buildToken.next();
-            }
-        }
-    }
+    appendNextBatch();
 
     if (alternativeImages.length === 0) {
         sidebarPanel.footer.find(".token-image-modal-url-label-add-wrapper > .token-image-modal-url-label-wrapper > .token-image-modal-footer-title").text("Replace The Default Image");
@@ -4117,7 +4110,7 @@ function inject_encounter_monsters() {
 function did_change_mytokens_items() {
     rebuild_token_items_list();
     filter_token_list($('[name="token-search"]').val() ? $('[name="token-search"]').val() : "");
-}
+}   
 
 /**
  * creates an iframe that loads a monster stat block for the given item

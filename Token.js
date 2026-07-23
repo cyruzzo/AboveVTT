@@ -1069,15 +1069,17 @@ class Token {
 		let paddingX = 0;
 		let paddingY = 0;
 		
-
-
+		if(this.options.tokenStyleSelect == "undefined")// I believe this only happens in the sidepanel
+			delete this.options.tokenStyleSelect;
+			
+		const tokenStyle = this.options.tokenStyleSelect ?? "circle";
 
 		if(this.options.disableaura || !this.hp || !this.maxHp) {
 			token.css('--token-hp-aura-color', 'transparent');
 			token.css('--token-temp-hp', "transparent");
 		} 
 		else {
-			if(this.options.tokenStyleSelect === "circle" || this.options.tokenStyleSelect === "square"){
+			if(tokenStyle === "circle" || tokenStyle === "square"){
 				paddingX += window.CURRENT_SCENE_DATA.hpps/10;
 				paddingY += window.CURRENT_SCENE_DATA.vpps/10;
 			}
@@ -1093,7 +1095,7 @@ class Token {
 			token.css('--token-border-color', 'transparent');
 		} 
 		else {
-			if(this.options.tokenStyleSelect === "circle" || this.options.tokenStyleSelect === "square"){
+			if(tokenStyle === "circle" || tokenStyle === "square"){
 				paddingX += Math.min(1, window.CURRENT_SCENE_DATA.hpps/40);
 				paddingY += Math.min(1, window.CURRENT_SCENE_DATA.vpps/40);
 			}
@@ -1104,7 +1106,7 @@ class Token {
 			token.css('--token-hpbar-display', 'none');
 		}
 		else {
-			if(this.options.tokenStyleSelect === "circle" || this.options.tokenStyleSelect === "square"){
+			if(tokenStyle === "circle" || tokenStyle === "square"){
 				paddingX += window.CURRENT_SCENE_DATA.hpps/10;
 				paddingY += window.CURRENT_SCENE_DATA.vpps/10;
 			}
