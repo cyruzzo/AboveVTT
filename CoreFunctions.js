@@ -940,13 +940,14 @@ function add_journal_roll_buttons(target, tokenId=undefined, specificImage=undef
   
   
   const $currTarget = $(target) 
-  if($currTarget.closest('.ct-sidebar__inner').length>0){
+  const sidebar = $currTarget.closest('.ct-sidebar__inner');
+  if(sidebar.length>0 && sidebar.find(`[class*='styles_gameLogPane']`).length == 0){
     
     const currentTargetClone = $currTarget.clone(true, true);
     currentTargetClone.show(); // incase of edits
     $currTarget.hide();
     $currTarget.before(currentTargetClone);
-
+    currentTargetClone.find(`[style*='display: none']`).remove();
     //observer to see if original data edited
     const observer = new MutationObserver((mutationsList) => {
         for (const mutation of mutationsList) {
@@ -961,10 +962,10 @@ function add_journal_roll_buttons(target, tokenId=undefined, specificImage=undef
     
     observer.observe($(target)[0], { childList: true, characterData: true, subtree: true })
     target = currentTargetClone;
-
   } 
-
+  
   $(target).html($newHTML[0].innerHTML);
+  $(target).find('.above-vtt-visited[style*="display: none"]').remove();
   
 
  
