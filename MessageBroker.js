@@ -1889,6 +1889,7 @@ class MessageBroker {
 										<p>Option 1: Disable the DM map. Use hidden number tokens or text tool to label areas.</p>
 										<p>Option 2: Resize / Align the maps in something like Photoshop/gimp</p>
 										<p>If needed walls can be rescaled by using the 'Edit Points' tool -> ${getModKeyName()}+A to select all points -> ${getShiftKeyName()}+DRAG up/down to rescale the walls to fit.
+										<p>You may want to join as a player/spectator to confirm alignment after adjusting.</p>
 									</div>
 									<div class="error-message-buttons">
 									<button id="close-error-button">Close</button>
