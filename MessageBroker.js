@@ -1876,8 +1876,9 @@ class MessageBroker {
 							window.CURRENT_SCENE_DATA.scale_factor = 1;
 						let scaleFactor = window.CURRENT_SCENE_DATA.scale_factor;
 						// Store current scene width and height
-						let mapHeight = await $("#scene_map").height();
-						let mapWidth = await $("#scene_map").width();
+						const sceneMap = $('#scene_map');
+						let mapHeight = await sceneMap.height();
+						let mapWidth = await sceneMap.width();
 						if (window.DM && data.dm_map && data.dm_map_usable == '1' && data.player_map && !data.UVTTFile && !data.is_video) {
 							function showMapWarning() {
 								$("#above-vtt-error-message").remove();
@@ -1912,7 +1913,7 @@ class MessageBroker {
 							function onLoad() {
 								const width = playerMap.naturalWidth;
 								const height = playerMap.naturalHeight;
-								if(width != mapWidth || height != mapHeight)
+								if(width != sceneMap[0].naturalWidth || height != sceneMap[0].naturalHeight)
 									showMapWarning();
 								removeEvents();
 							}
