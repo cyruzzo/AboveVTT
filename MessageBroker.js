@@ -1902,11 +1902,11 @@ class MessageBroker {
 									removeError();
 								});
 							}
-							const playerMap = new Image();
+							let playerMap = new Image();
 
 							function removeEvents(){
-								playerMap.removeEventListener('load');
-								playerMap.removeEventListener('error');
+								playerMap.removeEventListener('load', onLoad);
+								playerMap.removeEventListener('error', onError);
 								playerMap = null;
 							}
 
