@@ -1271,7 +1271,8 @@ function init_mouse_zoom() {
 	if(window.mouseZoomInitialized) return;
 	window.mouseZoomInitialized = true;
 	window.addEventListener('wheel', function (e) {
-		if (e.ctrlKey) {
+		const wheelZoomAsToggle = get_avtt_setting_value?.('wheelZoomAsToggle') === true;
+		if (e.ctrlKey || wheelZoomAsToggle) {
 			e.preventDefault();
 			e.stopPropagation();
 			if (e.deltaY > MAX_ZOOM_STEP) {
@@ -3008,10 +3009,16 @@ function init_zoom_buttons() {
 	let zoom_minus = $("<div id='zoom_minus' class='ddbc-tab-options--layout-pill'><div class='ddbc-tab-options__header-heading hasTooltip button-icon hideable' data-name='zoom out (-)'><span class='material-icons button-icon'>zoom_out</span></div></div>");
 
 	zoom_minus.click(function() { throttledZoom(0.90, 0)});
+	if (get_avtt_setting_value?.('wheelZoomAsToggle') === true) {
+		zoom_minus.hide();
+	}
 	zoom_section.append(zoom_minus);
 
 	let zoom_plus = $("<div id='zoom_plus' class='ddbc-tab-options--layout-pill'><div class='ddbc-tab-options__header-heading hasTooltip button-icon hideable' data-name='zoom in (+)'><span class='material-icons button-icon'>zoom_in</span></div></div>");
 	zoom_plus.click(function() { throttledZoom(1.10, 0)});
+	if (get_avtt_setting_value?.('wheelZoomAsToggle') === true) {
+		zoom_plus.hide();
+	}
 	zoom_section.append(zoom_plus);
 
 	let hide_interface = $(`<div id='hide_interface_button' class='ddbc-tab-options--layout-pill'><div class='ddbc-tab-options__header-heading hasTooltip button-icon' data-name='Unhide interface (shift+h)'><span class='material-icons md-16 button-icon'>visibility</span></div></div>`);
