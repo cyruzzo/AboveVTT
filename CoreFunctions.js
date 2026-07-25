@@ -918,8 +918,7 @@ function add_journal_roll_buttons(target, tokenId=undefined, specificImage=undef
     .replaceAll(rechargeRegEx, `<button data-exp='1d6' data-mod='' data-rolltype='recharge' data-actiontype='Recharge' class='avtt-roll-button' title='${actionType}'>$1</button>`)
 
   updated = add_aoe_to_statblock(updated);
-
-  
+      
   let ignoreFormatting = $(currentElement).find('.ignore-abovevtt-formating');
 
   let slashCommandElements = $(currentElement).find('.abovevtt-slash-command-journal')
@@ -947,7 +946,7 @@ function add_journal_roll_buttons(target, tokenId=undefined, specificImage=undef
 
   
   
-  const $currTarget = $(target) 
+  let $currTarget = $(target) 
   const sidebar = $currTarget.closest('.ct-sidebar__inner');
   if(sidebar.length>0 && sidebar.find(`[class*='styles_gameLogPane']`).length == 0){
     
@@ -970,17 +969,18 @@ function add_journal_roll_buttons(target, tokenId=undefined, specificImage=undef
     
     observer.observe($(target)[0], { childList: true, characterData: true, subtree: true })
     target = currentTargetClone;
+    $currTarget = $(target) 
   } 
   
-  $(target).html($newHTML[0].innerHTML);
-  $(target).find('.above-vtt-visited[style*="display: none"]').remove();
-  
+  $currTarget.html($newHTML[0].innerHTML);
+  $currTarget.find('.above-vtt-visited[style*="display: none"]').remove();
+  add_aoe_statblock_click($currTarget, tokenId);
 
  
 
 
   
-  $(target).find('button.avtt-roll-button[data-rolltype]').each(function(){
+  $currTarget.find('button.avtt-roll-button[data-rolltype]').each(function(){
     const targetButton = $(this);
     let rollAction = targetButton.prevUntil('em>strong').find('strong').last().text().replace('.', '');
     rollAction = (rollAction == '') ? targetButton.prev('strong').last().text().replace('.', '') : rollAction;
@@ -1051,10 +1051,10 @@ function add_journal_roll_buttons(target, tokenId=undefined, specificImage=undef
   // terminate the clones reference, overkill but rather be safe when it comes to memory
   currentElement = null;
 
-  $(target).find(".avtt-roll-button").click(clickHandler);
-  $(target).find(".avtt-roll-button").on("contextmenu", rightClickHandler);
+  $currTarget.find(".avtt-roll-button").click(clickHandler);
+  $currTarget.find(".avtt-roll-button").on("contextmenu", rightClickHandler);
 
-  $(target).find("button.avtt-roll-formula-button").off('click.avttRoll').on('click.avttRoll', function(clickEvent) {
+  $currTarget.find("button.avtt-roll-formula-button").off('click.avttRoll').on('click.avttRoll', function(clickEvent) {
   clickEvent.stopPropagation();
 
     const slashCommand = $(clickEvent.currentTarget).attr("data-slash-command");
@@ -1063,7 +1063,7 @@ function add_journal_roll_buttons(target, tokenId=undefined, specificImage=undef
     const diceRoll = DiceRoll.fromSlashCommand(slashCommand, tokenName, tokenImage, entityType, tokenId, damageType); // TODO: add gamelog_send_to_text() once that's available on the characters page without avtt running
     window.diceRoller.roll(diceRoll, undefined, undefined, undefined, undefined, damageType);
   });
-  $(target).find(`button.avtt-roll-formula-button`).off('contextmenu.rpg-roller').on('contextmenu.rpg-roller', function(e){
+  $currTarget.find(`button.avtt-roll-formula-button`).off('contextmenu.rpg-roller').on('contextmenu.rpg-roller', function(e){
     e.stopPropagation();
     e.preventDefault();
     let rollData = {}
