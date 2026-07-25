@@ -325,7 +325,7 @@ const buffsDebuffs = {
     "type": "feat",
     "replace": /(.)$/gi,//last character
     "replaceType": {
-      "damage": '[class*="styles_attack"]:has(.ddbc-note-components__component:contains("Heavy"))' //looks for Heavy trait in item note
+      "dmg": '[class*="styles_attack"]:has(.ddbc-note-components__component:contains("Heavy"))' //looks for Heavy trait in item note
     },
     "newRoll": '$1+PB', //add proficiency
   },
@@ -336,7 +336,7 @@ const buffsDebuffs = {
     "check": "0",
     "replace": /(\d+d\d+)/gi,
     "replaceType": {
-      "damage": 'button' 
+      "dmg": 'button' 
     },
     "newRoll": '$1ro<2',//reroll 1
     "type": "feat",
@@ -1046,7 +1046,7 @@ const buffsDebuffs = {
         "check": "0",
         "replace": /^(\d+d\d+)/gi,//find first roll
         "replaceType": {
-          "damage": 'button:has(.ddbc-damage--versatile), .ddbc-combat-item-attack--melee:has(.ddbc-note-components__component:contains("Two-Handed"))' //looks for versatile 2 hand button or two-handed trait in item note
+          "dmg": 'button:has(.ddbc-damage--versatile), .ddbc-combat-item-attack--melee:has(.ddbc-note-components__component:contains("Two-Handed"))' //looks for versatile 2 hand button or two-handed trait in item note
         },
         "newRoll": '$1min3',//replace with original roll with minimum roll of 3
       },
@@ -1057,7 +1057,7 @@ const buffsDebuffs = {
         "check": "0",
         "replace": /^(\d+d\d+)/gi,//find first roll
         "replaceType": {
-            "damage": 'button:has(.ddbc-damage--versatile), .ddbc-combat-item-attack--melee:has(.ddbc-note-components__component:contains("Two-Handed"))' //looks for versatile 2 hand button or two-handed trait in item note
+            "dmg": 'button:has(.ddbc-damage--versatile), .ddbc-combat-item-attack--melee:has(.ddbc-note-components__component:contains("Two-Handed"))' //looks for versatile 2 hand button or two-handed trait in item note
         },
         "newRoll": '$1ro<3',//reroll 1 & 2
       },
