@@ -258,6 +258,26 @@ function token_setting_options() {
 			defaultValue: "count"
 		},
 		{
+			name: "squareAura",
+			label: "Square Aura",
+			type: "toggle",
+			options: [
+				{ value: true, label: "Square", description: "The token's aura is a square when enabled and a circle otherwise." },
+				{ value: false, label: "Circle", description: "The token's aura is a square when enabled and a circle otherwise." }
+			],
+			defaultValue: false
+		},
+		{
+			name: "squareLight",
+			label: "Square Vision/Light",
+			type: "toggle",
+			options: [
+				{ value: true, label: "Square", description: "The token's vision/light is a square when enabled and a circle otherwise." },
+				{ value: false, label: "Circle", description: "The token's vision/light is a square when enabled and a circle otherwise." }
+			],
+			defaultValue: false
+		},
+		{
 			name: "auraislight",
 			label: "Enable Token Vision/Light",
 			type: 'toggle',
@@ -621,6 +641,17 @@ function avtt_settings() {
 		defaultValue: false,
 		class: 'ui',
 		global: 1
+	})
+	settings.push({
+		name: "circleIsSquare",
+		label: "Circle AoE is Square",
+		type: "toggle",
+		options: [
+			{ value: true, label: "Enable", description: `If enabled any circle AoE dropped from a statblock/player sheet will be placed as a square instead` },
+			{ value: false, label: "Disable", description: `If enabled any circle AoE dropped from a statblock/player sheet will be placed as a square instead` }
+		],
+		defaultValue: false,
+		class: 'ui'
 	})
 	settings.push(
 	{

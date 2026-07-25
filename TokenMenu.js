@@ -517,7 +517,7 @@ function token_context_menu_expanded(tokenIds, e, crossScenePortalData) {
 						const copyLink = `${tokenIds};${window.CURRENT_SCENE_DATA.id}`
 						navigator.clipboard.writeText(copyLink);
 						showTempMessage('Portal ID copied to clipboard');
-					});0
+					});
 					body.append(copyPortalId);
 				}
 				
@@ -2105,7 +2105,7 @@ function build_token_auras_inputs(tokenIds) {
 	}
 	
 	let tokensSquareAura = tokens.map(t => t.options.squareAura);
-	let uniqueSquareAura = [...new Set(hideAuraFromPlayers)];
+	let uniqueSquareAura = [...new Set(tokensSquareAura)];
 	let squareAuraIsEnabled = null;
 	if (uniqueSquareAura.length === 1) {
 		squareAuraIsEnabled = uniqueSquareAura[0];
@@ -2614,8 +2614,32 @@ function build_token_light_inputs(tokenIds, door=false) {
 	if(!window.DM){
 		enabledLightInput.hide();
 	}
+	let tokensSquareLight = tokens.map(t => t.options.squareLight);
+	let uniqueSquareLight = [...new Set(tokensSquareLight)];
+	let squareLightIsEnabled = null;
+	if (uniqueSquareLight.length === 1) {
+		squareLightIsEnabled = uniqueSquareLight[0];
+	}
+	const squareLight = {
+		name: "squareLight",
+		label: "Square Vision/Light",
+		type: "toggle",
+		options: [
+			{ value: true, label: "Square", description: "The token's vision/light is a square when enabled and a circle otherwise." },
+			{ value: false, label: "Circle", description: "The token's vision/light is a square when enabled and a circle otherwise." }
+		],
+		defaultValue: false
+	};
+	const squareLightInput = build_toggle_input(squareLight, squareLightIsEnabled, function(name, newValue) {
+		console.log(`${name} setting is now ${newValue}`);
+		tokens.forEach(token => {
+			token.options[name] = newValue;
+			token.place_sync_persist();
+		});
+	});
 
-	wrapper.find(".token-config-aura-wrapper").prepend(revealVisionInput);
+	
+	wrapper.find(".token-config-aura-wrapper").prepend(squareLightInput, revealVisionInput);
 	
 
 	wrapper.find("h3.token-image-modal-footer-title").after(enabledLightInput);
@@ -2624,6 +2648,8 @@ function build_token_light_inputs(tokenIds, door=false) {
 	} else {
 		wrapper.find(".token-config-aura-wrapper").hide();
 	}
+
+	
 
 	let radiusInputs = wrapper.find('input.light-radius, input.vision-radius');
 	radiusInputs.on('keyup', function(event) {
@@ -4036,11 +4062,12 @@ function build_adjustments_flyout_menu(tokenIds) {
 			return e.player == true;
 		});
 	}
+	const skipSettings = ['maxAge', 'defaultmaxhptype', 'placeType', 'lockRestrictDrop', 'hidden', 'squareAura', 'squareLight']
 	for(let i = 0; i < token_settings.length; i++) {
 		let setting = token_settings[i];
 		if (allTokensAreAoe && !availableToAoe.includes(setting.name)) {
 			continue;
-		} else if(setting.hiddenSetting || setting.name == 'maxAge' || setting.name == 'defaultmaxhptype' || setting.name == 'placeType' || setting.globalSettingOnly || setting.name == 'lockRestrictDrop' || setting.name == 'hidden' ) {
+		} else if(setting.hiddenSetting || setting.globalSettingOnly || skipSettings.includes(setting.name)) {
 			continue;
 		}
 
