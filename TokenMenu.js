@@ -3373,7 +3373,7 @@ function build_menu_stat_inputs(tokenIds) {
 				if(newValue.indexOf("+") == 0 || newValue.indexOf("-") == 0){
 					newMaxHP = token.maxHp + parseInt(newValue);
 				} else{
-					const sanitizedString = newHP.replaceAll(/[^\d+-/*().]/gi, '');
+					const sanitizedString = newMaxHP.replaceAll(/[^\d+-/*().]/gi, '');
 					newMaxHP = Math.max(0, parseInt(eval(sanitizedString)));
 				}
 				token.maxHp = newMaxHP;
@@ -3399,7 +3399,7 @@ function build_menu_stat_inputs(tokenIds) {
 			if(newValue.indexOf("+") == 0 || newValue.indexOf("-") == 0){
 				newMaxHP = token.maxHp + parseInt(newValue);
 			} else{
-				const sanitizedString = newHP.replaceAll(/[^\d+-/*().]/gi, '');
+				const sanitizedString = newMaxHP.replaceAll(/[^\d+-/*().]/gi, '');
 				newMaxHP = Math.max(0, parseInt(eval(sanitizedString)));
 			}
 			token.maxHp = newMaxHP;
