@@ -2105,7 +2105,7 @@ function build_token_auras_inputs(tokenIds) {
 	}
 	
 	let tokensSquareAura = tokens.map(t => t.options.squareAura);
-	let uniqueSquareAura = [...new Set(hideAuraFromPlayers)];
+	let uniqueSquareAura = [...new Set(tokensSquareAura)];
 	let squareAuraIsEnabled = null;
 	if (uniqueSquareAura.length === 1) {
 		squareAuraIsEnabled = uniqueSquareAura[0];
