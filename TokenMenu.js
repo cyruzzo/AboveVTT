@@ -517,7 +517,7 @@ function token_context_menu_expanded(tokenIds, e, crossScenePortalData) {
 						const copyLink = `${tokenIds};${window.CURRENT_SCENE_DATA.id}`
 						navigator.clipboard.writeText(copyLink);
 						showTempMessage('Portal ID copied to clipboard');
-					});0
+					});
 					body.append(copyPortalId);
 				}
 				
