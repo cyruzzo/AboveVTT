@@ -4236,7 +4236,7 @@ function setTokenAuras (token, options) {
 			: existingAura.css("opacity", 1)
 		}
 		else{
-			(options.hidden || (options.hideaura && !token.attr("data-id").includes(window.PLAYER_ID)) || showAura == 'none') ? existingAura.toggleClass('notVisible', true)
+			(options.hidden || (options.hideaura && !token.attr("data-id").includes(window.PLAYER_ID)) || showAura == 'none' || token.hasClass('notVisible')) ? existingAura.toggleClass('notVisible', true)
 				: existingAura.toggleClass('notVisible', false);
 		}
 	
