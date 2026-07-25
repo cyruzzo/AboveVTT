@@ -2103,6 +2103,33 @@ function build_token_auras_inputs(tokenIds) {
 	} else {
 		wrapper.find(".token-config-aura-wrapper").hide();
 	}
+	
+	let tokensSquareAura = tokens.map(t => t.options.squareAura);
+	let uniqueSquareAura = [...new Set(hideAuraFromPlayers)];
+	let squareAuraIsEnabled = null;
+	if (uniqueSquareAura.length === 1) {
+		squareAuraIsEnabled = uniqueSquareAura[0];
+	}
+	const squareAura = {
+		name: "squareAura",
+		label: "Square Aura",
+		type: "toggle",
+		options: [
+			{ value: true, label: "Square", description: "The token's aura is a square when enabled and a circle otherwise." },
+			{ value: false, label: "Circle", description: "The token's aura is a square when enabled and a circle otherwise." }
+		],
+		defaultValue: false
+	};
+	const squareAuraInput = build_toggle_input(squareAura, squareAuraIsEnabled, function(name, newValue) {
+		console.log(`${name} setting is now ${newValue}`);
+		tokens.forEach(token => {
+			token.options[name] = newValue;
+			token.place_sync_persist();
+		});
+	});
+	wrapper.find(".token-config-aura-wrapper").prepend(squareAuraInput);
+	
+
 	const hideAuraLabel = (allTokensArePlayer) ? 'Hide Aura from other Players' : 'Hide Aura from Players';
 	const hideAura = {
 		name: "hideaura",
@@ -2124,6 +2151,8 @@ function build_token_auras_inputs(tokenIds) {
 	if(window.DM || (tokens.length == 1 && (window.TOKEN_OBJECTS[tokens[0].options.id].options.player_owned || allTokensArePlayer))){
 		wrapper.find(".token-config-aura-wrapper").prepend(hideAuraInput);
 	}
+
+
 	let radiusInputs = wrapper.find('input.aura-radius');
 	radiusInputs.on('keyup', function(event) {
 		let newRadius = event.target.value;
@@ -3373,7 +3402,7 @@ function build_menu_stat_inputs(tokenIds) {
 				if(newValue.indexOf("+") == 0 || newValue.indexOf("-") == 0){
 					newMaxHP = token.maxHp + parseInt(newValue);
 				} else{
-					const sanitizedString = newHP.replaceAll(/[^\d+-/*().]/gi, '');
+					const sanitizedString = newMaxHP.replaceAll(/[^\d+-/*().]/gi, '');
 					newMaxHP = Math.max(0, parseInt(eval(sanitizedString)));
 				}
 				token.maxHp = newMaxHP;
@@ -3399,7 +3428,7 @@ function build_menu_stat_inputs(tokenIds) {
 			if(newValue.indexOf("+") == 0 || newValue.indexOf("-") == 0){
 				newMaxHP = token.maxHp + parseInt(newValue);
 			} else{
-				const sanitizedString = newHP.replaceAll(/[^\d+-/*().]/gi, '');
+				const sanitizedString = newMaxHP.replaceAll(/[^\d+-/*().]/gi, '');
 				newMaxHP = Math.max(0, parseInt(eval(sanitizedString)));
 			}
 			token.maxHp = newMaxHP;
