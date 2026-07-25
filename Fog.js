@@ -749,7 +749,7 @@ function is_door_in_visible_light(door, imageData){
 
 function check_single_token_visibility(id){
 
-	if (window.DM || $("#fog_overlay").is(":hidden") || window.TOKEN_OBJECTS[id].options.combatGroupToken)
+	if (window.DM || $("#fog_overlay").is(":hidden") || window.TOKEN_OBJECTS[id].options.combatGroupToken || window.offScreenCombineContext == undefined)
 		return;	
 	
 	let auraSelectorId = id.replaceAll("/", "").replaceAll('.', '');

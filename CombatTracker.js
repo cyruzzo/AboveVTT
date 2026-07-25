@@ -755,16 +755,9 @@ function update_carousel_combat_tracker(){
 	    }
 
 	    table.find(`tr[data-target='${firstTokenId}']`).toggleClass('first-in-round', true);
-		const images = table.find(`tr td:first-of-type img[data-id^='above-bucket-not-a-url']`);
-
-		for(let image of images){
-			image = $(image);
-			const imageId = image.attr('data-id');
-			updateImgSrc(imageId, image, image.is('video'), true)
-		}
-
-
-	    if(window.DM){
+		const images = table.find(`tr td:first-of-type img`);
+	    
+		if(window.DM){
 	    		carouselContainer.find('#combat_prev_button, #combat_next_button').remove();
 	    		const prevButtonClone = $('#combat_prev_button').clone(true, true);
 			    const nextButtonClone = $('#combat_next_button').clone(true, true);
@@ -782,6 +775,15 @@ function update_carousel_combat_tracker(){
 
 	    	
 	    }
+
+		for(let image of images){
+			image = $(image);
+			const imageId = image.attr('data-id');
+			updateImgSrc(imageId, image, image.is('video'), true)
+		}
+
+
+
     }
 
 
