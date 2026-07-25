@@ -797,17 +797,18 @@ function add_aoe_statblock_click(target, tokenId = undefined){
     let feet = $(this).attr('data-size');
     const name = $(this).attr('data-name');
     const lineWidth = $(this).attr('data-line-width');
-    
-    const circleIsSquare = get_avtt_setting_value('circleIsSquare');
-    if(circleIsSquare && shape == 'circle'){
-      shape = 'square';
-      feet *= 2;
-    }
+
+
 
     if(is_abovevtt_page() || window.self != window.top){
       window.top.hide_player_sheet();
       window.top.minimize_player_sheet();
-
+      const circleIsSquare = window.top.get_avtt_setting_value('circleIsSquare');
+      shape = window.top.sanitize_aoe_shape(shape);
+      if(circleIsSquare && shape == 'circle'){
+        shape = 'square';
+        feet *= 2;
+      }
 
       let options = window.top.build_aoe_token_options(color, shape, feet / window.top.CURRENT_SCENE_DATA.fpsq, name, lineWidth / window.top.CURRENT_SCENE_DATA.fpsq)
       if(name == 'Darkness' || name == 'Maddening Darkness' ){

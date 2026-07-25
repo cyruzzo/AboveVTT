@@ -245,7 +245,15 @@ $(function() {
             }
           }                 
           if(event.data.msgType=='placeAoe' && (event.data.sendTo == window.PLAYER_ID || (window.DM && event.data.sendTo == false)))  {
-              let options = build_aoe_token_options(event.data.data.color, event.data.data.shape, event.data.data.feet / window.CURRENT_SCENE_DATA.fpsq, event.data.data.name, event.data.data.lineWidth / window.CURRENT_SCENE_DATA.fpsq)
+              let shape = sanitize_aoe_shape(event.data.data.shape);
+              let feet = event.data.data.feet;
+              const circleIsSquare = window.top.get_avtt_setting_value('circleIsSquare');
+              if(circleIsSquare && shape == 'circle'){
+                shape = 'square';
+                feet *= 2;
+              }
+
+              let options = build_aoe_token_options(event.data.data.color, shape, feet / window.CURRENT_SCENE_DATA.fpsq, event.data.data.name, event.data.data.lineWidth / window.CURRENT_SCENE_DATA.fpsq)
               if(name == 'Darkness' || name == 'Maddening Darkness' ){
                 options = {
                   ...options,

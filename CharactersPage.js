@@ -2273,15 +2273,16 @@ function observe_character_sheet_changes(documentToObserve) {
           button.css("border-width","1px");
           button.click(function(e) {
             e.stopPropagation();
-            const circleIsSquare = get_avtt_setting_value('circleIsSquare');
-            let newShape = shape;
-            let newFeet = feet;
-            if(circleIsSquare && shape == 'circle'){
-              newShape = 'square';
-              newFeet *= 2;
-            }
+
             // hide the sheet, and drop the token. Don't reopen the sheet because they probably  want to position the token right away
             if(is_abovevtt_page() || window.self != window.top){
+              const circleIsSquare = window.top.get_avtt_setting_value('circleIsSquare');
+              let newShape = shape;
+              let newFeet = feet;
+              if(circleIsSquare && shape == 'circle'){
+                newShape = 'square';
+                newFeet *= 2;
+              }
               window.top.hide_player_sheet();
               window.top.minimize_player_sheet();
 
