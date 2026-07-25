@@ -4184,7 +4184,8 @@ function setAudioAura (token, options){
 
 function setTokenAuras (token, options) {
 	if (!options.aura1 || options.id.includes('exampleToken')) return;
-
+	const tokenId = options.id.replaceAll("/", "").replaceAll('.', '');
+	let existingAura = token.parent().parent().find("#aura_" + tokenId);
 	const innerAuraSize = options.aura1.feet.length > 0 ? (options.aura1.feet / parseFloat(window.CURRENT_SCENE_DATA.fpsq)) * window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.scale_factor  : 0;
 	const outerAuraSize = options.aura2.feet.length > 0 ? (options.aura2.feet / parseFloat(window.CURRENT_SCENE_DATA.fpsq)) * window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.scale_factor  : 0;
 	if ((innerAuraSize > 0 || outerAuraSize > 0) && options.auraVisible) {
@@ -4195,15 +4196,15 @@ function setTokenAuras (token, options) {
 		const auraBg = `radial-gradient(${options.aura1.color} ${auraRadius}px, ${options.aura2.color} ${auraRadius}px ${totalAura}px);`;
 		const totalSize = (2 * totalAura);
 		const absPosOffset = (options.size/window.CURRENT_SCENE_DATA.scale_factor - totalSize) / 2;
-		const tokenId = options.id.replaceAll("/", "").replaceAll('.', '');
-		const showAura = (token.parent().parent().find("#aura_" + tokenId).length > 0) ? token.parent().parent().find("#aura_" + tokenId).css('display') : '';
+		
+		const showAura = (existingAura.length > 0) ? existingAura.css('display') : '';
 		
 		const color1Values = options.aura1.color.replace(/[a-zA-Z\(\)\s]/g, '').split(',').splice(0, 3).join();
 		const color2Values = options.aura2.color.replace(/[a-zA-Z\(\)\s]/g, '').split(',').splice(0, 3).join();
 		const opacity1Value = options.aura1.color.replace(/[a-zA-Z\(\)\s]/g, '').split(',').splice(3, 1);
 		const opacity2Value = options.aura2.color.replace(/[a-zA-Z\(\)\s]/g, '').split(',').splice(3, 1);
 		
-
+		
 
 		const auraStyles = `width:${totalSize}px;
 							height:${totalSize}px;
@@ -4223,57 +4224,57 @@ function setTokenAuras (token, options) {
 							--radius2: ${totalAura}px;
 							--rotation: ${options.rotation}deg;
 							`;
-		if (token.parent().parent().find("#aura_" + tokenId).length > 0) {
-			token.parent().parent().find("#aura_" + tokenId).attr("style", auraStyles);	
+		if (existingAura.length > 0) {
+			existingAura.attr("style", auraStyles);	
 		} else {
-			const auraElement = $(`<div class='aura-element' id="aura_${tokenId}" data-id='${token.attr("data-id")}' style='${auraStyles}' />`);
-			auraElement.contextmenu(function(){return false;});
-			$("#scene_map_container").prepend(auraElement);
+			existingAura = $(`<div class='aura-element' id="aura_${tokenId}" data-id='${token.attr("data-id")}' style='${auraStyles}' />`);
+			existingAura.contextmenu(function(){return false;});
+			$("#scene_map_container").prepend(existingAura);
 		}
 		if(window.DM){
-			options.hidden ? token.parent().parent().find("#aura_" + tokenId).css("opacity", 0.5)
-			: token.parent().parent().find("#aura_" + tokenId).css("opacity", 1)
+			options.hidden ? existingAura.css("opacity", 0.5)
+			: existingAura.css("opacity", 1)
 		}
 		else{
-			(options.hidden || (options.hideaura && !token.attr("data-id").includes(window.PLAYER_ID)) || showAura == 'none') ? token.parent().parent().find("#aura_" + tokenId).toggleClass('notVisible', true)
-				: token.parent().parent().find("#aura_" + tokenId).toggleClass('notVisible', false);
+			(options.hidden || (options.hideaura && !token.attr("data-id").includes(window.PLAYER_ID)) || showAura == 'none') ? existingAura.toggleClass('notVisible', true)
+				: existingAura.toggleClass('notVisible', false);
 		}
-		const currAura = token.parent().parent().find("#aura_" + tokenId);
+	
 		if (window.ON_SCREEN_TOKENS[options.id] == undefined)
 			window.ON_SCREEN_TOKENS[options.id] = {};
-		window.ON_SCREEN_TOKENS[options.id].onScreenAura = currAura; 
+		window.ON_SCREEN_TOKENS[options.id].onScreenAura = existingAura; 
 		if(options.animation?.aura && options.animation?.aura != 'none'){
 			if(options.animation.customAuraMask != undefined){
 				if(options.animation.customAuraRotate == true){
-					currAura.attr('data-animation', 'aurafx-rotate')
+					existingAura.attr('data-animation', 'aurafx-rotate')
 					if (options.animation.customAuraRpm) {
-						currAura.css('--custom-rotate-rpm', `${60/options.animation.customAuraRpm}s`)
+						existingAura.css('--custom-rotate-rpm', `${60/options.animation.customAuraRpm}s`)
 					}
 				}
 				else{
-					currAura.attr('data-animation', '')
+					existingAura.attr('data-animation', '')
 				}
-				currAura.attr('data-custom-animation', 'true')
+				existingAura.attr('data-custom-animation', 'true')
 
-				currAura.css('--custom-mask-image', `url('${parse_img(options.animation.customAuraMask)}')`)
+				existingAura.css('--custom-mask-image', `url('${parse_img(options.animation.customAuraMask)}')`)
 				if (options.animation.customAuraMask?.includes('above-bucket-not-a-url')){
 					setAvttFilePickerCssVar({
 						var: '--custom-mask-image', 
-						target: currAura,
+						target: existingAura,
 						url: options.animation.customAuraMask
 					})
 				}
 			}
 			else{
-				currAura.attr('data-animation', options.animation.aura)
+				existingAura.attr('data-animation', options.animation.aura)
 			}				
 		}
 		else{
-			currAura.removeAttr('data-animation')
+			existingAura.removeAttr('data-animation')
 		}
+		existingAura.toggleClass('square-aura-element', options.squareAura == true);
 	} else {
-		const tokenId = token.attr("data-id").replaceAll("/", "");
-		token.parent().parent().find("#aura_" + tokenId).remove();
+		existingAura.remove();
 	}
 }
 

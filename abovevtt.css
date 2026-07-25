@@ -11122,6 +11122,17 @@ button.resistanceButton.qrm_buttons_bar span {
     background: #fff;
 }
 
+div.square-aura-element[id*='aura_'] {
+  background-image: none !important;
+  --thickness2: calc(var(--radius2) - var(--radius1));
+  box-sizing: border-box;
+  padding: var(--thickness2);
+  background-color: color-mix(in srgb, rgba(var(--color1)) calc(100% * var(--opacity1)), transparent 0%);
+  background-clip: content-box;
+  box-shadow: inset 0 0 0 var(--thickness2) color-mix(in srgb, rgba(var(--color2)) calc(100% * var(--opacity2)), transparent 0%);;
+  border-radius: 0;
+}
+
 .aura-element{
     rotate: var(--rotation);
 }
