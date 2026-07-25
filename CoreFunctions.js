@@ -2429,47 +2429,55 @@ async function normalize_scene_urls(scenes) {
 async function getAvttStorageUrl(url, highPriority = false){
   return await getFileFromS3(url.replace('above-bucket-not-a-url/', ''), highPriority);
 }
-async function updateImgSrc(url, container, video, highPriority = true, callback = () =>{}){
+async function updateImgSrc(url, container, video, highPriority = true, callback){
   
-    container.attr('data-url', url);
+ 
     const handleIntersection = (entries, observer) => {
       entries.forEach(async (entry) => {
-        if (entry.isIntersecting) {
-          const targetContainer = $(entry.target);
-          let url = targetContainer.attr('data-url');
-          targetContainer.removeAttr('data-url');
-          if(video == true && url?.includes('onedrive')){
-              targetContainer.attr('src', url.replace('embed?', 'download?'));
-            }
-            else if(url.includes("https://1drv.ms/"))
-            {
-              if(url.split('/')[4].length == 1){
-                url = url;
-              }
-              else{
-                url = "https://api.onedrive.com/v1.0/shares/u!" + btoa(url) + "/root/content";
-              }
-              targetContainer.attr('src', url);
+        if (!entry.isIntersecting)  return;
+        
+        const state = window.updateImageState.get(entry.target);
+        if(!state) return;
 
-            }
-            else if(url?.includes('google')){
-              throttleImgSrc(() => {
-                targetContainer.attr('src', parse_img(url));
-              })
-            }
-            else if(url.startsWith('above-bucket-not-a-url'))
-            {
-              url = await getAvttStorageUrl(url, true)
-              targetContainer.attr('src', url);
-              callback();
+        const targetContainer = $(entry.target);
+        let url = state.url;
+
+          if(video == true && url?.includes('onedrive')){
+            targetContainer.attr('src', url.replace('embed?', 'download?'));
+          }
+          else if(url.includes("https://1drv.ms/"))
+          {
+            if(url.split('/')[4].length == 1){
+              url = url;
             }
             else{
-              url = parse_img(url);
-              targetContainer.attr('src', url);
+              url = "https://api.onedrive.com/v1.0/shares/u!" + btoa(url) + "/root/content";
             }
-          
-          observer.unobserve(entry.target);
-        }
+            targetContainer.attr('src', url);
+
+          }
+          else if(url?.includes('google')){
+            throttleImgSrc(() => {
+              targetContainer.attr('src', parse_img(url));
+            })
+          }
+          else if(url.startsWith('above-bucket-not-a-url'))
+          {
+            url = await getAvttStorageUrl(url, true)
+            targetContainer.attr('src', url);
+            if (state.callback && !state.callbackFired) {
+              state.callbackFired = true;
+              state.callback();
+            }
+          }
+          else{
+            url = parse_img(url);
+            targetContainer.attr('src', url);
+          }
+        
+        observer.unobserve(entry.target);
+        window.updateImageState.delete(entry.target);
+        
       });
     };
 
@@ -2482,16 +2490,18 @@ async function updateImgSrc(url, container, video, highPriority = true, callback
 
     if(!window.inViewObserver)
       window.inViewObserver = new IntersectionObserver(handleIntersection, options);
+    if(!window.updateImageState)
+      window.updateImageState = new WeakMap();
 
-
+    window.updateImageState.set(container[0], {
+      url,
+      callback,
+      callbackFired: false
+    });
 
     window.inViewObserver.observe(container[0]);
-    
-
-
-
-  
 }
+
 async function updateTokenSrc(url, container, video=false){
   url = await parse_img(url)
   if(video == true && url?.includes('onedrive')){
