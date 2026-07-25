@@ -245,7 +245,7 @@ $(function() {
             }
           }                 
           if(event.data.msgType=='placeAoe' && (event.data.sendTo == window.PLAYER_ID || (window.DM && event.data.sendTo == false)))  {
-              let shape = event.data.data.shape;
+              let shape = sanitize_aoe_shape(event.data.data.shape);
               let feet = event.data.data.feet;
               const circleIsSquare = window.top.get_avtt_setting_value('circleIsSquare');
               if(circleIsSquare && shape == 'circle'){
