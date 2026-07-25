@@ -2251,19 +2251,21 @@ function observe_character_sheet_changes(documentToObserve) {
           const spellContainer = $(this).closest('.ct-spells-spell')
           const name = spellContainer.find(".ddbc-spell-name, [class*='styles_spellName']").first().text()
           let color = "default"
-          const feet = $(this).prev().find("[class*='styles_numberDisplay'] span:first-of-type").text();
+          let feet = $(this).prev().find("[class*='styles_numberDisplay'] span:first-of-type").text();
           const dmgIcon = $(this).closest('.ct-spells-spell').find('.ddbc-damage-type-icon');
           if (dmgIcon.length == 1){
             color = dmgIcon.attr('class').split(' ').filter(d => d.startsWith('ddbc-damage-type-icon--'))[0].split('--')[1];
           }
           let shape = $(this).find('svg').first().attr('class').split(' ').filter(c => c.startsWith('ddbc-aoe-type-icon--'))[0].split('--')[1];
           shape = window.top.sanitize_aoe_shape(shape)
+
           button.attr("title", "Place area of effect token")
           button.attr("data-shape", shape);
           button.attr("data-style", color);
           button.attr("data-size", feet);
           button.attr("data-name", name);
 
+              
           // Players need the token side panel for this to work for them.
           // adjustments will be needed in enable_Draggable_token_creation when they do to make sure it works correctly
           // set_full_path(button, `${RootFolder.Aoe.path}/${shape} AoE`)
@@ -2271,13 +2273,20 @@ function observe_character_sheet_changes(documentToObserve) {
           button.css("border-width","1px");
           button.click(function(e) {
             e.stopPropagation();
+            const circleIsSquare = get_avtt_setting_value('circleIsSquare');
+            let newShape = shape;
+            let newFeet = feet;
+            if(circleIsSquare && shape == 'circle'){
+              newShape = 'square';
+              newFeet *= 2;
+            }
             // hide the sheet, and drop the token. Don't reopen the sheet because they probably  want to position the token right away
             if(is_abovevtt_page() || window.self != window.top){
               window.top.hide_player_sheet();
               window.top.minimize_player_sheet();
 
-
-              let options = window.top.build_aoe_token_options(color, shape, feet / window.top.CURRENT_SCENE_DATA.fpsq, name)
+      
+              let options = window.top.build_aoe_token_options(color, newShape, newFeet / window.top.CURRENT_SCENE_DATA.fpsq, name)
               if(name == 'Darkness' || name == 'Maddening Darkness' ){
                 options = {
                   ...options,
@@ -2295,7 +2304,7 @@ function observe_character_sheet_changes(documentToObserve) {
               }
             }
             else if(window.sendToTab != undefined){
-              const data = {color: color, shape: shape, feet: feet, name: name, tokenId: `/profile/${window.myUser}/characters/${window.PLAYER_ID}`}
+              const data = {color: color, shape: newShape, feet: newFeet, name: name, tokenId: `/profile/${window.myUser}/characters/${window.PLAYER_ID}`}
               tabCommunicationChannel.postMessage({
                 msgType: 'placeAoe',
                 data: data,

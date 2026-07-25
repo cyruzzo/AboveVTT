@@ -730,6 +730,7 @@ function sanitize_aoe_shape(shape){
             shape = "square";
             break;
         case "sphere":
+        case "emanation":
             shape = "circle";
             break;
         case "cylinder":
@@ -792,10 +793,16 @@ function add_aoe_statblock_click(target, tokenId = undefined){
   target.find(`button.avtt-aoe-button`).off('click.aoe').on('click.aoe', function(e) {
     e.stopPropagation();
     const color = $(this).attr('data-style');
-    const shape = $(this).attr('data-shape');
-    const feet = $(this).attr('data-size');
+    let shape = $(this).attr('data-shape')
+    let feet = $(this).attr('data-size');
     const name = $(this).attr('data-name');
     const lineWidth = $(this).attr('data-line-width');
+    
+    const circleIsSquare = get_avtt_setting_value('circleIsSquare');
+    if(circleIsSquare && shape == 'circle'){
+      shape = 'square';
+      feet *= 2;
+    }
 
     if(is_abovevtt_page() || window.self != window.top){
       window.top.hide_player_sheet();

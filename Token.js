@@ -4361,7 +4361,7 @@ function setTokenLight (token, options) {
 							--rotation: ${options.rotation}deg;
 							`;
 
-
+		
 
 		const visionRadius = visionSize ? (visionSize + (optionsSize / 2)) : 0;
 		const visionBg = `radial-gradient(${options.vision?.color ?? `rgba(142, 142, 142, 1)`} ${visionRadius}px, #00000000 ${visionRadius}px)`;
@@ -4420,26 +4420,26 @@ function setTokenLight (token, options) {
 		const lightElement = $(`
 			<div class='aura-clip-container'>
 				<div class='aura-element-container-clip light' style='clip-path: ${clippath};' id='${options.id}'>
-					<div class='aura-element' id="light_${tokenId}" data-id='${options.id}' style='${lightStyles}'></div>
+					<div class='aura-element ${options.squareLight ? 'square-aura-element' : ''}' id="light_${tokenId}" data-id='${options.id}' style='${lightStyles}'></div>
 				</div>
 				
 
 			</div>
 			<div class='aura-clip-container vision'>
 				<div class='aura-element-container-clip vision darkvision' style='clip-path: ${clippath};' id='${options.id}'>
-					<div class='aura-element darkvision' id="vision_${tokenId}" data-id='${options.id}' style='${visionStyles}'></div>
+					<div class='aura-element darkvision ${options.squareLight ? 'square-aura-element' : ''}' id="vision_${tokenId}" data-id='${options.id}' style='${visionStyles}'></div>
 				</div>
 			</div>
 			${parseInt(options.devilsight.feet) > 0 ? `
 				<div class='aura-clip-container devilsight vision'>
 					<div class='aura-element-container-clip vision devilsight' style='clip-path: ${devilsightClip};' id='${options.id}'>
-						<div class='aura-element devilsight' id="vision_devilsight_${tokenId}" data-id='${options.id}' style='${devilsightStyles}'></div>
+						<div class='aura-element devilsight ${options.squareLight ? 'square-aura-element' : ''}' id="vision_devilsight_${tokenId}" data-id='${options.id}' style='${devilsightStyles}'></div>
 					</div>
 				</div>` : ""
 			}
 			${parseInt(options.truesight.feet) > 0 ? `<div class='aura-clip-container truesight vision'>
 				<div class='aura-element-container-clip vision truesight' style='clip-path: ${devilsightClip};' id='${options.id}'>
-					<div class='aura-element truesight' id="vision_truesight_${tokenId}" data-id='${options.id}' style='${truesightStyles}'></div>
+					<div class='aura-element truesight ${options.squareLight ? 'square-aura-element' : ''}' id="vision_truesight_${tokenId}" data-id='${options.id}' style='${truesightStyles}'></div>
 					</div>
 				</div>` : ""
 			}

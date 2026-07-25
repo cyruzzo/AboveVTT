@@ -1996,13 +1996,14 @@ function add_tooltip_aoe_buttons(html, tokenId){
       const spellContainer = $(this).closest('.tooltip-spell');
       const name = spellContainer.find(".tooltip-header-title").first().text();
       let color = "default"
-      const feet = /([\d]+) ft/gi.exec(spellContainer.find('.aoe-size').text())[1];
+      let feet = /([\d]+) ft/gi.exec(spellContainer.find('.aoe-size').text())[1];
       const dmgType = spellContainer.find(`[class*='-damage'] i[class*='i-type']`)?.attr('class')?.split('-')[2];
       if (dmgType != undefined && dmgType != ''){
         color = dmgType.toLowerCase();
       }
       let shape = $(this).attr('class').split(' ').filter(c => c.startsWith('i-aoe-'))[0].split('-')[2];
       shape = window.sanitize_aoe_shape(shape)
+
       button.attr("title", "Place area of effect token")
       button.attr("data-shape", shape);
       button.attr("data-style", color);
@@ -2013,8 +2014,14 @@ function add_tooltip_aoe_buttons(html, tokenId){
       button.css("border-width","1px");
       button.click(function(e) {
         e.stopPropagation();
-
-        let options = window.build_aoe_token_options(color, shape, feet / window.top.CURRENT_SCENE_DATA.fpsq, name)
+        const circleIsSquare = get_avtt_setting_value('circleIsSquare');
+        let newShape = shape;
+        let newFeet = feet;
+        if(circleIsSquare && shape == 'circle'){
+          newShape = 'square';
+          newFeet *= 2;
+        }
+        let options = window.build_aoe_token_options(color, newShape, newFeet / window.top.CURRENT_SCENE_DATA.fpsq, name)
         if(name == 'Darkness' || name == 'Maddening Darkness' ){
           options = {
             ...options,
