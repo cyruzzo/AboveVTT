@@ -11138,7 +11138,9 @@ button.resistanceButton.qrm_buttons_bar span {
     background-image: none !important;
     background-color: var(--vision-color);
 }
-
+.square-aura-element{
+    rotate: none !important;
+}
 .aura-element{
     rotate: var(--rotation);
 }
