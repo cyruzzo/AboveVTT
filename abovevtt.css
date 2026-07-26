@@ -11122,7 +11122,7 @@ button.resistanceButton.qrm_buttons_bar span {
     background: #fff;
 }
 
-.square-aura-element:is([id*='aura_'], .islight) {
+.square-aura-element:is([id*='aura_'], .islight):not([data-animation]) {
     background-image: none !important;
     --thickness2: calc(var(--radius2) - var(--radius1));
     box-sizing: border-box;
@@ -11133,12 +11133,12 @@ button.resistanceButton.qrm_buttons_bar span {
     border-radius: 0;
 }
 
-.vision>.square-aura-element {
+.vision>.square-aura-element:not([data-animation]) {
     border-radius: 0;
     background-image: none !important;
     background-color: var(--vision-color);
 }
-.square-aura-element{
+.square-aura-element:not([data-animation]){
     rotate: none !important;
 }
 .aura-element{

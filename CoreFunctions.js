@@ -958,24 +958,23 @@ function add_journal_roll_buttons(target, tokenId=undefined, specificImage=undef
 
     //observer to see if original data edited
     const observer = new MutationObserver((mutationsList) => {
-        for (const mutation of mutationsList) {
-            if (mutation.type === 'characterData') {
-                currentTargetClone.remove();
-                $(mutation.target).closest('.above-vtt-visited').removeClass('above-vtt-visited');
-                observer.disconnect();
-            }
-        }
+        observer.disconnect();
+        currentTargetClone.remove();
+        mutationsList.every(mutation =>{
+          $(mutation.target).closest('.above-vtt-visited').removeClass('above-vtt-visited');
+        }) 
     });
 
     
-    observer.observe($(target)[0], { childList: true, characterData: true, subtree: true })
+    observer.observe($(target)[0], { characterData: true, subtree: true })
     target = currentTargetClone;
-    $currTarget = $(target) 
+    $currTarget = $(target);
+    add_aoe_statblock_click($currTarget, tokenId);
   } 
   
   $currTarget.html($newHTML[0].innerHTML);
   $currTarget.find('.above-vtt-visited[style*="display: none"]').remove();
-  add_aoe_statblock_click($currTarget, tokenId);
+
 
  
 
