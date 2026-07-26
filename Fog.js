@@ -8418,7 +8418,15 @@ function clip_circle_with_polygon(ctx, x, y, radius, color, polygon, tokenOption
 	ctx.closePath();
 	ctx.clip();
 	if(tokenOptions.squareLight){
+		const rotation = tokenOptions.rotation ?? 0;
+		const rad = (rotation * Math.PI) / 180;
+		const scale = window.CURRENT_SCENE_DATA.scale_factor;
+		ctx.save();
+		ctx.translate(x/scale, y/scale);
+		ctx.rotate(rad);
+		ctx.translate(-x/scale, -y/scale);
 		drawRect(ctx, x-radius, y-radius, radius*2, radius*2, color, true, 0);
+		ctx.restore();
 	}
 	else{
 		drawCircle(ctx, x, y, radius, color);
