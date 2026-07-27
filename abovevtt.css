@@ -8861,7 +8861,7 @@ button#changeTokenImage:before{
 .sources-import-main-container *,
 .sidebar-modal{
     overscroll-behavior: contain;
-    &[class*='styles_wrapper'] div{
+    & div.ct-item-detail__description{
         overflow: visible;
         height: auto;
     }
@@ -9232,6 +9232,92 @@ body.color-blind-avtt {
     line-height: 100%;
 }
 
+.badge {
+    display: -webkit-inline-flex;
+    display: -ms-inline-flexbox;
+    display: inline-flex;
+    -webkit-align-items: center;
+    -ms-flex-align: center;
+    align-items: center;
+    -webkit-justify-content: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    vertical-align: middle;
+    max-width: 100%;
+    background-color: rgba(18,24,28,0.12);
+    border-radius: 4px;
+    height: 24px;
+    position: relative;
+    font-family: Roboto,Helvetica,sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 20px;
+    cursor: help
+}
+
+.badge+i,.badge+* {
+    margin-left: 8px
+}
+
+.tooltip .badge {
+    background-color: #E3E3E4
+}
+
+p .badge {
+    margin-left: 0
+}
+
+.badge-label {
+    color: #12181C;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding: 0 7px;
+    white-space: nowrap
+}
+
+.badge-tooltip {
+    min-width: 370px;
+    top: 40px;
+    left: 50%;
+    -webkit-transform: translate(-50%,0);
+    transform: translate(-50%,0);
+    padding: 6px 10px;
+    color: #FFF;
+    background-color: #374045;
+    font-weight: normal;
+    font-size: 13px;
+    border-radius: 2px;
+    position: absolute;
+    z-index: 99999999;
+    box-sizing: border-box;
+    transition: 0s all;
+    transition-delay: .5s;
+    visibility: hidden;
+    cursor: text;
+    font-size: 14px;
+    text-align: center;
+    z-index: 4
+}
+
+.badge-tooltip.badge-only {
+    min-width: 165px
+}
+
+.badge:hover .badge-tooltip,.badge:focus .badge-tooltip,.badge-label .badge-tooltip,.badge-label .badge-tooltip {
+    transition-delay: 0s;
+    visibility: visible
+}
+
+.badge-text {
+    display: inline!important;
+    margin-right: 4px;
+    color: #FFF
+}
+
+.badge-cta {
+    color: #64B6F7!important;
+    text-decoration: underline!important
+}
 .button-loading::after {
     content: "";
     position: absolute;
