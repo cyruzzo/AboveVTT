@@ -10700,7 +10700,11 @@ button.journal-view-button.journal-button img {
     overflow-wrap: break-word;
     width: 100%;
     scrollbar-width: thin;
+    & .tooltip-body-description-text{
+        scrollbar-width: thin;
+    }
 }
+
 [class*='GameLogEntries'] [class*='Message-Collapsed-Other-Flex']:has(.tooltip-body){
     padding:0;
 }
