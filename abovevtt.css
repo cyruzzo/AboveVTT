@@ -8861,7 +8861,7 @@ button#changeTokenImage:before{
 .sources-import-main-container *,
 .sidebar-modal{
     overscroll-behavior: contain;
-    &[class*='styles_wrapper'] div{
+    & div.ct-item-detail__description{
         overflow: visible;
         height: auto;
     }
