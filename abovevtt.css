@@ -10704,7 +10704,21 @@ button.journal-view-button.journal-button img {
         scrollbar-width: thin;
     }
 }
-
+[class*="MessageContainer"] .tooltip-header .tooltip-header-text {
+    max-width: calc(100% - 100px);
+    text-wrap: nowrap; 
+    & *{
+      overflow: hidden;  
+      text-overflow: ellipsis;
+    }
+    & .tooltip-header-title{       
+        font-size:18px;
+        display:block;
+    }
+    & .badge{
+        display:none;
+    }
+}
 [class*='GameLogEntries'] [class*='Message-Collapsed-Other-Flex']:has(.tooltip-body){
     padding:0;
 }
