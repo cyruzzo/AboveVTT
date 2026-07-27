@@ -10696,9 +10696,23 @@ button.journal-view-button.journal-button img {
 /* START - New quote box implementation */
 [class*='MessageContainer'] .tooltip-body{
     padding: 0px;
-    min-width: 265px;
-    overflow-wrap: anywhere;
+    min-width: 240px;
+    overflow-wrap: break-word;
     width: 100%;
+    scrollbar-width: thin;
+}
+[class*='GameLogEntries'] [class*='Message-Collapsed-Other-Flex']:has(.tooltip-body){
+    padding:0;
+}
+
+.body-rpgcharacter-sheet [class*='MessageContainer'] .tooltip-body{
+    --theme-contrast: #b43c35;
+    & tr td{
+        background: #fff;
+    }
+    & tr:nth-child(odd) td{
+     background: color-mix(in srgb, rgb(245, 248, 250), #000 10%);
+    }  
 }
 
 
