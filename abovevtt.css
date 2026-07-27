@@ -8861,6 +8861,10 @@ button#changeTokenImage:before{
 .sources-import-main-container *,
 .sidebar-modal{
     overscroll-behavior: contain;
+    &[class*='styles_wrapper'] div{
+        overflow: visible;
+        height: auto;
+    }
 }
 [class*='styles_gameLogPane'] *{
     overscroll-behavior: auto;
