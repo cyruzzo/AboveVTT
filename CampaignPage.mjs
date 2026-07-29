@@ -273,6 +273,8 @@ function inject_player_join_buttons() {
   console.log("inject_campaign_page_buttons");
   $(".ddb-campaigns-character-card-footer-links").each(function() {
     const characterCard = $(this);
+    if(characterCard.closest('.ddb-campaigns-detail-body-listing-inactive').length>0)
+      return;
     if(characterCard.find(".ddb-campaigns-character-card-footer-links-item-edit").length > 0) {
       const characterPagePathname = characterCard.find(".ddb-campaigns-character-card-footer-links-item-view").attr('href');
       characterCard.prepend(`<a style='color:white;background: #1b9af0;padding: 2px;' href='https://www.dndbeyond.com${characterPagePathname}?abovevtt=true' target='_blank' class='button ddb-campaigns-character-card-footer-links-item'>JOIN AboveVTT</a>`);
