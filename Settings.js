@@ -336,7 +336,7 @@ function token_setting_options() {
 	];
 }
 
-function avtt_settings() {
+function avtt_settings(campaignSettings = false) {
 	let settings = [
 
 		{
@@ -370,37 +370,6 @@ function avtt_settings() {
 			options: [
 				{ value: true, label: "Enable", description: `While moving a token vision will update` },
 				{ value: false, label: "Disable", description: `Vision will only update on drop of a token` }
-			],
-			defaultValue: false,
-			class: 'ui',
-			global: 1
-		},
-		{	
-			name: "gridZoomConversion",
-			label: "Store Grid Visual Size",
-			description: "<p>This allows you to save a grid visual size. This is useful for in person play where you want to quickly set the grid size to match physical mini sizes.</p><p>The stored value will be based on the current scenes grid size and zoom level. It will then be able to calculate the correct zoom level to make the grid match the stored visual size on any scene. This may be different per device so you will have to store the value on the device you plan on adjusting zoom to match the stored visual size.</p><p>A quick toggle button will be added to the right side buttons when a value is stored</p>",
-			buttonText: ["Clear", "Store"],
-			type: "customButton",
-			customFunction: [
-				function (clickEvent, body) {
-					clear_avtt_setting('gridZoomConversion');
-					showTempMessage(`Grid visual size cleared`, { fadeDelay: 600, fadeTime: 400 });
-					$("#grid_zoom_conversion").css('display', 'none');
-				}, function (clickEvent, body) {
-					set_avtt_setting_value('gridZoomConversion', window.ZOOM*parseFloat(window.CURRENT_SCENE_DATA.hpps));
-					showTempMessage(`Grid visual size stored`, { fadeDelay: 600, fadeTime: 400 });
-					$("#grid_zoom_conversion").css('display', '');
-				}
-			],
-			class: 'ui'
-		},
-		{
-			name: "disableCombatText",
-			label: "Disable DM Damage Button Text",
-			type: "toggle",
-			options: [
-				{ value: true, label: "Enable", description: `If enabled removes the scrolling text on tokens displayed to DM when using gamelog damage buttons.` },
-				{ value: false, label: "Disable", description: `If enabled removes the scrolling text on tokens displayed to DM when using gamelog damage buttons.` }
 			],
 			defaultValue: false,
 			class: 'ui',
@@ -464,10 +433,44 @@ function avtt_settings() {
 			global: 1
 		}
 	];
+	if(!campaignSettings){
+		settings.push({	
+			name: "gridZoomConversion",
+			label: "Store Grid Visual Size",
+			description: "<p>This allows you to save a grid visual size. This is useful for in person play where you want to quickly set the grid size to match physical mini sizes.</p><p>The stored value will be based on the current scenes grid size and zoom level. It will then be able to calculate the correct zoom level to make the grid match the stored visual size on any scene. This may be different per device so you will have to store the value on the device you plan on adjusting zoom to match the stored visual size.</p><p>A quick toggle button will be added to the right side buttons when a value is stored</p>",
+			buttonText: ["Clear", "Store"],
+			type: "customButton",
+			customFunction: [
+				function (clickEvent, body) {
+					clear_avtt_setting('gridZoomConversion');
+					showTempMessage(`Grid visual size cleared`, { fadeDelay: 600, fadeTime: 400 });
+					$("#grid_zoom_conversion").css('display', 'none');
+				}, function (clickEvent, body) {
+					showTempMessage(`Grid visual size stored`, { fadeDelay: 600, fadeTime: 400 });
+					set_avtt_setting_value('gridZoomConversion', window.ZOOM*parseFloat(window.CURRENT_SCENE_DATA.hpps));
+					$("#grid_zoom_conversion").css('display', '');
+				}
+			],
+			class: 'ui'
+		})
+	}
 
-	if (window.DM) {
+	if (window.DM && !campaignSettings) {
 		// Remove the `dm` an option for the DM and tweak the descriptions to remove references to the DM.
-		settings.push(
+		
+			settings.push(
+			{
+				name: "disableCombatText",
+				label: "Disable DM Damage Button Text",
+				type: "toggle",
+				options: [
+					{ value: true, label: "Enable", description: `If enabled removes the scrolling text on tokens displayed to DM when using gamelog damage buttons.` },
+					{ value: false, label: "Disable", description: `If enabled removes the scrolling text on tokens displayed to DM when using gamelog damage buttons.` }
+				],
+				defaultValue: false,
+				class: 'ui',
+				global: 1
+			},
 			{
 				name: "receiveCursorFromPeers",
 				label: "Cursors You See",
@@ -719,22 +722,6 @@ function avtt_settings() {
 	
 	settings.push(
 	{
-		name: "exportRemind",
-		label: "Export Reminder",
-		type: "dropdown",
-		options: [
-			{ value: 0, label: "Never", description: `No reminder` },
-			{ value: 1, label: "Daily", description: `Daily reminder` },
-			{ value: 7, label: "Weekly", description: `Weekly reminder` },
-			{ value: 30, label: "Monthly", description: `Monthly reminder` }	
-		],
-		defaultValue: 0,
-		class: 'ui',
-		global: 1
-	})
-	
-	settings.push(
-	{
 		name: "monsterCritType",
 		label: "Monster Action Crit Type",
 		type: "dropdown",
@@ -874,7 +861,52 @@ function avtt_settings() {
         },
 		class: 'ui'
 	})
+	if(window.DM && !campaignSettings){
+		settings.push(
+		{
+			name: "exportRemind",
+			label: "Export Reminder",
+			type: "dropdown",
+			options: [
+				{ value: 0, label: "Never", description: `No reminder` },
+				{ value: 1, label: "Daily", description: `Daily reminder` },
+				{ value: 7, label: "Weekly", description: `Weekly reminder` },
+				{ value: 30, label: "Monthly", description: `Monthly reminder` }	
+			],
+			defaultValue: 0,
+			class: 'ui',
+			global: 1
+		})
+		settings.push({
+			name: 'campaignDefaults',
+			label: 'Campagn Suggested Defaults',
+			type: 'flyoutButton',
+			sortCategory: true,
+			options: avtt_settings(true),
+			defaultValue: {},
+			class: 'defaults'
+		})
+	}
 
+	if(!campaignSettings){
+		settings.push({	
+			name: "matchCampaignSettings",
+			label: "Match Suggested Settings",
+			description: "<p>If the DM has suggested settings for this campaign force your settings to match.</p>",
+			buttonText: ["Set"],
+			type: "customButton",
+			customFunction: [
+				function (clickEvent, body) {
+					window.EXPERIMENTAL_SETTINGS = window.AVTT_CAMPAIGN_INFO.campaignSettings;
+					persist_experimental_settings();
+					$('#settings-panel .sidebar-panel-body').empty();
+					init_settings();
+					showTempMessage(`Settings Matched and Saved`, { fadeDelay: 600, fadeTime: 400 });
+				}
+			],
+			class: 'defaults'
+		})
+	}
 
 
 	if (AVTT_ENVIRONMENT.versionSuffix) {
@@ -1007,10 +1039,17 @@ function get_avtt_setting_value(name) {
 	if (name === "aggressiveErrorMessages" && is_release_build()) {
 		return false; // never allow this in a release build
 	}
+	let setValue;
 	switch (name) {
 		case "iframeStatBlocks": return should_use_iframes_for_monsters();
+		case "campaignDefaults":
+			setValue = $.extend({}, window.EXPERIMENTAL_SETTINGS[name], window.AVTT_CAMPAIGN_INFO.campaignSettings);
+			if (setValue !== undefined) {
+				return setValue;
+			}
+			return get_avtt_setting_default_value(name);
 		default:
-			const setValue = window.EXPERIMENTAL_SETTINGS[name];
+			setValue = window.EXPERIMENTAL_SETTINGS[name];
 			if (setValue !== undefined) {
 				return setValue;
 			}
@@ -1173,9 +1212,13 @@ function persist_default_scene_settings(settings, callback) {
     window.SCENE_DEFAULT_SETTINGS = settings;
     callback();
 }
-
+const debounceCampaignSettings = mydebounce(()=>{
+	AboveApi.setCampaignData(window.AVTT_CAMPAIGN_INFO);
+	window.MB.sendMessage("custom/myVTT/campaignData", window.AVTT_CAMPAIGN_INFO);
+}, 5000)
 function init_settings() {
-
+	let suggestedCampaignSettings = window.AVTT_CAMPAIGN_INFO.campaignSettings ?? {};
+	window.EXPERIMENTAL_SETTINGS = $.extend({}, suggestedCampaignSettings, window.EXPERIMENTAL_SETTINGS);
 	let body = settingsPanel.body;
 
 	body.append(`<h2 style='margin-top:10px; padding-bottom:2px;margin-bottom:2px; text-align:center'><img width='200px' src='${window.EXTENSION_PATH}assets/logo.png'><div style='margin-left:20px; display:inline;vertical-align:bottom;'>${window.AVTT_VERSION}${AVTT_ENVIRONMENT.versionSuffix}</div></h2>`);
@@ -1276,8 +1319,15 @@ function init_settings() {
 			case "flyoutButton":
 				inputWrapper = build_flyout_input(setting, currentValue, function(name, newValue){
 					set_avtt_setting_value(name, newValue);
-					if(name == 'quickToggleDefaults')
-						window.defaultToggles = newValue;
+					switch (name) {
+						case "quickToggleDefaults":
+							window.defaultToggles = newValue;
+							break;
+						case "campaignDefaults":
+							window.AVTT_CAMPAIGN_INFO.campaignSettings = newValue;
+							debounceCampaignSettings();
+							break;
+					}
 				})
 				break;
 			case "text":
@@ -1431,7 +1481,7 @@ function build_example_token(options, size=90) {
 // used for settings tab, and tokens tab configuration modals. For placed tokens, see `build_options_flyout_menu`
 // updateValue: function(name, newValue) {} // only update the data here
 // didChange: function() {} // do ui things here
-function build_sidebar_token_options_flyout(availableOptions, setValues, updateValue, didChange, showExtraOptions=false, genericFlyout=false, convertToDropdowns=false) {
+function build_sidebar_token_options_flyout(availableOptions, setValues, updateValue, didChange, showExtraOptions=false, genericFlyout=false, convertToDropdowns=false, setting = {sortCategory: false}) {
 	if (typeof updateValue !== 'function') {
 		updateValue = function(name, newValue){
 			console.warn("build_sidebar_token_options_flyout was not given an updateValue function so we can't set ", name, "to", value);
@@ -1444,7 +1494,18 @@ function build_sidebar_token_options_flyout(availableOptions, setValues, updateV
 	}
 
 	let container = $(`<div class="sidebar-token-options-flyout-container prevent-sidebar-modal-close"></div>`);
-
+	if(setting.sortCategory){
+		container.append(`
+		<br />
+		<h3 class="token-image-modal-footer-title no-bottom-margin-setting" >Campaign Suggested Settings</h3>
+		<div class="sidebar-panel-header-explanation"><b>These settings values will be set for users for any setting they have not set themselves. Some settings can have an impact on performance. Settings are saved to this campaign but ordered the same as the main window for convenience.</b></div>
+		<!--<div class='avtt-settings-section avtt-settings-defaults'><h4 class="token-image-modal-footer-title">Default Settings</h4></div>-->
+		<div class='avtt-settings-section avtt-settings-ui'><h4 class="token-image-modal-footer-title">UI</h4><div class='global-setting'><h5 class="token-image-modal-footer-title">Global</h5></div><div class='campaign-setting'><h5 class="token-image-modal-footer-title">Campaign</h5></div></div>
+		<div class='avtt-settings-section avtt-settings-stream'><h4 class="token-image-modal-footer-title">Streaming/P2P</h4></div>
+		<div class='avtt-settings-section avtt-settings-performance'><h4 class="token-image-modal-footer-title">Performance</h4><div class="sidebar-panel-header-explanation"><b>These settings can improve performance and are stored globally</b></div></div>
+		<div class='avtt-settings-section avtt-settings-debug'><h4 class="token-image-modal-footer-title">Debugging</h4><div class="sidebar-panel-header-explanation"><b>These settings can be used to debug issues or as last resorts when defaults aren't working</b></div></div>
+	`);
+	}
 	// const updateValue = function(name, newValue) {
 	// 	if (is_valid_token_option_value(name, newValue)) {
 	// 		setValues[name] = newValue;
@@ -1498,7 +1559,15 @@ function build_sidebar_token_options_flyout(availableOptions, setValues, updateV
 				console.warn("build_sidebar_token_options_flyout failed to handle token setting option with type", option.type);
 		}
 		if(inputWrapper){
-			container.append(inputWrapper)
+			if(setting.sortCategory){
+				container.find(`.avtt-settings-${option.class}${option.class == 'ui' ? 
+					option.global == 1 ? 
+						' .global-setting' : 
+						' .campaign-setting' : 
+					''}`).append(inputWrapper);
+			}else{
+				container.append(inputWrapper)
+			}
 		}
 	});
 	if(!genericFlyout){

@@ -37,7 +37,7 @@ $(function() {
         } catch (e) {
           console.warn(`Failed to parse global settings, using defaults`, e);
           localStorage.removeItem(`ExperimentalSettingsGlobal`);
-        }
+        }       
         window.EXPERIMENTAL_SETTINGS = {...campaignSettings, ...globalSettings};
         if (is_release_build()) {
           // in case someone left this on during beta testing, we should not allow it here
