@@ -477,6 +477,7 @@ function build_flyout_input(settingOption, currentValue, changeHandler){
     if (typeof changeHandler !== 'function') {
     changeHandler = function(){};
   }
+
   let wrapper = $(`
    <div class="token-image-modal-footer-select-wrapper" data-option-name="${settingOption.name}">
      <div class="token-image-modal-footer-title">${settingOption.label}</div>
@@ -485,10 +486,13 @@ function build_flyout_input(settingOption, currentValue, changeHandler){
   let flyoutButton = $(`<button class='sidebar-panel-footer-button avtt-small-settings-edit'>Edit</button>`);
     flyoutButton.on("click", function (clickEvent) {
         build_and_display_sidebar_flyout(clickEvent.clientY, function (flyout) {
-          let currentValue = get_avtt_setting_value(settingOption.name);
+            let currentValue = get_avtt_setting_value(settingOption.name);
+            if(settingOption.name == 'campaignDefaults'){
+              currentValue = $.extend({}, currentValue, window.AVTT_CAMPAIGN_INFO.campaignSettings);
+            }
             let optionsContainer = build_sidebar_token_options_flyout(settingOption.options, currentValue, function(name, value) {
                 currentValue[name] = value;
-            }, function(){changeHandler(settingOption.name, currentValue)}, false, true);
+            }, function(){changeHandler(settingOption.name, currentValue)}, false, true, false, settingOption);
             flyout.append(optionsContainer);
             position_flyout_left_of($('#settings-panel .sidebar-panel-body'), flyout);
         });
