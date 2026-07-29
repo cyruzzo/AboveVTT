@@ -487,9 +487,7 @@ function build_flyout_input(settingOption, currentValue, changeHandler){
     flyoutButton.on("click", function (clickEvent) {
         build_and_display_sidebar_flyout(clickEvent.clientY, function (flyout) {
             let currentValue = get_avtt_setting_value(settingOption.name);
-            if(settingOption.name == 'campaignDefaults'){
-              currentValue = $.extend({}, currentValue, window.AVTT_CAMPAIGN_INFO.campaignSettings);
-            }
+
             let optionsContainer = build_sidebar_token_options_flyout(settingOption.options, currentValue, function(name, value) {
                 currentValue[name] = value;
             }, function(){changeHandler(settingOption.name, currentValue)}, false, true, false, settingOption);
@@ -3271,6 +3269,7 @@ async function setup_tooltip_flyout(flyout, tooltipHtmlString, classes = [], eve
   flyout.attr("data-id", flyoutId);
   flyout.attr("data-parents-id", JSON.stringify(containerParentIdArray));
   const tooltipHtml = $(tooltipHtmlString);
+  tooltipHtml.find('style:not(#embededStyles)').remove();
   await window.JOURNAL.translateHtmlAndBlocks(tooltipHtml, options.id)
   add_journal_roll_buttons(tooltipHtml, options.id);
   add_aoe_statblock_click(tooltipHtml, options.id);

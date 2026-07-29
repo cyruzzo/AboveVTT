@@ -10733,6 +10733,9 @@ button.journal-view-button.journal-button img {
     }  
 }
 
+.tooltip-body .detail-content {
+    width: 100% ;
+}
 
 .custom-stat-block .text--quote-box {
     display: block !important;

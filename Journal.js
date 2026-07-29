@@ -2100,8 +2100,21 @@ class JournalManager{
 					let name = splitUrl[splitUrl.length-1];
 					itemId = window.ddbConfigJson.weaponProperties.filter(d=> d.name.toLowerCase() == name.toLowerCase())[0]?.id
 				}
-				else{
-							
+				else if(itemType == 'spells'){
+					const splitUrl = url.split('/');
+					const name = splitUrl[splitUrl.length-1].replaceAll('-', ' ');
+					const isLegacy = !get_avtt_setting_value('2024Tooltips');
+					const spell = window.SPELLS_CACHE.filter(d => d.definition.name.toLowerCase() == name.toLowerCase() && d.definition.isLegacy == isLegacy)
+					itemId = `${spell[0].definition.id}-${splitUrl[splitUrl.length-1]}`;
+				}
+				else if(itemType == 'magic-items'){
+					const splitUrl = url.split('/');
+					const name = splitUrl[splitUrl.length-1].replaceAll('-', ' ');
+					const isLegacy = !get_avtt_setting_value('2024Tooltips');
+					const item = window.ITEMS_CACHE.filter(d => d.name.toLowerCase() == name.toLowerCase() && d.isLegacy == isLegacy)
+					itemId = `${item[0].id}-${splitUrl[splitUrl.length-1]}`;
+				}
+				else{	
 					let itemPage = await $.get(url)		
 					if($(itemPage).find('.b-breadcrumb-wrapper>.b-breadcrumb-item:last-of-type a').length>0){
 						let splitUrl = $(itemPage).find('.b-breadcrumb-wrapper>.b-breadcrumb-item:last-of-type a').attr('href').split('/');

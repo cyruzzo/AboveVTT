@@ -376,8 +376,8 @@ function avtt_settings(campaignSettings = false) {
 			global: 1
 		},
 		{
-			name: "2024SpellTooltips",
-			label: "Force 2024 Spell Tooltips",
+			name: "2024Tooltips",
+			label: "Force 2024 Spell/Item Tooltips",
 			type: "toggle",
 			options: [
 				{ value: true, label: "Enable", description: `While enabled 2014 spell tooltips will be updated to 2024` },
@@ -1317,8 +1317,9 @@ function init_settings() {
 					  	 set_avtt_setting_value(name, newValue);
 					  	 container.remove();	
 					  });
-					} else if(name == "2024SpellTooltips"){
+					} else if(name == "2024Tooltips"){
 						window.tooltipCache = {};
+						window.spellIdCache = {};
 						set_avtt_setting_value(name, newValue);
 					} else{
 						set_avtt_setting_value(name, newValue);

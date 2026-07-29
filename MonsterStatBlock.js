@@ -1793,8 +1793,8 @@ const DAMAGE_ADJUSTMENT_TYPE_VULNERABILITIES = 3;
 const validRollTypes = ["to hit", "damage", "save", "check", "heal", undefined]; // undefined is in the list to allow clearing it
 
 async function getSpells(){
-    if(window.spells)
-        return window.spells;
+    if(window.SPELLS_CACHE)
+        return window.SPELLS_CACHE;
     const classes = await DDBApi.fetchJsonWithToken(`https://character-service.dndbeyond.com/character/v5/game-data/classes?campaignId=${window.gameId}&sharingSetting=2`);
     let spells = [];
     for(let charClass of classes.data){
@@ -1802,19 +1802,19 @@ async function getSpells(){
         const classSpells = await DDBApi.fetchJsonWithToken(`https://character-service.dndbeyond.com/character/v5/game-data/spells?campaignId=${window.gameId}&classId=${id}&classLevel=20&sharingSetting=2`);    
         spells = [...spells, ...classSpells.data]
     }
-    window.spells = [...new Map(spells.map(item => [item.definition.id, item])).values()];
-    return window.spells;
+    window.SPELLS_CACHE = [...new Map(spells.map(item => [item.definition.id, item])).values()];
+    return window.SPELLS_CACHE;
 }
 
 function getNonLegacySpellId(options){
     let newSpell
     if(options.tooltipName){
-      newSpell = window.spells.filter(d=> d.definition.name.toLowerCase() == options.tooltipName && !d.definition.isLegacy); 
+      newSpell = window.SPELLS_CACHE.filter(d=> d.definition.name.toLowerCase() == options.tooltipName && (!d.definition.isLegacy || d.definition.isHomebrew)); 
       return newSpell[0].definition.id;
     } else if(options.id){
-        const spell =  window.spells.filter(d=> d.definition.id == options.id);
+        const spell =  window.SPELLS_CACHE.filter(d=> d.definition.id == options.id);
         const name = spell[0].definition.name.toLowerCase();
-        newSpell = window.spells.filter(d=> d.definition.name.toLowerCase() == name && !d.definition.isLegacy);
+        newSpell = window.SPELLS_CACHE.filter(d=> d.definition.name.toLowerCase() == name && (!d.definition.isLegacy || d.definition.isHomebrew));
     }
     if(!newSpell[0]){
       console.warn('Spell does not exist');
@@ -1822,7 +1822,22 @@ function getNonLegacySpellId(options){
     }
     return newSpell[0].definition.id;
 }
-
+function getNonLegacyItemId(options){
+    let newItem 
+    if(options.tooltipName){
+      newItem = window.ITEMS_CACHE.filter(d=> d.name.toLowerCase() == options.tooltipName && (!d.isLegacy || d.isHomebrew)); 
+      return newItem[0].id;
+    } else if(options.id){
+        const spell =  window.ITEMS_CACHE.filter(d=> d.id == options.id);
+        const name = spell[0].name.toLowerCase();
+        newItem = window.ITEMS_CACHE.filter(d=> d.name.toLowerCase() == name && (!d.isLegacy || d.isHomebrew));
+    }
+    if(!newItem[0]){
+      console.warn('Spell does not exist');
+      return false;
+    }
+    return newItem[0].id;
+}
 const fetch_tooltip = mydebounce(async (dataTooltipHref, name, callback) => {
     // dataTooltipHref will look something like this `//www.dndbeyond.com/spells/2329-tooltip?disable-webm=1&disable-webm=1`
     // we only want the `spells/2329` part of that
@@ -1872,21 +1887,7 @@ const fetch_tooltip = mydebounce(async (dataTooltipHref, name, callback) => {
             tooltipBody.find('.detail-content>.line:first-of-type').remove();
           }
           let functionArray = [];
-          let importStyleText = ``;
-          $(moreInfo).find('link[rel="stylesheet"]').each(function(){
-            if(!this.href.includes('dndbeyond'))
-                return;
-            functionArray.push(async () => {
-              
-              let importStyle = await $.get(this.href);
-              let splitHref= this.href.split('/');
 
-              let parentDir = splitHref.slice(0,splitHref.length-2).join('/');
-              importStyleText = `${importStyle.replaceAll(/\.\.\/images/gi, `${parentDir}/images`)}${importStyleText}`
-            
-              return true;
-            }); 
-          });
           functionArray.reverse();
            for(let i =0; i<functionArray.length; i++){
             await functionArray[i]();
@@ -1905,9 +1906,8 @@ const fetch_tooltip = mydebounce(async (dataTooltipHref, name, callback) => {
                     </div>
               <div class="tooltip-body">
                 <div class='${bodyClass}'>
-                  <style>                         
+                  <style id='embededStyles'>                         
                       .tooltip-flyout .tooltip-body{
-                        ${importStyleText.replaceAll(/\:root/gi, '')}
                         .detail-content{
                           width: 100% !important;
                         }
@@ -1963,8 +1963,11 @@ const fetch_tooltip = mydebounce(async (dataTooltipHref, name, callback) => {
         const idIndex = parts.findIndex(p => p.includes("-tooltip"));
         let id = parseInt(parts[idIndex]);
         const type = parts[idIndex - 1];
-        if(type == 'spells' && get_avtt_setting_value('2024SpellTooltips')){
-          id = getNonLegacySpellId({id})
+        if(get_avtt_setting_value('2024Tooltips')){
+          if(type == 'spells')
+            id = getNonLegacySpellId({id});
+          else if(type == 'magic-items')
+            id = getNonLegacyItemId({id});
         }
         const typeAndId = `${type}/${id}`;
 
