@@ -474,12 +474,12 @@ class JournalManager{
 		let self=this;
 		
 		// Clear all elements from journal panel except the searchbar, which needs to stay in place between searches
-		journalPanel.body.children().not('#journal-control-container, #journal-control-container *').remove();
+		journalPanel.body.children().not('#journal-control-container, #journal-control-container *, #journal-included-content-box').remove();
 		
-		let searchInput = $(`<input name="journal-search" type="search" style="width:96%;margin:2%" placeholder="search journal">`);
+		const searchInput = $(`<input name="journal-search" type="search" style="width:96%;margin:2%" placeholder="search journal">`);
 		searchInput.off("input").on("input", mydebounce(() => {
-			let searchElement = document.getElementsByName("journal-search")[0];
-			let textValue = searchElement.value;
+			const searchElement = document.getElementsByName("journal-search")[0];
+			const textValue = searchElement.value;
 			this.build_journal(textValue);
 		}, 500));
 		searchInput.off("keyup").on('keyup', function(event) {
@@ -488,13 +488,13 @@ class JournalManager{
 			}
 		});
 		if(!searchText){
-			let searchElement = document.getElementsByName("journal-search")[0];
+			const searchElement = document.getElementsByName("journal-search")[0];
 			searchText = searchElement?.value || '';
 		}
-
-		let journalControlContainer = $(`<div id="journal-control-container"></div>`);
-		let expandAllButton = $(`<button class="expand-all-button token-row-button expand-collapse-button" title="Expand All Folders" style=""><span class="material-icons">expand</span></button>`);
-		let collapseAllButton = $(`<button class="collapse-all-button token-row-button expand-collapse-button" title="Collapse All Folders" style=""><span class="material-icons">vertical_align_center</span></button>`);
+		const includeContent = $(`<div id="journal-included-content-box" style="display: flex; margin-left: 7px; top: -7px; position: relative;"><input id="journal-included-content" type="checkbox"></input><label for="journal-included-content" style="display: inline-block; margin: 0px 0px 0px 5px;">Include Note Content</label></journal>`);
+		const journalControlContainer = $(`<div id="journal-control-container"></div>`);
+		const expandAllButton = $(`<button class="expand-all-button token-row-button expand-collapse-button" title="Expand All Folders" style=""><span class="material-icons">expand</span></button>`);
+		const collapseAllButton = $(`<button class="collapse-all-button token-row-button expand-collapse-button" title="Collapse All Folders" style=""><span class="material-icons">vertical_align_center</span></button>`);
 		expandAllButton.on('click', function(){
 			self.chapters.forEach(chapter => {
 				chapter.collapsed = false;
@@ -547,7 +547,7 @@ class JournalManager{
 			});
 		});
 		if (journalPanel.body.find('#journal-control-container').length === 0) {
-			journalPanel.body.append(journalControlContainer);
+			journalPanel.body.append(journalControlContainer, includeContent);
 			journalControlContainer.append(searchInput);
 			journalControlContainer.append(expandAllButton);
 			journalControlContainer.append(collapseAllButton);
@@ -622,8 +622,9 @@ class JournalManager{
 		// use to determine which journal items are rendered and which aren't.
 
 		if(searchText){
+			const includeContentChecked = $('#journal-included-content:checked').length>0;
 			for(const property in self.notes){
-				if(!searchText || self.notes[property].title?.toLowerCase().indexOf(searchText?.toLowerCase()) > -1){
+				if(!searchText || self.notes[property].title?.toLowerCase().indexOf(searchText?.toLowerCase()) > -1 || (includeContentChecked && self.notes[property].plain?.toLowerCase().indexOf(searchText?.toLowerCase()) > -1)){
 					relevantNotes[property] = self.notes[property];
 				}
 			}
