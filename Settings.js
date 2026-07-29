@@ -376,6 +376,18 @@ function avtt_settings(campaignSettings = false) {
 			global: 1
 		},
 		{
+			name: "2024SpellTooltips",
+			label: "Force 2024 Spell Tooltips",
+			type: "toggle",
+			options: [
+				{ value: true, label: "Enable", description: `While enabled 2014 spell tooltips will be updated to 2024` },
+				{ value: false, label: "Disable", description: `While enabled 2014 spell tooltips will be updated to 2024` }
+			],
+			defaultValue: false,
+			class: 'ui',
+			global: 1
+		},
+		{
 			name: 'streamDiceRolls',
 			label: 'Stream Dice Rolls',
 			type: 'toggle',
@@ -1305,8 +1317,10 @@ function init_settings() {
 					  	 set_avtt_setting_value(name, newValue);
 					  	 container.remove();	
 					  });
-					}
-					else{
+					} else if(name == "2024SpellTooltips"){
+						window.tooltipCache = {};
+						set_avtt_setting_value(name, newValue);
+					} else{
 						set_avtt_setting_value(name, newValue);
 					}	
 				});

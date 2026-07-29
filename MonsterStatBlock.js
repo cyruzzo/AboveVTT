@@ -1792,6 +1792,37 @@ const DAMAGE_ADJUSTMENT_TYPE_VULNERABILITIES = 3;
 
 const validRollTypes = ["to hit", "damage", "save", "check", "heal", undefined]; // undefined is in the list to allow clearing it
 
+async function getSpells(){
+    if(window.spells)
+        return window.spells;
+    const classes = await DDBApi.fetchJsonWithToken(`https://character-service.dndbeyond.com/character/v5/game-data/classes?campaignId=${window.gameId}&sharingSetting=2`);
+    let spells = [];
+    for(let charClass of classes.data){
+        const id = charClass.id;
+        const classSpells = await DDBApi.fetchJsonWithToken(`https://character-service.dndbeyond.com/character/v5/game-data/spells?campaignId=${window.gameId}&classId=${id}&classLevel=20&sharingSetting=2`);    
+        spells = [...spells, ...classSpells.data]
+    }
+    window.spells = [...new Map(spells.map(item => [item.definition.id, item])).values()];
+    return window.spells;
+}
+
+function getNonLegacySpellId(options){
+    let newSpell
+    if(options.tooltipName){
+      newSpell = window.spells.filter(d=> d.definition.name.toLowerCase() == options.tooltipName && !d.definition.isLegacy); 
+      return newSpell[0].definition.id;
+    } else if(options.id){
+        const spell =  window.spells.filter(d=> d.definition.id == options.id);
+        const name = spell[0].definition.name.toLowerCase();
+        newSpell = window.spells.filter(d=> d.definition.name.toLowerCase() == name && !d.definition.isLegacy);
+    }
+    if(!newSpell[0]){
+      console.warn('Spell does not exist');
+      return false;
+    }
+    return newSpell[0].definition.id;
+}
+
 const fetch_tooltip = mydebounce(async (dataTooltipHref, name, callback) => {
     // dataTooltipHref will look something like this `//www.dndbeyond.com/spells/2329-tooltip?disable-webm=1&disable-webm=1`
     // we only want the `spells/2329` part of that
@@ -1918,6 +1949,7 @@ const fetch_tooltip = mydebounce(async (dataTooltipHref, name, callback) => {
           callback(toolTipJson); 
         }
       }
+
       if (window.tooltipCache === undefined) {
           window.tooltipCache = {};
       }
@@ -1926,10 +1958,14 @@ const fetch_tooltip = mydebounce(async (dataTooltipHref, name, callback) => {
       console.log("fetch_tooltip starting for ", dataTooltipHref);
 
       if(dataTooltipHref[0] != undefined){
+
         const parts = dataTooltipHref[0].split("/");
         const idIndex = parts.findIndex(p => p.includes("-tooltip"));
-        const id = parseInt(parts[idIndex]);
+        let id = parseInt(parts[idIndex]);
         const type = parts[idIndex - 1];
+        if(type == 'spells' && get_avtt_setting_value('2024SpellTooltips')){
+          id = getNonLegacySpellId({id})
+        }
         const typeAndId = `${type}/${id}`;
 
         const existingJson = window.tooltipCache[typeAndId];

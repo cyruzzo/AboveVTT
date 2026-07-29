@@ -458,7 +458,10 @@ function inject_monster_tokens(searchTerm, skip, addedList=[]) {
     search_monsters(searchTerm, skip, function (monsterSearchResponse) {
         let listItems = addedList;
         let remainderItems = 0;
-
+        const sourceList = {};
+        const sourceCategory = window.ddbConfigJson.sources.map((s) => {
+            sourceList[s.id] = s.sourceCategoryId;
+        });
         for (let i = 0; i < monsterSearchResponse.data.length; i++) {
             if(listItems.length == 10){
                 remainderItems = 100 - i;
@@ -472,10 +475,7 @@ function inject_monster_tokens(searchTerm, skip, addedList=[]) {
 
             
             if(Array.isArray(window.sourceCategoryMonsterFilter) && window.sourceCategoryMonsterFilter.length>0){
-                const sourceList = {};
-                const sourceCategory = window.ddbConfigJson.sources.map((s) => {
-                    sourceList[s.id] = s.sourceCategoryId;
-                });
+
                 const sourceIdMap = item.monsterData.sources.map(s => { return sourceList[s.sourceId] })
                 const set = new Set(window.sourceCategoryMonsterFilter);
                 const hasMatch = sourceIdMap.some(value => set.has(`${value}`) || set.has(value)); 
