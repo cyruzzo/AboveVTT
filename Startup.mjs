@@ -58,6 +58,7 @@ $(function() {
       .then(set_campaign_secret)      // set it to window.CAMPAIGN_SECRET
       .then(store_campaign_info)      // store gameId and campaign secret in localStorage for use on other pages
       .then(async () => {
+        getSpells();
         const maxRetries = 5
         const baseDelay = 500
         for (let attempt = 1; attempt <= maxRetries; attempt++) {
