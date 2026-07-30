@@ -2345,7 +2345,8 @@ class JournalManager{
 		return immediateChildren;
 	}
 	async translateHtmlAndBlocks(target, displayNoteId, isStatBlock=true) {
-    	let pastedButtons = target.find('.avtt-roll-button, [data-rolltype="recharge"], .integrated-dice__container, span[data-dicenotation]');
+		await embedDDBSection(target);
+		let pastedButtons = target.find('.avtt-roll-button, [data-rolltype="recharge"], .integrated-dice__container, span[data-dicenotation]');
     	target.find('>style:first-of-type, >style#contentStyles').remove();
 		
 		for(let i=0; i<pastedButtons.length; i++){
@@ -2703,6 +2704,7 @@ class JournalManager{
 						mozallowfullscreen></iframe>`)
 			$(iframes[i]).replaceWith(newFrame);
 		}
+
 		const avttIframes = $newHTML.find('iframe[src*="src=above-bucket-not-a-url"]');
 		for (let i = 0; i < avttIframes.length; i++) {
 			const currSrc = avttIframes[i].src.replaceAll("’", "'");
@@ -3164,6 +3166,9 @@ class JournalManager{
 			}
 			.journal-site-embed{
 			    border: 1px dotted #5656bb;
+			}
+			.journal-ddb-section-embed{
+			    border: 1px dashed #ff0000;
 			}
 			@media(min-width: 768px) {
 				 .Basic-Text-Frame-2 {
@@ -3978,8 +3983,9 @@ class JournalManager{
 				  { title: 'DM Screen Chunk - won\'t be auto split into columns when used with the DM Screen', block: 'div', wrapper: true, classes: 'dmScreenChunk' },
 				  { title: 'Add Ability Tracker; Format: "Wild Shape 2"', inline: 'span', wrapper:true, classes: 'note-tracker'},
 			      { title: 'Ignore AboveVTT auto formating', inline: 'span', wrapper: true, classes: 'ignore-abovevtt-formating' },
-			      { title: 'Embed Site in Journal', inline: 'span', wrapper: true, classes: 'journal-site-embed'}
-			    ] },
+			      { title: 'Embed Site in Journal', inline: 'span', wrapper: true, classes: 'journal-site-embed'},
+				  { title: 'Embed DDB Section Directly in Note', inline: 'span', wrapper: true, classes: 'journal-ddb-section-embed'}
+				] },
 			    { title: 'Custom Statblock Stats', items: [
 			      { title: 'AC', inline: 'b', classes: 'custom-ac custom-stat'},
 			      { title: 'Average HP', inline: 'b',classes: 'custom-avghp custom-stat' },

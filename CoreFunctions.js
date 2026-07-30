@@ -788,7 +788,25 @@ function add_aoe_to_statblock(html){
        
   })
 }
-
+async function embedDDBSection(target){
+  const ddbSections = target.find('.journal-ddb-section-embed')
+  const promises = [];
+  for(let i = 0; i<ddbSections.length; i++){
+    const $section = $(ddbSections[i]);
+    let url = $section.text().replaceAll("’", "'");
+    if(!url.includes('dndbeyond.com/sources'))
+      continue;
+    const promise = new Promise(async (resolve, reject) => { 
+      fetch_tooltip([undefined, url], url, (tooltip)=>{
+        resolve(tooltip);
+      });
+    });
+    const tooltip = await promise;
+    const html = $(tooltip.Tooltip).find('.tooltip-body>div:first-of-type');
+    $section.replaceWith(html);
+  }
+  return true;
+}
 function add_aoe_statblock_click(target, tokenId = undefined){
   target.find(`button.avtt-aoe-button`).off('click.aoe').on('click.aoe', function(e) {
     e.stopPropagation();
