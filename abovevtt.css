@@ -5926,6 +5926,10 @@ div#initialPosition_row input[type=number] {
     width: 100%;
 }
 
+.note .note-text .more-info .detail-content{
+    width: 100%;
+}
+
 .body-rpgcharacter-sheet .note-text,
 .avtt-spectator-sheet .note-text{
     top: 0px;
