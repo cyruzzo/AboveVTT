@@ -1880,7 +1880,6 @@ class JournalManager{
 			this.block_send_to_buttons(note_text);
 			add_stat_block_hover(note_text);
 			add_aoe_statblock_click(note_text);
-			embedDDBSection(note_text);
 			$(note_text).find('.add-input').each(function(){window.JOURNAL.addTrackedInputs($(this), {noteId: id})})
 
 			if (!noteAlreadyOpen) {
@@ -2346,6 +2345,7 @@ class JournalManager{
 		return immediateChildren;
 	}
 	async translateHtmlAndBlocks(target, displayNoteId, isStatBlock=true) {
+		await embedDDBSection(target);
 		let pastedButtons = target.find('.avtt-roll-button, [data-rolltype="recharge"], .integrated-dice__container, span[data-dicenotation]');
     	target.find('>style:first-of-type, >style#contentStyles').remove();
 		

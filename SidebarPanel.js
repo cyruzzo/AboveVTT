@@ -3277,7 +3277,6 @@ async function setup_tooltip_flyout(flyout, tooltipHtmlString, classes = [], eve
   window.JOURNAL.add_journal_tooltip_targets(tooltipHtml);
   window.JOURNAL.block_send_to_buttons(tooltipHtml);
   add_stat_block_hover(tooltipHtml);
-  embedDDBSection(tooltipHtml);
   if(options.id != undefined || options.token != undefined)
     tooltipHtml.find('.add-input').each(function(){window.JOURNAL.addTrackedInputs($(this), {noteId: options.id, token: options.token})})
   flyout.find("a").attr("target", "_blank");
