@@ -158,6 +158,7 @@ class JournalManager{
 		this.gameid=gameid;
 		this.notes = {};
 		this.chapters = [];
+		this.persistTimeout;
 
 		const loadJournalPromise = (async () => {
 			let journalData;
@@ -272,8 +273,13 @@ class JournalManager{
 			}
 		});
 	}
-
-	debouncePersist = mydebounce(this.persist, 5000);
+	
+	setPersistTimeout = function(){
+		clearTimeout(this.persistTimeout);
+		this.persistTimeout = setTimeout(()=>{
+			this.persist
+		}, 2000);
+	}
 	
 	persist(allowPlayerPersist=false){
 		if(!(window.DM || allowPlayerPersist)){
@@ -1892,7 +1898,9 @@ class JournalManager{
 			}
 			note.find("a").attr("target", "_blank");
 			note_container.append(note);
-			
+			const debounceReopenNote = mydebounce(()=>{
+				self.display_note(id, statBlock)
+			}, 1500)
 			note.off('click').on('click', '.tooltip-hover[href*="https://www.dndbeyond.com/sources/dnd/"], .int_source_link ', function (event) {
 				event.preventDefault();
 				render_source_chapter_in_iframe(event.target.href);
@@ -1905,8 +1913,9 @@ class JournalManager{
 				avttImages.attr('href', '');
 				closestNote.find('a:empty, button:empty').remove();
 				self.notes[id].text = closestNote[0].innerHTML; 
-				window.JOURNAL.debouncePersist();
+				window.JOURNAL.setPersistTimeout();
 				debounceSendNote(id, self.notes[id]);
+				debounceReopenNote();
 			});
 			note.off('change.checkbox').on('change.checkbox', 'input', (e)=>{
 				if (e.target && e.target.nodeName === 'INPUT' && e.target.type === 'checkbox') {				
@@ -1922,8 +1931,9 @@ class JournalManager{
 				avttImages.attr('href', '');
 				closestNote.find('a:empty, button:empty').remove();
 				self.notes[id].text = closestNote[0].innerHTML; 
-				window.JOURNAL.debouncePersist();
+				window.JOURNAL.setPersistTimeout();
 				debounceSendNote(id, self.notes[id]);
+				debounceReopenNote();
 			})
 			this.positionNotePins(id, note_text);
 		});	
