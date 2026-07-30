@@ -92,7 +92,38 @@ async function display_stat_block_in_container(statBlock, container, tokenId, cu
             src="${imageUrl}"    
             class="monster-image"
             style="max-width: 100%;">
-            </div>`);
+            </div>`);      
+            
+      const customStatId = token.options.statBlock;
+      container.off('input.editable').on('input.editable', '.dnd-sheet [contenteditable="true"]', (e)=>{
+        const note_text = container.find('.avtt-stat-block-container').first();
+				const closestNote = note_text.clone(true, true);
+				const avttImages = closestNote.find('img[data-src*="above-bucket-not-a-url"]');
+				avttImages.attr('src', '');
+				avttImages.attr('href', '');
+        closestNote.find('a:empty, button:empty').remove();
+				window.JOURNAL.notes[customStatId].text = closestNote[0].innerHTML; 
+        debounceSendNote(customStatId, window.JOURNAL.notes[customStatId]);
+        window.JOURNAL.debouncePersist();
+			});
+			container.off('change.checkbox').on('change.checkbox', '.dnd-sheet input', (e)=>{
+				if (e.target && e.target.nodeName === 'INPUT' && e.target.type === 'checkbox') {				
+					if (e.target.checked) {
+						e.target.setAttribute('checked', 'checked');
+					} else {
+						e.target.removeAttribute('checked');
+					}
+				}
+        const note_text = container.find('.avtt-stat-block-container').first();
+				const closestNote = note_text.clone(true, true);
+				const avttImages = closestNote.find('img[data-src*="above-bucket-not-a-url"]');
+				avttImages.attr('src', '');
+				avttImages.attr('href', '');
+        closestNote.find('a:empty, button:empty').remove();
+				window.JOURNAL.notes[customStatId].text = closestNote[0].innerHTML; 
+        debounceSendNote(customStatId, window.JOURNAL.notes[customStatId]);
+        window.JOURNAL.debouncePersist();
+			})
     }
   
     add_aoe_statblock_click(container, tokenId);
@@ -199,7 +230,6 @@ async function display_stat_block_in_container(statBlock, container, tokenId, cu
         $(abilities[i]).toggleClass('avtt-ability-roll-button', true);
       }
     }
-    embedDDBSection(container);
     $("span.hideme").parent().parent().hide();
 }
 

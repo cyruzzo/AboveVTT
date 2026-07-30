@@ -1079,7 +1079,8 @@ function build_draggable_monster_window(tokenId) {
 		},
 		stop: function() {
 			$('.iframeResizeCover').remove();
-		}
+		},
+		cancel: '[contenteditable]'
 	});
 	minimize_player_monster_window_double_click(container);
 
