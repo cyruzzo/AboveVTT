@@ -903,7 +903,7 @@ function avtt_settings(campaignSettings = false) {
 	if(!campaignSettings){
 		settings.push({	
 			name: "matchCampaignSettings",
-			label: "Match Suggested Settings",
+			label: "Match DM Suggested Settings",
 			description: "<p>If the DM has suggested settings for this campaign force your settings to match.</p>",
 			buttonText: ["Set"],
 			type: "customButton",
