@@ -125,7 +125,11 @@ async function display_stat_block_in_container(statBlock, container, tokenId, cu
         window.JOURNAL.debouncePersist();
 			})
     }
-  
+    if($html.find('.dnd-sheet').length>0){
+      container.css('min-width', '575px');
+    }else{
+      container.css('min-width', '200px');
+    }
     add_aoe_statblock_click(container, tokenId);
 
     container.find("img.monster-image, .monster-image").each((i,block) => {
