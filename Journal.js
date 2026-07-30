@@ -2090,6 +2090,7 @@ class JournalManager{
 		url = url.toLowerCase();
 		if(itemType == 'sources')
 			return 
+		itemType = itemType == 'equipment' ? 'adventuring-gear' : itemType
 		if(itemId == 0 || itemType == 'equipment'){
 			if(window.spellIdCache[url]){
 				callback(`www.dndbeyond.com/${window.spellIdCache[url].type}/${window.spellIdCache[url].id}-tooltip?disable-webm=1`, itemType.slice(0, -1));	
@@ -2105,13 +2106,23 @@ class JournalManager{
 					const name = splitUrl[splitUrl.length-1].replaceAll('-', ' ');
 					const isLegacy = !get_avtt_setting_value('2024Tooltips');
 					const spell = window.SPELLS_CACHE.filter(d => d.definition.name.toLowerCase() == name.toLowerCase() && d.definition.isLegacy == isLegacy)
+					if(!spell.length)
+						console.warn(`spell not found`, name, `isLegacy`, isLegacy);
+						spell = window.SPELLS_CACHE.filter(d => d.name.toLowerCase() == name.toLowerCase())
+					if(!spell.length)
+						console.warn(`spell not found`, name);
 					itemId = `${spell[0].definition.id}-${splitUrl[splitUrl.length-1]}`;
 				}
-				else if(itemType == 'magic-items'){
+				else if(itemType == 'magic-items' || itemType == 'adventuring-gear'){
 					const splitUrl = url.split('/');
 					const name = splitUrl[splitUrl.length-1].replaceAll('-', ' ');
 					const isLegacy = !get_avtt_setting_value('2024Tooltips');
-					const item = window.ITEMS_CACHE.filter(d => d.name.toLowerCase() == name.toLowerCase() && d.isLegacy == isLegacy)
+					let item = window.ITEMS_CACHE.filter(d => d.name.toLowerCase() == name.toLowerCase() && d.isLegacy == isLegacy)
+					if(!item.length)
+						console.warn(`item not found`, name, `isLegacy`, isLegacy);
+						item = window.ITEMS_CACHE.filter(d => d.name.toLowerCase() == name.toLowerCase())
+					if(!item.length)
+						console.warn(`item not found`, name);
 					itemId = `${item[0].id}-${splitUrl[splitUrl.length-1]}`;
 				}
 				else{	
@@ -2119,8 +2130,7 @@ class JournalManager{
 					if($(itemPage).find('.b-breadcrumb-wrapper>.b-breadcrumb-item:last-of-type a').length>0){
 						let splitUrl = $(itemPage).find('.b-breadcrumb-wrapper>.b-breadcrumb-item:last-of-type a').attr('href').split('/');
 						itemId = parseInt(splitUrl[splitUrl.length-1]);
-						itemType = $(itemPage).find('.details-container-content-description-text span:first-of-type')?.text()?.toLowerCase()?.includes('weapon') ? 'weapons' : url.includes('equipment') ? 'adventuring-gear' : itemType
-					    
+						itemType = $(itemPage).find('.details-container-content-description-text span:first-of-type')?.text()?.toLowerCase()?.includes('weapon') ? 'weapons' : url.includes('equipment') ? 'adventuring-gear' : itemType   
 					}
 					else {
 						const regex = /window\.cobaltVcmList\.push\(\{.+id\:([0-9]+)/g;
