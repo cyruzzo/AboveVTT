@@ -4525,7 +4525,7 @@ class JournalManager{
 					"title": "Fillable Character Sheet",
 					"description": "Adds a fillable character sheet to the note. Has limited edit capabilites for Players.",
 					"content": `
-					<div class="dnd-sheet">
+					<style id='contentStyles'>${contentStyles}</style><div class="dnd-sheet">
 						<!-- ================= PAGE 1: CORE STATS, COMBAT & ACTIONS ================= -->
 						<div class="dnd-page">
 							<!-- Header Block -->
