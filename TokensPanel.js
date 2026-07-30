@@ -1763,7 +1763,7 @@ async function create_and_place_token(listItem, hidden = undefined, specificImag
         options.monster = 'customStat'
     }
     
-    options.color = options.color ?? foundOptions.color;
+    options.color = foundOptions.color ?? options.color;
     
 
 
