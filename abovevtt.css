@@ -8866,6 +8866,11 @@ button#changeTokenImage:before{
         height: auto;
     }
 }
+
+.glc-game-log div[class|='tss'][class$='-GameLog'] {
+    overflow-x:hidden;
+}
+
 [class*='styles_gameLogPane'] *{
     overscroll-behavior: auto;
 }

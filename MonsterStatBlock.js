@@ -1812,9 +1812,14 @@ function getNonLegacySpellId(options){
       newSpell = window.SPELLS_CACHE.filter(d=> d.definition.name.toLowerCase() == options.tooltipName && (!d.definition.isLegacy || d.definition.isHomebrew)); 
       return newSpell[0].definition.id;
     } else if(options.id){
-        const spell =  window.SPELLS_CACHE.filter(d=> d.definition.id == options.id);
+        const spell = window.SPELLS_CACHE.filter(d=> d.definition.id == options.id);
         const name = spell[0].definition.name.toLowerCase();
         newSpell = window.SPELLS_CACHE.filter(d=> d.definition.name.toLowerCase() == name && (!d.definition.isLegacy || d.definition.isHomebrew));
+        options.tooltipName = name;
+    }
+    if(!newSpell[0]){
+        console.warn('Legacy fallback', options)
+        newSpell = window.ITEMS_CACHE.filter(d=> d.name.toLowerCase() == options.tooltipName && d.isLegacy);
     }
     if(!newSpell[0]){
       console.warn('Spell does not exist');
@@ -1828,12 +1833,17 @@ function getNonLegacyItemId(options){
       newItem = window.ITEMS_CACHE.filter(d=> d.name.toLowerCase() == options.tooltipName && (!d.isLegacy || d.isHomebrew)); 
       return newItem[0].id;
     } else if(options.id){
-        const spell =  window.ITEMS_CACHE.filter(d=> d.id == options.id);
-        const name = spell[0].name.toLowerCase();
+        const item =  window.ITEMS_CACHE.filter(d=> d.id == options.id);
+        const name = item[0].name.toLowerCase();
         newItem = window.ITEMS_CACHE.filter(d=> d.name.toLowerCase() == name && (!d.isLegacy || d.isHomebrew));
+        options.tooltipName = name;
     }
     if(!newItem[0]){
-      console.warn('Spell does not exist');
+        console.warn('Legacy fallback', options)
+        newItem = window.ITEMS_CACHE.filter(d=> d.name.toLowerCase() == options.tooltipName && d.isLegacy);
+    }
+    if(!newItem[0]){
+      console.warn('Item does not exist', options);
       return false;
     }
     return newItem[0].id;
@@ -1962,11 +1972,11 @@ const fetch_tooltip = mydebounce(async (dataTooltipHref, name, callback) => {
         const parts = dataTooltipHref[0].split("/");
         const idIndex = parts.findIndex(p => p.includes("-tooltip"));
         let id = parseInt(parts[idIndex]);
-        const type = parts[idIndex - 1];
+        const type = parts[idIndex - 1] == 'equipment' ? 'adventuring-gear' : parts[idIndex - 1];
         if(get_avtt_setting_value('2024Tooltips')){
           if(type == 'spells')
             id = getNonLegacySpellId({id});
-          else if(type == 'magic-items')
+          else if(type == 'magic-items' || type == 'adventuring-gear')
             id = getNonLegacyItemId({id});
         }
         const typeAndId = `${type}/${id}`;
@@ -2115,19 +2125,13 @@ function add_stat_block_hover(statBlockContainer, tokenId) {
     const tooltip = $(statBlockContainer).find(".tooltip-hover");
     
     tooltip.hover(function (hoverEvent) {
-
         let currentTarget = $(hoverEvent.currentTarget);
         let cursorOffset = {
-           left : 10,
-           top  : -10
+          left : 10,
+          top  : -10
         }
-        currentTarget.off('mousemove.cursor').on('mousemove.cursor', function(e){
-          currentTarget.css({
-            '--cursor-offsetX': `${(e.clientX + cursorOffset.left)}px`,
-            '--cursor-offsetY': `${(e.clientY + cursorOffset.top)}px`
-          })
-        })
         if (hoverEvent.type === "mouseenter") {
+          clearTimeout(window.tooltipHoverTimeout);
           window.tooltipHoverTimeout = setTimeout(function(){
             currentTarget.css({
               '--cursor-offsetX': `${(hoverEvent.clientX + cursorOffset.left)}px`,
@@ -2186,7 +2190,13 @@ function add_stat_block_hover(statBlockContainer, tokenId) {
             currentTarget.toggleClass('loading-tooltip', true);   
             fetch_tooltip(dataTooltipHref, name, callback);   
           }, 200);
-        } else {
+        } else if (hoverEvent.type === "mousemove") {
+
+          currentTarget.css({
+            '--cursor-offsetX': `${(e.clientX + cursorOffset.left)}px`,
+            '--cursor-offsetY': `${(e.clientY + cursorOffset.top)}px`
+          })
+        } else if (hoverEvent.type === "mouseleave") {
             clearTimeout(window.tooltipHoverTimeout); 
             remove_tooltip(500);
             currentTarget.toggleClass('loading-tooltip', false);
