@@ -199,6 +199,7 @@ async function display_stat_block_in_container(statBlock, container, tokenId, cu
         $(abilities[i]).toggleClass('avtt-ability-roll-button', true);
       }
     }
+    embedDDBSection(container);
     $("span.hideme").parent().parent().hide();
 }
 
@@ -1848,7 +1849,7 @@ function getNonLegacyItemId(options){
     }
     return newItem[0].id;
 }
-const fetch_tooltip = mydebounce(async (dataTooltipHref, name, callback) => {
+const fetch_tooltip = mydebounce(async (dataTooltipHref, name, callback, callbackTarget) => {
     // dataTooltipHref will look something like this `//www.dndbeyond.com/spells/2329-tooltip?disable-webm=1&disable-webm=1`
     // we only want the `spells/2329` part of that
     try {
@@ -1862,7 +1863,7 @@ const fetch_tooltip = mydebounce(async (dataTooltipHref, name, callback) => {
           const existingJson = window.tooltipCache[typeAndId];
           if (existingJson !== undefined) {
               console.log("fetch_tooltip existingJson", existingJson);
-              callback(existingJson);
+              callback(existingJson, callbackTarget);
               return;
           }
           window.tooltipCache[typeAndId] = {Tooltip: ``};
@@ -1880,7 +1881,7 @@ const fetch_tooltip = mydebounce(async (dataTooltipHref, name, callback) => {
 
               const toolTipJson = { Tooltip: '' }
               window.tooltipCache[typeAndId] = toolTipJson;
-              callback(toolTipJson); 
+              callback(toolTipJson, callbackTarget); 
               return;
             } 
               
@@ -1956,7 +1957,7 @@ const fetch_tooltip = mydebounce(async (dataTooltipHref, name, callback) => {
 
           const toolTipJson = {Tooltip: moreInfo}
           window.tooltipCache[typeAndId] = toolTipJson;
-          callback(toolTipJson); 
+          callback(toolTipJson, callbackTarget); 
         }
       }
 
@@ -1984,7 +1985,7 @@ const fetch_tooltip = mydebounce(async (dataTooltipHref, name, callback) => {
         const existingJson = window.tooltipCache[typeAndId];
         if (existingJson !== undefined) {
           console.log("fetch_tooltip existingJson", existingJson);
-          callback(existingJson);
+          callback(existingJson, callbackTarget);
           return;
         }
         
@@ -1995,7 +1996,7 @@ const fetch_tooltip = mydebounce(async (dataTooltipHref, name, callback) => {
             // This prevents the scenario where a user triggers `mouseenter`, and `mouseleave` multiple times before the first network request finishes
             const alreadyFetched = window.tooltipCache[typeAndId];
             if (alreadyFetched) {
-                callback(alreadyFetched);
+                callback(alreadyFetched, callbackTarget);
                 return false;
             }
             return true;
@@ -2016,7 +2017,7 @@ const fetch_tooltip = mydebounce(async (dataTooltipHref, name, callback) => {
 
 
             window.tooltipCache[typeAndId] = responseJSON;
-            callback(responseJSON);
+            callback(responseJSON, callbackTarget);
           },
           error: function (error) {
             console.warn("fetch_tooltip error - attmpting more info link for homebrew/sources", error);
