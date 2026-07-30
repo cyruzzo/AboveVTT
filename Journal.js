@@ -3913,7 +3913,6 @@ class JournalManager{
 				color: #111;
 				background-color: #fff;
 				width: 100%;
-				max-width: 850px;
 				margin: 0 auto;
 				box-sizing: border-box;
 				font-size: 11px;

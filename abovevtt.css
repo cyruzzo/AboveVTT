@@ -828,6 +828,7 @@ span.button-text{
     margin: 25px 0px 0px 0px;
     overflow-y: auto;
     overflow-x: hidden;
+    width: 100% !important;
 }
 #resizeDragMon .avtt-stat-block-container .details-more-info {
     background: #fff;
@@ -12935,7 +12936,6 @@ p.monster-header+p {
     color: #111;
     background-color: #fff;
     width: 100%;
-    max-width: 850px;
     margin: 0 auto;
     box-sizing: border-box;
     font-size: 11px;
@@ -13273,7 +13273,7 @@ p.monster-header+p {
         overflow-wrap: break-word;
     }
 
-  }
+}
  
 /***** END NEW STAT BLOCKS ****/
 
