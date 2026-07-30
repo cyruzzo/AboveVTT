@@ -4583,37 +4583,37 @@ class JournalManager{
 									<!-- Strength -->
 									<tr>
 										<td>Str</td>
-										<td editablecontent="true">+0</td>
+										<td><span contenteditable="true">+0</span></td>
 										<td><span class="box-field ability-score-field" contenteditable="true">10</span></td>
 									</tr>
 									<!-- Dexterity -->
 									<tr>
 										<td>Dex</td>
-										<td editablecontent="true">+0</td>
+										<td><span contenteditable="true">+0</span></td>
 										<td><span class="box-field ability-score-field" contenteditable="true">10</span></td>
 									</tr>
 									<!-- Constitution -->
 									<tr>
 										<td>Con</td>
-										<td editablecontent="true">+0</td>
+										<td><span contenteditable="true">+0</span></td>
 										<td><span class="box-field ability-score-field" contenteditable="true">10</span></td>
 									</tr>
 									<!-- Intelligence -->
 									<tr>
 										<td>Int</td>
-										<td editablecontent="true">+0</td>
+										<td><span contenteditable="true">+0</span></td>
 										<td><span class="box-field ability-score-field" contenteditable="true">10</span></td>
 									</tr>
 									<!-- Wisdom -->
 									<tr>
 										<td>Wis</td>
-										<td editablecontent="true">+0</td>
+										<td><span contenteditable="true">+0</span></td>
 										<td><span class="box-field ability-score-field" contenteditable="true">10</span></td>
 									</tr>
 									<!-- Charisma -->
 									<tr>
 										<td>Cha</td>
-										<td editablecontent="true">+0</td>
+										<td><span contenteditable="true">+0</span></td>
 										<td><span class="box-field ability-score-field" contenteditable="true">10</span></td>
 									</tr>
 									</tbody>
@@ -4624,75 +4624,75 @@ class JournalManager{
 								<div class="skills-box">
 								<div class="section-title">Skills</div>
 								<div class="skill-row"><input type="checkbox" />
-									<div class="mod-bullet" contenteditable="true">+0</div>
+									<div contenteditable="true">+0</div>
 									Acrobatics <span>(Dex)</span>
 								</div>
 								<div class="skill-row"><input type="checkbox" />
-									<div class="mod-bullet" contenteditable="true">+0</div>
+									<div contenteditable="true">+0</div>
 									Animal Handling <span>(Wis)</span>
 								</div>
 								<div class="skill-row"><input type="checkbox" />
-									<div class="mod-bullet" contenteditable="true">+0</div>
+									<div contenteditable="true">+0</div>
 									Arcana <span>(Int)</span>
 								</div>
 								<div class="skill-row"><input checked="checked" type="checkbox" />
-									<div class="mod-bullet" contenteditable="true">+0</div>
+									<div contenteditable="true">+0</div>
 									Athletics <span>(Str)</span>
 								</div>
 								<div class="skill-row"><input type="checkbox" />
-									<div class="mod-bullet" contenteditable="true">+0</div>
+									<div contenteditable="true">+0</div>
 									Deception <span>(Cha)</span>
 								</div>
 								<div class="skill-row"><input type="checkbox" />
-									<div class="mod-bullet" contenteditable="true">+0</div>
+									<div contenteditable="true">+0</div>
 									History <span>(Int)</span>
 								</div>
 								<div class="skill-row"><input type="checkbox" />
-									<div class="mod-bullet" contenteditable="true">+0</div>
+									<div contenteditable="true">+0</div>
 									Insight <span>(Wis)</span>
 								</div>
 								<div class="skill-row"><input checked="checked" type="checkbox" />
-									<div class="mod-bullet" contenteditable="true">+0</div>
+									<div contenteditable="true">+0</div>
 									Intimidation <span>(Cha)</span>
 								</div>
 								<div class="skill-row"><input type="checkbox" />
-									<div class="mod-bullet" contenteditable="true">+0</div>
+									<div contenteditable="true">+0</div>
 									Investigation <span>(Int)</span>
 								</div>
 								<div class="skill-row"><input type="checkbox" />
-									<div class="mod-bullet" contenteditable="true">+0</div>
+									<div contenteditable="true">+0</div>
 									Medicine <span>(Wis)</span>
 								</div>
 								<div class="skill-row"><input type="checkbox" />
-									<div class="mod-bullet" contenteditable="true">+0</div>
+									<div contenteditable="true">+0</div>
 									Nature <span>(Int)</span>
 								</div>
 								<div class="skill-row"><input checked="checked" type="checkbox" />
-									<div class="mod-bullet" contenteditable="true">+0</div>
+									<div contenteditable="true">+0</div>
 									Perception <span>(Wis)</span>
 								</div>
 								<div class="skill-row"><input type="checkbox" />
-									<div class="mod-bullet" contenteditable="true">+0</div>
+									<div contenteditable="true">+0</div>
 									Performance <span>(Cha)</span>
 								</div>
 								<div class="skill-row"><input type="checkbox" />
-									<div class="mod-bullet" contenteditable="true">+0</div>
+									<div contenteditable="true">+0</div>
 									Persuasion <span>(Cha)</span>
 								</div>
 								<div class="skill-row"><input type="checkbox" />
-									<div class="mod-bullet" contenteditable="true">+0</div>
+									<div contenteditable="true">+0</div>
 									Religion <span>(Int)</span>
 								</div>
 								<div class="skill-row"><input type="checkbox" />
-									<div class="mod-bullet" contenteditable="true">+0</div>
+									<div contenteditable="true">+0</div>
 									Sleight of Hand <span>(Dex)</span>
 								</div>
 								<div class="skill-row"><input type="checkbox" />
-									<div class="mod-bullet" contenteditable="true">+0</div>
+									<div contenteditable="true">+0</div>
 									Stealth <span>(Dex)</span>
 								</div>
 								<div class="skill-row"><input checked="checked" type="checkbox" />
-									<div class="mod-bullet" contenteditable="true">+0</div>
+									<div contenteditable="true">+0</div>
 									Survival <span>(Wis)</span>
 								</div>
 								</div>
