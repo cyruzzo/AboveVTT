@@ -92,9 +92,14 @@ async function display_stat_block_in_container(statBlock, container, tokenId, cu
             src="${imageUrl}"    
             class="monster-image"
             style="max-width: 100%;">
-            </div>`);      
-            
+            </div>`);    
+
+
       const customStatId = token.options.statBlock;
+      const debounceReopenStatBlock = mydebounce((statBlock, tokenId, customStatBlock) => {
+        load_monster_stat(statBlock, tokenId, customStatBlock);
+      }, 1500);
+      
       container.off('input.editable').on('input.editable', '.dnd-sheet [contenteditable="true"]', (e)=>{
         const note_text = container.find('.avtt-stat-block-container').first();
 				const closestNote = note_text.clone(true, true);
@@ -104,7 +109,8 @@ async function display_stat_block_in_container(statBlock, container, tokenId, cu
         closestNote.find('a:empty, button:empty').remove();
 				window.JOURNAL.notes[customStatId].text = closestNote[0].innerHTML; 
         debounceSendNote(customStatId, window.JOURNAL.notes[customStatId]);
-        window.JOURNAL.debouncePersist();
+        window.JOURNAL.setPersistTimeout();
+        debounceReopenStatBlock(statBlock, tokenId, window.JOURNAL.notes[customStatId].text);
 			});
 			container.off('change.checkbox').on('change.checkbox', '.dnd-sheet input', (e)=>{
 				if (e.target && e.target.nodeName === 'INPUT' && e.target.type === 'checkbox') {				
@@ -122,7 +128,7 @@ async function display_stat_block_in_container(statBlock, container, tokenId, cu
         closestNote.find('a:empty, button:empty').remove();
 				window.JOURNAL.notes[customStatId].text = closestNote[0].innerHTML; 
         debounceSendNote(customStatId, window.JOURNAL.notes[customStatId]);
-        window.JOURNAL.debouncePersist();
+        window.JOURNAL.setPersistTimeout();
 			})
     }
     if($html.find('.dnd-sheet').length>0){
