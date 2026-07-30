@@ -106,7 +106,7 @@ async function display_stat_block_in_container(statBlock, container, tokenId, cu
 				const avttImages = closestNote.find('img[data-src*="above-bucket-not-a-url"]');
 				avttImages.attr('src', '');
 				avttImages.attr('href', '');
-        closestNote.find('a:empty, button:empty').remove();
+        closestNote.find('a:empty, button:empty, .image').remove();
 				window.JOURNAL.notes[customStatId].text = closestNote[0].innerHTML; 
         debounceSendNote(customStatId, window.JOURNAL.notes[customStatId]);
         window.JOURNAL.setPersistTimeout();
@@ -125,7 +125,7 @@ async function display_stat_block_in_container(statBlock, container, tokenId, cu
 				const avttImages = closestNote.find('img[data-src*="above-bucket-not-a-url"]');
 				avttImages.attr('src', '');
 				avttImages.attr('href', '');
-        closestNote.find('a:empty, button:empty').remove();
+        closestNote.find('a:empty, button:empty, .image').remove();
 				window.JOURNAL.notes[customStatId].text = closestNote[0].innerHTML; 
         debounceSendNote(customStatId, window.JOURNAL.notes[customStatId]);
         window.JOURNAL.setPersistTimeout();
