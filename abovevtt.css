@@ -12927,8 +12927,354 @@ p.monster-header+p {
 }
 
 
+.dnd-page [contenteditable]{
+    cursor: text;
+}
+.dnd-sheet {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    color: #111;
+    background-color: #fff;
+    width: 100%;
+    max-width: 850px;
+    margin: 0 auto;
+    box-sizing: border-box;
+    font-size: 11px;
+    line-height: 1.2;
 
+    .dnd-page {
+        border: 2px solid #222;
+        padding: 15px;
+        margin-bottom: 30px;
+        background: #fff;
+        page-break-after: always;
+        box-sizing: border-box;
+    }
+    .header-box {
+        border: 2px solid #222;
+        padding: 8px;
+        margin-bottom: 10px;
+        display: flex;
+        gap: 8px;
+        background: #f4f4f4;
+        box-sizing: border-box;
+    }
+    .header-box .col {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        box-sizing: border-box;
+    }
+    .header-box .char-name-box {
+        flex: 2;
+    }
+    .box-field {
+        border: 1px solid #444;
+        padding: 4px;
+        background: #fdfdfd;
+        min-height: 24px;
+        height: auto;
+        border-radius: 3px;
+        box-sizing: border-box;
+        overflow-wrap: break-word;
+    }
+    .label {
+        font-size: 8px;
+        text-transform: uppercase;
+        color: #555;
+        text-align: center;
+        display: block;
+        margin-top: 2px;
+        font-weight: bold;
+    }
+    .main-container {
+        display: flex;
+        gap: 10px;
+        box-sizing: border-box;
+    }
+    .left-column {
+        width: 140px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        box-sizing: border-box;
+    }
+    .abilities-table-container, .skills-box {
+        border: 1px solid #333;
+        padding: 6px;
+        background: #fff;
+        border-radius: 4px;
+        box-sizing: border-box;
+    }
+    .section-title {
+        font-size: 10px;
+        font-weight: bold;
+        text-align: center;
+        background: #222;
+        color: #fff;
+        padding: 3px;
+        margin-bottom: 6px;
+        border-radius: 2px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        text-align: center;
+        font-size: 9px;
+    }
+    th {
+        padding: 2px;
+    }
+    thead tr {
+        border-bottom: 1px solid #333;
+        font-size: 8px;
+        text-transform: uppercase;
+        color: #555;
+    }
+    thead th:first-child {
+        text-align: left;
+    }
+    tbody tr {
+        border-bottom: 1px solid #eee;
+    }
+    tbody tr td {
+        padding: 3px 2px;
+    }
+    tbody tr td:first-child {
+        font-weight: bold;
+        text-align: left;
+        text-transform: uppercase;
+        font-size: 8.5px;
+    }
+    tbody tr td:nth-child(2) {
+        font-weight: bold;
+        font-size: 11px;
+    }
+    .ability-score-field {
+        display: inline-block;
+        width: 22px;
+        border: 1px solid #444;
+        padding: 2px;
+        background: #fdfdfd;
+        min-height: 14px;
+        border-radius: 2px;
+        box-sizing: border-box;
+    }
+    .skill-row {
+        display: flex;
+        align-items: center;
+        font-size: 9.5px;
+        margin-bottom: 3px;
+        gap: 4px;
+    }
+    .skill-row input {
+        margin: 0;
+    }
+    .mod-bullet {
+        min-width: 24px;
+        height: 24px;
+        border: 1px solid #444;
+        text-align: center;
+        font-size: 9px;
+        line-height: 24px;
+        background: #f4f4f4;
+    }
+    .skill-row span {
+        color: #777;
+        font-size: 8px;
+    }
+    .mid-column {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        box-sizing: border-box;
+    }
+    .combat-stats-grid {
+        display: flex;
+        gap: 6px;
+        text-align: center;
+        box-sizing: border-box;
+    }
+    .combat-metric {
+        border: 2px solid #333;
+        padding: 6px;
+        flex: 1;
+        background: #fdfdfd;
+        border-radius: 4px;
+        box-sizing: border-box;
+    }
+    .metric-val {
+        font-size: 16px;
+        font-weight: bold;
+        margin-top: 4px;
+    }
+    .hp-box {
+        border: 1px solid #333;
+        padding: 6px;
+        border-radius: 4px;
+        box-sizing: border-box;
+    }
+    .hp-row {
+        display: flex;
+        gap: 6px;
+        margin-bottom: 6px;
+        box-sizing: border-box;
+    }
+    .hp-row .col {
+        flex: 1;
+        box-sizing: border-box;
+    }
+    .hp-subgrid {
+        display: flex;
+        gap: 4px;
+        box-sizing: border-box;
+    }
+    .hp-subgrid > div {
+        flex: 1;
+        box-sizing: border-box;
+    }
+    .container-block {
+        border: 1px solid #333;
+        padding: 6px;
+        border-radius: 4px;
+        min-height: 110px;
+        height: auto;
+        background: #fff;
+        box-sizing: border-box;
+    }
+    .container-block.flex-1 {
+        flex: 1;
+    }
+    .attacks-field {
+        min-height: 120px;
+        height: auto;
+        border: 1px solid #444;
+        padding: 4px;
+        background: #fdfdfd;
+        border-radius: 3px;
+        box-sizing: border-box;
+        overflow-wrap: break-word;
+    }
+    .features-field {
+        min-height: 180px;
+        height: auto;
+        border: 1px solid #444;
+        padding: 4px;
+        background: #fdfdfd;
+        border-radius: 3px;
+        box-sizing: border-box;
+        overflow-wrap: break-word;
+    }
+    .equipment-field {
+        min-height: 90px;
+        height: auto;
+        border: 1px solid #444;
+        padding: 4px;
+        background: #fdfdfd;
+        border-radius: 3px;
+        box-sizing: border-box;
+        overflow-wrap: break-word;
+    }
+    .page2-grid {
+        display: flex;
+        gap: 10px;
+        box-sizing: border-box;
+    }
+    .page2-grid > .col {
+        flex: 1;
+        box-sizing: border-box;
+    }
+    .bio-block {
+        border: 1px solid #333;
+        padding: 6px;
+        border-radius: 4px;
+        margin-bottom: 8px;
+        background: #fff;
+        box-sizing: border-box;
+    }
+    .bio-appearance { min-height: 90px; height: auto; border: 1px solid #444; padding: 4px; background: #fdfdfd; border-radius: 3px; box-sizing: border-box; overflow-wrap: break-word; }
+    .bio-backstory { min-height: 140px; height: auto; border: 1px solid #444; padding: 4px; background: #fdfdfd; border-radius: 3px; box-sizing: border-box; overflow-wrap: break-word; }
+    .bio-allies { min-height: 90px; height: auto; border: 1px solid #444; padding: 4px; background: #fdfdfd; border-radius: 3px; box-sizing: border-box; overflow-wrap: break-word; }
+    .bio-traits-add { min-height: 100px; height: auto; border: 1px solid #444; padding: 4px; background: #fdfdfd; border-radius: 3px; box-sizing: border-box; overflow-wrap: break-word; }
+    .traits-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+        box-sizing: border-box;
+    }
+    .trait-box-field {
+        min-height: 60px;
+        height: auto;
+        border: 1px solid #444;
+        padding: 4px;
+        background: #fdfdfd;
+        border-radius: 3px;
+        box-sizing: border-box;
+        overflow-wrap: break-word;
+    }
+    .attunement-content {
+        font-size: 9px;
+        margin-top: 4px;
+        box-sizing: border-box;
+    }
+    .attunement-content > div {
+        margin-bottom: 2px;
+    }
+    .currency-container {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 6px;
+        margin-top: 4px;
+        box-sizing: border-box;
+    }
+    .coin-slot {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        font-size: 9px;
+        font-weight: bold;
+        border: 1px solid #555;
+        padding: 2px 4px;
+        border-radius: 3px;
+        background: #f9f9f9;
+        box-sizing: border-box;
+    }
+    .coin-input {
+        width: 40px;
+        min-height: 24px;
+        height: auto;
+        border: 1px solid #ccc;
+        background: transparent;
+        text-align: right;
+        display: inline-block;
+        line-height: 24px;
+    }
+    .treasure-field {
+        min-height: 80px;
+        height: auto;
+        border: 1px solid #444;
+        padding: 4px;
+        background: #fdfdfd;
+        border-radius: 3px;
+        box-sizing: border-box;
+        overflow-wrap: break-word;
+    }
+    .spellcasting-field {
+        min-height: 120px;
+        height: auto;
+        border: 1px solid #444;
+        padding: 4px;
+        background: #fdfdfd;
+        border-radius: 3px;
+        box-sizing: border-box;
+        overflow-wrap: break-word;
+    }
 
+  }
+ 
 /***** END NEW STAT BLOCKS ****/
 
 

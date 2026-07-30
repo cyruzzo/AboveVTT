@@ -273,7 +273,7 @@ class JournalManager{
 		});
 	}
 
-	
+	debouncePersist = mydebounce(this.persist, 5000);
 	
 	persist(allowPlayerPersist=false){
 		if(!(window.DM || allowPlayerPersist)){
@@ -370,7 +370,8 @@ class JournalManager{
 
 		
 	}, 5000);
-	sendNotes(sendNotes){
+	
+	sendNotes(sendNotes, updateDM = false){
 
 		let self=this;
 		if(sendNotes.length > 1 && JSON.stringify(sendNotes).length > 120000) {
@@ -381,7 +382,8 @@ class JournalManager{
 		}
 		else{
 			window.MB.sendMessage('custom/myVTT/notesSync',{
-				notes: sendNotes
+				notes: sendNotes,
+				updateDM 
 			});
 		}
 
@@ -1770,85 +1772,87 @@ class JournalManager{
 		});
 		if(!noteAlreadyOpen){
 			note.attr('title',self.notes[id].title);
-			if(window.DM){
+			if(window.DM || self.notes[id].text.includes('.dnd-sheet')){
 				let visibility_container=$("<div class='visibility-container'/>");
 
 			
+				if(window.DM ){
+					let toggle_container = $(`<div class='visibility-toggle-container'></div`)
 
-				let toggle_container = $(`<div class='visibility-toggle-container'></div`)
+					let visibility_toggle=$("<input type='checkbox' name='allPlayers'/>");
+					let visibility_row = $(`<div class='visibility_toggle_row'><label for='allPlayers'>All Players</label></div>`)
+					visibility_row.append(visibility_toggle)
+					toggle_container.append(visibility_row);
+					visibility_toggle.change(function(){
 
-				let visibility_toggle=$("<input type='checkbox' name='allPlayers'/>");
-				let visibility_row = $(`<div class='visibility_toggle_row'><label for='allPlayers'>All Players</label></div>`)
-				visibility_row.append(visibility_toggle)
-				toggle_container.append(visibility_row);
-				visibility_toggle.change(function(){
-
-					window.JOURNAL.note_visibility(id,visibility_toggle.is(":checked"));
-					window.JOURNAL.build_journal();
-					toggle_container.find(`input:not([name='allPlayers'])`).prop('disabled', visibility_toggle.is(":checked"));
-					toggle_container.find(`input:not([name='allPlayers'])`).prop('checked', visibility_toggle.is(":checked"));
+						window.JOURNAL.note_visibility(id,visibility_toggle.is(":checked"));
+						window.JOURNAL.build_journal();
+						toggle_container.find(`input:not([name='allPlayers'])`).prop('disabled', visibility_toggle.is(":checked"));
+						toggle_container.find(`input:not([name='allPlayers'])`).prop('checked', visibility_toggle.is(":checked"));
+						
 					
-				
-				});
+					});
 
 
-				for(let i =0; i<window.playerUsers.length; i++){
-					if(toggle_container.find(`input[name='${window.playerUsers[i].userId}']`).length == 0){
-						let visibility_toggle=$(`<input type='checkbox' name='${window.playerUsers[i].userId}'/>`);
-						let visibility_row = $(`<div class='visibility_toggle_row'><label for='${window.playerUsers[i].userId}'>${window.playerUsers[i].userName}</label></div>`)
-						
-						visibility_row.append(visibility_toggle)
+					for(let i =0; i<window.playerUsers.length; i++){
+						if(toggle_container.find(`input[name='${window.playerUsers[i].userId}']`).length == 0){
+							let visibility_toggle=$(`<input type='checkbox' name='${window.playerUsers[i].userId}'/>`);
+							let visibility_row = $(`<div class='visibility_toggle_row'><label for='${window.playerUsers[i].userId}'>${window.playerUsers[i].userName}</label></div>`)
+							
+							visibility_row.append(visibility_toggle)
 
-						visibility_toggle.prop("checked",(self.notes[id]?.player instanceof Array && self.notes[id]?.player.includes(`${window.playerUsers[i].userId}`)));
-						
-						visibility_toggle.change(function(){
-							let sharedUsers = toggle_container.find(`input:checked:not([name='allPlayers'])`).toArray().map(d => d.name);
-							if(sharedUsers.length == 0)
-								sharedUsers = false;
-							window.JOURNAL.note_visibility(id,sharedUsers);
-							window.JOURNAL.build_journal();
-						});
-						
-						toggle_container.append(visibility_row);
+							visibility_toggle.prop("checked",(self.notes[id]?.player instanceof Array && self.notes[id]?.player.includes(`${window.playerUsers[i].userId}`)));
+							
+							visibility_toggle.change(function(){
+								let sharedUsers = toggle_container.find(`input:checked:not([name='allPlayers'])`).toArray().map(d => d.name);
+								if(sharedUsers.length == 0)
+									sharedUsers = false;
+								window.JOURNAL.note_visibility(id,sharedUsers);
+								window.JOURNAL.build_journal();
+							});
+							
+							toggle_container.append(visibility_row);
+						}
 					}
+
+					visibility_toggle.prop("checked",self.notes[id].player == true);
+						
+					if(visibility_toggle.is(":checked"))
+						toggle_container.find(`input:not([name='allPlayers'])`).prop('disabled', true);
+					else
+						toggle_container.find(`input:not([name='allPlayers'])`).prop('disabled', false);
+					
+					
+					let shareWithPlayer = $("<button class='share-player-visibility'>Share with players</button>");
+					shareWithPlayer.append(toggle_container);
+					visibility_container.append(shareWithPlayer);
+					
+					let popup_btn=$("<button>Force Open by Players</button>");
+					
+					popup_btn.click(function(){
+						window.MB.sendMessage('custom/myVTT/note',{
+								id: id,
+								note:self.notes[id],
+								popup: true,
+							});
+					});
+					
+					visibility_container.append(popup_btn);
+
+					let force_close_popup_btn=$("<button>Force Closed by Players</button>")
+
+					force_close_popup_btn.click(function(){
+						window.MB.sendMessage('custom/myVTT/note',{
+								id: id,
+								note:self.notes[id],
+								popup: false,
+							});
+					});
+
+					visibility_container.append(force_close_popup_btn);
+					
 				}
 
-				visibility_toggle.prop("checked",self.notes[id].player == true);
-					
-				if(visibility_toggle.is(":checked"))
-					toggle_container.find(`input:not([name='allPlayers'])`).prop('disabled', true);
-				else
-					toggle_container.find(`input:not([name='allPlayers'])`).prop('disabled', false);
-				
-				
-				let shareWithPlayer = $("<button class='share-player-visibility'>Share with players</button>");
-				shareWithPlayer.append(toggle_container);
-				visibility_container.append(shareWithPlayer);
-				
-				let popup_btn=$("<button>Force Open by Players</button>");
-				
-				popup_btn.click(function(){
-					window.MB.sendMessage('custom/myVTT/note',{
-							id: id,
-							note:self.notes[id],
-							popup: true,
-						});
-				});
-				
-				visibility_container.append(popup_btn);
-
-				let force_close_popup_btn=$("<button>Force Closed by Players</button>")
-
-				force_close_popup_btn.click(function(){
-					window.MB.sendMessage('custom/myVTT/note',{
-							id: id,
-							note:self.notes[id],
-							popup: false,
-						});
-				});
-
-				visibility_container.append(force_close_popup_btn);
-				
 				let edit_btn=$("<button>Edit</button>");
 				edit_btn.click(function(){
 					note_container.remove();
@@ -1874,6 +1878,7 @@ class JournalManager{
 
 		}
 		note_text.append(self.notes[id].text); // valid tags are controlled by tinyMCE.init()
+		
 		this.translateHtmlAndBlocks(note_text, id).then(() => {	
 			add_journal_roll_buttons(note_text);
 			this.add_journal_tooltip_targets(note_text);
@@ -1892,7 +1897,34 @@ class JournalManager{
 				event.preventDefault();
 				render_source_chapter_in_iframe(event.target.href);
 			});
-		
+			note.off('input.editable').on('input.editable', '[contenteditable="true"]', (e)=>{
+
+				const closestNote = note_text.clone(true, true);
+				const avttImages = closestNote.find('img[data-src*="above-bucket-not-a-url"]');
+				avttImages.attr('src', '');
+				avttImages.attr('href', '');
+				closestNote.find('a:empty, button:empty').remove();
+				self.notes[id].text = closestNote[0].innerHTML; 
+				window.JOURNAL.debouncePersist();
+				debounceSendNote(id, self.notes[id]);
+			});
+			note.off('change.checkbox').on('change.checkbox', 'input', (e)=>{
+				if (e.target && e.target.nodeName === 'INPUT' && e.target.type === 'checkbox') {				
+					if (e.target.checked) {
+						e.target.setAttribute('checked', 'checked');
+					} else {
+						e.target.removeAttribute('checked');
+					}
+				}
+				const closestNote = note_text.clone(true, true);
+				const avttImages = closestNote.find('img[data-src*="above-bucket-not-a-url"]');
+				avttImages.attr('src', '');
+				avttImages.attr('href', '');
+				closestNote.find('a:empty, button:empty').remove();
+				self.notes[id].text = closestNote[0].innerHTML; 
+				window.JOURNAL.debouncePersist();
+				debounceSendNote(id, self.notes[id]);
+			})
 			this.positionNotePins(id, note_text);
 		});	
 		
@@ -2724,7 +2756,7 @@ class JournalManager{
 	    $newHTML.find('.ignore-abovevtt-formating').each(function(index){
 			$(this).empty().append(ignoreFormatting[index].innerHTML);
 	    })
-
+		$newHTML.find('a:empty, button:empty').remove();
 
         $(target).html($newHTML);
 
@@ -3876,6 +3908,350 @@ class JournalManager{
 			.ddbc-creature-block:after {
 			    bottom: -3px
 			}
+			.dnd-sheet {
+				font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+				color: #111;
+				background-color: #fff;
+				width: 100%;
+				max-width: 850px;
+				margin: 0 auto;
+				box-sizing: border-box;
+				font-size: 11px;
+				line-height: 1.2;
+
+				.dnd-page {
+					border: 2px solid #222;
+					padding: 15px;
+					margin-bottom: 30px;
+					background: #fff;
+					page-break-after: always;
+					box-sizing: border-box;
+				}
+				.header-box {
+					border: 2px solid #222;
+					padding: 8px;
+					margin-bottom: 10px;
+					display: flex;
+					gap: 8px;
+					background: #f4f4f4;
+					box-sizing: border-box;
+				}
+				.header-box .col {
+					flex: 1;
+					display: flex;
+					flex-direction: column;
+					justify-content: flex-end;
+					box-sizing: border-box;
+				}
+				.header-box .char-name-box {
+					flex: 2;
+				}
+				.box-field {
+					border: 1px solid #444;
+					padding: 4px;
+					background: #fdfdfd;
+					min-height: 24px;
+					height: auto;
+					border-radius: 3px;
+					box-sizing: border-box;
+					overflow-wrap: break-word;
+				}
+				.label {
+					font-size: 8px;
+					text-transform: uppercase;
+					color: #555;
+					text-align: center;
+					display: block;
+					margin-top: 2px;
+					font-weight: bold;
+				}
+				.main-container {
+					display: flex;
+					gap: 10px;
+					box-sizing: border-box;
+				}
+				.left-column {
+					width: 140px;
+					display: flex;
+					flex-direction: column;
+					gap: 10px;
+					box-sizing: border-box;
+				}
+				.abilities-table-container, .skills-box {
+					border: 1px solid #333;
+					padding: 6px;
+					background: #fff;
+					border-radius: 4px;
+					box-sizing: border-box;
+				}
+				.section-title {
+					font-size: 10px;
+					font-weight: bold;
+					text-align: center;
+					background: #222;
+					color: #fff;
+					padding: 3px;
+					margin-bottom: 6px;
+					border-radius: 2px;
+					text-transform: uppercase;
+					letter-spacing: 0.5px;
+				}
+				table {
+					width: 100%;
+					border-collapse: collapse;
+					text-align: center;
+					font-size: 9px;
+				}
+				th {
+					padding: 2px;
+				}
+				thead tr {
+					border-bottom: 1px solid #333;
+					font-size: 8px;
+					text-transform: uppercase;
+					color: #555;
+				}
+				thead th:first-child {
+					text-align: left;
+				}
+				tbody tr {
+					border-bottom: 1px solid #eee;
+				}
+				tbody tr td {
+					padding: 3px 2px;
+				}
+				tbody tr td:first-child {
+					font-weight: bold;
+					text-align: left;
+					text-transform: uppercase;
+					font-size: 8.5px;
+				}
+				tbody tr td:nth-child(2) {
+					font-weight: bold;
+					font-size: 11px;
+				}
+				.ability-score-field {
+					display: inline-block;
+					width: 22px;
+					border: 1px solid #444;
+					padding: 2px;
+					background: #fdfdfd;
+					min-height: 14px;
+					border-radius: 2px;
+					box-sizing: border-box;
+				}
+				.skill-row {
+					display: flex;
+					align-items: center;
+					font-size: 9.5px;
+					margin-bottom: 3px;
+					gap: 4px;
+				}
+				.skill-row input {
+					margin: 0;
+				}
+				.mod-bullet {
+					min-width: 24px;
+					height: 24px;
+					border: 1px solid #444;
+					text-align: center;
+					font-size: 9px;
+					line-height: 24px;
+					background: #f4f4f4;
+				}
+				.skill-row span {
+					color: #777;
+					font-size: 8px;
+				}
+				.mid-column {
+					flex: 1;
+					display: flex;
+					flex-direction: column;
+					gap: 10px;
+					box-sizing: border-box;
+				}
+				.combat-stats-grid {
+					display: flex;
+					gap: 6px;
+					text-align: center;
+					box-sizing: border-box;
+				}
+				.combat-metric {
+					border: 2px solid #333;
+					padding: 6px;
+					flex: 1;
+					background: #fdfdfd;
+					border-radius: 4px;
+					box-sizing: border-box;
+				}
+				.metric-val {
+					font-size: 16px;
+					font-weight: bold;
+					margin-top: 4px;
+				}
+				.hp-box {
+					border: 1px solid #333;
+					padding: 6px;
+					border-radius: 4px;
+					box-sizing: border-box;
+				}
+				.hp-row {
+					display: flex;
+					gap: 6px;
+					margin-bottom: 6px;
+					box-sizing: border-box;
+				}
+				.hp-row .col {
+					flex: 1;
+					box-sizing: border-box;
+				}
+				.hp-subgrid {
+					display: flex;
+					gap: 4px;
+					box-sizing: border-box;
+				}
+				.hp-subgrid > div {
+					flex: 1;
+					box-sizing: border-box;
+				}
+				.container-block {
+					border: 1px solid #333;
+					padding: 6px;
+					border-radius: 4px;
+					min-height: 110px;
+					height: auto;
+					background: #fff;
+					box-sizing: border-box;
+				}
+				.container-block.flex-1 {
+					flex: 1;
+				}
+				.attacks-field {
+					min-height: 120px;
+					height: auto;
+					border: 1px solid #444;
+					padding: 4px;
+					background: #fdfdfd;
+					border-radius: 3px;
+					box-sizing: border-box;
+					overflow-wrap: break-word;
+				}
+				.features-field {
+					min-height: 180px;
+					height: auto;
+					border: 1px solid #444;
+					padding: 4px;
+					background: #fdfdfd;
+					border-radius: 3px;
+					box-sizing: border-box;
+					overflow-wrap: break-word;
+				}
+				.equipment-field {
+					min-height: 90px;
+					height: auto;
+					border: 1px solid #444;
+					padding: 4px;
+					background: #fdfdfd;
+					border-radius: 3px;
+					box-sizing: border-box;
+					overflow-wrap: break-word;
+				}
+				.page2-grid {
+					display: flex;
+					gap: 10px;
+					box-sizing: border-box;
+				}
+				.page2-grid > .col {
+					flex: 1;
+					box-sizing: border-box;
+				}
+				.bio-block {
+					border: 1px solid #333;
+					padding: 6px;
+					border-radius: 4px;
+					margin-bottom: 8px;
+					background: #fff;
+					box-sizing: border-box;
+				}
+				.bio-appearance { min-height: 90px; height: auto; border: 1px solid #444; padding: 4px; background: #fdfdfd; border-radius: 3px; box-sizing: border-box; overflow-wrap: break-word; }
+				.bio-backstory { min-height: 140px; height: auto; border: 1px solid #444; padding: 4px; background: #fdfdfd; border-radius: 3px; box-sizing: border-box; overflow-wrap: break-word; }
+				.bio-allies { min-height: 90px; height: auto; border: 1px solid #444; padding: 4px; background: #fdfdfd; border-radius: 3px; box-sizing: border-box; overflow-wrap: break-word; }
+				.bio-traits-add { min-height: 100px; height: auto; border: 1px solid #444; padding: 4px; background: #fdfdfd; border-radius: 3px; box-sizing: border-box; overflow-wrap: break-word; }
+				.traits-grid {
+					display: grid;
+					grid-template-columns: 1fr 1fr;
+					gap: 8px;
+					box-sizing: border-box;
+				}
+				.trait-box-field {
+					min-height: 60px;
+					height: auto;
+					border: 1px solid #444;
+					padding: 4px;
+					background: #fdfdfd;
+					border-radius: 3px;
+					box-sizing: border-box;
+					overflow-wrap: break-word;
+				}
+				.attunement-content {
+					font-size: 9px;
+					margin-top: 4px;
+					box-sizing: border-box;
+				}
+				.attunement-content > div {
+					margin-bottom: 2px;
+				}
+				.currency-container {
+					display: flex;
+					justify-content: space-between;
+					margin-bottom: 6px;
+					margin-top: 4px;
+					box-sizing: border-box;
+				}
+				.coin-slot {
+					display: flex;
+					align-items: center;
+					gap: 4px;
+					font-size: 9px;
+					font-weight: bold;
+					border: 1px solid #555;
+					padding: 2px 4px;
+					border-radius: 3px;
+					background: #f9f9f9;
+					box-sizing: border-box;
+				}
+				.coin-input {
+					width: 40px;
+					min-height: 24px;
+					height: auto;
+					border: 1px solid #ccc;
+					background: transparent;
+					text-align: right;
+					display: inline-block;
+					line-height: 24px;
+				}
+				.treasure-field {
+					min-height: 80px;
+					height: auto;
+					border: 1px solid #444;
+					padding: 4px;
+					background: #fdfdfd;
+					border-radius: 3px;
+					box-sizing: border-box;
+					overflow-wrap: break-word;
+				}
+				.spellcasting-field {
+					min-height: 120px;
+					height: auto;
+					border: 1px solid #444;
+					padding: 4px;
+					background: #fdfdfd;
+					border-radius: 3px;
+					box-sizing: border-box;
+					overflow-wrap: break-word;
+				}
+
+			}
 			@font-face {
 			  font-family: "Tiamat Condensed SC Regular";
 			  src: url("https://www.dndbeyond.com/fonts/tiamatcondensedsc-regular-webfont.woff2") format("woff2");
@@ -4145,6 +4521,373 @@ class JournalManager{
 <p>4th level (3 slots): greater invisibility, ice storm</p>
 <p>5th level (1 slot): cone of cold</p>`
 			    },
+				{
+					"title": "Fillable Character Sheet",
+					"description": "Adds a fillable character sheet to the note. Has limited edit capabilites for Players.",
+					"content": `
+					<style id='contentStyles'>${contentStyles}</style><div class="dnd-sheet">
+						<!-- ================= PAGE 1: CORE STATS, COMBAT & ACTIONS ================= -->
+						<div class="dnd-page">
+							<!-- Header Block -->
+							<div class="header-box">
+							<div class="col char-name-box">
+								<div class="box-field" contenteditable="true">&nbsp;</div>
+								<span class="label">Character Name</span>
+							</div>
+							<div class="col">
+								<div class="box-field" contenteditable="true">&nbsp;</div>
+								<span class="label">Class &amp; Level</span>
+							</div>
+							<div class="col">
+								<div class="box-field" contenteditable="true">&nbsp;</div>
+								<span class="label">Background</span>
+							</div>
+							<div class="col">
+								<div class="box-field" contenteditable="true">&nbsp;</div>
+								<span class="label">Species (Race)</span>
+							</div>
+							<div class="col">
+								<div class="box-field" contenteditable="true">&nbsp;</div>
+								<span class="label">Alignment</span>
+							</div>
+							<div class="col">
+								<div class="box-field" contenteditable="true">&nbsp;</div>
+								<span class="label">XP</span>
+							</div>
+							</div>
+							
+							<div class="main-container">
+							<!-- LEFT COLUMN: Abilities & Skills -->
+							<div class="left-column">
+								<!-- Main Stats Table Container -->
+								<div class="abilities-table-container">
+								<div class="section-title">Abilities</div>
+								<table>
+									<thead>
+									<tr>
+										<th>Ability</th>
+										<th>Mod</th>
+										<th>Score</th>
+									</tr>
+									</thead>
+									<tbody>
+									<!-- Strength -->
+									<tr>
+										<td>Str</td>
+										<td editablecontent="true">+0</td>
+										<td><span class="box-field ability-score-field" contenteditable="true">10</span></td>
+									</tr>
+									<!-- Dexterity -->
+									<tr>
+										<td>Dex</td>
+										<td editablecontent="true">+0</td>
+										<td><span class="box-field ability-score-field" contenteditable="true">10</span></td>
+									</tr>
+									<!-- Constitution -->
+									<tr>
+										<td>Con</td>
+										<td editablecontent="true">+0</td>
+										<td><span class="box-field ability-score-field" contenteditable="true">10</span></td>
+									</tr>
+									<!-- Intelligence -->
+									<tr>
+										<td>Int</td>
+										<td editablecontent="true">+0</td>
+										<td><span class="box-field ability-score-field" contenteditable="true">10</span></td>
+									</tr>
+									<!-- Wisdom -->
+									<tr>
+										<td>Wis</td>
+										<td editablecontent="true">+0</td>
+										<td><span class="box-field ability-score-field" contenteditable="true">10</span></td>
+									</tr>
+									<!-- Charisma -->
+									<tr>
+										<td>Cha</td>
+										<td editablecontent="true">+0</td>
+										<td><span class="box-field ability-score-field" contenteditable="true">10</span></td>
+									</tr>
+									</tbody>
+								</table>
+								</div>
+								
+								<!-- Skills List -->
+								<div class="skills-box">
+								<div class="section-title">Skills</div>
+								<div class="skill-row"><input type="checkbox" />
+									<div class="mod-bullet" contenteditable="true">+0</div>
+									Acrobatics <span>(Dex)</span>
+								</div>
+								<div class="skill-row"><input type="checkbox" />
+									<div class="mod-bullet" contenteditable="true">+0</div>
+									Animal Handling <span>(Wis)</span>
+								</div>
+								<div class="skill-row"><input type="checkbox" />
+									<div class="mod-bullet" contenteditable="true">+0</div>
+									Arcana <span>(Int)</span>
+								</div>
+								<div class="skill-row"><input checked="checked" type="checkbox" />
+									<div class="mod-bullet" contenteditable="true">+0</div>
+									Athletics <span>(Str)</span>
+								</div>
+								<div class="skill-row"><input type="checkbox" />
+									<div class="mod-bullet" contenteditable="true">+0</div>
+									Deception <span>(Cha)</span>
+								</div>
+								<div class="skill-row"><input type="checkbox" />
+									<div class="mod-bullet" contenteditable="true">+0</div>
+									History <span>(Int)</span>
+								</div>
+								<div class="skill-row"><input type="checkbox" />
+									<div class="mod-bullet" contenteditable="true">+0</div>
+									Insight <span>(Wis)</span>
+								</div>
+								<div class="skill-row"><input checked="checked" type="checkbox" />
+									<div class="mod-bullet" contenteditable="true">+0</div>
+									Intimidation <span>(Cha)</span>
+								</div>
+								<div class="skill-row"><input type="checkbox" />
+									<div class="mod-bullet" contenteditable="true">+0</div>
+									Investigation <span>(Int)</span>
+								</div>
+								<div class="skill-row"><input type="checkbox" />
+									<div class="mod-bullet" contenteditable="true">+0</div>
+									Medicine <span>(Wis)</span>
+								</div>
+								<div class="skill-row"><input type="checkbox" />
+									<div class="mod-bullet" contenteditable="true">+0</div>
+									Nature <span>(Int)</span>
+								</div>
+								<div class="skill-row"><input checked="checked" type="checkbox" />
+									<div class="mod-bullet" contenteditable="true">+0</div>
+									Perception <span>(Wis)</span>
+								</div>
+								<div class="skill-row"><input type="checkbox" />
+									<div class="mod-bullet" contenteditable="true">+0</div>
+									Performance <span>(Cha)</span>
+								</div>
+								<div class="skill-row"><input type="checkbox" />
+									<div class="mod-bullet" contenteditable="true">+0</div>
+									Persuasion <span>(Cha)</span>
+								</div>
+								<div class="skill-row"><input type="checkbox" />
+									<div class="mod-bullet" contenteditable="true">+0</div>
+									Religion <span>(Int)</span>
+								</div>
+								<div class="skill-row"><input type="checkbox" />
+									<div class="mod-bullet" contenteditable="true">+0</div>
+									Sleight of Hand <span>(Dex)</span>
+								</div>
+								<div class="skill-row"><input type="checkbox" />
+									<div class="mod-bullet" contenteditable="true">+0</div>
+									Stealth <span>(Dex)</span>
+								</div>
+								<div class="skill-row"><input checked="checked" type="checkbox" />
+									<div class="mod-bullet" contenteditable="true">+0</div>
+									Survival <span>(Wis)</span>
+								</div>
+								</div>
+							</div>
+							
+							<!-- MIDDLE & RIGHT COLUMNS -->
+							<div class="mid-column">
+								<!-- Top Metrics -->
+								<div class="combat-stats-grid">
+								<div class="combat-metric"><span class="label">Armor Class</span>
+									<div class="metric-val" contenteditable="true">16</div>
+								</div>
+								<div class="combat-metric"><span class="label">Initiative</span>
+									<div class="metric-val"><strong class="custom-initiative custom-stat" contenteditable="true">+1</strong></div>
+								</div>
+								<div class="combat-metric"><span class="label">Speed</span>
+									<div class="metric-val" contenteditable="true">30&nbsp;ft.</div>
+								</div>
+								<div class="combat-metric"><span class="label">Proficiency Bonus</span>
+									<div class="metric-val" contenteditable="true">+2</div>
+								</div>
+								</div>
+								
+								<!-- Hit Points Section -->
+								<div class="hp-box">
+								<div class="hp-row">
+									<div class="col"><span class="label">Maximum Hit Points</span>
+									<div class="box-field" contenteditable="true"><strong class="custom-avghp custom-stat">&nbsp;10</strong></div>
+									</div>
+									<div class="col"><span class="label">Current Hit Points</span>
+									<div class="box-field" contenteditable="true">&nbsp;</div>
+									</div>
+								</div>
+								<div class="hp-row">
+									<div class="col"><span class="label">Temporary Hit Points</span>
+									<div class="box-field" contenteditable="true">&nbsp;</div>
+									</div>
+									<div class="col">
+									<div class="hp-subgrid">
+										<div><span class="label">Hit Dice</span>
+										<div class="box-field" contenteditable="true">&nbsp;1d10</div>
+										</div>
+										<div><span class="label">Death Saves</span>
+										<div class="box-field" contenteditable="true">&nbsp;</div>
+										</div>
+									</div>
+									</div>
+								</div>
+								</div>
+								
+								<!-- Attacks & Spellcasting -->
+								<div class="container-block">
+								<div class="section-title">Attacks &amp; Spellcasting&nbsp;</div>
+								<div class="attacks-field"><br />
+									<table>
+									<thead>
+										<tr>
+										<th>Weapon/ability</th>
+										<th>Attack/Save</th>
+										<th>Damage</th>
+										<th>Notes</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr>
+										<td contenteditable="true">&nbsp;Warhammer</td>
+										<td contenteditable="true">+0</td>
+										<td contenteditable="true">1d8+3 bludgeoning</td>
+										<td contenteditable="true">Versatile (1d10)</td>
+										</tr>
+										<tr>
+										<td contenteditable="true">&nbsp;Heavy Crossbow</td>
+										<td contenteditable="true">+0</td>
+										<td contenteditable="true">1d10+1 piercing</td>
+										<td contenteditable="true">Range 100/400</td>
+										</tr>
+										<tr>
+										<td contenteditable="true">&nbsp;Handaxe</td>
+										<td contenteditable="true">+0</td>
+										<td contenteditable="true">1d6+3 slashing</td>
+										<td contenteditable="true">Light, Thrown (20/60)</td>
+										</tr>
+										<tr>
+										<td contenteditable="true">&nbsp;</td>
+										<td contenteditable="true">+0</td>
+										<td contenteditable="true">&nbsp;</td>
+										<td contenteditable="true">&nbsp;</td>
+										</tr>
+										<tr>
+										<td contenteditable="true">&nbsp;</td>
+										<td contenteditable="true">+0</td>
+										<td contenteditable="true">&nbsp;</td>
+										<td contenteditable="true">&nbsp;</td>
+										</tr>
+										<tr>
+										<td contenteditable="true">&nbsp;</td>
+										<td contenteditable="true">+0</td>
+										<td contenteditable="true">&nbsp;</td>
+										<td contenteditable="true">&nbsp;</td>
+										</tr>
+										<tr>
+										<td contenteditable="true">&nbsp;</td>
+										<td contenteditable="true">+0</td>
+										<td contenteditable="true">&nbsp;</td>
+										<td contenteditable="true">&nbsp;</td>
+										</tr>
+									</tbody>
+									</table>
+								</div>
+								</div>
+								
+								<!-- Features & Traits -->
+								<div class="container-block flex-1">
+								<div class="section-title">Features &amp; Traits</div>
+								<div class="features-field" contenteditable="true">- Darkvision: 60 ft range.<br /><br /></div>
+								</div>
+								
+								<!-- Equipment Block -->
+								<div class="container-block">
+								<div class="section-title">Equipment</div>
+								<div class="equipment-field" contenteditable="true">&nbsp;</div>
+								</div>
+							</div>
+							</div>
+						</div>
+						
+						<!-- ================= PAGE 2: BACKSTORY, SPELLS & INVENTORY ================= -->
+						<div class="dnd-page">
+							<div class="section-title" style="font-size: 12px; margin-bottom: 12px;">Character Details &amp; Backstory</div>
+							<div class="page2-grid">
+							<!-- Left side -->
+							<div class="col">
+								<div class="bio-block"><span class="label">Character Appearance</span>
+								<div class="bio-appearance" contenteditable="true">&nbsp;</div>
+								</div>
+								<div class="bio-block"><span class="label">Character Backstory</span>
+								<div class="bio-backstory" contenteditable="true">&nbsp;</div>
+								</div>
+								<div class="bio-block"><span class="label">Organization &amp; Allies</span>
+								<div class="bio-allies" contenteditable="true">&nbsp;</div>
+								</div>
+								<div class="bio-block"><span class="label">Additional Features &amp; Traits</span>
+								<div class="bio-traits-add" contenteditable="true">&nbsp;</div>
+								</div>
+							</div>
+							
+							<!-- Right side -->
+							<div class="col">
+								<div class="traits-grid">
+								<div class="bio-block"><span class="label">Personality Traits</span>
+									<div class="trait-box-field" contenteditable="true">&nbsp;</div>
+								</div>
+								<div class="bio-block"><span class="label">Ideals</span>
+									<div class="trait-box-field" contenteditable="true">&nbsp;</div>
+								</div>
+								<div class="bio-block"><span class="label">Bonds</span>
+									<div class="trait-box-field" contenteditable="true">&nbsp;</div>
+								</div>
+								<div class="bio-block"><span class="label">Flaws</span>
+									<div class="trait-box-field" contenteditable="true">&nbsp;</div>
+								</div>
+								</div>
+								
+								<!-- Attunement Section -->
+								<div class="bio-block"><span class="label">Magic Item Attunement (3 Slots Available)</span>
+								<div class="attunement-content">
+									<div style="margin-bottom: 2px;"><input checked="checked" type="checkbox" />&nbsp;<span contenteditable="true">Empty Slot</span></div>
+									<div style="margin-bottom: 2px;"><input type="checkbox" /> <span contenteditable="true">Empty Slot</span></div>
+									<div><input type="checkbox" /> <span contenteditable="true">Empty Slot</span></div>
+								</div>
+								</div>
+								
+								<!-- Treasure & Currency -->
+								<div class="bio-block"><span class="label">Treasure &amp; Currency</span>
+								<div class="currency-container">
+									<div class="coin-slot">CP:
+									<div class="coin-input" contenteditable="true">&nbsp;</div>
+									</div>
+									<div class="coin-slot">SP:
+									<div class="coin-input" contenteditable="true">&nbsp;</div>
+									</div>
+									<div class="coin-slot">EP:
+									<div class="coin-input" contenteditable="true">&nbsp;</div>
+									</div>
+									<div class="coin-slot">GP:
+									<div class="coin-input" contenteditable="true">&nbsp;</div>
+									</div>
+									<div class="coin-slot">PP:
+									<div class="coin-input" contenteditable="true">&nbsp;</div>
+									</div>
+								</div>
+								<div class="treasure-field" contenteditable="true">&nbsp;</div>
+								</div>
+								
+								<!-- Spellcasting Notes -->
+								<div class="bio-block"><span class="label">Spellcasting Notes / Summary</span>
+								<div class="spellcasting-field" contenteditable="true">&nbsp;</div>
+								</div>
+							</div>
+							</div>
+						</div>
+						</div>
+						`
+				},
 				{
 					"title": "Treasure / Loot Table",
 					"description": "Add a treasure table with buttons to add to party inventory.",
@@ -4518,7 +5261,16 @@ class JournalManager{
 							'--background-color': backgroundColor
 						});
 					}
-
+					editor.getBody().addEventListener('change', function (e) {
+						if (e.target && e.target.nodeName === 'INPUT' && e.target.type === 'checkbox') {				
+							if (e.target.checked) {
+								e.target.setAttribute('checked', 'checked');
+							} else {
+								e.target.removeAttribute('checked');
+							}
+							editor.nodeChanged();
+						}
+					});
 					editor.execCommand('setAvttImageSrc', e);
 				});
 				editor.on('NodeChange', async function (e) {
@@ -4546,8 +5298,9 @@ class JournalManager{
 				        e.element.setAttribute("src", await getGoogleDriveAPILink(url));
 				        return; 
 				    }
+
 				    return;
-				});
+				});					
 				editor.on('change keyup', async function(e){
 					editor.execCommand('setAvttImageSrc', e);
 				});
