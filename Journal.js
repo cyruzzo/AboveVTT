@@ -4518,7 +4518,16 @@ class JournalManager{
 							'--background-color': backgroundColor
 						});
 					}
-
+					editor.getBody().addEventListener('change', function (e) {
+						if (e.target && e.target.nodeName === 'INPUT' && e.target.type === 'checkbox') {				
+							if (e.target.checked) {
+								e.target.setAttribute('checked', 'checked');
+							} else {
+								e.target.removeAttribute('checked');
+							}
+							editor.nodeChanged();
+						}
+					});
 					editor.execCommand('setAvttImageSrc', e);
 				});
 				editor.on('NodeChange', async function (e) {
@@ -4546,8 +4555,9 @@ class JournalManager{
 				        e.element.setAttribute("src", await getGoogleDriveAPILink(url));
 				        return; 
 				    }
+
 				    return;
-				});
+				});					
 				editor.on('change keyup', async function(e){
 					editor.execCommand('setAvttImageSrc', e);
 				});
