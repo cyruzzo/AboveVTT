@@ -1763,7 +1763,7 @@ class JournalManager{
 		})
 	}
 	
-	display_note(id, statBlock = false){
+	display_note(id, statBlock = false, scrollTop=0){
 		let self=this;
 		let noteAlreadyOpen = $(`div.note[data-id='${id}']`).length>0;
 		
@@ -1945,6 +1945,7 @@ class JournalManager{
 				debounceSendNote(id, self.notes[id]);
 			})
 			this.positionNotePins(id, note_text);
+			note_text[0].scrollTop = scrollTop;
 		});	
 		if(note_text.find('.dnd-sheet').length>0){
 			note_container.find('.popout-button, .lockStatButton, .download_button').remove();
