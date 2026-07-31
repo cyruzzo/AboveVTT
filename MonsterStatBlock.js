@@ -108,7 +108,7 @@ async function display_stat_block_in_container(statBlock, container, tokenId, cu
         window.JOURNAL.notes[customStatId].text = sanitizedHTML; 
         debounceSendNote(customStatId, window.JOURNAL.notes[customStatId], tokenId);
         window.JOURNAL.setPersistTimeout();
-        debounceRescanStatBlock(container, tokenId);
+        debounceRescanStatBlock(container, customStatId, tokenId);
 			});
 			container.off('change.checkbox').on('change.checkbox', '.dnd-sheet input', (e)=>{
 				if (e.target && e.target.nodeName === 'INPUT' && e.target.type === 'checkbox') {				
@@ -155,9 +155,8 @@ async function display_stat_block_in_container(statBlock, container, tokenId, cu
       scan_monster(container, statBlock, tokenId);
     else
       add_ability_tracker_inputs(container, tokenId)
-    // scan_creature_pane(container, statBlock.name, statBlock.image);
+
     add_stat_block_hover(container, tokenId);
-  
     //todo: new sendtogamelog menu for these too?
     container.find("p>em>strong, p>strong>em, div>strong>em, div>em>strong, p>span>em>strong, p>span>strong>em").off("contextmenu.sendToGamelog").on("contextmenu.sendToGamelog", function (e) {
       e.preventDefault();
@@ -286,8 +285,8 @@ async function display_stat_block_in_container(statBlock, container, tokenId, cu
 
           const currentdate = new Date(); 
           const datetime = `${currentdate.getFullYear()}-${(currentdate.getMonth()+1)}-${currentdate.getDate()}`
-          const html = `<style id='contentStyles'>${window.JOURNAL.content_styles()}</style>
-          ${window.JOURNAL.notes[window.TOKEN_OBJECTS[tokenId].options.statBlock].text}`
+          const santizedHtml = basic_sanitize_html(window.JOURNAL.notes[window.TOKEN_OBJECTS[tokenId].options.statBlock].text);
+          const html = `<style id='contentStyles'>${window.JOURNAL.content_styles()}</style>${santizedHtml}`
           download(html,`${window.CAMPAIGN_INFO.name}-${datetime}-pctemplate.html`,"text/html");
               
           $(".import-loading-indicator").remove();        
@@ -296,20 +295,174 @@ async function display_stat_block_in_container(statBlock, container, tokenId, cu
       container.prepend(lockStatButton, downloadStat);
     }
 }
-const debounceRescanStatBlock = mydebounce(async (container, tokenId) => {
+const debounceRescanStatBlock = mydebounce(async (container, noteId, tokenId) => {
   const target = $(container).find(':focus').attr('data-focus', 'true');
   const caretOffset = getCaretCharacterOffset(target[0]);
+  const originalLength = target[0].textContent.length;
   const targetRescan = $(container).find('.avtt-stat-block-container, .note-text').first();
   const currScroll = targetRescan[0].scrollTop;
   await window.JOURNAL.translateHtmlAndBlocks(targetRescan);
   add_journal_roll_buttons(targetRescan, tokenId);
   window.JOURNAL.add_journal_tooltip_targets(targetRescan);
   $(container).find('.add-input').each(function(){window.JOURNAL.addTrackedInputs($(this), {token})});
+  add_ability_tracker_inputs(targetRescan, tokenId);
+  add_stat_block_hover(targetRescan, tokenId);
+  add_aoe_statblock_click(targetRescan, tokenId);
+
+  container.find("img.monster-image, .monster-image").each((i,block) => {
+    createSendPlayerButton(block, "login", true).insertAfter(block);
+  });
+
+  //todo: new sendtogamelog menu for these too?
+  container.find("p>em>strong, p>strong>em, div>strong>em, div>em>strong, p>span>em>strong, p>span>strong>em").off("contextmenu.sendToGamelog").on("contextmenu.sendToGamelog", function (e) {
+    e.preventDefault();
+    if(e.altKey || e.shiftKey || (!isMac() && e.ctrlKey) || e.metaKey)
+      return;
+    let outerP = e.target.closest('p, div').outerHTML;
+    const regExFeature = new RegExp(`${e.target.outerHTML.replace(/([\(\)])/g,"\\$1")}[\\s\\S]+?(?=(<\/p>|<\/div>|<strong><em|<em><strong))`, 'gi');
+    let match = outerP.match(regExFeature);
+
+
+    if(match){
+      let matched = `<p>${match[0]}</p>`;
+      
+
+      if($(e.target.closest('p, div')).find('em>strong, strong>em').length == 1){
+        let nextParagraphs = $(e.target.closest('p, div')).nextUntil('p:has(>em>strong), p:has(>strong>em), div:has(>strong>em), div:has(>em>strong)');
+        for(let i=0; i<nextParagraphs.length; i++){   
+          matched = `${matched}${nextParagraphs[i].outerHTML.trim()}`;
+        }
+      }
+      
+        
+        matched = `<div>${matched}</div>`;
+      send_html_to_gamelog(matched);
+    }
+    
+  })
+
+  container.find("p>em>strong, p>strong>em, div>strong>em, div>em>strong, p>span>em>strong, p>span>strong>em").off("click.roll").on("click.roll", function (e) {
+    e.preventDefault();
+    if($(e.target).text().includes('Recharge'))
+      return;
+    let rollButtons = $(e.currentTarget).closest('em:has(strong), strong:has(em)').nextUntil(':has(.avtt-ability-roll-button)')
+    rollButtons = rollButtons.add(rollButtons.find('.avtt-roll-button:not([data-rolltype="recharge"]), .avtt-roll-formula-button')).closest('.avtt-roll-button:not([data-rolltype="recharge"]), .avtt-roll-formula-button');
+    
+
+
+    const displayName = window.TOKEN_OBJECTS[tokenId] ? window.TOKEN_OBJECTS[tokenId].options?.revealname == true ? window.TOKEN_OBJECTS[tokenId].options.name : `` : target.find(".mon-stat-block__name-link").text(); // Wolf, Owl, etc
+    const creatureAvatar = window.TOKEN_OBJECTS[tokenId]?.options.imgsrc || statBlock?.data?.avatarUrl;
+    $(e.target.closest('p, div')).find('.avtt-aoe-button')?.click();
+    for(let i = 0; i<rollButtons.length; i++){      
+      let data = getRollData(rollButtons[i]);
+      let diceRoll;
+
+      if(data.expression != undefined){
+        if (/^1d20[+-]([0-9]+)/g.test(data.expression)) {
+            if(e.altKey){
+              if(e.shiftKey){
+                diceRoll = new DiceRoll(`3d20kh1${data.modifier}`, data.rollTitle, data.rollType, displayName, creatureAvatar, "monster");
+                }
+                else if((!isMac() && e.ctrlKey) || e.metaKey){
+                diceRoll = new DiceRoll(`3d20kl1${data.modifier}`, data.rollTitle, data.rollType, displayName, creatureAvatar, "monster");
+                }
+            }
+            else if(e.shiftKey){
+            diceRoll = new DiceRoll(`2d20kh1${data.modifier}`, data.rollTitle, data.rollType, displayName, creatureAvatar, "monster");
+            }
+            else if((!isMac() && e.ctrlKey) || e.metaKey){
+            diceRoll = new DiceRoll(`2d20kl1${data.modifier}`, data.rollTitle, data.rollType, displayName, creatureAvatar, "monster");
+            }else{
+            diceRoll = new DiceRoll(data.expression, data.rollTitle, data.rollType, displayName, creatureAvatar, "monster")
+            }
+        }
+        else{
+          diceRoll = new DiceRoll(data.expression, data.rollTitle, data.rollType, displayName, creatureAvatar, "monster")
+        }
+      
+
+
+        window.diceRoller.roll(diceRoll, true, undefined, get_avtt_setting_value('monsterCritType'), undefined, data.damageType);
+
+      }
+    }
+  })
+  let abilities= container.find("p>em>strong, p>strong>em, div>strong>em, div>em>strong, p>span>em>strong, p>span>strong>em");
+
+  for(let i = 0; i<abilities.length; i++){
+    if($(abilities[i]).closest('em:has(strong), strong:has(em)').nextUntil('em:has(strong), strong:has(em)').is('.avtt-roll-button, :has(.avtt-roll-button)')){
+      $(abilities[i]).toggleClass('avtt-ability-roll-button', true);
+    }
+  }
+  $("span.hideme").parent().parent().hide();
+  container.find('.lockStatButton').remove();
+  if(container.find('.dnd-sheet').length>0){
+    container.find('.popout-button').remove();
+    const lockStatButton = $(`<div class='lockStatButton' style="position: absolute;
+                                            left: 2px;
+                                            top: 3px;
+                                            width: 20px;
+                                            height: 20px;
+                                            color: #ddd;">
+                                <span title="lock buttons" class="material-symbols-outlined" style="font-size:20px;">
+                                  ${!window.lockTemplateStatBlocks ? "lock_open_right" : "lock"}
+                                </span>
+                              </div>`)
+    lockStatButton.off('click.lockStatBlock').on('click.lockStatBlock', ()=>{
+      window.lockTemplateStatBlocks = !window.lockTemplateStatBlocks;
+      const span = lockStatButton.find('>span');
+      if(window.lockTemplateStatBlocks){
+        container.find('.dnd-sheet button').attr("contenteditable", "false");
+        span.text('lock');
+      } else{
+        container.find('.dnd-sheet [contenteditable]').attr("contenteditable", "true");
+        span.text('lock_open_right');
+      }
+    })
+    
+    if(window.lockTemplateStatBlocks){
+        container.find('.dnd-sheet button').attr("contenteditable", "false");
+    } else{
+      container.find('.dnd-sheet [contenteditable]').attr("contenteditable", "true");
+    }
+
+    const downloadStat = $(`<div class='download_button' style="position: absolute;
+                                            left: 25px;
+                                            top: 3px;
+                                            width: 20px;
+                                            height: 20px;
+                                            color: #ddd;">
+                                <span title="Download Statblock as HTML" class="material-symbols-outlined" style="font-size:20px;">
+                                  download
+                                </span>
+                              </div>`)
+    downloadStat.off('click.exportStatBlock').on('click.exportStatBlock', function () { 
+        build_import_loading_indicator('Preparing Export File');
+
+        const currentdate = new Date(); 
+        const datetime = `${currentdate.getFullYear()}-${(currentdate.getMonth()+1)}-${currentdate.getDate()}`
+        const santizedHtml = basic_sanitize_html(window.JOURNAL.notes[window.TOKEN_OBJECTS[tokenId].options.statBlock].text);
+        const html = `<style id='contentStyles'>${window.JOURNAL.content_styles()}</style>${santizedHtml}`
+        download(html,`${window.CAMPAIGN_INFO.name}-${datetime}-pctemplate.html`,"text/html");
+            
+        $(".import-loading-indicator").remove();        
+    });
+
+    container.prepend(lockStatButton, downloadStat);
+  }
   $(container).find('.avtt-stat-block-container, .note-text')[0].scrollTop = currScroll;
   const focusTarget =  $(container).find('[data-focus]')
-  setCaretCharacterOffset(focusTarget[0],caretOffset+1)
+  const addOffsetLength = focusTarget[0].textContent.length - originalLength;
+  setCaretCharacterOffset(focusTarget[0], caretOffset+addOffsetLength)
   focusTarget.removeAttr('data-focus');
+  if(window.lockTemplateStatBlocks){
+    container.find('.dnd-sheet button').attr("contenteditable", "false");
+  } else{
+    container.find('.dnd-sheet [contenteditable]').attr("contenteditable", "true");
+  }
 }, 1000);
+
+
 async function build_monster_stat_block(statBlock, token) {
   if (!statBlock.userHasAccess) {
       return `<div id='noAccessToContent' style='height: 100%;text-align: center;width: 100%;padding: 10px;font-weight: bold;color: #944;'>You do not have access to this content on DndBeyond.</div>`;

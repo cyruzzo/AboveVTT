@@ -915,14 +915,14 @@ function add_journal_roll_buttons(target, tokenId=undefined, specificImage=undef
   // to account for all the nuances of DNDB dice notation.
   // numbers can be swapped for any number in the following comment
   // matches "1d10", " 1d10 ", "1d10+1", " 1d10+1 ", "1d10 + 1" " 1d10 + 1 "
-  const strongRoll = /(<strong>)(([0-9]+d[0-9]+)\s?([+-]\s?[0-9]+)?)(<\/strong>)/gi
-  const damageRollRegexBracket = /(\()(([0-9]+d[0-9]+)\s?([+-]\s?[0-9]+)?)(\))/gi
-  const damageRollRegex = /([:\s>]|^)(([0-9]+d[0-9]+)\s?([+-]\s?[0-9]+)?)([\.\):\s<,]|$)/gi
+  const strongRoll = /\s*(<strong>)(([0-9]+d[0-9]+)\s?([+-]\s?[0-9]+)?)(<\/strong>)/gi
+  const damageRollRegexBracket = /\s*(\()(([0-9]+d[0-9]+)\s?([+-]\s?[0-9]+)?)(\))/gi
+  const damageRollRegex = /\s*([:\s>]|^)(([0-9]+d[0-9]+)\s?([+-]\s?[0-9]+)?)([\.\):\s<,]|$)/gi
   // matches " +1 " or " + 1 "
-  const hitRollRegexBracket = /(?<![0-9]+d[0-9]+)(\()([+-]\s?[0-9]+)(\))/gi
-  const hitRollRegex = /(?<![0-9]+d[0-9]+)([:\s>]|^)([+-]\s?[0-9]+)([:\s<,]|$)/gi
-  const dRollRegex = /([\s>]|^)(\s?d[0-9]+)([^+-])/gi
-  const rechargeRegEx = /(Recharge [0-6]?\s?[—–-]?\s?[0-6])/gi
+  const hitRollRegexBracket = /\s*(?<![0-9]+d[0-9]+)(\()([+-]\s?[0-9]+)(\))/gi
+  const hitRollRegex = /\s*(?<![0-9]+d[0-9]+)([:\s>]|^)([+-]\s?[0-9]+)([:\s<,]|$)/gi
+  const dRollRegex = /\s*([\s>]|^)(\s?d[0-9]+)([^+-])/gi
+  const rechargeRegEx = /\s*(Recharge [0-6]?\s?[—–-]?\s?[0-6])/gi
   const actionType = "roll"
   const rollType = "AboveVTT"
   let updated = currentElement.html()
@@ -3087,12 +3087,11 @@ function getCaretCharacterOffset(element) {
     return caretOffset;
 }
 
-// 2. Set the cursor position using a character offset
+
 function setCaretCharacterOffset(element, offset) {
     const range = document.createRange();
     const selection = window.getSelection();
     
-    // Helper function to recursively find the correct text node and local offset
     let currentOffset = 0;
     let targetNode = null;
     let localOffset = 0;
