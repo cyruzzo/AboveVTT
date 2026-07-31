@@ -1884,7 +1884,11 @@ class JournalManager{
 
 		}
 		note_text.append(self.notes[id].text); // valid tags are controlled by tinyMCE.init()
-		
+		$(note_text).find('.injected-input, .added-input-desc').remove();
+		$(note_text).find('.add-input').replaceWith((i, innerHtml) => {
+			return innerHtml;
+		})
+
 		this.translateHtmlAndBlocks(note_text, id).then(() => {	
 			add_journal_roll_buttons(note_text);
 			this.add_journal_tooltip_targets(note_text);
@@ -1904,7 +1908,7 @@ class JournalManager{
 				render_source_chapter_in_iframe(event.target.href);
 			});
 			note.off('input.editable').on('input.editable', '[contenteditable="true"]', (e)=>{
-
+				if($(e.target).is('.injected-input')) return;  
 				const closestNote = note_text.clone(true, true);
 				const avttImages = closestNote.find('img[data-src*="above-bucket-not-a-url"]');
 				avttImages.attr('src', '');
@@ -2193,10 +2197,10 @@ class JournalManager{
 					const splitUrl = url.split('/');
 					const name = splitUrl[splitUrl.length-1].replaceAll('-', ' ');
 					const isLegacy = !get_avtt_setting_value('2024Tooltips');
-					const spell = window.SPELLS_CACHE.filter(d => d.definition.name.toLowerCase() == name.toLowerCase() && d.definition.isLegacy == isLegacy)
+					let spell = window.SPELLS_CACHE.filter(d => d.definition.name.toLowerCase() == name.toLowerCase() && d.definition.isLegacy == isLegacy)
 					if(!spell.length)
 						console.warn(`spell not found`, name, `isLegacy`, isLegacy);
-						spell = window.SPELLS_CACHE.filter(d => d.name.toLowerCase() == name.toLowerCase())
+						spell = window.SPELLS_CACHE.filter(d => d.definition.name.toLowerCase() == name.toLowerCase())
 					if(!spell.length)
 						console.warn(`spell not found`, name);
 					itemId = `${spell[0].definition.id}-${splitUrl[splitUrl.length-1]}`;

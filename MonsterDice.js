@@ -187,7 +187,7 @@ function rebuild_ability_trackers(target, tokenId){
  * @returns 
  */
 function createCountTracker(token, key, remaining, foundDescription, descriptionPostfix, callback) {
-	const input = $(`<input class="injected-input" data-token-id="${token.id}" data-tracker-key="${key}" type="number" value="${remaining}"> ${foundDescription} ${descriptionPostfix}</input>`);
+	const input = $(`<input class="injected-input" data-token-id="${token.id}" data-tracker-key="${key}" type="number" value="${remaining}"></input><span class='added-input-desc'> ${foundDescription} ${descriptionPostfix}</span>`);
 	input.off('input').on('input', function(){
 		resizeInput(input[0]);
 	})
