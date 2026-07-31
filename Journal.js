@@ -1914,6 +1914,9 @@ class JournalManager{
 				avttImages.attr('src', '');
 				avttImages.attr('href', '');
 				closestNote.find('a:empty, button:empty').remove();
+				closestNote.find('button').replaceWith((i, innerHTML)=>{
+          			return innerHTML;
+        		})
 				const sanitizedHTML = basic_sanitize_html(closestNote[0].innerHTML);
 				self.notes[id].text = sanitizedHTML; 
 				window.JOURNAL.setPersistTimeout();
@@ -1933,6 +1936,9 @@ class JournalManager{
 				avttImages.attr('src', '');
 				avttImages.attr('href', '');
 				closestNote.find('a:empty, button:empty').remove();
+				closestNote.find('button').replaceWith((i, innerHTML)=>{
+					return innerHTML;
+				})
 				const sanitizedHTML = basic_sanitize_html(closestNote[0].innerHTML);
 				self.notes[id].text = sanitizedHTML; 
 				window.JOURNAL.setPersistTimeout();
@@ -3949,7 +3955,7 @@ class JournalManager{
 					box-sizing: border-box;
 				}
 				.left-column {
-					width: 140px;
+					width: 170px;
 					display: flex;
 					flex-direction: column;
 					gap: 10px;
@@ -4587,10 +4593,8 @@ class JournalManager{
 					"title": "Fillable Character Sheet",
 					"description": "Adds a fillable character sheet to the note. Has limited edit capabilites for Players.",
 					"content": `
-					<style id='contentStyles'>${contentStyles}</style><div class="dnd-sheet">
-						<!-- ================= PAGE 1: CORE STATS, COMBAT & ACTIONS ================= -->
-						<div class="dnd-page">
-							<!-- Header Block -->
+					<style id='contentStyles'>${contentStyles}</style><div class="dnd-sheet"><!-- ================= PAGE 1: CORE STATS, COMBAT & ACTIONS ================= -->
+						<div class="dnd-page"><!-- Header Block -->
 							<div class="header-box">
 							<div class="col char-name-box">
 								<div class="box-field" contenteditable="true">&nbsp;</div>
@@ -4617,11 +4621,8 @@ class JournalManager{
 								<span class="label">XP</span>
 							</div>
 							</div>
-							
-							<div class="main-container">
-							<!-- LEFT COLUMN: Abilities & Skills -->
-							<div class="left-column">
-								<!-- Main Stats Table Container -->
+							<div class="main-container"><!-- LEFT COLUMN: Abilities & Skills -->
+							<div class="left-column"><!-- Main Stats Table Container -->
 								<div class="abilities-table-container">
 								<div class="section-title">Abilities</div>
 								<table>
@@ -4632,8 +4633,7 @@ class JournalManager{
 										<th>Score</th>
 									</tr>
 									</thead>
-									<tbody>
-									<!-- Strength -->
+									<tbody><!-- Strength -->
 									<tr>
 										<td>Str</td>
 										<td><span contenteditable="true">+0</span></td>
@@ -4672,88 +4672,131 @@ class JournalManager{
 									</tbody>
 								</table>
 								</div>
-								
 								<!-- Skills List -->
 								<div class="skills-box">
 								<div class="section-title">Skills</div>
-								<div class="skill-row"><input type="checkbox" />
-									<div contenteditable="true">+0</div>
-									Acrobatics <span>(Dex)</span>
-								</div>
-								<div class="skill-row"><input type="checkbox" />
-									<div contenteditable="true">+0</div>
-									Animal Handling <span>(Wis)</span>
-								</div>
-								<div class="skill-row"><input type="checkbox" />
-									<div contenteditable="true">+0</div>
-									Arcana <span>(Int)</span>
-								</div>
-								<div class="skill-row"><input checked="checked" type="checkbox" />
-									<div contenteditable="true">+0</div>
-									Athletics <span>(Str)</span>
-								</div>
-								<div class="skill-row"><input type="checkbox" />
-									<div contenteditable="true">+0</div>
-									Deception <span>(Cha)</span>
-								</div>
-								<div class="skill-row"><input type="checkbox" />
-									<div contenteditable="true">+0</div>
-									History <span>(Int)</span>
-								</div>
-								<div class="skill-row"><input type="checkbox" />
-									<div contenteditable="true">+0</div>
-									Insight <span>(Wis)</span>
-								</div>
-								<div class="skill-row"><input checked="checked" type="checkbox" />
-									<div contenteditable="true">+0</div>
-									Intimidation <span>(Cha)</span>
-								</div>
-								<div class="skill-row"><input type="checkbox" />
-									<div contenteditable="true">+0</div>
-									Investigation <span>(Int)</span>
-								</div>
-								<div class="skill-row"><input type="checkbox" />
-									<div contenteditable="true">+0</div>
-									Medicine <span>(Wis)</span>
-								</div>
-								<div class="skill-row"><input type="checkbox" />
-									<div contenteditable="true">+0</div>
-									Nature <span>(Int)</span>
-								</div>
-								<div class="skill-row"><input checked="checked" type="checkbox" />
-									<div contenteditable="true">+0</div>
-									Perception <span>(Wis)</span>
-								</div>
-								<div class="skill-row"><input type="checkbox" />
-									<div contenteditable="true">+0</div>
-									Performance <span>(Cha)</span>
-								</div>
-								<div class="skill-row"><input type="checkbox" />
-									<div contenteditable="true">+0</div>
-									Persuasion <span>(Cha)</span>
-								</div>
-								<div class="skill-row"><input type="checkbox" />
-									<div contenteditable="true">+0</div>
-									Religion <span>(Int)</span>
-								</div>
-								<div class="skill-row"><input type="checkbox" />
-									<div contenteditable="true">+0</div>
-									Sleight of Hand <span>(Dex)</span>
-								</div>
-								<div class="skill-row"><input type="checkbox" />
-									<div contenteditable="true">+0</div>
-									Stealth <span>(Dex)</span>
-								</div>
-								<div class="skill-row"><input checked="checked" type="checkbox" />
-									<div contenteditable="true">+0</div>
-									Survival <span>(Wis)</span>
-								</div>
+								<table style="height: 538px; float: left;" border="0" width="126" cellspacing="0" cellpadding="0">
+									<tbody>
+									<tr>
+										<td><input type="checkbox" /></td>
+										<td>+0</td>
+										<td>Acrobatics</td>
+										<td>Dex</td>
+									</tr>
+									<tr>
+										<td><input type="checkbox" /></td>
+										<td>+0</td>
+										<td>Animal Handling</td>
+										<td>Wis</td>
+									</tr>
+									<tr>
+										<td><input type="checkbox" /></td>
+										<td>+0</td>
+										<td>Arcana</td>
+										<td>Int</td>
+									</tr>
+									<tr>
+										<td><input checked="checked" type="checkbox" /></td>
+										<td>+0</td>
+										<td>Athletics</td>
+										<td>Str</td>
+									</tr>
+									<tr>
+										<td><input type="checkbox" /></td>
+										<td>+0</td>
+										<td>Deception</td>
+										<td>Cha</td>
+									</tr>
+									<tr>
+										<td><input type="checkbox" /></td>
+										<td>+0</td>
+										<td>History</td>
+										<td>Int</td>
+									</tr>
+									<tr>
+										<td><input type="checkbox" /></td>
+										<td>+0</td>
+										<td>Insight</td>
+										<td>Wis</td>
+									</tr>
+									<tr>
+										<td><input checked="checked" type="checkbox" /></td>
+										<td>+0</td>
+										<td>Intimidation</td>
+										<td>Cha</td>
+									</tr>
+									<tr>
+										<td><input type="checkbox" /></td>
+										<td>+0</td>
+										<td>Investigation</td>
+										<td>Int</td>
+									</tr>
+									<tr>
+										<td><input type="checkbox" /></td>
+										<td>+0</td>
+										<td>Medicine</td>
+										<td>Wis</td>
+									</tr>
+									<tr>
+										<td><input type="checkbox" /></td>
+										<td>+0</td>
+										<td>Nature</td>
+										<td>Int</td>
+									</tr>
+									<tr>
+										<td><input checked="checked" type="checkbox" /></td>
+										<td>+0</td>
+										<td>Perception</td>
+										<td>Wis</td>
+									</tr>
+									<tr>
+										<td><input type="checkbox" /></td>
+										<td>+0</td>
+										<td>Performance</td>
+										<td>Cha</td>
+									</tr>
+									<tr>
+										<td><input type="checkbox" /></td>
+										<td>+0</td>
+										<td>Persuasion</td>
+										<td>Cha</td>
+									</tr>
+									<tr>
+										<td><input type="checkbox" /></td>
+										<td>+0</td>
+										<td>Religion</td>
+										<td>Int</td>
+									</tr>
+									<tr>
+										<td><input type="checkbox" /></td>
+										<td>+0</td>
+										<td>Sleight of Hand</td>
+										<td>Dex</td>
+									</tr>
+									<tr>
+										<td><input type="checkbox" /></td>
+										<td>+0</td>
+										<td>Stealth</td>
+										<td>Dex</td>
+									</tr>
+									<tr>
+										<td><input checked="checked" type="checkbox" /></td>
+										<td>+0</td>
+										<td>Survival</td>
+										<td>Wis</td>
+									</tr>
+									<tr>
+										<td><input checked="checked" type="checkbox" /></td>
+										<td>+0</td>
+										<td>Survival</td>
+										<td>Wis</td>
+									</tr>
+									</tbody>
+								</table>
 								</div>
 							</div>
-							
 							<!-- MIDDLE & RIGHT COLUMNS -->
-							<div class="mid-column">
-								<!-- Top Metrics -->
+							<div class="mid-column"><!-- Top Metrics -->
 								<div class="combat-stats-grid">
 								<div class="combat-metric"><span class="label">Armor Class</span>
 									<div class="metric-val" contenteditable="true">16</div>
@@ -4768,7 +4811,6 @@ class JournalManager{
 									<div class="metric-val" contenteditable="true">+2</div>
 								</div>
 								</div>
-								
 								<!-- Hit Points Section -->
 								<div class="hp-box">
 								<div class="hp-row">
@@ -4795,7 +4837,6 @@ class JournalManager{
 									</div>
 								</div>
 								</div>
-								
 								<!-- Attacks & Spellcasting -->
 								<div class="container-block">
 								<div class="section-title">Attacks &amp; Spellcasting&nbsp;</div>
@@ -4856,13 +4897,11 @@ class JournalManager{
 									</table>
 								</div>
 								</div>
-								
 								<!-- Features & Traits -->
 								<div class="container-block flex-1">
 								<div class="section-title">Features &amp; Traits</div>
 								<div class="features-field" contenteditable="true">- Darkvision: 60 ft range.<br /><br /></div>
 								</div>
-								
 								<!-- Equipment Block -->
 								<div class="container-block">
 								<div class="section-title">Equipment</div>
@@ -4871,12 +4910,10 @@ class JournalManager{
 							</div>
 							</div>
 						</div>
-						
 						<!-- ================= PAGE 2: BACKSTORY, SPELLS & INVENTORY ================= -->
 						<div class="dnd-page">
 							<div class="section-title" style="font-size: 12px; margin-bottom: 12px;">Character Details &amp; Backstory</div>
-							<div class="page2-grid">
-							<!-- Left side -->
+							<div class="page2-grid"><!-- Left side -->
 							<div class="col">
 								<div class="bio-block"><span class="label">Character Appearance</span>
 								<div class="bio-appearance" contenteditable="true">&nbsp;</div>
@@ -4891,7 +4928,6 @@ class JournalManager{
 								<div class="bio-traits-add" contenteditable="true">&nbsp;</div>
 								</div>
 							</div>
-							
 							<!-- Right side -->
 							<div class="col">
 								<div class="traits-grid">
@@ -4908,7 +4944,6 @@ class JournalManager{
 									<div class="trait-box-field" contenteditable="true">&nbsp;</div>
 								</div>
 								</div>
-								
 								<!-- Attunement Section -->
 								<div class="bio-block"><span class="label">Magic Item Attunement (3 Slots Available)</span>
 								<div class="attunement-content">
@@ -4917,7 +4952,6 @@ class JournalManager{
 									<div><input type="checkbox" /> <span contenteditable="true">Empty Slot</span></div>
 								</div>
 								</div>
-								
 								<!-- Treasure & Currency -->
 								<div class="bio-block"><span class="label">Treasure &amp; Currency</span>
 								<div class="currency-container">
@@ -4939,7 +4973,6 @@ class JournalManager{
 								</div>
 								<div class="treasure-field" contenteditable="true">&nbsp;</div>
 								</div>
-								
 								<!-- Spellcasting Notes -->
 								<div class="bio-block"><span class="label">Spellcasting Notes / Summary</span>
 								<div class="spellcasting-field" contenteditable="true">&nbsp;</div>
