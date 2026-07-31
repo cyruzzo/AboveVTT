@@ -3985,7 +3985,7 @@ class JournalManager{
 					width: 100%;
 					border-collapse: collapse;
 					text-align: center;
-					font-size: 9px;
+					font-size: 11px;
 				}
 				th {
 					padding: 2px;
@@ -4037,7 +4037,7 @@ class JournalManager{
 					height: 24px;
 					border: 1px solid #444;
 					text-align: center;
-					font-size: 9px;
+					font-size: 11px;
 					line-height: 24px;
 					background: #f4f4f4;
 				}
@@ -4176,7 +4176,7 @@ class JournalManager{
 					overflow-wrap: break-word;
 				}
 				.attunement-content {
-					font-size: 9px;
+					font-size: 11px;
 					margin-top: 4px;
 					box-sizing: border-box;
 				}
@@ -4194,7 +4194,7 @@ class JournalManager{
 					display: flex;
 					align-items: center;
 					gap: 4px;
-					font-size: 9px;
+					font-size: 11px;
 					font-weight: bold;
 					border: 1px solid #555;
 					padding: 2px 4px;
