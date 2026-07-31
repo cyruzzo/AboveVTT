@@ -3985,7 +3985,7 @@ class JournalManager{
 					width: 100%;
 					border-collapse: collapse;
 					text-align: center;
-					font-size: 9px;
+					font-size: 11px;
 				}
 				th {
 					padding: 2px;
@@ -4011,10 +4011,7 @@ class JournalManager{
 					text-transform: uppercase;
 					font-size: 8.5px;
 				}
-				tbody tr td:nth-child(2) {
-					font-weight: bold;
-					font-size: 11px;
-				}
+
 				.ability-score-field {
 					display: inline-block;
 					width: 22px;
@@ -4040,7 +4037,7 @@ class JournalManager{
 					height: 24px;
 					border: 1px solid #444;
 					text-align: center;
-					font-size: 9px;
+					font-size: 11px;
 					line-height: 24px;
 					background: #f4f4f4;
 				}
@@ -4179,7 +4176,7 @@ class JournalManager{
 					overflow-wrap: break-word;
 				}
 				.attunement-content {
-					font-size: 9px;
+					font-size: 11px;
 					margin-top: 4px;
 					box-sizing: border-box;
 				}
@@ -4197,7 +4194,7 @@ class JournalManager{
 					display: flex;
 					align-items: center;
 					gap: 4px;
-					font-size: 9px;
+					font-size: 11px;
 					font-weight: bold;
 					border: 1px solid #555;
 					padding: 2px 4px;
@@ -4631,6 +4628,7 @@ class JournalManager{
 									<tr>
 										<th>Ability</th>
 										<th>Mod</th>
+										<th>Save</th>
 										<th>Score</th>
 									</tr>
 									</thead>
@@ -4638,11 +4636,13 @@ class JournalManager{
 									<tr>
 										<td>Str</td>
 										<td><span contenteditable="true">+0</span></td>
+										<td><span contenteditable="true">+0</span></td>
 										<td><span class="box-field ability-score-field" contenteditable="true">10</span></td>
 									</tr>
 									<!-- Dexterity -->
 									<tr>
 										<td>Dex</td>
+										<td><span contenteditable="true">+0</span></td>
 										<td><span contenteditable="true">+0</span></td>
 										<td><span class="box-field ability-score-field" contenteditable="true">10</span></td>
 									</tr>
@@ -4650,11 +4650,13 @@ class JournalManager{
 									<tr>
 										<td>Con</td>
 										<td><span contenteditable="true">+0</span></td>
+										<td><span contenteditable="true">+0</span></td>
 										<td><span class="box-field ability-score-field" contenteditable="true">10</span></td>
 									</tr>
 									<!-- Intelligence -->
 									<tr>
 										<td>Int</td>
+										<td><span contenteditable="true">+0</span></td>
 										<td><span contenteditable="true">+0</span></td>
 										<td><span class="box-field ability-score-field" contenteditable="true">10</span></td>
 									</tr>
@@ -4662,11 +4664,13 @@ class JournalManager{
 									<tr>
 										<td>Wis</td>
 										<td><span contenteditable="true">+0</span></td>
+										<td><span contenteditable="true">+0</span></td>
 										<td><span class="box-field ability-score-field" contenteditable="true">10</span></td>
 									</tr>
 									<!-- Charisma -->
 									<tr>
 										<td>Cha</td>
+										<td><span contenteditable="true">+0</span></td>
 										<td><span contenteditable="true">+0</span></td>
 										<td><span class="box-field ability-score-field" contenteditable="true">10</span></td>
 									</tr>
