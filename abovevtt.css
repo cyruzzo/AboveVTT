@@ -12993,7 +12993,7 @@ p.monster-header+p {
         box-sizing: border-box;
     }
     .left-column {
-        width: 140px;
+        width: 170px;
         display: flex;
         flex-direction: column;
         gap: 10px;

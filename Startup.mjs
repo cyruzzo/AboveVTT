@@ -889,22 +889,22 @@ function inject_dm_roll_default_menu(){
       font-size:14px;
     }
     .mce-btn {
-      margin-right: 3px !important;
+      margin-right: 3px;
     }
     .mce-btn {
-        border: 1px solid #b1b1b1 !important;
-        border-color: rgba(0,0,0,0.1) rgba(0,0,0,0.1) rgba(0,0,0,0.25) rgba(0,0,0,0.25) !important;
-        position: relative !important;
-        text-shadow: 0 1px 1px rgba(255,255,255,0.75) !important;
-        display: inline-block !important;
-        *display: inline !important;
-        *zoom:1;-webkit-border-radius: 3px !important;
-        -moz-border-radius: 3px !important;
-        border-radius: 3px !important;
-        -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05) !important;
-        -moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05) !important;
-        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05) !important;
-        background-color: #f0f0f0 !important;
+        border: 1px solid #b1b1b1;
+        border-color: rgba(0,0,0,0.1) rgba(0,0,0,0.1) rgba(0,0,0,0.25) rgba(0,0,0,0.25);
+        position: relative;
+        text-shadow: 0 1px 1px rgba(255,255,255,0.75);
+        display: inline-block;
+        *display: inline;
+        *zoom:1;-webkit-border-radius: 3px;
+        -moz-border-radius: 3px;
+        border-radius: 3px;
+        -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
+        -moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
+        background-color: #f0f0f0;
     }
 
     .mce-i-save:before {
