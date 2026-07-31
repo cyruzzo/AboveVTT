@@ -4179,6 +4179,12 @@ class JournalManager{
 					font-size: 11px;
 					margin-top: 4px;
 					box-sizing: border-box;
+					height: auto;
+					border: 1px solid #444;
+					padding: 4px;
+					background: #fdfdfd;
+					border-radius: 3px;
+					overflow-wrap: break-word;
 				}
 				.attunement-content > div {
 					margin-bottom: 2px;
@@ -4946,9 +4952,9 @@ class JournalManager{
 								<!-- Attunement Section -->
 								<div class="bio-block"><span class="label">Magic Item Attunement (3 Slots Available)</span>
 								<div class="attunement-content">
-									<div style="margin-bottom: 2px;"><input checked="checked" type="checkbox" />&nbsp;<span contenteditable="true">Empty Slot</span></div>
-									<div style="margin-bottom: 2px;"><input type="checkbox" /> <span contenteditable="true">Empty Slot</span></div>
-									<div><input type="checkbox" /> <span contenteditable="true">Empty Slot</span></div>
+									<div style="margin-bottom: 2px;"><input checked="checked" type="checkbox" />Empty Slot</div>
+									<div style="margin-bottom: 2px;"><input type="checkbox" />Empty Slot</div>
+									<div><input type="checkbox" />Empty Slot</div>
 								</div>
 								</div>
 								<!-- Treasure & Currency -->

@@ -13216,6 +13216,12 @@ p.monster-header+p {
         font-size: 11px;
         margin-top: 4px;
         box-sizing: border-box;
+        height: auto;
+        border: 1px solid #444;
+        padding: 4px;
+        background: #fdfdfd;
+        border-radius: 3px;
+        overflow-wrap: break-word;
     }
     .attunement-content > div {
         margin-bottom: 2px;
