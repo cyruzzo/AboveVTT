@@ -102,7 +102,7 @@ async function display_stat_block_in_container(statBlock, container, tokenId, cu
 
 
       container.off('input.editable').on('input.editable', '.dnd-sheet [contenteditable="true"]', (e)=>{
-        if(e.target.classList.includes('injected-input')) return;  
+        if($(e.target).is('.injected-input')) return;  
         const note_text = container.find('.avtt-stat-block-container').first();
 				const closestNote = note_text.clone(true, true);
 				const avttImages = closestNote.find('img[data-src*="above-bucket-not-a-url"]');

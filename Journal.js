@@ -1908,7 +1908,7 @@ class JournalManager{
 				render_source_chapter_in_iframe(event.target.href);
 			});
 			note.off('input.editable').on('input.editable', '[contenteditable="true"]', (e)=>{
-				if(e.target.classList.includes('injected-input')) return;  
+				if($(e.target).is('.injected-input')) return;  
 				const closestNote = note_text.clone(true, true);
 				const avttImages = closestNote.find('img[data-src*="above-bucket-not-a-url"]');
 				avttImages.attr('src', '');
