@@ -3896,8 +3896,8 @@ class JournalManager{
 			}
 			.dnd-sheet {
 				font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-				color: #111;
-				background-color: #fff;
+				color: var(--pc-template-text-color, #111);
+				background-color: var(--pc-template-sheet-bg, #fff);
 				width: 100%;
 				margin: 0 auto;
 				box-sizing: border-box;
@@ -3905,20 +3905,20 @@ class JournalManager{
 				line-height: 1.2;
 
 				.dnd-page {
-					border: 2px solid #222;
+					border: 2px solid var(--pc-template-border-color, #222);
 					padding: 15px;
 					margin-bottom: 30px;
-					background: #fff;
+					background: var(--pc-template-sheet-bg, #fff);
 					page-break-after: always;
 					box-sizing: border-box;
 				}
 				.header-box {
-					border: 2px solid #222;
+					border: 2px solid var(--pc-template-border-color, #222);
 					padding: 8px;
 					margin-bottom: 10px;
 					display: flex;
 					gap: 8px;
-					background: #f4f4f4;
+					background: var(--pc-template-header-bg, #fff);
 					box-sizing: border-box;
 				}
 				.header-box .col {
@@ -3932,19 +3932,20 @@ class JournalManager{
 					flex: 2;
 				}
 				.box-field {
-					border: 1px solid #444;
+					border: 1px solid var(--pc-template-border-color, #444);
 					padding: 4px;
-					background: #fdfdfd;
+					background: var(--pc-template-box-bg, #fdfdfd);
 					min-height: 24px;
 					height: auto;
 					border-radius: 3px;
 					box-sizing: border-box;
 					overflow-wrap: break-word;
+					color: var(--pc-template-text-color, #111);
 				}
 				.label {
 					font-size: 8px;
 					text-transform: uppercase;
-					color: #555;
+					color: var(--pc-template-text-muted, #444);
 					text-align: center;
 					display: block;
 					margin-top: 2px;
@@ -3963,9 +3964,9 @@ class JournalManager{
 					box-sizing: border-box;
 				}
 				.abilities-table-container, .skills-box {
-					border: 1px solid #333;
+					border: 1px solid var(--pc-template-border-color, #333);
 					padding: 6px;
-					background: #fff;
+					background: var(--pc-template-sheet-bg, #fff);
 					border-radius: 4px;
 					box-sizing: border-box;
 				}
@@ -3973,7 +3974,7 @@ class JournalManager{
 					font-size: 10px;
 					font-weight: bold;
 					text-align: center;
-					background: #222;
+					background: var(--pc-template-border-color, #222);
 					color: #fff;
 					padding: 3px;
 					margin-bottom: 6px;
@@ -3991,16 +3992,16 @@ class JournalManager{
 					padding: 2px;
 				}
 				thead tr {
-					border-bottom: 1px solid #333;
+					border-bottom: 1px solid var(--pc-template-border-light, #222);
 					font-size: 8px;
 					text-transform: uppercase;
-					color: #555;
+					color: var(--pc-template-text-muted, #444);
 				}
 				thead th:first-child {
 					text-align: left;
 				}
 				tbody tr {
-					border-bottom: 1px solid #eee;
+					border-bottom: 1px solid var(--pc-template-table-stripe, #eee);
 				}
 				tbody tr td {
 					padding: 3px 2px;
@@ -4015,12 +4016,13 @@ class JournalManager{
 				.ability-score-field {
 					display: inline-block;
 					width: 22px;
-					border: 1px solid #444;
+					border: 1px solid var(--pc-template-border-color, #444);
 					padding: 2px;
-					background: #fdfdfd;
+					background: var(--pc-template-box-bg, #fdfdfd);
 					min-height: 14px;
 					border-radius: 2px;
 					box-sizing: border-box;
+					color: var(--pc-template-text-color, #111);
 				}
 				.skill-row {
 					display: flex;
@@ -4035,14 +4037,15 @@ class JournalManager{
 				.mod-bullet {
 					min-width: 24px;
 					height: 24px;
-					border: 1px solid #444;
+					border: 1px solid var(--pc-template-border-color, #444);
 					text-align: center;
 					font-size: 11px;
 					line-height: 24px;
-					background: #f4f4f4;
+					background: var(--pc-template-header-bg, #f4f4f4);
+					color: var(--pc-template-text-color, #111);
 				}
 				.skill-row span {
-					color: #777;
+					color: var(--pc-template-text-muted, #777);
 					font-size: 8px;
 				}
 				.mid-column {
@@ -4059,10 +4062,10 @@ class JournalManager{
 					box-sizing: border-box;
 				}
 				.combat-metric {
-					border: 2px solid #333;
+					border: 2px solid var(--pc-template-border-light, #333);
 					padding: 6px;
 					flex: 1;
-					background: #fdfdfd;
+					background: var(--pc-template-box-bg, #fdfdfd);
 					border-radius: 4px;
 					box-sizing: border-box;
 				}
@@ -4072,7 +4075,7 @@ class JournalManager{
 					margin-top: 4px;
 				}
 				.hp-box {
-					border: 1px solid #333;
+					border: 1px solid var(--pc-template-border-light, #333);
 					padding: 6px;
 					border-radius: 4px;
 					box-sizing: border-box;
@@ -4097,12 +4100,12 @@ class JournalManager{
 					box-sizing: border-box;
 				}
 				.container-block {
-					border: 1px solid #333;
+					border: 1px solid var(--pc-template-border-light, #333);
 					padding: 6px;
 					border-radius: 4px;
 					min-height: 110px;
 					height: auto;
-					background: #fff;
+					background: var(--pc-template-sheet-bg, #fff);
 					box-sizing: border-box;
 				}
 				.container-block.flex-1 {
@@ -4111,32 +4114,35 @@ class JournalManager{
 				.attacks-field {
 					min-height: 120px;
 					height: auto;
-					border: 1px solid #444;
+					border: 1px solid var(--pc-template-border-color, #444);
 					padding: 4px;
-					background: #fdfdfd;
+					background: var(--pc-template-box-bg, #fdfdfd);
 					border-radius: 3px;
 					box-sizing: border-box;
 					overflow-wrap: break-word;
+					color: var(--pc-template-text-color, #111);
 				}
 				.features-field {
 					min-height: 180px;
 					height: auto;
-					border: 1px solid #444;
+					border: 1px solid var(--pc-template-border-color, #444);
 					padding: 4px;
-					background: #fdfdfd;
+					background: var(--pc-template-box-bg, #fdfdfd);
 					border-radius: 3px;
 					box-sizing: border-box;
 					overflow-wrap: break-word;
+					color: var(--pc-template-text-color, #111);
 				}
 				.equipment-field {
 					min-height: 90px;
 					height: auto;
-					border: 1px solid #444;
+					border: 1px solid var(--pc-template-border-color, #444);
 					padding: 4px;
-					background: #fdfdfd;
+					background: var(--pc-template-box-bg, #fdfdfd);
 					border-radius: 3px;
 					box-sizing: border-box;
 					overflow-wrap: break-word;
+					color: var(--pc-template-text-color, #111);
 				}
 				.page2-grid {
 					display: flex;
@@ -4148,17 +4154,17 @@ class JournalManager{
 					box-sizing: border-box;
 				}
 				.bio-block {
-					border: 1px solid #333;
+					border: 1px solid var(--pc-template-border-light, #333);
 					padding: 6px;
 					border-radius: 4px;
 					margin-bottom: 8px;
-					background: #fff;
+					background: var(--pc-template-sheet-bg, #fff);
 					box-sizing: border-box;
 				}
-				.bio-appearance { min-height: 90px; height: auto; border: 1px solid #444; padding: 4px; background: #fdfdfd; border-radius: 3px; box-sizing: border-box; overflow-wrap: break-word; }
-				.bio-backstory { min-height: 140px; height: auto; border: 1px solid #444; padding: 4px; background: #fdfdfd; border-radius: 3px; box-sizing: border-box; overflow-wrap: break-word; }
-				.bio-allies { min-height: 90px; height: auto; border: 1px solid #444; padding: 4px; background: #fdfdfd; border-radius: 3px; box-sizing: border-box; overflow-wrap: break-word; }
-				.bio-traits-add { min-height: 100px; height: auto; border: 1px solid #444; padding: 4px; background: #fdfdfd; border-radius: 3px; box-sizing: border-box; overflow-wrap: break-word; }
+				.bio-appearance { min-height: 90px; height: auto; border: 1px solid var(--pc-template-border-color, #444); padding: 4px; background: var(--pc-template-box-bg, var(--pc-template-box-bg, #fdfdfd)); border-radius: 3px; box-sizing: border-box; overflow-wrap: break-word; color: var(--pc-template-text-color, #111);}
+				.bio-backstory { min-height: 140px; height: auto; border: 1px solid var(--pc-template-border-color, #444); padding: 4px; background: var(--pc-template-box-bg, #fdfdfd); border-radius: 3px; box-sizing: border-box; overflow-wrap: break-word; color: var(--pc-template-text-color, #111);}
+				.bio-allies { min-height: 90px; height: auto; border: 1px solid var(--pc-template-border-color, #444); padding: 4px; background: var(--pc-template-box-bg, #fdfdfd); border-radius: 3px; box-sizing: border-box; overflow-wrap: break-word; color: var(--pc-template-text-color, #111);}
+				.bio-traits-add { min-height: 100px; height: auto; border: 1px solid var(--pc-template-border-color, #444); padding: 4px; background: var(--pc-template-box-bg, #fdfdfd); border-radius: 3px; box-sizing: border-box; overflow-wrap: break-word; color: var(--pc-template-text-color, #111);}
 				.traits-grid {
 					display: grid;
 					grid-template-columns: 1fr 1fr;
@@ -4168,9 +4174,9 @@ class JournalManager{
 				.trait-box-field {
 					min-height: 60px;
 					height: auto;
-					border: 1px solid #444;
+					border: 1px solid var(--pc-template-border-color, var(--pc-template-border-color, #444));
 					padding: 4px;
-					background: #fdfdfd;
+					background: var(--pc-template-box-bg, #fdfdfd);
 					border-radius: 3px;
 					box-sizing: border-box;
 					overflow-wrap: break-word;
@@ -4180,9 +4186,9 @@ class JournalManager{
 					margin-top: 4px;
 					box-sizing: border-box;
 					height: auto;
-					border: 1px solid #444;
+					border: 1px solid var(--pc-template-border-color, #444);
 					padding: 4px;
-					background: #fdfdfd;
+					background: var(--pc-template-box-bg, #fdfdfd);
 					border-radius: 3px;
 					overflow-wrap: break-word;
 				}
@@ -4202,18 +4208,19 @@ class JournalManager{
 					gap: 4px;
 					font-size: 11px;
 					font-weight: bold;
-					border: 1px solid #555;
+					border: 1px solid var(--pc-template-border-color, #444);
 					padding: 2px 4px;
 					border-radius: 3px;
-					background: #f9f9f9;
+					background: var(--pc-template-header-bg, #f9f9f9);
 					box-sizing: border-box;
 				}
 				.coin-input {
 					width: 40px;
 					min-height: 24px;
 					height: auto;
-					border: 1px solid #ccc;
-					background: transparent;
+					border: 1px solid var(--pc-template-border-color, #ccc);
+					background: var(--pc-template-box-bg, transparent);
+					color: var(--pc-template-text-color, #111);
 					text-align: right;
 					display: inline-block;
 					line-height: 24px;
@@ -4221,9 +4228,9 @@ class JournalManager{
 				.treasure-field {
 					min-height: 80px;
 					height: auto;
-					border: 1px solid #444;
+					border: 1px solid var(--pc-template-border-color, #444);
 					padding: 4px;
-					background: #fdfdfd;
+					background: var(--pc-template-box-bg, #fdfdfd);
 					border-radius: 3px;
 					box-sizing: border-box;
 					overflow-wrap: break-word;
@@ -4231,9 +4238,9 @@ class JournalManager{
 				.spellcasting-field {
 					min-height: 120px;
 					height: auto;
-					border: 1px solid #444;
+					border: 1px solid var(--pc-template-border-color, #444);
 					padding: 4px;
-					background: #fdfdfd;
+					background: var(--pc-template-box-bg, #fdfdfd);
 					border-radius: 3px;
 					box-sizing: border-box;
 					overflow-wrap: break-word;
@@ -4597,8 +4604,9 @@ class JournalManager{
 					"title": "Fillable Character Sheet",
 					"description": "Adds a fillable character sheet to the note. Has limited edit capabilites for Players.",
 					"content": `
-					<style id='contentStyles'>${contentStyles}</style><div class="dnd-sheet"><!-- ================= PAGE 1: CORE STATS, COMBAT & ACTIONS ================= -->
-						<div class="dnd-page"><!-- Header Block -->
+					<style id='contentStyles'>${contentStyles}</style>
+					<div class="dnd-sheet">
+						<div class="dnd-page">
 							<div class="header-box">
 							<div class="col char-name-box">
 								<div class="box-field" contenteditable="true">&nbsp;</div>
@@ -4625,8 +4633,8 @@ class JournalManager{
 								<span class="label">XP</span>
 							</div>
 							</div>
-							<div class="main-container"><!-- LEFT COLUMN: Abilities & Skills -->
-							<div class="left-column"><!-- Main Stats Table Container -->
+							<div class="main-container">
+							<div class="left-column">
 								<div class="abilities-table-container">
 								<div class="section-title">Abilities</div>
 								<table>
@@ -4638,42 +4646,37 @@ class JournalManager{
 										<th>Score</th>
 									</tr>
 									</thead>
-									<tbody><!-- Strength -->
+									<tbody>
 									<tr>
 										<td>Str</td>
 										<td><span contenteditable="true">+0</span></td>
 										<td><span contenteditable="true">+0</span></td>
 										<td><span class="box-field ability-score-field" contenteditable="true">10</span></td>
 									</tr>
-									<!-- Dexterity -->
 									<tr>
 										<td>Dex</td>
 										<td><span contenteditable="true">+0</span></td>
 										<td><span contenteditable="true">+0</span></td>
 										<td><span class="box-field ability-score-field" contenteditable="true">10</span></td>
 									</tr>
-									<!-- Constitution -->
 									<tr>
 										<td>Con</td>
 										<td><span contenteditable="true">+0</span></td>
 										<td><span contenteditable="true">+0</span></td>
 										<td><span class="box-field ability-score-field" contenteditable="true">10</span></td>
 									</tr>
-									<!-- Intelligence -->
 									<tr>
 										<td>Int</td>
 										<td><span contenteditable="true">+0</span></td>
 										<td><span contenteditable="true">+0</span></td>
 										<td><span class="box-field ability-score-field" contenteditable="true">10</span></td>
 									</tr>
-									<!-- Wisdom -->
 									<tr>
 										<td>Wis</td>
 										<td><span contenteditable="true">+0</span></td>
 										<td><span contenteditable="true">+0</span></td>
 										<td><span class="box-field ability-score-field" contenteditable="true">10</span></td>
 									</tr>
-									<!-- Charisma -->
 									<tr>
 										<td>Cha</td>
 										<td><span contenteditable="true">+0</span></td>
@@ -4683,7 +4686,6 @@ class JournalManager{
 									</tbody>
 								</table>
 								</div>
-								<!-- Skills List -->
 								<div class="skills-box">
 								<div class="section-title">Skills</div>
 								<table style="height: 538px; float: left;" border="0" width="126" cellspacing="0" cellpadding="0">
@@ -4707,7 +4709,7 @@ class JournalManager{
 										<td>Int</td>
 									</tr>
 									<tr>
-										<td><input checked="checked" type="checkbox" /></td>
+										<td><input type="checkbox" /></td>
 										<td>+0</td>
 										<td>Athletics</td>
 										<td>Str</td>
@@ -4731,7 +4733,7 @@ class JournalManager{
 										<td>Wis</td>
 									</tr>
 									<tr>
-										<td><input checked="checked" type="checkbox" /></td>
+										<td><input type="checkbox" /></td>
 										<td>+0</td>
 										<td>Intimidation</td>
 										<td>Cha</td>
@@ -4755,7 +4757,7 @@ class JournalManager{
 										<td>Int</td>
 									</tr>
 									<tr>
-										<td><input checked="checked" type="checkbox" /></td>
+										<td><input type="checkbox" /></td>
 										<td>+0</td>
 										<td>Perception</td>
 										<td>Wis</td>
@@ -4791,7 +4793,7 @@ class JournalManager{
 										<td>Dex</td>
 									</tr>
 									<tr>
-										<td><input checked="checked" type="checkbox" /></td>
+										<td><input type="checkbox" /></td>
 										<td>+0</td>
 										<td>Survival</td>
 										<td>Wis</td>
@@ -4800,8 +4802,7 @@ class JournalManager{
 								</table>
 								</div>
 							</div>
-							<!-- MIDDLE & RIGHT COLUMNS -->
-							<div class="mid-column"><!-- Top Metrics -->
+							<div class="mid-column">
 								<div class="combat-stats-grid">
 								<div class="combat-metric"><span class="label">Armor Class</span>
 									<div class="metric-val" contenteditable="true">16</div>
@@ -4810,17 +4811,16 @@ class JournalManager{
 									<div class="metric-val"><strong class="custom-initiative custom-stat" contenteditable="true">+1</strong></div>
 								</div>
 								<div class="combat-metric"><span class="label">Speed</span>
-									<div class="metric-val" contenteditable="true">30&nbsp;ft.</div>
+									<div class="metric-val" contenteditable="true">30 ft.</div>
 								</div>
 								<div class="combat-metric"><span class="label">Proficiency Bonus</span>
 									<div class="metric-val" contenteditable="true">+2</div>
 								</div>
 								</div>
-								<!-- Hit Points Section -->
 								<div class="hp-box">
 								<div class="hp-row">
 									<div class="col"><span class="label">Maximum Hit Points</span>
-									<div class="box-field" contenteditable="true"><strong class="custom-avghp custom-stat">&nbsp;10</strong></div>
+									<div class="box-field" contenteditable="true"><strong class="custom-avghp custom-stat"> 10</strong></div>
 									</div>
 									<div class="col"><span class="label">Current Hit Points</span>
 									<div class="box-field" contenteditable="true">&nbsp;</div>
@@ -4833,7 +4833,7 @@ class JournalManager{
 									<div class="col">
 									<div class="hp-subgrid">
 										<div><span class="label">Hit Dice</span>
-										<div class="box-field" contenteditable="true">&nbsp;1d10</div>
+										<div class="box-field" contenteditable="true">1d10</div>
 										</div>
 										<div><span class="label">Death Saves</span>
 										<div class="box-field" contenteditable="true">&nbsp;</div>
@@ -4842,9 +4842,8 @@ class JournalManager{
 									</div>
 								</div>
 								</div>
-								<!-- Attacks & Spellcasting -->
 								<div class="container-block">
-								<div class="section-title">Attacks &amp; Spellcasting&nbsp;</div>
+								<div class="section-title">Attacks &amp; Spellcasting</div>
 								<div class="attacks-field"><br />
 									<table>
 									<thead>
@@ -4857,44 +4856,44 @@ class JournalManager{
 									</thead>
 									<tbody>
 										<tr>
-										<td contenteditable="true">&nbsp;Warhammer</td>
+										<td contenteditable="true">Warhammer</td>
 										<td contenteditable="true">+0</td>
 										<td contenteditable="true">1d8+3 bludgeoning</td>
 										<td contenteditable="true">Versatile (1d10)</td>
 										</tr>
 										<tr>
-										<td contenteditable="true">&nbsp;Heavy Crossbow</td>
+										<td contenteditable="true">Heavy Crossbow</td>
 										<td contenteditable="true">+0</td>
 										<td contenteditable="true">1d10+1 piercing</td>
 										<td contenteditable="true">Range 100/400</td>
 										</tr>
 										<tr>
-										<td contenteditable="true">&nbsp;Handaxe</td>
+										<td contenteditable="true">Handaxe</td>
 										<td contenteditable="true">+0</td>
 										<td contenteditable="true">1d6+3 slashing</td>
 										<td contenteditable="true">Light, Thrown (20/60)</td>
 										</tr>
 										<tr>
 										<td contenteditable="true">&nbsp;</td>
-										<td contenteditable="true">+0</td>
 										<td contenteditable="true">&nbsp;</td>
-										<td contenteditable="true">&nbsp;</td>
-										</tr>
-										<tr>
-										<td contenteditable="true">&nbsp;</td>
-										<td contenteditable="true">+0</td>
 										<td contenteditable="true">&nbsp;</td>
 										<td contenteditable="true">&nbsp;</td>
 										</tr>
 										<tr>
 										<td contenteditable="true">&nbsp;</td>
-										<td contenteditable="true">+0</td>
+										<td contenteditable="true">&nbsp;</td>
 										<td contenteditable="true">&nbsp;</td>
 										<td contenteditable="true">&nbsp;</td>
 										</tr>
 										<tr>
 										<td contenteditable="true">&nbsp;</td>
-										<td contenteditable="true">+0</td>
+										<td contenteditable="true">&nbsp;</td>
+										<td contenteditable="true">&nbsp;</td>
+										<td contenteditable="true">&nbsp;</td>
+										</tr>
+										<tr>
+										<td contenteditable="true">&nbsp;</td>
+										<td contenteditable="true">&nbsp;</td>
 										<td contenteditable="true">&nbsp;</td>
 										<td contenteditable="true">&nbsp;</td>
 										</tr>
@@ -4902,12 +4901,10 @@ class JournalManager{
 									</table>
 								</div>
 								</div>
-								<!-- Features & Traits -->
 								<div class="container-block flex-1">
 								<div class="section-title">Features &amp; Traits</div>
 								<div class="features-field" contenteditable="true">- Darkvision: 60 ft range.<br /><br /></div>
 								</div>
-								<!-- Equipment Block -->
 								<div class="container-block">
 								<div class="section-title">Equipment</div>
 								<div class="equipment-field" contenteditable="true">&nbsp;</div>
@@ -4915,10 +4912,9 @@ class JournalManager{
 							</div>
 							</div>
 						</div>
-						<!-- ================= PAGE 2: BACKSTORY, SPELLS & INVENTORY ================= -->
 						<div class="dnd-page">
 							<div class="section-title" style="font-size: 12px; margin-bottom: 12px;">Character Details &amp; Backstory</div>
-							<div class="page2-grid"><!-- Left side -->
+							<div class="page2-grid">
 							<div class="col">
 								<div class="bio-block"><span class="label">Character Appearance</span>
 								<div class="bio-appearance" contenteditable="true">&nbsp;</div>
@@ -4933,7 +4929,6 @@ class JournalManager{
 								<div class="bio-traits-add" contenteditable="true">&nbsp;</div>
 								</div>
 							</div>
-							<!-- Right side -->
 							<div class="col">
 								<div class="traits-grid">
 								<div class="bio-block"><span class="label">Personality Traits</span>
@@ -4949,15 +4944,13 @@ class JournalManager{
 									<div class="trait-box-field" contenteditable="true">&nbsp;</div>
 								</div>
 								</div>
-								<!-- Attunement Section -->
 								<div class="bio-block"><span class="label">Magic Item Attunement (3 Slots Available)</span>
-								<div class="attunement-content">
-									<div style="margin-bottom: 2px;"><input checked="checked" type="checkbox" />Empty Slot</div>
-									<div style="margin-bottom: 2px;"><input type="checkbox" />Empty Slot</div>
-									<div><input type="checkbox" />Empty Slot</div>
+								<div class="attunement-content" contenteditable="true">
+									<div style="margin-bottom: 2px;"><input type="checkbox" /> Empty Slot</div>
+									<div style="margin-bottom: 2px;"><input type="checkbox" /> Empty Slot</div>
+									<div><input type="checkbox" /> Empty Slot</div>
 								</div>
 								</div>
-								<!-- Treasure & Currency -->
 								<div class="bio-block"><span class="label">Treasure &amp; Currency</span>
 								<div class="currency-container">
 									<div class="coin-slot">CP:
@@ -4978,7 +4971,6 @@ class JournalManager{
 								</div>
 								<div class="treasure-field" contenteditable="true">&nbsp;</div>
 								</div>
-								<!-- Spellcasting Notes -->
 								<div class="bio-block"><span class="label">Spellcasting Notes / Summary</span>
 								<div class="spellcasting-field" contenteditable="true">&nbsp;</div>
 								</div>
@@ -5351,14 +5343,27 @@ class JournalManager{
 				});
 				editor.on('init', function (e) {
 					const body = $(e.target.contentDocument.body);
-					const backgroundColor = $(':root').css('--background-color'); // support azmoria's dark mode without requiring inverse filters
-					const fontColor = $(':root').css('--font-color');
+					const $root = $(':root');
+					const backgroundColor =  $root.css('--background-color'); // support azmoria's dark mode without requiring inverse filters
+					const fontColor =  $root.css('--font-color');
+
 					if(backgroundColor && fontColor){
 						body.css({
 							background: backgroundColor,
 							color: fontColor,
 							'--font-color': fontColor,
-							'--background-color': backgroundColor
+							'--background-color': backgroundColor,
+							'--pc-template-bg-color': $root.css('--pc-template-bg-color') ?? '',
+							'--pc-template-sheet-bg': $root.css('--pc-template-sheet-bg') ?? '',
+							'--pc-template-text-color': $root.css('--pc-template-text-color') ?? '',
+							'--pc-template-text-muted': $root.css('--pc-template-text-muted') ?? '',
+							'--pc-template-border-color': $root.css('--pc-template-border-color') ?? '',
+							'--pc-template-border-light': $root.css('--pc-template-border-light') ?? '',
+							'--pc-template-box-bg': $root.css('--pc-template-box-bg') ?? '',
+							'--pc-template-header-bg': $root.css('--pc-template-header-bg') ?? '',
+							'--pc-template-table-stripe': $root.css('--pc-template-table-stripe') ?? '',
+							'--pc-template-section-bg': $root.css('--pc-template-section-bg') ?? '',
+							'--pc-template-section-text': $root.css('--pc-template-section-text') ?? ''
 						});
 					}
 					editor.getBody().addEventListener('change', function (e) {
@@ -5772,6 +5777,3 @@ function render_source_chapter_in_iframe(url) {
 
 	iframe.attr('src', url);
 }
-
-
-
