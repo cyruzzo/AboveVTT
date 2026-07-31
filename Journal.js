@@ -4785,12 +4785,6 @@ class JournalManager{
 										<td>Survival</td>
 										<td>Wis</td>
 									</tr>
-									<tr>
-										<td><input checked="checked" type="checkbox" /></td>
-										<td>+0</td>
-										<td>Survival</td>
-										<td>Wis</td>
-									</tr>
 									</tbody>
 								</table>
 								</div>
