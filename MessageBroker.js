@@ -241,8 +241,8 @@ const debounceHandleInjected = mydebounce(() => {
 		}
 	}
 }, 500)
-const debounceSendNote = mydebounce(function(id, note){
-	window.MB.sendMessage('custom/myVTT/note',  {note: note, id: id, from:window.PLAYER_ID})
+const debounceSendNote = mydebounce(function(id, note, tokenId){
+	window.MB.sendMessage('custom/myVTT/note',  {note, id, tokenId, from:window.PLAYER_ID})
 }, 2000);
 
 const delayedClear = mydebounce(() => clearFrame());
@@ -1258,6 +1258,7 @@ class MessageBroker {
 						openNote.remove();
 					}
 					
+					
 
 					if(window.JOURNAL.notes[msg.data.id].abilityTracker && openNote.length>0){
 						for(let i in window.JOURNAL.notes[msg.data.id].abilityTracker){
@@ -1274,6 +1275,10 @@ class MessageBroker {
 						}
 					}
 
+					const openStatBlock = $(`.custom-stat-block[data-stat-id="${msg.data.id}"]`)
+					if(openStatBlock.length > 0 && window.JOURNAL.notes[msg.data.id] != undefined){
+						load_monster_stat(msg.data.id, msg.data.tokenId, window.JOURNAL.notes[msg.data.id].text);
+					}
 					window.JOURNAL.persist(true);
 
 				}

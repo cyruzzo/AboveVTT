@@ -12928,7 +12928,7 @@ p.monster-header+p {
 }
 
 
-.dnd-page [contenteditable]{
+.dnd-page [contenteditable="true"]{
     cursor: text;
 }
 .dnd-sheet {
