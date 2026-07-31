@@ -4011,10 +4011,7 @@ class JournalManager{
 					text-transform: uppercase;
 					font-size: 8.5px;
 				}
-				tbody tr td:nth-child(2) {
-					font-weight: bold;
-					font-size: 11px;
-				}
+
 				.ability-score-field {
 					display: inline-block;
 					width: 22px;
@@ -4631,6 +4628,7 @@ class JournalManager{
 									<tr>
 										<th>Ability</th>
 										<th>Mod</th>
+										<th>Save</th>
 										<th>Score</th>
 									</tr>
 									</thead>
@@ -4638,11 +4636,13 @@ class JournalManager{
 									<tr>
 										<td>Str</td>
 										<td><span contenteditable="true">+0</span></td>
+										<td><span contenteditable="true">+0</span></td>
 										<td><span class="box-field ability-score-field" contenteditable="true">10</span></td>
 									</tr>
 									<!-- Dexterity -->
 									<tr>
 										<td>Dex</td>
+										<td><span contenteditable="true">+0</span></td>
 										<td><span contenteditable="true">+0</span></td>
 										<td><span class="box-field ability-score-field" contenteditable="true">10</span></td>
 									</tr>
@@ -4650,11 +4650,13 @@ class JournalManager{
 									<tr>
 										<td>Con</td>
 										<td><span contenteditable="true">+0</span></td>
+										<td><span contenteditable="true">+0</span></td>
 										<td><span class="box-field ability-score-field" contenteditable="true">10</span></td>
 									</tr>
 									<!-- Intelligence -->
 									<tr>
 										<td>Int</td>
+										<td><span contenteditable="true">+0</span></td>
 										<td><span contenteditable="true">+0</span></td>
 										<td><span class="box-field ability-score-field" contenteditable="true">10</span></td>
 									</tr>
@@ -4662,11 +4664,13 @@ class JournalManager{
 									<tr>
 										<td>Wis</td>
 										<td><span contenteditable="true">+0</span></td>
+										<td><span contenteditable="true">+0</span></td>
 										<td><span class="box-field ability-score-field" contenteditable="true">10</span></td>
 									</tr>
 									<!-- Charisma -->
 									<tr>
 										<td>Cha</td>
+										<td><span contenteditable="true">+0</span></td>
 										<td><span contenteditable="true">+0</span></td>
 										<td><span class="box-field ability-score-field" contenteditable="true">10</span></td>
 									</tr>

@@ -13048,10 +13048,7 @@ p.monster-header+p {
         text-transform: uppercase;
         font-size: 8.5px;
     }
-    tbody tr td:nth-child(2) {
-        font-weight: bold;
-        font-size: 11px;
-    }
+
     .ability-score-field {
         display: inline-block;
         width: 22px;
