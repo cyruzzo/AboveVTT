@@ -250,7 +250,7 @@ async function display_stat_block_in_container(statBlock, container, tokenId, cu
       }
     }
     $("span.hideme").parent().parent().hide();
-    container.find('.lockStatButton').remove();
+    container.find('.lockStatButton, download_button').remove();
     if(customStatBlock && container.find('.dnd-sheet').length>0){
       container.find('.popout-button').remove();
       const lockStatButton = $(`<div class='lockStatButton' style="position: absolute;
@@ -415,8 +415,8 @@ const debounceRescanStatBlock = mydebounce(async (container, noteId, tokenId) =>
   }
 
 
-  container.find('.lockStatButton').remove();
-  if(container.find('.dnd-sheet').length>0){
+
+  if(container.find('.dnd-sheet').length>0 && container.find('.lockStatButton, .download_button').length==0){
     container.find('.popout-button').remove();
     const lockStatButton = $(`<div class='lockStatButton' style="position: absolute;
                                             left: 2px;
@@ -467,8 +467,18 @@ const debounceRescanStatBlock = mydebounce(async (container, noteId, tokenId) =>
             
         $(".import-loading-indicator").remove();        
     });
-
-    container.prepend(lockStatButton, downloadStat);
+    if(!tokenId){
+      container.find('.title_bar_text').css('display', 'inline-block');
+      container.find('.title_bar').prepend(lockStatButton, downloadStat);
+      container.find('.title_bar').css({
+        'display': 'flex',
+        'align-items': 'center'
+      })
+    }
+    else{
+      container.prepend(lockStatButton, downloadStat);
+    }
+    
   }
   $(container).find('.avtt-stat-block-container, .note-text')[0].scrollTop = currScroll;
   const focusTarget =  $(container).find('[data-focus]')
