@@ -1252,8 +1252,14 @@ class MessageBroker {
 					const openNote = $(`.note[data-id='${msg.data.id}']`);
 					// If the 'Open' button is clicked OR the note is already opened by a player and it is saved 
 					// by the DM, the note gets refreshed.
+					let currScroll = 0;
+					if(openNote.length>0){
+						const targetRescan = openNote.find('.avtt-stat-block-container, .note-text').first();
+						currScroll = targetRescan[0].scrollTop;
+					}
+
 					if (msg.data.popup == true || (msg.data.popup == undefined && openNote.length != 0)){
-						window.JOURNAL.display_note(msg.data.id);
+						window.JOURNAL.display_note(msg.data.id, undefined, currScroll);
 					} else if (msg.data.popup == false) {
 						openNote.remove();
 					}
@@ -1277,7 +1283,9 @@ class MessageBroker {
 
 					const openStatBlock = $(`.custom-stat-block[data-stat-id="${msg.data.id}"]`)
 					if(openStatBlock.length > 0 && window.JOURNAL.notes[msg.data.id] != undefined){
-						load_monster_stat(msg.data.id, msg.data.tokenId, window.JOURNAL.notes[msg.data.id].text);
+						currScroll = openStatBlock[0].scrollTop;
+						const container = await load_monster_stat(msg.data.id, msg.data.tokenId, window.JOURNAL.notes[msg.data.id].text);
+						container.find('.avtt-stat-block-container, .note-text').first()[0].scrollTop = currScroll;
 					}
 					window.JOURNAL.persist(true);
 
