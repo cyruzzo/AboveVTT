@@ -70,8 +70,7 @@ function build_stat_block_for_copy(listItem, options, open5e = false){
 
 async function display_stat_block_in_container(statBlock, container, tokenId, customStatBlock = undefined) {
     const token = window.TOKEN_OBJECTS[tokenId];
-    let $html = (customStatBlock) ? $(`
-    <div class="container avtt-stat-block-container custom-stat-block">${customStatBlock}</div>`) : $(await build_monster_stat_block(statBlock, token));
+    let $html = (customStatBlock) ? $(`<div class="container avtt-stat-block-container custom-stat-block" data-stat-id="${window.TOKEN_OBJECTS[tokenId].options.statBlock}" data-token-id="${tokenId}">${customStatBlock}</div>`) : $(await build_monster_stat_block(statBlock, token));
     container.find("#noAccessToContent").remove(); // in case we're re-rendering with better data
     container.find(".avtt-stat-block-container").remove(); // in case we're re-rendering with better data
     container.append($html);
@@ -108,7 +107,7 @@ async function display_stat_block_in_container(statBlock, container, tokenId, cu
 				avttImages.attr('href', '');
         closestNote.find('a:empty, button:empty, .image').remove();
 				window.JOURNAL.notes[customStatId].text = closestNote[0].innerHTML; 
-        debounceSendNote(customStatId, window.JOURNAL.notes[customStatId]);
+        debounceSendNote(customStatId, window.JOURNAL.notes[customStatId], tokenId);
         window.JOURNAL.setPersistTimeout();
         debounceReopenStatBlock(statBlock, tokenId, window.JOURNAL.notes[customStatId].text);
 			});
@@ -127,7 +126,7 @@ async function display_stat_block_in_container(statBlock, container, tokenId, cu
 				avttImages.attr('href', '');
         closestNote.find('a:empty, button:empty, .image').remove();
 				window.JOURNAL.notes[customStatId].text = closestNote[0].innerHTML; 
-        debounceSendNote(customStatId, window.JOURNAL.notes[customStatId]);
+        debounceSendNote(customStatId, window.JOURNAL.notes[customStatId], tokenId);
         window.JOURNAL.setPersistTimeout();
 			})
     }
@@ -241,6 +240,44 @@ async function display_stat_block_in_container(statBlock, container, tokenId, cu
       }
     }
     $("span.hideme").parent().parent().hide();
+    container.find('.lockStatButton').remove();
+    if(customStatBlock && container.find('.dnd-sheet').length>0){
+      container.find('.popout-button').remove();
+      const lockStatButton = $(`<div class='lockStatButton' style="position: absolute;
+                                              left: 2px;
+                                              top: 3px;
+                                              width: 20px;
+                                              height: 20px;
+                                              color: #ddd;">
+                                  <span title="lock buttons" class="material-symbols-outlined" style="font-size:20px;">
+                                    ${!window.lockTemplateStatBlocks ? "lock_open_right" : "lock"}
+                                  </span>
+                                </div>`)
+      lockStatButton.off('click.lockStatBlock').on('click.lockStatBlock', ()=>{
+        window.lockTemplateStatBlocks = !window.lockTemplateStatBlocks;
+        const span = lockStatButton.find('>span');
+        if(window.lockTemplateStatBlocks){
+          container.find('.dnd-sheet button').attr("contenteditable", "false");
+          span.text('lock');
+        } else{
+          container.find('.dnd-sheet button').attr("contenteditable", "true");
+          span.text('lock_open_right');
+        }
+      })
+      
+      container.prepend(lockStatButton);
+      
+      if(window.lockTemplateStatBlocks){
+        container.find('.dnd-sheet [contenteditable="true"]:has(button)').attr("contenteditable", "false");
+        container.find('.dnd-sheet input').attr("disabled", "disabled");
+      } else{
+        container.find('.dnd-sheet [contenteditable="false"]').attr("contenteditable", "true");
+        container.find('.dnd-sheet input').removeAttr("disabled");
+      }
+
+
+
+    }
 }
 
 async function build_monster_stat_block(statBlock, token) {
