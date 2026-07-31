@@ -1937,7 +1937,54 @@ class JournalManager{
 			})
 			this.positionNotePins(id, note_text);
 		});	
-		
+		if(note_text.find('.dnd-sheet').length>0){
+			note_container.find('.popout-button, .lockStatButton, .download_button').remove();
+			const lockStatButton = $(`<div class='lockStatButton' style="position: relative; display:inline-block; color: #ddd;">
+										<span title="lock buttons" class="material-symbols-outlined" style="font-size: 20px; position: relative; top: 4px;">
+										${!window.lockTemplateStatBlocks ? "lock_open_right" : "lock"}
+										</span>
+									</div>`)
+			lockStatButton.off('click.lockStatBlock').on('click.lockStatBlock', ()=>{
+			window.lockTemplateStatBlocks = !window.lockTemplateStatBlocks;
+			const span = lockStatButton.find('>span');
+			if(window.lockTemplateStatBlocks){
+				note_text.find('.dnd-sheet button').attr("contenteditable", "false");
+				span.text('lock');
+			} else{
+				note_text.find('.dnd-sheet [contenteditable]').attr("contenteditable", "true");
+				span.text('lock_open_right');
+			}
+			})
+			
+			if(window.lockTemplateStatBlocks){
+				note_text.find('.dnd-sheet button').attr("contenteditable", "false");
+			} else{
+				note_text.find('.dnd-sheet [contenteditable]').attr("contenteditable", "true");
+			}
+
+			const downloadStat = $(`<div class='download_button' style="position: relative; display:inline-block; color: #ddd;">
+										<span title="Download Statblock as HTML" class="material-symbols-outlined" style="font-size: 24px; position: relative; top: 4px;">
+										download
+										</span>
+									</div>`)
+			downloadStat.off('click.exportStatBlock').on('click.exportStatBlock', function () { 
+				build_import_loading_indicator('Preparing Export File');
+
+				const currentdate = new Date(); 
+				const datetime = `${currentdate.getFullYear()}-${(currentdate.getMonth()+1)}-${currentdate.getDate()}`
+				const html = `<style id='contentStyles'>${window.JOURNAL.content_styles()}</style>
+				${window.JOURNAL.notes[id].text}`
+				download(html,`${window.CAMPAIGN_INFO.name}-${datetime}-pctemplate.html`,"text/html");
+					
+				$(".import-loading-indicator").remove();        
+			});
+			note_container.find('.title_bar_text').css('display', 'inline-block');
+			note_container.find('.title_bar').prepend(lockStatButton, downloadStat);
+			note_container.find('.title_bar').css({
+				'display': 'flex',
+				'align-items': 'center'
+			})
+		}
 	}
 	add_journal_tooltip_targets(target){
 		const monsterIds = [];
@@ -3054,89 +3101,8 @@ class JournalManager{
 			}
 		}
 	}
-	edit_note(id, statBlock = false){
-		$(`.ui-dialog:not(.resize_drag_window) div.note[data-id='${id}']`)?.dialog("close");
-		$(`.resize_drag_window[id="${id}"]`).remove();
-		this.close_all_notes();
-		let self=this;
-		
-		let note=$("<div class='note'></div>");
-		let form=$("<form></form>");
-		let tmp=uuid();
-		let ta=$("<textarea id='"+tmp+"' name='ajax_text' class='j-wysiwyg-editor text-editor' data-note-id='"+id+"'></textarea>");
-		ta.css('width','100%');
-		ta.css('height','100%');
-		form.append(ta);
-		
-		note.append(form);
-		
-		if(self.notes[id]){
-			ta.text(self.notes[id].text);
-		}
-		
-		note.attr('title',self.notes[id].title);
-		
-		$("#site-main").append(note);
-		note.dialog({
-			draggable: true,
-			width: 900,
-			height: 600,
-			position: {
-			   my: "center",
-			   at: "center-200",
-			   of: window
-			},
-			open: function(event, ui){
-				let btn_view=$(`<button class='journal-view-button journal-button'><img height="10" src="${window.EXTENSION_PATH}assets/icons/view.svg"></button>"`);
-				$(this).siblings('.ui-dialog-titlebar').prepend(btn_view);
-				btn_view.click(function(){	
-					self.close_all_notes();
-					self.display_note(id, statBlock);
-				});
-			},
-			close: function( event, ui ) {
-				// console.log(event);
-				let taid=$(event.target).find("textarea").attr('id');
-				tinyMCE.get(taid).execCommand('mceSave');
-				$(this).remove();
-			}
-		});
-
-		$("[role='dialog']").draggable({
-			containment: "#windowContainment",
-			start: function () {
-				$("#resizeDragMon, .note:has(iframe) form .mce-container-body, #sheet").append($('<div class="iframeResizeCover"></div>'));
-			},
-			stop: function () {
-				$('.iframeResizeCover').remove();			
-			}
-		});
-		$("[role='dialog']").resizable({
-			start: function () {
-				$("#resizeDragMon, .note:has(iframe) form .mce-container-body, #sheet").append($('<div class="iframeResizeCover"></div>'));
-			},
-			stop: function () {
-				$('.iframeResizeCover').remove();			
-			}
-		});
-		frame_z_index_when_click(note.parent(), true);
-		
-		const debounceNoteSave = mydebounce(function(e, editor){
-		    if(editor.isDirty()){
-				let parser = new DOMParser()
-				let html = parser.parseFromString(editor.getContent(), 'text/html');
-				const body = $(html).find('body')// we do this to get rid of style tags used in templates that aren't needed to be stored - it was causing notes to be too large from message size limits
-				const avttImages = body.find('img[data-src*="above-bucket-not-a-url"]');
-				avttImages.attr('src', '');
-				avttImages.attr('href', '');
-				self.notes[id].text = body.html(); 
-		    	self.notes[id].plain = editor.getContent({ format: 'text' });
-		    	self.notes[id].statBlock = statBlock;
-		    	self.persist();
-		    }
-		}, 800)
-
-		const contentStyles = `
+	content_styles() {
+		return `
 			:root {
 				 --theme-page-fg-color: #242527;
 			}
@@ -4342,6 +4308,90 @@ class JournalManager{
 			
 			/***** END NEW STAT BLOCKS ****/
 		`
+	}
+	edit_note(id, statBlock = false){
+		$(`.ui-dialog:not(.resize_drag_window) div.note[data-id='${id}']`)?.dialog("close");
+		$(`.resize_drag_window[id="${id}"]`).remove();
+		this.close_all_notes();
+		let self=this;
+		
+		let note=$("<div class='note'></div>");
+		let form=$("<form></form>");
+		let tmp=uuid();
+		let ta=$("<textarea id='"+tmp+"' name='ajax_text' class='j-wysiwyg-editor text-editor' data-note-id='"+id+"'></textarea>");
+		ta.css('width','100%');
+		ta.css('height','100%');
+		form.append(ta);
+		
+		note.append(form);
+		
+		if(self.notes[id]){
+			ta.text(self.notes[id].text);
+		}
+		
+		note.attr('title',self.notes[id].title);
+		
+		$("#site-main").append(note);
+		note.dialog({
+			draggable: true,
+			width: 900,
+			height: 600,
+			position: {
+			   my: "center",
+			   at: "center-200",
+			   of: window
+			},
+			open: function(event, ui){
+				let btn_view=$(`<button class='journal-view-button journal-button'><img height="10" src="${window.EXTENSION_PATH}assets/icons/view.svg"></button>"`);
+				$(this).siblings('.ui-dialog-titlebar').prepend(btn_view);
+				btn_view.click(function(){	
+					self.close_all_notes();
+					self.display_note(id, statBlock);
+				});
+			},
+			close: function( event, ui ) {
+				// console.log(event);
+				let taid=$(event.target).find("textarea").attr('id');
+				tinyMCE.get(taid).execCommand('mceSave');
+				$(this).remove();
+			}
+		});
+
+		$("[role='dialog']").draggable({
+			containment: "#windowContainment",
+			start: function () {
+				$("#resizeDragMon, .note:has(iframe) form .mce-container-body, #sheet").append($('<div class="iframeResizeCover"></div>'));
+			},
+			stop: function () {
+				$('.iframeResizeCover').remove();			
+			}
+		});
+		$("[role='dialog']").resizable({
+			start: function () {
+				$("#resizeDragMon, .note:has(iframe) form .mce-container-body, #sheet").append($('<div class="iframeResizeCover"></div>'));
+			},
+			stop: function () {
+				$('.iframeResizeCover').remove();			
+			}
+		});
+		frame_z_index_when_click(note.parent(), true);
+		
+		const debounceNoteSave = mydebounce(function(e, editor){
+		    if(editor.isDirty()){
+				let parser = new DOMParser()
+				let html = parser.parseFromString(editor.getContent(), 'text/html');
+				const body = $(html).find('body')// we do this to get rid of style tags used in templates that aren't needed to be stored - it was causing notes to be too large from message size limits
+				const avttImages = body.find('img[data-src*="above-bucket-not-a-url"]');
+				avttImages.attr('src', '');
+				avttImages.attr('href', '');
+				self.notes[id].text = body.html(); 
+		    	self.notes[id].plain = editor.getContent({ format: 'text' });
+		    	self.notes[id].statBlock = statBlock;
+		    	self.persist();
+		    }
+		}, 800)
+
+		const contentStyles = this.content_styles()
 
 		tinyMCE.init({
 			selector: '#' + tmp,

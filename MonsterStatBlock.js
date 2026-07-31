@@ -260,23 +260,40 @@ async function display_stat_block_in_container(statBlock, container, tokenId, cu
           container.find('.dnd-sheet button').attr("contenteditable", "false");
           span.text('lock');
         } else{
-          container.find('.dnd-sheet button').attr("contenteditable", "true");
+          container.find('.dnd-sheet [contenteditable]').attr("contenteditable", "true");
           span.text('lock_open_right');
         }
       })
       
-      container.prepend(lockStatButton);
-      
       if(window.lockTemplateStatBlocks){
-        container.find('.dnd-sheet [contenteditable="true"]:has(button)').attr("contenteditable", "false");
-        container.find('.dnd-sheet input').attr("disabled", "disabled");
+         container.find('.dnd-sheet button').attr("contenteditable", "false");
       } else{
-        container.find('.dnd-sheet [contenteditable="false"]').attr("contenteditable", "true");
-        container.find('.dnd-sheet input').removeAttr("disabled");
+        container.find('.dnd-sheet [contenteditable]').attr("contenteditable", "true");
       }
 
+      const downloadStat = $(`<div class='download_button' style="position: absolute;
+                                              left: 25px;
+                                              top: 3px;
+                                              width: 20px;
+                                              height: 20px;
+                                              color: #ddd;">
+                                  <span title="Download Statblock as HTML" class="material-symbols-outlined" style="font-size:20px;">
+                                    download
+                                  </span>
+                                </div>`)
+      downloadStat.off('click.exportStatBlock').on('click.exportStatBlock', function () { 
+          build_import_loading_indicator('Preparing Export File');
 
+          const currentdate = new Date(); 
+          const datetime = `${currentdate.getFullYear()}-${(currentdate.getMonth()+1)}-${currentdate.getDate()}`
+          const html = `<style id='contentStyles'>${window.JOURNAL.content_styles()}</style>
+          ${window.JOURNAL.notes[window.TOKEN_OBJECTS[tokenId].options.statBlock].text}`
+          download(html,`${window.CAMPAIGN_INFO.name}-${datetime}-pctemplate.html`,"text/html");
+              
+          $(".import-loading-indicator").remove();        
+      });
 
+      container.prepend(lockStatButton, downloadStat);
     }
 }
 
