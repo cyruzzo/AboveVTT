@@ -106,7 +106,8 @@ async function display_stat_block_in_container(statBlock, container, tokenId, cu
 				avttImages.attr('src', '');
 				avttImages.attr('href', '');
         closestNote.find('a:empty, button:empty, .image').remove();
-				window.JOURNAL.notes[customStatId].text = closestNote[0].innerHTML; 
+        const sanitizedHTML = basic_sanitize_html(closestNote[0].innerHTML);
+        window.JOURNAL.notes[customStatId].text = sanitizedHTML; 
         debounceSendNote(customStatId, window.JOURNAL.notes[customStatId], tokenId);
         window.JOURNAL.setPersistTimeout();
         debounceReopenStatBlock(statBlock, tokenId, window.JOURNAL.notes[customStatId].text);
@@ -125,7 +126,8 @@ async function display_stat_block_in_container(statBlock, container, tokenId, cu
 				avttImages.attr('src', '');
 				avttImages.attr('href', '');
         closestNote.find('a:empty, button:empty, .image').remove();
-				window.JOURNAL.notes[customStatId].text = closestNote[0].innerHTML; 
+        const sanitizedHTML = basic_sanitize_html(closestNote[0].innerHTML);
+        window.JOURNAL.notes[customStatId].text = sanitizedHTML; 
         debounceSendNote(customStatId, window.JOURNAL.notes[customStatId], tokenId);
         window.JOURNAL.setPersistTimeout();
 			})

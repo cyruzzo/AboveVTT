@@ -3070,7 +3070,9 @@ function createDialogMenu(rootId, options) {
   options.map((opt) => dialogMenuOption(rootId, contain, opt));
   return dialog[0]; //note: return native element, NOT jquery
 }
-
+function basic_sanitize_html(html){
+  return DOMPurify.sanitize(html,{ALLOWED_TAGS: ['video','img','div','p', 'b', 'button', 'span', 'path', 'rect', 'svg', 'a', 'hr', 'ul', 'li', 'ol', 'h3', 'h2', 'h4', 'h1', 'table', 'tr', 'td', 'th', 'br', 'input', 'strong', 'em'], ADD_ATTR: ['target', 'contenteditable']}); //This array needs to include all HTML elements the extension sends via chat.
+}
 //turn an element into a menu trigger
 function makeDialogMenuTrigger(element, trigger, menuId, createMenu, onShow) {
   const elementId = uuid(); //give it a uuid so we can find it later in menu code

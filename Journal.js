@@ -1912,7 +1912,8 @@ class JournalManager{
 				avttImages.attr('src', '');
 				avttImages.attr('href', '');
 				closestNote.find('a:empty, button:empty').remove();
-				self.notes[id].text = closestNote[0].innerHTML; 
+				const sanitizedHTML = basic_sanitize_html(closestNote[0].innerHTML);
+				self.notes[id].text = sanitizedHTML; 
 				window.JOURNAL.setPersistTimeout();
 				debounceSendNote(id, self.notes[id]);
 				debounceReopenNote();
@@ -1930,7 +1931,8 @@ class JournalManager{
 				avttImages.attr('src', '');
 				avttImages.attr('href', '');
 				closestNote.find('a:empty, button:empty').remove();
-				self.notes[id].text = closestNote[0].innerHTML; 
+				const sanitizedHTML = basic_sanitize_html(closestNote[0].innerHTML);
+				self.notes[id].text = sanitizedHTML; 
 				window.JOURNAL.setPersistTimeout();
 				debounceSendNote(id, self.notes[id]);
 				debounceReopenNote();
