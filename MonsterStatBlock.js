@@ -108,7 +108,7 @@ async function display_stat_block_in_container(statBlock, container, tokenId, cu
         window.JOURNAL.notes[customStatId].text = sanitizedHTML; 
         debounceSendNote(customStatId, window.JOURNAL.notes[customStatId], tokenId);
         window.JOURNAL.setPersistTimeout();
-        debounceRescanStatBlock(container, tokenId);
+        debounceRescanStatBlock(container, customStatId, tokenId);
 			});
 			container.off('change.checkbox').on('change.checkbox', '.dnd-sheet input', (e)=>{
 				if (e.target && e.target.nodeName === 'INPUT' && e.target.type === 'checkbox') {				
@@ -155,13 +155,7 @@ async function display_stat_block_in_container(statBlock, container, tokenId, cu
       scan_monster(container, statBlock, tokenId);
     else
       add_ability_tracker_inputs(container, tokenId)
-    // scan_creature_pane(container, statBlock.name, statBlock.image);
-    add_stat_block_hover(container, tokenId);
-    add_aoe_statblock_click(container, tokenId);
 
-    container.find("img.monster-image, .monster-image").each((i,block) => {
-      createSendPlayerButton(block, "login", true).insertAfter(block);
-    });
     add_stat_block_hover(container, tokenId);
     //todo: new sendtogamelog menu for these too?
     container.find("p>em>strong, p>strong>em, div>strong>em, div>em>strong, p>span>em>strong, p>span>strong>em").off("contextmenu.sendToGamelog").on("contextmenu.sendToGamelog", function (e) {
@@ -301,23 +295,24 @@ async function display_stat_block_in_container(statBlock, container, tokenId, cu
       container.prepend(lockStatButton, downloadStat);
     }
 }
-const debounceRescanStatBlock = mydebounce(async (container, tokenId) => {
+const debounceRescanStatBlock = mydebounce(async (container, noteId, tokenId) => {
   const target = $(container).find(':focus').attr('data-focus', 'true');
   const caretOffset = getCaretCharacterOffset(target[0]);
+  const originalLength = target[0].textContent.length;
   const targetRescan = $(container).find('.avtt-stat-block-container, .note-text').first();
   const currScroll = targetRescan[0].scrollTop;
   await window.JOURNAL.translateHtmlAndBlocks(targetRescan);
   add_journal_roll_buttons(targetRescan, tokenId);
   window.JOURNAL.add_journal_tooltip_targets(targetRescan);
   $(container).find('.add-input').each(function(){window.JOURNAL.addTrackedInputs($(this), {token})});
-  add_ability_tracker_inputs(container, tokenId);
-  add_stat_block_hover(container, tokenId);
-  add_aoe_statblock_click(container, tokenId);
+  add_ability_tracker_inputs(targetRescan, tokenId);
+  add_stat_block_hover(targetRescan, tokenId);
+  add_aoe_statblock_click(targetRescan, tokenId);
 
   container.find("img.monster-image, .monster-image").each((i,block) => {
     createSendPlayerButton(block, "login", true).insertAfter(block);
   });
-  
+
   //todo: new sendtogamelog menu for these too?
   container.find("p>em>strong, p>strong>em, div>strong>em, div>em>strong, p>span>em>strong, p>span>strong>em").off("contextmenu.sendToGamelog").on("contextmenu.sendToGamelog", function (e) {
     e.preventDefault();
@@ -457,7 +452,8 @@ const debounceRescanStatBlock = mydebounce(async (container, tokenId) => {
   }
   $(container).find('.avtt-stat-block-container, .note-text')[0].scrollTop = currScroll;
   const focusTarget =  $(container).find('[data-focus]')
-  setCaretCharacterOffset(focusTarget[0], caretOffset)
+  const addOffsetLength = focusTarget[0].textContent.length - originalLength;
+  setCaretCharacterOffset(focusTarget[0], caretOffset+addOffsetLength)
   focusTarget.removeAttr('data-focus');
   if(window.lockTemplateStatBlocks){
     container.find('.dnd-sheet button').attr("contenteditable", "false");
@@ -465,6 +461,8 @@ const debounceRescanStatBlock = mydebounce(async (container, tokenId) => {
     container.find('.dnd-sheet [contenteditable]').attr("contenteditable", "true");
   }
 }, 1000);
+
+
 async function build_monster_stat_block(statBlock, token) {
   if (!statBlock.userHasAccess) {
       return `<div id='noAccessToContent' style='height: 100%;text-align: center;width: 100%;padding: 10px;font-weight: bold;color: #944;'>You do not have access to this content on DndBeyond.</div>`;

@@ -277,7 +277,7 @@ class JournalManager{
 	setPersistTimeout = function(){
 		clearTimeout(this.persistTimeout);
 		this.persistTimeout = setTimeout(()=>{
-			this.persist
+			this.persist();
 		}, 2000);
 	}
 	
@@ -1914,7 +1914,7 @@ class JournalManager{
 				self.notes[id].text = sanitizedHTML; 
 				window.JOURNAL.setPersistTimeout();
 				debounceSendNote(id, self.notes[id]);
-				debounceRescanStatBlock(note_container);
+				debounceRescanStatBlock(note_container, id);
 			});
 			note.off('change.checkbox').on('change.checkbox', 'input', (e)=>{
 				if (e.target && e.target.nodeName === 'INPUT' && e.target.type === 'checkbox') {				
