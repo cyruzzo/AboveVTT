@@ -95,9 +95,7 @@ async function display_stat_block_in_container(statBlock, container, tokenId, cu
 
 
       const customStatId = token.options.statBlock;
-      const debounceReopenStatBlock = mydebounce((statBlock, tokenId, customStatBlock) => {
-        load_monster_stat(statBlock, tokenId, customStatBlock);
-      }, 1500);
+
       
       container.off('input.editable').on('input.editable', '.dnd-sheet [contenteditable="true"]', (e)=>{
         const note_text = container.find('.avtt-stat-block-container').first();
@@ -110,7 +108,7 @@ async function display_stat_block_in_container(statBlock, container, tokenId, cu
         window.JOURNAL.notes[customStatId].text = sanitizedHTML; 
         debounceSendNote(customStatId, window.JOURNAL.notes[customStatId], tokenId);
         window.JOURNAL.setPersistTimeout();
-        debounceReopenStatBlock(statBlock, tokenId, window.JOURNAL.notes[customStatId].text);
+        debounceRescanStatBlock(container, tokenId);
 			});
 			container.off('change.checkbox').on('change.checkbox', '.dnd-sheet input', (e)=>{
 				if (e.target && e.target.nodeName === 'INPUT' && e.target.type === 'checkbox') {				
@@ -298,7 +296,20 @@ async function display_stat_block_in_container(statBlock, container, tokenId, cu
       container.prepend(lockStatButton, downloadStat);
     }
 }
-
+const debounceRescanStatBlock = mydebounce(async (container, tokenId) => {
+  const target = $(container).find(':focus').attr('data-focus', 'true');
+  const caretOffset = getCaretCharacterOffset(target[0]);
+  const targetRescan = $(container).find('.avtt-stat-block-container, .note-text').first();
+  const currScroll = targetRescan[0].scrollTop;
+  await window.JOURNAL.translateHtmlAndBlocks(targetRescan);
+  add_journal_roll_buttons(targetRescan, tokenId);
+  window.JOURNAL.add_journal_tooltip_targets(targetRescan);
+  $(container).find('.add-input').each(function(){window.JOURNAL.addTrackedInputs($(this), {token})});
+  $(container).find('.avtt-stat-block-container, .note-text')[0].scrollTop = currScroll;
+  const focusTarget =  $(container).find('[data-focus]')
+  setCaretCharacterOffset(focusTarget[0],caretOffset+1)
+  focusTarget.removeAttr('data-focus');
+}, 1000);
 async function build_monster_stat_block(statBlock, token) {
   if (!statBlock.userHasAccess) {
       return `<div id='noAccessToContent' style='height: 100%;text-align: center;width: 100%;padding: 10px;font-weight: bold;color: #944;'>You do not have access to this content on DndBeyond.</div>`;
