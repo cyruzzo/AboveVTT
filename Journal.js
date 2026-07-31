@@ -1898,9 +1898,7 @@ class JournalManager{
 			}
 			note.find("a").attr("target", "_blank");
 			note_container.append(note);
-			const debounceReopenNote = mydebounce(()=>{
-				self.display_note(id, statBlock)
-			}, 1500)
+
 			note.off('click').on('click', '.tooltip-hover[href*="https://www.dndbeyond.com/sources/dnd/"], .int_source_link ', function (event) {
 				event.preventDefault();
 				render_source_chapter_in_iframe(event.target.href);
@@ -1916,7 +1914,7 @@ class JournalManager{
 				self.notes[id].text = sanitizedHTML; 
 				window.JOURNAL.setPersistTimeout();
 				debounceSendNote(id, self.notes[id]);
-				debounceReopenNote();
+				debounceRescanStatBlock(note_container);
 			});
 			note.off('change.checkbox').on('change.checkbox', 'input', (e)=>{
 				if (e.target && e.target.nodeName === 'INPUT' && e.target.type === 'checkbox') {				
@@ -1935,7 +1933,6 @@ class JournalManager{
 				self.notes[id].text = sanitizedHTML; 
 				window.JOURNAL.setPersistTimeout();
 				debounceSendNote(id, self.notes[id]);
-				debounceReopenNote();
 			})
 			this.positionNotePins(id, note_text);
 		});	

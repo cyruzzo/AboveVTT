@@ -3073,6 +3073,61 @@ function createDialogMenu(rootId, options) {
 function basic_sanitize_html(html){
   return DOMPurify.sanitize(html,{ALLOWED_TAGS: ['video','img','div','p', 'b', 'button', 'span', 'path', 'rect', 'svg', 'a', 'hr', 'ul', 'li', 'ol', 'h3', 'h2', 'h4', 'h1', 'table', 'tr', 'td', 'th', 'br', 'input', 'strong', 'em'], ADD_ATTR: ['target', 'contenteditable']}); //This array needs to include all HTML elements the extension sends via chat.
 }
+function getCaretCharacterOffset(element) {
+    let caretOffset = 0;
+    const selection = window.getSelection();
+    
+    if (selection.rangeCount > 0) {
+        const range = selection.getRangeAt(0);
+        const preCaretRange = range.cloneRange();
+        preCaretRange.selectNodeContents(element);
+        preCaretRange.setEnd(range.endContainer, range.endOffset);
+        caretOffset = preCaretRange.toString().length;
+    }
+    return caretOffset;
+}
+
+// 2. Set the cursor position using a character offset
+function setCaretCharacterOffset(element, offset) {
+    const range = document.createRange();
+    const selection = window.getSelection();
+    
+    // Helper function to recursively find the correct text node and local offset
+    let currentOffset = 0;
+    let targetNode = null;
+    let localOffset = 0;
+
+    function traverseNodes(node) {
+        if (node.nodeType === Node.TEXT_NODE) {
+            if (currentOffset + node.length >= offset) {
+                targetNode = node;
+                localOffset = offset - currentOffset;
+                return true; // Stop traversing
+            }
+            currentOffset += node.length;
+        } else {
+            for (let i = 0; i < node.childNodes.length; i++) {
+                if (traverseNodes(node.childNodes[i])) return true;
+            }
+        }
+        return false;
+    }
+
+    traverseNodes(element);
+
+    // Fallback if the requested offset exceeds text length
+    if (!targetNode) {
+        targetNode = element;
+        localOffset = element.childNodes.length;
+    }
+
+    range.setStart(targetNode, localOffset);
+    range.collapse(true);
+    
+    selection.removeAllRanges();
+    selection.addRange(range);
+    element.focus();
+}
 //turn an element into a menu trigger
 function makeDialogMenuTrigger(element, trigger, menuId, createMenu, onShow) {
   const elementId = uuid(); //give it a uuid so we can find it later in menu code
