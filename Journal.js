@@ -4636,377 +4636,490 @@ class JournalManager{
 					<div class="dnd-sheet">
 						<div class="dnd-page">
 							<div class="header-box">
-							<div class="col char-name-box">
-								<div class="box-field" contenteditable="true">&nbsp;</div>
-								<span class="label">Character Name</span>
-							</div>
-							<div class="col">
-								<div class="box-field" contenteditable="true">&nbsp;</div>
-								<span class="label">Class &amp; Level</span>
-							</div>
-							<div class="col">
-								<div class="box-field" contenteditable="true">&nbsp;</div>
-								<span class="label">Background</span>
-							</div>
-							<div class="col">
-								<div class="box-field" contenteditable="true">&nbsp;</div>
-								<span class="label">Species (Race)</span>
-							</div>
-							<div class="col">
-								<div class="box-field" contenteditable="true">&nbsp;</div>
-								<span class="label">Alignment</span>
-							</div>
-							<div class="col">
-								<div class="box-field" contenteditable="true">&nbsp;</div>
-								<span class="label">XP</span>
-							</div>
+								<div class="col char-name-box">
+									<div class="box-field" contenteditable="true">&nbsp;</div>
+									<span class="label">Character Name</span>
+								</div>
+								<div class="col">
+									<div class="box-field" contenteditable="true">&nbsp;</div>
+									<span class="label">Class &amp; Level</span>
+								</div>
+								<div class="col">
+									<div class="box-field" contenteditable="true">&nbsp;</div>
+									<span class="label">Background</span>
+								</div>
+								<div class="col">
+									<div class="box-field" contenteditable="true">&nbsp;</div>
+									<span class="label">Species (Race)</span>
+								</div>
+								<div class="col">
+									<div class="box-field" contenteditable="true">&nbsp;</div>
+									<span class="label">Alignment</span>
+								</div>
+								<div class="col">
+									<div class="box-field" contenteditable="true">&nbsp;</div>
+									<span class="label">XP</span>
+								</div>
 							</div>
 							<div class="main-container">
-							<div class="left-column">
-								<div class="abilities-table-container">
-								<div class="section-title">Abilities</div>
-								<table contenteditable="true">
-									<thead>
-									<tr>
-										<th>Ability</th>
-										<th>Mod</th>
-										<th>Save</th>
-										<th>Score</th>
-									</tr>
-									</thead>
-									<tbody>
-									<tr>
-										<td>Str</td>
-										<td><span contenteditable="true">+0</span></td>
-										<td><span contenteditable="true">+0</span></td>
-										<td><span class="box-field ability-score-field" contenteditable="true">10</span></td>
-									</tr>
-									<tr>
-										<td>Dex</td>
-										<td><span contenteditable="true">+0</span></td>
-										<td><span contenteditable="true">+0</span></td>
-										<td><span class="box-field ability-score-field" contenteditable="true">10</span></td>
-									</tr>
-									<tr>
-										<td>Con</td>
-										<td><span contenteditable="true">+0</span></td>
-										<td><span contenteditable="true">+0</span></td>
-										<td><span class="box-field ability-score-field" contenteditable="true">10</span></td>
-									</tr>
-									<tr>
-										<td>Int</td>
-										<td><span contenteditable="true">+0</span></td>
-										<td><span contenteditable="true">+0</span></td>
-										<td><span class="box-field ability-score-field" contenteditable="true">10</span></td>
-									</tr>
-									<tr>
-										<td>Wis</td>
-										<td><span contenteditable="true">+0</span></td>
-										<td><span contenteditable="true">+0</span></td>
-										<td><span class="box-field ability-score-field" contenteditable="true">10</span></td>
-									</tr>
-									<tr>
-										<td>Cha</td>
-										<td><span contenteditable="true">+0</span></td>
-										<td><span contenteditable="true">+0</span></td>
-										<td><span class="box-field ability-score-field" contenteditable="true">10</span></td>
-									</tr>
-									</tbody>
-								</table>
-								</div>
-								<div class="skills-box">
-								<div class="section-title">Skills</div>
-								<table contenteditable="true"style="height: 538px; float: left;" border="0" width="126" cellspacing="0" cellpadding="0">
-									<tbody>
-									<tr>
-										<td><input type="checkbox" /></td>
-										<td>+0</td>
-										<td>Acrobatics</td>
-										<td>Dex</td>
-									</tr>
-									<tr>
-										<td><input type="checkbox" /></td>
-										<td>+0</td>
-										<td>Animal Handling</td>
-										<td>Wis</td>
-									</tr>
-									<tr>
-										<td><input type="checkbox" /></td>
-										<td>+0</td>
-										<td>Arcana</td>
-										<td>Int</td>
-									</tr>
-									<tr>
-										<td><input type="checkbox" /></td>
-										<td>+0</td>
-										<td>Athletics</td>
-										<td>Str</td>
-									</tr>
-									<tr>
-										<td><input type="checkbox" /></td>
-										<td>+0</td>
-										<td>Deception</td>
-										<td>Cha</td>
-									</tr>
-									<tr>
-										<td><input type="checkbox" /></td>
-										<td>+0</td>
-										<td>History</td>
-										<td>Int</td>
-									</tr>
-									<tr>
-										<td><input type="checkbox" /></td>
-										<td>+0</td>
-										<td>Insight</td>
-										<td>Wis</td>
-									</tr>
-									<tr>
-										<td><input type="checkbox" /></td>
-										<td>+0</td>
-										<td>Intimidation</td>
-										<td>Cha</td>
-									</tr>
-									<tr>
-										<td><input type="checkbox" /></td>
-										<td>+0</td>
-										<td>Investigation</td>
-										<td>Int</td>
-									</tr>
-									<tr>
-										<td><input type="checkbox" /></td>
-										<td>+0</td>
-										<td>Medicine</td>
-										<td>Wis</td>
-									</tr>
-									<tr>
-										<td><input type="checkbox" /></td>
-										<td>+0</td>
-										<td>Nature</td>
-										<td>Int</td>
-									</tr>
-									<tr>
-										<td><input type="checkbox" /></td>
-										<td>+0</td>
-										<td>Perception</td>
-										<td>Wis</td>
-									</tr>
-									<tr>
-										<td><input type="checkbox" /></td>
-										<td>+0</td>
-										<td>Performance</td>
-										<td>Cha</td>
-									</tr>
-									<tr>
-										<td><input type="checkbox" /></td>
-										<td>+0</td>
-										<td>Persuasion</td>
-										<td>Cha</td>
-									</tr>
-									<tr>
-										<td><input type="checkbox" /></td>
-										<td>+0</td>
-										<td>Religion</td>
-										<td>Int</td>
-									</tr>
-									<tr>
-										<td><input type="checkbox" /></td>
-										<td>+0</td>
-										<td>Sleight of Hand</td>
-										<td>Dex</td>
-									</tr>
-									<tr>
-										<td><input type="checkbox" /></td>
-										<td>+0</td>
-										<td>Stealth</td>
-										<td>Dex</td>
-									</tr>
-									<tr>
-										<td><input type="checkbox" /></td>
-										<td>+0</td>
-										<td>Survival</td>
-										<td>Wis</td>
-									</tr>
-									</tbody>
-								</table>
-								</div>
-							</div>
-							<div class="mid-column">
-								<div class="combat-stats-grid">
-								<div class="combat-metric"><span class="label">Armor Class</span>
-									<div class="metric-val" contenteditable="true">16</div>
-								</div>
-								<div class="combat-metric"><span class="label">Initiative</span>
-									<div class="metric-val"><strong class="custom-initiative custom-stat" contenteditable="true">+1</strong></div>
-								</div>
-								<div class="combat-metric"><span class="label">Speed</span>
-									<div class="metric-val" contenteditable="true">30 ft.</div>
-								</div>
-								<div class="combat-metric"><span class="label">Proficiency Bonus</span>
-									<div class="metric-val" contenteditable="true">+2</div>
-								</div>
-								</div>
-								<div class="hp-box">
-								<div class="hp-row">
-									<div class="col"><span class="label">Maximum Hit Points</span>
-									<div class="box-field" contenteditable="true"><strong class="custom-avghp custom-stat"> 10</strong></div>
+								<div class="left-column">
+									<div class="abilities-table-container">
+										<div class="section-title">Abilities</div>
+										<table contenteditable="true">
+											<thead>
+												<tr>
+													<th>Ability</th>
+													<th>Mod</th>
+													<th>Save</th>
+													<th>Score</th>
+												</tr>
+											</thead>
+											<tbody>
+												<tr>
+													<td>Str</td>
+													<td>
+														<span contenteditable="true">+0</span>
+													</td>
+													<td>
+														<span contenteditable="true">+0</span>
+													</td>
+													<td>
+														<span class="box-field ability-score-field" contenteditable="true">10</span>
+													</td>
+												</tr>
+												<tr>
+													<td>Dex</td>
+													<td>
+														<span contenteditable="true">+0</span>
+													</td>
+													<td>
+														<span contenteditable="true">+0</span>
+													</td>
+													<td>
+														<span class="box-field ability-score-field" contenteditable="true">10</span>
+													</td>
+												</tr>
+												<tr>
+													<td>Con</td>
+													<td>
+														<span contenteditable="true">+0</span>
+													</td>
+													<td>
+														<span contenteditable="true">+0</span>
+													</td>
+													<td>
+														<span class="box-field ability-score-field" contenteditable="true">10</span>
+													</td>
+												</tr>
+												<tr>
+													<td>Int</td>
+													<td>
+														<span contenteditable="true">+0</span>
+													</td>
+													<td>
+														<span contenteditable="true">+0</span>
+													</td>
+													<td>
+														<span class="box-field ability-score-field" contenteditable="true">10</span>
+													</td>
+												</tr>
+												<tr>
+													<td>Wis</td>
+													<td>
+														<span contenteditable="true">+0</span>
+													</td>
+													<td>
+														<span contenteditable="true">+0</span>
+													</td>
+													<td>
+														<span class="box-field ability-score-field" contenteditable="true">10</span>
+													</td>
+												</tr>
+												<tr>
+													<td>Cha</td>
+													<td>
+														<span contenteditable="true">+0</span>
+													</td>
+													<td>
+														<span contenteditable="true">+0</span>
+													</td>
+													<td>
+														<span class="box-field ability-score-field" contenteditable="true">10</span>
+													</td>
+												</tr>
+											</tbody>
+										</table>
 									</div>
-									<div class="col"><span class="label">Current Hit Points</span>
-									<div class="box-field" contenteditable="true">&nbsp;</div>
+									<div class="skills-box">
+										<div class="section-title">Skills</div>
+										<table style="height: 538px; float: left;" contenteditable="true" border="0" width="126" cellspacing="0" cellpadding="0">
+											<tbody>
+												<tr>
+													<td>
+														<input type="checkbox" />
+													</td>
+													<td>+0</td>
+													<td>Acrobatics</td>
+													<td>Dex</td>
+												</tr>
+												<tr>
+													<td>
+														<input type="checkbox" />
+													</td>
+													<td>+0</td>
+													<td>Animal Handling</td>
+													<td>Wis</td>
+												</tr>
+												<tr>
+													<td>
+														<input type="checkbox" />
+													</td>
+													<td>+0</td>
+													<td>Arcana</td>
+													<td>Int</td>
+												</tr>
+												<tr>
+													<td>
+														<input type="checkbox" />
+													</td>
+													<td>+0</td>
+													<td>Athletics</td>
+													<td>Str</td>
+												</tr>
+												<tr>
+													<td>
+														<input type="checkbox" />
+													</td>
+													<td>+0</td>
+													<td>Deception</td>
+													<td>Cha</td>
+												</tr>
+												<tr>
+													<td>
+														<input type="checkbox" />
+													</td>
+													<td>+0</td>
+													<td>History</td>
+													<td>Int</td>
+												</tr>
+												<tr>
+													<td>
+														<input type="checkbox" />
+													</td>
+													<td>+0</td>
+													<td>Insight</td>
+													<td>Wis</td>
+												</tr>
+												<tr>
+													<td>
+														<input type="checkbox" />
+													</td>
+													<td>+0</td>
+													<td>Intimidation</td>
+													<td>Cha</td>
+												</tr>
+												<tr>
+													<td>
+														<input type="checkbox" />
+													</td>
+													<td>+0</td>
+													<td>Investigation</td>
+													<td>Int</td>
+												</tr>
+												<tr>
+													<td>
+														<input type="checkbox" />
+													</td>
+													<td>+0</td>
+													<td>Medicine</td>
+													<td>Wis</td>
+												</tr>
+												<tr>
+													<td>
+														<input type="checkbox" />
+													</td>
+													<td>+0</td>
+													<td>Nature</td>
+													<td>Int</td>
+												</tr>
+												<tr>
+													<td>
+														<input type="checkbox" />
+													</td>
+													<td>+0</td>
+													<td>Perception</td>
+													<td>Wis</td>
+												</tr>
+												<tr>
+													<td>
+														<input type="checkbox" />
+													</td>
+													<td>+0</td>
+													<td>Performance</td>
+													<td>Cha</td>
+												</tr>
+												<tr>
+													<td>
+														<input type="checkbox" />
+													</td>
+													<td>+0</td>
+													<td>Persuasion</td>
+													<td>Cha</td>
+												</tr>
+												<tr>
+													<td>
+														<input type="checkbox" />
+													</td>
+													<td>+0</td>
+													<td>Religion</td>
+													<td>Int</td>
+												</tr>
+												<tr>
+													<td>
+														<input type="checkbox" />
+													</td>
+													<td>+0</td>
+													<td>Sleight of Hand</td>
+													<td>Dex</td>
+												</tr>
+												<tr>
+													<td>
+														<input type="checkbox" />
+													</td>
+													<td>+0</td>
+													<td>Stealth</td>
+													<td>Dex</td>
+												</tr>
+												<tr>
+													<td>
+														<input type="checkbox" />
+													</td>
+													<td>+0</td>
+													<td>Survival</td>
+													<td>Wis</td>
+												</tr>
+											</tbody>
+										</table>
 									</div>
 								</div>
-								<div class="hp-row">
-									<div class="col"><span class="label">Temporary Hit Points</span>
-									<div class="box-field" contenteditable="true">&nbsp;</div>
-									</div>
-									<div class="col">
-									<div class="hp-subgrid">
-										<div><span class="label">Hit Dice</span>
-										<div class="box-field" contenteditable="true">1d10</div>
+								<div class="mid-column">
+									<div class="combat-stats-grid">
+										<div class="combat-metric">
+											<span class="label">Armor Class</span>
+											<div class="metric-val" contenteditable="true">
+												<strong class="custom-ac custom-stat">16</strong>
+											</div>
 										</div>
-										<div><span class="label">Death Saves</span>
-										<div class="box-field" contenteditable="true">&nbsp;</div>
+										<div class="combat-metric">
+											<span class="label">Initiative</span>
+											<div class="metric-val">
+												<strong class="custom-initiative custom-stat" contenteditable="true">+1</strong>
+											</div>
+										</div>
+										<div class="combat-metric">
+											<span class="label">Speed</span>
+											<div class="metric-val" contenteditable="true">30 ft.</div>
+										</div>
+										<div class="combat-metric">
+											<span class="label">Proficiency Bonus</span>
+											<div class="metric-val" contenteditable="true">+2</div>
 										</div>
 									</div>
+									<div class="hp-box">
+										<div class="hp-row">
+											<div class="col">
+												<span class="label">Maximum Hit Points</span>
+												<div class="box-field" contenteditable="true">
+													<strong class="custom-avghp custom-stat"> 10</strong>
+												</div>
+											</div>
+											<div class="col">
+												<span class="label">Current Hit Points</span>
+												<div class="box-field" contenteditable="true">&nbsp;</div>
+											</div>
+										</div>
+										<div class="hp-row">
+											<div class="col">
+												<span class="label">Temporary Hit Points</span>
+												<div class="box-field" contenteditable="true">&nbsp;</div>
+											</div>
+											<div class="col">
+												<div class="hp-subgrid">
+													<div>
+														<span class="label">Hit Dice</span>
+														<div class="box-field" contenteditable="true">1d10</div>
+													</div>
+													<div>
+														<span class="label">Death Saves</span>
+														<div class="box-field" contenteditable="true">&nbsp;</div>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="container-block">
+										<div class="section-title">Attacks &amp; Spellcasting</div>
+										<div class="attacks-field">
+											<br />
+											<table contenteditable="true">
+												<thead>
+													<tr>
+														<th>Weapon/ability</th>
+														<th>Attack/Save</th>
+														<th>Damage</th>
+														<th>Notes</th>
+													</tr>
+												</thead>
+												<tbody>
+													<tr>
+														<td contenteditable="true">Warhammer</td>
+														<td contenteditable="true">+0</td>
+														<td contenteditable="true">1d8+3 bludgeoning</td>
+														<td contenteditable="true">Versatile (1d10)</td>
+													</tr>
+													<tr>
+														<td contenteditable="true">Heavy Crossbow</td>
+														<td contenteditable="true">+0</td>
+														<td contenteditable="true">1d10+1 piercing</td>
+														<td contenteditable="true">Range 100/400</td>
+													</tr>
+													<tr>
+														<td contenteditable="true">Handaxe</td>
+														<td contenteditable="true">+0</td>
+														<td contenteditable="true">1d6+3 slashing</td>
+														<td contenteditable="true">Light, Thrown (20/60)</td>
+													</tr>
+													<tr>
+														<td contenteditable="true">&nbsp;</td>
+														<td contenteditable="true">&nbsp;</td>
+														<td contenteditable="true">&nbsp;</td>
+														<td contenteditable="true">&nbsp;</td>
+													</tr>
+													<tr>
+														<td contenteditable="true">&nbsp;</td>
+														<td contenteditable="true">&nbsp;</td>
+														<td contenteditable="true">&nbsp;</td>
+														<td contenteditable="true">&nbsp;</td>
+													</tr>
+													<tr>
+														<td contenteditable="true">&nbsp;</td>
+														<td contenteditable="true">&nbsp;</td>
+														<td contenteditable="true">&nbsp;</td>
+														<td contenteditable="true">&nbsp;</td>
+													</tr>
+													<tr>
+														<td contenteditable="true">&nbsp;</td>
+														<td contenteditable="true">&nbsp;</td>
+														<td contenteditable="true">&nbsp;</td>
+														<td contenteditable="true">&nbsp;</td>
+													</tr>
+												</tbody>
+											</table>
+										</div>
+									</div>
+									<div class="container-block flex-1">
+										<div class="section-title">Features &amp; Traits</div>
+										<div class="features-field" contenteditable="true">- Darkvision: 60 ft range.
+											<br />
+											<br />
+										</div>
+									</div>
+									<div class="container-block">
+										<div class="section-title">Equipment</div>
+										<div class="equipment-field" contenteditable="true">&nbsp;</div>
 									</div>
 								</div>
-								</div>
-								<div class="container-block">
-								<div class="section-title">Attacks &amp; Spellcasting</div>
-								<div class="attacks-field"><br />
-									<table contenteditable="true">
-									<thead>
-										<tr>
-										<th>Weapon/ability</th>
-										<th>Attack/Save</th>
-										<th>Damage</th>
-										<th>Notes</th>
-										</tr>
-									</thead>
-									<tbody>
-										<tr>
-										<td contenteditable="true">Warhammer</td>
-										<td contenteditable="true">+0</td>
-										<td contenteditable="true">1d8+3 bludgeoning</td>
-										<td contenteditable="true">Versatile (1d10)</td>
-										</tr>
-										<tr>
-										<td contenteditable="true">Heavy Crossbow</td>
-										<td contenteditable="true">+0</td>
-										<td contenteditable="true">1d10+1 piercing</td>
-										<td contenteditable="true">Range 100/400</td>
-										</tr>
-										<tr>
-										<td contenteditable="true">Handaxe</td>
-										<td contenteditable="true">+0</td>
-										<td contenteditable="true">1d6+3 slashing</td>
-										<td contenteditable="true">Light, Thrown (20/60)</td>
-										</tr>
-										<tr>
-										<td contenteditable="true">&nbsp;</td>
-										<td contenteditable="true">&nbsp;</td>
-										<td contenteditable="true">&nbsp;</td>
-										<td contenteditable="true">&nbsp;</td>
-										</tr>
-										<tr>
-										<td contenteditable="true">&nbsp;</td>
-										<td contenteditable="true">&nbsp;</td>
-										<td contenteditable="true">&nbsp;</td>
-										<td contenteditable="true">&nbsp;</td>
-										</tr>
-										<tr>
-										<td contenteditable="true">&nbsp;</td>
-										<td contenteditable="true">&nbsp;</td>
-										<td contenteditable="true">&nbsp;</td>
-										<td contenteditable="true">&nbsp;</td>
-										</tr>
-										<tr>
-										<td contenteditable="true">&nbsp;</td>
-										<td contenteditable="true">&nbsp;</td>
-										<td contenteditable="true">&nbsp;</td>
-										<td contenteditable="true">&nbsp;</td>
-										</tr>
-									</tbody>
-									</table>
-								</div>
-								</div>
-								<div class="container-block flex-1">
-								<div class="section-title">Features &amp; Traits</div>
-								<div class="features-field" contenteditable="true">- Darkvision: 60 ft range.<br /><br /></div>
-								</div>
-								<div class="container-block">
-								<div class="section-title">Equipment</div>
-								<div class="equipment-field" contenteditable="true">&nbsp;</div>
-								</div>
-							</div>
 							</div>
 						</div>
 						<div class="dnd-page">
 							<div class="section-title" style="font-size: 12px; margin-bottom: 12px;">Character Details &amp; Backstory</div>
 							<div class="page2-grid">
-							<div class="col">
-								<div class="bio-block"><span class="label">Character Appearance</span>
-								<div class="bio-appearance" contenteditable="true">&nbsp;</div>
-								</div>
-								<div class="bio-block"><span class="label">Character Backstory</span>
-								<div class="bio-backstory" contenteditable="true">&nbsp;</div>
-								</div>
-								<div class="bio-block"><span class="label">Organization &amp; Allies</span>
-								<div class="bio-allies" contenteditable="true">&nbsp;</div>
-								</div>
-								<div class="bio-block"><span class="label">Additional Features &amp; Traits</span>
-								<div class="bio-traits-add" contenteditable="true">&nbsp;</div>
-								</div>
-							</div>
-							<div class="col">
-								<div class="traits-grid">
-								<div class="bio-block"><span class="label">Personality Traits</span>
-									<div class="trait-box-field" contenteditable="true">&nbsp;</div>
-								</div>
-								<div class="bio-block"><span class="label">Ideals</span>
-									<div class="trait-box-field" contenteditable="true">&nbsp;</div>
-								</div>
-								<div class="bio-block"><span class="label">Bonds</span>
-									<div class="trait-box-field" contenteditable="true">&nbsp;</div>
-								</div>
-								<div class="bio-block"><span class="label">Flaws</span>
-									<div class="trait-box-field" contenteditable="true">&nbsp;</div>
-								</div>
-								</div>
-								<div class="bio-block"><span class="label">Magic Item Attunement (3 Slots Available)</span>
-								<div class="attunement-content" contenteditable="true">
-									<div style="margin-bottom: 2px;"><input type="checkbox" /> Empty Slot</div>
-									<div style="margin-bottom: 2px;"><input type="checkbox" /> Empty Slot</div>
-									<div><input type="checkbox" /> Empty Slot</div>
-								</div>
-								</div>
-								<div class="bio-block"><span class="label">Treasure &amp; Currency</span>
-								<div class="currency-container">
-									<div class="coin-slot">CP:
-									<div class="coin-input" contenteditable="true">&nbsp;</div>
+								<div class="col">
+									<div class="bio-block">
+										<span class="label">Character Appearance</span>
+										<div class="bio-appearance" contenteditable="true">&nbsp;</div>
 									</div>
-									<div class="coin-slot">SP:
-									<div class="coin-input" contenteditable="true">&nbsp;</div>
+									<div class="bio-block">
+										<span class="label">Character Backstory</span>
+										<div class="bio-backstory" contenteditable="true">&nbsp;</div>
 									</div>
-									<div class="coin-slot">EP:
-									<div class="coin-input" contenteditable="true">&nbsp;</div>
+									<div class="bio-block">
+										<span class="label">Organization &amp; Allies</span>
+										<div class="bio-allies" contenteditable="true">&nbsp;</div>
 									</div>
-									<div class="coin-slot">GP:
-									<div class="coin-input" contenteditable="true">&nbsp;</div>
-									</div>
-									<div class="coin-slot">PP:
-									<div class="coin-input" contenteditable="true">&nbsp;</div>
+									<div class="bio-block">
+										<span class="label">Additional Features &amp; Traits</span>
+										<div class="bio-traits-add" contenteditable="true">&nbsp;</div>
 									</div>
 								</div>
-								<div class="treasure-field" contenteditable="true">&nbsp;</div>
+								<div class="col">
+									<div class="traits-grid">
+										<div class="bio-block">
+											<span class="label">Personality Traits</span>
+											<div class="trait-box-field" contenteditable="true">&nbsp;</div>
+										</div>
+										<div class="bio-block">
+											<span class="label">Ideals</span>
+											<div class="trait-box-field" contenteditable="true">&nbsp;</div>
+										</div>
+										<div class="bio-block">
+											<span class="label">Bonds</span>
+											<div class="trait-box-field" contenteditable="true">&nbsp;</div>
+										</div>
+										<div class="bio-block">
+											<span class="label">Flaws</span>
+											<div class="trait-box-field" contenteditable="true">&nbsp;</div>
+										</div>
+									</div>
+									<div class="bio-block">
+										<span class="label">Magic Item Attunement (3 Slots Available)</span>
+										<div class="attunement-content" contenteditable="true">
+											<div style="margin-bottom: 2px;">
+												<input type="checkbox" /> Empty Slot
+											</div>
+											<div style="margin-bottom: 2px;">
+												<input type="checkbox" /> Empty Slot
+											</div>
+											<div>
+												<input type="checkbox" /> Empty Slot
+											</div>
+										</div>
+									</div>
+									<div class="bio-block">
+										<span class="label">Treasure &amp; Currency</span>
+										<div class="currency-container">
+											<div class="coin-slot">CP:
+
+												<div class="coin-input" contenteditable="true">&nbsp;</div>
+											</div>
+											<div class="coin-slot">SP:
+
+												<div class="coin-input" contenteditable="true">&nbsp;</div>
+											</div>
+											<div class="coin-slot">EP:
+
+												<div class="coin-input" contenteditable="true">&nbsp;</div>
+											</div>
+											<div class="coin-slot">GP:
+
+												<div class="coin-input" contenteditable="true">&nbsp;</div>
+											</div>
+											<div class="coin-slot">PP:
+
+												<div class="coin-input" contenteditable="true">&nbsp;</div>
+											</div>
+										</div>
+										<div class="treasure-field" contenteditable="true">&nbsp;</div>
+									</div>
+									<div class="bio-block">
+										<span class="label">Spellcasting Notes / Summary</span>
+										<div class="spellcasting-field" contenteditable="true">&nbsp;</div>
+									</div>
 								</div>
-								<div class="bio-block"><span class="label">Spellcasting Notes / Summary</span>
-								<div class="spellcasting-field" contenteditable="true">&nbsp;</div>
-								</div>
-							</div>
 							</div>
 						</div>
-						</div>
-						`
+					</div>
+					`
 				},
 				{
 					"title": "Treasure / Loot Table",

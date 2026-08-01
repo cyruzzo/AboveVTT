@@ -13027,7 +13027,7 @@ p.monster-header+p {
         text-align: center;
         border: none;
         background: none;
-        color: var(--pc-template-text-color, #111);
+        color: var(--pc-template-text-color, #999999);
         font-weight: 800;
         font-size: 16px;
         line-height: 18px;
