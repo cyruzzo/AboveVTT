@@ -3052,11 +3052,13 @@ function checkForExportRemind() {
 			$(`<div style="background: var(--background-color, #fff);
 								padding: 20px;
 								display: flex;
-								align-items: center;
 								flex-direction: column;
 								gap: 5px;
 								font-size: 16px;
 								font-weight: bold;
+								top: -2px;
+								position: relative;
+								border-radius: 0px 0px 5px 5px;
 							">
 			<span>It is time to do an export of this campaign.</span>
 			<button id="exportRemindButton">Export</button>

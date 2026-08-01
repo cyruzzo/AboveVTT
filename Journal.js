@@ -4896,13 +4896,13 @@ class JournalManager{
 													<tr>
 														<td contenteditable="true">Handaxe</td>
 														<td contenteditable="true">+0</td>
-														<td contenteditable="true">1d6+3 slashing</td>
+														<td contenteditable="true">1d6 slashing</td>
 														<td contenteditable="true">[wprop]Light[/wprop], [wprop]Thrown [/wprop](20/60)</td>
 													</tr>
 													<tr>
 														<td contenteditable="true">&nbsp;[spell]Acid Splash[/spell]</td>
 														<td contenteditable="true">10 DEX</td>
-														<td contenteditable="true">&nbsp;1d6</td>
+														<td contenteditable="true">&nbsp;1d6 acid</td>
 														<td contenteditable="true">5-foot-radius Sphere</td>
 													</tr>
 													<tr>
@@ -5000,7 +5000,11 @@ class JournalManager{
 										<div class="treasure-field" contenteditable="true">&nbsp;</div>
 									</div>
 									<div class="bio-block"><span class="label">Spellcasting Notes / Summary</span>
-										<div class="spellcasting-field" contenteditable="true">&nbsp;</div>
+										<div class="spellcasting-field" contenteditable="true">Spellcasting. Spell save DC 10, +0 to hit
+											with spell attacks<br />&nbsp;<br />Cantrips (at will): acid splash, light, mage hand,
+											prestidigitation<br /><br />1st level (2 slots): detect magic, mage armor
+											<p>&nbsp;</p>
+										</div>
 									</div>
 								</div>
 							</div>
