@@ -1047,6 +1047,14 @@ function add_journal_roll_buttons(target, tokenId=undefined, specificImage=undef
         rollAction = targetButton.closest('tr').find('td').first().text();
         if(columnIndex == 1){ 
           rollType = 'To Hit';
+        }else if(columnIndex == 2){
+          rollType = 'Damage';
+          let saveText = targetButton.closest('td').prev('td').text();
+          const regex = /\D*(\d+)\s+(CON|INT|WIS|CHA|DEX|STR).*|.*(CON|INT|WIS|CHA|DEX|STR)\s+(\d+)\D*/i
+          if(saveText.match(regex)){
+            saveText = saveText.replace(regex, '$2$3 $1$4').trim();
+            if(saveText != undefined) targetButton.attr('data-save', saveText);
+          }
         }
       }
     }
@@ -1085,7 +1093,7 @@ function add_journal_roll_buttons(target, tokenId=undefined, specificImage=undef
     if(followingText && followingText.toLowerCase().match(/^\s*heal(ing)?/i)) rollType = 'Heal';
     targetButton.attr('data-actiontype', rollAction);
     targetButton.attr('data-rolltype', rollType);
-
+    
    
   })
 
@@ -1100,7 +1108,7 @@ function add_journal_roll_buttons(target, tokenId=undefined, specificImage=undef
   $currTarget.find(".avtt-roll-button").on("contextmenu", rightClickHandler);
 
   $currTarget.find("button.avtt-roll-formula-button").off('click.avttRoll').on('click.avttRoll', function(clickEvent) {
-  clickEvent.stopPropagation();
+    clickEvent.stopPropagation();
 
     const slashCommand = $(clickEvent.currentTarget).attr("data-slash-command");
     const followingText = $(clickEvent.currentTarget)[0].nextSibling?.textContent?.trim()?.split(' ')[0]
