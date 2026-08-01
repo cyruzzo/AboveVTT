@@ -1024,7 +1024,32 @@ function add_journal_roll_buttons(target, tokenId=undefined, specificImage=undef
     else if(targetButton.closest('.ability-block__stat, [class*="styles_stat__"]')?.find('.ability-block__heading, [class*="styles_statHeading"]').length>0){
       rollAction = targetButton.closest('.ability-block__stat, [class*="styles_stat__"]')?.find('.ability-block__heading, [class*="styles_statHeading"]').text();
       rollType = 'Check'
-    } 
+    } else if(targetButton.closest('.dnd-sheet .abilities-table-container').length>0){
+      if(targetButton.closest('td').length>0){
+        const columnIndex = targetButton.closest('td')[0].cellIndex;
+        rollAction = targetButton.closest('tr').find('td').first().text();
+        rollType = columnIndex == 2 ? 'Save' : 'Check';
+      }
+    } else if(targetButton.closest('.dnd-sheet .skills-box').length>0){
+      if(targetButton.closest('td').length>0){
+        rollAction = `${targetButton.closest('tr').find('td:nth-last-child(2)').text()} (${targetButton.closest('tr').find('td:last').text()})`;
+        rollType = 'Check'
+      }
+    } else if(targetButton.closest('.dnd-sheet .combat-metric').length>0){
+      rollAction = targetButton.closest('.dnd-sheet .combat-metric').find('.label').text();
+      rollType = 'Roll'
+    } else if(targetButton.closest('.dnd-sheet .hp-box').length>0){
+      rollAction = targetButton.closest('.box-field').parent().find('.label').text();
+      rollType = 'Roll'
+    } else if(targetButton.closest('.dnd-sheet .attacks-field').length>0){
+      if(targetButton.closest('td').length>0){
+        const columnIndex = targetButton.closest('td')[0].cellIndex; 
+        rollAction = targetButton.closest('tr').find('td').first().text();
+        if(columnIndex == 1){ 
+          rollType = 'To Hit';
+        }
+      }
+    }
 
     if (rollAction == '' || rollAction == undefined){
       rollAction = 'Roll';
