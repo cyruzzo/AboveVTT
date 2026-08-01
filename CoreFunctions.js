@@ -1076,15 +1076,17 @@ function add_journal_roll_buttons(target, tokenId=undefined, specificImage=undef
       rollType = 'Roll';
     }
     
-    targetButton.attr('data-actiontype', rollAction);
-    targetButton.attr('data-rolltype', rollType);
-
     const followingText = targetButton[0].nextSibling?.textContent?.trim()?.split(' ')[0]
     
     const damageType = followingText && window.ddbConfigJson?.damageTypes?.some(d => d.name.toLowerCase() == followingText.toLowerCase()) ? followingText : undefined
     if(damageType != undefined){
       targetButton.attr('data-damagetype', damageType);
     }
+    if(followingText && followingText.toLowerCase().match(/^\s*heal(ing)?/i)) rollType = 'Heal';
+    targetButton.attr('data-actiontype', rollAction);
+    targetButton.attr('data-rolltype', rollType);
+
+   
   })
 
   const tokenName = window.all_token_objects && window.all_token_objects[tokenId]?.options?.name ? window.all_token_objects[tokenId]?.options?.name  : window.PLAYER_NAME
