@@ -3049,7 +3049,7 @@ function checkForExportRemind() {
 		}
 		exportReminder = find_or_create_generic_draggable_window("exportReminder", "Export Reminder", false, false, '#exportReminder', 'fit-content', '10%', '10%', '10%', false, '', false, true);	
 		exportReminder.append(
-			$(`<div style="background: #fff;
+			$(`<div style="background: var(--background-color, #fff);
 								padding: 20px;
 								display: flex;
 								align-items: center;
