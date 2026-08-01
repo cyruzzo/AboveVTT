@@ -4722,127 +4722,109 @@ class JournalManager{
 												<tr>
 													<td><input type="checkbox" /></td>
 													<td>+0</td>
-													<td>Acrobatics
-													</td>
+													<td>Acrobatics</td>
 													<td>Dex</td>
 												</tr>
 												<tr>
 													<td><input type="checkbox" /></td>
 													<td>+0</td>
-													<td>Animal
-															Handling</td>
+													<td>Animal Handling</td>
 													<td>Wis</td>
 												</tr>
 												<tr>
 													<td><input type="checkbox" /></td>
 													<td>+0</td>
-													<td>Arcana
-													</td>
+													<td>Arcana</td>
 													<td>Int</td>
 												</tr>
 												<tr>
 													<td><input type="checkbox" /></td>
 													<td>+0</td>
-													<td>Athletics
-													</td>
+													<td>Athletics</td>
 													<td>Str</td>
 												</tr>
 												<tr>
 													<td><input type="checkbox" /></td>
 													<td>+0</td>
-													<td>Deception
-													</td>
+													<td>Deception</td>
 													<td>Cha</td>
 												</tr>
 												<tr>
 													<td><input type="checkbox" /></td>
 													<td>+0</td>
-													<td>History
-													</td>
+													<td>History</td>
 													<td>Int</td>
 												</tr>
 												<tr>
 													<td><input type="checkbox" /></td>
 													<td>+0</td>
-													<td>Insight
-													</td>
+													<td>Insight</td>
 													<td>Wis</td>
 												</tr>
 												<tr>
 													<td><input type="checkbox" /></td>
 													<td>+0</td>
-													<td>Intimidation
-													</td>
+													<td>Intimidation</td>
 													<td>Cha</td>
 												</tr>
 												<tr>
 													<td><input type="checkbox" /></td>
 													<td>+0</td>
-													<td>Investigation
-													</td>
+													<td>Investigation</td>
 													<td>Int</td>
 												</tr>
 												<tr>
 													<td><input type="checkbox" /></td>
 													<td>+0</td>
-													<td>Medicine
-													</td>
+													<td>Medicine</td>
 													<td>Wis</td>
 												</tr>
 												<tr>
 													<td><input type="checkbox" /></td>
 													<td>+0</td>
-													<td>Nature
-													</td>
+													<td>Nature</td>
 													<td>Int</td>
 												</tr>
 												<tr>
 													<td><input type="checkbox" /></td>
 													<td>+0</td>
-													<td>Perception
-													</td>
+													<td>Perception</td>
 													<td>Wis</td>
 												</tr>
 												<tr>
 													<td><input type="checkbox" /></td>
 													<td>+0</td>
-													<td>Performance
-													</td>
+													<td>Performance</td>
 													<td>Cha</td>
 												</tr>
 												<tr>
 													<td><input type="checkbox" /></td>
 													<td>+0</td>
-													<td>Persuasion
-													</td>
+													<td>Persuasion</td>
 													<td>Cha</td>
 												</tr>
 												<tr>
 													<td><input type="checkbox" /></td>
 													<td>+0</td>
-													<td>Religion
-													</td>
+													<td>Religion</td>
 													<td>Int</td>
 												</tr>
 												<tr>
 													<td><input type="checkbox" /></td>
 													<td>+0</td>
-													<td>Sleight of
-															Hand</td>
+													<td>Sleight of Hand</td>
 													<td>Dex</td>
 												</tr>
 												<tr>
 													<td><input type="checkbox" /></td>
 													<td>+0</td>
-													<td>Stealth
-													</td>
+													<td>Stealth</td>
 													<td>Dex</td>
 												</tr>
 												<tr>
 													<td><input type="checkbox" /></td>
 													<td>+0</td>
-													<td>Survival
-													</td>
+													<td>Survival</td>
 													<td>Wis</td>
 												</tr>
 											</tbody>
@@ -4877,14 +4859,12 @@ class JournalManager{
 											</div>
 										</div>
 										<div class="hp-row">
-											<div class="col"><span class="label">Temporary
-														Hit Points</span>
+											<div class="col"><span class="label">Temporary Hit Points</span>
 												<div class="box-field" contenteditable="true">&nbsp;</div>
 											</div>
 											<div class="col">
 												<div class="hp-subgrid">
-													<div><span class="label">Hit
-																Dice</span>
+													<div><span class="label">Hit Dice</span>
 														<div class="box-field" contenteditable="true">1d10</div>
 													</div>
 													<div><span class="label">Death Saves</span>
@@ -4914,22 +4894,16 @@ class JournalManager{
 														<td contenteditable="true">DC15 Con (2d10) Poison , [wprop]Nick[/wprop]</td>
 													</tr>
 													<tr>
-														<td contenteditable="true">Heavy Crossbow</td>
-														<td contenteditable="true">+0</td>
-														<td contenteditable="true">1d10+1 piercing</td>
-														<td contenteditable="true">Range 100/400</td>
-													</tr>
-													<tr>
 														<td contenteditable="true">Handaxe</td>
 														<td contenteditable="true">+0</td>
 														<td contenteditable="true">1d6+3 slashing</td>
 														<td contenteditable="true">[wprop]Light[/wprop], [wprop]Thrown [/wprop](20/60)</td>
 													</tr>
 													<tr>
-														<td contenteditable="true">&nbsp;</td>
-														<td contenteditable="true">&nbsp;</td>
-														<td contenteditable="true">&nbsp;</td>
-														<td contenteditable="true">&nbsp;</td>
+														<td contenteditable="true">&nbsp;[spell]Acid Splash[/spell]</td>
+														<td contenteditable="true">10 DEX</td>
+														<td contenteditable="true">&nbsp;1d6</td>
+														<td contenteditable="true">5-foot-radius Sphere</td>
 													</tr>
 													<tr>
 														<td contenteditable="true">&nbsp;</td>
@@ -4955,8 +4929,7 @@ class JournalManager{
 									</div>
 									<div class="container-block flex-1">
 										<div class="section-title">Features &amp; Traits</div>
-										<div class="features-field" contenteditable="true">- Darkvision: 60 ft
-											range.</div>
+										<div class="features-field" contenteditable="true">- Darkvision: 60 ft range.</div>
 									</div>
 									<div class="container-block">
 										<div class="section-title">Equipment</div>
@@ -5033,7 +5006,6 @@ class JournalManager{
 							</div>
 						</div>
 					</div>
-
 					`
 				},
 				{
