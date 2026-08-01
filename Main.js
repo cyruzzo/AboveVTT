@@ -1102,7 +1102,9 @@ function close_player_monster_stat_block() {
  * @param {DOMObject} titleBar the window's title bar
  */
 function minimize_player_monster_window_double_click(titleBar) {
-	titleBar.off('dblclick').on('dblclick', function() {
+
+	titleBar.off('dblclick').on('dblclick', function(e) {
+		if(e.target.id != titleBar[0].id && !e.target.classList.contains("monster_title")) return
 		if (titleBar.hasClass("restored")) {
 			titleBar.data("prev-height", titleBar.height());
 			titleBar.data("prev-width", titleBar.width() - 3);
