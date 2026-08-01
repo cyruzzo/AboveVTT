@@ -1913,12 +1913,13 @@ class JournalManager{
 				const avttImages = closestNote.find('img[data-src*="above-bucket-not-a-url"]');
 				avttImages.attr('src', '');
 				avttImages.attr('href', '');
-				closestNote.find('a:empty, button:empty').remove();
+				closestNote.find('a:empty, button:empty, .add-table-row').remove();
 				closestNote.find('button').replaceWith((i, innerHTML)=>{
           			return innerHTML;
         		})
 				const sanitizedHTML = basic_sanitize_html(closestNote[0].innerHTML);
 				self.notes[id].text = sanitizedHTML; 
+				self.notes[id].plain = formatToTinyMCEHtml(self.notes[id].text);
 				window.JOURNAL.setPersistTimeout();
 				debounceSendNote(id, self.notes[id]);
 				debounceRescanStatBlock(note_container, id);
@@ -1935,12 +1936,13 @@ class JournalManager{
 				const avttImages = closestNote.find('img[data-src*="above-bucket-not-a-url"]');
 				avttImages.attr('src', '');
 				avttImages.attr('href', '');
-				closestNote.find('a:empty, button:empty').remove();
+				closestNote.find('a:empty, button:empty, .add-table-row').remove();
 				closestNote.find('button').replaceWith((i, innerHTML)=>{
 					return innerHTML;
 				})
 				const sanitizedHTML = basic_sanitize_html(closestNote[0].innerHTML);
 				self.notes[id].text = sanitizedHTML; 
+				self.notes[id].plain = formatToTinyMCEHtml(self.notes[id].text);
 				window.JOURNAL.setPersistTimeout();
 				debounceSendNote(id, self.notes[id]);
 			})
@@ -1988,13 +1990,38 @@ class JournalManager{
 					
 				$(".import-loading-indicator").remove();        
 			});
+			const uploadStat = $(`<div class='upload_button' style="position: relative; display:inline-block; color: #ddd;">
+				<span onclick='import_open_template();' title="Upload HTML Statblock" class="material-symbols-outlined" style="font-size: 24px; position: relative; top: 4px;">
+					upload
+				</span>
+				<input accept='.html' id='input_pc_template' type='file' single style='display: none' />
+				</div>
+			`);
+			uploadStat.find('input[type="file"]').change(function(e) {
+				import_pc_template_html(e.target.files, note_text, id);
+			});
 			note_container.find('.title_bar_text').css('display', 'inline-block');
-			note_container.find('.title_bar').prepend(lockStatButton, downloadStat);
+			note_container.find('.title_bar').prepend(lockStatButton, downloadStat, uploadStat);
 			note_container.find('.title_bar').css({
 				'display': 'flex',
 				'align-items': 'center'
-			})
-		}
+			});
+			note_text.find('table').each(function() {
+				if($(this).next('.add-table-row').length>0)
+					return;
+				const add_table_row = $(`<button class="add-table-row">+</button>`);
+					
+				$(this).after(add_table_row);
+				
+			});
+			note_text.off('click.addRow').on('click.addRow', '.add-table-row', function (e) {
+				e.preventDefault();
+				const table = $(e.target).prev('table');
+				const newRow = table.find('tr:last').clone();
+				newRow.find('td, th').html('');
+				table.append(newRow);
+			});
+	}
 	}
 	add_journal_tooltip_targets(target){
 		const monsterIds = [];
@@ -4002,6 +4029,7 @@ class JournalManager{
 				}
 				tbody tr {
 					border-bottom: 1px solid var(--pc-template-table-stripe, #eee);
+					height: 25px;
 				}
 				tbody tr td {
 					padding: 3px 2px;
@@ -4404,7 +4432,7 @@ class JournalManager{
 				const avttImages = body.find('img[data-src*="above-bucket-not-a-url"]');
 				avttImages.attr('src', '');
 				avttImages.attr('href', '');
-				self.notes[id].text = body.html(); 
+				self.notes[id].text = basic_sanitize_html(body.html()); 
 		    	self.notes[id].plain = editor.getContent({ format: 'text' });
 		    	self.notes[id].statBlock = statBlock;
 		    	self.persist();
@@ -4637,7 +4665,7 @@ class JournalManager{
 							<div class="left-column">
 								<div class="abilities-table-container">
 								<div class="section-title">Abilities</div>
-								<table>
+								<table contenteditable="true">
 									<thead>
 									<tr>
 										<th>Ability</th>
@@ -4688,7 +4716,7 @@ class JournalManager{
 								</div>
 								<div class="skills-box">
 								<div class="section-title">Skills</div>
-								<table style="height: 538px; float: left;" border="0" width="126" cellspacing="0" cellpadding="0">
+								<table contenteditable="true"style="height: 538px; float: left;" border="0" width="126" cellspacing="0" cellpadding="0">
 									<tbody>
 									<tr>
 										<td><input type="checkbox" /></td>
@@ -4845,7 +4873,7 @@ class JournalManager{
 								<div class="container-block">
 								<div class="section-title">Attacks &amp; Spellcasting</div>
 								<div class="attacks-field"><br />
-									<table>
+									<table contenteditable="true">
 									<thead>
 										<tr>
 										<th>Weapon/ability</th>
@@ -5426,7 +5454,7 @@ class JournalManager{
 				const avttImages = body.find('img[data-src*="above-bucket-not-a-url"]');
 				avttImages.attr('src', '');
 				avttImages.attr('href', '');
-				self.notes[note_id].text = body.html(); 
+				self.notes[note_id].text = basic_sanitize_html(body.html()); 
 				self.notes[note_id].plain = tinymce.activeEditor.getContent({ format: 'text' });
 				self.notes[note_id].statBlock = statBlock;
 				self.persist();
