@@ -2224,12 +2224,12 @@ class JournalManager{
 			else{
 				if(url.includes('weapon-properties')){
 					let splitUrl = url.split('/');
-					let name = splitUrl[splitUrl.length-1];
+					let name = decodeURIComponent(splitUrl[splitUrl.length-1].replaceAll('-', ' ')).replaceAll("’", "'");;
 					itemId = window.ddbConfigJson.weaponProperties.filter(d=> d.name.toLowerCase() == name.toLowerCase())[0]?.id
 				}
 				else if(itemType == 'spells'){
 					const splitUrl = url.split('/');
-					const name = splitUrl[splitUrl.length-1].replaceAll('-', ' ');
+					const name = decodeURIComponent(splitUrl[splitUrl.length-1].replaceAll('-', ' ')).replaceAll("’", "'");
 					const isLegacy = !get_avtt_setting_value('2024Tooltips');
 					let spell = window.SPELLS_CACHE.filter(d => d.definition.name.toLowerCase() == name.toLowerCase() && d.definition.isLegacy == isLegacy)
 					if(!spell.length)
@@ -2241,7 +2241,7 @@ class JournalManager{
 				}
 				else if(itemType == 'magic-items' || itemType == 'adventuring-gear'){
 					const splitUrl = url.split('/');
-					const name = splitUrl[splitUrl.length-1].replaceAll('-', ' ');
+					const name = decodeURIComponent(splitUrl[splitUrl.length-1].replaceAll('-', ' ')).replaceAll("’", "'");
 					const isLegacy = !get_avtt_setting_value('2024Tooltips');
 					let item = window.ITEMS_CACHE.filter(d => d.name.toLowerCase() == name.toLowerCase() && d.isLegacy == isLegacy)
 					if(!item.length)
