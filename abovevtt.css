@@ -13018,6 +13018,20 @@ p.monster-header+p {
         text-transform: uppercase;
         letter-spacing: 0.5px;
     }
+    .add-table-row{
+        outline: none;
+        margin-top: 0;
+        margin-bottom: 0;
+        display: block;
+        width: 100%;
+        text-align: center;
+        border: none;
+        background: none;
+        color: var(--pc-template-text-color, #111);
+        font-weight: 800;
+        font-size: 16px;
+        line-height: 18px;
+    }
     table {
         width: 100%;
         border-collapse: collapse;
@@ -13038,6 +13052,7 @@ p.monster-header+p {
     }
     tbody tr {
         border-bottom: 1px solid #eee;
+        height: 25px;
     }
     tbody tr td {
         padding: 3px 2px;

@@ -108,12 +108,13 @@ async function display_stat_block_in_container(statBlock, container, tokenId, cu
 				const avttImages = closestNote.find('img[data-src*="above-bucket-not-a-url"]');
 				avttImages.attr('src', '');
 				avttImages.attr('href', '');
-        closestNote.find('a:empty, button:empty, .image').remove();
+        closestNote.find('a:empty, button:empty, .image, .add-table-row').remove();
         closestNote.find('button').replaceWith((i, innerHTML)=>{
           return innerHTML;
         })
         const sanitizedHTML = basic_sanitize_html(closestNote[0].innerHTML);
         window.JOURNAL.notes[customStatId].text = sanitizedHTML; 
+        window.JOURNAL.notes[customStatId].plain = formatToTinyMCEHtml(window.JOURNAL.notes[customStatId].text);
         debounceSendNote(customStatId, window.JOURNAL.notes[customStatId], tokenId);
         window.JOURNAL.setPersistTimeout();
         debounceRescanStatBlock(container, customStatId, tokenId);
@@ -131,12 +132,13 @@ async function display_stat_block_in_container(statBlock, container, tokenId, cu
 				const avttImages = closestNote.find('img[data-src*="above-bucket-not-a-url"]');
 				avttImages.attr('src', '');
 				avttImages.attr('href', '');
-        closestNote.find('a:empty, button:empty, .image').remove();
+        closestNote.find('a:empty, button:empty, .image, .add-table-row').remove();
         closestNote.find('button').replaceWith((i, innerHTML)=>{
           return innerHTML;
         })
         const sanitizedHTML = basic_sanitize_html(closestNote[0].innerHTML);
         window.JOURNAL.notes[customStatId].text = sanitizedHTML; 
+        window.JOURNAL.notes[customStatId].plain = formatToTinyMCEHtml(window.JOURNAL.notes[customStatId].text);
         debounceSendNote(customStatId, window.JOURNAL.notes[customStatId], tokenId);
         window.JOURNAL.setPersistTimeout();
 			})
@@ -250,7 +252,7 @@ async function display_stat_block_in_container(statBlock, container, tokenId, cu
       }
     }
     $("span.hideme").parent().parent().hide();
-    container.find('.lockStatButton, download_button').remove();
+    container.find('.lockStatButton, download_button, .upload_button, .add-table-row').remove();
     if(customStatBlock && container.find('.dnd-sheet').length>0){
       container.find('.popout-button').remove();
       const lockStatButton = $(`<div class='lockStatButton' style="position: absolute;
@@ -302,9 +304,97 @@ async function display_stat_block_in_container(statBlock, container, tokenId, cu
               
           $(".import-loading-indicator").remove();        
       });
-
-      container.prepend(lockStatButton, downloadStat);
+      const uploadStat = $(`<div class='upload_button' style="position: absolute;
+                                              left: 45px;
+                                              top: 3px;
+                                              width: 20px;
+                                              height: 20px;
+                                              color: #ddd;">
+                    <span onclick='import_open_template();' title="Upload HTML Statblock" class="material-symbols-outlined" style="font-size:20px;">
+                      upload
+                    </span>
+                    <input accept='.html' id='input_pc_template' type='file' single style='display: none' />
+                  </div>
+                  `);
+      uploadStat.find('input[type="file"]').change(function(e) {
+        import_pc_template_html(e.target.files, $html, window.TOKEN_OBJECTS[tokenId]?.options?.statBlock, tokenId);
+      });
+      container.prepend(lockStatButton, downloadStat, uploadStat);
+			container.find('table').each(function() {
+        if($(this).next('.add-table-row').length>0)
+          return;
+        const add_table_row = $(`<button class="add-table-row">+</button>`);	
+				$(this).after(add_table_row);
+			});
+      container.off('click.addRow').on('click.addRow', '.add-table-row', function (e) {
+				e.preventDefault();
+				const table = $(e.target).prev('table');
+				const newRow = table.find('tr:last').clone();
+				newRow.find('td, th').html('');
+				table.append(newRow);
+			});
+	
+      
     }
+}
+
+function formatToTinyMCEHtml(plainText) {
+    if (!plainText) return '';
+
+    // 1. Escape HTML characters to prevent XSS and broken layouts
+    let escapedText = plainText
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+
+    // 2. Normalize all line endings to LF (\n)
+    let normalized = escapedText.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+
+    // 3. Split content into distinct paragraphs by double line breaks
+    let paragraphs = normalized.split('\n\n');
+
+    // 4. Map each block into paragraphs and individual line breaks
+    let htmlResult = paragraphs.map(para => {
+        // Strip trailing whitespaces
+        let cleanPara = para.trim();
+        if (cleanPara === '') return '';
+        
+        // Convert single line breaks to <br /> tags
+        let withBreaks = cleanPara.replace(/\n/g, '<br />');
+        
+        // Wrap the final content block in TinyMCE paragraph tags
+        return `<p>${withBreaks}</p>`;
+    }).join('');
+
+    return htmlResult;
+}
+function import_open_template(){
+  $("#input_pc_template").trigger("click");
+}
+function import_pc_template_html(files, parentEle, customStatId, tokenId) {
+	if (!files.length) return;
+	build_import_loading_indicator('Preparing Import');
+
+	let processed = 0;
+	let file = files[0]
+  const reader = new FileReader();
+  reader.onload = function () {
+    try {
+      const sanitizedHTML = basic_sanitize_html(reader.result);
+      parentEle.html(sanitizedHTML);
+      debounceRescanStatBlock(parentEle, customStatId, tokenId);
+      window.JOURNAL.notes[customStatId].text = sanitizedHTML; 
+      window.JOURNAL.notes[customStatId].plain = formatToTinyMCEHtml(window.JOURNAL.notes[customStatId].text);
+      debounceSendNote(customStatId, window.JOURNAL.notes[customStatId], tokenId);
+      window.JOURNAL.setPersistTimeout();
+      $('.import-loading-indicator').remove();
+    } catch (e) {
+      console.error('Failed to import file', file.name, e);
+      $('.import-loading-indicator').remove();
+    }
+    
+  };
+	reader.readAsText(file);
 }
 const debounceRescanStatBlock = mydebounce(async (container, noteId, tokenId) => {
   const token = window.TOKEN_OBJECTS[tokenId];
@@ -313,9 +403,19 @@ const debounceRescanStatBlock = mydebounce(async (container, noteId, tokenId) =>
     return innerHtml;
   })
   const target = $(container).find(':focus').attr('data-focus', 'true');
-  const caretOffset = getCaretCharacterOffset(target[0]);
-  const originalLength = target[0].textContent.length;
-  const targetRescan = $(container).find('.avtt-stat-block-container, .note-text').first();
+  let caretOffset = 0;
+  let originalLength = 0;
+  if(target.length){
+    caretOffset = getCaretCharacterOffset(target[0]);
+    originalLength = target[0].textContent.length;
+  }
+   
+  
+  let targetRescan = $(container).find('.avtt-stat-block-container, .note-text').first();
+  if(!targetRescan.length){
+    container = $(container).closest('.avtt-stat-block-container, .note-text').parent();
+    targetRescan = $(container).find('.avtt-stat-block-container, .note-text').first();
+  }
   const currScroll = targetRescan[0].scrollTop;
   await window.JOURNAL.translateHtmlAndBlocks(targetRescan);
   add_journal_roll_buttons(targetRescan, tokenId);
@@ -413,78 +513,28 @@ const debounceRescanStatBlock = mydebounce(async (container, noteId, tokenId) =>
     }
     $("span.hideme").parent().parent().hide();
   }
+  container.find('table').each(function() {
+    if($(this).next('.add-table-row').length>0)
+      return;
+    const add_table_row = $(`<button class="add-table-row">+</button>`);	
+    $(this).after(add_table_row);
+  });
+  container.off('click.addRow').on('click.addRow', '.add-table-row', function (e) {
+    e.preventDefault();
+    const table = $(e.target).prev('table');
+    const newRow = table.find('tr:last').clone();
+    newRow.find('td, th').html('');
+    table.append(newRow);
+  });
 
-
-
-  if(container.find('.dnd-sheet').length>0 && container.find('.lockStatButton, .download_button').length==0){
-    container.find('.popout-button').remove();
-    const lockStatButton = $(`<div class='lockStatButton' style="position: absolute;
-                                            left: 2px;
-                                            top: 3px;
-                                            width: 20px;
-                                            height: 20px;
-                                            color: #ddd;">
-                                <span title="lock buttons" class="material-symbols-outlined" style="font-size:20px;">
-                                  ${!window.lockTemplateStatBlocks ? "lock_open_right" : "lock"}
-                                </span>
-                              </div>`)
-    lockStatButton.off('click.lockStatBlock').on('click.lockStatBlock', ()=>{
-      window.lockTemplateStatBlocks = !window.lockTemplateStatBlocks;
-      const span = lockStatButton.find('>span');
-      if(window.lockTemplateStatBlocks){
-        container.find('.dnd-sheet button').attr("contenteditable", "false");
-        span.text('lock');
-      } else{
-        container.find('.dnd-sheet [contenteditable]').attr("contenteditable", "true");
-        span.text('lock_open_right');
-      }
-    })
-    
-    if(window.lockTemplateStatBlocks){
-        container.find('.dnd-sheet button').attr("contenteditable", "false");
-    } else{
-      container.find('.dnd-sheet [contenteditable]').attr("contenteditable", "true");
-    }
-
-    const downloadStat = $(`<div class='download_button' style="position: absolute;
-                                            left: 25px;
-                                            top: 3px;
-                                            width: 20px;
-                                            height: 20px;
-                                            color: #ddd;">
-                                <span title="Download Statblock as HTML" class="material-symbols-outlined" style="font-size:20px;">
-                                  download
-                                </span>
-                              </div>`)
-    downloadStat.off('click.exportStatBlock').on('click.exportStatBlock', function () { 
-        build_import_loading_indicator('Preparing Export File');
-
-        const currentdate = new Date(); 
-        const datetime = `${currentdate.getFullYear()}-${(currentdate.getMonth()+1)}-${currentdate.getDate()}`
-        const santizedHtml = basic_sanitize_html(window.JOURNAL.notes[window.TOKEN_OBJECTS[tokenId].options.statBlock].text);
-        const html = `<style id='contentStyles'>${window.JOURNAL.content_styles()}</style>${santizedHtml}`
-        download(html,`${window.CAMPAIGN_INFO.name}-${datetime}-pctemplate.html`,"text/html");
-            
-        $(".import-loading-indicator").remove();        
-    });
-    if(!tokenId){
-      container.find('.title_bar_text').css('display', 'inline-block');
-      container.find('.title_bar').prepend(lockStatButton, downloadStat);
-      container.find('.title_bar').css({
-        'display': 'flex',
-        'align-items': 'center'
-      })
-    }
-    else{
-      container.prepend(lockStatButton, downloadStat);
-    }
-    
-  }
   $(container).find('.avtt-stat-block-container, .note-text')[0].scrollTop = currScroll;
   const focusTarget =  $(container).find('[data-focus]')
-  const addOffsetLength = focusTarget[0].textContent.length - originalLength;
-  setCaretCharacterOffset(focusTarget[0], caretOffset+addOffsetLength)
-  focusTarget.removeAttr('data-focus');
+  if(focusTarget.length != 0){
+    const addOffsetLength = focusTarget[0].textContent.length - originalLength;
+    setCaretCharacterOffset(focusTarget[0], caretOffset+addOffsetLength)
+    focusTarget.removeAttr('data-focus');
+  }
+
   if(window.lockTemplateStatBlocks){
     container.find('.dnd-sheet button').attr("contenteditable", "false");
   } else{
