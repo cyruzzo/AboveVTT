@@ -268,6 +268,7 @@ function getRollData(rollButton){
       rollTitle = $rollButton.attr('data-actiontype');
       rollType = $rollButton.attr('data-rolltype');
     }
+
     if($rollButton.hasClass('avtt-roll-formula-button')){
       let slashCommand = DiceRoll.fromSlashCommand($rollButton.attr('data-slash-command'))
       expression = slashCommand.expression;
@@ -337,6 +338,7 @@ function getRollData(rollButton){
     const followingText = $rollButton[0].nextSibling?.textContent?.trim()?.split(' ')[0]
     damageType = followingText && window.ddbConfigJson.damageTypes.some(d => d.name.toLowerCase() == followingText.toLowerCase()) ? followingText : damageType;     
 
+    if(followingText && ["heal", "healing"].includes(followingText.toLowerCase())) rollType = 'Heal';
 
     const spellSave = window.diceRoller.getSpellSave(rollButton);
 
