@@ -2112,6 +2112,7 @@ class JournalManager{
 			const addMonsterButton = function(){
 				$self.css('display', 'inline-block')
 				const monsterId = $self.attr('data-tooltip-href').match(/monsters\/(\d+)/i)?.[1];
+				if(monsterId === undefined) return;
 				$self.attr('data-monsterid', monsterId);
 				monsterIds.push(monsterId);
 				window.JOURNAL.addTokenDragToMonsterLink(self);
