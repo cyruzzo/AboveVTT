@@ -101,7 +101,8 @@ async function display_stat_block_in_container(statBlock, container, tokenId, cu
       const customStatId = token.options.statBlock;
 
 
-      container.off('input.editable').on('input.editable', '.dnd-sheet [contenteditable="true"]', (e)=>{
+      container.off('focusout.editable').on('focusout.editable', '.dnd-sheet [contenteditable="true"]', (e)=>{
+        if($('[contenteditable="true"] :is(:focus, :focus-within)').length>0) return;
         if($(e.target).is('.injected-input')) return;  
         const note_text = container.find('.avtt-stat-block-container').first();
 				const closestNote = note_text.clone(true, true);
