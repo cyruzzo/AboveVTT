@@ -2120,10 +2120,18 @@ class JournalManager{
 			if(!$self.hasClass('monster-tooltip')){
 				if(self.href.match(/\/spells\/[0-9]|\/magic-items\/[0-9]|\/monsters\/[0-9]|\/sources\//gi)){
 					$self.attr('data-moreinfo', `${self.href}`);
-				}	
+				}
 				window.JOURNAL.getDataTooltip(self.href, function(url, typeClass){
+					if(url.match(/\/(\d+)-tooltip/i)){
+						const tooltipId = url.match(/\/(\d+)-tooltip/i)[1];
+						const newUrl = `${self.href.replace(/\/\d+(-.*)$/i, `/${tooltipId}$1`)}`;
+						$self.attr('href', newUrl);
+						if(self.href.match(/\/spells\/[0-9]|\/magic-items\/[0-9]|\/monsters\/[0-9]|\/sources\//gi)){
+							$self.attr('data-moreinfo', `${newUrl}`);
+						}
+					}
 					$self.attr('data-tooltip-href', url);
-					$self.attr('href', `https://${url.split('-tooltip')[0]}`);
+					
 					$self.toggleClass(`${typeClass}-tooltip`, true);
 					addMonsterButton();
 				});	
@@ -2241,9 +2249,16 @@ class JournalManager{
 		if(itemType == 'sources')
 			return 
 		itemType = itemType == 'equipment' ? 'adventuring-gear' : itemType
-		if(itemId == 0 || itemType == 'equipment'){
+		if(get_avtt_setting_value('2024Tooltips') || itemId == 0){
 			if(window.spellIdCache[url]){
 				callback(`www.dndbeyond.com/${window.spellIdCache[url].type}/${window.spellIdCache[url].id}-tooltip?disable-webm=1`, itemType.slice(0, -1));	
+				return;
+			}
+			else if(itemId>0 && ['spells', 'magic-items', 'adventuring-gear'].includes(itemType)){       
+				if(itemType == 'spells')
+					itemId = getNonLegacySpellId({id: itemId});
+				else if(itemType == 'magic-items' || itemType == 'adventuring-gear')
+					itemId = getNonLegacyItemId({id: itemId});
 			}
 			else{
 				if(url.includes('weapon-properties')){
@@ -2289,14 +2304,11 @@ class JournalManager{
 						itemId = itemPage.matchAll(regex).next().value[1];	
 					}
 				}
-				window.spellIdCache[url] = {id: itemId, type: itemType};
-				callback(`www.dndbeyond.com/${itemType}/${itemId}-tooltip?disable-webm=1`, itemType.slice(0, -1));
+						
 			}	
 		}
-		else{
-			callback(`www.dndbeyond.com/${itemType}/${itemId}-tooltip?disable-webm=1`, itemType.slice(0, -1));	
-		}
-		
+		window.spellIdCache[url] = {id: itemId, type: itemType};
+		callback(`www.dndbeyond.com/${itemType}/${itemId}-tooltip?disable-webm=1`, itemType.slice(0, -1));
 	}
 	async getNotes(){
 	for(let note in window.JOURNAL.notes){

@@ -81,9 +81,10 @@ async function display_stat_block_in_container(statBlock, container, tokenId, cu
       })
       await window.JOURNAL.translateHtmlAndBlocks($html);
       add_journal_roll_buttons($html, tokenId);
-      window.JOURNAL.add_journal_tooltip_targets($html);
+     
       $(container).find('.add-input').each(function(){window.JOURNAL.addTrackedInputs($(this), {token})});
     }
+    window.JOURNAL.add_journal_tooltip_targets($html);
     if(customStatBlock){
       let imageUrl = parse_img(token.options.imgsrc);
 
