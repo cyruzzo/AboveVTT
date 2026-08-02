@@ -2497,7 +2497,7 @@ class JournalManager{
 				embededIframes[i].src = embededIframes[i].src.replace(/youtube(-nocookie)?\.com/gi, 'youtube-nocookie.com');
 			}
 			else if(!embededIframes[i].src.startsWith(window.EXTENSION_PATH)){
-				embededIframes[i].src = `${window.EXTENSION_PATH}iframe.html?src=${encodeURIComponent(embededIframes[i].src)}`;
+				embededIframes[i].src = `${window.EXTENSION_PATH}iframe.html?src=${encodeURIComponent(embededIframes[i].src).replace(/'/g, '%27')}`;
 			}
 		}
 
@@ -2824,7 +2824,7 @@ class JournalManager{
 			}
 			
 			const newFrame = $(`<iframe class='journal-site-embed'
-						src='${window.EXTENSION_PATH}iframe.html?src=${encodeURIComponent(url)}'
+						src='${window.EXTENSION_PATH}iframe.html?src=${encodeURIComponent(url).replace(/'/g, '%27')}'
 						allowfullscreen
 						webkitallowfullscreen
 						mozallowfullscreen></iframe>`)
@@ -2837,7 +2837,7 @@ class JournalManager{
 			const urlParams = new URLSearchParams(currSrc.split('?')[1]);
 			const origSrc = urlParams.get('src');
 			const src = await getAvttStorageUrl(origSrc, true);
-			avttIframes[i].src = `${window.EXTENSION_PATH}iframe.html?src=${encodeURIComponent(src)}`;
+			avttIframes[i].src = `${window.EXTENSION_PATH}iframe.html?src=${encodeURIComponent(src).replace(/'/g, '%27')}`;
 		}
 		const avttImages = $newHTML.find('img[data-src*="above-bucket-not-a-url"]')
 
@@ -5226,7 +5226,7 @@ class JournalManager{
 											} else if (fileType === avttFilePickerTypes.AUDIO) {
 												tinymce.activeEditor.insertContent(`<audio controls src="${link}"></audio>`);
 											} else {
-												tinymce.activeEditor.insertContent(`<iframe width='100%' height='400' src='${window.EXTENSION_PATH}iframe.html?src=${link}'
+												tinymce.activeEditor.insertContent(`<iframe width='100%' height='400' src='${window.EXTENSION_PATH}iframe.html?src=${link.replace(/'/g, '%27')}'
 												allowfullscreen
 												webkitallowfullscreen
 												mozallowfullscreen></iframe>`);
@@ -5329,7 +5329,7 @@ class JournalManager{
 									} else if (fileType === avttFilePickerTypes.AUDIO) {
 										tinymce.activeEditor.insertContent(`<audio controls src="${link}"></audio>`);
 									} else {
-										tinymce.activeEditor.insertContent(`<iframe width='100%' height='400' src='${window.EXTENSION_PATH}iframe.html?src=${link}'
+										tinymce.activeEditor.insertContent(`<iframe width='100%' height='400' src='${window.EXTENSION_PATH}iframe.html?src=${link.replace(/'/g, '%27')}'
 												allowfullscreen
 												webkitallowfullscreen
 												mozallowfullscreen></iframe>`);
