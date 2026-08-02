@@ -3054,7 +3054,7 @@ function open_github_issue(title, body) {
 
 function display_url_embeded(url){
   const encodedUrl = encodeURIComponent(url);
-  const src = `${window.EXTENSION_PATH}iframe.html?src=${encodedUrl}`;
+  const src = `${window.EXTENSION_PATH}iframe.html?src=${encodedUrl.replace(/'/g, '%27')}`;
   const iframe = $(`<iframe id='embededFileFrame' data-src='${url}' src='${src}'></iframe>`);
   iframe.css({
     width: 'calc(100% + 2px)',

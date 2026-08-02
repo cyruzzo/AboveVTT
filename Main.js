@@ -3459,7 +3459,7 @@ function init_help_menu() {
 			$('.tabs-content>div#tab2').show();
 			let src = $(currentTab).attr('data-src');
 			$('.tabs-content>div#tab2').find('iframe').remove();
-			$('.tabs-content>div#tab2').append(`<iframe src='${window.EXTENSION_PATH}iframe.html?src=${encodeURIComponent(src)}'
+			$('.tabs-content>div#tab2').append(`<iframe src='${window.EXTENSION_PATH}iframe.html?src=${encodeURIComponent(src).replace(/'/g, '%27')}'
 						allowfullscreen
 						webkitallowfullscreen
 						mozallowfullscreen></iframe>`)

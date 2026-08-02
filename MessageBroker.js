@@ -192,7 +192,7 @@ const debounceHandleInjected = mydebounce(() => {
 							closeOnContentClick: true,
 							callbacks: {
 								elementParse: function (item) {
-									item.src = `${window.EXTENSION_PATH}iframe.html?src=${encodeURIComponent(item.src)}`;
+									item.src = `${window.EXTENSION_PATH}iframe.html?src=${encodeURIComponent(item.src).replace(/'/g, '%27')}`;
 								}
 							}
 						});
