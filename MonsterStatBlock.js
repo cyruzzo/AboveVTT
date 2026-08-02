@@ -412,13 +412,6 @@ const debounceRescanStatBlock = mydebounce(async (container, noteId, tokenId) =>
   $(container).find('.add-input').replaceWith((i, innerHtml) => {
     return innerHtml;
   })
-  const target = $(container).find(':focus').attr('data-focus', 'true');
-  let caretOffset = 0;
-  let originalLength = 0;
-  if(target.length){
-    caretOffset = getCaretCharacterOffset(target[0]);
-    originalLength = target[0].textContent.length;
-  }
   
   let targetRescan = $(container).find('.avtt-stat-block-container, .note-text').first();
   if(!targetRescan.length){
@@ -537,12 +530,7 @@ const debounceRescanStatBlock = mydebounce(async (container, noteId, tokenId) =>
   });
 
   $(container).find('.avtt-stat-block-container, .note-text')[0].scrollTop = currScroll;
-  const focusTarget =  $(container).find('[data-focus]')
-  if(focusTarget.length != 0){
-    const addOffsetLength = focusTarget[0].textContent.length - originalLength;
-    setCaretCharacterOffset(focusTarget[0], caretOffset+addOffsetLength)
-    focusTarget.removeAttr('data-focus');
-  }
+  
 
   if(window.lockTemplateStatBlocks){
     container.find('.dnd-sheet button').attr("contenteditable", "false");
