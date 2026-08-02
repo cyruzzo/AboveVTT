@@ -1991,7 +1991,12 @@ class JournalManager{
 				const datetime = `${currentdate.getFullYear()}-${(currentdate.getMonth()+1)}-${currentdate.getDate()}`
 				const santizedHtml = basic_sanitize_html(window.JOURNAL.notes[id].text);
 				let html = $(`${santizedHtml}`);
+				$(html).find('.injected-input, .added-input-desc').remove();
+				$(html).find('.add-input').replaceWith((i, innerHtml) => {
+					return innerHtml;
+				})
 				self.translateHtmlAndBlocks(html).then(()=>{
+					$(html).find('.add-input').each(function(){window.JOURNAL.addTrackedInputs($(this), {noteId: id})})
 					html = `<style id='contentStyles'>
 					${window.JOURNAL.content_styles()}			
 					.custom-stat{
