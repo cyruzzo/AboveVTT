@@ -114,7 +114,7 @@ async function display_stat_block_in_container(statBlock, container, tokenId, cu
           return innerHTML;
         })
         const sanitizedHTML = basic_sanitize_html(closestNote[0].innerHTML);
-        const changes = $(sanitizedHTML).text() != window.JOURNAL.notes[customStatId].plain;
+        const changes = $(sanitizedHTML).text().replace(/[\s\n\r]/gi, '') != window.JOURNAL.notes[customStatId].plain.replace(/[\s\n\r]/gi, '');
         if(changes){
           window.JOURNAL.notes[customStatId].text = sanitizedHTML; 
           window.JOURNAL.notes[customStatId].plain = $(sanitizedHTML).text();
