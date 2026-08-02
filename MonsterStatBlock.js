@@ -114,10 +114,10 @@ async function display_stat_block_in_container(statBlock, container, tokenId, cu
           return innerHTML;
         })
         const sanitizedHTML = basic_sanitize_html(closestNote[0].innerHTML);
-        const changes = sanitizedHTML != window.JOURNAL.notes[customStatId].text;
+        const changes = $(sanitizedHTML).text() != window.JOURNAL.notes[customStatId].plain;
         if(changes){
           window.JOURNAL.notes[customStatId].text = sanitizedHTML; 
-          window.JOURNAL.notes[customStatId].plain = $(window.JOURNAL.notes[customStatId].text).text();
+          window.JOURNAL.notes[customStatId].plain = $(sanitizedHTML).text();
           debounceSendNote(customStatId, window.JOURNAL.notes[customStatId], tokenId);
           window.JOURNAL.setPersistTimeout();
           debounceRescanStatBlock(container, customStatId, tokenId);

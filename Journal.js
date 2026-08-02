@@ -1919,10 +1919,10 @@ class JournalManager{
           			return innerHTML;
         		})
 				const sanitizedHTML = basic_sanitize_html(closestNote[0].innerHTML);
-				const changes = sanitizedHTML != window.JOURNAL.notes[customStatId].text;
+				const changes = $(sanitizedHTML).text() != self.notes[id].plain;
         		if(changes){
 					self.notes[id].text = sanitizedHTML; 
-					self.notes[id].plain = $(self.notes[id].text).text();
+					self.notes[id].plain = $(sanitizedHTML).text();
 					window.JOURNAL.setPersistTimeout();
 					debounceSendNote(id, self.notes[id]);
 					debounceRescanStatBlock(note_container, id);
