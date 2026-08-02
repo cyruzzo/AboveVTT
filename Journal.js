@@ -1624,15 +1624,15 @@ class JournalManager{
 			const rowNumber = target.closest('tr').index();
 			spellName = `${spellName}-${rowNumber}`;
 		}
-
-		if (noteId && window.JOURNAL.notes[noteId].abilityTracker?.[spellName] >= 0) {
-			numberFound = window.JOURNAL.notes[noteId].abilityTracker[spellName]
-		}
-		else if(token && token.options.abilityTracker?.[spellName] >= 0){
+		
+		if(token && token.options.abilityTracker?.[spellName] >= 0){
 			numberFound = token.options.abilityTracker[spellName]
 		}
 		else if(token){
 			token.track_ability(spellName, numberFound)
+		}
+		else if(noteId && window.JOURNAL.notes[noteId].abilityTracker?.[spellName] >= 0) {
+			numberFound = window.JOURNAL.notes[noteId].abilityTracker[spellName]
 		}
 		else {
 			track_ability(spellName, numberFound)
