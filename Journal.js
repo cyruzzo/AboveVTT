@@ -1955,6 +1955,7 @@ class JournalManager{
 			note_text[0].scrollTop = scrollTop;
 		});	
 		if(note_text.find('.dnd-sheet').length>0){
+			note_text.find('a').attr('contenteditable', 'false');
 			note_container.find('.popout-button, .lockStatButton, .download_button').remove();
 			const lockStatButton = $(`<div class='lockStatButton' style="position: relative; display:inline-block; color: #ddd;">
 										<span title="lock buttons" class="material-symbols-outlined" style="font-size: 20px; position: relative; top: 4px;">
@@ -1968,7 +1969,7 @@ class JournalManager{
 				note_text.find('.dnd-sheet button').attr("contenteditable", "false");
 				span.text('lock');
 			} else{
-				note_text.find('.dnd-sheet [contenteditable]').attr("contenteditable", "true");
+				note_text.find('.dnd-sheet [contenteditable]:not(a)').attr("contenteditable", "true");
 				span.text('lock_open_right');
 			}
 			})
@@ -1976,7 +1977,7 @@ class JournalManager{
 			if(window.lockTemplateStatBlocks){
 				note_text.find('.dnd-sheet button').attr("contenteditable", "false");
 			} else{
-				note_text.find('.dnd-sheet [contenteditable]').attr("contenteditable", "true");
+				note_text.find('.dnd-sheet [contenteditable]:not(a)').attr("contenteditable", "true");
 			}
 
 			const downloadStat = $(`<div class='download_button' style="position: relative; display:inline-block; color: #ddd;">
@@ -1991,14 +1992,16 @@ class JournalManager{
 				const datetime = `${currentdate.getFullYear()}-${(currentdate.getMonth()+1)}-${currentdate.getDate()}`
 				const santizedHtml = basic_sanitize_html(window.JOURNAL.notes[id].text);
 				let html = $(`${santizedHtml}`);
-				$(html).find('.injected-input, .added-input-desc').remove();
-				$(html).find('.add-input').replaceWith((i, innerHtml) => {
+				html.find('.injected-input, .added-input-desc').remove();
+				html.find('.add-input').replaceWith((i, innerHtml) => {
 					return innerHtml;
 				})
 				self.translateHtmlAndBlocks(html).then(()=>{
-					$(html).find('.add-input').each(function(){window.JOURNAL.addTrackedInputs($(this), {noteId: id})})
+					self.add_journal_tooltip_targets(html);
+					html.find('a').attr('contenteditable', 'false');
+					html.find('.add-input').each(function(){window.JOURNAL.addTrackedInputs($(this), {noteId: id})})
 					html = `<style id='contentStyles'>
-					${window.JOURNAL.content_styles()}			
+					${self.content_styles()}			
 					.custom-stat{
 						color: --var(--pc-template-text-color, #111) !important;
 						border: none !important;
@@ -2107,20 +2110,19 @@ class JournalManager{
 				return;	
 			}
 			const addMonsterButton = function(){
-				if ($self.hasClass('monster-tooltip')) {
-					$self.css('display', 'inline-block')
-					const monsterId = $self.attr('data-tooltip-href').match(/monsters\/(\d+)/i)?.[1];
-					$self.attr('data-monsterid', monsterId);
-					monsterIds.push(monsterId);
-					window.JOURNAL.addTokenDragToMonsterLink(self);
-				}
+				$self.css('display', 'inline-block')
+				const monsterId = $self.attr('data-tooltip-href').match(/monsters\/(\d+)/i)?.[1];
+				$self.attr('data-monsterid', monsterId);
+				monsterIds.push(monsterId);
+				window.JOURNAL.addTokenDragToMonsterLink(self);
 			}
-			if(!$self.attr('data-tooltip-href')){
+			if(!$self.hasClass('monster-tooltip')){
 				if(self.href.match(/\/spells\/[0-9]|\/magic-items\/[0-9]|\/monsters\/[0-9]|\/sources\//gi)){
 					$self.attr('data-moreinfo', `${self.href}`);
 				}	
 				window.JOURNAL.getDataTooltip(self.href, function(url, typeClass){
 					$self.attr('data-tooltip-href', url);
+					$self.attr('href', `https://${url.split('-tooltip')[0]}`);
 					$self.toggleClass(`${typeClass}-tooltip`, true);
 					addMonsterButton();
 				});	
@@ -2253,9 +2255,10 @@ class JournalManager{
 					const name = decodeURIComponent(splitUrl[splitUrl.length-1].replaceAll('-', ' ')).replaceAll("’", "'");
 					const isLegacy = !get_avtt_setting_value('2024Tooltips');
 					let spell = window.SPELLS_CACHE.filter(d => d.definition.name.toLowerCase() == name.toLowerCase() && d.definition.isLegacy == isLegacy)
-					if(!spell.length)
+					if(!spell.length){
 						console.warn(`spell not found`, name, `isLegacy`, isLegacy);
 						spell = window.SPELLS_CACHE.filter(d => d.definition.name.toLowerCase() == name.toLowerCase())
+					}
 					if(!spell.length)
 						console.warn(`spell not found`, name);
 					itemId = `${spell[0].definition.id}-${splitUrl[splitUrl.length-1]}`;
@@ -2265,9 +2268,10 @@ class JournalManager{
 					const name = decodeURIComponent(splitUrl[splitUrl.length-1].replaceAll('-', ' ')).replaceAll("’", "'");
 					const isLegacy = !get_avtt_setting_value('2024Tooltips');
 					let item = window.ITEMS_CACHE.filter(d => d.name.toLowerCase() == name.toLowerCase() && d.isLegacy == isLegacy)
-					if(!item.length)
+					if(!item.length){
 						console.warn(`item not found`, name, `isLegacy`, isLegacy);
 						item = window.ITEMS_CACHE.filter(d => d.name.toLowerCase() == name.toLowerCase())
+					}
 					if(!item.length)
 						console.warn(`item not found`, name);
 					itemId = `${item[0].id}-${splitUrl[splitUrl.length-1]}`;

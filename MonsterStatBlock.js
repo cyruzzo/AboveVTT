@@ -259,6 +259,7 @@ async function display_stat_block_in_container(statBlock, container, tokenId, cu
     $("span.hideme").parent().parent().hide();
     container.find('.lockStatButton, .download_button, .upload_button, .add-table-row').remove();
     if(customStatBlock && container.find('.dnd-sheet').length>0){
+      container.find('a').attr('contenteditable', 'false');
       container.find('.popout-button').remove();
       const lockStatButton = $(`<div class='lockStatButton' style="position: absolute;
                                               left: 2px;
@@ -277,7 +278,7 @@ async function display_stat_block_in_container(statBlock, container, tokenId, cu
           container.find('.dnd-sheet button').attr("contenteditable", "false");
           span.text('lock');
         } else{
-          container.find('.dnd-sheet [contenteditable]').attr("contenteditable", "true");
+          container.find('.dnd-sheet [contenteditable]:not(a)').attr("contenteditable", "true");
           span.text('lock_open_right');
         }
       })
@@ -285,7 +286,7 @@ async function display_stat_block_in_container(statBlock, container, tokenId, cu
       if(window.lockTemplateStatBlocks){
          container.find('.dnd-sheet button').attr("contenteditable", "false");
       } else{
-        container.find('.dnd-sheet [contenteditable]').attr("contenteditable", "true");
+        container.find('.dnd-sheet [contenteditable]:not(a)').attr("contenteditable", "true");
       }
 
       const downloadStat = $(`<div class='download_button' style="position: absolute;
@@ -305,12 +306,14 @@ async function display_stat_block_in_container(statBlock, container, tokenId, cu
           const datetime = `${currentdate.getFullYear()}-${(currentdate.getMonth()+1)}-${currentdate.getDate()}`
           const santizedHtml = basic_sanitize_html(window.JOURNAL.notes[window.TOKEN_OBJECTS[tokenId].options.statBlock].text);      
           let html = $(`${santizedHtml}`);
-          $(html).find('.injected-input, .added-input-desc').remove();
-          $(html).find('.add-input').replaceWith((i, innerHtml) => {
+          html.find('.injected-input, .added-input-desc').remove();
+          html.find('.add-input').replaceWith((i, innerHtml) => {
             return innerHtml;
           })
           window.JOURNAL.translateHtmlAndBlocks(html).then(()=>{
-					  $(html).find('.add-input').each(function(){window.JOURNAL.addTrackedInputs($(this), {token: window.TOKEN_OBJECTS[tokenId]})})
+            window.JOURNAL.add_journal_tooltip_targets(html);
+					  html.find('.add-input').each(function(){window.JOURNAL.addTrackedInputs($(this), {token: window.TOKEN_OBJECTS[tokenId]})})
+            html.find('a').attr('contenteditable', 'false');
             html = `<style id='contentStyles'>
             ${window.JOURNAL.content_styles()}			
             .custom-stat{
@@ -406,7 +409,7 @@ const debounceRescanStatBlock = mydebounce(async (container, noteId, tokenId) =>
   $(container).find('.add-input').each(function(){window.JOURNAL.addTrackedInputs($(this), {token, noteId})});
   add_stat_block_hover(targetRescan, tokenId);
   add_aoe_statblock_click(targetRescan, tokenId);
-
+  targetRescan.find('a').attr('contenteditable', 'false');
   if(tokenId){
     container.find("img.monster-image, .monster-image").each((i,block) => {
       createSendPlayerButton(block, "login", true).insertAfter(block);
@@ -515,7 +518,7 @@ const debounceRescanStatBlock = mydebounce(async (container, noteId, tokenId) =>
   if(window.lockTemplateStatBlocks){
     container.find('.dnd-sheet button').attr("contenteditable", "false");
   } else{
-    container.find('.dnd-sheet [contenteditable]').attr("contenteditable", "true");
+    container.find('.dnd-sheet [contenteditable]:not(a)').attr("contenteditable", "true");
   }
 }, 1000);
 
