@@ -252,7 +252,7 @@ async function display_stat_block_in_container(statBlock, container, tokenId, cu
       }
     }
     $("span.hideme").parent().parent().hide();
-    container.find('.lockStatButton, download_button, .upload_button, .add-table-row').remove();
+    container.find('.lockStatButton, .download_button, .upload_button, .add-table-row').remove();
     if(customStatBlock && container.find('.dnd-sheet').length>0){
       container.find('.popout-button').remove();
       const lockStatButton = $(`<div class='lockStatButton' style="position: absolute;
