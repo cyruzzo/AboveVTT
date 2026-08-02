@@ -338,7 +338,7 @@ function getRollData(rollButton){
     const followingText = $rollButton[0].nextSibling?.textContent?.trim()?.split(' ')[0]
     damageType = followingText && window.ddbConfigJson.damageTypes.some(d => d.name.toLowerCase() == followingText.toLowerCase()) ? followingText : damageType;     
 
-    if(followingText && ["heal", "healing"].includes(followingText.toLowerCase())) rollType = 'Heal';
+    if(followingText && followingText.toLowerCase().match(/^\s*heal(ing)?/i)) rollType = 'Heal';
 
     const spellSave = window.diceRoller.getSpellSave(rollButton);
 
@@ -407,10 +407,12 @@ function adjustRollWithRollBuffs(expression, rollType, $rollButton){
         const validSingleButton = singleReplaceSelector == undefined || (singleReplaceSelector?.[rollBuffKey] != undefined && $rollButton.closest(singleReplaceSelector[rollBuffKey]).length > 0);
        
         if (multiReplaceRegex != undefined && validMultiButton) {
-            expression = `${expression.replace(multiReplaceRegex, targetMultiOptions.newRoll)}`   
+            const newRoll = typeof targetMultiOptions?.newRoll === 'function' ? targetMultiOptions.newRoll(expression) : targetMultiOptions?.newRoll;
+            expression = `${expression.replace(multiReplaceRegex, newRoll)}`   
         }
         else if (!isMultiOption && singleReplaceRegex != undefined && validSingleButton){
-            expression = `${expression.replace(singleReplaceRegex, singleTarget.newRoll)}` 
+            const newRoll = typeof singleTarget?.newRoll === 'function' ? singleTarget.newRoll(expression) : singleTarget?.newRoll;
+            expression = `${expression.replace(singleReplaceRegex, newRoll)}` 
         }
     }
     const PB = getPB();
