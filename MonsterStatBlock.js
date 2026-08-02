@@ -305,7 +305,12 @@ async function display_stat_block_in_container(statBlock, container, tokenId, cu
           const datetime = `${currentdate.getFullYear()}-${(currentdate.getMonth()+1)}-${currentdate.getDate()}`
           const santizedHtml = basic_sanitize_html(window.JOURNAL.notes[window.TOKEN_OBJECTS[tokenId].options.statBlock].text);      
           let html = $(`${santizedHtml}`);
+          $(html).find('.injected-input, .added-input-desc').remove();
+          $(html).find('.add-input').replaceWith((i, innerHtml) => {
+            return innerHtml;
+          })
           window.JOURNAL.translateHtmlAndBlocks(html).then(()=>{
+					  $(html).find('.add-input').each(function(){window.JOURNAL.addTrackedInputs($(this), {token: window.TOKEN_OBJECTS[tokenId]})})
             html = `<style id='contentStyles'>
             ${window.JOURNAL.content_styles()}			
             .custom-stat{
