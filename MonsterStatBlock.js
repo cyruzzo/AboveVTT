@@ -114,11 +114,15 @@ async function display_stat_block_in_container(statBlock, container, tokenId, cu
           return innerHTML;
         })
         const sanitizedHTML = basic_sanitize_html(closestNote[0].innerHTML);
-        window.JOURNAL.notes[customStatId].text = sanitizedHTML; 
-        window.JOURNAL.notes[customStatId].plain = formatToTinyMCEHtml(window.JOURNAL.notes[customStatId].text);
-        debounceSendNote(customStatId, window.JOURNAL.notes[customStatId], tokenId);
-        window.JOURNAL.setPersistTimeout();
-        debounceRescanStatBlock(container, customStatId, tokenId);
+        const changes = sanitizedHTML != window.JOURNAL.notes[customStatId].text;
+        if(changes){
+          window.JOURNAL.notes[customStatId].text = sanitizedHTML; 
+          window.JOURNAL.notes[customStatId].plain = $(window.JOURNAL.notes[customStatId].text).text();
+          debounceSendNote(customStatId, window.JOURNAL.notes[customStatId], tokenId);
+          window.JOURNAL.setPersistTimeout();
+          debounceRescanStatBlock(container, customStatId, tokenId);
+        }
+
 			});
 			container.off('change.checkbox').on('change.checkbox', '.dnd-sheet input', (e)=>{
 				if (e.target && e.target.nodeName === 'INPUT' && e.target.type === 'checkbox') {				
@@ -139,7 +143,7 @@ async function display_stat_block_in_container(statBlock, container, tokenId, cu
         })
         const sanitizedHTML = basic_sanitize_html(closestNote[0].innerHTML);
         window.JOURNAL.notes[customStatId].text = sanitizedHTML; 
-        window.JOURNAL.notes[customStatId].plain = formatToTinyMCEHtml(window.JOURNAL.notes[customStatId].text);
+        window.JOURNAL.notes[customStatId].plain = $(window.JOURNAL.notes[customStatId].text).text();
         debounceSendNote(customStatId, window.JOURNAL.notes[customStatId], tokenId);
         window.JOURNAL.setPersistTimeout();
 			})
@@ -348,36 +352,7 @@ async function display_stat_block_in_container(statBlock, container, tokenId, cu
     }
 }
 
-function formatToTinyMCEHtml(plainText) {
-    if (!plainText) return '';
 
-    // 1. Escape HTML characters to prevent XSS and broken layouts
-    let escapedText = plainText
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;');
-
-    // 2. Normalize all line endings to LF (\n)
-    let normalized = escapedText.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
-
-    // 3. Split content into distinct paragraphs by double line breaks
-    let paragraphs = normalized.split('\n\n');
-
-    // 4. Map each block into paragraphs and individual line breaks
-    let htmlResult = paragraphs.map(para => {
-        // Strip trailing whitespaces
-        let cleanPara = para.trim();
-        if (cleanPara === '') return '';
-        
-        // Convert single line breaks to <br /> tags
-        let withBreaks = cleanPara.replace(/\n/g, '<br />');
-        
-        // Wrap the final content block in TinyMCE paragraph tags
-        return `<p>${withBreaks}</p>`;
-    }).join('');
-
-    return htmlResult;
-}
 function import_open_template(){
   $("#input_pc_template").trigger("click");
 }
@@ -394,7 +369,7 @@ function import_pc_template_html(files, parentEle, customStatId, tokenId) {
       parentEle.html(sanitizedHTML);
       debounceRescanStatBlock(parentEle, customStatId, tokenId);
       window.JOURNAL.notes[customStatId].text = sanitizedHTML; 
-      window.JOURNAL.notes[customStatId].plain = formatToTinyMCEHtml(window.JOURNAL.notes[customStatId].text);
+      window.JOURNAL.notes[customStatId].plain = $(window.JOURNAL.notes[customStatId].text).text();
       debounceSendNote(customStatId, window.JOURNAL.notes[customStatId], tokenId);
       window.JOURNAL.setPersistTimeout();
       $('.import-loading-indicator').remove();
@@ -530,7 +505,7 @@ const debounceRescanStatBlock = mydebounce(async (container, noteId, tokenId) =>
   });
 
   $(container).find('.avtt-stat-block-container, .note-text')[0].scrollTop = currScroll;
-  
+
 
   if(window.lockTemplateStatBlocks){
     container.find('.dnd-sheet button').attr("contenteditable", "false");

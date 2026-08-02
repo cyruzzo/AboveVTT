@@ -1919,11 +1919,15 @@ class JournalManager{
           			return innerHTML;
         		})
 				const sanitizedHTML = basic_sanitize_html(closestNote[0].innerHTML);
-				self.notes[id].text = sanitizedHTML; 
-				self.notes[id].plain = formatToTinyMCEHtml(self.notes[id].text);
-				window.JOURNAL.setPersistTimeout();
-				debounceSendNote(id, self.notes[id]);
-				debounceRescanStatBlock(note_container, id);
+				const changes = sanitizedHTML != window.JOURNAL.notes[customStatId].text;
+        		if(changes){
+					self.notes[id].text = sanitizedHTML; 
+					self.notes[id].plain = $(self.notes[id].text).text();
+					window.JOURNAL.setPersistTimeout();
+					debounceSendNote(id, self.notes[id]);
+					debounceRescanStatBlock(note_container, id);
+				}
+
 			});
 			note.off('change.checkbox').on('change.checkbox', 'input', (e)=>{
 				if (e.target && e.target.nodeName === 'INPUT' && e.target.type === 'checkbox') {				
@@ -1943,7 +1947,7 @@ class JournalManager{
 				})
 				const sanitizedHTML = basic_sanitize_html(closestNote[0].innerHTML);
 				self.notes[id].text = sanitizedHTML; 
-				self.notes[id].plain = formatToTinyMCEHtml(self.notes[id].text);
+				self.notes[id].plain = $(self.notes[id].text).text();
 				window.JOURNAL.setPersistTimeout();
 				debounceSendNote(id, self.notes[id]);
 			})
