@@ -353,6 +353,22 @@ const buffsDebuffs = {
     "newRoll": '$1ro<2',//reroll 1
     "type": "feat",
   },
+  "Triage Expert": {
+    "tohit": "0",
+    "dmg": "0",
+    "save": "0",
+    "check": "0",
+    "replace": /(\d+)(d\d+)/i,
+    "replaceType": {
+      "heal": 'button'
+    },
+    "newRoll": function(m){
+      const match = m.match(/(\d+)(d\d+)/i)
+      return `${1+parseInt(match[1])}${match[2]}kh${parseInt(match[1])}`
+    },
+    "type": "feat",
+ 
+  },
   "Call the Hunt": {
     "tohit": "0",
     "dmg": "+d6",
