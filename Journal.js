@@ -1919,7 +1919,7 @@ class JournalManager{
           			return innerHTML;
         		})
 				const sanitizedHTML = basic_sanitize_html(closestNote[0].innerHTML);
-				const changes = $(sanitizedHTML).text() != self.notes[id].plain;
+				const changes = $(sanitizedHTML).text().replace(/[\s\n\r]/gi, '') != self.notes[id].plain.replace(/[\s\n\r]/gi, '');
         		if(changes){
 					self.notes[id].text = sanitizedHTML; 
 					self.notes[id].plain = $(sanitizedHTML).text();
