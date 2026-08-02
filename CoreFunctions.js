@@ -3106,7 +3106,9 @@ function createDialogMenu(rootId, options) {
   return dialog[0]; //note: return native element, NOT jquery
 }
 function basic_sanitize_html(html){
-  return DOMPurify.sanitize(html,{ALLOWED_TAGS: ['video','img','div','p', 'b', 'button', 'span', 'path', 'rect', 'svg', 'a', 'hr', 'ul', 'li', 'ol', 'h3', 'h2', 'h4', 'h1', 'table', 'thead', 'tbody', 'tr', 'td', 'th', 'br', 'input', 'strong', 'em'], ADD_ATTR: ['target', 'contenteditable']}); //This array needs to include all HTML elements the extension sends via chat.
+  let sanitized = DOMPurify.sanitize(html,{ALLOWED_TAGS: ['video','img','div','p', 'b', 'button', 'span', 'path', 'rect', 'svg', 'a', 'hr', 'ul', 'li', 'ol', 'h3', 'h2', 'h4', 'h1', 'table', 'thead', 'tbody', 'tr', 'td', 'th', 'br', 'input', 'strong', 'em'], ADD_ATTR: ['target', 'contenteditable']}); //This array needs to include all HTML elements the extension sends via chat.
+  sanitized = sanitized.replace(/[\n\s]+(<)|(>)[\n\s]+/gi, '$1$2');
+  return sanitized;
 }
 
 //turn an element into a menu trigger

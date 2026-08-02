@@ -242,7 +242,6 @@ const debounceHandleInjected = mydebounce(() => {
 	}
 }, 500)
 const debounceSendNote = mydebounce(function(id, note, tokenId){
-	note.plain = "";
 	window.MB.sendMessage('custom/myVTT/note',  {note, id, tokenId, from:window.PLAYER_ID})
 }, 2000);
 
@@ -1257,7 +1256,8 @@ class MessageBroker {
 						msg.data.text = temp_note.join('');
 						delete window.temp_note_save[uuid];
 					}
-				}				
+				}	
+				msg.data.plain = $(msg.data.text).text();
 				if(all_collected && (!window.DM || (msg.data.from && msg.data.from != window.PLAYER_ID))){
 					if(msg.data.delete == true){
 						delete window.JOURNAL.notes[msg.data.id]
@@ -2581,24 +2581,25 @@ class MessageBroker {
 
 		if(eventType.startsWith("custom")){
 			if(eventType == "custom/myVTT/note"){
+				const copyData = $.extend(true, {}, data);
 				const msgId = uuid();
-				data.note.plain = "";
-				let text = `${data.note.text}`;
+				copyData.note.plain = "";
+				let text = `${copyData.note.text}`;
 				let order = 0;
 				const textLength = JSON.stringify(text).length;
 				const lastIndex = Math.floor(textLength/120000);
-				data.lastIndex = lastIndex;
-				data.uuid = msgId;
+				copyData.lastIndex = lastIndex;
+				copyData.uuid = msgId;
 				while(order<lastIndex){
-					data.order = order;
+					copyData.order = order;
 					let sendNote = text.slice(0, 120000)
-					data.note.text = sendNote;
-					this.sendAboveMB('custom/myVTT/note', data, skipSceneId, forceSceneId)
+					copyData.note.text = sendNote;
+					this.sendAboveMB('custom/myVTT/note', copyData, skipSceneId, forceSceneId)
 					order+=1;
 					text = text.slice(120000, text.length)
 				}
-				data.note.text = text;
-				this.sendAboveMB('custom/myVTT/note', data, skipSceneId, forceSceneId)
+				copyData.note.text = text;
+				this.sendAboveMB('custom/myVTT/note', copyData, skipSceneId, forceSceneId)
 			}else{
 				this.sendAboveMB(eventType,data,skipSceneId,forceSceneId);
 			}		
