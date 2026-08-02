@@ -1984,11 +1984,22 @@ class JournalManager{
 
 				const currentdate = new Date(); 
 				const datetime = `${currentdate.getFullYear()}-${(currentdate.getMonth()+1)}-${currentdate.getDate()}`
-				const html = `<style id='contentStyles'>${window.JOURNAL.content_styles()}</style>
-				${window.JOURNAL.notes[id].text}`
-				download(html,`${window.CAMPAIGN_INFO.name}-${datetime}-pctemplate.html`,"text/html");
-					
-				$(".import-loading-indicator").remove();        
+				const santizedHtml = basic_sanitize_html(window.JOURNAL.notes[id].text);
+				let html = $(`${santizedHtml}`);
+				self.translateHtmlAndBlocks(html).then(()=>{
+					html = `<style id='contentStyles'>
+					${window.JOURNAL.content_styles()}			
+					.custom-stat{
+						color: --var(--pc-template-text-color, #111) !important;
+						border: none !important;
+					}</style>
+					${html[0].outerHTML}`;
+					download(html,`${window.CAMPAIGN_INFO.name}-${datetime}-pctemplate.html`,"text/html");
+						
+					$(".import-loading-indicator").remove();        
+				})
+				
+				
 			});
 			const uploadStat = $(`<div class='upload_button' style="position: relative; display:inline-block; color: #ddd;">
 				<span onclick='import_open_template();' title="Upload HTML Statblock" class="material-symbols-outlined" style="font-size: 24px; position: relative; top: 4px;">
@@ -3146,6 +3157,60 @@ class JournalManager{
 			/* END - Default text color */
 			*{
 				 font-family: Roboto, Helvetica, sans-serif;
+			}
+			body .tooltip-hover, body .tooltip-hover:hover, body .tooltip-hover:focus, body .tooltip-hover:active, body .tooltip-hover:visited{
+				color: var(--compendium-action-tooltip,var(--compendium-default-tooltip,#11884c))!important;
+				text-decoration: none;
+			}
+			body .tooltip-hover, body .tooltip-hover:hover, body .tooltip-hover:focus, body .tooltip-hover:active, body .tooltip-hover:visited{
+				color: var(--compendium-action-tooltip,var(--compendium-default-tooltip,#11884c)) !important
+			}
+			body .tooltip-hover.action-tooltip {
+				color: var(--compendium-action-tooltip,var(--compendium-default-tooltip,#11884c)) !important
+			}
+
+			body .tooltip-hover.condition-tooltip {
+				color: var(--compendium-condition-tooltip,var(--compendium-default-tooltip,#5a8100)) !important
+			}
+
+			body .tooltip-hover.item-tooltip {
+				color: var(--compendium-item-tooltip,#774521) !important
+			}
+
+			body .tooltip-hover.lore-tooltip {
+				color: var(--compendium-lore-tooltip,#a83e3e) !important
+			}
+
+			body .tooltip-hover.monster-tooltip {
+				color: var(--compendium-monster-tooltip,#bc0f0f) !important
+			}
+
+			body .tooltip-hover.magic-item-tooltip {
+				color: var(--compendium-magic-item-tooltip,#0f5cbc) !important
+			}
+
+			body .tooltip-hover.rule-tooltip {
+				color: var(--compendium-rule-tooltip,#9b740b) !important
+			}
+
+			body .tooltip-hover.sense-tooltip {
+				color: var(--compendium-sense-tooltip,var(--compendium-default-tooltip,#a41b96)) !important
+			}
+
+			body .tooltip-hover.spell-tooltip {
+				color: var(--compendium-spell-tooltip,#704cd9) !important
+			}
+
+			body .tooltip-hover.skill-tooltip {
+				color: var(--compendium-skill-tooltip,var(--compendium-default-tooltip,#11884c)) !important
+			}
+
+			body .tooltip-hover.weapon-properties-tooltip {
+				color: var(--compendium-wprop-tooltip,var(--compendium-default-tooltip,#11884c)) !important
+			}
+
+			body .tooltip-hover.vehicle-tooltip {
+				color: var(--compendium-vehicle-tooltip,#1b9af0) !important
 			}
 			.abovevtt-mon-stat-block__separator{
 				 max-width: 100%;

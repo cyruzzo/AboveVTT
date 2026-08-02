@@ -298,11 +298,20 @@ async function display_stat_block_in_container(statBlock, container, tokenId, cu
 
           const currentdate = new Date(); 
           const datetime = `${currentdate.getFullYear()}-${(currentdate.getMonth()+1)}-${currentdate.getDate()}`
-          const santizedHtml = basic_sanitize_html(window.JOURNAL.notes[window.TOKEN_OBJECTS[tokenId].options.statBlock].text);
-          const html = `<style id='contentStyles'>${window.JOURNAL.content_styles()}</style>${santizedHtml}`
-          download(html,`${window.CAMPAIGN_INFO.name}-${datetime}-pctemplate.html`,"text/html");
+          const santizedHtml = basic_sanitize_html(window.JOURNAL.notes[window.TOKEN_OBJECTS[tokenId].options.statBlock].text);      
+          let html = $(`${santizedHtml}`);
+          window.JOURNAL.translateHtmlAndBlocks(html).then(()=>{
+            html = `<style id='contentStyles'>
+            ${window.JOURNAL.content_styles()}			
+            .custom-stat{
+              color: --var(--pc-template-text-color, #111) !important;
+              border: none !important;
+            }</style>
+            ${html[0].outerHTML}`;
+            download(html,`${window.CAMPAIGN_INFO.name}-${datetime}-pctemplate.html`,"text/html");
               
-          $(".import-loading-indicator").remove();        
+            $(".import-loading-indicator").remove();        
+          })      
       });
       const uploadStat = $(`<div class='upload_button' style="position: absolute;
                                               left: 45px;
@@ -409,7 +418,6 @@ const debounceRescanStatBlock = mydebounce(async (container, noteId, tokenId) =>
     caretOffset = getCaretCharacterOffset(target[0]);
     originalLength = target[0].textContent.length;
   }
-   
   
   let targetRescan = $(container).find('.avtt-stat-block-container, .note-text').first();
   if(!targetRescan.length){
