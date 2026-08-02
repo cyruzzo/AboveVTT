@@ -4227,7 +4227,7 @@ class JournalManager{
 					color: var(--pc-template-text-color, #111);
 				}
 				.equipment-field {
-					min-height: 90px;
+					min-height: 139px;
 					height: auto;
 					border: 1px solid var(--pc-template-border-color, #444);
 					padding: 4px;
@@ -4992,7 +4992,7 @@ class JournalManager{
 											</table>
 										</div>
 									</div>
-									<div class="container-block flex-1">
+									<div class="container-block">
 										<div class="section-title">Features &amp; Traits</div>
 										<div class="features-field" contenteditable="true">- Darkvision: 60 ft range.</div>
 									</div>

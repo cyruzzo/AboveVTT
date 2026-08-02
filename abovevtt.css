@@ -13184,7 +13184,7 @@ p.monster-header+p {
         overflow-wrap: break-word;
     }
     .equipment-field {
-        min-height: 90px;
+        min-height: 139px;
         height: auto;
         border: 1px solid #444;
         padding: 4px;
