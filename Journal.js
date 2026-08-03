@@ -1915,10 +1915,19 @@ class JournalManager{
 				avttImages.attr('src', '');
 				avttImages.attr('href', '');
 				closestNote.find('a:empty, button:empty, .add-table-row').remove();
-				closestNote.find('button').replaceWith((i, innerHTML)=>{
+				const noteButtons = closestNote.find('button');
+				noteButtons.replaceWith((i, innerHTML)=>{
+          			const command = noteButtons[i].getAttribute('data-slash-command');
+					if(command){
+						innerHTML = `[roll]${command}[/roll]`
+					}
           			return innerHTML;
         		})
-				const sanitizedHTML = basic_sanitize_html(closestNote[0].innerHTML);
+				closestNote.find('.abovevtt-slash-command-journal').replaceWith((i, innerHTML) =>{
+					return innerHTML;
+				})
+				const sanitizedHTML = basic_sanitize_html(closestNote[0].innerHTML).replaceAll(/\[(\/)?spell\]/gi, `[$1spell]`).replaceAll(/\[(\/)?magicitem\]/gi, `[$1magicItem]`).replaceAll(/\[(\/)?item\]/gi, `[$1item]`);
+				
 				const changes = $(sanitizedHTML).text().replace(/[\s\n\r]/gi, '') != self.notes[id].plain.replace(/[\s\n\r]/gi, '');
         		if(changes){
 					self.notes[id].text = sanitizedHTML; 
@@ -1942,10 +1951,19 @@ class JournalManager{
 				avttImages.attr('src', '');
 				avttImages.attr('href', '');
 				closestNote.find('a:empty, button:empty, .add-table-row').remove();
-				closestNote.find('button').replaceWith((i, innerHTML)=>{
+				const noteButtons = closestNote.find('button');
+				noteButtons.replaceWith((i, innerHTML)=>{
+          			const command = noteButtons[i].getAttribute('data-slash-command');
+					if(command){
+						innerHTML = `[roll]${command}[/roll]`
+					}
 					return innerHTML;
 				})
-				const sanitizedHTML = basic_sanitize_html(closestNote[0].innerHTML);
+				closestNote.find('.abovevtt-slash-command-journal').replaceWith((i, innerHTML) =>{
+					return innerHTML;
+				})
+				const sanitizedHTML = basic_sanitize_html(closestNote[0].innerHTML).replaceAll(/\[(\/)?spell\]/gi, `[$1spell]`).replaceAll(/\[(\/)?magicitem\]/gi, `[$1magicItem]`).replaceAll(/\[(\/)?item\]/gi, `[$1item]`);
+				
 				self.notes[id].text = sanitizedHTML; 
 				self.notes[id].plain = $(self.notes[id].text).text();
 				window.JOURNAL.setPersistTimeout();
@@ -2000,6 +2018,9 @@ class JournalManager{
 					self.add_journal_tooltip_targets(html);
 					html.find('a').attr('contenteditable', 'false');
 					html.find('.add-input').each(function(){window.JOURNAL.addTrackedInputs($(this), {noteId: id})})
+					html.find('.abovevtt-slash-command-journal').replaceWith((i, innerHTML) =>{
+						return `[roll]${innerHTML}[/roll]`;
+					})
 					html = `<style id='contentStyles'>
 						${self.content_styles()}			
 						.custom-stat{
@@ -2019,14 +2040,46 @@ class JournalManager{
 									e.target.removeAttribute('checked');
 								}
 							}
+							window.addEventListener('input', (e) => {
+								if (e.target && e.target.nodeName === 'INPUT' && e.target.type === 'number') {
+									e.target.setAttribute('value', e.target.value);
+								}
+							});
 						});
-						window.addEventListener('input', (e) => {
-							if (e.target && e.target.nodeName === 'INPUT' && e.target.type === 'number') {
-								e.target.setAttribute('value', e.target.value);
-							}
+						</script>
+					${html[0].outerHTML}			
+					<script>
+						document.querySelectorAll('table').forEach((table) => {
+							if (table.nextElementSibling?.classList.contains('add-table-row')) return;
+
+							const addTableRowButton = document.createElement('button');
+							addTableRowButton.className = 'add-table-row';
+							addTableRowButton.type = 'button';
+							addTableRowButton.textContent = '+';
+							table.insertAdjacentElement('afterend', addTableRowButton);
 						});
-					</script>
-					${html[0].outerHTML}`;
+
+						document.addEventListener('click', (e) => {
+							const addButton = e.target.closest('.add-table-row');
+							if (!addButton) return;
+
+							e.preventDefault();
+
+							const table = addButton.previousElementSibling;
+							if (!table || table.tagName.toLowerCase() !== 'table') return;
+
+							const rowContainer = table.tBodies[0] || table;
+							const lastRow = rowContainer.rows[rowContainer.rows.length - 1];
+							if (!lastRow) return;
+
+							const newRow = lastRow.cloneNode(true);
+							newRow.querySelectorAll('td, th').forEach((cell) => {
+								cell.innerHTML = '';
+							});
+
+							rowContainer.appendChild(newRow);
+						});
+					</script>`;
 					download(html,`${window.CAMPAIGN_INFO.name}-${datetime}-pctemplate.html`,"text/html");
 						
 					$(".import-loading-indicator").remove();        
@@ -4126,6 +4179,20 @@ class JournalManager{
 					display: flex;
 					align-items: center;
 					justify-content: center;  
+				}
+				.add-table-row{
+					outline: none;
+					margin-top: 0;
+					margin-bottom: 0;
+					display: block;
+					width: 100%;
+					text-align: center;
+					border: none;
+					background: none;
+					color: var(--pc-template-text-color, #999999);
+					font-weight: 800;
+					font-size: 16px;
+					line-height: 18px;
 				}
 				table {
 					width: 100%;
