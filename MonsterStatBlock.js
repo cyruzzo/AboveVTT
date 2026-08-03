@@ -316,11 +316,15 @@ async function display_stat_block_in_container(statBlock, container, tokenId, cu
 					  html.find('.add-input').each(function(){window.JOURNAL.addTrackedInputs($(this), {token: window.TOKEN_OBJECTS[tokenId]})})
             html.find('a').attr('contenteditable', 'false');
             html = `<style id='contentStyles'>
-            ${window.JOURNAL.content_styles()}			
-            .custom-stat{
-              color: --var(--pc-template-text-color, #111) !important;
-              border: none !important;
-            }</style>
+              ${window.JOURNAL.content_styles()}			
+              .custom-stat{
+                color: --var(--pc-template-text-color, #111) !important;
+                border: none !important;
+              }
+              .ignore-abovevtt-formating{
+                border: none !important;
+              }    
+            </style>
             ${html[0].outerHTML}`;
             download(html,`${window.CAMPAIGN_INFO.name}-${datetime}-pctemplate.html`,"text/html");
               
