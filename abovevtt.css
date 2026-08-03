@@ -13021,6 +13021,11 @@ p.monster-header+p {
         text-transform: uppercase;
         letter-spacing: 0.5px;
     }
+    .heroic-inspiration{
+        display: flex;
+        align-items: center;
+        justify-content: center;  
+    }
     .add-table-row{
         outline: none;
         margin-top: 0;
@@ -13059,6 +13064,7 @@ p.monster-header+p {
     }
     tbody tr td {
         padding: 3px 2px;
+        vertical-align: middle;
     }
     tbody tr td:first-child {
         font-weight: bold;
@@ -13173,6 +13179,16 @@ p.monster-header+p {
         box-sizing: border-box;
         overflow-wrap: break-word;
     }
+    .notes-field {
+        min-height: 350px;
+        height: auto;
+        border: 1px solid #444;
+        padding: 4px;
+        background: #fdfdfd;
+        border-radius: 3px;
+        box-sizing: border-box;
+        overflow-wrap: break-word;
+    }
     .features-field {
         min-height: 180px;
         height: auto;
@@ -13202,7 +13218,8 @@ p.monster-header+p {
         flex: 1;
         box-sizing: border-box;
     }
-    .bio-block {
+    .bio-block,
+    .notes-block {
         border: 1px solid #333;
         padding: 6px;
         border-radius: 4px;
