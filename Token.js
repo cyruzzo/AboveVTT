@@ -4032,7 +4032,11 @@ function deselect_all_tokens(ignoreVisionUpdate = false) {
 	$(`:is(#combat_area, #combat_area_carousel) tr`).toggleClass('selected-token', false);
 	remove_selected_token_bounding_box();
 	window.CURRENTLY_SELECTED_TOKENS = [];
-
+	if(window.SelectedTokenVision == true && $('#selected_token_vision .ddbc-tab-options__header-heading--is-active').length==0){
+        window.SelectedTokenVision = false;
+        if(window.DM)
+            do_check_token_visibility();       
+    }
 	if(ignoreVisionUpdate == false){
 		check_darkness_value();
 	   	if(window.SelectedTokenVision == true && $('#selected_token_vision .ddbc-tab-options__header-heading--is-active').length==0){

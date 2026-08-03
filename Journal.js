@@ -2142,9 +2142,10 @@ class JournalManager{
 					$self.attr('data-moreinfo', `${self.href}`);
 				}
 				window.JOURNAL.getDataTooltip(self.href, function(url, typeClass){
-					if(url.match(/\/(\d+)-tooltip/i)){
-						const tooltipId = url.match(/\/(\d+)-tooltip/i)[1];
-						const newUrl = `${self.href.replace(/\/\d+(-.*)$/i, `/${tooltipId}$1`)}`;
+					const matched = url.match(/\/(\d+)[^/]*-tooltip(\?.*)?$/i)
+					if(matched){
+						const tooltipId = matched[1];
+						const newUrl = `${self.href.replace(/(\d+-)?([^/]*)(-tooltip)?(\?.*)?$/i, `${tooltipId}-$2`)}`;
 						$self.attr('href', newUrl);
 						if(self.href.match(/\/spells\/[0-9]|\/magic-items\/[0-9]|\/monsters\/[0-9]|\/sources\//gi)){
 							$self.attr('data-moreinfo', `${newUrl}`);
