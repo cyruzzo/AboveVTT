@@ -1915,10 +1915,19 @@ class JournalManager{
 				avttImages.attr('src', '');
 				avttImages.attr('href', '');
 				closestNote.find('a:empty, button:empty, .add-table-row').remove();
-				closestNote.find('button').replaceWith((i, innerHTML)=>{
+				const noteButtons = closestNote.find('button');
+				noteButtons.replaceWith((i, innerHTML)=>{
+          			const command = noteButtons[i].getAttribute('data-slash-command');
+					if(command){
+						innerHTML = `[roll]${command}[/roll]`
+					}
           			return innerHTML;
         		})
-				const sanitizedHTML = basic_sanitize_html(closestNote[0].innerHTML);
+				closestNote.find('.abovevtt-slash-command-journal').replaceWith((i, innerHTML) =>{
+					return innerHTML;
+				})
+				const sanitizedHTML = basic_sanitize_html(closestNote[0].innerHTML).replaceAll(/\[(\/)?spell\]/gi, `[$1spell]`).replaceAll(/\[(\/)?magicitem\]/gi, `[$1magicItem]`).replaceAll(/\[(\/)?item\]/gi, `[$1item]`);
+				
 				const changes = $(sanitizedHTML).text().replace(/[\s\n\r]/gi, '') != self.notes[id].plain.replace(/[\s\n\r]/gi, '');
         		if(changes){
 					self.notes[id].text = sanitizedHTML; 
@@ -1942,10 +1951,19 @@ class JournalManager{
 				avttImages.attr('src', '');
 				avttImages.attr('href', '');
 				closestNote.find('a:empty, button:empty, .add-table-row').remove();
-				closestNote.find('button').replaceWith((i, innerHTML)=>{
+				const noteButtons = closestNote.find('button');
+				noteButtons.replaceWith((i, innerHTML)=>{
+          			const command = noteButtons[i].getAttribute('data-slash-command');
+					if(command){
+						innerHTML = `[roll]${command}[/roll]`
+					}
 					return innerHTML;
 				})
-				const sanitizedHTML = basic_sanitize_html(closestNote[0].innerHTML);
+				closestNote.find('.abovevtt-slash-command-journal').replaceWith((i, innerHTML) =>{
+					return innerHTML;
+				})
+				const sanitizedHTML = basic_sanitize_html(closestNote[0].innerHTML).replaceAll(/\[(\/)?spell\]/gi, `[$1spell]`).replaceAll(/\[(\/)?magicitem\]/gi, `[$1magicItem]`).replaceAll(/\[(\/)?item\]/gi, `[$1item]`);
+				
 				self.notes[id].text = sanitizedHTML; 
 				self.notes[id].plain = $(self.notes[id].text).text();
 				window.JOURNAL.setPersistTimeout();

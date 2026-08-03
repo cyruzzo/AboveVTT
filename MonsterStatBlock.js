@@ -111,10 +111,19 @@ async function display_stat_block_in_container(statBlock, container, tokenId, cu
 				avttImages.attr('src', '');
 				avttImages.attr('href', '');
         closestNote.find('a:empty, button:empty, .image, .add-table-row').remove();
-        closestNote.find('button').replaceWith((i, innerHTML)=>{
+        const noteButtons = closestNote.find('button');
+				noteButtons.replaceWith((i, innerHTML)=>{
+          const command = noteButtons[i].getAttribute('data-slash-command');
+					if(command){
+						innerHTML = `[roll]${command}[/roll]`
+					}
           return innerHTML;
         })
-        const sanitizedHTML = basic_sanitize_html(closestNote[0].innerHTML);
+        closestNote.find('.abovevtt-slash-command-journal').replaceWith((i, innerHTML) =>{
+					return innerHTML;
+				})
+        const sanitizedHTML = basic_sanitize_html(closestNote[0].innerHTML).replaceAll(/\[(\/)?spell\]/gi, `[$1spell]`).replaceAll(/\[(\/)?magicitem\]/gi, `[$1magicItem]`).replaceAll(/\[(\/)?item\]/gi, `[$1item]`);
+				
         const changes = $(sanitizedHTML).text().replace(/[\s\n\r]/gi, '') != window.JOURNAL.notes[customStatId].plain.replace(/[\s\n\r]/gi, '');
         if(changes){
           window.JOURNAL.notes[customStatId].text = sanitizedHTML; 
@@ -139,10 +148,19 @@ async function display_stat_block_in_container(statBlock, container, tokenId, cu
 				avttImages.attr('src', '');
 				avttImages.attr('href', '');
         closestNote.find('a:empty, button:empty, .image, .add-table-row').remove();
-        closestNote.find('button').replaceWith((i, innerHTML)=>{
+        const noteButtons = closestNote.find('button');
+				noteButtons.replaceWith((i, innerHTML)=>{
+          const command = noteButtons[i].getAttribute('data-slash-command');
+					if(command){
+						innerHTML = `[roll]${command}[/roll]`
+					}
           return innerHTML;
         })
-        const sanitizedHTML = basic_sanitize_html(closestNote[0].innerHTML);
+        closestNote.find('.abovevtt-slash-command-journal').replaceWith((i, innerHTML) =>{
+					return innerHTML;
+				})
+        const sanitizedHTML = basic_sanitize_html(closestNote[0].innerHTML).replaceAll(/\[(\/)?spell\]/gi, `[$1spell]`).replaceAll(/\[(\/)?magicitem\]/gi, `[$1magicItem]`).replaceAll(/\[(\/)?item\]/gi, `[$1item]`);
+        
         window.JOURNAL.notes[customStatId].text = sanitizedHTML; 
         window.JOURNAL.notes[customStatId].plain = $(window.JOURNAL.notes[customStatId].text).text();
         debounceSendNote(customStatId, window.JOURNAL.notes[customStatId], tokenId);
@@ -397,7 +415,7 @@ function import_pc_template_html(files, parentEle, customStatId, tokenId) {
       const sanitizedHTML = basic_sanitize_html(reader.result);
       parentEle.html(sanitizedHTML);
       debounceRescanStatBlock(parentEle, customStatId, tokenId);
-      window.JOURNAL.notes[customStatId].text = sanitizedHTML; 
+      window.JOURNAL.notes[customStatId].text = sanitizedHTML.replaceAll(/\[(\/)?spell\]/gi, `[$1spell]`).replaceAll(/\[(\/)?magicitem\]/gi, `[$1magicItem]`).replaceAll(/\[(\/)?item\]/gi, `[$1item]`); 
       window.JOURNAL.notes[customStatId].plain = $(window.JOURNAL.notes[customStatId].text).text();
       debounceSendNote(customStatId, window.JOURNAL.notes[customStatId], tokenId);
       window.JOURNAL.setPersistTimeout();
@@ -412,16 +430,17 @@ function import_pc_template_html(files, parentEle, customStatId, tokenId) {
 }
 const debounceRescanStatBlock = mydebounce(async (container, noteId, tokenId) => {
   const token = window.TOKEN_OBJECTS[tokenId];
-  $(container).find('.injected-input, .added-input-desc').remove();
-  $(container).find('.add-input').replaceWith((i, innerHtml) => {
-    return innerHtml;
-  })
   
   let targetRescan = $(container).find('.avtt-stat-block-container, .note-text').first();
   if(!targetRescan.length){
     container = $(container).closest('.avtt-stat-block-container, .note-text').parent();
     targetRescan = $(container).find('.avtt-stat-block-container, .note-text').first();
   }
+  $(targetRescan).html(window.JOURNAL.notes[noteId].text);
+  $(container).find('.injected-input, .added-input-desc').remove();
+  $(container).find('.add-input').replaceWith((i, innerHtml) => {
+    return innerHtml;
+  })
   const currScroll = targetRescan[0].scrollTop;
   await window.JOURNAL.translateHtmlAndBlocks(targetRescan);
   add_journal_roll_buttons(targetRescan, tokenId);
