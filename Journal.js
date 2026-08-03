@@ -2246,10 +2246,10 @@ class JournalManager{
 		let itemId = (url.matchAll(urlRegex).next().value) ? url.matchAll(urlRegex).next().value[1] : 0;
 		let itemType = url.matchAll(urlType).next().value[1];
 		url = url.toLowerCase();
-		if(itemType == 'sources')
+		if(itemType == 'sources' || itemType == 'compendium')
 			return 
 		itemType = itemType == 'equipment' ? 'adventuring-gear' : itemType
-		if(get_avtt_setting_value('2024Tooltips') || itemId == 0){
+		if(itemId == 0 || (['spells', 'magic-items', 'adventuring-gear'].includes(itemType) && get_avtt_setting_value('2024Tooltips'))){
 			if(window.spellIdCache[url]){
 				callback(`www.dndbeyond.com/${window.spellIdCache[url].type}/${window.spellIdCache[url].id}-tooltip?disable-webm=1`, itemType.slice(0, -1));	
 				return;
@@ -5064,46 +5064,46 @@ class JournalManager{
 						</div>
 						<div class="dnd-page">
 							<div class="page2-grid">
-								<div class="col">
-									<div class="bio-block"><div class="section-title">Treasure &amp; Currency</div>
-										<div class="currency-container">
-											<div class="coin-slot">CP:
-												<div class="coin-input" contenteditable="true">&nbsp;</div>
-											</div>
-											<div class="coin-slot">SP:
-												<div class="coin-input" contenteditable="true">&nbsp;</div>
-											</div>
-											<div class="coin-slot">EP:
-												<div class="coin-input" contenteditable="true">&nbsp;</div>
-											</div>
-											<div class="coin-slot">GP:
-												<div class="coin-input" contenteditable="true">&nbsp;</div>
-											</div>
-											<div class="coin-slot">PP:
-												<div class="coin-input" contenteditable="true">&nbsp;</div>
+									<div class="col">
+										<div class="bio-block"><div class="section-title">Magic Item Attunement (3 Slots Available)</div>
+											<div class="attunement-content" contenteditable="true">
+												<div style="margin-bottom: 2px;"><input checked="checked" type="checkbox" /> [magicItem]Cloak of
+													Protection[/magicItem]</div>
+												<div style="margin-bottom: 2px;"><input type="checkbox" /> Empty Slot</div>
+												<div><input type="checkbox" /> Empty Slot</div>
 											</div>
 										</div>
-										<div class="treasure-field" contenteditable="true">&nbsp;</div>
-									</div>
-									<div class="bio-block"><div class="section-title">Additional Features &amp; Traits</div>
-										<div class="bio-traits-add" contenteditable="true">&nbsp;</div>
-									</div>
-									<div class="bio-block"><div class="section-title">Character Appearance</div>
-										<div class="bio-appearance" contenteditable="true">&nbsp;</div>
-									</div>
-									<div class="bio-block"><div class="section-title">Character Backstory</div>
-										<div class="bio-backstory" contenteditable="true">&nbsp;</div>
-									</div>
-								</div>
-								<div class="col">
-								<div class="bio-block"><div class="section-title">Magic Item Attunement (3 Slots Available)</div>
-										<div class="attunement-content" contenteditable="true">
-											<div style="margin-bottom: 2px;"><input checked="checked" type="checkbox" /> [magicItem]Cloak of
-												Protection[/magicItem]</div>
-											<div style="margin-bottom: 2px;"><input type="checkbox" /> Empty Slot</div>
-											<div><input type="checkbox" /> Empty Slot</div>
+										<div class="bio-block"><div class="section-title">Additional Features &amp; Traits</div>
+											<div class="bio-traits-add" contenteditable="true">&nbsp;</div>
+										</div>
+										<div class="bio-block"><div class="section-title">Character Appearance</div>
+											<div class="bio-appearance" contenteditable="true">&nbsp;</div>
+										</div>
+										<div class="bio-block"><div class="section-title">Character Backstory</div>
+											<div class="bio-backstory" contenteditable="true">&nbsp;</div>
 										</div>
 									</div>
+									<div class="col">
+										<div class="bio-block"><div class="section-title">Treasure &amp; Currency</div>
+											<div class="currency-container">
+												<div class="coin-slot">CP:
+													<div class="coin-input" contenteditable="true">&nbsp;</div>
+												</div>
+												<div class="coin-slot">SP:
+													<div class="coin-input" contenteditable="true">&nbsp;</div>
+												</div>
+												<div class="coin-slot">EP:
+													<div class="coin-input" contenteditable="true">&nbsp;</div>
+												</div>
+												<div class="coin-slot">GP:
+													<div class="coin-input" contenteditable="true">&nbsp;</div>
+												</div>
+												<div class="coin-slot">PP:
+													<div class="coin-input" contenteditable="true">&nbsp;</div>
+												</div>
+											</div>
+											<div class="treasure-field" contenteditable="true">&nbsp;</div>
+										</div>
 									<div class="bio-block"><div class="section-title">Spellcasting Notes / Summary</div>
 										<div class="spellcasting-field" contenteditable="true">Spellcasting. Spell save DC 10, +0 to hit
 											with spell attacks<br />&nbsp;<br />Cantrips (at will): acid splash, light, mage hand,
