@@ -2018,6 +2018,9 @@ class JournalManager{
 					self.add_journal_tooltip_targets(html);
 					html.find('a').attr('contenteditable', 'false');
 					html.find('.add-input').each(function(){window.JOURNAL.addTrackedInputs($(this), {noteId: id})})
+					html.find('.abovevtt-slash-command-journal').replaceWith((i, innerHTML) =>{
+						return innerHTML;
+					})
 					html = `<style id='contentStyles'>
 						${self.content_styles()}			
 						.custom-stat{

@@ -333,6 +333,9 @@ async function display_stat_block_in_container(statBlock, container, tokenId, cu
             window.JOURNAL.add_journal_tooltip_targets(html);
 					  html.find('.add-input').each(function(){window.JOURNAL.addTrackedInputs($(this), {token: window.TOKEN_OBJECTS[tokenId]})})
             html.find('a').attr('contenteditable', 'false');
+            html.find('.abovevtt-slash-command-journal').replaceWith((i, innerHTML) =>{
+              return `[roll]${innerHTML}[/roll]`;
+            })
             html = `<style id='contentStyles'>
               ${window.JOURNAL.content_styles()}			
               .custom-stat{
