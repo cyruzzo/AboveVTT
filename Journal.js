@@ -2001,11 +2001,15 @@ class JournalManager{
 					html.find('a').attr('contenteditable', 'false');
 					html.find('.add-input').each(function(){window.JOURNAL.addTrackedInputs($(this), {noteId: id})})
 					html = `<style id='contentStyles'>
-					${self.content_styles()}			
-					.custom-stat{
-						color: --var(--pc-template-text-color, #111) !important;
-						border: none !important;
-					}</style>
+						${self.content_styles()}			
+						.custom-stat{
+							color: --var(--pc-template-text-color, #111) !important;
+							border: none !important;
+						}
+						.ignore-abovevtt-formating{
+							border: none !important;
+						}   
+					</style>
 					${html[0].outerHTML}`;
 					download(html,`${window.CAMPAIGN_INFO.name}-${datetime}-pctemplate.html`,"text/html");
 						
