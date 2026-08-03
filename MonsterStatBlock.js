@@ -325,6 +325,22 @@ async function display_stat_block_in_container(statBlock, container, tokenId, cu
                 border: none !important;
               }    
             </style>
+            <script>
+              window.addEventListener("click", (e) => {
+                if (e.target && e.target.nodeName === 'INPUT' && e.target.type === 'checkbox') {				
+                  if (e.target.checked) {
+                    e.target.setAttribute('checked', 'checked');
+                  } else {
+                    e.target.removeAttribute('checked');
+                  }
+                }
+                window.addEventListener('input', (e) => {
+                  if (e.target && e.target.nodeName === 'INPUT' && e.target.type === 'number') {
+                    e.target.setAttribute('value', e.target.value);
+                  }
+                });
+              });
+            </script>
             ${html[0].outerHTML}`;
             download(html,`${window.CAMPAIGN_INFO.name}-${datetime}-pctemplate.html`,"text/html");
               
