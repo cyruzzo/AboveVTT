@@ -362,7 +362,39 @@ async function display_stat_block_in_container(statBlock, container, tokenId, cu
                 });
               });
             </script>
-            ${html[0].outerHTML}`;
+            ${html[0].outerHTML}
+            <script>
+              document.querySelectorAll('table').forEach((table) => {
+                if (table.nextElementSibling?.classList.contains('add-table-row')) return;
+
+                const addTableRowButton = document.createElement('button');
+                addTableRowButton.className = 'add-table-row';
+                addTableRowButton.type = 'button';
+                addTableRowButton.textContent = '+';
+                table.insertAdjacentElement('afterend', addTableRowButton);
+              });
+
+              document.addEventListener('click', (e) => {
+                const addButton = e.target.closest('.add-table-row');
+                if (!addButton) return;
+
+                e.preventDefault();
+
+                const table = addButton.previousElementSibling;
+                if (!table || table.tagName.toLowerCase() !== 'table') return;
+
+                const rowContainer = table.tBodies[0] || table;
+                const lastRow = rowContainer.rows[rowContainer.rows.length - 1];
+                if (!lastRow) return;
+
+                const newRow = lastRow.cloneNode(true);
+                newRow.querySelectorAll('td, th').forEach((cell) => {
+                  cell.innerHTML = '';
+                });
+
+                rowContainer.appendChild(newRow);
+              });
+					  </script>`;
             download(html,`${window.CAMPAIGN_INFO.name}-${datetime}-pctemplate.html`,"text/html");
               
             $(".import-loading-indicator").remove();        

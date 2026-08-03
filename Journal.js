@@ -2019,7 +2019,7 @@ class JournalManager{
 					html.find('a').attr('contenteditable', 'false');
 					html.find('.add-input').each(function(){window.JOURNAL.addTrackedInputs($(this), {noteId: id})})
 					html.find('.abovevtt-slash-command-journal').replaceWith((i, innerHTML) =>{
-						return innerHTML;
+						return `[roll]${innerHTML}[/roll]`;
 					})
 					html = `<style id='contentStyles'>
 						${self.content_styles()}			
@@ -2040,14 +2040,46 @@ class JournalManager{
 									e.target.removeAttribute('checked');
 								}
 							}
+							window.addEventListener('input', (e) => {
+								if (e.target && e.target.nodeName === 'INPUT' && e.target.type === 'number') {
+									e.target.setAttribute('value', e.target.value);
+								}
+							});
 						});
-						window.addEventListener('input', (e) => {
-							if (e.target && e.target.nodeName === 'INPUT' && e.target.type === 'number') {
-								e.target.setAttribute('value', e.target.value);
-							}
+						</script>
+					${html[0].outerHTML}			
+					<script>
+						document.querySelectorAll('table').forEach((table) => {
+							if (table.nextElementSibling?.classList.contains('add-table-row')) return;
+
+							const addTableRowButton = document.createElement('button');
+							addTableRowButton.className = 'add-table-row';
+							addTableRowButton.type = 'button';
+							addTableRowButton.textContent = '+';
+							table.insertAdjacentElement('afterend', addTableRowButton);
 						});
-					</script>
-					${html[0].outerHTML}`;
+
+						document.addEventListener('click', (e) => {
+							const addButton = e.target.closest('.add-table-row');
+							if (!addButton) return;
+
+							e.preventDefault();
+
+							const table = addButton.previousElementSibling;
+							if (!table || table.tagName.toLowerCase() !== 'table') return;
+
+							const rowContainer = table.tBodies[0] || table;
+							const lastRow = rowContainer.rows[rowContainer.rows.length - 1];
+							if (!lastRow) return;
+
+							const newRow = lastRow.cloneNode(true);
+							newRow.querySelectorAll('td, th').forEach((cell) => {
+								cell.innerHTML = '';
+							});
+
+							rowContainer.appendChild(newRow);
+						});
+					</script>`;
 					download(html,`${window.CAMPAIGN_INFO.name}-${datetime}-pctemplate.html`,"text/html");
 						
 					$(".import-loading-indicator").remove();        
@@ -4147,6 +4179,20 @@ class JournalManager{
 					display: flex;
 					align-items: center;
 					justify-content: center;  
+				}
+				.add-table-row{
+					outline: none;
+					margin-top: 0;
+					margin-bottom: 0;
+					display: block;
+					width: 100%;
+					text-align: center;
+					border: none;
+					background: none;
+					color: var(--pc-template-text-color, #999999);
+					font-weight: 800;
+					font-size: 16px;
+					line-height: 18px;
 				}
 				table {
 					width: 100%;
