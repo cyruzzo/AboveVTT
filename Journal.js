@@ -1965,7 +1965,7 @@ class JournalManager{
 		});	
 		if(note_text.find('.dnd-sheet').length>0){
 			note_text.find('a').attr('contenteditable', 'false');
-			note_container.find('.popout-button, .lockStatButton, .download_button').remove();
+			note_container.find('.popout-button, .lockStatButton, .download_button', '.upload_button').remove();
 			const lockStatButton = $(`<div class='lockStatButton' style="position: relative; display:inline-block; color: #ddd;">
 										<span title="lock buttons" class="material-symbols-outlined" style="font-size: 20px; position: relative; top: 4px;">
 										${!window.lockTemplateStatBlocks ? "lock_open_right" : "lock"}
