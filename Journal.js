@@ -1593,32 +1593,22 @@ class JournalManager{
 		    });
 		}
 	}
-
+	track_ability(key, updatedValue, noteId) {
+		if (window.JOURNAL.notes[noteId].abilityTracker === undefined) {
+			window.JOURNAL.notes[noteId].abilityTracker = {};
+		}
+		const asNumber = parseInt(updatedValue);
+		window.JOURNAL.notes[noteId].abilityTracker[key] = asNumber;
+		window.JOURNAL.persist();
+		debounceSendNote(noteId, window.JOURNAL.notes[noteId]);	
+	}
 	addTrackedInputs(target, id = {noteId: undefined, token: undefined}){
 		let numberFound = target.attr('data-number');
-		let spellName = target.attr('data-spell');
+		let spellName = target.attr('data-spell').trim();
 		const remainingText = target.hasClass('each') ? '' : `${spellName} slots remaining`
 		const {noteId, token} = id;
 
-		const track_ability = function (key, updatedValue) {
-			if(noteId != undefined){
-				if (window.JOURNAL.notes[noteId].abilityTracker === undefined) {
-					window.JOURNAL.notes[noteId].abilityTracker = {};
-				}
-				const asNumber = parseInt(updatedValue);
-				window.JOURNAL.notes[noteId].abilityTracker[key] = asNumber;
-				window.JOURNAL.persist();
-				debounceSendNote(noteId, window.JOURNAL.notes[noteId])
-			}
-			else if(token != undefined){
-				if (token.options.abilityTracker?.[spellName] >= 0) {
-					numberFound = token.options.abilityTracker[spellName]
-				} else {
-					token.track_ability(spellName, numberFound)
-				}
-				
-			}
-		}
+
 		const partyLootTable = target.closest('.party-item-table');
 		if(partyLootTable.length>0){
 			const rowNumber = target.closest('tr').index();
@@ -1635,12 +1625,13 @@ class JournalManager{
 			numberFound = window.JOURNAL.notes[noteId].abilityTracker[spellName]
 		}
 		else {
-			track_ability(spellName, numberFound)
+			window.JOURNAL.track_ability(spellName, numberFound, noteId);
 		}
+
 		const trackerTarget = token || window.JOURNAL.notes[noteId];
-		const trackFunction = noteId ? track_ability : undefined;
-		let input = createCountTracker(trackerTarget, spellName, numberFound, remainingText, "", trackFunction);
+		const trackFunction = noteId && !token ? window.JOURNAL.track_ability : undefined;
 		const playerDisabled = target.hasClass('player-disabled');
+		let input = createCountTracker(trackerTarget, spellName, numberFound, remainingText, "", trackFunction, noteId);
 		if (!window.DM && playerDisabled) {
 			input.prop('disabled', true);
 		}
@@ -1885,7 +1876,7 @@ class JournalManager{
 		}
 		note_text.append(self.notes[id].text); // valid tags are controlled by tinyMCE.init()
 		$(note_text).find('.injected-input, .added-input-desc').remove();
-		$(note_text).find('.add-input').replaceWith((i, innerHtml) => {
+		$(note_text).find('.add-input:not(.avtt-custom-tracker)').replaceWith((i, innerHtml) => {
 			return innerHtml;
 		})
 
@@ -2011,7 +2002,7 @@ class JournalManager{
 				const santizedHtml = basic_sanitize_html(window.JOURNAL.notes[id].text);
 				let html = $(`${santizedHtml}`);
 				html.find('.injected-input, .added-input-desc').remove();
-				html.find('.add-input').replaceWith((i, innerHtml) => {
+				html.find('.add-input:not(.avtt-custom-tracker)').replaceWith((i, innerHtml) => {
 					return innerHtml;
 				})
 				self.translateHtmlAndBlocks(html).then(()=>{
@@ -2341,7 +2332,7 @@ class JournalManager{
 					itemId = window.ddbConfigJson.weaponProperties.filter(d=> d.name.toLowerCase() == name.toLowerCase())[0]?.id
 				}
 				else if(itemType == 'spells'){
-					const splitUrl = url.split('/');
+					const splitUrl = url.split('spells/');
 					const name = decodeURIComponent(splitUrl[splitUrl.length-1].replaceAll('-', ' ')).replaceAll("’", "'");
 					const isLegacy = !get_avtt_setting_value('2024Tooltips');
 					let spell = window.SPELLS_CACHE.filter(d => d.definition.name.toLowerCase() == name.toLowerCase() && d.definition.isLegacy == isLegacy)
@@ -2349,12 +2340,14 @@ class JournalManager{
 						console.warn(`spell not found`, name, `isLegacy`, isLegacy);
 						spell = window.SPELLS_CACHE.filter(d => d.definition.name.toLowerCase() == name.toLowerCase())
 					}
-					if(!spell.length)
+					if(!spell.length){
 						console.warn(`spell not found`, name);
-					itemId = `${spell[0].definition.id}-${splitUrl[splitUrl.length-1]}`;
+						return;
+					}	
+					itemId = `${spell[0].definition.id}-${splitUrl[splitUrl.length-1].replace('/', '-')}`;
 				}
 				else if(itemType == 'magic-items' || itemType == 'adventuring-gear'){
-					const splitUrl = url.split('/');
+					const splitUrl = url.split(/(magic-items|adventuring-gear|equipment)\//gi);
 					const name = decodeURIComponent(splitUrl[splitUrl.length-1].replaceAll('-', ' ')).replaceAll("’", "'");
 					const isLegacy = !get_avtt_setting_value('2024Tooltips');
 					let item = window.ITEMS_CACHE.filter(d => d.name.toLowerCase() == name.toLowerCase() && d.isLegacy == isLegacy)
@@ -2362,9 +2355,11 @@ class JournalManager{
 						console.warn(`item not found`, name, `isLegacy`, isLegacy);
 						item = window.ITEMS_CACHE.filter(d => d.name.toLowerCase() == name.toLowerCase())
 					}
-					if(!item.length)
+					if(!item.length){
 						console.warn(`item not found`, name);
-					itemId = `${item[0].id}-${splitUrl[splitUrl.length-1]}`;
+						return;
+					}		
+					itemId = `${item[0].id}-${splitUrl[splitUrl.length-1].replace('/', '-')}`;
 				}
 				else{	
 					let itemPage = await $.get(url)		
@@ -2861,7 +2856,7 @@ class JournalManager{
 				const currentSpan = $(`<div>${m1}</div>`);
 				currentSpan.find('a.ignore-abovevtt-formating, .ignore-abovevtt-formating:has(a)').removeClass('ignore-abovevtt-formating');
 				const trackText = currentSpan.text().replace(/([a-zA-Z\s]+)([\d]+)/gi, function(m, m1, m2){
-					return `<span>${m1}</span><span class="add-input each" data-number="${m2}" data-spell="${m1}"></span>`
+					return `<span>${m1}</span><span class="add-input each avtt-custom-tracker" data-number="${m2}" data-spell="${m1}"></span>`
 				})
 				const children = currentSpan.find('*');
 				if (children.length>0) {
