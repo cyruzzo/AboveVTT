@@ -76,7 +76,7 @@ async function display_stat_block_in_container(statBlock, container, tokenId, cu
     container.append($html);
     if(customStatBlock || statBlock.data?.open5e == true){
       $(container).find('.injected-input, .added-input-desc').remove();
-      $(container).find('.add-input').replaceWith((i, innerHtml) => {
+      $(container).find('.add-input:not(.avtt-custom-tracker)').replaceWith((i, innerHtml) => {
         return innerHtml;
       })
       await window.JOURNAL.translateHtmlAndBlocks($html);
@@ -326,7 +326,7 @@ async function display_stat_block_in_container(statBlock, container, tokenId, cu
           const santizedHtml = basic_sanitize_html(window.JOURNAL.notes[window.TOKEN_OBJECTS[tokenId].options.statBlock].text);      
           let html = $(`${santizedHtml}`);
           html.find('.injected-input, .added-input-desc').remove();
-          html.find('.add-input').replaceWith((i, innerHtml) => {
+          html.find('.add-input:not(.avtt-custom-tracker)').replaceWith((i, innerHtml) => {
             return innerHtml;
           })
           window.JOURNAL.translateHtmlAndBlocks(html).then(()=>{
@@ -449,6 +449,17 @@ function import_pc_template_html(files, parentEle, customStatId, tokenId) {
     try {
       const sanitizedHTML = basic_sanitize_html(reader.result);
       parentEle.html(sanitizedHTML);
+      const token = window.TOKEN_OBJECTS[tokenId];
+      parentEle.find('.injected-input').each((i, ele)=>{
+        const value = ele.value;
+        const target = ele.getAttribute("data-tracker-key");
+        const targetTokenId = ele.getAttribute("data-token-id");
+        if(token && targetTokenId != undefined && targetTokenId != ''){
+          token.track_ability(target, value);
+        } else{
+          window.JOURNAL.track_ability(target, value, customStatId);
+        }
+      })
       debounceRescanStatBlock(parentEle, customStatId, tokenId);
       window.JOURNAL.notes[customStatId].text = sanitizedHTML.replaceAll(/\[(\/)?spell\]/gi, `[$1spell]`).replaceAll(/\[(\/)?magicitem\]/gi, `[$1magicItem]`).replaceAll(/\[(\/)?item\]/gi, `[$1item]`); 
       window.JOURNAL.notes[customStatId].plain = $(window.JOURNAL.notes[customStatId].text).text();
@@ -473,7 +484,7 @@ const debounceRescanStatBlock = mydebounce(async (container, noteId, tokenId) =>
   }
   $(targetRescan).html(window.JOURNAL.notes[noteId].text);
   $(container).find('.injected-input, .added-input-desc').remove();
-  $(container).find('.add-input').replaceWith((i, innerHtml) => {
+  $(container).find('.add-input:not(.avtt-custom-tracker)').replaceWith((i, innerHtml) => {
     return innerHtml;
   })
   const currScroll = targetRescan[0].scrollTop;
