@@ -1768,7 +1768,7 @@ async function create_and_place_token(listItem, hidden = undefined, specificImag
 
 
 
-
+    
 
     options.itemType = listItem.type;
     options.itemId = listItem.id;
@@ -3057,7 +3057,7 @@ function display_aoe_token_configuration_modal(listItem, placedToken = undefined
         customization.setTokenOption('offset.x', offsetX)
         persist_token_customization(customization);
         decorate_modal_images(sidebarPanel, listItem, placedToken);
-    });
+    }, "Adjust the X position of the image. Larger values moves the image right, smaller left.");
     inputWrapper.append(offsetXWrapper);
 
     let startingOffsetY = targetOptions.offset?.y ?? 0;
@@ -3074,7 +3074,7 @@ function display_aoe_token_configuration_modal(listItem, placedToken = undefined
         customization.setTokenOption('offset.y', offsetY)
         persist_token_customization(customization);
         decorate_modal_images(sidebarPanel, listItem, placedToken);
-    });
+    }, "Adjust the Y position of the image. Larger values moves the image up, smaller down.");
     inputWrapper.append(offsetYWrapper);
 
 
@@ -3083,7 +3083,7 @@ function display_aoe_token_configuration_modal(listItem, placedToken = undefined
         customization.setTokenOption("imageZoom", imageZoom);
         persist_token_customization(customization);
         decorate_modal_images(sidebarPanel, listItem, placedToken);  
-    });
+    }, "This will adjust the zoom of the image. Different clipping will happen based on token style.");
     inputWrapper.append(imageZoomWrapper);
 
     let startingTokenFlip = targetOptions.tokenFlip ?? 0;
@@ -3099,7 +3099,7 @@ function display_aoe_token_configuration_modal(listItem, placedToken = undefined
         customization.setTokenOption("imageOpacity", opacity);
         persist_token_customization(customization);
         decorate_modal_images(sidebarPanel, listItem, placedToken);
-    });
+    }, "This will adjust the image opacity. Accepted values between 0 and 1, 0 being fully transparent.");
     inputWrapper.append(opacityWrapper);
 
     let startingHeading = targetOptions.imageHeading ?? 0;
@@ -3107,7 +3107,7 @@ function display_aoe_token_configuration_modal(listItem, placedToken = undefined
         customization.setTokenOption("imageHeading", heading);
         persist_token_customization(customization);
         decorate_modal_images(sidebarPanel, listItem, placedToken);
-    });
+    }, "This will adjust the default image direction/rotation. This affects where the 'look here' rotation and arrow key rotation uses as the token facing direction. Default token facing is down.");
     inputWrapper.append(headingWrapper);
 
     // border color
