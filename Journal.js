@@ -2175,16 +2175,16 @@ class JournalManager{
 			}
 			const addMonsterButton = function(){
 				$self.css('display', 'inline-block')
-				const monsterId = $self.attr('data-tooltip-href').match(/monsters\/(\d+)/i)?.[1];
+				const monsterId = $self.attr('data-tooltip-href')?.match(/monsters\/(\d+)/i)?.[1];
 				if(monsterId === undefined) return;
 				$self.attr('data-monsterid', monsterId);
 				monsterIds.push(monsterId);
 				window.JOURNAL.addTokenDragToMonsterLink(self);
 			}
+			if(self.href.match(/\/spells\/[0-9]|\/magic-items\/[0-9]|\/monsters\/[0-9]|\/sources\//gi)){
+				$self.attr('data-moreinfo', `${self.href}`);
+			}
 			if(!$self.hasClass('monster-tooltip')){
-				if(self.href.match(/\/spells\/[0-9]|\/magic-items\/[0-9]|\/monsters\/[0-9]|\/sources\//gi)){
-					$self.attr('data-moreinfo', `${self.href}`);
-				}
 				window.JOURNAL.getDataTooltip(self.href, function(url, typeClass){
 					const matched = url.match(/\/(\d+)[^/]*-tooltip(\?.*)?$/i)
 					if(matched){
@@ -4219,7 +4219,7 @@ class JournalManager{
 					font-weight: bold;
 					text-align: left;
 					text-transform: uppercase;
-					font-size: 8.5px;
+					font-size: 11px;
 				}
 
 				.ability-score-field {
