@@ -3932,7 +3932,7 @@ function build_adjustments_flyout_menu(tokenIds) {
 				if(persist)
 					token.place_sync_persist();
 			});
-		});
+		}, "Adjust the X position of the image. Larger values moves the image right, smaller left.");
 		body.append(offsetXWrapper);
 
 		let tokenOffsetY = tokens.map(t => t.options.offset?.y);
@@ -3952,7 +3952,7 @@ function build_adjustments_flyout_menu(tokenIds) {
 				if(persist)
 					token.place_sync_persist();
 			});
-		});
+		}, "Adjust the Y position of the image. Larger values moves the image up, smaller down.");
 		body.append(offsetYWrapper);
 
 
@@ -3970,7 +3970,7 @@ function build_adjustments_flyout_menu(tokenIds) {
 				if(persist)
 					token.place_sync_persist();
 			});
-		});
+		}, "This will adjust the zoom of the image. Different clipping will happen based on token style.");
 		body.append(imageZoomWrapper);
 
 
@@ -3984,7 +3984,7 @@ function build_adjustments_flyout_menu(tokenIds) {
 				if(persist)
 					token.place_sync_persist();
 			});
-		});
+		}, "This will adjust the image opacity. Accepted values between 0 and 1, 0 being fully transparent.");
 		body.append(opacityWrapper);
 
 		let tokenHeading = tokens.map(t => t.options.imageHeading);
@@ -3997,7 +3997,7 @@ function build_adjustments_flyout_menu(tokenIds) {
 				if(persist)
 					token.place_sync_persist();
 			});
-		});
+		}, "This will adjust the default image direction/rotation. This affects where the 'look here' rotation and arrow key rotation uses as the token facing direction. Default token facing is down.");
 		body.append(headingWrapper);
 
 		let tokFlip = tokens.map(t => t.options?.tokenFlip);
@@ -4405,8 +4405,8 @@ function build_token_scale_input(startingScale, tokens, name, min=0.1, max=10, s
 	return imageWrapper;
 }
 
-function build_token_num_input(startingScale=1, tokens, name, min=0.1, max=10, step=0.1, didUpdate) {
-	let imageInput = $(`<input class="image-input-number" type="number" max="${max}" min="${min}" step="${step}" title="Token Image Scale" placeholder="${startingScale}" name="Image Scale">`);
+function build_token_num_input(startingScale=1, tokens, name, min=0.1, max=10, step=0.1, didUpdate, title="Token Image Scale") {
+	let imageInput = $(`<input class="image-input-number" type="number" max="${max}" min="${min}" step="${step}" title="${title}" placeholder="${startingScale}" name="Image Scale">`);
 
 	imageInput.val(startingScale);
 
