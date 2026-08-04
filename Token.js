@@ -3555,6 +3555,7 @@ class Token {
 			return;
 		}
 		this.options.abilityTracker[key] = asNumber;
+		this.sync();
 	}
 	// returns the stored value as a number or returns defaultValue
 	get_tracked_ability(key, defaultValue) {

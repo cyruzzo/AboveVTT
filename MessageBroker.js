@@ -2227,9 +2227,12 @@ class MessageBroker {
 
 
 		const isChatEnabled = is_encounters_page() || is_characters_page() || is_campaign_page();
+		const imageUrl = new URL(data.img);
+		const decodedPath = decodeURIComponent(imageUrl.pathname);
+		imageUrl.pathname = encodeURI(decodedPath);
 
 		//Security logic to prevent content being sent which can execute JavaScript.
-		let image = `<img class="${isChatEnabled ? 'tss-1e4a2a1-AvatarPortrait' : 'Avatar_AvatarPortrait__3cq6B'}" src="${encodeURI(data.img)}" alt="">`;
+		let image = `<img class="${isChatEnabled ? 'tss-1e4a2a1-AvatarPortrait' : 'Avatar_AvatarPortrait__3cq6B'}" src="${imageUrl.toString()}" alt="">`;
 		let player = `<span class="tss-1tj70tb-Sender" title="${data.player}">${data.player}</span>`;
 
 		player = DOMPurify.sanitize( player,{ALLOWED_TAGS: ['span']});
