@@ -424,10 +424,12 @@ async function display_stat_block_in_container(statBlock, container, tokenId, cu
 			});
       container.off('click.addRow').on('click.addRow', '.add-table-row', function (e) {
 				e.preventDefault();
-				const table = $(e.target).prev('table');
-				const newRow = table.find('tr:last').clone();
+			  const table = $(e.target).prev('table');
+				const tableBody = $(table).find('tbody');
+				const targetContainer = tableBody.length>0 ? tableBody : table;
+				const newRow = targetContainer.find('>tr:last').clone();
 				newRow.find('td, th').html('');
-				table.append(newRow);
+				targetContainer.append(newRow);
 			});
 	
       
@@ -592,10 +594,12 @@ const debounceRescanStatBlock = mydebounce(async (container, noteId, tokenId) =>
   });
   container.off('click.addRow').on('click.addRow', '.add-table-row', function (e) {
     e.preventDefault();
-    const table = $(e.target).prev('table');
-    const newRow = table.find('tr:last').clone();
-    newRow.find('td, th').html('');
-    table.append(newRow);
+			const table = $(e.target).prev('table');
+      const tableBody = $(table).find('tbody');
+      const targetContainer = tableBody.length>0 ? tableBody : table;
+      const newRow = targetContainer.find('>tr:last').clone();
+      newRow.find('td, th').html('');
+      targetContainer.append(newRow);
   });
 
   $(container).find('.avtt-stat-block-container, .note-text')[0].scrollTop = currScroll;
