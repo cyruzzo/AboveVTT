@@ -3578,7 +3578,12 @@ body .note-visibility-toggle-container {
     padding: 10px;
     width:80%;
 }
-
+svg.ritual-icon-svg {
+    width: 10px;
+    height: auto;
+    margin-left:3px;
+    vertical-align:middle;
+}
 body .tooltip-hover, body .tooltip-hover:hover, body .tooltip-hover:focus, body .tooltip-hover:active, body .tooltip-hover:visited{
     color: var(--compendium-action-tooltip,var(--compendium-default-tooltip,#11884c)) !important
 }

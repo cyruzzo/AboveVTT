@@ -2220,6 +2220,9 @@ function getNonLegacySpellId(options){
       return newSpell[0].definition.id;
     } else if(options.id){
         const spell = window.SPELLS_CACHE.filter(d=> d.definition.id == options.id);
+        if(!spell[0]){
+          return options.id;
+        }
         const name = spell[0].definition.name.toLowerCase();
         newSpell = window.SPELLS_CACHE.filter(d=> d.definition.name.toLowerCase() == name && (!d.definition.isLegacy || d.definition.isHomebrew));
         options.tooltipName = name;
@@ -2252,8 +2255,8 @@ function getNonLegacyItemId(options){
     if(!newItem[0]){
       console.warn('Item does not exist', options);
       return false;
+      return newItem[0].id;
     }
-    return newItem[0].id;
 }
 const fetch_tooltip = mydebounce(async (dataTooltipHref, name, callback, callbackTarget) => {
     // dataTooltipHref will look something like this `//www.dndbeyond.com/spells/2329-tooltip?disable-webm=1&disable-webm=1`
@@ -2382,12 +2385,12 @@ const fetch_tooltip = mydebounce(async (dataTooltipHref, name, callback, callbac
         const type = parts[idIndex - 1] == 'equipment' ? 'adventuring-gear' : parts[idIndex - 1];
         if(get_avtt_setting_value('2024Tooltips')){
           if(type == 'spells')
-            id = getNonLegacySpellId({id});
+            id= getNonLegacySpellId({id});
           else if(type == 'magic-items' || type == 'adventuring-gear')
             id = getNonLegacyItemId({id});
         }
         const typeAndId = `${type}/${id}`;
-
+        const isRitual = type == 'spells' ? window.SPELLS_CACHE.filter(d=> d.definition.id == id)[0]?.definition.ritual : false;
         const existingJson = window.tooltipCache[typeAndId];
         if (existingJson !== undefined) {
           console.log("fetch_tooltip existingJson", existingJson);
@@ -2422,8 +2425,8 @@ const fetch_tooltip = mydebounce(async (dataTooltipHref, name, callback, callbac
             }
 
 
-            window.tooltipCache[typeAndId] = responseJSON;
-            callback(responseJSON, callbackTarget);
+            window.tooltipCache[typeAndId] = {...responseJSON, isRitual};
+            callback(window.tooltipCache[typeAndId], callbackTarget);
           },
           error: function (error) {
             console.warn("fetch_tooltip error - attmpting more info link for homebrew/sources", error);
@@ -2511,7 +2514,7 @@ function display_tooltip(tooltipJson, container, hoverEvent, tokenId=undefined) 
 
 
         build_and_display_sidebar_flyout(hoverEvent.clientY, function (flyout) {
-            setup_tooltip_flyout(flyout, tooltipHtmlString, ['tooltip-flyout'], hoverEvent, {id: tokenId, container});
+            setup_tooltip_flyout(flyout, tooltipHtmlString, ['tooltip-flyout'], hoverEvent, {id: tokenId, container, isRitual: tooltipJson.isRitual});
             flyout.css("background-color", "#fff");
         });
     }

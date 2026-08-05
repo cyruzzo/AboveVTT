@@ -43,6 +43,19 @@ class DDBApi {
     }
 
   }
+  static async fetchSpellsJsonWithToken(){
+    if(window.SPELLS_CACHE)
+        return window.SPELLS_CACHE;
+    const classes = await DDBApi.fetchJsonWithToken(`https://character-service.dndbeyond.com/character/v5/game-data/classes?campaignId=${window.gameId}&sharingSetting=2`);
+    let spells = [];
+    for(let charClass of classes.data){
+        const id = charClass.id;
+        const classSpells = await DDBApi.fetchJsonWithToken(`https://character-service.dndbeyond.com/character/v5/game-data/spells?campaignId=${window.gameId}&classId=${id}&classLevel=20&sharingSetting=2`);    
+        spells = [...spells, ...classSpells.data]
+    }
+    window.SPELLS_CACHE = [...new Map(spells.map(item => [item.definition.id, item])).values()];
+    return window.SPELLS_CACHE;
+}
 
   static async fetchJsonWithToken(url, extraConfig = {}) {
     const token = await DDBApi.#refreshToken();
