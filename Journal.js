@@ -1965,7 +1965,7 @@ class JournalManager{
 		});	
 		if(note_text.find('.dnd-sheet').length>0){
 			note_text.find('a').attr('contenteditable', 'false');
-			note_container.find('.popout-button, .lockStatButton, .download_button', '.upload_button').remove();
+			note_container.find('.popout-button, .lockStatButton, .download_button, .upload_button').remove();
 			const lockStatButton = $(`<div class='lockStatButton' style="position: relative; display:inline-block; color: #ddd;">
 										<span title="lock buttons" class="material-symbols-outlined" style="font-size: 20px; position: relative; top: 4px;">
 										${!window.lockTemplateStatBlocks ? "lock_open_right" : "lock"}
@@ -2185,7 +2185,7 @@ class JournalManager{
 				$self.attr('data-moreinfo', `${self.href}`);
 			}
 			if(!$self.hasClass('monster-tooltip')){
-				window.JOURNAL.getDataTooltip(self.href, function(url, typeClass){
+				window.JOURNAL.getDataTooltip(self.href, function(url, typeClass, isRitual){
 					const matched = url.match(/\/(\d+)[^/]*-tooltip(\?.*)?$/i)
 					if(matched){
 						const tooltipId = matched[1];
@@ -2196,6 +2196,10 @@ class JournalManager{
 						}
 					}
 					$self.attr('data-tooltip-href', url);
+					if(isRitual){
+						const ritualIcon = $(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12.17 14.83" class="ritual-icon-svg"><path fill="var(--font-color, #111)" d="M3,0H1.22A1.23,1.23,0,0,0,0,1.24V13.6a1.23,1.23,0,0,0,1.22,1.24H11.41a.77.77,0,0,0,.76-.77c0-.43-.34-1-.76-1H2.13c-.33,0-.61,0-.61-.34s.27-1,.61-1H11a1.23,1.23,0,0,0,1.22-1.24V1.24A1.23,1.23,0,0,0,11,0H3.08"></path><path fill="var(--background-color, #FFF)" d="M4.35,2.23A11.66,11.66,0,0,1,6.2,2.09a3.12,3.12,0,0,1,2.08.54A1.7,1.7,0,0,1,8.86,4,1.8,1.8,0,0,1,7.64,5.67v0A1.72,1.72,0,0,1,8.58,7a13.32,13.32,0,0,0,.53,1.88H7.84a9.62,9.62,0,0,1-.45-1.59c-.19-.88-.51-1.16-1.21-1.18H5.57V8.88H4.35Zm1.22,3H6.3c.83,0,1.35-.44,1.35-1.11S7.12,3,6.33,3a3.53,3.53,0,0,0-.76.06Z"></path></svg>`);         
+						$self.append(ritualIcon)
+					}
 					
 					$self.toggleClass(`${typeClass}-tooltip`, true);
 					addMonsterButton();
@@ -2316,7 +2320,7 @@ class JournalManager{
 		itemType = itemType == 'equipment' ? 'adventuring-gear' : itemType
 		if(itemId == 0 || (['spells', 'magic-items', 'adventuring-gear'].includes(itemType) && get_avtt_setting_value('2024Tooltips'))){
 			if(window.spellIdCache[url]){
-				callback(`www.dndbeyond.com/${window.spellIdCache[url].type}/${window.spellIdCache[url].id}-tooltip?disable-webm=1`, itemType.slice(0, -1));	
+				callback(`www.dndbeyond.com/${window.spellIdCache[url].type}/${window.spellIdCache[url].id}-tooltip?disable-webm=1`, itemType.slice(0, -1), window.spellIdCache[url].isRitual);	
 				return;
 			}
 			else if(itemId>0 && ['spells', 'magic-items', 'adventuring-gear'].includes(itemType)){       
@@ -2376,8 +2380,9 @@ class JournalManager{
 						
 			}	
 		}
-		window.spellIdCache[url] = {id: itemId, type: itemType};
-		callback(`www.dndbeyond.com/${itemType}/${itemId}-tooltip?disable-webm=1`, itemType.slice(0, -1));
+		const isRitual = itemType == 'spells' ? window.SPELLS_CACHE.filter(d=> d.definition.id == itemId)[0]?.definition.ritual : false;
+		window.spellIdCache[url] = {id: itemId, type: itemType, isRitual};
+		callback(`www.dndbeyond.com/${itemType}/${itemId}-tooltip?disable-webm=1`, itemType.slice(0, -1), isRitual);
 	}
 	async getNotes(){
 	for(let note in window.JOURNAL.notes){
@@ -4216,10 +4221,7 @@ class JournalManager{
 					vertical-align: middle;
 				}
 				tbody tr td:first-child {
-					font-weight: bold;
 					text-align: left;
-					text-transform: uppercase;
-					font-size: 11px;
 				}
 
 				.ability-score-field {
@@ -4857,13 +4859,8 @@ class JournalManager{
 							<div class="main-container">
 								<div class="left-column">
 									<div class="abilities-table-container">
-										<div class="section-title">
-											<label for="template-heroic-inspiration">
-												<span class="ignore-abovevtt-formating">Heroic Inspiration</span>
-											</label>						
-										</div>
-										<div class="box-field heroic-inspiration">
-											<input id="template-heroic-inspiration" type="checkbox"/>
+										<div class="section-title"><span class="ignore-abovevtt-formating">Heroic Inspiration</span></div>
+										<div class="box-field heroic-inspiration"><input id="template-heroic-inspiration" type="checkbox" />
 										</div>
 									</div>
 									<div class="abilities-table-container">
@@ -4883,37 +4880,43 @@ class JournalManager{
 														<td>Str</td>
 														<td><span contenteditable="true">+0</span></td>
 														<td><span contenteditable="true">+0</span></td>
-														<td><span class="box-field ability-score-field" contenteditable="true">10</span></td>
+														<td><span class="box-field ability-score-field" contenteditable="true">10</span>
+														</td>
 													</tr>
 													<tr>
 														<td>Dex</td>
 														<td><span contenteditable="true">+0</span></td>
 														<td><span contenteditable="true">+0</span></td>
-														<td><span class="box-field ability-score-field" contenteditable="true">10</span></td>
+														<td><span class="box-field ability-score-field" contenteditable="true">10</span>
+														</td>
 													</tr>
 													<tr>
 														<td>Con</td>
 														<td><span contenteditable="true">+0</span></td>
 														<td><span contenteditable="true">+0</span></td>
-														<td><span class="box-field ability-score-field" contenteditable="true">10</span></td>
+														<td><span class="box-field ability-score-field" contenteditable="true">10</span>
+														</td>
 													</tr>
 													<tr>
 														<td>Int</td>
 														<td><span contenteditable="true">+0</span></td>
 														<td><span contenteditable="true">+0</span></td>
-														<td><span class="box-field ability-score-field" contenteditable="true">10</span></td>
+														<td><span class="box-field ability-score-field" contenteditable="true">10</span>
+														</td>
 													</tr>
 													<tr>
 														<td>Wis</td>
 														<td><span contenteditable="true">+0</span></td>
 														<td><span contenteditable="true">+0</span></td>
-														<td><span class="box-field ability-score-field" contenteditable="true">10</span></td>
+														<td><span class="box-field ability-score-field" contenteditable="true">10</span>
+														</td>
 													</tr>
 													<tr>
 														<td>Cha</td>
 														<td><span contenteditable="true">+0</span></td>
 														<td><span contenteditable="true">+0</span></td>
-														<td><span class="box-field ability-score-field" contenteditable="true">10</span></td>
+														<td><span class="box-field ability-score-field" contenteditable="true">10</span>
+														</td>
 													</tr>
 												</tbody>
 											</table>
@@ -5065,13 +5068,24 @@ class JournalManager{
 											</div>
 										</div>
 										<div class="hp-row">
-											<div class="col"><span class="label">Temporary Hit Points</span>
+											<div class="col"><span class="label"><a class="tooltip-hover condition-tooltip"
+														style="display: inline-block;" contenteditable="false"
+														href="https://www.dndbeyond.com/compendium/rules/basic-rules/combat#Temporary Hit Points"
+														target="_blank"
+														data-tooltip-json-href="//www.dndbeyond.com/conditions/76/tooltip-json"
+														data-tooltip-href="//www.dndbeyond.com/rules/76-tooltip">Temporary Hit
+														Points</a></span>
 												<div class="box-field" contenteditable="true">&nbsp;</div>
 											</div>
 											<div class="col">
 												<div class="hp-subgrid">
-													<div><span class="label">Hit Dice</span>
-														<div class="box-field" contenteditable="true">1d10</div>
+													<div><span class="label"><a class="tooltip-hover condition-tooltip"
+																style="display: inline-block;" contenteditable="false"
+																href="https://www.dndbeyond.com/compendium/rules/basic-rules/combat#Hit Dice"
+																target="_blank"
+																data-tooltip-json-href="//www.dndbeyond.com/conditions/39/tooltip-json"
+																data-tooltip-href="//www.dndbeyond.com/rules/39-tooltip">Hit Dice</a></span>
+														<div class="box-field" contenteditable="true"><input type="checkbox" /> 1d10</div>
 													</div>
 													<div><span class="label">Death Saves</span>
 														<div class="box-field" contenteditable="true">&nbsp;</div>
@@ -5102,13 +5116,13 @@ class JournalManager{
 													<tr>
 														<td contenteditable="true">Handaxe</td>
 														<td contenteditable="true">+0</td>
-														<td contenteditable="true">1d6 slashing</td>
-														<td contenteditable="true">[wprop]Light[/wprop], [wprop]Thrown [/wprop](20/60)</td>
+														<td contenteditable="true">(1d6) slashing</td>
+														<td contenteditable="true">[wprop]Light[/wprop], [wprop]Thrown[/wprop](20/60)</td>
 													</tr>
 													<tr>
-														<td contenteditable="true">&nbsp;[spell]Acid Splash[/spell]</td>
+														<td contenteditable="true">[spell]Acid Splash[/spell]</td>
 														<td contenteditable="true">10 DEX</td>
-														<td contenteditable="true">&nbsp;1d6 acid</td>
+														<td contenteditable="true">(1d6) acid</td>
 														<td contenteditable="true">5-foot-radius Sphere</td>
 													</tr>
 													<tr>
@@ -5133,93 +5147,312 @@ class JournalManager{
 											</table>
 										</div>
 									</div>
-									<div class="container-block">
-										<div class="section-title">Features &amp; Traits</div>
-										<div class="features-field" contenteditable="true">- Darkvision: 60 ft range.</div>
+									<div class="bio-block">
+										<div class="section-title">Spellcasting Notes / Summary</div>
+										<div class="spellcasting-field" contenteditable="true">Spellcasting. Spell save DC 10, +0 to hit
+											with spell attacks<br /> <br />Cantrips (at will): acid splash, light, mage hand,
+											prestidigitation<br /><br />1st level (2 slots): detect magic, mage armor<br />
+											<p>&nbsp;</p>
+										</div>
 									</div>
 									<div class="container-block">
-										<div class="section-title">Equipment</div>
-										<div class="equipment-field" contenteditable="true">[magicItem]Dagger of Venom[/magicItem],
-											[magicItem]Cloak of Protection[/magicItem]</div>
+										<div class="section-title">Features &amp; Traits</div>
+										<div class="features-field" contenteditable="true">- Darkvision: 60 ft range.&nbsp;</div>
 									</div>
 								</div>
 							</div>
 						</div>
 						<div class="dnd-page">
 							<div class="page2-grid">
-									<div class="col">
-										<div class="bio-block"><div class="section-title">Magic Item Attunement (3 Slots Available)</div>
-											<div class="attunement-content" contenteditable="true">
-												<div style="margin-bottom: 2px;"><input checked="checked" type="checkbox" /> [magicItem]Cloak of
-													Protection[/magicItem]</div>
-												<div style="margin-bottom: 2px;"><input type="checkbox" /> Empty Slot</div>
-												<div><input type="checkbox" /> Empty Slot</div>
-											</div>
-										</div>
-										<div class="bio-block"><div class="section-title">Additional Features &amp; Traits</div>
-											<div class="bio-traits-add" contenteditable="true">&nbsp;</div>
-										</div>
-										<div class="bio-block"><div class="section-title">Character Appearance</div>
-											<div class="bio-appearance" contenteditable="true">&nbsp;</div>
-										</div>
-										<div class="bio-block"><div class="section-title">Character Backstory</div>
-											<div class="bio-backstory" contenteditable="true">&nbsp;</div>
+								<div class="col">
+									<div class="bio-block">
+										<div class="section-title">Magic Item Attunement (3 Slots Available)</div>
+										<div class="attunement-content" contenteditable="true">
+											<div style="margin-bottom: 2px;"><input checked="checked"
+													type="checkbox" />&nbsp;[magicItem]Cloak of Protection[/magicItem]</div>
+											<div style="margin-bottom: 2px;"><input type="checkbox" /> Empty Slot</div>
+											<div><input type="checkbox" /> Empty Slot</div>
 										</div>
 									</div>
-									<div class="col">
-										<div class="bio-block"><div class="section-title">Treasure &amp; Currency</div>
-											<div class="currency-container">
-												<div class="coin-slot">CP:
-													<div class="coin-input" contenteditable="true">&nbsp;</div>
-												</div>
-												<div class="coin-slot">SP:
-													<div class="coin-input" contenteditable="true">&nbsp;</div>
-												</div>
-												<div class="coin-slot">EP:
-													<div class="coin-input" contenteditable="true">&nbsp;</div>
-												</div>
-												<div class="coin-slot">GP:
-													<div class="coin-input" contenteditable="true">&nbsp;</div>
-												</div>
-												<div class="coin-slot">PP:
-													<div class="coin-input" contenteditable="true">&nbsp;</div>
-												</div>
-											</div>
-											<div class="treasure-field" contenteditable="true">&nbsp;</div>
-										</div>
-									<div class="bio-block"><div class="section-title">Spellcasting Notes / Summary</div>
-										<div class="spellcasting-field" contenteditable="true">Spellcasting. Spell save DC 10, +0 to hit
-											with spell attacks<br />&nbsp;<br />Cantrips (at will): acid splash, light, mage hand,
-											prestidigitation<br /><br />1st level (2 slots): detect magic, mage armor
-											<p>&nbsp;</p>
-										</div>
+									<div class="bio-block">
+										<div class="section-title">Additional Features &amp; Traits</div>
+										<div class="bio-traits-add" contenteditable="true">&nbsp;</div>
+									</div>
+									<div class="bio-block">
+										<div class="section-title">Character Appearance</div>
+										<div class="bio-appearance" contenteditable="true">&nbsp;</div>
+									</div>
+									<div class="bio-block">
+										<div class="section-title">Character Backstory</div>
+										<div class="bio-backstory" contenteditable="true">&nbsp;</div>
 									</div>
 									<div class="traits-grid">
-										<div class="bio-block"><div class="section-title">Personality Traits</div>
+										<div class="bio-block">
+											<div class="section-title">Personality Traits</div>
 											<div class="trait-box-field" contenteditable="true">&nbsp;</div>
 										</div>
-										<div class="bio-block"><div class="section-title">Ideals</div>
+										<div class="bio-block">
+											<div class="section-title">Ideals</div>
 											<div class="trait-box-field" contenteditable="true">&nbsp;</div>
 										</div>
-										<div class="bio-block"><div class="section-title">Bonds</div>
+										<div class="bio-block">
+											<div class="section-title">Bonds</div>
 											<div class="trait-box-field" contenteditable="true">&nbsp;</div>
 										</div>
-										<div class="bio-block"><div class="section-title">Flaws</div>
+										<div class="bio-block">
+											<div class="section-title">Flaws</div>
 											<div class="trait-box-field" contenteditable="true">&nbsp;</div>
 										</div>
 									</div>
-									<div class="bio-block"><div class="section-title">Organization &amp; Allies</div>
+									<div class="bio-block">
+										<div class="section-title">Organization &amp; Allies</div>
 										<div class="bio-allies" contenteditable="true">&nbsp;</div>
+									</div>
+								</div>
+								<div class="col">
+									<div class="bio-block">
+										<div class="section-title">Treasure &amp; Currency</div>
+										<div class="currency-container">
+											<div class="coin-slot">CP:
+												<div class="coin-input" contenteditable="true">&nbsp;</div>
+											</div>
+											<div class="coin-slot">SP:
+												<div class="coin-input" contenteditable="true">&nbsp;</div>
+											</div>
+											<div class="coin-slot">EP:
+												<div class="coin-input" contenteditable="true">&nbsp;</div>
+											</div>
+											<div class="coin-slot">GP:
+												<div class="coin-input" contenteditable="true">&nbsp;</div>
+											</div>
+											<div class="coin-slot">PP:
+												<div class="coin-input" contenteditable="true">&nbsp;</div>
+											</div>
+										</div>
+										<div class="treasure-field" contenteditable="true">&nbsp;</div>
+									</div>
+									<div class="container-block">
+										<div class="section-title">Equipment</div>
+										<div class="equipment-field" contenteditable="true">
+											<table>
+												<thead>
+													<tr>
+														<th>Name</th>
+														<th>Weight</th>
+														<th>QTY</th>
+														<th>Cost (GP)</th>
+														<th>Notes</th>
+													</tr>
+												</thead>
+												<tbody>
+													<tr>
+														<td>[magicItem]Cloak of Protection[/magicItem]</td>
+														<td>&nbsp;</td>
+														<td>1</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+													</tr>
+													<tr>
+														<td>[magicItem]Dagger of Venom[/magicItem]</td>
+														<td>1 lbs</td>
+														<td>1</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+													</tr>
+													<tr>
+														<td>[item]Rope[/item]</td>
+														<td>5 lbs</td>
+														<td>50 ft</td>
+														<td>1</td>
+														<td>&nbsp;</td>
+													</tr>
+													<tr>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+													</tr>
+													<tr>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+													</tr>
+													<tr>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+													</tr>
+													<tr>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+													</tr>
+													<tr>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+													</tr>
+													<tr>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+													</tr>
+													<tr>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+													</tr>
+													<tr>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+													</tr>
+													<tr>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+													</tr>
+													<tr>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+													</tr>
+													<tr>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+													</tr>
+													<tr>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+													</tr>
+													<tr>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+													</tr>
+													<tr>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+													</tr>
+													<tr>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+													</tr>
+													<tr>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+													</tr>
+													<tr>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+													</tr>
+													<tr>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+													</tr>
+													<tr>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+													</tr>
+													<tr>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+													</tr>
+													<tr>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+													</tr>
+													<tr>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+													</tr>
+													<tr>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+													</tr>
+													<tr>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+													</tr>
+													<tr>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+													</tr>
+												</tbody>
+											</table>
+										</div>
 									</div>
 								</div>
 							</div>
 						</div>
 						<div class="dnd-page">
-								<div class="col">
+							<div class="col">
 								<div class="notes-block">
-										<div class="section-title">Notes</div>
-										<div class="notes-field" contenteditable="true"></div>
-									</div>
+									<div class="section-title">Notes</div>
+									<div class="notes-field" contenteditable="true">&nbsp;</div>
 								</div>
 							</div>
 						</div>
