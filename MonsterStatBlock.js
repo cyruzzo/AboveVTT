@@ -2376,7 +2376,14 @@ const fetch_tooltip = mydebounce(async (dataTooltipHref, name, callback, callbac
             id = getNonLegacyItemId({id});
         }
         const typeAndId = `${type}/${id}`;
-        const isRitual = type == 'spells' ? window.SPELLS_CACHE.filter(d=> d.definition.id == id)[0]?.definition.ritual : false;
+       
+        const currSpell = type == 'spells' ? window.SPELLS_CACHE.filter(d=> d.definition.id == id)[0]?.definition : false;
+        let isRitual, componentText;
+        if(currSpell){
+          isRitual = currSpell.ritual ?? false;
+          componentText = currSpell.componentsDescription ?? '';
+        }
+       
         const existingJson = window.tooltipCache[typeAndId];
         if (existingJson !== undefined) {
           console.log("fetch_tooltip existingJson", existingJson);
@@ -2411,7 +2418,7 @@ const fetch_tooltip = mydebounce(async (dataTooltipHref, name, callback, callbac
             }
 
 
-            window.tooltipCache[typeAndId] = {...responseJSON, isRitual};
+            window.tooltipCache[typeAndId] = {...responseJSON, isRitual, componentText};
             callback(window.tooltipCache[typeAndId], callbackTarget);
           },
           error: function (error) {
@@ -2500,7 +2507,7 @@ function display_tooltip(tooltipJson, container, hoverEvent, tokenId=undefined) 
 
 
         build_and_display_sidebar_flyout(hoverEvent.clientY, function (flyout) {
-            setup_tooltip_flyout(flyout, tooltipHtmlString, ['tooltip-flyout'], hoverEvent, {id: tokenId, container, isRitual: tooltipJson.isRitual});
+            setup_tooltip_flyout(flyout, tooltipHtmlString, ['tooltip-flyout'], hoverEvent, {id: tokenId, container, isRitual: tooltipJson.isRitual, componentText: tooltipJson.componentText});
             flyout.css("background-color", "#fff");
         });
     }
