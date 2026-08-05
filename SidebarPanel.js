@@ -3288,9 +3288,12 @@ async function setup_tooltip_flyout(flyout, tooltipHtmlString, classes = [], eve
     const ritualIcon = $(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12.17 14.83" class="ritual-icon-svg"><path fill="var(--font-color, #111)" d="M3,0H1.22A1.23,1.23,0,0,0,0,1.24V13.6a1.23,1.23,0,0,0,1.22,1.24H11.41a.77.77,0,0,0,.76-.77c0-.43-.34-1-.76-1H2.13c-.33,0-.61,0-.61-.34s.27-1,.61-1H11a1.23,1.23,0,0,0,1.22-1.24V1.24A1.23,1.23,0,0,0,11,0H3.08"></path><path fill="var(--background-color, #FFF)" d="M4.35,2.23A11.66,11.66,0,0,1,6.2,2.09a3.12,3.12,0,0,1,2.08.54A1.7,1.7,0,0,1,8.86,4,1.8,1.8,0,0,1,7.64,5.67v0A1.72,1.72,0,0,1,8.58,7a13.32,13.32,0,0,0,.53,1.88H7.84a9.62,9.62,0,0,1-.45-1.59c-.19-.88-.51-1.16-1.21-1.18H5.57V8.88H4.35Zm1.22,3H6.3c.83,0,1.35-.44,1.35-1.11S7.12,3,6.33,3a3.53,3.53,0,0,0-.76.06Z"></path></svg>`);         
     tooltipHtml.find('[class*="-castingtime"]>[class*="-value"]').append(ritualIcon);
   }
+  if(options.componentText != ''){
+    tooltipHtml.find('[class*="body-statblock-item-components"]').append(`<p style="margin:0; font-size:11px; opacity:0.8">${options.componentText}</p>`)
+  }
 
   flyout.append(tooltipHtml);
-
+  tooltipHtmlString = tooltipHtml[0].outerHTML;
   let sendToGamelogButton = $(`<a class="ddbeb-button" href="#">Send To Gamelog</a>`);
   sendToGamelogButton.css({ "float": "right" });
   sendToGamelogButton.on("click", function(ce) {
