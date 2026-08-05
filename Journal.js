@@ -1966,7 +1966,7 @@ class JournalManager{
 		if(note_text.find('.dnd-sheet').length>0){
 			note_text.find('a').attr('contenteditable', 'false');
 			note_container.find('.popout-button, .lockStatButton, .download_button, .upload_button').remove();
-			const lockStatButton = $(`<div class='lockStatButton' style="position: relative; display:inline-block; color: #ddd;">
+			const lockStatButton = $(`<div class='lockStatButton' style="cursor: pointer; position: relative; display:inline-block; color: #ddd;">
 										<span title="lock buttons" class="material-symbols-outlined" style="font-size: 20px; position: relative; top: 4px;">
 										${!window.lockTemplateStatBlocks ? "lock_open_right" : "lock"}
 										</span>
@@ -1989,7 +1989,7 @@ class JournalManager{
 				note_text.find('.dnd-sheet [contenteditable]:not(a)').attr("contenteditable", "true");
 			}
 
-			const downloadStat = $(`<div class='download_button' style="position: relative; display:inline-block; color: #ddd;">
+			const downloadStat = $(`<div class='download_button' style="cursor: pointer; position: relative; display:inline-block; color: #ddd;">
 										<span title="Download Statblock as HTML" class="material-symbols-outlined" style="font-size: 24px; position: relative; top: 4px;">
 										download
 										</span>
@@ -2078,7 +2078,7 @@ class JournalManager{
 				
 				
 			});
-			const uploadStat = $(`<div class='upload_button' style="position: relative; display:inline-block; color: #ddd;">
+			const uploadStat = $(`<div class='upload_button' style="cursor: pointer; position: relative; display:inline-block; color: #ddd;">
 				<span onclick='import_open_template();' title="Upload HTML Statblock" class="material-symbols-outlined" style="font-size: 24px; position: relative; top: 4px;">
 					upload
 				</span>
@@ -4097,6 +4097,12 @@ class JournalManager{
 				font-size: 11px;
 				line-height: 1.2;
 
+				svg.ritual-icon-svg {
+					width: 10px;
+					height: auto;
+					margin-left:3px;
+					vertical-align:middle;
+				}
 				.dnd-page {
 					border: 2px solid var(--pc-template-border-color, #222);
 					padding: 15px;
