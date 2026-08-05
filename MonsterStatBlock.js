@@ -280,7 +280,7 @@ async function display_stat_block_in_container(statBlock, container, tokenId, cu
     if(customStatBlock && container.find('.dnd-sheet').length>0){
       container.find('a').attr('contenteditable', 'false');
       container.find('.popout-button').remove();
-      const lockStatButton = $(`<div class='lockStatButton' style="position: absolute;
+      const lockStatButton = $(`<div class='lockStatButton' style="cursor: pointer; position: absolute;
                                               left: 2px;
                                               top: 3px;
                                               width: 20px;
@@ -308,7 +308,7 @@ async function display_stat_block_in_container(statBlock, container, tokenId, cu
         container.find('.dnd-sheet [contenteditable]:not(a)').attr("contenteditable", "true");
       }
 
-      const downloadStat = $(`<div class='download_button' style="position: absolute;
+      const downloadStat = $(`<div class='download_button' style="cursor: pointer; position: absolute;
                                               left: 25px;
                                               top: 3px;
                                               width: 20px;
@@ -400,7 +400,7 @@ async function display_stat_block_in_container(statBlock, container, tokenId, cu
             $(".import-loading-indicator").remove();        
           })      
       });
-      const uploadStat = $(`<div class='upload_button' style="position: absolute;
+      const uploadStat = $(`<div class='upload_button' style="cursor: pointer; position: absolute;
                                               left: 45px;
                                               top: 3px;
                                               width: 20px;
@@ -2198,20 +2198,6 @@ const DAMAGE_ADJUSTMENT_TYPE_VULNERABILITIES = 3;
 
 
 const validRollTypes = ["to hit", "damage", "save", "check", "heal", undefined]; // undefined is in the list to allow clearing it
-
-async function getSpells(){
-    if(window.SPELLS_CACHE)
-        return window.SPELLS_CACHE;
-    const classes = await DDBApi.fetchJsonWithToken(`https://character-service.dndbeyond.com/character/v5/game-data/classes?campaignId=${window.gameId}&sharingSetting=2`);
-    let spells = [];
-    for(let charClass of classes.data){
-        const id = charClass.id;
-        const classSpells = await DDBApi.fetchJsonWithToken(`https://character-service.dndbeyond.com/character/v5/game-data/spells?campaignId=${window.gameId}&classId=${id}&classLevel=20&sharingSetting=2`);    
-        spells = [...spells, ...classSpells.data]
-    }
-    window.SPELLS_CACHE = [...new Map(spells.map(item => [item.definition.id, item])).values()];
-    return window.SPELLS_CACHE;
-}
 
 function getNonLegacySpellId(options){
     let newSpell
