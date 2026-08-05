@@ -2245,8 +2245,8 @@ function getNonLegacyItemId(options){
     if(!newItem[0]){
       console.warn('Item does not exist', options);
       return false;
-      return newItem[0].id;
     }
+    return newItem[0].id;
 }
 const fetch_tooltip = mydebounce(async (dataTooltipHref, name, callback, callbackTarget) => {
     // dataTooltipHref will look something like this `//www.dndbeyond.com/spells/2329-tooltip?disable-webm=1&disable-webm=1`
