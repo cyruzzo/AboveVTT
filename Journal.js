@@ -2105,7 +2105,9 @@ class JournalManager{
 			note_text.off('click.addRow').on('click.addRow', '.add-table-row', function (e) {
 				e.preventDefault();
 				const table = $(e.target).prev('table');
-				const newRow = table.find('tr:last').clone();
+				const tableBody = $(table).find('tbody');
+				const targetContainer = tableBody.length>0 ? tableBody : table;
+				const newRow = table.find('>tr:last, >tbody tr:last').clone();
 				newRow.find('td, th').html('');
 				table.append(newRow);
 			});
@@ -2189,14 +2191,18 @@ class JournalManager{
 					const matched = url.match(/\/(\d+)[^/]*-tooltip(\?.*)?$/i)
 					if(matched){
 						const tooltipId = matched[1];
-						const newUrl = `${self.href.replace(/(\d+-)?([^/]*)(-tooltip)?(\?.*)?$/i, `${tooltipId}-$2`)}`;
+						let newHref = self.href.split(/\/(spells|magic-items|equipments|adventuring-gear)\//gi);
+						if(newHref.length>1)
+							newHref[newHref.length-1] = newHref[newHref.length-1].replace('/','-');
+						newHref = newHref.join('/')
+						const newUrl = `${newHref.replace(/(\d+-)?([^/]*)(-tooltip)?(\?.*)?$/i, `${tooltipId}-$2`)}`;
 						$self.attr('href', newUrl);
 						if(self.href.match(/\/spells\/[0-9]|\/magic-items\/[0-9]|\/monsters\/[0-9]|\/sources\//gi)){
 							$self.attr('data-moreinfo', `${newUrl}`);
 						}
 					}
 					$self.attr('data-tooltip-href', url);
-					if(isRitual){
+					if(isRitual && $self.find('.ritual-icon-svg').length==0){
 						const ritualIcon = $(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12.17 14.83" class="ritual-icon-svg"><path fill="var(--font-color, #111)" d="M3,0H1.22A1.23,1.23,0,0,0,0,1.24V13.6a1.23,1.23,0,0,0,1.22,1.24H11.41a.77.77,0,0,0,.76-.77c0-.43-.34-1-.76-1H2.13c-.33,0-.61,0-.61-.34s.27-1,.61-1H11a1.23,1.23,0,0,0,1.22-1.24V1.24A1.23,1.23,0,0,0,11,0H3.08"></path><path fill="var(--background-color, #FFF)" d="M4.35,2.23A11.66,11.66,0,0,1,6.2,2.09a3.12,3.12,0,0,1,2.08.54A1.7,1.7,0,0,1,8.86,4,1.8,1.8,0,0,1,7.64,5.67v0A1.72,1.72,0,0,1,8.58,7a13.32,13.32,0,0,0,.53,1.88H7.84a9.62,9.62,0,0,1-.45-1.59c-.19-.88-.51-1.16-1.21-1.18H5.57V8.88H4.35Zm1.22,3H6.3c.83,0,1.35-.44,1.35-1.11S7.12,3,6.33,3a3.53,3.53,0,0,0-.76.06Z"></path></svg>`);         
 						$self.append(ritualIcon)
 					}
@@ -2380,7 +2386,12 @@ class JournalManager{
 						
 			}	
 		}
-		const isRitual = itemType == 'spells' ? window.SPELLS_CACHE.filter(d=> d.definition.id == itemId)[0]?.definition.ritual : false;
+		const isRitual = itemType == 'spells' ? window.SPELLS_CACHE.filter(d=> {
+				let newItemId = itemId;
+				if(typeof itemId == 'string') newItemId = itemId.replace(/(\d+)-.*/gi,'$1');
+				return d.definition.id == newItemId
+			})[0]?.definition.ritual 
+			: false;
 		window.spellIdCache[url] = {id: itemId, type: itemType, isRitual};
 		callback(`www.dndbeyond.com/${itemType}/${itemId}-tooltip?disable-webm=1`, itemType.slice(0, -1), isRitual);
 	}

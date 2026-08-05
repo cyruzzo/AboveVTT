@@ -424,10 +424,12 @@ async function display_stat_block_in_container(statBlock, container, tokenId, cu
 			});
       container.off('click.addRow').on('click.addRow', '.add-table-row', function (e) {
 				e.preventDefault();
-				const table = $(e.target).prev('table');
-				const newRow = table.find('tr:last').clone();
+			  const table = $(e.target).prev('table');
+				const tableBody = $(table).find('tbody');
+				const targetContainer = tableBody.length>0 ? tableBody : table;
+				const newRow = targetContainer.find('>tr:last').clone();
 				newRow.find('td, th').html('');
-				table.append(newRow);
+				targetContainer.append(newRow);
 			});
 	
       
@@ -592,10 +594,12 @@ const debounceRescanStatBlock = mydebounce(async (container, noteId, tokenId) =>
   });
   container.off('click.addRow').on('click.addRow', '.add-table-row', function (e) {
     e.preventDefault();
-    const table = $(e.target).prev('table');
-    const newRow = table.find('tr:last').clone();
-    newRow.find('td, th').html('');
-    table.append(newRow);
+			const table = $(e.target).prev('table');
+      const tableBody = $(table).find('tbody');
+      const targetContainer = tableBody.length>0 ? tableBody : table;
+      const newRow = targetContainer.find('>tr:last').clone();
+      newRow.find('td, th').html('');
+      targetContainer.append(newRow);
   });
 
   $(container).find('.avtt-stat-block-container, .note-text')[0].scrollTop = currScroll;
@@ -2376,7 +2380,14 @@ const fetch_tooltip = mydebounce(async (dataTooltipHref, name, callback, callbac
             id = getNonLegacyItemId({id});
         }
         const typeAndId = `${type}/${id}`;
-        const isRitual = type == 'spells' ? window.SPELLS_CACHE.filter(d=> d.definition.id == id)[0]?.definition.ritual : false;
+       
+        const currSpell = type == 'spells' ? window.SPELLS_CACHE.filter(d=> d.definition.id == id)[0]?.definition : false;
+        let isRitual, componentText;
+        if(currSpell){
+          isRitual = currSpell.ritual ?? false;
+          componentText = currSpell.componentsDescription ?? '';
+        }
+       
         const existingJson = window.tooltipCache[typeAndId];
         if (existingJson !== undefined) {
           console.log("fetch_tooltip existingJson", existingJson);
@@ -2411,7 +2422,7 @@ const fetch_tooltip = mydebounce(async (dataTooltipHref, name, callback, callbac
             }
 
 
-            window.tooltipCache[typeAndId] = {...responseJSON, isRitual};
+            window.tooltipCache[typeAndId] = {...responseJSON, isRitual, componentText};
             callback(window.tooltipCache[typeAndId], callbackTarget);
           },
           error: function (error) {
@@ -2500,7 +2511,7 @@ function display_tooltip(tooltipJson, container, hoverEvent, tokenId=undefined) 
 
 
         build_and_display_sidebar_flyout(hoverEvent.clientY, function (flyout) {
-            setup_tooltip_flyout(flyout, tooltipHtmlString, ['tooltip-flyout'], hoverEvent, {id: tokenId, container, isRitual: tooltipJson.isRitual});
+            setup_tooltip_flyout(flyout, tooltipHtmlString, ['tooltip-flyout'], hoverEvent, {id: tokenId, container, isRitual: tooltipJson.isRitual, componentText: tooltipJson.componentText});
             flyout.css("background-color", "#fff");
         });
     }
