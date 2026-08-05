@@ -2568,7 +2568,7 @@ function add_stat_block_hover(statBlockContainer, tokenId) {
             if(window.tooltipCache == undefined)
               window.tooltipCache = {};
             if(dataTooltipHref[0] != undefined){
-              const parts = dataTooltipHref[0].split(/[/?]/gi);
+              const parts = dataTooltipHref[0].split("/");
               const idIndex = parts.findIndex(p => p.includes("-tooltip"));
               const id = parseInt(parts[idIndex]);
               const type = parts[idIndex - 1];
