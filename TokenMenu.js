@@ -3333,8 +3333,8 @@ function build_menu_stat_inputs(tokenIds) {
 	body.append(hpMenuInput);
 	body.append(maxHpMenuInput);
 
-	const debouceChangeInput = mydebounce((token)=>{
-		token.place_sync_persist();
+	const debounceTriggerKeyboard = mydebounce((input, keyboardEvent)=>{
+		input.trigger(keyboardEvent);
 	})
 	if(!isNaN(hp) && !isNaN(max_hp)){
 		hpMenuInput.find('input').on('wheel', function(e) {
@@ -3343,23 +3343,25 @@ function build_menu_stat_inputs(tokenIds) {
 				return;
 			e.preventDefault();
 			const delta = e.originalEvent.deltaY < 0 ? 1 : -1;
-			const current = parseInt(tokens[0].hp) || 0;
+			const current = parseInt(input.val());
+			if(isNaN(current)) return;
 			input.val(Math.max(0, current + delta));
 			const keyboardEvent = $.Event('keyup');
 			keyboardEvent.key = 'Enter'; 
-			input.trigger(keyboardEvent);
+			debounceTriggerKeyboard(input, keyboardEvent);
 		});
 		maxHpMenuInput.find('input').on('wheel', function(e) {
 			const input = $(this);
-			if(!input.is(':focus'))
+			if(!input.is(':focus'))s
 				return;
 			e.preventDefault();
 			const delta = e.originalEvent.deltaY < 0 ? 1 : -1;
-			const current = parseInt(tokens[0].maxHp) || 0;
+			const current = parseInt(input.val());
+			if(isNaN(current)) return;
 			input.val(Math.max(1, current + delta));
 			const keyboardEvent = $.Event('keyup');
 			keyboardEvent.key = 'Enter'; 
-			input.trigger(keyboardEvent);
+			debounceTriggerKeyboard(input, keyboardEvent);
 		});
 	}
 
@@ -3380,7 +3382,7 @@ function build_menu_stat_inputs(tokenIds) {
 				}
 
 				token.hp = newHP - token.tempHp;
-				debouceChangeInput(token);
+				token.place_sync_persist();
 				if(tokens.length == 1){
 					$(".hpMenuInput").val(newHP);
 				}
