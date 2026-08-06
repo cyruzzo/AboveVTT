@@ -13001,7 +13001,7 @@ p.monster-header+p {
         box-sizing: border-box;
     }
     .left-column {
-        width: 170px;
+        width: 190px;
         display: flex;
         flex-direction: column;
         gap: 10px;
@@ -13030,6 +13030,20 @@ p.monster-header+p {
         display: flex;
         align-items: center;
         justify-content: center;  
+    }
+    .table-row-drag-handle {
+        width: 24px;
+        min-width: 24px;
+        padding: 0 6px;
+        cursor: grab;
+        color: var(--pc-template-text-muted, #888);
+        user-select: none;
+        text-align: center;
+        font-size: 12px;
+        line-height: 1;
+    }
+    .table-row-drag-handle:active {
+        cursor: grabbing;
     }
     .add-table-row{
         outline: none;
@@ -13071,9 +13085,9 @@ p.monster-header+p {
         padding: 3px 2px;
         vertical-align: middle;
     }
-    tbody tr td:first-child {
+    tbody tr td:nth-child(2) {
         text-align: left;
-    }
+    } 
 
     .ability-score-field {
         display: inline-block;
