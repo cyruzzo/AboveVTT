@@ -14,6 +14,12 @@ class PeerManager {
   /** The id of the stale connection loop. We monitor for stale connections and try to clean them up. This tracks that loop */
   staleConnectionTimerId = undefined;
 
+  /** A short-lived cache of handled handshake events to prevent replay storms from repeated peerReady/peerConnect messages */
+  handshakeCache = new Map();
+
+  /** How long to suppress duplicate handshake handling for the same remote peer */
+  handshakeCooldownMs = 5000;
+
   /** a list of ids to avoid sending cursor events to */
   skipCursorEvents = [];
 
@@ -115,6 +121,37 @@ class PeerManager {
     }
   }
 
+  /** Returns true if the handshake for the given remote peer should still be processed. */
+  shouldProcessHandshake(msg, eventType) {
+    const remotePeerId = msg?.data?.peerId;
+    const remotePlayerId = msg?.data?.playerId;
+    const key = `${eventType}:${remotePeerId || ""}:${remotePlayerId || ""}`;
+    const now = Date.now();
+    const previous = this.handshakeCache.get(key);
+
+    if (previous && now - previous < this.handshakeCooldownMs) {
+      console.debug("PeerManager skipping duplicate handshake", eventType, msg?.data);
+      return false;
+    }
+
+    this.handshakeCache.set(key, now);
+    return true;
+  }
+
+  /** Returns true if we already have a non-stale connection for the same remote peer/player. */
+  hasActiveConnection(remotePeerId, remotePlayerId) {
+    const playerId = `${remotePlayerId ?? ""}`;
+    return this.connections.some(pc => {
+      if (remotePeerId && pc.peerId === remotePeerId) {
+        return !pc.isStale;
+      }
+      if (playerId && pc.playerId === playerId) {
+        return !pc.isStale;
+      }
+      return false;
+    });
+  }
+
   /** Sends a peerReady event over the websocket.
    * Any connected players will respond with their connection details which will call {@link receivedPeerConnect} */
   readyToConnect() {
@@ -145,6 +182,13 @@ class PeerManager {
     }
     try {
       console.debug("PeerManager.receivedPeerReady", msg);
+      if (!this.shouldProcessHandshake(msg, "peerReady")) {
+        return;
+      }
+      if (this.hasActiveConnection(msg?.data?.peerId, msg?.data?.playerId)) {
+        console.debug("PeerManager.receivedPeerReady skipping existing active connection", msg?.data);
+        return;
+      }
       // This user just joined. Initiate the connection.
       window.PeerManager.connectTo(msg.data.peerId, msg.data.playerId);
       // now let them know that how to connect to us
@@ -166,7 +210,14 @@ class PeerManager {
     }
     try {
       console.debug("PeerManager.receivedPeerConnect", msg);
+      if (!this.shouldProcessHandshake(msg, "peerConnect")) {
+        return;
+      }
       if (msg.data.initiator === window.PeerManager.peer.id) { // make sure they're sending it to us
+        if (this.hasActiveConnection(msg?.data?.peerId, msg?.data?.playerId)) {
+          console.debug("PeerManager.receivedPeerConnect skipping existing active connection", msg?.data);
+          return;
+        }
         window.PeerManager.connectTo(msg.data.peerId, msg.data.playerId);
       }
     } catch (error) {
