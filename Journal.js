@@ -2081,15 +2081,18 @@ class JournalManager{
 			});
 			note_text.find('table').each(function() {
 				const $table = $(this);
-				if($table.next('.add-table-row').length>0)
-					return;
-				const add_table_row = $(`<button class="add-table-row">+</button>`);
-				$table.after(add_table_row);
-
 				const rowsContainer = $table.find('tbody').length > 0 ? $table.find('tbody') : $table;
 				if (rowsContainer.find('> tr').length > 1) {
+					rowsContainer.find('> tr').each(function() {
+						const $row = $(this);
+						if ($row.find('> .table-row-drag-handle').length === 0) {
+							const $handleCell = $('<td class="table-row-drag-handle" aria-hidden="true">⋮⋮</td>');
+							$row.prepend($handleCell);
+						}
+					});
 					rowsContainer.sortable({
 						items: '> tr',
+						handle: '.table-row-drag-handle',
 						helper: function(event, ui) {
 							const helper = ui.clone();
 							helper.children().each(function(index) {
@@ -2103,8 +2106,23 @@ class JournalManager{
 						}
 					})
 				}
+				const header = $table.find('th').first().parent().parent();
+				header.find('> tr').each(function() {
+					const $row = $(this);
+					if ($row.find('> .header-spacer').length === 0) {
+						const $handleCell = $('<th class="header-spacer" aria-hidden="true"></td>');
+						$row.prepend($handleCell);
+					}
+				});
+				
+				if($table.next('.add-table-row').length>0)
+					return;
+				const add_table_row = $(`<button class="add-table-row">+</button>`);
+				$table.after(add_table_row);
+
+				
 			});
-			
+
 			note_text.off('click.addRow').on('click.addRow', '.add-table-row', function (e) {
 				e.preventDefault();
 				const table = $(e.target).prev('table');
