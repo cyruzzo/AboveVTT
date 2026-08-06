@@ -276,7 +276,7 @@ async function display_stat_block_in_container(statBlock, container, tokenId, cu
       }
     }
     $("span.hideme").parent().parent().hide();
-    container.find('.lockStatButton, .download_button, .upload_button, .add-table-row').remove();
+    container.find('.lockStatButton, .download_button, .upload_button, .add-table-row, .table-row-drag-handle, .header-spacer').remove();
     if(customStatBlock && container.find('.dnd-sheet').length>0){
       container.find('a').attr('contenteditable', 'false');
       container.find('.popout-button').remove();
@@ -372,6 +372,7 @@ async function display_stat_block_in_container(statBlock, container, tokenId, cu
                 addTableRowButton.type = 'button';
                 addTableRowButton.textContent = '+';
                 table.insertAdjacentElement('afterend', addTableRowButton);
+                setupTableRowDragging(table);
               });
 
               document.addEventListener('click', (e) => {
@@ -383,17 +384,8 @@ async function display_stat_block_in_container(statBlock, container, tokenId, cu
                 const table = addButton.previousElementSibling;
                 if (!table || table.tagName.toLowerCase() !== 'table') return;
 
-                const rowContainer = table.tBodies[0] || table;
-                const lastRow = rowContainer.rows[rowContainer.rows.length - 1];
-                if (!lastRow) return;
-
-                const newRow = lastRow.cloneNode(true);
-                newRow.querySelectorAll('td, th').forEach((cell) => {
-                  cell.innerHTML = '';
-                });
-
-                rowContainer.appendChild(newRow);
-              });
+                addRowToTable(table);
+              })'
 					  </script>`;
             download(html,`${window.CAMPAIGN_INFO.name}-${datetime}-pctemplate.html`,"text/html");
               
@@ -417,10 +409,69 @@ async function display_stat_block_in_container(statBlock, container, tokenId, cu
       });
       container.prepend(lockStatButton, downloadStat, uploadStat);
 			container.find('table').each(function() {
-        if($(this).next('.add-table-row').length>0)
+        const $table = $(this);
+        const rowsContainer = $table.find('tbody').length > 0 ? $table.find('tbody') : $table;
+        if (rowsContainer.find('> tr').length > 1) {
+          rowsContainer.find('> tr').each(function() {
+            const $row = $(this);
+            if ($row.find('> .table-row-drag-handle').length === 0) {
+              const $handleCell = $('<td class="table-row-drag-handle" aria-hidden="true">⋮⋮</td>');
+              $row.prepend($handleCell);
+            }
+          });
+
+          rowsContainer.sortable({
+            items: '> tr',
+            handle: '.table-row-drag-handle',
+            helper: function(event, ui) {
+              const helper = ui.clone();
+              helper.children().each(function(index) {
+                $(this).width(ui.children().eq(index).outerWidth());
+              });
+              return helper;
+            },
+            placeholder: 'ui-sortable-placeholder',
+            update: function() {
+              const closestNote = container.find('.avtt-stat-block-container').first();
+              const noteText = closestNote.length > 0 ? closestNote : container;
+              const noteClone = noteText.clone(true, true);
+              const avttImages = noteClone.find('img[data-src*="above-bucket-not-a-url"]');
+              avttImages.attr('src', '');
+              avttImages.attr('href', '');
+              noteClone.find('a:empty, button:empty, .image, .add-table-row').remove();
+              const noteButtons = noteClone.find('button');
+              noteButtons.replaceWith((i, innerHTML)=>{
+                const command = noteButtons[i].getAttribute('data-slash-command');
+                if(command){
+                  innerHTML = `[roll]${command}[/roll]`
+                }
+                return innerHTML;
+              })
+              noteClone.find('.abovevtt-slash-command-journal').replaceWith((i, innerHTML) =>{
+                return innerHTML;
+              })
+              const sanitizedHTML = basic_sanitize_html(noteClone[0].innerHTML).replaceAll(/\[(\/)?spell\]/gi, `[$1spell]`).replaceAll(/\[(\/)?magicitem\]/gi, `[$1magicItem]`).replaceAll(/\[(\/)?item\]/gi, `[$1item]`);
+              window.JOURNAL.notes[window.TOKEN_OBJECTS[tokenId]?.options?.statBlock].text = sanitizedHTML;
+              window.JOURNAL.notes[window.TOKEN_OBJECTS[tokenId]?.options?.statBlock].plain = $(sanitizedHTML).text();
+              window.JOURNAL.setPersistTimeout();
+              debounceSendNote(window.TOKEN_OBJECTS[tokenId]?.options?.statBlock, window.JOURNAL.notes[window.TOKEN_OBJECTS[tokenId]?.options?.statBlock], tokenId);
+            }
+          })
+          const header = $table.find('th').first().parent().parent();
+          header.find('> tr').each(function() {
+            const $row = $(this);
+            if ($row.find('> .header-spacer').length === 0) {
+              const $handleCell = $('<th class="header-spacer" aria-hidden="true"></td>');
+              $row.prepend($handleCell);
+            }
+          });
+        }
+        if($table.next('.add-table-row').length>0)
           return;
-        const add_table_row = $(`<button class="add-table-row">+</button>`);	
-				$(this).after(add_table_row);
+        const add_table_row = $(`<button class="add-table-row">+</button>`); 	
+				$table.after(add_table_row);
+
+
 			});
       container.off('click.addRow').on('click.addRow', '.add-table-row', function (e) {
 				e.preventDefault();
@@ -428,14 +479,11 @@ async function display_stat_block_in_container(statBlock, container, tokenId, cu
 				const tableBody = $(table).find('tbody');
 				const targetContainer = tableBody.length>0 ? tableBody : table;
 				const newRow = targetContainer.find('>tr:last').clone();
-				newRow.find('td, th').html('');
+				newRow.find('td:not(.table-row-drag-handle), th').html('');
 				targetContainer.append(newRow);
 			});
-	
-      
-    }
-}
-
+		}
+	}
 
 function import_open_template(){
   $("#input_pc_template").trigger("click");
@@ -587,18 +635,75 @@ const debounceRescanStatBlock = mydebounce(async (container, noteId, tokenId) =>
     $("span.hideme").parent().parent().hide();
   }
   container.find('table').each(function() {
-    if($(this).next('.add-table-row').length>0)
+    const $table = $(this);
+    const rowsContainer = $table.find('tbody').length > 0 ? $table.find('tbody') : $table;
+    if (rowsContainer.find('> tr').length > 1) {
+      rowsContainer.find('> tr').each(function() {
+        const $row = $(this);
+        if ($row.find('> .table-row-drag-handle').length === 0) {
+          const $handleCell = $('<td class="table-row-drag-handle" aria-hidden="true">⋮⋮</td>');
+          $row.prepend($handleCell);
+        }
+      });
+
+      rowsContainer.sortable({
+        items: '> tr',
+        handle: '.table-row-drag-handle',
+        helper: function(event, ui) {
+          const helper = ui.clone();
+          helper.children().each(function(index) {
+            $(this).width(ui.children().eq(index).outerWidth());
+          });
+          return helper;
+        },
+        placeholder: 'ui-sortable-placeholder',
+        update: function() {
+          const closestNote = container.find('.avtt-stat-block-container').first();
+          const noteText = closestNote.length > 0 ? closestNote : container;
+          const noteClone = noteText.clone(true, true);
+          const avttImages = noteClone.find('img[data-src*="above-bucket-not-a-url"]');
+          avttImages.attr('src', '');
+          avttImages.attr('href', '');
+          noteClone.find('a:empty, button:empty, .image, .add-table-row').remove();
+          const noteButtons = noteClone.find('button');
+          noteButtons.replaceWith((i, innerHTML)=>{
+            const command = noteButtons[i].getAttribute('data-slash-command');
+            if(command){
+              innerHTML = `[roll]${command}[/roll]`
+            }
+            return innerHTML;
+          })
+          noteClone.find('.abovevtt-slash-command-journal').replaceWith((i, innerHTML) =>{
+            return innerHTML;
+          })
+          const sanitizedHTML = basic_sanitize_html(noteClone[0].innerHTML).replaceAll(/\[(\/)?spell\]/gi, `[$1spell]`).replaceAll(/\[(\/)?magicitem\]/gi, `[$1magicItem]`).replaceAll(/\[(\/)?item\]/gi, `[$1item]`);
+          window.JOURNAL.notes[window.TOKEN_OBJECTS[tokenId]?.options?.statBlock].text = sanitizedHTML;
+          window.JOURNAL.notes[window.TOKEN_OBJECTS[tokenId]?.options?.statBlock].plain = $(sanitizedHTML).text();
+          window.JOURNAL.setPersistTimeout();
+          debounceSendNote(window.TOKEN_OBJECTS[tokenId]?.options?.statBlock, window.JOURNAL.notes[window.TOKEN_OBJECTS[tokenId]?.options?.statBlock], tokenId);
+        }
+      })
+      const header = $table.find('th').first().parent().parent();
+      header.find('> tr').each(function() {
+        const $row = $(this);
+        if ($row.find('> .header-spacer').length === 0) {
+          const $handleCell = $('<th class="header-spacer" aria-hidden="true"></td>');
+          $row.prepend($handleCell);
+        }
+      });
+    }
+    if($table.next('.add-table-row').length>0)
       return;
     const add_table_row = $(`<button class="add-table-row">+</button>`);	
-    $(this).after(add_table_row);
+    $table.after(add_table_row);
   });
-  container.off('click.addRow').on('click.addRow', '.add-table-row', function (e) {
+  targetRescan.off('click.addRow').on('click.addRow', '.add-table-row', function (e) {
     e.preventDefault();
 			const table = $(e.target).prev('table');
       const tableBody = $(table).find('tbody');
       const targetContainer = tableBody.length>0 ? tableBody : table;
       const newRow = targetContainer.find('>tr:last').clone();
-      newRow.find('td, th').html('');
+      newRow.find('td:not(.table-row-drag-handle), th').html('');
       targetContainer.append(newRow);
   });
 

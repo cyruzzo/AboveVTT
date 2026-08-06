@@ -1894,6 +1894,90 @@ class JournalManager{
 			note.find("a").attr("target", "_blank");
 			note_container.append(note);
 
+			const persistNoteContent = (forceSave = false, rescanStatBlock = true) => {
+				const closestNote = note_text.clone(true, true);
+				const avttImages = closestNote.find('img[data-src*="above-bucket-not-a-url"]');
+				avttImages.attr('src', '');
+				avttImages.attr('href', '');
+				closestNote.find('a:empty, button:empty, .add-table-row, .table-row-drag-handle, .header-spacer').remove();
+				const noteButtons = closestNote.find('button');
+				noteButtons.replaceWith((i, innerHTML)=>{
+					const command = noteButtons[i].getAttribute('data-slash-command');
+					if(command){
+						innerHTML = `[roll]${command}[/roll]`
+					}
+					return innerHTML;
+				})
+				closestNote.find('.abovevtt-slash-command-journal').replaceWith((i, innerHTML) =>{
+					return innerHTML;
+				})
+				const sanitizedHTML = basic_sanitize_html(closestNote[0].innerHTML).replaceAll(/\[(\/)?spell\]/gi, `[$1spell]`).replaceAll(/\[(\/)?magicitem\]/gi, `[$1magicItem]`).replaceAll(/\[(\/)?item\]/gi, `[$1item]`);
+				const changes = forceSave || $(sanitizedHTML).text().replace(/[\s\n\r]/gi, '') != self.notes[id].plain.replace(/[\s\n\r]/gi, '');
+				if(changes){
+					self.notes[id].text = sanitizedHTML;
+					self.notes[id].plain = $(sanitizedHTML).text();
+					window.JOURNAL.setPersistTimeout();
+					debounceSendNote(id, self.notes[id]);
+					if(rescanStatBlock){
+						debounceRescanStatBlock(note_container, id);
+					}
+				}
+			};
+
+			note_text.find('table').each(function() {
+				const $table = $(this);
+				const rowsContainer = $table.find('tbody').length > 0 ? $table.find('tbody') : $table;
+				if (rowsContainer.find('> tr').length > 1) {
+					rowsContainer.find('> tr').each(function() {
+						const $row = $(this);
+						if ($row.find('> .table-row-drag-handle').length === 0) {
+							const $handleCell = $('<td class="table-row-drag-handle" aria-hidden="true">⋮⋮</td>');
+							$row.prepend($handleCell);
+						}
+					});
+					rowsContainer.sortable({
+						items: '> tr',
+						handle: '.table-row-drag-handle',
+						helper: function(event, ui) {
+							const helper = ui.clone();
+							helper.children().each(function(index) {
+								$(this).width(ui.children().eq(index).outerWidth());
+							});
+							return helper;
+						},
+						placeholder: 'ui-sortable-placeholder',
+						update: function() {
+							persistNoteContent(true, false);
+						}
+					})
+				}
+				const header = $table.find('th').first().parent().parent();
+				header.find('> tr').each(function() {
+					const $row = $(this);
+					if ($row.find('> .header-spacer').length === 0) {
+						const $handleCell = $('<th class="header-spacer" aria-hidden="true"></td>');
+						$row.prepend($handleCell);
+					}
+				});
+				
+				if($table.next('.add-table-row').length>0)
+					return;
+				const add_table_row = $(`<button class="add-table-row">+</button>`);
+				$table.after(add_table_row);
+
+				
+			});
+
+			note_text.off('click.addRow').on('click.addRow', '.add-table-row', function (e) {
+				e.preventDefault();
+				const table = $(e.target).prev('table');
+				const tableBody = $(table).find('tbody');
+				const targetContainer = tableBody.length>0 ? tableBody : table;
+				const newRow = targetContainer.find('>tr:last').clone();
+				newRow.find('td:not(.table-row-drag-handle), th').html('');
+				targetContainer.append(newRow);
+			});
+
 			note.off('click').on('click', '.tooltip-hover[href*="https://www.dndbeyond.com/sources/dnd/"], .int_source_link ', function (event) {
 				event.preventDefault();
 				render_source_chapter_in_iframe(event.target.href);
@@ -1901,33 +1985,7 @@ class JournalManager{
 			note.off('focusout.editable').on('focusout.editable', '[contenteditable="true"]', (e)=>{
 				if($('[contenteditable="true"] :is(:focus, :focus-within)').length>0) return;
 				if($(e.target).is('.injected-input')) return;  
-				const closestNote = note_text.clone(true, true);
-				const avttImages = closestNote.find('img[data-src*="above-bucket-not-a-url"]');
-				avttImages.attr('src', '');
-				avttImages.attr('href', '');
-				closestNote.find('a:empty, button:empty, .add-table-row').remove();
-				const noteButtons = closestNote.find('button');
-				noteButtons.replaceWith((i, innerHTML)=>{
-          			const command = noteButtons[i].getAttribute('data-slash-command');
-					if(command){
-						innerHTML = `[roll]${command}[/roll]`
-					}
-          			return innerHTML;
-        		})
-				closestNote.find('.abovevtt-slash-command-journal').replaceWith((i, innerHTML) =>{
-					return innerHTML;
-				})
-				const sanitizedHTML = basic_sanitize_html(closestNote[0].innerHTML).replaceAll(/\[(\/)?spell\]/gi, `[$1spell]`).replaceAll(/\[(\/)?magicitem\]/gi, `[$1magicItem]`).replaceAll(/\[(\/)?item\]/gi, `[$1item]`);
-				
-				const changes = $(sanitizedHTML).text().replace(/[\s\n\r]/gi, '') != self.notes[id].plain.replace(/[\s\n\r]/gi, '');
-        		if(changes){
-					self.notes[id].text = sanitizedHTML; 
-					self.notes[id].plain = $(sanitizedHTML).text();
-					window.JOURNAL.setPersistTimeout();
-					debounceSendNote(id, self.notes[id]);
-					debounceRescanStatBlock(note_container, id);
-				}
-
+				persistNoteContent();
 			});
 			note.off('change.checkbox').on('change.checkbox', 'input', (e)=>{
 				if (e.target && e.target.nodeName === 'INPUT' && e.target.type === 'checkbox') {				
@@ -1937,28 +1995,7 @@ class JournalManager{
 						e.target.removeAttribute('checked');
 					}
 				}
-				const closestNote = note_text.clone(true, true);
-				const avttImages = closestNote.find('img[data-src*="above-bucket-not-a-url"]');
-				avttImages.attr('src', '');
-				avttImages.attr('href', '');
-				closestNote.find('a:empty, button:empty, .add-table-row').remove();
-				const noteButtons = closestNote.find('button');
-				noteButtons.replaceWith((i, innerHTML)=>{
-          			const command = noteButtons[i].getAttribute('data-slash-command');
-					if(command){
-						innerHTML = `[roll]${command}[/roll]`
-					}
-					return innerHTML;
-				})
-				closestNote.find('.abovevtt-slash-command-journal').replaceWith((i, innerHTML) =>{
-					return innerHTML;
-				})
-				const sanitizedHTML = basic_sanitize_html(closestNote[0].innerHTML).replaceAll(/\[(\/)?spell\]/gi, `[$1spell]`).replaceAll(/\[(\/)?magicitem\]/gi, `[$1magicItem]`).replaceAll(/\[(\/)?item\]/gi, `[$1item]`);
-				
-				self.notes[id].text = sanitizedHTML; 
-				self.notes[id].plain = $(self.notes[id].text).text();
-				window.JOURNAL.setPersistTimeout();
-				debounceSendNote(id, self.notes[id]);
+				persistNoteContent(true, false);
 			})
 			this.positionNotePins(id, note_text);
 			note_text[0].scrollTop = scrollTop;
@@ -2095,21 +2132,39 @@ class JournalManager{
 				'align-items': 'center'
 			});
 			note_text.find('table').each(function() {
-				if($(this).next('.add-table-row').length>0)
+				const $table = $(this);
+				if($table.next('.add-table-row').length>0)
 					return;
 				const add_table_row = $(`<button class="add-table-row">+</button>`);
-					
-				$(this).after(add_table_row);
-				
+				$table.after(add_table_row);
+
+				const rowsContainer = $table.find('tbody').length > 0 ? $table.find('tbody') : $table;
+				if (rowsContainer.find('> tr').length > 1) {
+					rowsContainer.sortable({
+						items: '> tr',
+						helper: function(event, ui) {
+							const helper = ui.clone();
+							helper.children().each(function(index) {
+								$(this).width(ui.children().eq(index).outerWidth());
+							});
+							return helper;
+						},
+						placeholder: 'ui-sortable-placeholder',
+						update: function() {
+							persistNoteContent(true, false);
+						}
+					})
+				}
 			});
+			
 			note_text.off('click.addRow').on('click.addRow', '.add-table-row', function (e) {
 				e.preventDefault();
 				const table = $(e.target).prev('table');
 				const tableBody = $(table).find('tbody');
 				const targetContainer = tableBody.length>0 ? tableBody : table;
-				const newRow = table.find('>tr:last, >tbody tr:last').clone();
-				newRow.find('td, th').html('');
-				table.append(newRow);
+				const newRow = targetContainer.find('>tr:last').clone();
+				newRow.find('td:not(.table-row-drag-handle), th').html('');
+				targetContainer.append(newRow);
 			});
 	}
 	}
@@ -4167,7 +4222,7 @@ class JournalManager{
 					box-sizing: border-box;
 				}
 				.left-column {
-					width: 170px;
+					width: 190px;
 					display: flex;
 					flex-direction: column;
 					gap: 10px;
@@ -4211,6 +4266,24 @@ class JournalManager{
 					font-size: 16px;
 					line-height: 18px;
 				}
+				.note-text .ui-sortable-placeholder {
+					visibility: visible !important;
+					background: rgba(0, 0, 0, 0.08);
+				}
+				.note-text .table-row-drag-handle {
+					width: 24px;
+					min-width: 24px;
+					padding: 0 6px;
+					cursor: grab;
+					color: var(--pc-template-text-muted, #888);
+					user-select: none;
+					text-align: center;
+					font-size: 12px;
+					line-height: 1;
+				}
+				.note-text .table-row-drag-handle:active {
+					cursor: grabbing;
+				}
 				table {
 					width: 100%;
 					border-collapse: collapse;
@@ -4226,7 +4299,7 @@ class JournalManager{
 					text-transform: uppercase;
 					color: var(--pc-template-text-muted, #444);
 				}
-				thead th:first-child {
+				thead th:nth-child(2) {
 					text-align: left;
 				}
 				tbody tr {
@@ -4237,7 +4310,7 @@ class JournalManager{
 					padding: 3px 2px;
 					vertical-align: middle;
 				}
-				tbody tr td:first-child {
+				tbody tr td:nth-child(2) {
 					text-align: left;
 				}
 
@@ -5088,10 +5161,9 @@ class JournalManager{
 											<div class="col"><span class="label"><a class="tooltip-hover condition-tooltip"
 														style="display: inline-block;" contenteditable="false"
 														href="https://www.dndbeyond.com/compendium/rules/basic-rules/combat#Temporary Hit Points"
-														target="_blank"
-														data-tooltip-json-href="//www.dndbeyond.com/conditions/76/tooltip-json"
-														data-tooltip-href="//www.dndbeyond.com/rules/76-tooltip">Temporary Hit
-														Points</a></span>
+														target="_blank" data-tooltip-href="//www.dndbeyond.com/rules/76-tooltip"
+														data-tooltip-json-href="//www.dndbeyond.com/conditions/76/tooltip-json">Temporary
+														Hit Points</a></span>
 												<div class="box-field" contenteditable="true">&nbsp;</div>
 											</div>
 											<div class="col">
@@ -5099,9 +5171,9 @@ class JournalManager{
 													<div><span class="label"><a class="tooltip-hover condition-tooltip"
 																style="display: inline-block;" contenteditable="false"
 																href="https://www.dndbeyond.com/compendium/rules/basic-rules/combat#Hit Dice"
-																target="_blank"
-																data-tooltip-json-href="//www.dndbeyond.com/conditions/39/tooltip-json"
-																data-tooltip-href="//www.dndbeyond.com/rules/39-tooltip">Hit Dice</a></span>
+																target="_blank" data-tooltip-href="//www.dndbeyond.com/rules/39-tooltip"
+																data-tooltip-json-href="//www.dndbeyond.com/conditions/39/tooltip-json">Hit
+																Dice</a></span>
 														<div class="box-field" contenteditable="true"><input type="checkbox" /> 1d10</div>
 													</div>
 													<div><span class="label">Death Saves</span>
@@ -5174,7 +5246,29 @@ class JournalManager{
 									</div>
 									<div class="container-block">
 										<div class="section-title">Features &amp; Traits</div>
-										<div class="features-field" contenteditable="true">- Darkvision: 60 ft range.&nbsp;</div>
+										<div class="features-field" contenteditable="true">
+											<table>
+												<tbody class="ui-sortable">
+													<tr class="">
+														<td>[track]Rage 2[/track]</td>
+														<td>Str attack damage +2</td>
+													</tr>
+													<tr class="">
+														<td>Savage Attacker</td>
+														<td>Reroll weapon damage dice once per turn</td>
+													</tr>
+													<tr class="">
+														<td>Darkvision 60ft.</td>
+														<td>&nbsp;</td>
+													</tr>
+													<tr class="">
+														<td>&nbsp;Wild Shape</td>
+														<td>&nbsp;<input type="checkbox" /><input type="checkbox" />&nbsp;/ Long Rest (1
+															Recharge on Short Rest)</td>
+													</tr>
+												</tbody>
+											</table>
+										</div>
 									</div>
 								</div>
 							</div>
@@ -5284,14 +5378,14 @@ class JournalManager{
 														<td>&nbsp;</td>
 													</tr>
 													<tr>
-														<td>&nbsp;</td>
+														<td>&nbsp;[track][item]Arrows[/item] 20[/track]</td>
 														<td>&nbsp;</td>
 														<td>&nbsp;</td>
 														<td>&nbsp;</td>
 														<td>&nbsp;</td>
 													</tr>
 													<tr>
-														<td>&nbsp;</td>
+														<td>&nbsp;[track][item]Rations[/item] 10[/track]&nbsp;</td>
 														<td>&nbsp;</td>
 														<td>&nbsp;</td>
 														<td>&nbsp;</td>
