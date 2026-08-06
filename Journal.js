@@ -5158,22 +5158,12 @@ class JournalManager{
 											</div>
 										</div>
 										<div class="hp-row">
-											<div class="col"><span class="label"><a class="tooltip-hover condition-tooltip"
-														style="display: inline-block;" contenteditable="false"
-														href="https://www.dndbeyond.com/compendium/rules/basic-rules/combat#Temporary Hit Points"
-														target="_blank" data-tooltip-href="//www.dndbeyond.com/rules/76-tooltip"
-														data-tooltip-json-href="//www.dndbeyond.com/conditions/76/tooltip-json">Temporary
-														Hit Points</a></span>
+											<div class="col"><span class="label">Temporary Hit Points</a></span>
 												<div class="box-field" contenteditable="true">&nbsp;</div>
 											</div>
 											<div class="col">
 												<div class="hp-subgrid">
-													<div><span class="label"><a class="tooltip-hover condition-tooltip"
-																style="display: inline-block;" contenteditable="false"
-																href="https://www.dndbeyond.com/compendium/rules/basic-rules/combat#Hit Dice"
-																target="_blank" data-tooltip-href="//www.dndbeyond.com/rules/39-tooltip"
-																data-tooltip-json-href="//www.dndbeyond.com/conditions/39/tooltip-json">Hit
-																Dice</a></span>
+													<div><span class="label">Hit Dice</span>
 														<div class="box-field" contenteditable="true"><input type="checkbox" /> 1d10</div>
 													</div>
 													<div><span class="label">Death Saves</span>
@@ -5287,7 +5277,15 @@ class JournalManager{
 									</div>
 									<div class="bio-block">
 										<div class="section-title">Additional Features &amp; Traits</div>
-										<div class="bio-traits-add" contenteditable="true">&nbsp;</div>
+										<div class="bio-traits-add" contenteditable="true"><strong>Armor</strong>
+											<div>&bull; Light Armor</div>
+											<div><strong>Weapons</strong></div>
+											<div>&bull; Simple Weapons</div>
+											<div><strong>Tools</strong></div>
+											<div>&bull; Herbalism Kit</div>
+											<div><strong>Languages</strong></div>
+											<div>&bull; Common</div>
+										</div>
 									</div>
 									<div class="bio-block">
 										<div class="section-title">Character Appearance</div>
