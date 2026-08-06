@@ -1924,59 +1924,7 @@ class JournalManager{
 				}
 			};
 
-			note_text.find('table').each(function() {
-				const $table = $(this);
-				const rowsContainer = $table.find('tbody').length > 0 ? $table.find('tbody') : $table;
-				if (rowsContainer.find('> tr').length > 1) {
-					rowsContainer.find('> tr').each(function() {
-						const $row = $(this);
-						if ($row.find('> .table-row-drag-handle').length === 0) {
-							const $handleCell = $('<td class="table-row-drag-handle" aria-hidden="true">⋮⋮</td>');
-							$row.prepend($handleCell);
-						}
-					});
-					rowsContainer.sortable({
-						items: '> tr',
-						handle: '.table-row-drag-handle',
-						helper: function(event, ui) {
-							const helper = ui.clone();
-							helper.children().each(function(index) {
-								$(this).width(ui.children().eq(index).outerWidth());
-							});
-							return helper;
-						},
-						placeholder: 'ui-sortable-placeholder',
-						update: function() {
-							persistNoteContent(true, false);
-						}
-					})
-				}
-				const header = $table.find('th').first().parent().parent();
-				header.find('> tr').each(function() {
-					const $row = $(this);
-					if ($row.find('> .header-spacer').length === 0) {
-						const $handleCell = $('<th class="header-spacer" aria-hidden="true"></td>');
-						$row.prepend($handleCell);
-					}
-				});
-				
-				if($table.next('.add-table-row').length>0)
-					return;
-				const add_table_row = $(`<button class="add-table-row">+</button>`);
-				$table.after(add_table_row);
-
-				
-			});
-
-			note_text.off('click.addRow').on('click.addRow', '.add-table-row', function (e) {
-				e.preventDefault();
-				const table = $(e.target).prev('table');
-				const tableBody = $(table).find('tbody');
-				const targetContainer = tableBody.length>0 ? tableBody : table;
-				const newRow = targetContainer.find('>tr:last').clone();
-				newRow.find('td:not(.table-row-drag-handle), th').html('');
-				targetContainer.append(newRow);
-			});
+	
 
 			note.off('click').on('click', '.tooltip-hover[href*="https://www.dndbeyond.com/sources/dnd/"], .int_source_link ', function (event) {
 				event.preventDefault();
