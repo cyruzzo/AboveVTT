@@ -1682,7 +1682,7 @@ class Token {
 		}
 	}
 
-
+	
 	build_conditions(parent, singleRow = false) {
 		if(this.options.combatGroupToken)
 			return [];
@@ -2151,7 +2151,9 @@ class Token {
 		
 
 	}
-
+	deboucePlaceSync = mydebounce(()=>{
+		this.place_sync_persist();
+	})
 	throttlePlace = throttle((animationDuration, sceneId = window.CURRENT_SCENE_DATA.id, callback=()=>{}) => {
 		if(window.all_token_objects?.[this.options.id] != undefined)
 			window.all_token_objects[this.options.id].options = $.extend(true, {}, this.options);
