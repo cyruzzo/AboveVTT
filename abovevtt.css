@@ -13074,7 +13074,7 @@ p.monster-header+p {
         text-transform: uppercase;
         color: #555;
     }
-    thead th:is(:first-child, :nth-child(2)) {
+    thead th:is(:first-child, .table-row-drag-handle+:nth-child(2)) {
         text-align: left;
     }
     tbody tr {
@@ -13085,7 +13085,7 @@ p.monster-header+p {
         padding: 3px 2px;
         vertical-align: middle;
     }
-    tbody tr td:is(:first-child, :nth-child(2)) {
+    tbody tr td:is(:first-child, .table-row-drag-handle+:nth-child(2)) {
         text-align: left;
     } 
 

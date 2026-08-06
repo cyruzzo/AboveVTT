@@ -4299,7 +4299,7 @@ class JournalManager{
 					text-transform: uppercase;
 					color: var(--pc-template-text-muted, #444);
 				}
-				thead th:is(:first-child, :nth-child(2)) {
+				thead th:is(:first-child, .table-row-drag-handle+:nth-child(2)) {
 					text-align: left;
 				}
 				tbody tr {
@@ -4310,7 +4310,7 @@ class JournalManager{
 					padding: 3px 2px;
 					vertical-align: middle;
 				}
-				tbody tr td:is(:first-child, :nth-child(2)){
+				tbody tr td:is(:first-child, .table-row-drag-handle+:nth-child(2)){
 					text-align: left;
 				}
 
