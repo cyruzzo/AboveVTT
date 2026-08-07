@@ -443,6 +443,18 @@ function avtt_settings(campaignSettings = false) {
 			defaultValue: false,
 			class: 'ui',
 			global: 1
+		},
+		{
+			name: "wheelZoomAsToggle",
+			label: "Wheel Zoom as Toggle",
+			type: "toggle",
+			options: [
+				{ value: true, label: "Enable", description: `Mouse wheel will act as a toggle for zoom` },
+				{ value: false, label: "Disable", description: `Mouse wheel will behave normally (continuous zoom)` }
+			],
+			defaultValue: false,
+			class: 'ui',
+			global: 1
 		}
 	];
 	if(!campaignSettings){
@@ -1146,6 +1158,9 @@ function set_avtt_setting_value(name, newValue) {
 			break;
 		case "alwaysHideScrollbar":
 			hide_or_unhide_scrollbar();
+			break;
+		case "wheelZoomAsToggle":
+			$('#zoom_plus, #zoom_minus').toggle(!(newValue === true));
 			break;
 	}
 }
