@@ -785,7 +785,11 @@ function clear_peer_canvas(playerId) {
 /** iterates over window.PEER_RULERS and draws any rulers that need to be drawn */
 function redraw_peer_rulers(playerId) {
   //clear_peer_canvas(playerId); // make sure we clear the canvas first. Otherwise, we'll see every previous position of every ruler
+  
   const waypointManager = window.PEER_RULERS[playerId];
+  if (waypointManager.fadeoutAnimationId) {
+    waypointManager.cancelFadeout(true);
+  }
   waypointManager.draw(undefined, undefined, undefined, playerId);
   clearTimeout(waypointManager.fadeoutDelay)  
   waypointManager.fadeoutDelay = setTimeout(() => {
