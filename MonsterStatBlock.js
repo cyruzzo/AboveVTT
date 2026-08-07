@@ -2313,7 +2313,7 @@ function getNonLegacySpellId(options){
     }
     if(!newSpell[0]){
         console.warn('Legacy fallback', options)
-        newSpell = window.ITEMS_CACHE.filter(d=> d.name.toLowerCase() == options.tooltipName && d.isLegacy);
+        newSpell = window.SPELLS_CACHE.filter(d=> d.name.toLowerCase() == options.tooltipName && d.isLegacy);
     }
     if(!newSpell[0]){
       console.warn('Spell does not exist');
@@ -2478,7 +2478,7 @@ const fetch_tooltip = mydebounce(async (dataTooltipHref, name, callback, callbac
         }
         const typeAndId = `${type}/${id}`;
        
-        const currSpell = type == 'spells' ? window.SPELLS_CACHE.filter(d=> d.definition.id == id)[0]?.definition : false;
+        const currSpell = type == 'spells' ? window.SPELLS_CACHE?.filter(d=> d.definition.id == id)[0]?.definition : false;
         let isRitual, componentText;
         if(currSpell){
           isRitual = currSpell.ritual ?? false;

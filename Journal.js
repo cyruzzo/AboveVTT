@@ -2361,7 +2361,7 @@ class JournalManager{
 					let name = decodeURIComponent(splitUrl[splitUrl.length-1].replaceAll('-', ' ')).replaceAll("’", "'");;
 					itemId = window.ddbConfigJson.weaponProperties.filter(d=> d.name.toLowerCase() == name.toLowerCase())[0]?.id
 				}
-				else if(itemType == 'spells'){
+				else if(window.SPELLS_CACHE && itemType == 'spells'){
 					const splitUrl = url.split('spells/');
 					const name = decodeURIComponent(splitUrl[splitUrl.length-1].replaceAll('-', ' ')).replaceAll("’", "'");
 					const isLegacy = !get_avtt_setting_value('2024Tooltips');
@@ -2376,7 +2376,7 @@ class JournalManager{
 					}	
 					itemId = `${spell[0].definition.id}-${splitUrl[splitUrl.length-1].replace('/', '-')}`;
 				}
-				else if(itemType == 'magic-items' || itemType == 'adventuring-gear'){
+				else if(window.ITEMS_CACHE && (itemType == 'magic-items' || itemType == 'adventuring-gear')){
 					const splitUrl = url.split(/(magic-items|adventuring-gear|equipment)\//gi);
 					const name = decodeURIComponent(splitUrl[splitUrl.length-1].replaceAll('-', ' ')).replaceAll("’", "'");
 					const isLegacy = !get_avtt_setting_value('2024Tooltips');
@@ -2406,7 +2406,7 @@ class JournalManager{
 						
 			}	
 		}
-		const isRitual = itemType == 'spells' ? window.SPELLS_CACHE.filter(d=> {
+		const isRitual = itemType == 'spells' ? window.SPELLS_CACHE?.filter(d=> {
 				let newItemId = itemId;
 				if(typeof itemId == 'string') newItemId = itemId.replace(/(\d+)-.*/gi,'$1');
 				return d.definition.id == newItemId
