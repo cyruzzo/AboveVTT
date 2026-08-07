@@ -4277,8 +4277,11 @@ class JournalManager{
 					padding: 3px 2px;
 					vertical-align: middle;
 				}
-				tbody tr td:is(:first-child, .table-row-drag-handle+:nth-child(2)){
+				tbody tr td:is(:first-child, .table-row-drag-handle+:nth-child(2), :last-child) {
 					text-align: left;
+				} 
+				:is(.skills-box, .abilities-table-container) tbody  tr td:last-child{
+					text-align: center;
 				}
 
 				.ability-score-field {
@@ -5206,19 +5209,19 @@ class JournalManager{
 										<div class="features-field" contenteditable="true">
 											<table>
 												<tbody class="ui-sortable">
-													<tr class="">
+													<tr>
 														<td>[track]Rage 2[/track]</td>
 														<td>Str attack damage +2</td>
 													</tr>
-													<tr class="">
+													<tr>
 														<td>Savage Attacker</td>
 														<td>Reroll weapon damage dice once per turn</td>
 													</tr>
-													<tr class="">
+													<tr>
 														<td>Darkvision 60ft.</td>
 														<td>&nbsp;</td>
 													</tr>
-													<tr class="">
+													<tr>
 														<td>&nbsp;Wild Shape</td>
 														<td>&nbsp;<input type="checkbox" /><input type="checkbox" />&nbsp;/ Long Rest (1
 															Recharge on Short Rest)</td>
