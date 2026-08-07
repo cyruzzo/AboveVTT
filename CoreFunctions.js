@@ -1646,7 +1646,23 @@ function showErrorMessage(error, ...extraInfo) {
     $("#error-message-stack").show();
   }
 }
+function showHardwareAccelWarning(){
+  let container = $("#above-vtt-error-message");
+  container.remove();
+  container = $(`
+      <div id="above-vtt-error-message" class="small-error">
+        <h2>Hardware Acceleration not enabled.</h2>
+        <div id="error-message-details">Enable hardware acceleration (graphics acceleration in chrome) in your browser settings and restart your browser.</div>
+        <div class="error-message-buttons">
+          <button id="close-error-button">Close</button>
+        </div>
+      </div>
+    `)
+  
+  $(document.body).append(container);
 
+  $("#close-error-button").on("click", removeError);
+}
 function showDiceDisabledWarning(){
   window.diceWarning = 1;
   let container = $("#above-vtt-error-message");

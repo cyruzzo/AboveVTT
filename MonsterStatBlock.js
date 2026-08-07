@@ -168,7 +168,7 @@ async function display_stat_block_in_container(statBlock, container, tokenId, cu
 			})
     }
     if($html.find('.dnd-sheet').length>0){
-      container.css('min-width', '575px');
+      container.css('min-width', '615px');
     }else{
       container.css('min-width', '200px');
     }
@@ -415,21 +415,14 @@ async function display_stat_block_in_container(statBlock, container, tokenId, cu
           rowsContainer.find('> tr').each(function() {
             const $row = $(this);
             if ($row.find('> .table-row-drag-handle').length === 0) {
-              const $handleCell = $('<td class="table-row-drag-handle" aria-hidden="true">⋮⋮</td>');
+              const $handleCell = $('<td class="table-row-drag-handle" contenteditable="false" aria-hidden="true">⋮⋮</td>');
               $row.prepend($handleCell);
             }
           });
 
-          rowsContainer.sortable({
-            items: '> tr',
+          $table.sortable({
+            items: '> tbody > tr, > tr',
             handle: '.table-row-drag-handle',
-            helper: function(event, ui) {
-              const helper = ui.clone();
-              helper.children().each(function(index) {
-                $(this).width(ui.children().eq(index).outerWidth());
-              });
-              return helper;
-            },
             placeholder: 'ui-sortable-placeholder',
             update: function() {
               const closestNote = container.find('.avtt-stat-block-container').first();
@@ -473,7 +466,7 @@ async function display_stat_block_in_container(statBlock, container, tokenId, cu
 
 
 			});
-      container.off('click.addRow').on('click.addRow', '.add-table-row', function (e) {
+      container.off('pointerdown.addRow, touchstart.addRow').on('pointerdown.addRow, touchstart.addRow', '.add-table-row', function (e) {
 				e.preventDefault();
 			  const table = $(e.target).prev('table');
 				const tableBody = $(table).find('tbody');
@@ -641,21 +634,14 @@ const debounceRescanStatBlock = mydebounce(async (container, noteId, tokenId) =>
       rowsContainer.find('> tr').each(function() {
         const $row = $(this);
         if ($row.find('> .table-row-drag-handle').length === 0) {
-          const $handleCell = $('<td class="table-row-drag-handle" aria-hidden="true">⋮⋮</td>');
+          const $handleCell = $('<td class="table-row-drag-handle" contenteditable="false" aria-hidden="true">⋮⋮</td>');
           $row.prepend($handleCell);
         }
       });
 
-      rowsContainer.sortable({
-        items: '> tr',
+      $table.sortable({
+        items: '> tbody > tr, > tr',
         handle: '.table-row-drag-handle',
-        helper: function(event, ui) {
-          const helper = ui.clone();
-          helper.children().each(function(index) {
-            $(this).width(ui.children().eq(index).outerWidth());
-          });
-          return helper;
-        },
         placeholder: 'ui-sortable-placeholder',
         update: function() {
           const closestNote = container.find('.avtt-stat-block-container').first();
@@ -677,10 +663,10 @@ const debounceRescanStatBlock = mydebounce(async (container, noteId, tokenId) =>
             return innerHTML;
           })
           const sanitizedHTML = basic_sanitize_html(noteClone[0].innerHTML).replaceAll(/\[(\/)?spell\]/gi, `[$1spell]`).replaceAll(/\[(\/)?magicitem\]/gi, `[$1magicItem]`).replaceAll(/\[(\/)?item\]/gi, `[$1item]`);
-          window.JOURNAL.notes[window.TOKEN_OBJECTS[tokenId]?.options?.statBlock].text = sanitizedHTML;
-          window.JOURNAL.notes[window.TOKEN_OBJECTS[tokenId]?.options?.statBlock].plain = $(sanitizedHTML).text();
+          window.JOURNAL.notes[noteId].text = sanitizedHTML;
+          window.JOURNAL.notes[noteId].plain = $(sanitizedHTML).text();
           window.JOURNAL.setPersistTimeout();
-          debounceSendNote(window.TOKEN_OBJECTS[tokenId]?.options?.statBlock, window.JOURNAL.notes[window.TOKEN_OBJECTS[tokenId]?.options?.statBlock], tokenId);
+          debounceSendNote(noteId,  window.JOURNAL.notes[noteId], tokenId);
         }
       })
       const header = $table.find('th').first().parent().parent();
@@ -697,7 +683,7 @@ const debounceRescanStatBlock = mydebounce(async (container, noteId, tokenId) =>
     const add_table_row = $(`<button class="add-table-row">+</button>`);	
     $table.after(add_table_row);
   });
-  targetRescan.off('click.addRow').on('click.addRow', '.add-table-row', function (e) {
+  targetRescan.off('pointerdown.addRow, touchstart.addRow').on('pointerdown.addRow, touchstart.addRow', '.add-table-row', function (e) {
     e.preventDefault();
 			const table = $(e.target).prev('table');
       const tableBody = $(table).find('tbody');

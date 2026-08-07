@@ -8,6 +8,13 @@ import { init_audio_mixer } from './audio/index.mjs'
 $(function() {
   if (is_abovevtt_page()) { // Only execute if the app is starting up
     console.log("startup calling init_splash");
+    let canvas = document.createElement('canvas');
+    if(!!(canvas?.getContext("webgl", {failIfMajorPerformanceCaveat: true}) || canvas?.getContext("experimental-webgl", {failIfMajorPerformanceCaveat: true}))){
+      canvas = null;
+    } else{
+      showHardwareAccelWarning();
+      return;
+    } 
     init_my_dice_details();
     init_loading_overlay_beholder();
     addBeyond20EventListener("rendered-roll", (request) => {$('.avtt-sidebar-controls #switch_gamelog').click();});
