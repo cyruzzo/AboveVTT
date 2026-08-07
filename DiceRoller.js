@@ -132,7 +132,19 @@ class DiceRoll {
     constructor(expression, action = undefined, rollType = undefined, name = undefined, avatarUrl = undefined, entityType = undefined, entityId = undefined, sendToOverride = undefined, damageType = undefined) {
 
         let parsedExpression = expression.toLowerCase().replaceAll(/\s+/g, "").replaceAll(/^(d\d+)|([+-])(d\d+)/g, '$21$1$3');; // remove all spaces and 1's to d6 -> 1d6, d8 -> 1d8 etc.
-
+        $(document).off('change.dicevisibility').on('change.dicevisibility', 'input[id|="dice-visibility-option"]', (e)=>{
+           // This is a workaround resolve an issue with DDB bug. They write the new data to local storage then override it immediately with initally loaded data.
+            const userData = JSON.parse(localStorage.getItem('userDiceData'))
+            if(userData){
+                const target = $(e.currentTarget);
+                const targetId = target.attr('id').split('-');
+                const newVisibility = targetId[targetId.length-1];
+                userData.state[window.MB.userid].settings.visibility = newVisibility;
+                setTimeout(() => {
+                    localStorage.setItem('userDiceData', JSON.stringify(userData));
+                }, 250)
+            }
+        })
         if (!parsedExpression.match(validExpressionRegex)) {
             console.warn("Not parsing expression because it contains an invalid character", expression);          
             chat_command_error();
