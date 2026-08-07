@@ -13085,10 +13085,12 @@ p.monster-header+p {
         padding: 3px 2px;
         vertical-align: middle;
     }
-    tbody tr td:is(:first-child, .table-row-drag-handle+:nth-child(2)) {
+    tbody tr td:is(:first-child, .table-row-drag-handle+:nth-child(2), :last-child) {
         text-align: left;
     } 
-
+    :is(.skills-box, .abilities-table-container) tbody  tr td:last-child{
+        text-align: center;
+    }
     .ability-score-field {
         display: inline-block;
         width: 22px;
