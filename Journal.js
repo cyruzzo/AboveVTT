@@ -2774,10 +2774,10 @@ class JournalManager{
                 spellcasting < li &&
                 (input.match(/(?<!<[^>]+)At will:/gi) ||
                     input.match(/(?<!<[^>]+)Cantrips \(at will\):/gi) ||
-                    input.match(/(?<!<[^>]+)(\d+\/day( each)?|\d+\w+ level \(\d slots?\))\:/gi))
+                    input.match(/(?<!<[^>]+)(\d+\/day( each)?|\d+\w+ level \(\d+ slots?\))\:/gi))
             ) {
             	let eachNumberFound = (input.match(/(?<!<[^>]+)\d+\/day( each)?/gi)) ? parseInt(input.match(/(?<!<[^>]+)[0-9]+(?![0-9]?px)/gi)[0]) : undefined;
-            	let slotsNumberFound = (input.match(/(?<!<[^>]+)\d+\w+ level \(\d slots?\)\:/gi)) ? parseInt(input.match(/(?<!<[^>]+)[0-9]+/gi)[1]) : undefined;
+            	let slotsNumberFound = (input.match(/(?<!<[^>]+)\d+\w+ level \(\d+ slots?\)\:/gi)) ? parseInt(input.match(/(?<!<[^>]+)[0-9]+/gi)[1]) : undefined;
             	let spellLevelFound = (slotsNumberFound) ? input.match(/\d+\w+ level/gi)[0] : undefined;
 				
 				let parts = input.replace(/<(?!\/?(?:span|a)\b)[^>]*>/gi, '').split(/((?<!<[^>]+):)/gi)
