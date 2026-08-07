@@ -1947,140 +1947,140 @@ class JournalManager{
 			})
 			this.positionNotePins(id, note_text);
 			note_text[0].scrollTop = scrollTop;
-		});	
-		if(note_text.find('.dnd-sheet').length>0){
-			note_text.find('a').attr('contenteditable', 'false');
-			note_container.find('.popout-button, .lockStatButton, .download_button, .upload_button').remove();
-			const lockStatButton = $(`<div class='lockStatButton' style="cursor: pointer; position: relative; display:inline-block; color: #ddd;">
-										<span title="lock buttons" class="material-symbols-outlined" style="font-size: 20px; position: relative; top: 4px;">
-										${!window.lockTemplateStatBlocks ? "lock_open_right" : "lock"}
-										</span>
-									</div>`)
-			lockStatButton.off('click.lockStatBlock').on('click.lockStatBlock', ()=>{
-			window.lockTemplateStatBlocks = !window.lockTemplateStatBlocks;
-			const span = lockStatButton.find('>span');
-			if(window.lockTemplateStatBlocks){
-				note_text.find('.dnd-sheet button').attr("contenteditable", "false");
-				span.text('lock');
-			} else{
-				note_text.find('.dnd-sheet [contenteditable]:not(a)').attr("contenteditable", "true");
-				span.text('lock_open_right');
-			}
-			})
 			
-			if(window.lockTemplateStatBlocks){
-				note_text.find('.dnd-sheet button').attr("contenteditable", "false");
-			} else{
-				note_text.find('.dnd-sheet [contenteditable]:not(a)').attr("contenteditable", "true");
-			}
-
-			const downloadStat = $(`<div class='download_button' style="cursor: pointer; position: relative; display:inline-block; color: #ddd;">
-										<span title="Download Statblock as HTML" class="material-symbols-outlined" style="font-size: 24px; position: relative; top: 4px;">
-										download
-										</span>
-									</div>`)
-			downloadStat.off('click.exportStatBlock').on('click.exportStatBlock', function () { 
-				build_import_loading_indicator('Preparing Export File');
-
-				const currentdate = new Date(); 
-				const datetime = `${currentdate.getFullYear()}-${(currentdate.getMonth()+1)}-${currentdate.getDate()}`
-				const santizedHtml = basic_sanitize_html(window.JOURNAL.notes[id].text);
-				let html = $(`${santizedHtml}`);
-				html.find('.injected-input, .added-input-desc').remove();
-				html.find('.add-input:not(.avtt-custom-tracker)').replaceWith((i, innerHtml) => {
-					return innerHtml;
+			if(note_text.find('.dnd-sheet').length>0){
+				note_text.find('a').attr('contenteditable', 'false');
+				note_container.find('.popout-button, .lockStatButton, .download_button, .upload_button').remove();
+				const lockStatButton = $(`<div class='lockStatButton' style="cursor: pointer; position: relative; display:inline-block; color: #ddd;">
+											<span title="lock buttons" class="material-symbols-outlined" style="font-size: 20px; position: relative; top: 4px;">
+											${!window.lockTemplateStatBlocks ? "lock_open_right" : "lock"}
+											</span>
+										</div>`)
+				lockStatButton.off('click.lockStatBlock').on('click.lockStatBlock', ()=>{
+				window.lockTemplateStatBlocks = !window.lockTemplateStatBlocks;
+				const span = lockStatButton.find('>span');
+				if(window.lockTemplateStatBlocks){
+					note_text.find('.dnd-sheet button').attr("contenteditable", "false");
+					span.text('lock');
+				} else{
+					note_text.find('.dnd-sheet [contenteditable]:not(a)').attr("contenteditable", "true");
+					span.text('lock_open_right');
+				}
 				})
-				self.translateHtmlAndBlocks(html).then(()=>{
-					self.add_journal_tooltip_targets(html);
-					html.find('a').attr('contenteditable', 'false');
-					html.find('.add-input').each(function(){window.JOURNAL.addTrackedInputs($(this), {noteId: id})})
-					html.find('.abovevtt-slash-command-journal').replaceWith((i, innerHTML) =>{
-						return `[roll]${innerHTML}[/roll]`;
+				
+				if(window.lockTemplateStatBlocks){
+					note_text.find('.dnd-sheet button').attr("contenteditable", "false");
+				} else{
+					note_text.find('.dnd-sheet [contenteditable]:not(a)').attr("contenteditable", "true");
+				}
+
+				const downloadStat = $(`<div class='download_button' style="cursor: pointer; position: relative; display:inline-block; color: #ddd;">
+											<span title="Download Statblock as HTML" class="material-symbols-outlined" style="font-size: 24px; position: relative; top: 4px;">
+											download
+											</span>
+										</div>`)
+				downloadStat.off('click.exportStatBlock').on('click.exportStatBlock', function () { 
+					build_import_loading_indicator('Preparing Export File');
+
+					const currentdate = new Date(); 
+					const datetime = `${currentdate.getFullYear()}-${(currentdate.getMonth()+1)}-${currentdate.getDate()}`
+					const santizedHtml = basic_sanitize_html(window.JOURNAL.notes[id].text);
+					let html = $(`${santizedHtml}`);
+					html.find('.injected-input, .added-input-desc').remove();
+					html.find('.add-input:not(.avtt-custom-tracker)').replaceWith((i, innerHtml) => {
+						return innerHtml;
 					})
-					html = `<style id='contentStyles'>
-						${self.content_styles()}			
-						.custom-stat{
-							color: --var(--pc-template-text-color, #111) !important;
-							border: none !important;
-						}
-						.ignore-abovevtt-formating{
-							border: none !important;
-						}   		   
-					</style>
-					<script>
-						window.addEventListener("click", (e) => {
-							if (e.target && e.target.nodeName === 'INPUT' && e.target.type === 'checkbox') {				
-								if (e.target.checked) {
-									e.target.setAttribute('checked', 'checked');
-								} else {
-									e.target.removeAttribute('checked');
-								}
+					self.translateHtmlAndBlocks(html).then(()=>{
+						self.add_journal_tooltip_targets(html);
+						html.find('a').attr('contenteditable', 'false');
+						html.find('.add-input').each(function(){window.JOURNAL.addTrackedInputs($(this), {noteId: id})})
+						html.find('.abovevtt-slash-command-journal').replaceWith((i, innerHTML) =>{
+							return `[roll]${innerHTML}[/roll]`;
+						})
+						html = `<style id='contentStyles'>
+							${self.content_styles()}			
+							.custom-stat{
+								color: --var(--pc-template-text-color, #111) !important;
+								border: none !important;
 							}
-							window.addEventListener('input', (e) => {
-								if (e.target && e.target.nodeName === 'INPUT' && e.target.type === 'number') {
-									e.target.setAttribute('value', e.target.value);
+							.ignore-abovevtt-formating{
+								border: none !important;
+							}   		   
+						</style>
+						<script>
+							window.addEventListener("click", (e) => {
+								if (e.target && e.target.nodeName === 'INPUT' && e.target.type === 'checkbox') {				
+									if (e.target.checked) {
+										e.target.setAttribute('checked', 'checked');
+									} else {
+										e.target.removeAttribute('checked');
+									}
 								}
+								window.addEventListener('input', (e) => {
+									if (e.target && e.target.nodeName === 'INPUT' && e.target.type === 'number') {
+										e.target.setAttribute('value', e.target.value);
+									}
+								});
 							});
-						});
-						</script>
-					${html[0].outerHTML}			
-					<script>
-						document.querySelectorAll('table').forEach((table) => {
-							if (table.nextElementSibling?.classList.contains('add-table-row')) return;
+							</script>
+						${html[0].outerHTML}			
+						<script>
+							document.querySelectorAll('table').forEach((table) => {
+								if (table.nextElementSibling?.classList.contains('add-table-row')) return;
 
-							const addTableRowButton = document.createElement('button');
-							addTableRowButton.className = 'add-table-row';
-							addTableRowButton.type = 'button';
-							addTableRowButton.textContent = '+';
-							table.insertAdjacentElement('afterend', addTableRowButton);
-						});
-
-						document.addEventListener('click', (e) => {
-							const addButton = e.target.closest('.add-table-row');
-							if (!addButton) return;
-
-							e.preventDefault();
-
-							const table = addButton.previousElementSibling;
-							if (!table || table.tagName.toLowerCase() !== 'table') return;
-
-							const rowContainer = table.tBodies[0] || table;
-							const lastRow = rowContainer.rows[rowContainer.rows.length - 1];
-							if (!lastRow) return;
-
-							const newRow = lastRow.cloneNode(true);
-							newRow.querySelectorAll('td, th').forEach((cell) => {
-								cell.innerHTML = '';
+								const addTableRowButton = document.createElement('button');
+								addTableRowButton.className = 'add-table-row';
+								addTableRowButton.type = 'button';
+								addTableRowButton.textContent = '+';
+								table.insertAdjacentElement('afterend', addTableRowButton);
 							});
 
-							rowContainer.appendChild(newRow);
-						});
-					</script>`;
-					download(html,`${window.CAMPAIGN_INFO.name}-${datetime}-pctemplate.html`,"text/html");
-						
-					$(".import-loading-indicator").remove();        
-				})
+							document.addEventListener('click', (e) => {
+								const addButton = e.target.closest('.add-table-row');
+								if (!addButton) return;
+
+								e.preventDefault();
+
+								const table = addButton.previousElementSibling;
+								if (!table || table.tagName.toLowerCase() !== 'table') return;
+
+								const rowContainer = table.tBodies[0] || table;
+								const lastRow = rowContainer.rows[rowContainer.rows.length - 1];
+								if (!lastRow) return;
+
+								const newRow = lastRow.cloneNode(true);
+								newRow.querySelectorAll('td, th').forEach((cell) => {
+									cell.innerHTML = '';
+								});
+
+								rowContainer.appendChild(newRow);
+							});
+						</script>`;
+						download(html,`${window.CAMPAIGN_INFO.name}-${datetime}-pctemplate.html`,"text/html");
+							
+						$(".import-loading-indicator").remove();        
+					})
+					
+					
+				});
+				const uploadStat = $(`<div class='upload_button' style="cursor: pointer; position: relative; display:inline-block; color: #ddd;">
+					<span onclick='import_open_template();' title="Upload HTML Statblock" class="material-symbols-outlined" style="font-size: 24px; position: relative; top: 4px;">
+						upload
+					</span>
+					<input accept='.html' id='input_pc_template' type='file' single style='display: none' />
+					</div>
+				`);
+				uploadStat.find('input[type="file"]').change(function(e) {
+					import_pc_template_html(e.target.files, note_text, id);
+				});
+				note_container.find('.title_bar_text').css('display', 'inline-block');
+				note_container.find('.title_bar').prepend(lockStatButton, downloadStat, uploadStat);
+				note_container.find('.title_bar').css({
+					'display': 'flex',
+					'align-items': 'center'
+				});
 				
-				
-			});
-			const uploadStat = $(`<div class='upload_button' style="cursor: pointer; position: relative; display:inline-block; color: #ddd;">
-				<span onclick='import_open_template();' title="Upload HTML Statblock" class="material-symbols-outlined" style="font-size: 24px; position: relative; top: 4px;">
-					upload
-				</span>
-				<input accept='.html' id='input_pc_template' type='file' single style='display: none' />
-				</div>
-			`);
-			uploadStat.find('input[type="file"]').change(function(e) {
-				import_pc_template_html(e.target.files, note_text, id);
-			});
-			note_container.find('.title_bar_text').css('display', 'inline-block');
-			note_container.find('.title_bar').prepend(lockStatButton, downloadStat, uploadStat);
-			note_container.find('.title_bar').css({
-				'display': 'flex',
-				'align-items': 'center'
-			});
-			const initializeTableRowSorting = () => {
-				note_text.find('table').each(function() {
+				note_container.find('table').each(function() {
 					const $table = $(this);
 					const rowsContainer = $table.find('tbody').length > 0 ? $table.find('tbody') : $table;
 					if (rowsContainer.find('> tr').length > 1) {
@@ -2117,22 +2117,21 @@ class JournalManager{
 					const add_table_row = $(`<button class="add-table-row">+</button>`);
 					$table.after(add_table_row);
 				});
-			};
 
-			requestAnimationFrame(() => {
-				initializeTableRowSorting();
-			});
+				
 
-			note_text.off('pointerdown.addRow, touchstart.addRow').on('pointerdown.addRow, touchstart.addRow', '.add-table-row', function (e) {
-				e.preventDefault();
-				const table = $(e.target).prev('table');
-				const tableBody = $(table).find('tbody');
-				const targetContainer = tableBody.length>0 ? tableBody : table;
-				const newRow = targetContainer.find('>tr:last').clone();
-				newRow.find('td:not(.table-row-drag-handle), th').html('');
-				targetContainer.append(newRow);
-			});
-		}
+				note_text.off('pointerdown.addRow, touchstart.addRow').on('pointerdown.addRow, touchstart.addRow', '.add-table-row', function (e) {
+					e.preventDefault();
+					const table = $(e.target).prev('table');
+					const tableBody = $(table).find('tbody');
+					const targetContainer = tableBody.length>0 ? tableBody : table;
+					const newRow = targetContainer.find('>tr:last').clone();
+					newRow.find('td:not(.table-row-drag-handle), th').html('');
+					targetContainer.append(newRow);
+				});
+			}
+		});	
+		
 	}
 	add_journal_tooltip_targets(target){
 		const monsterIds = [];
@@ -2837,6 +2836,8 @@ class JournalManager{
 
                 return `${languageText}`
             })
+			input = input.replace(/\[checkbox checked\]/gi, `<input type="checkbox" checked>`);
+			input = input.replace(/\[checkbox\]/gi, `<input type="checkbox">`);
             input = input.replace(/\[note\](.*?)\[\/note\]/g, function(m){
             	let note = m.replace(/<\/?p>/g, '').replace(/\s?\[note\]\s?|\s?\[\/note\]\s?/g, '').replace('[/note]', '');   	
             	const noteId = note.replace(/\s/g, '-').split(';')[0];
@@ -5638,7 +5639,7 @@ class JournalManager{
 				},
 			],
 		  	table_grid: false,
-			toolbar: 'undo styleselect template | horizontalrules | bold italic underline strikethrough | alignleft aligncenter alignright justify| outdent indent | bullist numlist | fontsizeinput forecolor backcolor | link unlink | image media filePickers table tableCustom | code',
+			toolbar: 'undo styleselect template | horizontalrules | bold italic underline strikethrough | alignleft aligncenter alignright justify | outdent indent | bullist numlist custom-check | fontsizeinput forecolor backcolor | link unlink | image media filePickers table tableCustom | code',
 			image_class_list: [
 				{title: 'Magnify', value: 'magnify'},
 			],
@@ -5704,26 +5705,32 @@ class JournalManager{
 				});
 
 				editor.addButton('horizontalrules', {
-					  type: 'splitbutton',
-				      text: '',
-				      icon: 'hr',
-				      tooltip: 'Horizontal Rules',
-				      menu: [
-				          {			     
-				            icon: 'hr',
-				            text: 'Statblock Seperator',
-				            onclick: (e) => {e.preventDefault(); e.stopPropagation(); editor.insertContent(`<img class="mon-stat-block__separator-img" alt="" src="https://www.dndbeyond.com/file-attachments/0/579/stat-block-header-bar.svg"/>`)},
-				      
-				          },
-				          {
-				            icon: 'hr',
-				            text: 'Horizontal Rule',
-				            onclick: (e) => {e.preventDefault(); e.stopPropagation(); editor.insertContent(`<hr>`)},
-				          }
-				        ],
-				      onclick: (e) => {e.preventDefault(); e.stopPropagation(); editor.insertContent(`<img class="mon-stat-block__separator-img" alt="" src="https://www.dndbeyond.com/file-attachments/0/579/stat-block-header-bar.svg"/>`)},
-				    });
-
+					type: 'splitbutton',
+					text: '',
+					icon: 'hr',
+					tooltip: 'Horizontal Rules',
+					menu: [
+						{			     
+						icon: 'hr',
+						text: 'Statblock Seperator',
+						onclick: (e) => {e.preventDefault(); e.stopPropagation(); editor.insertContent(`<img class="mon-stat-block__separator-img" alt="" src="https://www.dndbeyond.com/file-attachments/0/579/stat-block-header-bar.svg"/>`)},
+					
+						},
+						{
+						icon: 'hr',
+						text: 'Horizontal Rule',
+						onclick: (e) => {e.preventDefault(); e.stopPropagation(); editor.insertContent(`<hr>`)},
+						}
+					],
+					onclick: (e) => {e.preventDefault(); e.stopPropagation(); editor.insertContent(`<img class="mon-stat-block__separator-img" alt="" src="https://www.dndbeyond.com/file-attachments/0/579/stat-block-header-bar.svg"/>`)},
+				});
+				editor.addButton('custom-check', {
+					text: '',
+					icon: 'custom-checkbox',
+					image: `data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 width=%2224%22 height=%2224%22><path d=%22M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z%22/></svg>`,
+					tooltip: 'Add Checkbox',
+					onclick: (e) => {e.preventDefault(); e.stopPropagation(); editor.insertContent(`<input type='checkbox'/>`)},
+				});
 				editor.addButton('filePickers', {
 					type: 'splitbutton',
 					text: '',

@@ -134,7 +134,7 @@ async function display_stat_block_in_container(statBlock, container, tokenId, cu
         }
 
 			});
-			container.off('change.checkbox').on('change.checkbox', '.dnd-sheet input', (e)=>{
+			container.off('change.checkbox').on('change.checkbox', 'input[type="checkbox"], .dnd-sheet input', (e)=>{
 				if (e.target && e.target.nodeName === 'INPUT' && e.target.type === 'checkbox') {				
 					if (e.target.checked) {
 						e.target.setAttribute('checked', 'checked');
@@ -2295,6 +2295,9 @@ const DAMAGE_ADJUSTMENT_TYPE_VULNERABILITIES = 3;
 const validRollTypes = ["to hit", "damage", "save", "check", "heal", undefined]; // undefined is in the list to allow clearing it
 
 function getNonLegacySpellId(options){
+    if(!window.SPELLS_CACHE){
+      return options.id ?? options.tooltipName;
+    }
     let newSpell
     if(options.tooltipName){
       newSpell = window.SPELLS_CACHE.filter(d=> d.definition.name.toLowerCase() == options.tooltipName && (!d.definition.isLegacy || d.definition.isHomebrew)); 
@@ -2319,6 +2322,9 @@ function getNonLegacySpellId(options){
     return newSpell[0].definition.id;
 }
 function getNonLegacyItemId(options){
+    if(!window.ITEMS_CACHE){
+      return options.id ?? options.tooltipName;
+    }
     let newItem 
     if(options.tooltipName){
       newItem = window.ITEMS_CACHE.filter(d=> d.name.toLowerCase() == options.tooltipName && (!d.isLegacy || d.isHomebrew)); 
