@@ -466,7 +466,7 @@ async function display_stat_block_in_container(statBlock, container, tokenId, cu
 
 
 			});
-      container.off('click.addRow').on('click.addRow', '.add-table-row', function (e) {
+      container.off('pointerdown.addRow, touchstart.addRow').on('pointerdown.addRow, touchstart.addRow', '.add-table-row', function (e) {
 				e.preventDefault();
 			  const table = $(e.target).prev('table');
 				const tableBody = $(table).find('tbody');
@@ -683,7 +683,7 @@ const debounceRescanStatBlock = mydebounce(async (container, noteId, tokenId) =>
     const add_table_row = $(`<button class="add-table-row">+</button>`);	
     $table.after(add_table_row);
   });
-  targetRescan.off('click.addRow').on('click.addRow', '.add-table-row', function (e) {
+  targetRescan.off('pointerdown.addRow, touchstart.addRow').on('pointerdown.addRow, touchstart.addRow', '.add-table-row', function (e) {
     e.preventDefault();
 			const table = $(e.target).prev('table');
       const tableBody = $(table).find('tbody');

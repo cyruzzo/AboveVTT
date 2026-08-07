@@ -2123,7 +2123,7 @@ class JournalManager{
 				initializeTableRowSorting();
 			});
 
-			note_text.off('click.addRow').on('click.addRow', '.add-table-row', function (e) {
+			note_text.off('pointerdown.addRow, touchstart.addRow').on('pointerdown.addRow, touchstart.addRow', '.add-table-row', function (e) {
 				e.preventDefault();
 				const table = $(e.target).prev('table');
 				const tableBody = $(table).find('tbody');
@@ -2132,7 +2132,7 @@ class JournalManager{
 				newRow.find('td:not(.table-row-drag-handle), th').html('');
 				targetContainer.append(newRow);
 			});
-	}
+		}
 	}
 	add_journal_tooltip_targets(target){
 		const monsterIds = [];
