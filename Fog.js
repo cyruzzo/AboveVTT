@@ -157,6 +157,8 @@ class WaypointManagerClass {
 		}
 		this.playerId = window.PLAYER_ID;
 		this.throttleDrawQueued = false;
+		this.pendingDrawArgs = null;
+		this.pendingDrawFrame = null;
 		this.throttleDraw = throttle((callback) => {
 			if(this.throttleDrawQueued == true)
 				return;
@@ -334,41 +336,50 @@ class WaypointManagerClass {
 	* @param playerId {string | false | undefined} `window.PLAYER_ID` if unset
 	*/
 	draw(labelX = undefined, labelY = undefined, alpha = 1, playerId=window.PLAYER_ID) {
-		const sceneMapSize = getSceneMapSize();
-
-		let cumulativeDistance = 0;
-		this.numberOfDiagonals = 0;
-		let elementsToDraw = "";
-		const [sceneWidth, sceneHeight] = [sceneMapSize.sceneWidth, sceneMapSize.sceneHeight];
-		const bobbles = $(`<svg viewbox='0 0 ${sceneWidth} ${sceneHeight}' width='${sceneWidth}' height='${sceneHeight}' class='ruler-svg-bobbles' style='top:0px; left:0px;'></svg>`);
-		const lines = $(`<svg viewbox='0 0 ${sceneWidth} ${sceneHeight}' width='${sceneWidth}' height='${sceneHeight}' class='ruler-svg-line' style='top:0px; left:0px;'></svg>`);
-
-		
-		for (let i = 0; i < this.coords.length; i++) {
-			
-			if (i < this.coords.length - 1) {
-				elementsToDraw += this.makeWaypointSegment(this.coords[i], cumulativeDistance, undefined, undefined, sceneMapSize, bobbles, lines);
-			} else {
-				elementsToDraw += this.makeWaypointSegment(this.coords[i], cumulativeDistance, labelX, labelY, sceneMapSize, bobbles, lines);
-			}
-
-			cumulativeDistance += this.coords[i].distance
+		this.pendingDrawArgs = { labelX, labelY, alpha, playerId };
+		if (this.pendingDrawFrame !== null) {
+			return;
 		}
-		elementsToDraw = `${lines[0].outerHTML}${elementsToDraw}${bobbles[0].outerHTML}`
 
-	
-		const rulerContainer = this.getOrCreateDrawingContainer(playerId);
-		const self = this;
-		this.throttleDraw(function(){
-			// update alpha for the entire container
-			if(alpha>0){
-				rulerContainer.style.setProperty("--svg-text-alpha", alpha.toString());
-				rulerContainer.innerHTML = elementsToDraw;	
+		this.pendingDrawFrame = requestAnimationFrame(() => {
+			const args = this.pendingDrawArgs;
+			this.pendingDrawArgs = null;
+			this.pendingDrawFrame = null;
+			if (!args) {
+				return;
 			}
-			else{
-				self.clearWaypointDrawings(playerId);
+
+			const sceneMapSize = getSceneMapSize();
+			let cumulativeDistance = 0;
+			this.numberOfDiagonals = 0;
+			let elementsToDraw = "";
+			const [sceneWidth, sceneHeight] = [sceneMapSize.sceneWidth, sceneMapSize.sceneHeight];
+			const bobbles = $(`<svg viewbox='0 0 ${sceneWidth} ${sceneHeight}' width='${sceneWidth}' height='${sceneHeight}' class='ruler-svg-bobbles' style='top:0px; left:0px;'></svg>`);
+			const lines = $(`<svg viewbox='0 0 ${sceneWidth} ${sceneHeight}' width='${sceneWidth}' height='${sceneHeight}' class='ruler-svg-line' style='top:0px; left:0px;'></svg>`);
+
+			for (let i = 0; i < this.coords.length; i++) {
+				if (i < this.coords.length - 1) {
+					elementsToDraw += this.makeWaypointSegment(this.coords[i], cumulativeDistance, undefined, undefined, sceneMapSize, bobbles, lines);
+				} else {
+					elementsToDraw += this.makeWaypointSegment(this.coords[i], cumulativeDistance, args.labelX, args.labelY, sceneMapSize, bobbles, lines);
+				}
+
+				cumulativeDistance += this.coords[i].distance
 			}
-		})
+			elementsToDraw = `${lines[0].outerHTML}${elementsToDraw}${bobbles[0].outerHTML}`
+
+			const rulerContainer = this.getOrCreateDrawingContainer(args.playerId);
+			const self = this;
+			this.throttleDraw(function(){
+				if(args.alpha > 0){
+					rulerContainer.style.setProperty("--svg-text-alpha", args.alpha.toString());
+					rulerContainer.innerHTML = elementsToDraw;	
+				}
+				else{
+					self.clearWaypointDrawings(args.playerId);
+				}
+			})
+		});
 	}
 
 	/**
@@ -593,7 +604,7 @@ class WaypointManagerClass {
 
 			self.fadeoutAnimationId = requestAnimationFrame(fadeout)
 		};
-
+		
 		self.fadeoutAnimationId = requestAnimationFrame(fadeout);
 	}
 

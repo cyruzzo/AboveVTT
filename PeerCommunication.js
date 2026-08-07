@@ -315,7 +315,6 @@ function peer_disconnected(peerId, playerId) {
 
 //#region game logic
 
-var peer_animation_timout = 20;
 
 /** Set this to true to avoid sending cursor events and ruler events at the same time
  * Don't forget to unpause it */
@@ -524,13 +523,13 @@ function init_peer_fade_function(playerId) {
 const sendRulerPositionToPeers = throttle( () => {
   noisy_log("sendRulerPositionToPeers");
   window.PeerManager.send(PeerEvent.cursor(undefined, undefined, undefined, true));
-}, peer_animation_timout);
+}, 50);
 
 /** a debounced function that will send {@link PeerEvent.cursor} event to all peers */
 const sendTokenPositionToPeers = throttle( (tokenX, tokenY, tokenId, includeRuler) => {
   noisy_log("sendTokenPositionToPeers", tokenX, tokenY, tokenId, includeRuler);
   window.PeerManager.send(PeerEvent.cursor(tokenX, tokenY, tokenId, includeRuler));
-}, peer_animation_timout);
+}, 50);
 
 /** a debounced function that will send {@link PeerEvent.cursor} event to all peers */
 const sendCursorPositionToPeers = throttle( (mouseMoveEvent) => {
@@ -547,7 +546,7 @@ const sendCursorPositionToPeers = throttle( (mouseMoveEvent) => {
   } catch (error) {
     console.log("Failed to sendCursorPositionToPeers", error);
   }
-}, peer_animation_timout);
+}, 50);
 
 /** called when we receive a {@link PeerEvent.cursor} event */
 function handle_peer_cursor_event(eventData) {
@@ -620,34 +619,56 @@ function handle_peer_cursor_event(eventData) {
 function update_peer_cursor(eventData) {
   fade_peer_cursor(eventData.playerId);
 
-  if (typeof eventData.tokenId === "string" && eventData.tokenId.length > 0) {
-    peer_is_dragging_token(eventData); 
+  if (!window.PEER_CURSOR_PENDING) {
+    window.PEER_CURSOR_PENDING = {};
+  }
+  if (!window.PEER_CURSOR_FRAMES) {
+    window.PEER_CURSOR_FRAMES = {};
+  }
+
+  const pendingKey = eventData.playerId;
+  window.PEER_CURSOR_PENDING[pendingKey] = eventData;
+
+  if (window.PEER_CURSOR_FRAMES[pendingKey]) {
     return;
   }
 
-  // we're not checking receiveCursorFromPeers === "none" because we did that in handle_peer_cursor_event
-  if (window.receiveCursorFromPeers === "combatTurn" && eventData.playerId !== dm_id) { // we always allow the DM
-    const currentTurn = ct_current_turn();
-    if (!currentTurn) return; // combat is not active, and this player only wants to see the cursor of the current turn
-    if (!currentTurn.includes(eventData.playerId)) return; // combat is active, but this cursor does not match the current turn
-  }
+  window.PEER_CURSOR_FRAMES[pendingKey] = requestAnimationFrame(() => {
+    const pendingEvent = window.PEER_CURSOR_PENDING[pendingKey];
+    delete window.PEER_CURSOR_FRAMES[pendingKey];
+    delete window.PEER_CURSOR_PENDING[pendingKey];
+    if (!pendingEvent) {
+      return;
+    }
 
-  noisy_log("update_peer_cursor", eventData);
+    if (typeof pendingEvent.tokenId === "string" && pendingEvent.tokenId.length > 0) {
+      peer_is_dragging_token(pendingEvent);
+      return;
+    }
 
-  const playerId = eventData.playerId === dm_id ? "DM" : eventData.playerId; // dm_id has whitespace in it which messes with html selectors
-  let cursorPosition = $(`#cursorPosition-${playerId}`);
-  if (cursorPosition.length === 0) {
-    cursorPosition = $(`<div class="peerCursorPosition" id="cursorPosition-${playerId}"></div>`);
-    $("#VTT").append(cursorPosition);
-    cursorPosition.css("transform", "scale(" + 1/window.ZOOM + ")");
-  }
-  cursorPosition.css('background', eventData.color);
-  cursorPosition.stop();
-  cursorPosition.animate({
-    top: eventData.y-cursorPosition.width()/2,
-    left: eventData.x-cursorPosition.height()/2
-  }, peer_animation_timout, "linear");
-  cursorPosition.fadeIn();
+    // we're not checking receiveCursorFromPeers === "none" because we did that in handle_peer_cursor_event
+    if (window.receiveCursorFromPeers === "combatTurn" && pendingEvent.playerId !== dm_id) { // we always allow the DM
+      const currentTurn = ct_current_turn();
+      if (!currentTurn) return; // combat is not active, and this player only wants to see the cursor of the current turn
+      if (!currentTurn.includes(pendingEvent.playerId)) return; // combat is active, but this cursor does not match the current turn
+    }
+
+    noisy_log("update_peer_cursor", pendingEvent);
+
+    const playerId = pendingEvent.playerId === dm_id ? "DM" : pendingEvent.playerId; // dm_id has whitespace in it which messes with html selectors
+    let cursorPosition = $(`#cursorPosition-${playerId}`);
+    if (cursorPosition.length === 0) {
+      cursorPosition = $(`<div class="peerCursorPosition" id="cursorPosition-${playerId}"></div>`);
+      $("#VTT").append(cursorPosition);
+      cursorPosition.css("transform", "scale(" + 1/window.ZOOM + ")");
+    }
+    cursorPosition.css({
+      background: pendingEvent.color,
+      top: pendingEvent.y-cursorPosition.width()/2,
+      left: pendingEvent.x-cursorPosition.height()/2
+    });
+    cursorPosition.show();
+  });
 }
 
 /** Calls the fade cursor debounce function for the playerId. See {@link init_peer_fade_function}
@@ -689,18 +710,42 @@ const refreshTokensSidebarList = mydebounce( () => { // we want to debounce this
 /** called when we receive a {@link PeerEvent.cursor} event
 * this should only be called from {@link handle_peer_cursor_event} */
 function update_peer_ruler(eventData) {
-  peer_is_dragging_token(eventData); // they allow rulers to be drawn so also show the token being dragged if applicable
+  if (!window.PEER_RULER_PENDING) {
+    window.PEER_RULER_PENDING = {};
+  }
+  if (!window.PEER_RULER_FRAMES) {
+    window.PEER_RULER_FRAMES = {};
+  }
 
-  // we're not checking receiveRulerFromPeers because we did that in handle_peer_cursor_event
+  const pendingKey = eventData.playerId;
+  window.PEER_RULER_PENDING[pendingKey] = eventData;
 
-  noisy_log("update_peer_ruler", eventData)
+  if (window.PEER_RULER_FRAMES[pendingKey]) {
+    return;
+  }
 
-  if (window.CURRENT_SCENE_DATA && window.CURRENT_SCENE_DATA.id !== eventData.sceneId) return; // they're on a different scene
-  const waypointManager = get_peer_waypoint_manager(eventData.playerId, eventData.color);
-  waypointManager.clearWaypoints(false);
-  waypointManager.numWaypoints = eventData.numWaypoints;
-  waypointManager.coords = eventData.coords;
-  redraw_peer_rulers(eventData.playerId);
+  window.PEER_RULER_FRAMES[pendingKey] = requestAnimationFrame(() => {
+    const pendingEvent = window.PEER_RULER_PENDING[pendingKey];
+    delete window.PEER_RULER_FRAMES[pendingKey];
+    delete window.PEER_RULER_PENDING[pendingKey];
+    if (!pendingEvent) {
+      return;
+    }
+
+    if (typeof pendingEvent.tokenId === "string" && pendingEvent.tokenId.length > 0) {
+      peer_is_dragging_token(pendingEvent);
+    }
+
+    // we're not checking receiveRulerFromPeers because we did that in handle_peer_cursor_event
+    noisy_log("update_peer_ruler", pendingEvent);
+
+    if (window.CURRENT_SCENE_DATA && window.CURRENT_SCENE_DATA.id !== pendingEvent.sceneId) return; // they're on a different scene
+    const waypointManager = get_peer_waypoint_manager(pendingEvent.playerId, pendingEvent.color);
+    waypointManager.clearWaypoints(false);
+    waypointManager.numWaypoints = pendingEvent.numWaypoints;
+    waypointManager.coords = pendingEvent.coords;
+    redraw_peer_rulers(pendingEvent.playerId);
+  });
 }
 
 /** adds or updates the location of a mock token to show where a player is actively dragging it
@@ -742,7 +787,10 @@ function redraw_peer_rulers(playerId) {
   //clear_peer_canvas(playerId); // make sure we clear the canvas first. Otherwise, we'll see every previous position of every ruler
   const waypointManager = window.PEER_RULERS[playerId];
   waypointManager.draw(undefined, undefined, undefined, playerId);
-  waypointManager.fadeoutMeasuring(playerId);
+  clearTimeout(waypointManager.fadeoutDelay)  
+  waypointManager.fadeoutDelay = setTimeout(() => {
+    waypointManager.fadeoutMeasuring(playerId);
+  }, 200)
 }
 
 /** finds or creates a {@link WaypointManagerClass} for the given player
