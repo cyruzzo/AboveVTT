@@ -106,32 +106,7 @@ async function display_stat_block_in_container(statBlock, container, tokenId, cu
         if($('[contenteditable="true"] :is(:focus, :focus-within)').length>0) return;
         if($(e.target).is('.injected-input')) return;  
         const note_text = container.find('.avtt-stat-block-container').first();
-				const closestNote = note_text.clone(true, true);
-				const avttImages = closestNote.find('img[data-src*="above-bucket-not-a-url"]');
-				avttImages.attr('src', '');
-				avttImages.attr('href', '');
-        closestNote.find('a:empty, button:empty, .image, .add-table-row, .table-row-drag-handle, .header-spacer, .injected-input, .added-input-desc, .spell-tooltip>svg.ritual-icon-svg').remove();
-        const noteButtons = closestNote.find('button');
-				noteButtons.replaceWith((i, innerHTML)=>{
-          const command = noteButtons[i].getAttribute('data-slash-command');
-					if(command){
-						innerHTML = `[roll]${command}[/roll]`
-					}
-          return innerHTML;
-        })
-        closestNote.find('.abovevtt-slash-command-journal').replaceWith((i, innerHTML) =>{
-					return innerHTML;
-				})
-        const sanitizedHTML = basic_sanitize_html(closestNote[0].innerHTML).replaceAll(/\[(\/)?spell\]/gi, `[$1spell]`).replaceAll(/\[(\/)?magicitem\]/gi, `[$1magicItem]`).replaceAll(/\[(\/)?item\]/gi, `[$1item]`);
-				
-        const changes = $(sanitizedHTML).text().replace(/[\s\n\r]/gi, '') != window.JOURNAL.notes[customStatId].plain.replace(/[\s\n\r]/gi, '');
-        if(changes){
-          window.JOURNAL.notes[customStatId].text = sanitizedHTML; 
-          window.JOURNAL.notes[customStatId].plain = $(sanitizedHTML).text();
-          debounceSendNote(customStatId, window.JOURNAL.notes[customStatId], tokenId);
-          window.JOURNAL.setPersistTimeout();
-          debounceRescanStatBlock(container, customStatId, tokenId);
-        }
+        window.JOURNAL.persistStatBlockContent(customStatId, note_text, container, {tokenId, forceSave: true, rescanStatBlock: true});
 
 			});
 			container.off('change.checkbox').on('change.checkbox', 'input[type="checkbox"], .dnd-sheet input', (e)=>{
@@ -143,29 +118,18 @@ async function display_stat_block_in_container(statBlock, container, tokenId, cu
 					}
 				}
         const note_text = container.find('.avtt-stat-block-container').first();
-				const closestNote = note_text.clone(true, true);
-				const avttImages = closestNote.find('img[data-src*="above-bucket-not-a-url"]');
-				avttImages.attr('src', '');
-				avttImages.attr('href', '');
-        closestNote.find('a:empty, button:empty, .image, .add-table-row, .table-row-drag-handle, .header-spacer, .injected-input, .added-input-desc, .spell-tooltip>svg.ritual-icon-svg').remove();
-        const noteButtons = closestNote.find('button');
-				noteButtons.replaceWith((i, innerHTML)=>{
-          const command = noteButtons[i].getAttribute('data-slash-command');
-					if(command){
-						innerHTML = `[roll]${command}[/roll]`
-					}
-          return innerHTML;
-        })
-        closestNote.find('.abovevtt-slash-command-journal').replaceWith((i, innerHTML) =>{
-					return innerHTML;
-				})
-        const sanitizedHTML = basic_sanitize_html(closestNote[0].innerHTML).replaceAll(/\[(\/)?spell\]/gi, `[$1spell]`).replaceAll(/\[(\/)?magicitem\]/gi, `[$1magicItem]`).replaceAll(/\[(\/)?item\]/gi, `[$1item]`);
-        
-        window.JOURNAL.notes[customStatId].text = sanitizedHTML; 
-        window.JOURNAL.notes[customStatId].plain = $(window.JOURNAL.notes[customStatId].text).text();
-        debounceSendNote(customStatId, window.JOURNAL.notes[customStatId], tokenId);
-        window.JOURNAL.setPersistTimeout();
+				window.JOURNAL.persistStatBlockContent(customStatId, note_text, container, {tokenId, forceSave: true, rescanStatBlock: false});
 			})
+      container.off('pointerdown.profChange, touchstart.profChange').on('pointerdown.profChange, touchstart.profChange', '.prof-checkbox', (e)=>{
+        e.preventDefault();
+        const target = $(e.currentTarget);
+        const currentState = parseInt(target.attr('data-state'));
+        const newState = (currentState + 1) % 4;
+        target.attr('data-state', newState);
+
+        const note_text = container.find('.avtt-stat-block-container').first();
+        window.JOURNAL.persistStatBlockContent(customStatId, note_text, container, {tokenId, forceSave: true, rescanStatBlock: false});
+      })
     }
     if($html.find('.dnd-sheet').length>0){
       container.css('min-width', '615px');
@@ -276,7 +240,7 @@ async function display_stat_block_in_container(statBlock, container, tokenId, cu
       }
     }
     $("span.hideme").parent().parent().hide();
-    container.find('.lockStatButton, .download_button, .upload_button, .add-table-row, .table-row-drag-handle, .header-spacer, .injected-input, .added-input-desc, .spell-tooltip>svg.ritual-icon-svg').remove();
+    container.find('.lockStatButton, .download_button, .upload_button, .add-table-row, .table-row-drag-handle, .header-spacer').remove();
     if(customStatBlock && container.find('.dnd-sheet').length>0){
       container.find('a').attr('contenteditable', 'false');
       container.find('.popout-button').remove();
@@ -515,27 +479,8 @@ async function display_stat_block_in_container(statBlock, container, tokenId, cu
             update: function() {
               const closestNote = container.find('.avtt-stat-block-container').first();
               const noteText = closestNote.length > 0 ? closestNote : container;
-              const noteClone = noteText.clone(true, true);
-              const avttImages = noteClone.find('img[data-src*="above-bucket-not-a-url"]');
-              avttImages.attr('src', '');
-              avttImages.attr('href', '');
-              noteClone.find('a:empty, button:empty, .image, .add-table-row, .table-row-drag-handle, .header-spacer, .injected-input, .added-input-desc, .spell-tooltip>svg.ritual-icon-svg').remove();
-              const noteButtons = noteClone.find('button');
-              noteButtons.replaceWith((i, innerHTML)=>{
-                const command = noteButtons[i].getAttribute('data-slash-command');
-                if(command){
-                  innerHTML = `[roll]${command}[/roll]`
-                }
-                return innerHTML;
-              })
-              noteClone.find('.abovevtt-slash-command-journal').replaceWith((i, innerHTML) =>{
-                return innerHTML;
-              })
-              const sanitizedHTML = basic_sanitize_html(noteClone[0].innerHTML).replaceAll(/\[(\/)?spell\]/gi, `[$1spell]`).replaceAll(/\[(\/)?magicitem\]/gi, `[$1magicItem]`).replaceAll(/\[(\/)?item\]/gi, `[$1item]`);
-              window.JOURNAL.notes[window.TOKEN_OBJECTS[tokenId]?.options?.statBlock].text = sanitizedHTML;
-              window.JOURNAL.notes[window.TOKEN_OBJECTS[tokenId]?.options?.statBlock].plain = $(sanitizedHTML).text();
-              window.JOURNAL.setPersistTimeout();
-              debounceSendNote(window.TOKEN_OBJECTS[tokenId]?.options?.statBlock, window.JOURNAL.notes[window.TOKEN_OBJECTS[tokenId]?.options?.statBlock], tokenId);
+              const noteId = window.TOKEN_OBJECTS[tokenId]?.options?.statBlock;
+              window.JOURNAL.persistStatBlockContent(noteId, noteText, container, {tokenId, forceSave: true, rescanStatBlock: false});
             }
           })
           const header = $table.find('th').first().parent().parent();
@@ -554,14 +499,7 @@ async function display_stat_block_in_container(statBlock, container, tokenId, cu
 
 
 			});
-      container.off('pointerdown.profChange, touchstart.profChange').on('pointerdown.profChange, touchstart.profChange', '.prof-checkbox', (e)=>{
-        e.preventDefault();
-        const target = $(e.currentTarget);
-        const currentState = parseInt(target.attr('data-state'));
-        const newState = (currentState + 1) % 4;
-        target.attr('data-state', newState);
-        persistNoteContent(true);
-      })
+  
       container.off('pointerdown.addRow, touchstart.addRow').on('pointerdown.addRow, touchstart.addRow', '.add-table-row', function (e) {
 				e.preventDefault();
 			  const table = $(e.target).prev('table');
@@ -742,27 +680,7 @@ const debounceRescanStatBlock = mydebounce(async (container, noteId, tokenId) =>
         update: function() {
           const closestNote = container.find('.avtt-stat-block-container').first();
           const noteText = closestNote.length > 0 ? closestNote : container;
-          const noteClone = noteText.clone(true, true);
-          const avttImages = noteClone.find('img[data-src*="above-bucket-not-a-url"]');
-          avttImages.attr('src', '');
-          avttImages.attr('href', '');
-          noteClone.find('a:empty, button:empty, .image, .add-table-row, .table-row-drag-handle, .header-spacer, .injected-input, .added-input-desc, .spell-tooltip>svg.ritual-icon-svg').remove();
-          const noteButtons = noteClone.find('button');
-          noteButtons.replaceWith((i, innerHTML)=>{
-            const command = noteButtons[i].getAttribute('data-slash-command');
-            if(command){
-              innerHTML = `[roll]${command}[/roll]`
-            }
-            return innerHTML;
-          })
-          noteClone.find('.abovevtt-slash-command-journal').replaceWith((i, innerHTML) =>{
-            return innerHTML;
-          })
-          const sanitizedHTML = basic_sanitize_html(noteClone[0].innerHTML).replaceAll(/\[(\/)?spell\]/gi, `[$1spell]`).replaceAll(/\[(\/)?magicitem\]/gi, `[$1magicItem]`).replaceAll(/\[(\/)?item\]/gi, `[$1item]`);
-          window.JOURNAL.notes[noteId].text = sanitizedHTML;
-          window.JOURNAL.notes[noteId].plain = $(sanitizedHTML).text();
-          window.JOURNAL.setPersistTimeout();
-          debounceSendNote(noteId,  window.JOURNAL.notes[noteId], tokenId);
+          window.JOURNAL.persistStatBlockContent(noteId, noteText, container, {tokenId, forceSave: true, rescanStatBlock: false});
         }
       })
       const header = $table.find('th').first().parent().parent();
@@ -785,7 +703,8 @@ const debounceRescanStatBlock = mydebounce(async (container, noteId, tokenId) =>
     const currentState = parseInt(target.attr('data-state'));
     const newState = (currentState + 1) % 4;
     target.attr('data-state', newState);
-    persistNoteContent(true);
+    const note_text = container.find('.avtt-stat-block-container').first();
+    window.JOURNAL.persistStatBlockContent(noteId, note_text, container, {tokenId, forceSave: true, rescanStatBlock: false});
   })
   targetRescan.off('pointerdown.addRow, touchstart.addRow').on('pointerdown.addRow, touchstart.addRow', '.add-table-row', function (e) {
     e.preventDefault();

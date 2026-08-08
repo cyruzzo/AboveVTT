@@ -1753,7 +1753,44 @@ class JournalManager{
 
 		})
 	}
-	
+	/** For saving statblocks and updating between dms and players required
+	* @param {string} id the note id
+	* @param {Object} note_text is the note body
+	* @param {Object} note_container is the main container holding the statblock. This is different based on if we display it from a token or note
+	* @param {Object} options  extra config data
+	* @param {String|undefined} options.tokenId id of token if the statblock was openned from a token
+	* @param {Boolean|undefined} options.forceSave forces saving of the note even if no changes found in text
+	* @param {Boolean|undefined} options.rescanStatBlock reruns any autoformatting we do to statblocks */
+	persistStatBlockContent = (id, note_text, note_container, options = { tokenId: undefined, forceSave: false, rescanStatBlock: true }) => {
+		const { tokenId, forceSave, rescanStatBlock } = options;
+		const closestNote = note_text.clone(true, true);
+		const avttImages = closestNote.find('img[data-src*="above-bucket-not-a-url"]');
+		avttImages.attr('src', '');
+		avttImages.attr('href', '');
+		closestNote.find('a:empty, button:empty, .add-table-row, .table-row-drag-handle, .header-spacer, .injected-input, .added-input-desc, .spell-tooltip>svg.ritual-icon-svg').remove();
+		const noteButtons = closestNote.find('button');
+		noteButtons.replaceWith((i, innerHTML)=>{
+			const command = noteButtons[i].getAttribute('data-slash-command');
+			if(command){
+				innerHTML = `[roll]${command}[/roll]`
+			}
+			return innerHTML;
+		})
+		closestNote.find('.abovevtt-slash-command-journal').replaceWith((i, innerHTML) =>{
+			return innerHTML;
+		})
+		const sanitizedHTML = basic_sanitize_html(closestNote[0].innerHTML).replaceAll(/\[(\/)?spell\]/gi, `[$1spell]`).replaceAll(/\[(\/)?magicitem\]/gi, `[$1magicItem]`).replaceAll(/\[(\/)?item\]/gi, `[$1item]`);
+		const changes = forceSave || $(sanitizedHTML).text().replace(/[\s\n\r]/gi, '') != this.notes[id].plain.replace(/[\s\n\r]/gi, '');
+		if(changes){
+			this.notes[id].text = sanitizedHTML;
+			this.notes[id].plain = $(sanitizedHTML).text();
+			window.JOURNAL.setPersistTimeout();
+			debounceSendNote(id, this.notes[id], tokenId);
+			if(rescanStatBlock){
+				debounceRescanStatBlock(note_container, id, tokenId);
+			}
+		}
+	};
 	display_note(id, statBlock = false, scrollTop=0){
 		let self=this;
 		let noteAlreadyOpen = $(`div.note[data-id='${id}']`).length>0;
@@ -1894,38 +1931,6 @@ class JournalManager{
 			note.find("a").attr("target", "_blank");
 			note_container.append(note);
 
-			const persistNoteContent = (forceSave = false, rescanStatBlock = true) => {
-				const closestNote = note_text.clone(true, true);
-				const avttImages = closestNote.find('img[data-src*="above-bucket-not-a-url"]');
-				avttImages.attr('src', '');
-				avttImages.attr('href', '');
-				closestNote.find('a:empty, button:empty, .add-table-row, .table-row-drag-handle, .header-spacer, .injected-input, .added-input-desc, .spell-tooltip>svg.ritual-icon-svg').remove();
-				const noteButtons = closestNote.find('button');
-				noteButtons.replaceWith((i, innerHTML)=>{
-					const command = noteButtons[i].getAttribute('data-slash-command');
-					if(command){
-						innerHTML = `[roll]${command}[/roll]`
-					}
-					return innerHTML;
-				})
-				closestNote.find('.abovevtt-slash-command-journal').replaceWith((i, innerHTML) =>{
-					return innerHTML;
-				})
-				const sanitizedHTML = basic_sanitize_html(closestNote[0].innerHTML).replaceAll(/\[(\/)?spell\]/gi, `[$1spell]`).replaceAll(/\[(\/)?magicitem\]/gi, `[$1magicItem]`).replaceAll(/\[(\/)?item\]/gi, `[$1item]`);
-				const changes = forceSave || $(sanitizedHTML).text().replace(/[\s\n\r]/gi, '') != self.notes[id].plain.replace(/[\s\n\r]/gi, '');
-				if(changes){
-					self.notes[id].text = sanitizedHTML;
-					self.notes[id].plain = $(sanitizedHTML).text();
-					window.JOURNAL.setPersistTimeout();
-					debounceSendNote(id, self.notes[id]);
-					if(rescanStatBlock){
-						debounceRescanStatBlock(note_container, id);
-					}
-				}
-			};
-
-	
-
 			note.off('click').on('click', '.tooltip-hover[href*="https://www.dndbeyond.com/sources/dnd/"], .int_source_link ', function (event) {
 				event.preventDefault();
 				render_source_chapter_in_iframe(event.target.href);
@@ -1933,7 +1938,7 @@ class JournalManager{
 			note.off('focusout.editable').on('focusout.editable', '[contenteditable="true"]', (e)=>{
 				if($('[contenteditable="true"] :is(:focus, :focus-within)').length>0) return;
 				if($(e.target).is('.injected-input')) return;  
-				persistNoteContent();
+				self.persistStatBlockContent(id, note_text, note_container, {rescanStatBlock: true});
 			});
 			note.off('change.checkbox').on('change.checkbox', 'input', (e)=>{
 				if (e.target && e.target.nodeName === 'INPUT' && e.target.type === 'checkbox') {				
@@ -1943,7 +1948,7 @@ class JournalManager{
 						e.target.removeAttribute('checked');
 					}
 				}
-				persistNoteContent(true, false);
+				self.persistStatBlockContent(id, note_text, note_container, {forceSave: true, rescanStatBlock: false});
 			})
 			this.positionNotePins(id, note_text);
 			note_text[0].scrollTop = scrollTop;
@@ -2178,7 +2183,7 @@ class JournalManager{
 							handle: '.table-row-drag-handle',
 							placeholder: 'ui-sortable-placeholder',
 							update: function() {
-								persistNoteContent(true, false);
+								self.persistStatBlockContent(id, note_text, note_container, {forceSave: true, rescanStatBlock: false});
 							}
 						});
 					}
@@ -2203,7 +2208,7 @@ class JournalManager{
 					const currentState = parseInt(target.attr('data-state'));
 					const newState = (currentState + 1) % 4;
 					target.attr('data-state', newState);
-					persistNoteContent(true);
+					self.persistStatBlockContent(id, note_text, note_container, {forceSave: true, rescanStatBlock: false});
 				})
 				note_text.off('pointerdown.addRow, touchstart.addRow').on('pointerdown.addRow, touchstart.addRow', '.add-table-row', function (e) {
 					e.preventDefault();
