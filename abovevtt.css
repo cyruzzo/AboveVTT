@@ -13098,15 +13098,14 @@ p.monster-header+p {
     }
 
     .prof-icon {
-        width: 16px;
-        height: 16px;
+        width: 18px;
+        height: 18px;
     }
 
-    /* Base empty circle styling */
     .base-circle {
         fill: none;
-        stroke: #333;
-        stroke-width: 2;
+        stroke: color-mix(in srgb, var(--font-color, #333) 50%, transparent 0%) !important;
+        stroke-width: 1;
     }
 
     .half-fill, .full-fill, .ring-stroke {
