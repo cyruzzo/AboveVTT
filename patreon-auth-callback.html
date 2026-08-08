@@ -49,7 +49,7 @@
 
             try {
                 if (window.opener && !window.opener.closed) {
-                    window.opener.postMessage(message, "*");
+                    window.opener.postMessage(message, "https://www.dndbeyond.com");
                 }
             } catch (err) {
                 console.error('Failed to notify opener about Patreon auth result', err);
