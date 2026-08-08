@@ -1791,6 +1791,175 @@ class JournalManager{
 			}
 		}
 	};
+	/**Downloads and PC template statblock as an offline sheet that can be reuploaded with changes later.
+	 * @param {string} id is the note id we want to download */
+	downloadStatBlock = (id) => {
+		build_import_loading_indicator('Preparing Export File');
+
+		const currentdate = new Date(); 
+		const datetime = `${currentdate.getFullYear()}-${(currentdate.getMonth()+1)}-${currentdate.getDate()}`
+		const santizedHtml = basic_sanitize_html(window.JOURNAL.notes[id].text);
+		let html = $(`${santizedHtml}`);
+		html.find('.injected-input, .added-input-desc').remove();
+		html.find('.add-input:not(.avtt-custom-tracker)').replaceWith((i, innerHtml) => {
+			return innerHtml;
+		})
+		this.translateHtmlAndBlocks(html).then(()=>{
+			this.add_journal_tooltip_targets(html);
+			html.find('a').attr('contenteditable', 'false');
+			html.find('.add-input').each(function(){window.JOURNAL.addTrackedInputs($(this), {noteId: id})})
+			html.find('.abovevtt-slash-command-journal').replaceWith((i, innerHTML) =>{
+				return `[roll]${innerHTML}[/roll]`;
+			})
+			html = `<style id='contentStyles'>
+				${this.content_styles()}			
+				.custom-stat{
+					color: --var(--pc-template-text-color, #111) !important;
+					border: none !important;
+				}
+				.ignore-abovevtt-formating{
+					border: none !important;
+				}   		   
+			</style>
+			<script>
+				window.addEventListener("click", (e) => {
+					if (e.target && e.target.nodeName === 'INPUT' && e.target.type === 'checkbox') {				
+						if (e.target.checked) {
+							e.target.setAttribute('checked', 'checked');
+						} else {
+							e.target.removeAttribute('checked');
+						}
+					}
+
+				});
+				window.addEventListener('input', (e) => {
+					if (e.target && e.target.nodeName === 'INPUT' && e.target.type === 'number') {
+					   e.target.setAttribute('value', e.target.value);
+					}
+				});
+			</script>
+			${html[0].outerHTML}			
+			<script>
+				document.querySelectorAll('table').forEach((table) => {
+					if (table.nextElementSibling?.classList.contains('add-table-row')) return;
+
+					const addTableRowButton = document.createElement('button');
+					addTableRowButton.className = 'add-table-row';
+					addTableRowButton.type = 'button';
+					addTableRowButton.textContent = '+';
+					table.insertAdjacentElement('afterend', addTableRowButton);
+
+						const tbody = table.querySelector('tbody');
+						const rowsContainer = tbody ? tbody : table;
+						const directRows = rowsContainer.querySelectorAll(':scope > tr');
+
+						if (directRows.length > 1) {
+						directRows.forEach(row => {
+							if (!row.querySelector(':scope > .table-row-drag-handle')) {
+							const handleCell = document.createElement('td');
+							handleCell.className = 'table-row-drag-handle';
+							handleCell.setAttribute('contenteditable', 'false');
+							handleCell.setAttribute('aria-hidden', 'true');
+							handleCell.textContent = '⋮⋮';
+							row.prepend(handleCell);
+							}
+						});
+						const firstTh = table.querySelector('th');
+						if (firstTh) {
+							const header = firstTh.parentElement.parentElement;
+							header.querySelectorAll(':scope > tr').forEach(row => {
+							if (!row.querySelector(':scope > .header-spacer')) {
+								const handleCell = document.createElement('th');
+								handleCell.className = 'header-spacer';
+								handleCell.setAttribute('aria-hidden', 'true');
+								row.prepend(handleCell);
+							}
+							});
+						}
+						let draggedRow = null;
+
+						rowsContainer.querySelectorAll(':scope > tr').forEach(row => {
+							row.setAttribute('draggable', 'false');
+
+							const handle = row.querySelector(':scope > .table-row-drag-handle');
+							if (handle) {
+							handle.style.cursor = 'grab';
+							
+							handle.addEventListener('mousedown', () => {
+								row.setAttribute('draggable', 'true');
+							});
+							
+							handle.addEventListener('mouseup', () => {
+								row.setAttribute('draggable', 'false');
+							});
+							}
+
+							row.addEventListener('dragstart', (e) => {
+							draggedRow = row;
+							e.dataTransfer.effectAllowed = 'move';
+							});
+
+							row.addEventListener('dragend', () => {
+							row.setAttribute('draggable', 'false');
+							rowsContainer.querySelectorAll(':scope > tr').forEach(r => r.style.borderTop = '');
+							draggedRow = null;
+							});
+
+							row.addEventListener('dragover', (e) => {
+							e.preventDefault();
+							e.dataTransfer.dropEffect = 'move';
+							if (!draggedRow || draggedRow === row) return;
+
+							const rect = row.getBoundingClientRect();
+							const midpoint = rect.top + rect.height / 2;
+
+							if (e.clientY < midpoint) {
+								rowsContainer.insertBefore(draggedRow, row);
+							} else {
+								rowsContainer.insertBefore(draggedRow, row.nextSibling);
+							}
+							});
+						});
+					}
+				});
+
+				document.addEventListener('click', (e) => {
+					if (e.target && e.target.nodeName === 'INPUT' && e.target.closest('a')){
+						e.preventDefault();
+					 	e.stopPropagation();
+					}
+						
+					const addButton = e.target.closest('.add-table-row');
+					if (addButton) {
+						e.preventDefault();
+						const table = addButton.previousElementSibling;
+						if (!table || table.tagName.toLowerCase() !== 'table') return;
+
+						const rowContainer = table.tBodies[0] || table;
+						const lastRow = rowContainer.rows[rowContainer.rows.length - 1];
+						if (!lastRow) return;
+
+						const newRow = lastRow.cloneNode(true);
+						newRow.querySelectorAll('td, th').forEach((cell) => {
+							cell.innerHTML = '';
+						});
+
+						rowContainer.appendChild(newRow);
+					}
+					const profCheck = e.target.closest('.prof-checkbox');
+					if(profCheck){
+						e.preventDefault();
+						const state = profCheck.dataset.state;
+						const newState = (parseInt(state) + 1) % 4;
+						profCheck.dataset.state = newState;
+					}
+				});
+			</script>`;
+			download(html,`${window.CAMPAIGN_INFO.name}-${datetime}-pctemplate.html`,"text/html");
+				
+			$(".import-loading-indicator").remove();        
+		})
+	}
 	display_note(id, statBlock = false, scrollTop=0){
 		let self=this;
 		let noteAlreadyOpen = $(`div.note[data-id='${id}']`).length>0;
@@ -1985,167 +2154,7 @@ class JournalManager{
 											</span>
 										</div>`)
 				downloadStat.off('click.exportStatBlock').on('click.exportStatBlock', function () { 
-					build_import_loading_indicator('Preparing Export File');
-
-					const currentdate = new Date(); 
-					const datetime = `${currentdate.getFullYear()}-${(currentdate.getMonth()+1)}-${currentdate.getDate()}`
-					const santizedHtml = basic_sanitize_html(window.JOURNAL.notes[id].text);
-					let html = $(`${santizedHtml}`);
-					html.find('.injected-input, .added-input-desc').remove();
-					html.find('.add-input:not(.avtt-custom-tracker)').replaceWith((i, innerHtml) => {
-						return innerHtml;
-					})
-					self.translateHtmlAndBlocks(html).then(()=>{
-						self.add_journal_tooltip_targets(html);
-						html.find('a').attr('contenteditable', 'false');
-						html.find('.add-input').each(function(){window.JOURNAL.addTrackedInputs($(this), {noteId: id})})
-						html.find('.abovevtt-slash-command-journal').replaceWith((i, innerHTML) =>{
-							return `[roll]${innerHTML}[/roll]`;
-						})
-						html = `<style id='contentStyles'>
-							${self.content_styles()}			
-							.custom-stat{
-								color: --var(--pc-template-text-color, #111) !important;
-								border: none !important;
-							}
-							.ignore-abovevtt-formating{
-								border: none !important;
-							}   		   
-						</style>
-						<script>
-							window.addEventListener("click", (e) => {
-								if (e.target && e.target.nodeName === 'INPUT' && e.target.type === 'checkbox') {				
-									if (e.target.checked) {
-										e.target.setAttribute('checked', 'checked');
-									} else {
-										e.target.removeAttribute('checked');
-									}
-								}
-								window.addEventListener('input', (e) => {
-									if (e.target && e.target.nodeName === 'INPUT' && e.target.type === 'number') {
-										e.target.setAttribute('value', e.target.value);
-									}
-								});
-							});
-							</script>
-						${html[0].outerHTML}			
-						<script>
-							document.querySelectorAll('table').forEach((table) => {
-								if (table.nextElementSibling?.classList.contains('add-table-row')) return;
-
-								const addTableRowButton = document.createElement('button');
-								addTableRowButton.className = 'add-table-row';
-								addTableRowButton.type = 'button';
-								addTableRowButton.textContent = '+';
-								table.insertAdjacentElement('afterend', addTableRowButton);
-
-									const tbody = table.querySelector('tbody');
-									const rowsContainer = tbody ? tbody : table;
-									const directRows = rowsContainer.querySelectorAll(':scope > tr');
-
-									if (directRows.length > 1) {
-									directRows.forEach(row => {
-										if (!row.querySelector(':scope > .table-row-drag-handle')) {
-										const handleCell = document.createElement('td');
-										handleCell.className = 'table-row-drag-handle';
-										handleCell.setAttribute('contenteditable', 'false');
-										handleCell.setAttribute('aria-hidden', 'true');
-										handleCell.textContent = '⋮⋮';
-										row.prepend(handleCell);
-										}
-									});
-									const firstTh = table.querySelector('th');
-									if (firstTh) {
-										const header = firstTh.parentElement.parentElement;
-										header.querySelectorAll(':scope > tr').forEach(row => {
-										if (!row.querySelector(':scope > .header-spacer')) {
-											const handleCell = document.createElement('th');
-											handleCell.className = 'header-spacer';
-											handleCell.setAttribute('aria-hidden', 'true');
-											row.prepend(handleCell);
-										}
-										});
-									}
-									let draggedRow = null;
-
-									rowsContainer.querySelectorAll(':scope > tr').forEach(row => {
-										row.setAttribute('draggable', 'false');
-
-										const handle = row.querySelector(':scope > .table-row-drag-handle');
-										if (handle) {
-										handle.style.cursor = 'grab';
-										
-										handle.addEventListener('mousedown', () => {
-											row.setAttribute('draggable', 'true');
-										});
-										
-										handle.addEventListener('mouseup', () => {
-											row.setAttribute('draggable', 'false');
-										});
-										}
-
-										row.addEventListener('dragstart', (e) => {
-										draggedRow = row;
-										e.dataTransfer.effectAllowed = 'move';
-										});
-
-										row.addEventListener('dragend', () => {
-										row.setAttribute('draggable', 'false');
-										rowsContainer.querySelectorAll(':scope > tr').forEach(r => r.style.borderTop = '');
-										draggedRow = null;
-										});
-
-										row.addEventListener('dragover', (e) => {
-										e.preventDefault();
-										e.dataTransfer.dropEffect = 'move';
-										if (!draggedRow || draggedRow === row) return;
-
-										const rect = row.getBoundingClientRect();
-										const midpoint = rect.top + rect.height / 2;
-
-										if (e.clientY < midpoint) {
-											rowsContainer.insertBefore(draggedRow, row);
-										} else {
-											rowsContainer.insertBefore(draggedRow, row.nextSibling);
-										}
-										});
-									});
-								}
-							});
-
-							document.addEventListener('click', (e) => {
-								const addButton = e.target.closest('.add-table-row');
-								
-								e.preventDefault();
-								if (addButton) {
-									const table = addButton.previousElementSibling;
-									if (!table || table.tagName.toLowerCase() !== 'table') return;
-
-									const rowContainer = table.tBodies[0] || table;
-									const lastRow = rowContainer.rows[rowContainer.rows.length - 1];
-									if (!lastRow) return;
-
-									const newRow = lastRow.cloneNode(true);
-									newRow.querySelectorAll('td, th').forEach((cell) => {
-										cell.innerHTML = '';
-									});
-
-									rowContainer.appendChild(newRow);
-								}
-                				const profCheck = e.target.closest('.prof-checkbox');
-								if(profCheck){
-									const state = profCheck.dataset.state;
-									const newState = (parseInt(state) + 1) % 4;
-									profCheck.dataset.state = newState;
-								}
-							});
-					  </script>`;
-						download(html,`${window.CAMPAIGN_INFO.name}-${datetime}-pctemplate.html`,"text/html");
-							
-						$(".import-loading-indicator").remove();        
-					})
-					
-					
+					self.downloadStatBlock(id);
 				});
 				const uploadStat = $(`<div class='upload_button' style="cursor: pointer; position: relative; display:inline-block; color: #ddd;">
 					<span onclick='import_open_template();' title="Upload HTML Statblock" class="material-symbols-outlined" style="font-size: 24px; position: relative; top: 4px;">
