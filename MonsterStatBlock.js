@@ -430,7 +430,7 @@ async function display_stat_block_in_container(statBlock, container, tokenId, cu
 
 									rowContainer.appendChild(newRow);
 								}
-                				const profCheck = e.target.closest('.prof-checkbox');
+                const profCheck = e.target.closest('.prof-checkbox');
 								if(profCheck){
 									const state = profCheck.dataset.state;
 									const newState = (parseInt(state) + 1) % 4;
@@ -697,7 +697,7 @@ const debounceRescanStatBlock = mydebounce(async (container, noteId, tokenId) =>
     const add_table_row = $(`<button class="add-table-row">+</button>`);	
     $table.after(add_table_row);
   });
-  targetRescan.off('pointerdown.profChange, touchstart.profChange').on('pointerdown.profChange, touchstart.profChange', '.prof-checkbox', (e)=>{
+  container.off('pointerdown.profChange, touchstart.profChange').on('pointerdown.profChange, touchstart.profChange', '.prof-checkbox', (e)=>{
     e.preventDefault();
     const target = $(e.currentTarget);
     const currentState = parseInt(target.attr('data-state'));
@@ -706,7 +706,7 @@ const debounceRescanStatBlock = mydebounce(async (container, noteId, tokenId) =>
     const note_text = container.find('.avtt-stat-block-container').first();
     window.JOURNAL.persistStatBlockContent(noteId, note_text, container, {tokenId, forceSave: true, rescanStatBlock: false});
   })
-  targetRescan.off('pointerdown.addRow, touchstart.addRow').on('pointerdown.addRow, touchstart.addRow', '.add-table-row', function (e) {
+  container.off('pointerdown.addRow, touchstart.addRow').on('pointerdown.addRow, touchstart.addRow', '.add-table-row', function (e) {
     e.preventDefault();
 			const table = $(e.target).prev('table');
       const tableBody = $(table).find('tbody');

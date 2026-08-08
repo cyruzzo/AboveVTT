@@ -2202,7 +2202,7 @@ class JournalManager{
 					$table.after(add_table_row);
 				});
 			
-				note_text.off('pointerdown.profChange, touchstart.profChange').on('pointerdown.profChange, touchstart.profChange', '.prof-checkbox', (e)=>{
+				note_container.off('pointerdown.profChange, touchstart.profChange').on('pointerdown.profChange, touchstart.profChange', '.prof-checkbox', (e)=>{
 					e.preventDefault();
 					const target = $(e.currentTarget);
 					const currentState = parseInt(target.attr('data-state'));
@@ -2210,7 +2210,7 @@ class JournalManager{
 					target.attr('data-state', newState);
 					self.persistStatBlockContent(id, note_text, note_container, {forceSave: true, rescanStatBlock: false});
 				})
-				note_text.off('pointerdown.addRow, touchstart.addRow').on('pointerdown.addRow, touchstart.addRow', '.add-table-row', function (e) {
+				note_container.off('pointerdown.addRow, touchstart.addRow').on('pointerdown.addRow, touchstart.addRow', '.add-table-row', function (e) {
 					e.preventDefault();
 					const table = $(e.target).prev('table');
 					const tableBody = $(table).find('tbody');
