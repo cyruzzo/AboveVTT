@@ -110,7 +110,7 @@ async function display_stat_block_in_container(statBlock, container, tokenId, cu
 				const avttImages = closestNote.find('img[data-src*="above-bucket-not-a-url"]');
 				avttImages.attr('src', '');
 				avttImages.attr('href', '');
-        closestNote.find('a:empty, button:empty, .image, .add-table-row').remove();
+        closestNote.find('a:empty, button:empty, .image, .add-table-row, .table-row-drag-handle, .header-spacer, .injected-input, .added-input-desc, .spell-tooltip>svg.ritual-icon-svg').remove();
         const noteButtons = closestNote.find('button');
 				noteButtons.replaceWith((i, innerHTML)=>{
           const command = noteButtons[i].getAttribute('data-slash-command');
@@ -147,7 +147,7 @@ async function display_stat_block_in_container(statBlock, container, tokenId, cu
 				const avttImages = closestNote.find('img[data-src*="above-bucket-not-a-url"]');
 				avttImages.attr('src', '');
 				avttImages.attr('href', '');
-        closestNote.find('a:empty, button:empty, .image, .add-table-row').remove();
+        closestNote.find('a:empty, button:empty, .image, .add-table-row, .table-row-drag-handle, .header-spacer, .injected-input, .added-input-desc, .spell-tooltip>svg.ritual-icon-svg').remove();
         const noteButtons = closestNote.find('button');
 				noteButtons.replaceWith((i, innerHTML)=>{
           const command = noteButtons[i].getAttribute('data-slash-command');
@@ -276,7 +276,7 @@ async function display_stat_block_in_container(statBlock, container, tokenId, cu
       }
     }
     $("span.hideme").parent().parent().hide();
-    container.find('.lockStatButton, .download_button, .upload_button, .add-table-row, .table-row-drag-handle, .header-spacer').remove();
+    container.find('.lockStatButton, .download_button, .upload_button, .add-table-row, .table-row-drag-handle, .header-spacer, .injected-input, .added-input-desc, .spell-tooltip>svg.ritual-icon-svg').remove();
     if(customStatBlock && container.find('.dnd-sheet').length>0){
       container.find('a').attr('contenteditable', 'false');
       container.find('.popout-button').remove();
@@ -364,28 +364,115 @@ async function display_stat_block_in_container(statBlock, container, tokenId, cu
             </script>
             ${html[0].outerHTML}
             <script>
-              document.querySelectorAll('table').forEach((table) => {
-                if (table.nextElementSibling?.classList.contains('add-table-row')) return;
+							document.querySelectorAll('table').forEach((table) => {
+								if (table.nextElementSibling?.classList.contains('add-table-row')) return;
 
-                const addTableRowButton = document.createElement('button');
-                addTableRowButton.className = 'add-table-row';
-                addTableRowButton.type = 'button';
-                addTableRowButton.textContent = '+';
-                table.insertAdjacentElement('afterend', addTableRowButton);
-                setupTableRowDragging(table);
-              });
+								const addTableRowButton = document.createElement('button');
+								addTableRowButton.className = 'add-table-row';
+								addTableRowButton.type = 'button';
+								addTableRowButton.textContent = '+';
+								table.insertAdjacentElement('afterend', addTableRowButton);
 
-              document.addEventListener('click', (e) => {
-                const addButton = e.target.closest('.add-table-row');
-                if (!addButton) return;
+									const tbody = table.querySelector('tbody');
+									const rowsContainer = tbody ? tbody : table;
+									const directRows = rowsContainer.querySelectorAll(':scope > tr');
 
-                e.preventDefault();
+									if (directRows.length > 1) {
+									directRows.forEach(row => {
+										if (!row.querySelector(':scope > .table-row-drag-handle')) {
+										const handleCell = document.createElement('td');
+										handleCell.className = 'table-row-drag-handle';
+										handleCell.setAttribute('contenteditable', 'false');
+										handleCell.setAttribute('aria-hidden', 'true');
+										handleCell.textContent = '⋮⋮';
+										row.prepend(handleCell);
+										}
+									});
+									const firstTh = table.querySelector('th');
+									if (firstTh) {
+										const header = firstTh.parentElement.parentElement;
+										header.querySelectorAll(':scope > tr').forEach(row => {
+										if (!row.querySelector(':scope > .header-spacer')) {
+											const handleCell = document.createElement('th');
+											handleCell.className = 'header-spacer';
+											handleCell.setAttribute('aria-hidden', 'true');
+											row.prepend(handleCell);
+										}
+										});
+									}
+									let draggedRow = null;
 
-                const table = addButton.previousElementSibling;
-                if (!table || table.tagName.toLowerCase() !== 'table') return;
+									rowsContainer.querySelectorAll(':scope > tr').forEach(row => {
+										row.setAttribute('draggable', 'false');
 
-                addRowToTable(table);
-              })'
+										const handle = row.querySelector(':scope > .table-row-drag-handle');
+										if (handle) {
+										handle.style.cursor = 'grab';
+										
+										handle.addEventListener('mousedown', () => {
+											row.setAttribute('draggable', 'true');
+										});
+										
+										handle.addEventListener('mouseup', () => {
+											row.setAttribute('draggable', 'false');
+										});
+										}
+
+										row.addEventListener('dragstart', (e) => {
+										draggedRow = row;
+										e.dataTransfer.effectAllowed = 'move';
+										});
+
+										row.addEventListener('dragend', () => {
+										row.setAttribute('draggable', 'false');
+										rowsContainer.querySelectorAll(':scope > tr').forEach(r => r.style.borderTop = '');
+										draggedRow = null;
+										});
+
+										row.addEventListener('dragover', (e) => {
+										e.preventDefault();
+										e.dataTransfer.dropEffect = 'move';
+										if (!draggedRow || draggedRow === row) return;
+
+										const rect = row.getBoundingClientRect();
+										const midpoint = rect.top + rect.height / 2;
+
+										if (e.clientY < midpoint) {
+											rowsContainer.insertBefore(draggedRow, row);
+										} else {
+											rowsContainer.insertBefore(draggedRow, row.nextSibling);
+										}
+										});
+									});
+								}
+							});
+
+							document.addEventListener('click', (e) => {
+								const addButton = e.target.closest('.add-table-row');
+								
+								e.preventDefault();
+								if (addButton) {
+									const table = addButton.previousElementSibling;
+									if (!table || table.tagName.toLowerCase() !== 'table') return;
+
+									const rowContainer = table.tBodies[0] || table;
+									const lastRow = rowContainer.rows[rowContainer.rows.length - 1];
+									if (!lastRow) return;
+
+									const newRow = lastRow.cloneNode(true);
+									newRow.querySelectorAll('td, th').forEach((cell) => {
+										cell.innerHTML = '';
+									});
+
+									rowContainer.appendChild(newRow);
+								}
+                				const profCheck = e.target.closest('.prof-checkbox');
+								if(profCheck){
+									const state = profCheck.dataset.state;
+									const newState = (parseInt(state) + 1) % 4;
+									profCheck.dataset.state = newState;
+								}
+							});
 					  </script>`;
             download(html,`${window.CAMPAIGN_INFO.name}-${datetime}-pctemplate.html`,"text/html");
               
@@ -408,6 +495,7 @@ async function display_stat_block_in_container(statBlock, container, tokenId, cu
         import_pc_template_html(e.target.files, $html, window.TOKEN_OBJECTS[tokenId]?.options?.statBlock, tokenId);
       });
       container.prepend(lockStatButton, downloadStat, uploadStat);
+
 			container.find('table').each(function() {
         const $table = $(this);
         const rowsContainer = $table.find('tbody').length > 0 ? $table.find('tbody') : $table;
@@ -431,7 +519,7 @@ async function display_stat_block_in_container(statBlock, container, tokenId, cu
               const avttImages = noteClone.find('img[data-src*="above-bucket-not-a-url"]');
               avttImages.attr('src', '');
               avttImages.attr('href', '');
-              noteClone.find('a:empty, button:empty, .image, .add-table-row').remove();
+              noteClone.find('a:empty, button:empty, .image, .add-table-row, .table-row-drag-handle, .header-spacer, .injected-input, .added-input-desc, .spell-tooltip>svg.ritual-icon-svg').remove();
               const noteButtons = noteClone.find('button');
               noteButtons.replaceWith((i, innerHTML)=>{
                 const command = noteButtons[i].getAttribute('data-slash-command');
@@ -466,6 +554,14 @@ async function display_stat_block_in_container(statBlock, container, tokenId, cu
 
 
 			});
+      container.off('pointerdown.profChange, touchstart.profChange').on('pointerdown.profChange, touchstart.profChange', '.prof-checkbox', (e)=>{
+        e.preventDefault();
+        const target = $(e.currentTarget);
+        const currentState = parseInt(target.attr('data-state'));
+        const newState = (currentState + 1) % 4;
+        target.attr('data-state', newState);
+        persistNoteContent(true);
+      })
       container.off('pointerdown.addRow, touchstart.addRow').on('pointerdown.addRow, touchstart.addRow', '.add-table-row', function (e) {
 				e.preventDefault();
 			  const table = $(e.target).prev('table');
@@ -650,7 +746,7 @@ const debounceRescanStatBlock = mydebounce(async (container, noteId, tokenId) =>
           const avttImages = noteClone.find('img[data-src*="above-bucket-not-a-url"]');
           avttImages.attr('src', '');
           avttImages.attr('href', '');
-          noteClone.find('a:empty, button:empty, .image, .add-table-row').remove();
+          noteClone.find('a:empty, button:empty, .image, .add-table-row, .table-row-drag-handle, .header-spacer, .injected-input, .added-input-desc, .spell-tooltip>svg.ritual-icon-svg').remove();
           const noteButtons = noteClone.find('button');
           noteButtons.replaceWith((i, innerHTML)=>{
             const command = noteButtons[i].getAttribute('data-slash-command');
@@ -683,6 +779,14 @@ const debounceRescanStatBlock = mydebounce(async (container, noteId, tokenId) =>
     const add_table_row = $(`<button class="add-table-row">+</button>`);	
     $table.after(add_table_row);
   });
+  targetRescan.off('pointerdown.profChange, touchstart.profChange').on('pointerdown.profChange, touchstart.profChange', '.prof-checkbox', (e)=>{
+    e.preventDefault();
+    const target = $(e.currentTarget);
+    const currentState = parseInt(target.attr('data-state'));
+    const newState = (currentState + 1) % 4;
+    target.attr('data-state', newState);
+    persistNoteContent(true);
+  })
   targetRescan.off('pointerdown.addRow, touchstart.addRow').on('pointerdown.addRow, touchstart.addRow', '.add-table-row', function (e) {
     e.preventDefault();
 			const table = $(e.target).prev('table');
