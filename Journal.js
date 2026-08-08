@@ -1899,7 +1899,7 @@ class JournalManager{
 				const avttImages = closestNote.find('img[data-src*="above-bucket-not-a-url"]');
 				avttImages.attr('src', '');
 				avttImages.attr('href', '');
-				closestNote.find('a:empty, button:empty, .add-table-row, .table-row-drag-handle, .header-spacer').remove();
+				closestNote.find('a:empty, button:empty, .add-table-row, .table-row-drag-handle, .header-spacer, .injected-input, .added-input-desc, .spell-tooltip>svg.ritual-icon-svg').remove();
 				const noteButtons = closestNote.find('button');
 				noteButtons.replaceWith((i, innerHTML)=>{
 					const command = noteButtons[i].getAttribute('data-slash-command');
@@ -2033,29 +2033,108 @@ class JournalManager{
 								addTableRowButton.type = 'button';
 								addTableRowButton.textContent = '+';
 								table.insertAdjacentElement('afterend', addTableRowButton);
+
+									const tbody = table.querySelector('tbody');
+									const rowsContainer = tbody ? tbody : table;
+									const directRows = rowsContainer.querySelectorAll(':scope > tr');
+
+									if (directRows.length > 1) {
+									directRows.forEach(row => {
+										if (!row.querySelector(':scope > .table-row-drag-handle')) {
+										const handleCell = document.createElement('td');
+										handleCell.className = 'table-row-drag-handle';
+										handleCell.setAttribute('contenteditable', 'false');
+										handleCell.setAttribute('aria-hidden', 'true');
+										handleCell.textContent = '⋮⋮';
+										row.prepend(handleCell);
+										}
+									});
+									const firstTh = table.querySelector('th');
+									if (firstTh) {
+										const header = firstTh.parentElement.parentElement;
+										header.querySelectorAll(':scope > tr').forEach(row => {
+										if (!row.querySelector(':scope > .header-spacer')) {
+											const handleCell = document.createElement('th');
+											handleCell.className = 'header-spacer';
+											handleCell.setAttribute('aria-hidden', 'true');
+											row.prepend(handleCell);
+										}
+										});
+									}
+									let draggedRow = null;
+
+									rowsContainer.querySelectorAll(':scope > tr').forEach(row => {
+										row.setAttribute('draggable', 'false');
+
+										const handle = row.querySelector(':scope > .table-row-drag-handle');
+										if (handle) {
+										handle.style.cursor = 'grab';
+										
+										handle.addEventListener('mousedown', () => {
+											row.setAttribute('draggable', 'true');
+										});
+										
+										handle.addEventListener('mouseup', () => {
+											row.setAttribute('draggable', 'false');
+										});
+										}
+
+										row.addEventListener('dragstart', (e) => {
+										draggedRow = row;
+										e.dataTransfer.effectAllowed = 'move';
+										});
+
+										row.addEventListener('dragend', () => {
+										row.setAttribute('draggable', 'false');
+										rowsContainer.querySelectorAll(':scope > tr').forEach(r => r.style.borderTop = '');
+										draggedRow = null;
+										});
+
+										row.addEventListener('dragover', (e) => {
+										e.preventDefault();
+										e.dataTransfer.dropEffect = 'move';
+										if (!draggedRow || draggedRow === row) return;
+
+										const rect = row.getBoundingClientRect();
+										const midpoint = rect.top + rect.height / 2;
+
+										if (e.clientY < midpoint) {
+											rowsContainer.insertBefore(draggedRow, row);
+										} else {
+											rowsContainer.insertBefore(draggedRow, row.nextSibling);
+										}
+										});
+									});
+								}
 							});
 
 							document.addEventListener('click', (e) => {
 								const addButton = e.target.closest('.add-table-row');
-								if (!addButton) return;
-
+								
 								e.preventDefault();
+								if (addButton) {
+									const table = addButton.previousElementSibling;
+									if (!table || table.tagName.toLowerCase() !== 'table') return;
 
-								const table = addButton.previousElementSibling;
-								if (!table || table.tagName.toLowerCase() !== 'table') return;
+									const rowContainer = table.tBodies[0] || table;
+									const lastRow = rowContainer.rows[rowContainer.rows.length - 1];
+									if (!lastRow) return;
 
-								const rowContainer = table.tBodies[0] || table;
-								const lastRow = rowContainer.rows[rowContainer.rows.length - 1];
-								if (!lastRow) return;
+									const newRow = lastRow.cloneNode(true);
+									newRow.querySelectorAll('td, th').forEach((cell) => {
+										cell.innerHTML = '';
+									});
 
-								const newRow = lastRow.cloneNode(true);
-								newRow.querySelectorAll('td, th').forEach((cell) => {
-									cell.innerHTML = '';
-								});
-
-								rowContainer.appendChild(newRow);
+									rowContainer.appendChild(newRow);
+								}
+                				const profCheck = e.target.closest('.prof-checkbox');
+								if(profCheck){
+									const state = profCheck.dataset.state;
+									const newState = (parseInt(state) + 1) % 4;
+									profCheck.dataset.state = newState;
+								}
 							});
-						</script>`;
+					  </script>`;
 						download(html,`${window.CAMPAIGN_INFO.name}-${datetime}-pctemplate.html`,"text/html");
 							
 						$(".import-loading-indicator").remove();        
@@ -2117,9 +2196,15 @@ class JournalManager{
 					const add_table_row = $(`<button class="add-table-row">+</button>`);
 					$table.after(add_table_row);
 				});
-
-				
-
+			
+				note_text.off('pointerdown.profChange, touchstart.profChange').on('pointerdown.profChange, touchstart.profChange', '.prof-checkbox', (e)=>{
+					e.preventDefault();
+					const target = $(e.currentTarget);
+					const currentState = parseInt(target.attr('data-state'));
+					const newState = (currentState + 1) % 4;
+					target.attr('data-state', newState);
+					persistNoteContent(true);
+				})
 				note_text.off('pointerdown.addRow, touchstart.addRow').on('pointerdown.addRow, touchstart.addRow', '.add-table-row', function (e) {
 					e.preventDefault();
 					const table = $(e.target).prev('table');
@@ -2836,6 +2921,7 @@ class JournalManager{
 
                 return `${languageText}`
             })
+			input = input.replace(/\[profCheckbox\]/gi, `<div data-state="0" class="prof-checkbox" contenteditable="false"><svg class="prof-icon" name="preventRemove"> <circle class="base-circle" r="4" cy="8" cx="8"></circle> <path class="half-fill" d="M 8 3 A 1 1 0 0 0 8 12 Z"></path> <circle class="full-fill" r="4" cy="8" cx="8"></circle> <circle class="ring-stroke" r="7" cy="8" cx="8"></circle> </svg></div>`);
 			input = input.replace(/\[checkbox checked\]/gi, `<input type="checkbox" checked>`);
 			input = input.replace(/\[checkbox\]/gi, `<input type="checkbox">`);
             input = input.replace(/\[note\](.*?)\[\/note\]/g, function(m){
@@ -4130,6 +4216,20 @@ class JournalManager{
 				font-size: 11px;
 				line-height: 1.2;
 
+				.table-row-drag-handle {
+					width: 15px;
+					min-width: 15px;
+					padding: 0 4px;
+					cursor: grab;
+					color: var(--pc-template-text-muted, #888);
+					user-select: none;
+					text-align: center;
+					font-size: 12px;
+					line-height: 1;
+				}
+				.table-row-drag-handle:active {
+					cursor: grabbing;
+				}
 				svg.ritual-icon-svg {
 					width: 10px;
 					height: auto;
@@ -4237,10 +4337,56 @@ class JournalManager{
 					visibility: visible !important;
 					background: rgba(0, 0, 0, 0.08);
 				}
+				.prof-checkbox {
+					display: inline-flex;
+					align-items: center;
+					gap: 8px;
+					cursor: pointer;
+					user-select: none;
+					font-family: sans-serif;
+				}
+
+				.prof-icon {
+					width: 16px;
+					height: 16px;
+				}
+
+				/* Base empty circle styling */
+				.base-circle {
+					fill: none;
+					stroke: #333;
+					stroke-width: 2;
+				}
+
+				.half-fill, .full-fill, .ring-stroke {
+					opacity: 0;
+					transition: opacity 0.15s ease;
+				}
+
+				.prof-checkbox[data-state="1"] .half-fill {
+					opacity: 1;
+					fill: #333;
+				}
+
+				.prof-checkbox[data-state="2"] .full-fill {
+					opacity: 1;
+					fill: #333;
+				}
+
+				.prof-checkbox[data-state="3"] .full-fill {
+					opacity: 1;
+					fill: #333;
+				}
+				.prof-checkbox[data-state="3"] .ring-stroke {
+					opacity: 1;
+					fill: none;
+					stroke: #333;
+					stroke-width: 1;
+				}
 				.note-text .table-row-drag-handle {
-					width: 24px;
-					min-width: 24px;
-					padding: 0 6px;
+					width: 15px;
+					min-width: 15px;
+					padding: 0 4px;
 					cursor: grab;
 					color: var(--pc-template-text-muted, #888);
 					user-select: none;
@@ -4988,109 +5134,109 @@ class JournalManager{
 											<table contenteditable="true">
 												<tbody>
 													<tr>
-														<td><input type="checkbox" /></td>
+														<td><div data-state="0" class="prof-checkbox" contenteditable="false"><svg class="prof-icon" name="preventRemove"> <circle class="base-circle" r="4" cy="8" cx="8"></circle> <path class="half-fill" d="M 8 3 A 1 1 0 0 0 8 12 Z"></path> <circle class="full-fill" r="4" cy="8" cx="8"></circle> <circle class="ring-stroke" r="7" cy="8" cx="8"></circle> </svg></div></td>
 														<td>+0</td>
 														<td>Acrobatics</td>
 														<td>Dex</td>
 													</tr>
 													<tr>
-														<td><input type="checkbox" /></td>
+														<td><div data-state="1" class="prof-checkbox" contenteditable="false"><svg class="prof-icon" name="preventRemove"> <circle class="base-circle" r="4" cy="8" cx="8"></circle> <path class="half-fill" d="M 8 3 A 1 1 0 0 0 8 12 Z"></path> <circle class="full-fill" r="4" cy="8" cx="8"></circle> <circle class="ring-stroke" r="7" cy="8" cx="8"></circle> </svg></div></td>
 														<td>+0</td>
 														<td>Animal Handling</td>
 														<td>Wis</td>
 													</tr>
 													<tr>
-														<td><input type="checkbox" /></td>
+														<td><div data-state="2" class="prof-checkbox" contenteditable="false"><svg class="prof-icon" name="preventRemove"> <circle class="base-circle" r="4" cy="8" cx="8"></circle> <path class="half-fill" d="M 8 3 A 1 1 0 0 0 8 12 Z"></path> <circle class="full-fill" r="4" cy="8" cx="8"></circle> <circle class="ring-stroke" r="7" cy="8" cx="8"></circle> </svg></div></td>
 														<td>+0</td>
 														<td>Arcana</td>
 														<td>Int</td>
 													</tr>
 													<tr>
-														<td><input type="checkbox" /></td>
+														<td><div data-state="3" class="prof-checkbox" contenteditable="false"><svg class="prof-icon" name="preventRemove"> <circle class="base-circle" r="4" cy="8" cx="8"></circle> <path class="half-fill" d="M 8 3 A 1 1 0 0 0 8 12 Z"></path> <circle class="full-fill" r="4" cy="8" cx="8"></circle> <circle class="ring-stroke" r="7" cy="8" cx="8"></circle> </svg></div></td>
 														<td>+0</td>
 														<td>Athletics</td>
 														<td>Str</td>
 													</tr>
 													<tr>
-														<td><input type="checkbox" /></td>
+														<td><div data-state="0" class="prof-checkbox" contenteditable="false"><svg class="prof-icon" name="preventRemove"> <circle class="base-circle" r="4" cy="8" cx="8"></circle> <path class="half-fill" d="M 8 3 A 1 1 0 0 0 8 12 Z"></path> <circle class="full-fill" r="4" cy="8" cx="8"></circle> <circle class="ring-stroke" r="7" cy="8" cx="8"></circle> </svg></div></td>
 														<td>+0</td>
 														<td>Deception</td>
 														<td>Cha</td>
 													</tr>
 													<tr>
-														<td><input type="checkbox" /></td>
+														<td><div data-state="0" class="prof-checkbox" contenteditable="false"><svg class="prof-icon" name="preventRemove"> <circle class="base-circle" r="4" cy="8" cx="8"></circle> <path class="half-fill" d="M 8 3 A 1 1 0 0 0 8 12 Z"></path> <circle class="full-fill" r="4" cy="8" cx="8"></circle> <circle class="ring-stroke" r="7" cy="8" cx="8"></circle> </svg></div></td>
 														<td>+0</td>
 														<td>History</td>
 														<td>Int</td>
 													</tr>
 													<tr>
-														<td><input type="checkbox" /></td>
+														<td><div data-state="0" class="prof-checkbox" contenteditable="false"><svg class="prof-icon" name="preventRemove"> <circle class="base-circle" r="4" cy="8" cx="8"></circle> <path class="half-fill" d="M 8 3 A 1 1 0 0 0 8 12 Z"></path> <circle class="full-fill" r="4" cy="8" cx="8"></circle> <circle class="ring-stroke" r="7" cy="8" cx="8"></circle> </svg></div></td>
 														<td>+0</td>
 														<td>Insight</td>
 														<td>Wis</td>
 													</tr>
 													<tr>
-														<td><input type="checkbox" /></td>
+														<td><div data-state="0" class="prof-checkbox" contenteditable="false"><svg class="prof-icon" name="preventRemove"> <circle class="base-circle" r="4" cy="8" cx="8"></circle> <path class="half-fill" d="M 8 3 A 1 1 0 0 0 8 12 Z"></path> <circle class="full-fill" r="4" cy="8" cx="8"></circle> <circle class="ring-stroke" r="7" cy="8" cx="8"></circle> </svg></div></td>
 														<td>+0</td>
 														<td>Intimidation</td>
 														<td>Cha</td>
 													</tr>
 													<tr>
-														<td><input type="checkbox" /></td>
+														<td><div data-state="0" class="prof-checkbox" contenteditable="false"><svg class="prof-icon" name="preventRemove"> <circle class="base-circle" r="4" cy="8" cx="8"></circle> <path class="half-fill" d="M 8 3 A 1 1 0 0 0 8 12 Z"></path> <circle class="full-fill" r="4" cy="8" cx="8"></circle> <circle class="ring-stroke" r="7" cy="8" cx="8"></circle> </svg></div></td>
 														<td>+0</td>
 														<td>Investigation</td>
 														<td>Int</td>
 													</tr>
 													<tr>
-														<td><input type="checkbox" /></td>
+														<td><div data-state="0" class="prof-checkbox" contenteditable="false"><svg class="prof-icon" name="preventRemove"> <circle class="base-circle" r="4" cy="8" cx="8"></circle> <path class="half-fill" d="M 8 3 A 1 1 0 0 0 8 12 Z"></path> <circle class="full-fill" r="4" cy="8" cx="8"></circle> <circle class="ring-stroke" r="7" cy="8" cx="8"></circle> </svg></div></td>
 														<td>+0</td>
 														<td>Medicine</td>
 														<td>Wis</td>
 													</tr>
 													<tr>
-														<td><input type="checkbox" /></td>
+														<td><div data-state="0" class="prof-checkbox" contenteditable="false"><svg class="prof-icon" name="preventRemove"> <circle class="base-circle" r="4" cy="8" cx="8"></circle> <path class="half-fill" d="M 8 3 A 1 1 0 0 0 8 12 Z"></path> <circle class="full-fill" r="4" cy="8" cx="8"></circle> <circle class="ring-stroke" r="7" cy="8" cx="8"></circle> </svg></div></td>
 														<td>+0</td>
 														<td>Nature</td>
 														<td>Int</td>
 													</tr>
 													<tr>
-														<td><input type="checkbox" /></td>
+														<td><div data-state="0" class="prof-checkbox" contenteditable="false"><svg class="prof-icon" name="preventRemove"> <circle class="base-circle" r="4" cy="8" cx="8"></circle> <path class="half-fill" d="M 8 3 A 1 1 0 0 0 8 12 Z"></path> <circle class="full-fill" r="4" cy="8" cx="8"></circle> <circle class="ring-stroke" r="7" cy="8" cx="8"></circle> </svg></div></td>
 														<td>+0</td>
 														<td>Perception</td>
 														<td>Wis</td>
 													</tr>
 													<tr>
-														<td><input type="checkbox" /></td>
+														<td><div data-state="0" class="prof-checkbox" contenteditable="false"><svg class="prof-icon" name="preventRemove"> <circle class="base-circle" r="4" cy="8" cx="8"></circle> <path class="half-fill" d="M 8 3 A 1 1 0 0 0 8 12 Z"></path> <circle class="full-fill" r="4" cy="8" cx="8"></circle> <circle class="ring-stroke" r="7" cy="8" cx="8"></circle> </svg></div></td>
 														<td>+0</td>
 														<td>Performance</td>
 														<td>Cha</td>
 													</tr>
 													<tr>
-														<td><input type="checkbox" /></td>
+														<td><div data-state="0" class="prof-checkbox" contenteditable="false"><svg class="prof-icon" name="preventRemove"> <circle class="base-circle" r="4" cy="8" cx="8"></circle> <path class="half-fill" d="M 8 3 A 1 1 0 0 0 8 12 Z"></path> <circle class="full-fill" r="4" cy="8" cx="8"></circle> <circle class="ring-stroke" r="7" cy="8" cx="8"></circle> </svg></div></td>
 														<td>+0</td>
 														<td>Persuasion</td>
 														<td>Cha</td>
 													</tr>
 													<tr>
-														<td><input type="checkbox" /></td>
+														<td><div data-state="0" class="prof-checkbox" contenteditable="false"><svg class="prof-icon" name="preventRemove"> <circle class="base-circle" r="4" cy="8" cx="8"></circle> <path class="half-fill" d="M 8 3 A 1 1 0 0 0 8 12 Z"></path> <circle class="full-fill" r="4" cy="8" cx="8"></circle> <circle class="ring-stroke" r="7" cy="8" cx="8"></circle> </svg></div></td>
 														<td>+0</td>
 														<td>Religion</td>
 														<td>Int</td>
 													</tr>
 													<tr>
-														<td><input type="checkbox" /></td>
+														<td><div data-state="0" class="prof-checkbox" contenteditable="false"><svg class="prof-icon" name="preventRemove"> <circle class="base-circle" r="4" cy="8" cx="8"></circle> <path class="half-fill" d="M 8 3 A 1 1 0 0 0 8 12 Z"></path> <circle class="full-fill" r="4" cy="8" cx="8"></circle> <circle class="ring-stroke" r="7" cy="8" cx="8"></circle> </svg></div></td>
 														<td>+0</td>
 														<td>Sleight of Hand</td>
 														<td>Dex</td>
 													</tr>
 													<tr>
-														<td><input type="checkbox" /></td>
+														<td><div data-state="0" class="prof-checkbox" contenteditable="false"><svg class="prof-icon" name="preventRemove"> <circle class="base-circle" r="4" cy="8" cx="8"></circle> <path class="half-fill" d="M 8 3 A 1 1 0 0 0 8 12 Z"></path> <circle class="full-fill" r="4" cy="8" cx="8"></circle> <circle class="ring-stroke" r="7" cy="8" cx="8"></circle> </svg></div></td>
 														<td>+0</td>
 														<td>Stealth</td>
 														<td>Dex</td>
 													</tr>
 													<tr>
-														<td><input type="checkbox" /></td>
+														<td><div data-state="0" class="prof-checkbox" contenteditable="false"><svg class="prof-icon" name="preventRemove"> <circle class="base-circle" r="4" cy="8" cx="8"></circle> <path class="half-fill" d="M 8 3 A 1 1 0 0 0 8 12 Z"></path> <circle class="full-fill" r="4" cy="8" cx="8"></circle> <circle class="ring-stroke" r="7" cy="8" cx="8"></circle> </svg></div></td>
 														<td>+0</td>
 														<td>Survival</td>
 														<td>Wis</td>
@@ -5654,7 +5800,7 @@ class JournalManager{
 			   {title: 'DDB Tooltip Link (Spells, Monsters, Magic Items, Source)', value: 'tooltip-hover no-border ignore-abovevtt-formating'}
 			],
 			valid_children : '+body[style]',
-			
+			extended_valid_elements: 'svg[name|xmlns|viewBox|width|height|class|fill|stroke],path[d|fill|stroke|stroke-width|class],g[class|fill|stroke|class],circle[cx|cy|r|fill|stroke|class],rect[x|y|width|height|fill|stroke|class],polygon[points|fill|stroke|class]',
 			setup: function (editor) { 
 				editor.addButton('fontsizeinput', {
 					type: 'container',
@@ -5706,7 +5852,15 @@ class JournalManager{
 						
 					}
 				});
-
+				editor.on('click', function (e) {
+					const target = $(e.target).closest('.prof-checkbox');
+					if (target.length>0) {
+						e.preventDefault();
+						const currentState = parseInt(target.attr('data-state'));
+						const newState = (currentState + 1) % 4;
+						target.attr('data-state', newState);
+					}
+				});
 				editor.addButton('horizontalrules', {
 					type: 'splitbutton',
 					text: '',
@@ -5728,10 +5882,29 @@ class JournalManager{
 					onclick: (e) => {e.preventDefault(); e.stopPropagation(); editor.insertContent(`<img class="mon-stat-block__separator-img" alt="" src="https://www.dndbeyond.com/file-attachments/0/579/stat-block-header-bar.svg"/>`)},
 				});
 				editor.addButton('custom-check', {
+					type: 'splitbutton',
 					text: '',
 					icon: 'custom-checkbox',
 					image: `data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 width=%2224%22 height=%2224%22><path d=%22M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z%22/></svg>`,
 					tooltip: 'Add Checkbox',
+					menu: [
+						{
+							text: "Checkbox",
+							onclick: (e) => { 
+								e.preventDefault();
+								e.stopPropagation(); 
+								editor.insertContent(`<input type='checkbox'/>`);
+							}
+						},
+						{
+							text: "Proficiency Checkbox",
+							onclick: (e) => { 
+								e.preventDefault();
+								e.stopPropagation(); 
+								editor.insertContent(`<div data-state="0" class="prof-checkbox" contenteditable="false"><svg class="prof-icon" name="preventRemove"> <circle class="base-circle" r="4" cy="8" cx="8"></circle> <path class="half-fill" d="M 8 3 A 1 1 0 0 0 8 12 Z"></path> <circle class="full-fill" r="4" cy="8" cx="8"></circle> <circle class="ring-stroke" r="7" cy="8" cx="8"></circle> </svg></div>`);
+							}
+						},
+					],
 					onclick: (e) => {e.preventDefault(); e.stopPropagation(); editor.insertContent(`<input type='checkbox'/>`)},
 				});
 				editor.addButton('filePickers', {

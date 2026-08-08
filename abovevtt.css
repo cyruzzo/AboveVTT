@@ -13032,9 +13032,9 @@ p.monster-header+p {
         justify-content: center;  
     }
     .table-row-drag-handle {
-        width: 24px;
-        min-width: 24px;
-        padding: 0 6px;
+        width: 15px;
+        min-width: 15px;
+        padding: 0 4px;
         cursor: grab;
         color: var(--pc-template-text-muted, #888);
         user-select: none;
@@ -13088,6 +13088,53 @@ p.monster-header+p {
     tbody tr td:is(:first-child, .table-row-drag-handle+:nth-child(2), :last-child) {
         text-align: left;
     } 
+    .prof-checkbox {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        cursor: pointer;
+        user-select: none;
+        font-family: sans-serif;
+    }
+
+    .prof-icon {
+        width: 16px;
+        height: 16px;
+    }
+
+    /* Base empty circle styling */
+    .base-circle {
+        fill: none;
+        stroke: #333;
+        stroke-width: 2;
+    }
+
+    .half-fill, .full-fill, .ring-stroke {
+        opacity: 0;
+        transition: opacity 0.15s ease;
+    }
+
+    .prof-checkbox[data-state="1"] .half-fill {
+        opacity: 1;
+        fill: #333;
+    }
+
+    .prof-checkbox[data-state="2"] .full-fill {
+        opacity: 1;
+        fill: #333;
+    }
+
+    .prof-checkbox[data-state="3"] .full-fill {
+        opacity: 1;
+        fill: #333;
+    }
+    .prof-checkbox[data-state="3"] .ring-stroke {
+        opacity: 1;
+        fill: none;
+        stroke: #333;
+        stroke-width: 1;
+    }
+
     :is(.skills-box, .abilities-table-container) tbody  tr td:last-child{
         text-align: center;
     }
