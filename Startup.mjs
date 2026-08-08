@@ -8,13 +8,15 @@ import { init_audio_mixer } from './audio/index.mjs'
 $(function() {
   if (is_abovevtt_page()) { // Only execute if the app is starting up
     console.log("startup calling init_splash");
-    let canvas = document.createElement('canvas');
-    if(!!(canvas?.getContext("webgl", {failIfMajorPerformanceCaveat: true}) || canvas?.getContext("experimental-webgl", {failIfMajorPerformanceCaveat: true}))){
-      canvas = null;
-    } else{
-      showHardwareAccelWarning();
-      return;
-    } 
+
+    if (localStorage.getItem("HardwareAccelWarningDismissed") !== "true") {
+      let canvas = document.createElement('canvas');
+      if(!!(canvas?.getContext("webgl", {failIfMajorPerformanceCaveat: true}) || canvas?.getContext("experimental-webgl", {failIfMajorPerformanceCaveat: true}))){
+        canvas = null;
+      } else{
+        showHardwareAccelWarning();
+      } 
+    }
     init_my_dice_details();
     init_loading_overlay_beholder();
     addBeyond20EventListener("rendered-roll", (request) => {$('.avtt-sidebar-controls #switch_gamelog').click();});
@@ -128,7 +130,6 @@ $(function() {
         addExtensionPathStyles();
         $('body').append(`<script type="text/javascript" src="https://www.dropbox.com/static/api/2/dropins.js" id="dropboxjs" data-app-key="h3iaoazdu0wqrfd"></script>`)
       }).then(() => {     
-       
         const lastSendToDefault = localStorage.getItem(`${gameId}-sendToDefault`, gamelog_send_to_text()); 
 
         if(lastSendToDefault != null){

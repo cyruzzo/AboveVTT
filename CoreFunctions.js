@@ -1647,21 +1647,36 @@ function showErrorMessage(error, ...extraInfo) {
   }
 }
 function showHardwareAccelWarning(){
-  let container = $("#above-vtt-error-message");
-  container.remove();
-  container = $(`
-      <div id="above-vtt-error-message" class="small-error">
-        <h2>Hardware Acceleration not enabled.</h2>
-        <div id="error-message-details">Enable hardware acceleration (graphics acceleration in chrome) in your browser settings and restart your browser.</div>
-        <div class="error-message-buttons">
-          <button id="close-error-button">Close</button>
-        </div>
+  if (localStorage.getItem("HardwareAccelWarningDismissed") === "true") 
+    return;
+  let canvas = document.createElement('canvas');
+  if(!!(canvas?.getContext("webgl", {failIfMajorPerformanceCaveat: true}) || canvas?.getContext("experimental-webgl", {failIfMajorPerformanceCaveat: true}))){
+    canvas = null;
+    return;
+  }
+  $("#above-vtt-error-message").remove();
+  const container = $(`
+    <div id="above-vtt-error-message">
+      <h2>Hardware Acceleration is not detected</h2>
+      <div id="error-message-details">
+        <p>It is recommended to enable hardware acceleration in your browser settings then restart your browser.</p>
       </div>
-    `)
-  
+      <label style="display:flex;align-items:center;margin-top:0.75rem;cursor:pointer;">
+        <input id="hardware-accel-warning-hide" type="checkbox" style="margin-right:0.5rem;">
+        Do not show again
+      </label>
+      <div class="error-message-buttons">
+        <button id="close-error-button">Close</button>
+      </div>
+    </div>
+  `);
   $(document.body).append(container);
-
-  $("#close-error-button").on("click", removeError);
+  $("#close-error-button").off().on("click", () => {
+    if ($("#hardware-accel-warning-hide").is(":checked")) {
+      localStorage.setItem("HardwareAccelWarningDismissed", "true");
+    }
+    removeError();
+  });
 }
 function showDiceDisabledWarning(){
   window.diceWarning = 1;
