@@ -1840,40 +1840,32 @@ class JournalManager{
 			</script>
 			${html[0].outerHTML}			
 			<script>
-				document.querySelectorAll('table').forEach((table) => {
-					if (table.nextElementSibling?.classList.contains('add-table-row')) return;
+				function setupDraggableTableRows(table){
+					const tbody = table.querySelector('tbody');
+					const rowsContainer = tbody ? tbody : table;
+					const directRows = rowsContainer.querySelectorAll(':scope > tr');
 
-					const addTableRowButton = document.createElement('button');
-					addTableRowButton.className = 'add-table-row';
-					addTableRowButton.type = 'button';
-					addTableRowButton.textContent = '+';
-					table.insertAdjacentElement('afterend', addTableRowButton);
-
-						const tbody = table.querySelector('tbody');
-						const rowsContainer = tbody ? tbody : table;
-						const directRows = rowsContainer.querySelectorAll(':scope > tr');
-
-						if (directRows.length > 1) {
+					if (directRows.length > 1) {
 						directRows.forEach(row => {
 							if (!row.querySelector(':scope > .table-row-drag-handle')) {
-							const handleCell = document.createElement('td');
-							handleCell.className = 'table-row-drag-handle';
-							handleCell.setAttribute('contenteditable', 'false');
-							handleCell.setAttribute('aria-hidden', 'true');
-							handleCell.textContent = '⋮⋮';
-							row.prepend(handleCell);
+								const handleCell = document.createElement('td');
+								handleCell.className = 'table-row-drag-handle';
+								handleCell.setAttribute('contenteditable', 'false');
+								handleCell.setAttribute('aria-hidden', 'true');
+								handleCell.textContent = '⋮⋮';
+								row.prepend(handleCell);
 							}
 						});
 						const firstTh = table.querySelector('th');
 						if (firstTh) {
 							const header = firstTh.parentElement.parentElement;
 							header.querySelectorAll(':scope > tr').forEach(row => {
-							if (!row.querySelector(':scope > .header-spacer')) {
-								const handleCell = document.createElement('th');
-								handleCell.className = 'header-spacer';
-								handleCell.setAttribute('aria-hidden', 'true');
-								row.prepend(handleCell);
-							}
+								if (!row.querySelector(':scope > .header-spacer')) {
+									const handleCell = document.createElement('th');
+									handleCell.className = 'header-spacer';
+									handleCell.setAttribute('aria-hidden', 'true');
+									row.prepend(handleCell);
+								}
 							});
 						}
 						let draggedRow = null;
@@ -1921,6 +1913,16 @@ class JournalManager{
 							});
 						});
 					}
+				}			
+				document.querySelectorAll('table').forEach((table) => {
+					if (table.nextElementSibling?.classList.contains('add-table-row')) return;
+
+					const addTableRowButton = document.createElement('button');
+					addTableRowButton.className = 'add-table-row';
+					addTableRowButton.type = 'button';
+					addTableRowButton.textContent = '+';
+					table.insertAdjacentElement('afterend', addTableRowButton);
+					setupDraggableTableRows(table);	
 				});
 
 				document.addEventListener('click', (e) => {
@@ -1940,11 +1942,12 @@ class JournalManager{
 						if (!lastRow) return;
 
 						const newRow = lastRow.cloneNode(true);
-						newRow.querySelectorAll('td, th').forEach((cell) => {
+						newRow.querySelectorAll('td:not(.table-row-drag-handle), th').forEach((cell) => {
 							cell.innerHTML = '';
 						});
 
 						rowContainer.appendChild(newRow);
+						setupDraggableTableRows(table);
 					}
 					const profCheck = e.target.closest('.prof-checkbox');
 					if(profCheck){
