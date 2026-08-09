@@ -261,7 +261,7 @@ async function display_stat_block_in_container(statBlock, container, tokenId, cu
           container.find('.dnd-sheet button').attr("contenteditable", "false");
           span.text('lock');
         } else{
-          container.find('.dnd-sheet [contenteditable]:not(a)').attr("contenteditable", "true");
+          container.find('.dnd-sheet [contenteditable]:not(a):not(.table-row-drag-handle)').attr("contenteditable", "true");
           span.text('lock_open_right');
         }
       })
@@ -269,7 +269,7 @@ async function display_stat_block_in_container(statBlock, container, tokenId, cu
       if(window.lockTemplateStatBlocks){
          container.find('.dnd-sheet button').attr("contenteditable", "false");
       } else{
-        container.find('.dnd-sheet [contenteditable]:not(a)').attr("contenteditable", "true");
+        container.find('.dnd-sheet [contenteditable]:not(a):not(.table-row-drag-handle)').attr("contenteditable", "true");
       }
 
       const downloadStat = $(`<div class='download_button' style="cursor: pointer; position: absolute;
@@ -564,7 +564,7 @@ const debounceRescanStatBlock = mydebounce(async (container, noteId, tokenId) =>
   if(window.lockTemplateStatBlocks){
     container.find('.dnd-sheet button').attr("contenteditable", "false");
   } else{
-    container.find('.dnd-sheet [contenteditable]:not(a)').attr("contenteditable", "true");
+    container.find('.dnd-sheet [contenteditable]:not(a):not(.table-row-drag-handle)').attr("contenteditable", "true");
   }
 }, 1000);
 

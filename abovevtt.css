@@ -12939,6 +12939,50 @@ p.monster-header+p {
 .dnd-page [contenteditable="true"]{
     cursor: text;
 }
+
+.prof-checkbox {
+    display: inline-flex;
+    align-items: center;
+    cursor: pointer !important;
+}
+
+.prof-icon {
+    width: 18px;
+    height: 18px;
+}
+
+.base-circle {
+    fill: none;
+    stroke: color-mix(in srgb, var(--font-color, #333) 50%, transparent 0%) !important;
+    stroke-width: 1;
+}
+
+.half-fill, .full-fill, .ring-stroke {
+    opacity: 0;
+    transition: opacity 0.15s ease;
+}
+
+.prof-checkbox[data-state="1"] .half-fill {
+    opacity: 1;
+    fill: #333;
+}
+
+.prof-checkbox[data-state="2"] .full-fill {
+    opacity: 1;
+    fill: #333;
+}
+
+.prof-checkbox[data-state="3"] .full-fill {
+    opacity: 1;
+    fill: #333;
+}
+.prof-checkbox[data-state="3"] .ring-stroke {
+    opacity: 1;
+    fill: none;
+    stroke: #333;
+    stroke-width: 1;
+}
+
 .dnd-sheet {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
     color: #111;
@@ -13006,6 +13050,13 @@ p.monster-header+p {
         flex-direction: column;
         gap: 10px;
         box-sizing: border-box;
+    }
+    table :has(>.prof-checkbox){
+        display: inline-flex;
+        align-items: center;  
+    }
+    .abilities-table-container .prof-checkbox{
+        scale:0.7;
     }
     .abilities-table-container, .skills-box {
         border: 1px solid #333;
@@ -13088,51 +13139,7 @@ p.monster-header+p {
     tbody tr td:is(:first-child, .table-row-drag-handle+:nth-child(2), :last-child) {
         text-align: left;
     } 
-    .prof-checkbox {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        cursor: pointer;
-        user-select: none;
-        font-family: sans-serif;
-    }
-
-    .prof-icon {
-        width: 18px;
-        height: 18px;
-    }
-
-    .base-circle {
-        fill: none;
-        stroke: color-mix(in srgb, var(--font-color, #333) 50%, transparent 0%) !important;
-        stroke-width: 1;
-    }
-
-    .half-fill, .full-fill, .ring-stroke {
-        opacity: 0;
-        transition: opacity 0.15s ease;
-    }
-
-    .prof-checkbox[data-state="1"] .half-fill {
-        opacity: 1;
-        fill: #333;
-    }
-
-    .prof-checkbox[data-state="2"] .full-fill {
-        opacity: 1;
-        fill: #333;
-    }
-
-    .prof-checkbox[data-state="3"] .full-fill {
-        opacity: 1;
-        fill: #333;
-    }
-    .prof-checkbox[data-state="3"] .ring-stroke {
-        opacity: 1;
-        fill: none;
-        stroke: #333;
-        stroke-width: 1;
-    }
+  
 
     :is(.skills-box, .abilities-table-container) tbody  tr td:last-child{
         text-align: center;
