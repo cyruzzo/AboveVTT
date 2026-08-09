@@ -203,7 +203,7 @@ async function initiateVideoUI() {
 
 
 function joinRoom(room = window.gameId) {
-    console.log("Joining Room")
+    noisy_log("Joining Room")
     room_id = PRE + room + SUF;
     player_id = PRE + window.PLAYER_ID + SUF;
   
@@ -218,7 +218,7 @@ function joinRoom(room = window.gameId) {
         window.videoConnectedPeers = [player_id];
     }
     window.videoPeer.on('open', (id) => {
-        console.log("Connected with Id: " + id)
+        noisy_log("Connected with Id: " + id)
         window.myVideoPeerID = id;   
         getMediaDevice();
     })
@@ -347,7 +347,7 @@ function startScreenShare() {
           })
         }
         setLocalStream(screenStream)
-        console.log(screenStream)
+        noisy_log(screenStream)
     })
 }
 

@@ -389,7 +389,7 @@ function open_grid_wizard_controls(scene_id, aligner1, aligner2, regrid = functi
 	$("#edit_dialog").remove();
 
 	scene.fog_of_war = "1"; // ALWAYS ON since 0.0.18
-	console.log('edit_scene_dialog');
+	noisy_log('edit_scene_dialog');
 	$("#scene_selector").attr('disabled', 'disabled');
 	const dialog = $(`<div id='edit_dialog' data-scene-id='${scene.id}'></div>`);
 	dialog.css('background', "url('/content/1-0-1487-0/skins/waterdeep/images/mon-summary/paper-texture.png')");
@@ -792,7 +792,7 @@ function edit_scene_vision_settings(scene_id){
 	$("#edit_dialog").remove();
 
 	scene.fog_of_war = "1"; // ALWAYS ON since 0.0.18
-	console.log('edit_scene_dialog');
+	noisy_log('edit_scene_dialog');
 	$("#scene_selector").attr('disabled', 'disabled');
 	const dialog = $(`<div id='edit_dialog' data-scene-id='${scene.id}'></div>`);
 	dialog.css('background', "url('/content/1-0-1487-0/skins/waterdeep/images/mon-summary/paper-texture.png')");
@@ -985,7 +985,7 @@ function edit_scene_vision_settings(scene_id){
 	})
 	const submitButton = $("<button type='button'>Save</button>");
 	submitButton.click(async function() {
-		console.log("Saving scene changes")
+		noisy_log("Saving scene changes")
 
 		const formData = await get_edit_form_data();
 		for (key in formData) {
@@ -1082,7 +1082,7 @@ function edit_scene_dialog(scene_id) {
 	$("#edit_dialog").remove();
 
 	scene.fog_of_war = "1"; // ALWAYS ON since 0.0.18
-	console.log('edit_scene_dialog');
+	noisy_log('edit_scene_dialog');
 	$("#scene_selector").attr('disabled', 'disabled');
 	const dialog = $(`<div id='edit_dialog' data-scene-id='${scene.id}'></div>`);
 	dialog.css('background', "url('/content/1-0-1487-0/skins/waterdeep/images/mon-summary/paper-texture.png')");
@@ -1496,7 +1496,7 @@ Tbh I feel like these overcomplicate things
 
 	const submitButton = $("<button type='button'>Save</button>");
 	submitButton.click(async function() {
-		console.log("Saving scene changes")
+		noisy_log("Saving scene changes")
 
 		const formData = await get_edit_form_data();
 		scene.gridOver = +($("#gridOverSelect").val() || 0);
@@ -1678,8 +1678,8 @@ function display_scenes(notOwned = false) {
 		return;
 	}
 	fill_importer(window.ScenesHandler.sources[source_name].chapters[chapter_name].scenes, 0);
-	console.log(window.ScenesHandler.sources[source_name].chapters[chapter_name].scenes);
-	console.log("mostrati...");
+	noisy_log(window.ScenesHandler.sources[source_name].chapters[chapter_name].scenes);
+	noisy_log("mostrati...");
 	/*$("#scene_select").empty();
 	
 	let source_name=$("#source_select").val();
@@ -1692,7 +1692,7 @@ function display_scenes(notOwned = false) {
 }
 
 function ddb_style_chapter_select(source, chapters) {
-	console.log("ddb_style_chapter_select", chapters);
+	noisy_log("ddb_style_chapter_select", chapters);
 	const menu = $(`
 		<div class="sidebar-scroll-menu">
 			<ul class="quick-menu quick-menu-tier-1">
@@ -1710,7 +1710,7 @@ function ddb_style_chapter_select(source, chapters) {
 	`);
 	const chapterList = menu.find("ul.chapter-list");
 	for (const chapterKey in chapters) {
-		console.log("building", chapterKey, chapters[chapterKey]);
+		noisy_log("building", chapterKey, chapters[chapterKey]);
 		const chapterListItem = ddb_style_chapter_list_item(chapterKey, chapters[chapterKey].title);
 		chapterList.append(chapterListItem);
 		chapterListItem.find("a").click(function(e) {
@@ -1733,7 +1733,7 @@ function ddb_style_chapter_select(source, chapters) {
 }
 
 function ddb_style_chapter_list_item(chapterKey, chapterTitle) {
-	console.log("ddb_style_chapter_list_item", chapterKey, chapterTitle)
+	noisy_log("ddb_style_chapter_list_item", chapterKey, chapterTitle)
 	return $(`
 		<li class="quick-menu-item quick-menu-item-tier-2 quick-menu-item-closed">
 			<div class="quick-menu-item-label">
@@ -1934,7 +1934,7 @@ async function build_scene_data_payload(parentId, fullPath, sceneName = "New Sce
 
 
 function init_scenes_panel() {
-	console.log("init_scenes_panel");
+	noisy_log("init_scenes_panel");
 
 	scenesPanel.updateHeader("Scenes");
 	add_expand_collapse_buttons_to_header(scenesPanel);
@@ -2033,7 +2033,7 @@ async function did_update_scenes() {
 }
 
 function rebuild_scene_items_list() {
-	console.group("rebuild_scene_items_list");
+
 
 	window.sceneListFolders = window.ScenesHandler.scenes
 		.filter(s => s.itemType === ItemType.Folder)
@@ -2047,18 +2047,16 @@ function rebuild_scene_items_list() {
 
 	update_token_folders_remembered_state();
 
-	console.groupEnd();
 }
 
 async function migrate_scene_folders() {
 
-	console.log(`migrate_scene_folders MB`, window.MB)
 
 	// collect scenes that need to be migrated
 	const scenesNeedingMigration = window.ScenesHandler.scenes.filter(s => s.itemType === undefined); // scenes that have been migrated have an itemType
 	if (!scenesNeedingMigration) {
 		// nothing to migrate
-		console.log("migrate_scene_folders does not need to migrate");
+		noisy_log("migrate_scene_folders does not need to migrate");
 		return;
 	}
 
@@ -2074,32 +2072,32 @@ async function migrate_scene_folders() {
 		.sort()
 		.forEach(folderPath => {
 			if (!pathsWithoutFolders.includes(folderPath)) { // make sure we don't make duplicate folders
-				console.debug(`migrate_scene_folders scenesNeedingMigration parsing ${folderPath}`);
+				noisy_log(`migrate_scene_folders scenesNeedingMigration parsing ${folderPath}`);
 				pathsWithoutFolders.push(folderPath);
 			}
 			// now make sure we get nested folders that only have folders in them
 			const backfillPathParts = folderPath.split("/");
 			while (backfillPathParts.length > 0) {
 				const lastPathPart = backfillPathParts.pop();
-				console.debug(`migrate_scene_folders dropping lastPathPart ${lastPathPart}`);
+				noisy_log(`migrate_scene_folders dropping lastPathPart ${lastPathPart}`);
 				const backfillPath = sanitize_folder_path(backfillPathParts.join("/"));
 				if (!pathsWithoutFolders.includes(backfillPath)) { // make sure we don't make duplicate folders
-					console.debug(`migrate_scene_folders adding backfillPath ${backfillPath}`);
+					noisy_log(`migrate_scene_folders adding backfillPath ${backfillPath}`);
 					pathsWithoutFolders.push(backfillPath);
 				}
 			}
 		});
 
-	console.debug(`migrate_scene_folders pathsWithoutFolders before filter ${pathsWithoutFolders}`);
+	noisy_log(`migrate_scene_folders pathsWithoutFolders before filter ${pathsWithoutFolders}`);
 	pathsWithoutFolders = pathsWithoutFolders.filter(fp => fp && fp !== '' && fp !== "/").sort();
-	console.log("migrate_scene_folders pathsWithoutFolders", pathsWithoutFolders);
+	noisy_log("migrate_scene_folders pathsWithoutFolders", pathsWithoutFolders);
 
 	pathsWithoutFolders.forEach(folderPath => {
 			let pathParts = folderPath.split("/");
 			let folderName = pathParts.pop();
 			let parentPath = sanitize_folder_path(pathParts.join("/"));
 			const parentId = folders.concat(newFolders).find(f => f.folderPath === parentPath)?.id || RootFolder.Scenes.id;
-			console.log(`migrate_scene_folders creating folderPath: ${folderPath}, parentPath: ${parentPath}, folderName: ${folderName}, parentId: ${parentId}, folders: `, folders);
+			noisy_log(`migrate_scene_folders creating folderPath: ${folderPath}, parentPath: ${parentPath}, folderName: ${folderName}, parentId: ${parentId}, folders: `, folders);
 			newFolders.push({
 				id: uuid(),
 				title: folderName,
@@ -2114,11 +2112,11 @@ async function migrate_scene_folders() {
 			unmigratedScene.itemType = ItemType.Scene;
 			const parentFolder = folders.concat(newFolders).find(f => f.folderPath === unmigratedScene.folderPath);
 			if (parentFolder) {
-				console.log("migrate_scene_folders setting parentId: ", parentFolder.id, parentFolder);
+				noisy_log("migrate_scene_folders setting parentId: ", parentFolder.id, parentFolder);
 				unmigratedScene.parentId = parentFolder.id;
 			} else {
 				unmigratedScene.parentId = RootFolder.Scenes.id;
-				console.log("migrate_scene_folders setting parentId: ", RootFolder.Scenes.id);
+				noisy_log("migrate_scene_folders setting parentId: ", RootFolder.Scenes.id);
 			}
 		});
 
@@ -2127,9 +2125,9 @@ async function migrate_scene_folders() {
 	let foldersToMigrate = itemsToMigrate.filter(i => i.itemType === ItemType.Folder);
 	let scenesToMigrate = itemsToMigrate.filter(i => i.itemType === ItemType.Scene);
 	if (scenesToMigrate.length > 0) {
-		console.log("migrate_scene_folders is migrating scenes", scenesToMigrate);
+		noisy_log("migrate_scene_folders is migrating scenes", scenesToMigrate);
 		for (const scene of scenesToMigrate) {
-			console.log('migrate_scene_folders is sending update_scene', scene)
+			noisy_log('migrate_scene_folders is sending update_scene', scene)
 			// startup_step is not defined at this point?
 			$("#loading-overlay-beholder > .sidebar-panel-loading-indicator > .loading-status-indicator__subtext").text(`Migrating scene ${scene.title}`);
 			window.MB.sendMessage("custom/myVTT/update_scene", scene);
@@ -2138,7 +2136,7 @@ async function migrate_scene_folders() {
 	}
 
 	if (foldersToMigrate.length > 0) {
-		console.log("migrate_scene_folders is migrating folders", foldersToMigrate);
+		noisy_log("migrate_scene_folders is migrating folders", foldersToMigrate);
 		await AboveApi.migrateScenes(window.gameId, foldersToMigrate);
 		$("#loading-overlay-beholder > .sidebar-panel-loading-indicator > .loading-status-indicator__subtext").text(`Uploading scene folders`);
 		await async_sleep(2000); // give the DB 2 seconds to persist the new data before fetching it again
@@ -2697,9 +2695,9 @@ function create_scene_folder_inside(listItem) {
 }
 
 function rename_scene_folder(item, newName, alertUser) {
-	console.log(`rename_scene_folder`, item, newName, alertUser);
+	noisy_log(`rename_scene_folder`, item, newName, alertUser);
 	const folderIndex = window.ScenesHandler.scenes.findIndex(s => s.id === item.id);
-	console.log(`rename_scene_folder folderIndex: ${folderIndex}`)
+	noisy_log(`rename_scene_folder folderIndex: ${folderIndex}`)
 	if (folderIndex < 0) {
 		const warningMessage = `Could not find a folder with id: ${item.id}`
 		console.warn('rename_scene_folder', warningMessage, item);
@@ -2708,9 +2706,9 @@ function rename_scene_folder(item, newName, alertUser) {
 		}
 		return;
 	}
-	console.log(`rename_scene_folder before`, window.ScenesHandler.scenes[folderIndex].title);
+	noisy_log(`rename_scene_folder before`, window.ScenesHandler.scenes[folderIndex].title);
 	window.ScenesHandler.scenes[folderIndex].title = newName;
-	console.log(`rename_scene_folder after`, window.ScenesHandler.scenes[folderIndex].title);
+	noisy_log(`rename_scene_folder after`, window.ScenesHandler.scenes[folderIndex].title);
 	window.ScenesHandler.persist_scene(folderIndex);
 	item.name = newName; // not sure if this will work. Might need to redraw the list
 
@@ -3006,11 +3004,11 @@ function delete_folder_and_all_scenes_within_it(listItem) {
 
 	const scenesToDelete = find_descendants_of_scene_id(listItem.id);
 
-	console.debug("before deleting from scenes", window.ScenesHandler.scenes);
+	noisy_log("before deleting from scenes", window.ScenesHandler.scenes);
 	scenesToDelete.forEach(scene => {
 		window.ScenesHandler.delete_scene(scene.id, false);
 	});
-	console.debug("after deleting from scenes", window.ScenesHandler.scenes);
+	noisy_log("after deleting from scenes", window.ScenesHandler.scenes);
 	console.groupEnd();
 }
 
@@ -3450,7 +3448,7 @@ function build_UVTT_import_container(){
 
 	const submitButton = $("<button type='button'>Save</button>");
 	submitButton.click(async function() {
-		console.log("Saving scene changes")
+		noisy_log("Saving scene changes")
 
 		const formData = await get_edit_form_data();
 		const folderPath = decode_full_path($(`#sources-import-main-container`).attr("data-folder-path")).replace(RootFolder.Scenes.path, "");
@@ -3921,7 +3919,7 @@ function build_import_container() {
 			container.find("li.listing-card").each((idk, el) => {
 				const li = $(el);
 				const searchTerms = li.attr("data-collapsible-search").toLowerCase();
-				console.log(searchTerms, filterValue, searchTerms.includes(filterValue))
+				noisy_log(searchTerms, filterValue, searchTerms.includes(filterValue))
 				if(searchTerms.includes(filterValue)) {
 					li.removeClass("ddb-collapsible__item--hidden");
 				} else {
@@ -4017,7 +4015,7 @@ function build_import_collapsible_section(sectionLabel, logoUrl) {
 }
 
 function scene_importer_clicked_source(source, chapter, image, title) {
-	console.log(`scene_importer_clicked_source(${source}, ${chapter}, ${image}, ${title})`);
+	noisy_log(`scene_importer_clicked_source(${source}, ${chapter}, ${image}, ${title})`);
 	if (!window.recentlyVisitedSources) {
 		read_recently_visited_scene_importer_sources();
 	}

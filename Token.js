@@ -1304,11 +1304,9 @@ class Token {
 		}
 		
 		if (this.options.hidden == false || typeof this.options.hidden == 'undefined'){
-			console.log("Setting combat tracker opacity to 1.0")
 			$("#combat_tracker_inside tr[data-target='" + this.options.id + "']").find('.Avatar_AvatarPortrait__2dP8u').css('opacity','1.0');
 		}
 		else {
-			console.log("Setting combat tracker opacity to 0.5")
 			$("#combat_tracker_inside tr[data-target='" + this.options.id + "']").find('.Avatar_AvatarPortrait__2dP8u').css('opacity','0.5');
 		}
 		//this.options.ct_show = $("#combat_tracker_inside tr[data-target='" + this.options.id + "']").find('input').checked;
@@ -3739,7 +3737,7 @@ function place_token_at_view_point(tokenObject, pageX, pageY) {
 
 function place_token_at_map_point(tokenObject, x, y, forcePlaceAndSize = false, animationDuration) {
 
-	console.log(`attempting to place token at ${x}, ${y}; options: ${JSON.stringify(tokenObject)}`);
+	noisy_log(`attempting to place token at ${x}, ${y}; options: ${JSON.stringify(tokenObject)}`);
 
 	if (tokenObject.id == undefined) {
 		tokenObject.id = uuid();
@@ -3946,7 +3944,7 @@ function token_menu() {
 			initialY = event.touches[0].pageY;
 			clearTimeout(contextMenuLongPressTimer);
 			contextMenuLongPressTimer = setTimeout(function() {
-			    console.log("context_menu_flyout contextmenu event", event);
+			    noisy_log("context_menu_flyout contextmenu event", event);
 				if (window.DRAGGING || $(".pause_click").length > 0) {
 					return;
 				}
@@ -3973,7 +3971,7 @@ function token_menu() {
 		    
 		  });
 		$("#tokens").on("contextmenu", ".VTTToken, .door-button", function(event) {
-			console.log("context_menu_flyout contextmenu event", event);
+			noisy_log("context_menu_flyout contextmenu event", event);
 			event.preventDefault();
 			event.stopPropagation();
 			if (window.DRAGGING || $(".pause_click").length > 0) {

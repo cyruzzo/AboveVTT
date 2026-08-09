@@ -142,13 +142,13 @@ class AboveApi {
 
   static async getScene(sceneId) {
     const response = await this.fetchJson("getScene", {scene: sceneId});
-    console.log(`AboveApi.getScene(${sceneId})`, response);
+    noisy_log(`AboveApi.getScene(${sceneId})`, response);
     return response;
   }
 
   static async exportScenes(campaignSecret) {
     const response = await this.fetchJson("export_scenes", undefined, campaignSecret);
-    console.log(`AboveApi.exportScenes`, response);
+    noisy_log(`AboveApi.exportScenes`, response);
     return response;
   }
 

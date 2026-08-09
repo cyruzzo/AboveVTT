@@ -238,12 +238,7 @@ class WaypointManagerClass {
 
 	// Increment the current index into the array of waypoints, and draw a small indicator
 	checkNewWaypoint(mousex, mousey) {
-			//console.log("Incrementing waypoint");
-			this.currentWaypointIndex++;
-
-			// Draw an indicator for cosmetic niceness
-			//let snapCoords = this.getSnapPointCoords(mousex, mousey);
-			//this.drawBobble(snapCoords.x, snapCoords.y, Math.max(15 * Math.max((1 - window.ZOOM), 0)/window.CURRENT_SCENE_DATA.scale_factor, 3));
+		this.currentWaypointIndex++;
 	}
 
 	// Track mouse moving
@@ -832,7 +827,6 @@ function check_single_token_visibility(id){
 		$(selector).toggleClass('notVisible', false);
 		if(window.TOKEN_OBJECTS[id].options.hideaura !== true && id !== playerTokenId)
 			$(auraSelector).toggleClass('notVisible', false);
-		//console.log('SHOW '+id);
 	}
 }
 
@@ -868,7 +862,7 @@ function getPixelFromImageData(imageData, x, y){
 
 }
 function do_check_token_visibility() {
-	console.log("do_check_token_visibility");
+	noisy_log("do_check_token_visibility");
 	if(window.LOADING)
 		return;
 	let isAoeTokenSelected = false;
@@ -4407,7 +4401,6 @@ function drawing_mouseup(e) {
 		if(window.MOUSEDOWN && WaypointManager.isMeasuring()) {
 			WaypointManager.checkNewWaypoint(mouseX, mouseY);
 		}
-		//console.log("Measure right click");
 		return;
 	}
 
@@ -7428,7 +7421,7 @@ function init_vision_menu(buttons){
 			const colorPickerChange = function (e, tinycolor) {
 				let lightName = e.target.name.replace("Color", "");
 				LOS_PRESETS[i][lightName].color = `rgba(${tinycolor._r}, ${tinycolor._g}, ${tinycolor._b}, ${tinycolor._a})`;
-				console.log(lightName, e, tinycolor);
+				noisy_log(lightName, e, tinycolor);
 				localStorage.setItem('LOS_PRESETS', JSON.stringify(LOS_PRESETS));
 			};
 			colorPickers.on('move.spectrum', colorPickerChange);   // update the token as the player messes around with colors

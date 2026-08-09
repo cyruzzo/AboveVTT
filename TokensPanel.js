@@ -158,9 +158,9 @@ function migrate_tokendata() {
                 delete newToken.img;
                 let existing = migratedTokens.find(t => t.name === newToken.name && t.folderPath === newToken.folderPath)
                 if (existing !== undefined) {
-                    console.log("migrate_to_my_tokens not adding duplicate token", newToken);
+                    noisy_log("migrate_to_my_tokens not adding duplicate token", newToken);
                 } else {
-                    console.log("migrate_to_my_tokens successfully migrated token", newToken, "from", oldToken);
+                    noisy_log("migrate_to_my_tokens successfully migrated token", newToken, "from", oldToken);
                     migratedTokens.push(newToken);
                 }
                 oldToken.didMigrateToMyToken = true;
@@ -194,12 +194,12 @@ function rollback_from_my_tokens() {
     const rollbackFolderAtPath = function(oldFolderPath) {
         let currentFolderPath = sanitize_folder_path(oldFolderPath);
         let folder = convert_path(currentFolderPath);
-        console.log("attempting to roll back all tokens in folder", currentFolderPath, folder);
+        noisy_log("attempting to roll back all tokens in folder", currentFolderPath, folder);
         if (folder.tokens) {
             for (let tokenKey in folder.tokens) {
                 let oldToken = folder.tokens[tokenKey];
                 oldToken.didMigrateToMyToken = false;
-                console.log("rolling back oldToken", oldToken);
+                noisy_log("rolling back oldToken", oldToken);
             }
         }
         for (let folderName in folder.folders) {
@@ -286,10 +286,10 @@ function find_builtin_token(fullPath) {
     let found = builtInTokens.find(t => {
         let dirtyPath = `${RootFolder.AboveVTT.path}${t.folderPath}/${t.name}`;
         let fullTokenPath = sanitize_folder_path(dirtyPath);
-        console.debug("looking for: ", fullPath, dirtyPath, fullTokenPath, fullTokenPath === fullPath, t);
+        noisy_log("looking for: ", fullPath, dirtyPath, fullTokenPath, fullTokenPath === fullPath, t);
         return fullTokenPath === fullPath;
     });
-    console.debug("found: ", found);
+    noisy_log("found: ", found);
     console.groupEnd();
     return found;
 }
@@ -302,7 +302,7 @@ function find_builtin_token(fullPath) {
  */
 function rebuild_token_items_list() {
     if (!window.DM) return;
-    console.group("rebuild_token_items_list");
+
     try {
 
     //bring old players folder data up to current structure to support players folders
@@ -391,9 +391,9 @@ function rebuild_token_items_list() {
     window.tokenListItems = tokenItems.concat(aoe_items);
     rebuild_ddb_npcs();
     update_token_folders_remembered_state();
-    console.groupEnd();
+
     } catch (error) {
-        console.groupEnd();
+
         console.error("rebuild_token_items_list caught an unexpected error", error);
     }
 
@@ -411,7 +411,7 @@ function filter_token_list(searchTerm) {
         searchTerm = "";
     }
 
-    console.log("filter_token_list searchTerm", searchTerm)
+    noisy_log("filter_token_list searchTerm", searchTerm)
     $('.custom-token-list').hide();
     redraw_token_list(searchTerm, true, true);
 
@@ -432,7 +432,7 @@ function filter_token_list(searchTerm) {
         }
     }
 
-    console.log("filter_token_list about to call inject_monster_tokens");
+    noisy_log("filter_token_list about to call inject_monster_tokens");
 
     window.monsterListItems = []; // don't let this grow unbounded
     window.open5eListItems = [];
@@ -448,7 +448,7 @@ function filter_token_list(searchTerm) {
  * @param skip {number} the pagination offset. This function will inject a "Load More" button with the skip details embedded. You don't need to pass anything for this.
  */
 function inject_monster_tokens(searchTerm, skip, addedList=[]) {
-    console.log("inject_monster_tokens about to call search_monsters");
+    noisy_log("inject_monster_tokens about to call search_monsters");
     const monsterFolderTitle = $('#monstersFolder>.sidebar-list-item-row-item:first-of-type .sidebar-list-item-row-details-title');
     if(monsterFolderTitle.find('.beholder-dm-screen').length==0){
         const beholderSvg = $(`<svg class="beholder-dm-screen loading-status-indicator__svg animate" viewBox="0 0 285 176" fill="none" xmlns="http://www.w3.org/2000/svg" style="width: 50px;position: absolute;padding: 0px;display: inline;left: 110px;top: 2px;"><defs><path id="beholder-eye-move-path" d="M0 0 a 15 5 0 0 0 15 0 a 15 5 0 0 1 -15 0 z"></path><clipPath id="beholder-eye-socket-clip-path"><path id="eye-socket" fill-rule="evenodd" clip-rule="evenodd" d="M145.5 76c-8.562 0-15.5-7.027-15.5-15.694 0-8.663 6.938-1.575 15.5-1.575 8.562 0 15.5-7.088 15.5 1.575C161 68.973 154.062 76 145.5 76z"></path></clipPath></defs><g class="beholder-dm-screen__beholder"><path fill-rule="evenodd" clip-rule="evenodd" d="M145.313 77.36c-10.2 0-18.466-8.27-18.466-18.47 0-10.197 8.266-1.855 18.466-1.855 10.199 0 18.465-8.342 18.465 1.855 0 10.2-8.266 18.47-18.465 18.47m59.557 4.296l-.083-.057c-.704-.5-1.367-1.03-1.965-1.59a12.643 12.643 0 0 1-1.57-1.801c-.909-1.268-1.51-2.653-1.859-4.175-.355-1.521-.461-3.179-.442-4.977.007-.897.049-1.835.087-2.827.038-.995.079-2.032.053-3.194-.031-1.158-.11-2.445-.519-3.97a10.494 10.494 0 0 0-1.014-2.43 8.978 8.978 0 0 0-1.938-2.32 9.64 9.64 0 0 0-2.468-1.54l-.314-.137-.299-.114-.609-.212c-.382-.105-.787-.227-1.151-.298-1.495-.315-2.819-.383-4.065-.39-1.248-.004-2.407.087-3.534.2a56.971 56.971 0 0 0-3.18.44c-6.271.646-12.648 1.559-13.689-.837-1.079-2.487-3.35-8.058 3.115-12.19 4.076.154 8.141.347 12.179.62 1.461.098 2.914.212 4.36.34-4.614.924-9.314 1.7-14.019 2.43h-.015a2.845 2.845 0 0 0-2.388 3.066 2.84 2.84 0 0 0 3.088 2.574c5.125-.462 10.25-.973 15.416-1.696 2.592-.378 5.17-.776 7.88-1.42a29.7 29.7 0 0 0 2.108-.59c.181-.06.363-.117.56-.193.197-.072.378-.136.594-.227.208-.09.405-.17.643-.291l.345-.174.394-.235c.064-.042.124-.076.196-.125l.235-.174.235-.174.117-.099.148-.136c.098-.094.189-.189.283-.287l.137-.152a3.44 3.44 0 0 0 .166-.22c.114-.154.224-.317.318-.484l.072-.125.038-.064.042-.09a5.06 5.06 0 0 0 .367-1.154c.045-.308.06-.63.045-.944a4.322 4.322 0 0 0-.042-.458 5.19 5.19 0 0 0-.386-1.207 5.356 5.356 0 0 0-.499-.799l-.091-.117-.072-.083a5.828 5.828 0 0 0-.303-.318l-.155-.151-.083-.076-.057-.05a9.998 9.998 0 0 0-.503-.382c-.152-.102-.28-.178-.424-.265l-.205-.124-.181-.091-.36-.186a18.713 18.713 0 0 0-.643-.28l-.591-.23c-1.521-.538-2.853-.856-4.197-1.159a83.606 83.606 0 0 0-3.951-.772c-2.604-.45-5.185-.829-7.763-1.166-4.273-.564-8.531-1.029-12.785-1.46 0-.004-.004-.004-.004-.004a38.55 38.55 0 0 0-4.81-3.1v-.004c.397-.223.965-.424 1.688-.549 1.135-.208 2.551-.242 4.05-.185 3.024.11 6.366.59 10.022.662 1.832.02 3.781-.056 5.84-.56a12.415 12.415 0 0 0 3.081-1.188 10.429 10.429 0 0 0 2.702-2.135 2.841 2.841 0 0 0-3.774-4.205l-.208.152c-.825.594-1.76.87-2.956.942-1.188.068-2.566-.09-4.004-.367-2.907-.553-6.003-1.556-9.5-2.32-1.763-.371-3.644-.7-5.802-.73a16.984 16.984 0 0 0-3.455.298 13.236 13.236 0 0 0-3.774 1.333 13.065 13.065 0 0 0-3.376 2.615 14.67 14.67 0 0 0-1.646 2.154h-.004a41.49 41.49 0 0 0-8.436-.863c-1.518 0-3.017.079-4.489.238-1.79-1.563-3.444-3.198-4.833-4.913a21.527 21.527 0 0 1-1.4-1.903 15.588 15.588 0 0 1-1.094-1.893c-.606-1.241-.905-2.422-.893-3.22a3.38 3.38 0 0 1 .038-.55c.034-.155.06-.31.121-.446.106-.273.276-.534.571-.776.579-.496 1.681-.81 2.884-.689 1.207.114 2.487.629 3.615 1.476 1.135.848 2.111 2.044 2.868 3.444l.038.076a2.848 2.848 0 0 0 3.471 1.329 2.843 2.843 0 0 0 1.714-3.641c-.768-2.135-1.96-4.235-3.675-6.003-1.71-1.76-3.924-3.18-6.502-3.872a12.604 12.604 0 0 0-4.076-.416 11.248 11.248 0 0 0-4.284 1.128 10.405 10.405 0 0 0-3.702 3.054c-.499.655-.901 1.37-1.237 2.104-.318.73-.568 1.488-.731 2.237-.337 1.503-.356 2.96-.238 4.315.125 1.362.405 2.63.764 3.822.36 1.196.803 2.317 1.298 3.373a31.9 31.9 0 0 0 1.605 3.043c.458.768.935 1.506 1.427 2.233h-.004a39.13 39.13 0 0 0-4.515 2.384c-3.111-.344-6.2-.76-9.242-1.294-2.033-.364-4.043-.769-6.007-1.26-1.96-.485-3.876-1.045-5.662-1.726a24.74 24.74 0 0 1-2.528-1.102c-.772-.393-1.48-.829-1.987-1.234a4.916 4.916 0 0 1-.56-.507c-.02-.015-.03-.03-.046-.045.288-.28.761-.621 1.314-.905.719-.382 1.566-.711 2.456-.984 1.79-.556 3.762-.9 5.76-1.098l.046-.007a2.843 2.843 0 0 0 2.547-2.805 2.846 2.846 0 0 0-2.824-2.868c-2.301-.02-4.628.11-7.028.567-1.2.231-2.418.538-3.671 1.022-.628.246-1.26.526-1.911.901a10.12 10.12 0 0 0-1.96 1.446c-.648.62-1.307 1.438-1.757 2.524-.114.261-.197.56-.284.844a7.996 7.996 0 0 0-.166.909c-.061.609-.05 1.237.049 1.809.189 1.162.632 2.12 1.109 2.891a11.265 11.265 0 0 0 1.529 1.942c1.056 1.082 2.127 1.88 3.194 2.6a33.287 33.287 0 0 0 3.21 1.855c2.142 1.093 4.284 1.979 6.434 2.774a98.121 98.121 0 0 0 6.464 2.112c.511.147 1.018.291 1.529.435a36.8 36.8 0 0 0-4.458 7.089v.004c-1.908-2.014-3.876-3.997-6.022-5.931a52.386 52.386 0 0 0-3.471-2.888 31.347 31.347 0 0 0-2.028-1.408 17.575 17.575 0 0 0-2.574-1.378 11.177 11.177 0 0 0-1.888-.616c-.761-.16-1.73-.31-3.02-.107a6.543 6.543 0 0 0-1.007.254 6.508 6.508 0 0 0-2.79 1.84 6.7 6.7 0 0 0-.594.783c-.083.129-.174.269-.238.39a7.248 7.248 0 0 0-.681 1.692 9.383 9.383 0 0 0-.3 2.02c-.022.584 0 1.09.038 1.568.084.953.231 1.786.401 2.577l.39 1.764c.027.14.065.268.087.408l.057.428.121.855.065.428.033.443.072.886c.061.586.061 1.196.076 1.801.05 2.426-.11 4.92-.435 7.407a50.6 50.6 0 0 1-1.503 7.35c-.17.594-.367 1.17-.548 1.76a55.283 55.283 0 0 1-.632 1.684l-.352.791c-.061.129-.114.276-.178.39l-.193.356-.186.355c-.064.121-.129.246-.193.326-.129.185-.257.375-.378.575l-.303.485a2.813 2.813 0 0 0 4.462 3.387c.295-.322.59-.655.878-.988.155-.17.265-.333.382-.496l.349-.488.344-.492c.117-.166.2-.325.303-.492l.583-.98a53.92 53.92 0 0 0 1.018-1.964c.295-.659.61-1.321.89-1.984a58.231 58.231 0 0 0 2.69-8.114 58.405 58.405 0 0 0 1.51-8.493c.068-.73.152-1.454.167-2.203l.045-1.12.02-.56-.012-.568-.004-.205c.167.186.333.371.496.557 1.608 1.84 3.179 3.838 4.708 5.889a181.94 181.94 0 0 1 4.481 6.328c.14.2.311.428.477.617.284.33.594.62.924.874 0 .216.003.424.015.636-2.661 2.861-5.265 5.821-7.748 9.034-1.567 2.06-3.096 4.19-4.485 6.715-.685 1.267-1.347 2.645-1.854 4.363-.246.879-.454 1.851-.496 3.02l-.007.44.022.473c.012.159.02.314.038.477.023.166.05.337.076.503.113.666.333 1.385.65 2.07.16.337.356.67.557.992.212.299.44.613.681.878a8.075 8.075 0 0 0 1.54 1.328c1.05.697 2.04 1.06 2.938 1.31 1.79.466 3.292.519 4.723.507 2.842-.053 5.367-.48 7.853-.98 4.943-1.022 9.618-2.434 14.243-3.948a2.845 2.845 0 0 0 1.911-3.236 2.842 2.842 0 0 0-3.323-2.267h-.015c-4.648.878-9.322 1.635-13.864 1.965-2.252.155-4.511.208-6.46-.027a10.954 10.954 0 0 1-1.685-.322c.004-.015.012-.026.015-.037.133-.273.322-.606.534-.954.235-.36.477-.73.768-1.117 1.14-1.548 2.619-3.164 4.183-4.723a83.551 83.551 0 0 1 2.585-2.468 35.897 35.897 0 0 0 2.312 4.16c.125.2.261.405.397.602 3.747-.413 7.415-1.06 10.356-1.617l.037-.007a7.47 7.47 0 0 1 8.702 5.957 7.491 7.491 0 0 1-4.724 8.38C132.172 94.372 138.542 96 145.313 96c20.358 0 37.087-14.708 38.994-33.514.193-.05.386-.098.576-.144a23.261 23.261 0 0 1 2.354-.458c.726-.102 1.393-.14 1.847-.125.125-.004.193.015.299.012.03.003.064.007.098.007h.053c.008.004.015.004.027.004.106 0 .094-.019.09-.068-.007-.05-.022-.125.019-.117.038.007.125.083.216.26.087.19.186.443.269.761.079.33.159.69.219 1.102.129.806.216 1.745.307 2.725.091.984.178 2.02.306 3.1.262 2.138.682 4.435 1.533 6.683.837 2.245 2.154 4.406 3.812 6.15.825.871 1.725 1.655 2.66 2.336.943.677 1.919 1.26 2.911 1.782a2.848 2.848 0 0 0 3.641-.874 2.848 2.848 0 0 0-.674-3.966" fill="#0398F3"></path><g clip-path="url(#beholder-eye-socket-clip-path)"><circle cx="137.5" cy="60" r="7" fill="#1B9AF0"><animateMotion dur="2.3s" repeatCount="indefinite"><mpath xlink:href="#beholder-eye-move-path"></mpath></animateMotion></circle></g></g><g class="beholder-dm-screen__screen"><path fill="#EAEEF0" stroke="#fff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M76 76h136v97H76z"></path><path d="M218 170.926V74.282l64-35.208v96.644l-64 35.208zM70 171.026V74.318L3 38.974v96.708l67 35.344z" fill="#F3F6F9" stroke="#fff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"></path></g></svg>`);
@@ -487,7 +487,7 @@ function inject_monster_tokens(searchTerm, skip, addedList=[]) {
             window.monsterListItems.push(item);
             listItems.push(item);
         }
-        console.log("search_monsters converted", listItems);
+        noisy_log("search_monsters converted", listItems);
         let monsterFolder = find_html_row_from_path(RootFolder.Monsters.path, tokensPanel.body);
         if(listItems.length < 10 && monsterSearchResponse.pagination.total > (monsterSearchResponse.pagination.skip + 100)){
            inject_monster_tokens(searchTerm, skip + 100, listItems);
@@ -497,13 +497,13 @@ function inject_monster_tokens(searchTerm, skip, addedList=[]) {
             if (searchTerm.length > 0) {
                 monsterFolder.removeClass("collapsed");
             }     
-            console.log("search_monster pagination ", monsterSearchResponse.pagination.total, monsterSearchResponse.pagination.skip, monsterSearchResponse.pagination.total > monsterSearchResponse.pagination.skip);
+            noisy_log("search_monster pagination ", monsterSearchResponse.pagination.total, monsterSearchResponse.pagination.skip, monsterSearchResponse.pagination.total > monsterSearchResponse.pagination.skip);
             monsterFolder.find(".load-more-button").remove();
             if (monsterSearchResponse.pagination.total > (monsterSearchResponse.pagination.skip - remainderItems + 100)) {
                 // add load more button
                 let loadMoreButton = $(`<button class="ddbeb-button load-more-button" data-skip="${monsterSearchResponse.pagination.skip}">Load More</button>`);
                 loadMoreButton.click(function(loadMoreClickEvent) {
-                    console.log("load more!", loadMoreClickEvent);
+                    noisy_log("load more!", loadMoreClickEvent);
                     let previousSkip = parseInt($(loadMoreClickEvent.currentTarget).attr("data-skip"));
                     inject_monster_tokens(searchTerm, previousSkip - remainderItems + 100);
                 });
@@ -547,7 +547,7 @@ function inject_open5e_monster_list_items(listItems = open5e_monsters) {
         // add load more button
         let loadMoreButton = $(`<button class="ddbeb-button open5e-load-more load-more-button">Load More</button>`);
         loadMoreButton.click(async function(loadMoreClickEvent) {
-            console.log("load more!", loadMoreClickEvent);   
+            noisy_log("load more!", loadMoreClickEvent);   
             open5e_monsters = await getNextOpen5e(open5e_monsters, open5e_next);
             $('.open5e-load-more').remove();
             monsterFolder.find('.folder-item-list').empty();
@@ -648,7 +648,6 @@ function redraw_token_list(searchTerm, enableDraggable = true, leaveEmpty=false)
         return;
     }
    
-    console.group("redraw_token_list");
     update_token_folders_remembered_state();
     let list = $(`<div class="custom-token-list"></div>`);
     tokensPanel.body.find('.custom-token-list').remove();
@@ -737,7 +736,6 @@ function redraw_token_list(searchTerm, enableDraggable = true, leaveEmpty=false)
     else{
         $(".sidebar-panel-content").find(".sidebar-panel-body .hidden-sidebar-item").toggleClass("temporary-visible", true);
     }  
-    console.groupEnd()
 }
 
 function get_helper_size(draggedItem){
@@ -770,7 +768,7 @@ async function enable_draggable_token_creation(html, specificImage = undefined, 
         cancel: '.token-row-gear, .change-token-image-item, #context-menu-layer',
         distance: 25,
         helper: function(event) {
-            console.log("enable_draggable_token_creation helper");
+            noisy_log("enable_draggable_token_creation helper");
             let draggedRow = $(event.target).closest(".list-item-identifier");
             let isPlayerSheetAoe = false
             let playerAoe = undefined
@@ -860,7 +858,7 @@ async function enable_draggable_token_creation(html, specificImage = undefined, 
         },
         start: function (event, ui) {
             
-            console.log("enable_draggable_token_creation start");
+            noisy_log("enable_draggable_token_creation start");
             let draggedRow = $(event.target).closest(".list-item-identifier");
             if ($(event.target).hasClass("list-item-identifier")) {
                 draggedRow = $(event.target);
@@ -897,7 +895,7 @@ async function enable_draggable_token_creation(html, specificImage = undefined, 
             // $( event.originalEvent.target ).one('click', function(e){ e.stopImmediatePropagation(); } );
             event.stopPropagation(); // prevent the mouseup event from closing the modal
             if ($(ui.helper).hasClass("drag-cancelled")) {
-                console.log("enable_draggable_token_creation cancelled");
+                noisy_log("enable_draggable_token_creation cancelled");
                 return;
             }
             const getRowItem = (event) => {
@@ -909,7 +907,7 @@ async function enable_draggable_token_creation(html, specificImage = undefined, 
                 return draggedItem;
             }
             let droppedOn = document.elementFromPoint(event.clientX, event.clientY);
-            console.log("droppedOn", droppedOn);
+            noisy_log("droppedOn", droppedOn);
             const numSelected = $('#tokens-panel .selected').length;
             if (droppedOn?.closest("#VTT")) {
                 // place a token where this was dropped
@@ -949,7 +947,7 @@ async function enable_draggable_token_creation(html, specificImage = undefined, 
                 const numSelected = $('#tokens-panel .selected').length;
                 const droppedOnWindow = $(droppedOn?.closest("#encounterWindow"));
                 const encounterId = droppedOnWindow.attr('data-encounter-id');
-                console.log("enable_draggable_token_creation stop");
+                noisy_log("enable_draggable_token_creation stop");
                 const customization = find_or_create_token_customization(ItemType.Folder, encounterId);
                 if (customization.encounterData == undefined)
                     customization.encounterData = {}
@@ -995,7 +993,7 @@ async function enable_draggable_token_creation(html, specificImage = undefined, 
                 persist_token_customization(customization)
                 droppedOnWindow.trigger('redrawListing');
             }else {
-                console.log("Not dropping over element", droppedOn);
+                noisy_log("Not dropping over element", droppedOn);
             }
         }
     });
@@ -1267,12 +1265,12 @@ async function create_and_place_token(listItem, hidden = undefined, specificImag
     let appendedNumbers = [];
     switch (listItem.type) {
         case ItemType.Folder:
-            console.log("TODO: place all tokens in folder?", listItem);
+            noisy_log("TODO: place all tokens in folder?", listItem);
             break;
         case ItemType.MyToken:
             tokenSizeSetting = options.tokenSize;
             tokenSize = parseFloat(tokenSizeSetting);
-            console.log("PLACING SIZE1", options.tokenSize, tokenSize)            
+            noisy_log("PLACING SIZE1", options.tokenSize, tokenSize)            
             if (tokenSizeSetting === undefined || typeof tokenSizeSetting !== 'number') {
                 tokenSize = 1;
                 // TODO: handle custom sizes
@@ -1301,7 +1299,7 @@ async function create_and_place_token(listItem, hidden = undefined, specificImag
             switch (options['placeType']) {
                 case 'personality':
                     let personailityTrait = getPersonalityTrait()
-                    console.log(`updating monster name with trait: ${personailityTrait}, and setting color: ${color}`);
+                    noisy_log(`updating monster name with trait: ${personailityTrait}, and setting color: ${color}`);
                     options.name = ` ${personailityTrait} ${listItem.name}`;
                     break;
                 case 'none':
@@ -1313,7 +1311,7 @@ async function create_and_place_token(listItem, hidden = undefined, specificImag
                 case 'count': 
                 default:    
                     if (placedCount > 1) {
-                        console.log(`updating monster name with count: ${placedCount}, and setting color: ${color}`);
+                        noisy_log(`updating monster name with count: ${placedCount}, and setting color: ${color}`);
                         options.name = `${listItem.name} ${placedCount}`; 
                     }
                     break;
@@ -1401,7 +1399,7 @@ async function create_and_place_token(listItem, hidden = undefined, specificImag
             switch (options['placeType']) {
                 case 'personality':
                     let personailityTrait = getPersonalityTrait()
-                    console.log(`updating monster name with trait: ${personailityTrait}, and setting color: ${color}`);
+                    noisy_log(`updating monster name with trait: ${personailityTrait}, and setting color: ${color}`);
                     options.name = ` ${personailityTrait} ${listItem.name}`;
                     break;
                 case 'none':
@@ -1413,7 +1411,7 @@ async function create_and_place_token(listItem, hidden = undefined, specificImag
                 case 'count': 
                 default:    
                     if (placedCount > 1) {
-                        console.log(`updating monster name with count: ${placedCount}, and setting color: ${color}`);
+                        noisy_log(`updating monster name with count: ${placedCount}, and setting color: ${color}`);
                         options.name = `${listItem.name} ${placedCount}`; 
                     }
                     break;
@@ -1488,7 +1486,7 @@ async function create_and_place_token(listItem, hidden = undefined, specificImag
            
                 case 'personality':
                     let personailityTrait = getPersonalityTrait()
-                    console.log(`updating monster name with trait: ${personailityTrait}, and setting color: ${color}`);
+                    noisy_log(`updating monster name with trait: ${personailityTrait}, and setting color: ${color}`);
                     options.name = ` ${personailityTrait} ${listItem.name}`;
                     break;
                 case 'none':
@@ -1500,7 +1498,7 @@ async function create_and_place_token(listItem, hidden = undefined, specificImag
                 case 'count': 
                 default:    
                     if (placedCount > 1) {
-                        console.log(`updating monster name with count: ${placedCount}, and setting color: ${color}`);
+                        noisy_log(`updating monster name with count: ${placedCount}, and setting color: ${color}`);
                         options.name = `${listItem.name} ${placedCount}`; 
                     }
                     break;
@@ -1537,7 +1535,7 @@ async function create_and_place_token(listItem, hidden = undefined, specificImag
             switch (options['placeType']) {
                 case 'personality':
                     let personailityTrait = getPersonalityTrait()
-                    console.log(`updating monster name with trait: ${personailityTrait}, and setting color: ${color}`);
+                    noisy_log(`updating monster name with trait: ${personailityTrait}, and setting color: ${color}`);
                     options.name = ` ${personailityTrait} ${listItem.name}`;
                     break;
                 case 'none':
@@ -1549,7 +1547,7 @@ async function create_and_place_token(listItem, hidden = undefined, specificImag
                 case 'count': 
                 default:    
                     if (placedCount > 1) {
-                        console.log(`updating monster name with count: ${placedCount}, and setting color: ${color}`);
+                        noisy_log(`updating monster name with count: ${placedCount}, and setting color: ${color}`);
                         options.name = `${listItem.name} ${placedCount}`; 
                     }
                     break;
@@ -1787,7 +1785,7 @@ async function create_and_place_token(listItem, hidden = undefined, specificImag
 
     delete options.undefined;
     delete options[""];
-    console.log("create_and_place_token about to place token with options", options, hidden, mapPoint, eventPageX, eventPageY, disableSnap);
+    noisy_log("create_and_place_token about to place token with options", options, hidden, mapPoint, eventPageX, eventPageY, disableSnap);
 
     if (eventPageX === undefined || eventPageY === undefined) {
         place_token_in_center_of_view(options);
@@ -1883,22 +1881,22 @@ function alternative_images_for_item(listItem) {
 function random_image_for_item(listItem, specificImage) {
     const validSpecifiedImage = parse_img(specificImage);
     if (validSpecifiedImage !== undefined && validSpecifiedImage.length > 0) {
-        console.debug("random_image_for_item validSpecifiedImage", validSpecifiedImage);
+        noisy_log("random_image_for_item validSpecifiedImage", validSpecifiedImage);
         return validSpecifiedImage
     }
     const customizations = find_token_customization(listItem.type, listItem.id);
     const validDefaultImage = parse_img(customizations?.tokenOptions?.defaultImage);
     if (validDefaultImage !== undefined && validDefaultImage.length > 0) {
-        console.debug("random_image_for_item validDefaultImage", validDefaultImage);
+        noisy_log("random_image_for_item validDefaultImage", validDefaultImage);
         return validDefaultImage
     }
     const alternativeImages = alternative_images_for_item(listItem);
     if (alternativeImages !== undefined && alternativeImages.length > 0) {
         const randomIndex = getRandomInt(0, alternativeImages.length);
-        console.debug("random_image_for_item", alternativeImages, randomIndex);
+        noisy_log("random_image_for_item", alternativeImages, randomIndex);
         return parse_img(alternativeImages[randomIndex]);
     } else {
-        console.debug("random_image_for_item alternativeImages empty, returning", listItem.image);
+        noisy_log("random_image_for_item alternativeImages empty, returning", listItem.image);
         return parse_img(listItem.image);
     }
 }
@@ -1910,7 +1908,7 @@ function random_image_for_item(listItem, specificImage) {
  * @param callback {function} a function that takes the JSON object returned by the DDB API
  */
 function search_monsters(searchTerm, skip, callback) {
-    console.log("search_monsters starting");
+   noisy_log("search_monsters starting");
     if (typeof callback !== 'function') {
         callback = function(){};
     }
@@ -1927,11 +1925,11 @@ function search_monsters(searchTerm, skip, callback) {
     if (filterParams.length > 0) {
         searchParam += `&${filterParams}`;
     }
-    console.log(`search_monsters calling API https://monster-service.dndbeyond.com/v1/Monster?skip=${offset}&take=100${searchParam}`);
+    noisy_log(`search_monsters calling API https://monster-service.dndbeyond.com/v1/Monster?skip=${offset}&take=100${searchParam}`);
     window.ajaxQueue.addDDBRequest({
         url: `https://monster-service.dndbeyond.com/v1/Monster?skip=${offset}&take=100${searchParam}`,
         success: function (responseData) {
-            console.log(`search_monsters succeeded`);
+            noisy_log(`search_monsters succeeded`);
             callback(responseData);
         },
         failure: function (errorMessage) {
@@ -2513,16 +2511,16 @@ function create_mytoken_folder_inside(listItem, options = {}) {
 
 function delete_mytokens_folder_and_everything_in_it(listItem) {
     build_import_loading_indicator('Deleting Folder and Contents');
-    console.log("delete_mytokens_folder_and_everything_in_it about to delete all tokens with parentId", listItem.id);
+    noisy_log("delete_mytokens_folder_and_everything_in_it about to delete all tokens with parentId", listItem.id);
     setTimeout(() => {
         delete_token_customization_by_parent_id(listItem.id, function (deletedChildren, deletedChildrenErrorType) {
             if (deletedChildren) {
-                console.log("delete_mytokens_folder_and_everything_in_it successfully deleted all children. about to delete the folder with id", listItem.id);
+                noisy_log("delete_mytokens_folder_and_everything_in_it successfully deleted all children. about to delete the folder with id", listItem.id);
                 delete_token_customization_by_type_and_id(listItem.type, listItem.id, function (deletedFolder, deletedFolderErrorType) {
                     did_change_mytokens_items();
                     expand_all_folders_up_to_item(listItem);
                     if (deletedFolder) {
-                        console.log("delete_mytokens_folder_and_everything_in_it successfully deleted the folder with id", listItem.id);
+                        noisy_log("delete_mytokens_folder_and_everything_in_it successfully deleted the folder with id", listItem.id);
                     } else {
                         showError(deletedFolderErrorType, "delete_mytokens_folder_and_everything_in_it failed to delete the folder with id", listItem.id);
                     }
@@ -2543,7 +2541,7 @@ function delete_mytokens_folder_and_everything_in_it(listItem) {
 function move_mytokens_to_parent_folder_and_delete_folder(listItem, callback) {
     // this is different from move_mytokens_folder in that it moved everything out of listItem
 
-    console.log("move_mytokens_to_parent_folder_and_delete_folder about to move all items out of", listItem.id);
+    noisy_log("move_mytokens_to_parent_folder_and_delete_folder about to move all items out of", listItem.id);
     window.TOKEN_CUSTOMIZATIONS.forEach(tc => {
         if (tc.parentId === listItem.id) {
             tc.parentId = listItem.parentId;
@@ -2551,15 +2549,15 @@ function move_mytokens_to_parent_folder_and_delete_folder(listItem, callback) {
     });
     let index = window.TOKEN_CUSTOMIZATIONS.findIndex(tc => tc.tokenType === listItem.type && tc.id === listItem.id);
     if (index >= 0) {
-        console.log(window.TOKEN_CUSTOMIZATIONS.length);
+        noisy_log(window.TOKEN_CUSTOMIZATIONS.length);
         window.TOKEN_CUSTOMIZATIONS.splice(index, 1);
-        console.log(window.TOKEN_CUSTOMIZATIONS.length);
+        noisy_log(window.TOKEN_CUSTOMIZATIONS.length);
     } else {
-        console.log("move_mytokens_to_parent_folder_and_delete_folder could not find customization with id", listItem.id);
+        noisy_log("move_mytokens_to_parent_folder_and_delete_folder could not find customization with id", listItem.id);
     }
     persist_all_token_customizations(window.TOKEN_CUSTOMIZATIONS, function (didSucceed, errorType) {
         if (didSucceed) {
-            console.log("move_mytokens_to_parent_folder_and_delete_folder successfully moved all children up one level and deleted folder with id", listItem.id);
+            noisy_log("move_mytokens_to_parent_folder_and_delete_folder successfully moved all children up one level and deleted folder with id", listItem.id);
         } else {
             showError(errorType, "move_mytokens_to_parent_folder_and_delete_folder failed to move all items out of", listItem.id);
         }
@@ -2585,7 +2583,7 @@ function create_token_inside(listItem, tokenName = "New Token", tokenImage = '',
 
     // let folderPath = listItem.fullPath().replace(RootFolder.MyTokens.path, "");
     // let newTokenCount = mytokens.filter(t => t.folderPath === folderPath && t.name.startsWith(newTokenName)).length;
-    console.log("newTokenCount", newTokenCount);
+    noisy_log("newTokenCount", newTokenCount);
     if (newTokenCount > 0) {
         newTokenName += ` ${newTokenCount + 1}`;
     }
@@ -2639,7 +2637,7 @@ function create_token_inside(listItem, tokenName = "New Token", tokenImage = '',
     persist_token_customization(customization, function (didSucceed, error) {
         if (skipDidChange)
             return;
-        console.log("create_token_inside created a new item", customization);
+        noisy_log("create_token_inside created a new item", customization);
         did_change_mytokens_items();
         const newItem = window.tokenListItems.find(li => li.type === ItemType.MyToken && li.id === customization.id);
         if (didSucceed && newItem) {
@@ -2844,7 +2842,7 @@ function display_aoe_token_configuration_modal(listItem, placedToken = undefined
     // MyToken name input handler
     const rename = async function(newName) {
         if (newName !== undefined && newName.length > 0) {
-            console.log("update token name to", newName);
+            noisy_log("update token name to", newName);
             customization.setTokenOption("name", newName);
             persist_token_customization(customization);
             sidebarPanel.updateHeader(newName, "", "When placing tokens, one of these images will be chosen at random. Right-click an image for more options.");
@@ -3025,9 +3023,9 @@ function display_aoe_token_configuration_modal(listItem, placedToken = undefined
     } else {
         tokenSizes.push(token_size_for_item(listItem, selectedTokenImage))
     }
-     console.log("TOKENSIZES", tokenSizes);
+     noisy_log("TOKENSIZES", tokenSizes);
      let tokenSizeInput = build_token_size_input(tokenSizes, function (newSize) {
-        console.log("TOKEN NEW SIZES", newSize);
+        noisy_log("TOKEN NEW SIZES", newSize);
         customization.setTokenOption("tokenSize", newSize);
         persist_token_customization(customization);
         decorate_modal_images(sidebarPanel, listItem, placedToken);
@@ -3277,7 +3275,7 @@ function display_aoe_token_configuration_modal(listItem, placedToken = undefined
     };
     let auraIsLightEnabled = (targetOptions.auraislight != undefined) ? targetOptions.auraislight : true;
     let enabledLightInput = build_toggle_input( lightOption, auraIsLightEnabled, function(name, newValue) {
-        console.log(`${name} setting is now ${newValue}`);
+        noisy_log(`${name} setting is now ${newValue}`);
         customization.setTokenOption("auraislight", newValue);
         persist_token_customization(customization);
         if (newValue) {
@@ -3433,7 +3431,7 @@ function display_aoe_token_configuration_modal(listItem, placedToken = undefined
     };
     let auraIsEnabled = (targetOptions.auraVisible != undefined) ? targetOptions.auraVisible : false;
     let enabledAuraInput = build_toggle_input( auraOption, auraIsEnabled, function(name, newValue) {
-        console.log(`${name} setting is now ${newValue}`);
+        noisy_log(`${name} setting is now ${newValue}`);
         customization.setTokenOption("auraVisible", newValue);
         persist_token_customization(customization);
         if (newValue) {
@@ -3513,7 +3511,7 @@ function display_aoe_token_configuration_modal(listItem, placedToken = undefined
     const colorPickerChange = function(e, tinycolor) {
         let auraName = e.target.name.replace("Color", "");
         let color = `rgba(${tinycolor._r}, ${tinycolor._g}, ${tinycolor._b}, ${tinycolor._a})`;
-        console.log(auraName, e, tinycolor);
+        noisy_log(auraName, e, tinycolor);
         customization.setTokenOption(`${auraName}.color`, color)
         persist_token_customization(customization);
         
@@ -4158,7 +4156,7 @@ function open_monster_item_iframe(listItem) {
     tokensPanel.container.append(iframe);
 
     let rowHtml = find_html_row(listItem, tokensPanel.body);
-    console.log(listItem.fullPath(), rowHtml);
+    noisy_log(listItem.fullPath(), rowHtml);
     rowHtml.addClass("button-loading");
     iframe.on("load", function(event) {
         rowHtml.removeClass("button-loading");
@@ -4528,7 +4526,7 @@ function read_local_monster_search_filters() {
     } else {
         $(".monster-filter-button").css("color", "#838383");
     }
-    console.log("monster_search_filters", monster_search_filters);
+    noisy_log("monster_search_filters", monster_search_filters);
 }
 
 /** @returns {string} the query params to use when searching for monsters via the DDB API */
@@ -4912,7 +4910,7 @@ function display_change_image_modal(placedToken) {
             }
         }
         alternativeImages = [...new Set(alternativeImages)]; // clear out any duplicates
-        console.log("display_change_image_modal", alternativeImages);
+        noisy_log("display_change_image_modal", alternativeImages);
         alternativeImages.forEach(imgUrl => {
             if (!imgUrl || sidebarPanel.body.find(`.example-token[data-src='${imgUrl}']`).length>0)
                 return;
@@ -5096,7 +5094,7 @@ function display_change_image_modal(placedToken) {
 }
 
 const fetch_and_cache_scene_monster_items = mydebounce( () => {
-    console.log("fetch_and_cache_scene_monster_items");
+    noisy_log("fetch_and_cache_scene_monster_items");
     let monsterIds = [];
     let open5emonsterIds = []
     for (let id in window.TOKEN_OBJECTS) {
@@ -5120,10 +5118,10 @@ const fetch_and_cache_scene_monster_items = mydebounce( () => {
         }
     }
     if (monsterIds.length === 0 && open5emonsterIds === 0) {
-        console.log("fetch_and_cache_scene_monster_items no monsters to fetch");
+        noisy_log("fetch_and_cache_scene_monster_items no monsters to fetch");
         return;
     }
-    console.log("fetch_and_cache_scene_monster_items calling fetch_monsters with ids: ", monsterIds);
+    noisy_log("fetch_and_cache_scene_monster_items calling fetch_monsters with ids: ", monsterIds);
     fetch_monsters(monsterIds, async function (response) {
         if (response !== false) {
             update_monster_item_cache(response.map(m => SidebarListItem.Monster(m)));

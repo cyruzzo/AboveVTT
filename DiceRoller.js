@@ -196,10 +196,10 @@ class DiceRoll {
             let diceType = diceExpression.match(/d\d+/g);
             let numberOfDice = parseInt(diceExpression.split("d")[0]);
             if (diceExpression.includes("ro")) {
-                console.debug("diceExpression: ", diceExpression, ", includes reroll so we're doubling the number of dice for", diceType, ", numberOfDice before doubling: ", numberOfDice);
+                noisy_log("diceExpression: ", diceExpression, ", includes reroll so we're doubling the number of dice for", diceType, ", numberOfDice before doubling: ", numberOfDice);
                 numberOfDice = numberOfDice * 2;
             }
-            console.debug("diceExpression: ", diceExpression, ", diceType: ", diceType, ", numberOfDice: ", numberOfDice);
+            noisy_log("diceExpression: ", diceExpression, ", diceType: ", diceType, ", numberOfDice: ", numberOfDice);
             if (this.#separatedDiceToRoll[diceType] === undefined) {
                 this.#separatedDiceToRoll[diceType] = numberOfDice;
             } else {
@@ -221,7 +221,7 @@ class DiceRoll {
         let slashCommand = modifiedSlashCommand.match(diceRollCommandRegex)?.[0];
         let expression = modifiedSlashCommand.replace(diceRollCommandRegex, "").match(allowedExpressionCharactersRegex)?.[0];
         let action = modifiedSlashCommand.replace(diceRollCommandRegex, "").replace(allowedExpressionCharactersRegex, "");
-        console.debug("DiceRoll.fromSlashCommand text: ", slashCommandText, ", slashCommand:", slashCommand, ", expression: ", expression, ", action: ", action);
+        noisy_log("DiceRoll.fromSlashCommand text: ", slashCommandText, ", slashCommand:", slashCommand, ", expression: ", expression, ", action: ", action);
         let rollType = undefined;
         let damageType = undefined;
         if (slashCommand.startsWith("/r")) {
@@ -742,7 +742,7 @@ class DiceRoller {
             }             
 
             console.group("DiceRoller.parseAndRoll");
-            console.log("attempting to parse diceRoll", diceRoll);
+            noisy_log("attempting to parse diceRoll", diceRoll);
 
 
 
@@ -895,7 +895,7 @@ class DiceRoller {
 
 
         if ($(".dice-toolbar").hasClass("rollable")) {
-            console.log("diceRoll.sendToOverride", diceRoll.sendToOverride)
+            noisy_log("diceRoll.sendToOverride", diceRoll.sendToOverride)
             await $(".dice-toolbar__target").children().first().click();
         }
         if ($(`[class*='DiceContainer_button']`).length>0) {    
@@ -920,7 +920,7 @@ class DiceRoller {
         // diceRoll.entityId = monster.id;
         // diceRoll.entityType = monsterData.id;
 
-        console.log("with values", expression, displayName, imgUrl, rollType, damageType, actionType, sendTo)
+        noisy_log("with values", expression, displayName, imgUrl, rollType, damageType, actionType, sendTo)
 
 
         try {
@@ -943,7 +943,7 @@ class DiceRoller {
                     choppedExpression = choppedExpression.slice(idx + currentRoll.length);
                 }
             }
-            console.log("chopped expression", choppedExpression)
+            noisy_log("chopped expression", choppedExpression)
             notationList.push(choppedExpression); // our last notation will still be here so add it to the list
 
             if (roll.rolls.length != notationList.length) {
@@ -1081,7 +1081,7 @@ class DiceRoller {
 
     /** reset all variables back to their default values */
     #resetVariables(resetTimer = true) {
-        console.log("resetting local variables");
+        noisy_log("resetting local variables");
         if (resetTimer){
             clearTimeout(this.#timeoutId);
             this.#timeoutId = undefined;
@@ -1093,12 +1093,12 @@ class DiceRoller {
         this.#pendingSendTo = undefined;
     }
     async handleOldFulfilled(message) {
-        console.log("capturing fulfilled message: ", message)
+        noisy_log("capturing fulfilled message: ", message)
         let alteredMessage = await this.#swapRollData(message);
         if (alteredMessage.data?.context?.avatarUrl?.startsWith("above-bucket-not-a-url")) {
             alteredMessage.data.context.avatarUrl = await getAvttStorageUrl(alteredMessage.data.context.avatarUrl, true)
         }
-        console.log("altered fulfilled message: ", alteredMessage);
+        noisy_log("altered fulfilled message: ", alteredMessage);
         this.ddbDispatch(alteredMessage);
         await this.#resetVariables();
         this.nextRoll(this.#pendingMessages[message.data.rollId].ddbMessage, this.#pendingMessages[message.data.rollId].pendingCritRange, this.#pendingMessages[message.data.rollId].pendingCritType, this.#pendingMessages[message.data.rollId].pendingDamageType);
@@ -1115,12 +1115,12 @@ class DiceRoller {
         const newId = uuid();
         
         const message = { ...this.#pendingMessages[firstPending].ddbMessage, eventType: "dice/roll/fulfilled", id: newId, persist: true };
-        console.log("capturing fulfilled message: ", message)
+        noisy_log("capturing fulfilled message: ", message)
         let alteredMessage = message;
         if (alteredMessage.data?.context?.avatarUrl?.startsWith("above-bucket-not-a-url")) {
             alteredMessage.data.context.avatarUrl = await getAvttStorageUrl(alteredMessage.data.context.avatarUrl, true)
         }
-        console.log("altered fulfilled message: ", alteredMessage);
+        noisy_log("altered fulfilled message: ", alteredMessage);
         alteredMessage.dateTime = this.#pendingMessages[firstPending]?.ddbMessage?.dateTime || Date.now();
         this.ddbDispatch(alteredMessage);
         if(this.#multiRollArray.length>0){
@@ -1167,7 +1167,6 @@ class DiceRoller {
                 clearTimeout(this.backupSendTimeout)
                 this.sendNewFulfilled();           
             } else{
-               console.debug("swap image only, not capturing: ", message);
                let ddbMessage = { ...message };
                if (window.CAMPAIGN_INFO?.dmId == ddbMessage.entityId) {
                    ddbMessage.data.context.avatarUrl = dmAvatarUrl
@@ -1209,7 +1208,7 @@ class DiceRoller {
                 return;
             }
             
-            console.log("capturing pending message: ", message);
+            noisy_log("capturing pending message: ", message);
             let ddbMessage = { ...message };
             this.#pendingMessages[ddbMessage.data.rollId] = {
                 ddbMessage,
@@ -1281,10 +1280,10 @@ class DiceRoller {
                 // all the values are in the same order as the DDB expression so iterate over the expression, and pull out the values that correspond
                 let matchedValues = {}; // { d20: [1, 18], ... }
                 let rolledExpressions = pendingDiceRoll.expression.match(allDiceRegex);
-                console.debug("rolledExpressions: ", rolledExpressions);
+                noisy_log("rolledExpressions: ", rolledExpressions);
                 let valuesToMatch = r.result.values;
                 rolledExpressions.forEach(diceExpression => {
-                    console.debug("diceExpression: ", diceExpression);
+                    cnoisy_log("diceExpression: ", diceExpression);
                     let diceType = diceExpression.match(/d\d+/g);
                     let numberOfDice = parseInt(diceExpression.split("d")[0]);
                     if (matchedValues[diceType] === undefined) {
@@ -1297,7 +1296,6 @@ class DiceRoller {
                     matchedValues[diceType] = matchedValues[diceType].concat(valuesToMatch.slice(0, numberOfDice));
                     valuesToMatch = valuesToMatch.slice(numberOfDice);
                 });
-                console.debug("matchedValues: ", JSON.stringify(matchedValues));
 
                 // 2. replace each dice expression in #pendingDiceRoll.expression with the corresponding dice roll results
                 // For example: "2d20kh1+1d4-3" with rolled results of [9, 18, 2] will turn into "18+2-3"
@@ -1317,7 +1315,6 @@ class DiceRoller {
                     }
                     let calculationValues = matchedValues[diceType].slice(0, numberOfDice);
                     matchedValues[diceType] = matchedValues[diceType].slice(numberOfDice);
-                    console.debug(diceExpression, "calculationValues: ", calculationValues);
 
                     if (includesReroll) {
                         // we have twice as many dice values as we need, so we need to figure out which dice values to drop.
@@ -1331,7 +1328,6 @@ class DiceRoller {
                         const rerollModifier = diceExpression.match(/ro(<|<=|>|>=|=)\d+/);
                         calculationValues = rolledValues.map(value => {
                             const rerollExpression = rerollModifier[0].replace('ro', value).replace(/(?<!(<|>))=(?!(<|>))/, "==").replaceAll(/(\D)0+(\d)/gi, '$1$2');
-                            console.debug("rerollExpression", rerollExpression)
                             if (eval(rerollExpression)) {
                                 return rerolledValues.shift();
                             } else {
@@ -1346,7 +1342,6 @@ class DiceRoller {
                         const minRoll = /min(\d+)/.exec(diceExpression);
                         calculationValues = calculationValues.map(value => {
                             const minExpression = minRoll[0].replace('min', `${value}<`).replaceAll(/(\D)0+(\d)/gi, '$1$2');
-                            console.debug("minExpression", minExpression)
                             if (eval(minExpression)) {
                                 return minRoll[1];
                             } else {
@@ -1360,13 +1355,11 @@ class DiceRoller {
                         let numberToKeep = parseInt(diceExpression.split("kh")[1]);
                         // then sort and only take the highest values
                         calculationValues = calculationValues.sort((a, b) => b - a).slice(0, numberToKeep);
-                        console.debug(diceExpression, "kh calculationValues: ", calculationValues);
                     } else if (diceExpression.includes("kl")) {
                         // "keep lowest" was used so figure out how many to keep
                         let numberToKeep = parseInt(diceExpression.split("kl")[1]);
                         // then sort and only take the lowest values
                         calculationValues = calculationValues.sort((a, b) => a - b).slice(0, numberToKeep);
-                        console.debug(diceExpression, "kl calculationValues: ", calculationValues);
                     }
 
                     // finally, replace the diceExpression with the results that we have. For example 2d20 with results [2, 9] will result in "(2+9)", 1d20 with results of [3] will result in "3"
@@ -1380,7 +1373,7 @@ class DiceRoller {
                 if((critAttackAction != undefined && pendingCritType == 3) || pendingCrit == 3){
                     calculatedTotal = calculatedTotal * 2; 
                 }
-                console.log("pendingExpression: ", pendingDiceRoll.expression, ", replacedExpression: ", replacedExpression, ", calculatedTotal:", calculatedTotal, ", replacedValues: ", replacedValues);
+                noisy_log("pendingExpression: ", pendingDiceRoll.expression, ", replacedExpression: ", replacedExpression, ", calculatedTotal:", calculatedTotal, ", replacedValues: ", replacedValues);
 
                 // we successfully processed the expression, now let's update the message object
                 r.diceNotationStr = pendingDiceRoll.expression; 
@@ -1427,7 +1420,7 @@ class DiceRoller {
             // We'll look for this later to know that we should swap some HTML after this render
             ddbMessage.avttExpression = pendingDiceRoll.expression;
             ddbMessage.avttExpressionResult = pendingDiceRoll.expressionResult;
-            console.log("DiceRoll ddbMessage.avttExpression: ", ddbMessage.avttExpression);
+            noisy_log("DiceRoll ddbMessage.avttExpression: ", ddbMessage.avttExpression);
         }
         if((critAttackAction != undefined && pendingCritType == 3) || pendingCrit == 3){
             ddbMessage.avttExpression = `2(${pendingDiceRoll.expression})`;
@@ -1486,7 +1479,7 @@ function replace_gamelog_message_expressions(listItem) {
         if (avttExpression !== undefined && avttExpression.length > 0) {
             expressionSpan.text(avttExpression);
             expressionSpan.attr("title", avttExpression);
-            console.log("injected avttExpression", avttExpression);
+            noisy_log("injected avttExpression", avttExpression);
         }
     }
 
@@ -1495,13 +1488,13 @@ function replace_gamelog_message_expressions(listItem) {
         let avttExpressionResult = listItem.attr("data-avtt-expression-result");
         if (avttExpressionResult !== undefined && avttExpressionResult.length > 0) {
             expressionResultSpan.text(avttExpressionResult);
-            console.log("injected avttExpressionResult", avttExpressionResult);
+            noisy_log("injected avttExpressionResult", avttExpressionResult);
         }
     }
 }
 
 function getCharacterStatModifiers(entityType, entityId) {
-    console.debug("getCharacterStatModifiers", entityType, entityId);
+    noisy_log("getCharacterStatModifiers", entityType, entityId);
     if (entityType === "character" && typeof window.pcs === "object") {
         try {
             const pc = window.pcs.find(pc => pc.sheet.includes(entityId));
@@ -1515,7 +1508,7 @@ function getCharacterStatModifiers(entityType, entityId) {
                     "cha": pc.abilities.find(a => a.name === "cha").modifier,
                     "pb": pc.proficiencyBonus
                 };
-                console.debug("getCharacterStatModifiers built statMods from window.pcs", statMods);
+                noisy_log("getCharacterStatModifiers built statMods from window.pcs", statMods);
                 return statMods;
             }
         } catch (error) {
@@ -1534,13 +1527,13 @@ function getCharacterStatModifiers(entityType, entityId) {
                 "cha": stats[5].textContent.match(/[+-]/gi) ? parseInt(stats[5].textContent) : Math.floor((parseInt(stats[5].textContent) - 10) / 2),
                 "pb": parseInt($(".ct-proficiency-bonus-box__value, .ct-combat-mobile__extra--proficiency [class*='styles_numberDisplay']").text())
             };
-            console.debug("getCharacterStatModifiers built statMods from character sheet html", statMods);
+            noisy_log("getCharacterStatModifiers built statMods from character sheet html", statMods);
             return statMods
         } catch (error) {
             console.warn("getCharacterStatModifiers failed to collect abilities from character sheet", error);
         }
     }
-    console.log("getCharacterStatModifiers found nothing");
+    noisy_log("getCharacterStatModifiers found nothing");
     return undefined;
 }
 
@@ -1586,6 +1579,6 @@ function replaceModifiersInSlashCommand(slashCommandText, entityType, entityId) 
 
     const modifiedCommand = slashCommandText.replaceAll(expression, modifiedExpression);
 
-    console.log("replaceModifiersInSlashCommand changed", slashCommandText, "to", modifiedCommand);
+    noisy_log("replaceModifiersInSlashCommand changed", slashCommandText, "to", modifiedCommand);
     return modifiedCommand;
 }

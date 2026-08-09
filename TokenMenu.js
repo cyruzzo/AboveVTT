@@ -2084,7 +2084,7 @@ function build_token_auras_inputs(tokenIds) {
 		defaultValue: false
 	};
 	let enabledAurasInput = build_toggle_input(auraOption, auraIsEnabled, function(name, newValue) {
-		console.log(`${name} setting is now ${newValue}`);
+		noisy_log(`${name} setting is now ${newValue}`);
 		tokens.forEach(token => {
 			token.options[name] = newValue;
 			token.place_sync_persist();
@@ -2121,7 +2121,7 @@ function build_token_auras_inputs(tokenIds) {
 		defaultValue: false
 	};
 	const squareAuraInput = build_toggle_input(squareAura, squareAuraIsEnabled, function(name, newValue) {
-		console.log(`${name} setting is now ${newValue}`);
+		noisy_log(`${name} setting is now ${newValue}`);
 		tokens.forEach(token => {
 			token.options[name] = newValue;
 			token.place_sync_persist();
@@ -2142,7 +2142,7 @@ function build_token_auras_inputs(tokenIds) {
 		defaultValue: false
 	};
 	const hideAuraInput = build_toggle_input(hideAura, hideAuraIsEnabled, function(name, newValue) {
-		console.log(`${name} setting is now ${newValue}`);
+		noisy_log(`${name} setting is now ${newValue}`);
 		tokens.forEach(token => {
 			token.options[name] = newValue;
 			token.place_sync_persist();
@@ -2191,7 +2191,7 @@ function build_token_auras_inputs(tokenIds) {
 	const colorPickerChange = function(e, tinycolor) {
 		let auraName = e.target.name.replace("Color", "");
 		let color = `rgba(${tinycolor._r}, ${tinycolor._g}, ${tinycolor._b}, ${tinycolor._a})`;
-		console.log(auraName, e, tinycolor);
+		noisy_log(auraName, e, tinycolor);
 		if (e.type === 'change') {
 			tokens.forEach(token => {
 				token.options[auraName]['color'] = color;
@@ -2244,7 +2244,7 @@ function build_token_auras_inputs(tokenIds) {
 
 
 	$("#VTTWRAPPER .sidebar-modal").on("remove", function () {
-		console.log("removing sidebar modal!!!");
+		noisy_log("removing sidebar modal!!!");
 		colorPickers.spectrum("destroy");
 	});
 	body.append(wrapper);
@@ -2547,7 +2547,7 @@ function build_token_light_inputs(tokenIds, door=false) {
 		$(this).toggleClass('active-daylight');
 		let newValue = $(this).hasClass('active-daylight');	
 		let name = $(this).attr('name');
-		console.log(`${name} setting is now ${newValue}`);
+		noisy_log(`${name} setting is now ${newValue}`);
 		tokens.forEach(token => {
 			token.options[name].daylight = newValue;
 			token.place_sync_persist();
@@ -2587,7 +2587,7 @@ function build_token_light_inputs(tokenIds, door=false) {
 
 	}
 	let revealVisionInput = build_dropdown_input(revealvisionOption, auraRevealVisionEnabled, function(name, newValue) {
-		console.log(`${name} setting is now ${newValue}`);
+		noisy_log(`${name} setting is now ${newValue}`);
 		tokens.forEach(token => {
 			if(newValue == 'true')
                 newValue = true;
@@ -2599,7 +2599,7 @@ function build_token_light_inputs(tokenIds, door=false) {
 	});
 
 	let enabledLightInput = build_toggle_input( lightOption, auraIsLightEnabled, function(name, newValue) {
-		console.log(`${name} setting is now ${newValue}`);
+		noisy_log(`${name} setting is now ${newValue}`);
 		tokens.forEach(token => {
 			token.options[name] = newValue;
 			token.place_sync_persist();
@@ -2631,7 +2631,7 @@ function build_token_light_inputs(tokenIds, door=false) {
 		defaultValue: false
 	};
 	const squareLightInput = build_toggle_input(squareLight, squareLightIsEnabled, function(name, newValue) {
-		console.log(`${name} setting is now ${newValue}`);
+		noisy_log(`${name} setting is now ${newValue}`);
 		tokens.forEach(token => {
 			token.options[name] = newValue;
 			token.place_sync_persist();
@@ -2691,7 +2691,7 @@ function build_token_light_inputs(tokenIds, door=false) {
 	const colorPickerChange = function(e, tinycolor) {
 		let auraName = e.target.name.replace("Color", "");
 		let color = `rgba(${tinycolor._r}, ${tinycolor._g}, ${tinycolor._b}, ${tinycolor._a})`;
-		console.log(auraName, e, tinycolor);
+		noisy_log(auraName, e, tinycolor);
 		if (e.type === 'change') {
 			tokens.forEach(token => {
 				token.options[auraName]['color'] = color;
@@ -2863,7 +2863,7 @@ function build_token_light_inputs(tokenIds, door=false) {
 	});
 
 	$("#VTTWRAPPER .sidebar-modal").on("remove", function () {
-		console.log("removing sidebar modal!!!");
+		noisy_log("removing sidebar modal!!!");
 		colorPickers.spectrum("destroy");
 	});
 	body.append(wrapper);
@@ -2986,7 +2986,7 @@ function create_aura_presets_edit(animationPresets){
 		const colorPickerChange = function(e, tinycolor) {
 			let auraName = e.target.name.replace("Color", "");
 			window.AURA_PRESETS[i][auraName].color = `rgba(${tinycolor._r}, ${tinycolor._g}, ${tinycolor._b}, ${tinycolor._a})`;
-			console.log(auraName, e, tinycolor);
+			noisy_log(auraName, e, tinycolor);
 			localStorage.setItem('AURA_PRESETS', JSON.stringify(window.AURA_PRESETS));
 		};
 		colorPickers.on('move.spectrum', colorPickerChange);   // update the token as the player messes around with colors
@@ -3168,7 +3168,7 @@ function create_light_presets_edit(animationPresets){
 		const colorPickerChange = function(e, tinycolor) {
 			let auraName = e.target.name.replace("Color", "");
 			window.LIGHT_PRESETS[i][auraName].color = `rgba(${tinycolor._r}, ${tinycolor._g}, ${tinycolor._b}, ${tinycolor._a})`;
-			console.log(auraName, e, tinycolor);
+			noisy_log(auraName, e, tinycolor);
 			localStorage.setItem('LIGHT_PRESETS', JSON.stringify(window.LIGHT_PRESETS));
 		};
 		colorPickers.on('move.spectrum', colorPickerChange);   // update the token as the player messes around with colors
@@ -3866,7 +3866,7 @@ function build_adjustments_flyout_menu(tokenIds) {
 	
 	let uniqueSizes = [...new Set(tokenSizes)];
 
-	console.log("uniqueSizes", uniqueSizes);
+	noisy_log("uniqueSizes", uniqueSizes);
 	let lineaoe = tokens.length == 1 && tokens[0].isLineAoe();
 	let linewidthsize = tokens[0].numberOfGridSpaces().width;
 	let sizeInputs = build_token_size_input(uniqueSizes, function (newSize, linewidth=false) {
@@ -3876,7 +3876,7 @@ function build_adjustments_flyout_menu(tokenIds) {
 		if (!isNaN(newSize)) {
 			newSize = hpps * newSize;
 		} else {
-			console.log(`not updating tokens with size ${newSize}`); // probably undefined because we inject the "multiple" options below
+			noisy_log(`not updating tokens with size ${newSize}`); // probably undefined because we inject the "multiple" options below
 			return;
 		}
 		tokens.forEach(token => {			
@@ -4621,7 +4621,7 @@ function build_token_size_input(tokenSizes, changeHandler, forceCustom = false, 
 	}
 
 	const isSizeCustom = (forceCustom || ![0.5, 1, 2, 3, 4].includes(numGridSquares));
-	console.log("isSizeCustom: ", isSizeCustom, ", forceCustom: ", forceCustom, ", numGridSquares: ", numGridSquares, ", [0.5, 1, 2, 3, 4].includes(numGridSquares):", [0.5, 1, 2, 3, 4].includes(numGridSquares))
+	noisy_log("isSizeCustom: ", isSizeCustom, ", forceCustom: ", forceCustom, ", numGridSquares: ", numGridSquares, ", [0.5, 1, 2, 3, 4].includes(numGridSquares):", [0.5, 1, 2, 3, 4].includes(numGridSquares))
 
 	// Limit custom token scale to grid size 
 	const maxScale = Math.max(window.CURRENT_SCENE_DATA.width * window.CURRENT_SCENE_DATA.scale_factor / window.CURRENT_SCENE_DATA.hpps);
@@ -4662,7 +4662,7 @@ function build_token_size_input(tokenSizes, changeHandler, forceCustom = false, 
 
 	tokenSizeInput.off('change focusout').on('change focusout', function(event) {
 		let customInputWrapper = $(event.target).parent().next();
-		console.log("tokenSizeInput changed");
+		noisy_log("tokenSizeInput changed");
 		if ($(event.target).val() === "custom") {
 			customInputWrapper.show();
 		} else {
@@ -4673,7 +4673,7 @@ function build_token_size_input(tokenSizes, changeHandler, forceCustom = false, 
 	});
 
 	customSizeInput.off('change focusout').on('change focusout', function(event) {
-		console.log("customSizeInput changed");
+		noisy_log("customSizeInput changed");
 		// convert custom footage into squares
 		let newValue = 
 			parseFloat($(event.target).val() / window.CURRENT_SCENE_DATA.fpsq);
@@ -4690,7 +4690,7 @@ function build_token_size_input(tokenSizes, changeHandler, forceCustom = false, 
 	if(lineaoe == true){
 		let customLineWidthInput = output.find("input[name='data-token-line-width-custom']");
 		customLineWidthInput.change(function(event) {
-		console.log("customSizeInput changed");
+		noisy_log("customSizeInput changed");
 		// convert custom footage into squares
 		let newValue = 
 			parseFloat($(event.target).val() / window.CURRENT_SCENE_DATA.fpsq);
@@ -4762,7 +4762,7 @@ function updateScaleInputs(newScale, maxScale) {
 
 function open_quick_roll_menu(e, options = {left: e.clientX + "px", top: e.clientY + "px"}) {
 	//opens a roll menu for group rolls 
-	console.log("Opening Roll menu")
+	noisy_log("Opening Roll menu")
 	$("#qrm_dialog").remove();
 
 	let qrm = $("<div id='qrm_dialog'></div>");
@@ -4894,7 +4894,7 @@ function open_quick_roll_menu(e, options = {left: e.clientX + "px", top: e.clien
 		if (_dmg.includes('d')) {
 			let expression = _dmg
 			let roll = new rpgDiceRoller.DiceRoll(expression);
-			console.log(expression + "->" + roll.total);
+			noisy_log(expression + "->" + roll.total);
 			//reassign to the input 
 			_dmg = roll.total
 			$('#hp_adjustment_failed_save').val(_dmg);
@@ -4929,7 +4929,7 @@ function open_quick_roll_menu(e, options = {left: e.clientX + "px", top: e.clien
 			}
 			let expression = dice + modifier;
 			let roll = new rpgDiceRoller.DiceRoll(expression);
-			console.log(expression + "->" + roll.total);
+			noisy_log(expression + "->" + roll.total);
 			//reassign to the input 
 			result = $(this).parent().children('#qrm_roll_result')
 		
@@ -5018,9 +5018,6 @@ function open_quick_roll_menu(e, options = {left: e.clientX + "px", top: e.clien
 
 	let damage_hp = $('<button title="Apply Roll as Damage" id="qrm_damage" value="ON" class="damage_heal_button active_roll_mod" >DAMAGE</button>')
 	damage_hp.click(function() {
-	
-		console.log($(this).val())
-		console.log($(this))
 		//toggle off the other button
 		$(heal_hp).val("OFF")
 		$(heal_hp).removeClass('active_roll_mod')
@@ -5037,9 +5034,6 @@ function open_quick_roll_menu(e, options = {left: e.clientX + "px", top: e.clien
 	let heal_hp = $('<button title="Apply Roll as Healing" id="qrm_healing" value="OFF" class="damage_heal_button">HEAL</button>')
 	heal_hp.click(function(){
 		
-		console.log('EHRE')
-		console.log($(this).val())
-		console.log($(this))
 		//toggle off the other button
 		$(damage_hp).val("OFF")
 		$(damage_hp).removeClass('active_roll_mod')
@@ -5459,7 +5453,7 @@ function add_to_quick_roll_menu(token, autoRollAfterAoe = false) {
 	//remove_from_list.tooltip({show: { duration: 1000 }})
 	remove_from_list.click(
 		function() {
-			console.log('Removing from list')
+			noisy_log('Removing from list')
 			let target=$(this).parent().parent().parent().parent().attr('data-target');
 			if(target in window.TOKEN_OBJECTS){
 				remove_from_quick_roll_menu(window.TOKEN_OBJECTS[target]);	     
@@ -5529,7 +5523,7 @@ function add_to_quick_roll_menu(token, autoRollAfterAoe = false) {
 }
 
 function save_type_change(dropdown){
-	console.log("Save type is: "+ dropdown.value );
+	noisy_log("Save type is: "+ dropdown.value );
 	$('#quick_roll_area').children('tr').each(function () {
 		let x = window.TOKEN_OBJECTS[$(this).attr('data-target')]
 		roll_bonus = qrm_fetch_stat(x)
@@ -5567,7 +5561,7 @@ function qrm_fetch_stat(token) {
 				roll_bonus = "+"+roll_bonus;
 			}
 		}
-		console.log(roll_bonus);
+		noisy_log(roll_bonus);
 	}
 	else if (token.isPlayer() == true) {
 		save_dropdown_value = parseInt($('#qrm_save_dropdown').val());
@@ -5659,7 +5653,7 @@ function qrm_update_popout(){
 			'width': '100%',
 			'height': '100%'
 		});
-		console.log('Update QRM popout');
+		noisy_log('Update QRM popout');
 		$(childWindows['Quick Roll Menu'].document).find('#qrm_dialog #quick_roll_area input#qrm_hp').change(function(e) {
 			let id = $(this).parent().parent().parent().attr("data-target");			
 			$(`tr[data-target='${id}'] #qrm_hp`).val($(this).val());
@@ -5674,7 +5668,7 @@ function qrm_update_popout(){
 		});	
 		$(childWindows['Quick Roll Menu'].document).find('#qrm_dialog #quick_roll_area input#roll_bonus').change(function(e) {
 			let id = $(this).parent().parent().parent().attr("data-target");
-			console.log($(`tr[data-target='${id}'] #roll_bonus`))
+			noisy_log($(`tr[data-target='${id}'] #roll_bonus`))
 			$(`tr[data-target='${id}'] #roll_bonus`).val($(this).val());
 			$(`tr[data-target='${id}'] #roll_bonus`).trigger("change");
 			qrm_update_popout();
@@ -5769,7 +5763,7 @@ function qrm_apply_hp_adjustment(healing=false){
 		let result = $(this).find('#qrm_roll_result').val();
 		if (result == ''){
 			//could swap this to an alert if people really think its needed...
-			console.log('No roll was performed on this token, but Apply was selected. Rerolling for ALL tokens.')
+			noisy_log('No roll was performed on this token, but Apply was selected. Rerolling for ALL tokens.')
 			$('#qrm_roll_button').click()
 		}
 		

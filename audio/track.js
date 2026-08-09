@@ -74,11 +74,11 @@ class TrackLibrary extends Library {
                     }
                 }
             }
-            console.log('Importing new tracks')
+            noisy_log('Importing new tracks')
             console.table(newTracks)
             this.create(...newTracks);
 
-            console.log('Importing exiting tracks')
+            noisy_log('Importing exiting tracks')
             console.table(Object.fromEntries(updateTracks))
             this.batchUpdate(updateTracks);
             localStorage.removeItem("Soundpads");
@@ -202,11 +202,11 @@ class TrackLibrary extends Library {
             }
         });
 
-        console.log('Importing new tracks')
+        noisy_log('Importing new tracks')
         console.table(newTracks)
         this.create(...newTracks);
 
-        console.log('Importing exiting tracks')
+        noisy_log('Importing exiting tracks')
         console.table(Object.fromEntries(updateTacks))
         this.batchUpdate(updateTacks);
     }

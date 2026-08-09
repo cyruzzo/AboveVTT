@@ -364,7 +364,7 @@ class TokenCustomization {
             target = this.tokenOptions.alternativeImagesCustomizations[currSrc]
         }
 
-        console.debug("setTokenOption", key, value);
+        noisy_log("setTokenOption", key, value);
         if (value === undefined) {
             delete target[key];
         } else if (key === "name") { // we want to special case "name" because we want to guarantee that it's a string
@@ -667,14 +667,14 @@ function migrate_token_customizations() {
     }
     load_custom_monster_image_mapping();
     if (window.CUSTOM_TOKEN_IMAGE_MAP.didMigrate === true) {
-        console.log("migrate_token_customizations has already completed");
+        noisy_log("migrate_token_customizations has already completed");
         return;
     }
     try {
         let newCustomizations = [];
 
         // PC customizations migration
-        console.log("migrate_token_customizations starting to migrate player customizations");
+        noisy_log("migrate_token_customizations starting to migrate player customizations");
         // converting from a map with the id as the key to a list of objects with the id inside the object
         let oldCustomizations = read_player_token_customizations();
         for (let playerId in oldCustomizations) {
@@ -696,17 +696,17 @@ function migrate_token_customizations() {
                     const newCustomization = TokenCustomization.PC(playerId, tokenOptions);
                     newCustomizations.push(newCustomization);
                     oldCustomizations[playerId].didMigrate = true;
-                    console.debug("migrate_token_customizations migrated", oldCustomizations[playerId], "to", newCustomization);
+                    noisy_log("migrate_token_customizations migrated", oldCustomizations[playerId], "to", newCustomization);
                 }
             } else {
-                console.debug("migrate_token_customizations did not migrate", oldCustomizations[playerId]);
+               noisy_log("migrate_token_customizations did not migrate", oldCustomizations[playerId]);
             }
         }
-        console.log("migrate_token_customizations finished migrating player customizations");
+        noisy_log("migrate_token_customizations finished migrating player customizations");
 
         // Monster customizations migration
         let monsterIdsToFetch = new Set();
-        console.log("migrate_token_customizations starting to migrate monster customizations");
+        noisy_log("migrate_token_customizations starting to migrate monster customizations");
         for(let monsterIdNumber in window.CUSTOM_TOKEN_IMAGE_MAP) {
             const monsterId = `${monsterIdNumber}`; // monster ids are numbers, but we want it to be a string to be consistent with other ids
             let images = window.CUSTOM_TOKEN_IMAGE_MAP[monsterIdNumber];
@@ -720,28 +720,28 @@ function migrate_token_customizations() {
             } else {
                 const newCustomization = TokenCustomization.Monster(monsterId, { alternativeImages: [...images] });
                 newCustomizations.push(newCustomization);
-                console.debug("migrate_token_customizations migrated", monsterIdNumber, images, "to", newCustomization);
+                noisy_log("migrate_token_customizations migrated", monsterIdNumber, images, "to", newCustomization);
                 monsterIdsToFetch.add(monsterIdNumber);
             }
         }
-        console.log("migrate_token_customizations finished migrating monster customizations");
+        noisy_log("migrate_token_customizations finished migrating monster customizations");
 
         const migratedFromMyTokens = migrate_convert_mytokens_to_customizations(mytokensfolders, mytokens);
         newCustomizations = newCustomizations.concat(migratedFromMyTokens);
 
         // fetch monsters so we can get the monster names
-        console.log("migrate_token_customizations starting to fetch monsters to fill names");
+        noisy_log("migrate_token_customizations starting to fetch monsters to fill names");
         fetch_monsters([...monsterIdsToFetch], function (response) {
             if (typeof response === "object") {
                 response.forEach(m => {
                     let found = newCustomizations.find(c => c.tokenType === ItemType.Monster && c.id === `${m.id}`);
-                    console.debug("migrate_token_customizations", found, m);
+                    noisy_log("migrate_token_customizations", found, m);
                     if (found && found.tokenOptions) {
                         found.tokenOptions.name = m.name;
                     }
                 });
-                console.log("migrate_token_customizations updated monsters with names");
-                console.log("migrate_token_customizations attempting to persist all customizations");
+                noisy_log("migrate_token_customizations updated monsters with names");
+                noisy_log("migrate_token_customizations attempting to persist all customizations");
                 // Persist everything
                 persist_all_token_customizations(newCustomizations, function (success, errorType) {
                     if (success === true) {
@@ -749,7 +749,7 @@ function migrate_token_customizations() {
                         write_player_token_customizations(oldCustomizations);
                         window.CUSTOM_TOKEN_IMAGE_MAP.didMigrate = true;
                         save_custom_monster_image_mapping();
-                        console.log("migrate_token_customizations successfully persisted migrated customizations", newCustomizations);
+                        noisy_log("migrate_token_customizations successfully persisted migrated customizations", newCustomizations);
                         did_change_mytokens_items();
                     } else {
                         console.error("migrate_token_customizations failed to persist new customizations", newCustomizations, errorType);
@@ -757,13 +757,13 @@ function migrate_token_customizations() {
                 });
             } else {
                 console.error("migrate_token_customizations received a response that isn't an object", response);
-                console.log("migrate_token_customizations attempting to rollback the migration");
+                noisy_log("migrate_token_customizations attempting to rollback the migration");
                 rollback_token_customizations_migration();
             }
         });
     } catch (error) {
         console.error("migrate_token_customizations failed", error);
-        console.log("migrate_token_customizations attempting to rollback the migration");
+        noisy_log("migrate_token_customizations attempting to rollback the migration");
         rollback_token_customizations_migration();
     }
 }
@@ -786,12 +786,12 @@ function migrate_convert_mytokens_to_customizations(listOfMyTokenFolders, listOf
 
     let newCustomizations = [];
 
-    console.log("migrate_token_customizations starting to migrate mytokenfolders customizations");
+    noisy_log("migrate_token_customizations starting to migrate mytokenfolders customizations");
     listOfMyTokenFolders.forEach(folder => {
         let fullPath = sanitize_folder_path(`${RootFolder.MyTokens.path}/${folder.folderPath}/${folder.name}`);
         const existing = window.TOKEN_CUSTOMIZATIONS.find(tc => tc.tokenType === ItemType.Folder && (tc.id === folder.id || tc.fullPath() === fullPath));
         if (existing) {
-            console.debug("migrate_token_customizations path already exists", fullPath);
+            noisy_log("migrate_token_customizations path already exists", fullPath);
         } else {
             // old structure: { name: folderKey, folderPath: currentFolderPath, collapsed: true }
             let parentPath = sanitize_folder_path(`${RootFolder.MyTokens.path}/${folder.folderPath}`);
@@ -805,20 +805,20 @@ function migrate_convert_mytokens_to_customizations(listOfMyTokenFolders, listOf
             }
             let newCustomization = TokenCustomization.Folder(folder.id, parentId, RootFolder.MyTokens.id, { name: folder.name });
             newCustomizations.push(newCustomization);
-            console.debug("migrate_token_customizations migrated", sanitize_folder_path(`${folder.folderPath}/${folder.name}`), "to", newCustomization);
+            noisy_log("migrate_token_customizations migrated", sanitize_folder_path(`${folder.folderPath}/${folder.name}`), "to", newCustomization);
         }
     });
-    console.log("migrate_token_customizations finished migrating mytokenfolders customizations");
+    noisy_log("migrate_token_customizations finished migrating mytokenfolders customizations");
 
     // newCustomizations.forEach(tc => existingPaths.add(tc.fullPath()));
 
     // MyToken migration
-    console.log("migrate_token_customizations starting to migrate mytokens customizations");
+    noisy_log("migrate_token_customizations starting to migrate mytokens customizations");
     listOfMyTokens.forEach(async myToken => {
         let fullPath = sanitize_folder_path(`${RootFolder.MyTokens.path}/${myToken.folderPath}/${myToken.name}`);
         const existing = window.TOKEN_CUSTOMIZATIONS.find(tc => tc.tokenType === ItemType.MyToken && (tc.id === myToken.customizationId || tc.fullPath() === fullPath));
         if (existing) {
-            console.debug("migrate_token_customizations path already exists", fullPath);
+            noisy_log("migrate_token_customizations path already exists", fullPath);
         } else {
             let parentPath = sanitize_folder_path(`${RootFolder.MyTokens.path}/${myToken.folderPath}`);
             let parentId = easyFolderReference[parentPath];
@@ -842,10 +842,10 @@ function migrate_convert_mytokens_to_customizations(listOfMyTokenFolders, listOf
             let newCustomization = TokenCustomization.MyToken(uuid(), parentId, tokenOptions);
             newCustomizations.push(newCustomization);
             myToken.customizationId = newCustomization.id; // track the migration
-            console.debug("migrate_token_customizations migrated", fullPath, "to", newCustomization);
+            noisy_log("migrate_token_customizations migrated", fullPath, "to", newCustomization);
         }
     });
-    console.log("migrate_token_customizations finished migrating mytokens customizations");
+    noisy_log("migrate_token_customizations finished migrating mytokens customizations");
 
     persist_my_tokens(); // we added ids to myTokens so we need to save that
 
@@ -887,7 +887,7 @@ function persist_all_token_customizations(customizations, callback) {
     if (typeof callback !== 'function') {
         callback = function(){};
     }
-    console.log("persist_all_token_customizations starting");
+    noisy_log("persist_all_token_customizations starting");
 
     const persist = async () => {
         try {
@@ -1001,7 +1001,7 @@ function fetch_token_customizations(callback) {
         callback = function(){};
     }
     const load = async () => {
-        console.log("fetch_token_customizations starting");
+        noisy_log("fetch_token_customizations starting");
         let customMappingData;
         try {
             const objectStore = globalIndexedDB.transaction(["customizationData"]).objectStore(`customizationData`);
@@ -1210,7 +1210,7 @@ function fetch_ddb_portraits() {
         window.ajaxQueue.addDDBRequest({
             url: "https://character-service.dndbeyond.com/character/v5/game-data/portraits?sharingSetting=2",
             success: function (responseData) {
-                console.log("Successfully fetched config/json from DDB API");
+                noisy_log("Successfully fetched config/json from DDB API");
                 window.ddbPortraits = responseData.data;
                 rebuild_ddb_npcs(false);
             },

@@ -11,13 +11,7 @@ function store_peer_preferences(preferences) {
   window.PEER_PREFERENCES[preferences.playerId] = preferences;
 }
 
-/** Logs that are super noisy should be sent through here.
- * This allows us to enable these logs on the fly when we need to debug things that would otherwise flood the console */
-function noisy_log(...message) {
-  if (window.enableNoisyLogs === true) {
-    console.debug(...message);
-  }
-}
+
 
 function is_peer_connected(playerId) {
   if (!playerId) return false;
@@ -118,7 +112,7 @@ function handle_peer_event(eventData) {
       case PeerEventType.goodbye:           peer_said_goodbye(eventData); break;
       case PeerEventType.hello:             peer_said_hello(eventData); break;
       case PeerEventType.preferencesChange: peer_changed_preferences(eventData); break;
-      default: console.debug("handle_peer_event is ignoring event", eventData); // using console.debug because we don't want to spam the console with warning or errors.
+      default: noisy_log("handle_peer_event is ignoring event", eventData); // we don't want to spam the console with warning or errors.
     }
   } catch (error) {
     // using console.debug because we don't want to spam the console with warnings or errors
@@ -414,7 +408,7 @@ function peer_changed_preferences(eventData) {
 function update_player_online_indicator(playerId, isConnected, peerColor) {
   const color = peerColor ? peerColor : "gray";
   const pc = find_pc_by_player_id(playerId, false);
-  console.debug("update_player_online_indicator", playerId, isConnected, color, pc);
+  noisy_log("update_player_online_indicator", playerId, isConnected, color, pc);
   if (pc) {
     if (window.DM) {
       const playerListItem = window.tokenListItems.find(li => li.type === ItemType.PC && li.id === pc.sheet);
@@ -829,7 +823,6 @@ function get_peer_waypoint_manager(playerId, color) {
 function update_peer_communication_with_combat_tracker_data(ctItems) {
   try {
     if (!Array.isArray(ctItems)) return;
-    console.debug("update_peer_communication_with_combat_tracker_data", ctItems);
     let myPlayerId = my_player_id();
     const currentTurn = ctItems.find(item => item.current === true && item.options)?.options?.id;
     const currentTurnId = currentTurn ? getPlayerIDFromSheet(currentTurn) : undefined;

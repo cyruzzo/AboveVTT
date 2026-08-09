@@ -378,7 +378,7 @@ function build_token_option_select_input(option, currentValue, changeHandler) {
     }
   }
   inputElement.change(function (event) {
-    console.log("update", event.target.name, "to", event.target.value);
+    noisy_log("update", event.target.name, "to", event.target.value);
     if (event.target.value === "enabled") {
       changeHandler(option.name, true);
       update_hover_text(wrapper, option.enabledDescription);
@@ -1319,7 +1319,7 @@ function find_sidebar_list_item(html) {
   if (encounterId !== undefined && encounterId !== null && encounterId !== "") {
     foundItem = window.tokenListItems.find(item => item.isTypeEncounter() && item.encounterId === encounterId);
     if (foundItem !== undefined) {
-      console.log('find_sidebar_list_item', foundItem);
+      noisy_log('find_sidebar_list_item', foundItem);
       return foundItem;
     }
   }
@@ -1328,7 +1328,7 @@ function find_sidebar_list_item(html) {
   if (typeof sceneId === "string" && sceneId.length > 0) {
     foundItem = window.sceneListItems.find(item => item.id === sceneId);
     if (foundItem !== undefined) {
-      console.log('find_sidebar_list_item', foundItem);
+      noisy_log('find_sidebar_list_item', foundItem);
       return foundItem;
     }
   }
@@ -1337,7 +1337,7 @@ function find_sidebar_list_item(html) {
     // explicitly using '==' instead of '===' to allow (33253 == '33253') to return true
     foundItem = window.monsterListItems.find(item => item.monsterData.id == html.attr("data-monster"));
     if (foundItem !== undefined) {
-      console.log('find_sidebar_list_item', foundItem);
+      noisy_log('find_sidebar_list_item', foundItem);
       return foundItem;
     }
   }
@@ -1346,28 +1346,28 @@ function find_sidebar_list_item(html) {
   if (typeof htmlId === "string" && htmlId.length > 0) {
     foundItem = window.tokenListItems.find(li => li.id === htmlId);
     if (foundItem !== undefined) {
-      console.log('find_sidebar_list_item', foundItem);
+      noisy_log('find_sidebar_list_item', foundItem);
       return foundItem;
     }
     foundItem = window.sceneListItems.find(li => li.id === htmlId);
     if (foundItem !== undefined) {
-      console.log('find_sidebar_list_item', foundItem);
+      noisy_log('find_sidebar_list_item', foundItem);
       return foundItem;
     }
     foundItem = window.sceneListFolders.find(li => li.id === htmlId);
     if (foundItem !== undefined) {
-      console.log('find_sidebar_list_item', foundItem);
+      noisy_log('find_sidebar_list_item', foundItem);
       return foundItem;
     }
     // explicitly using '==' instead of '===' to allow (33253 == '33253') to return true
     foundItem = window.monsterListItems.find(item => item.monsterData.id == html.attr("data-monster"));
     if (foundItem !== undefined) {
-      console.log('find_sidebar_list_item', foundItem);
+      noisy_log('find_sidebar_list_item', foundItem);
       return foundItem;
     }
     foundItem = window.open5eListItems.find(item => item.id == htmlId);
     if (foundItem !== undefined) {
-      console.log('find_sidebar_list_item', foundItem);
+      noisy_log('find_sidebar_list_item', foundItem);
       return foundItem;
     }
   }
@@ -1388,13 +1388,13 @@ function find_sidebar_list_item_from_path(fullPath) {
   let foundItem;
   if (fullPath.startsWith(RootFolder.Scenes.path)) {
     foundItem = window.sceneListItems?.find(matchingPath);
-    console.log('find_sidebar_list_item_from_path sceneListItems', foundItem);
+    noisy_log('find_sidebar_list_item_from_path sceneListItems', foundItem);
     if (foundItem === undefined) {
       foundItem = window.sceneListFolders?.find(matchingPath);
-      console.log('find_sidebar_list_item_from_path sceneListFolders', foundItem);
+      noisy_log('find_sidebar_list_item_from_path sceneListFolders', foundItem);
     }
     if (foundItem !== undefined) {
-      console.log('find_sidebar_list_item_from_path', foundItem);
+      noisy_log('find_sidebar_list_item_from_path', foundItem);
       return foundItem;
     }
   }
@@ -1413,7 +1413,7 @@ function find_sidebar_list_item_from_path(fullPath) {
   if (foundItem === undefined) {
     console.warn(`find_sidebar_list_item found nothing at path: ${fullPath}`);
   }
-  console.log('find_sidebar_list_item_from_path', foundItem);
+  noisy_log('find_sidebar_list_item_from_path', foundItem);
   return foundItem;
 }
 
@@ -1948,7 +1948,7 @@ function build_sidebar_list_row(listItem) {
       expandButton.on("click", function (clickEvent) {
         clickEvent.stopPropagation();
         let r = $(clickEvent.target).closest(".sidebar-list-item-row");
-        console.log(r);
+        noisy_log(r);
         if (r.hasClass("expanded")) {
           r.removeClass("expanded");
           r.find(".player-expansion-button .material-icons").text("expand_more");
@@ -2129,10 +2129,10 @@ function build_sidebar_list_row(listItem) {
 function did_click_row(clickEvent) {
   clickEvent.stopPropagation();
 
-  console.log("did_click_row", clickEvent);
+  noisy_log("did_click_row", clickEvent);
   let clickedRow = $(clickEvent.target).closest(".list-item-identifier");
   let clickedItem = find_sidebar_list_item(clickedRow);
-  console.log("did_click_row", clickedItem);
+  noisy_log("did_click_row", clickedItem);
 
   let rowId = clickedRow.attr('data-id');
 
@@ -2216,10 +2216,10 @@ function did_click_row(clickEvent) {
         }
       }
       else if (clickedItem.monsterData.isReleased === true || clickedItem.monsterData.isHomebrew === true) {
-        console.log(`Opening monster with id ${clickedItem.monsterData.id}, url ${clickedItem.monsterData.url}`);
+        noisy_log(`Opening monster with id ${clickedItem.monsterData.id}, url ${clickedItem.monsterData.url}`);
         open_monster_item(clickedItem);
       } else {
-        console.log(`User does not have access to monster with id ${clickedItem.monsterData.id}. Opening ${clickedItem.monsterData.url}`);
+        noisy_log(`User does not have access to monster with id ${clickedItem.monsterData.id}. Opening ${clickedItem.monsterData.url}`);
         window.open(clickedItem.monsterData.url, '_blank');
       }
       break;
@@ -2239,7 +2239,7 @@ function did_click_row(clickEvent) {
         }
       }
       else {
-        console.log(`Opening open5e monster with id ${clickedItem.monsterData.key}`);
+        noisy_log(`Opening open5e monster with id ${clickedItem.monsterData.key}`);
         open_monster_item(clickedItem, true);
       }
       break;
@@ -2273,10 +2273,10 @@ function did_click_row(clickEvent) {
  */
 function did_click_row_gear(clickEvent) {
   clickEvent.stopPropagation();
-  console.log("did_click_row_gear", clickEvent);
+  noisy_log("did_click_row_gear", clickEvent);
   let clickedRow = $(clickEvent.target).closest(".list-item-identifier");
   let clickedItem = find_sidebar_list_item(clickedRow);
-  console.log("did_click_row_gear", clickedItem);
+  noisy_log("did_click_row_gear", clickedItem);
   display_sidebar_list_item_configuration_modal(clickedItem);
 }
 
@@ -2554,7 +2554,7 @@ function edit_encounter(clickEvent) {
   clickEvent.stopPropagation();
   const clickedRow = $(clickEvent.target).closest(".list-item-identifier");
   const clickedItem = find_sidebar_list_item(clickedRow);
-  console.log('edit encounter clicked');
+  noisy_log('edit encounter clicked');
 
   const customization = find_or_create_token_customization(ItemType.Folder, clickedItem.id);
 
@@ -2820,10 +2820,10 @@ function edit_encounter(clickEvent) {
  */
 function did_click_add_button(clickEvent) {
   clickEvent.stopPropagation();
-  console.log("did_click_add_button", clickEvent);
+  noisy_log("did_click_add_button", clickEvent);
   let clickedRow = $(clickEvent.target).closest(".list-item-identifier");
   let clickedItem = find_sidebar_list_item(clickedRow);
-  console.log("did_click_add_button", clickedItem);
+  noisy_log("did_click_add_button", clickedItem);
   let hidden = clickEvent.shiftKey ? true : undefined; // we only want to force hidden if the shift key is help. otherwise let the global and override settings handle it
   create_and_place_token(clickedItem, hidden, undefined, undefined, undefined);
   update_pc_token_rows();
@@ -2905,7 +2905,7 @@ function display_folder_configure_modal(listItem) {
     console.warn("display_folder_configure_modal was called with an incorrect type", listItem);
     return;
   }
-  console.log('display_folder_configure_modal', listItem);
+  noisy_log('display_folder_configure_modal', listItem);
 
   let sidebarId = "folder-configuration-modal";
   let sidebarModal = new SidebarPanel(sidebarId, true);
@@ -2917,24 +2917,24 @@ function display_folder_configure_modal(listItem) {
 
   const renameFolder = function(newFolderName, input, event) {
     let oldPath = harvest_full_path(input);
-    console.log(`renameFolder oldPath: ${oldPath}, newFolderName: ${newFolderName}`);
+    noisy_log(`renameFolder oldPath: ${oldPath}, newFolderName: ${newFolderName}`);
     if (oldPath.endsWith(`/${newFolderName}`)) {
       // It did not change. Nothing to do here.
       return undefined;
     }
     let foundItem = find_sidebar_list_item(input);
-    console.log(`before renameFolder foundItem id: ${foundItem.id}, name: ${foundItem.name}, folderPath: ${foundItem.folderPath}`);
+    noisy_log(`before renameFolder foundItem id: ${foundItem.id}, name: ${foundItem.name}, folderPath: ${foundItem.folderPath}`);
     let updatedFullPath = rename_folder(foundItem, newFolderName, true);
-    console.log(`after  renameFolder foundItem id: ${foundItem.id}, name: ${foundItem.name}, folderPath: ${foundItem.folderPath}, updatedFullPath: ${updatedFullPath}`);
+    noisy_log(`after  renameFolder foundItem id: ${foundItem.id}, name: ${foundItem.name}, folderPath: ${foundItem.folderPath}, updatedFullPath: ${updatedFullPath}`);
     if (updatedFullPath) {
       // the name has been changed. Update the input so we know it has been changed later
       set_full_path(input, updatedFullPath);
-      console.log('inside updatedFullPath');      
+      noisy_log('inside updatedFullPath');      
       sidebarModal.updateHeader(newFolderName, updatedFullPath, "Edit or delete this folder.");
-      console.log('returning updatedFullPath');
+      noisy_log('returning updatedFullPath');
       return updatedFullPath;
     } else {
-      console.log('else updatedFullPath');
+      noisy_log('else updatedFullPath');
       // there was a naming conflict, and the user has been alerted. select the entire text so they can easily change it
       input.select();
       return false;
@@ -3014,7 +3014,7 @@ function display_folder_configure_modal(listItem) {
   saveButton.on("click", function (clickEvent) {
     if (itemType === ItemType.MyToken || itemType === ItemType.Scene || (itemType === ItemType.PC && listItem.id !== RootFolder.Players.id) || (itemType === ItemType.Encounter && listItem.id !== RootFolder.Encounters.id)){
       let nameInput = $(clickEvent.currentTarget).closest(".sidebar-panel-body").find("input[name='folderName']");
-      console.log(`saveButton nameInput`, nameInput);
+      noisy_log(`saveButton nameInput`, nameInput);
       let renameResult = renameFolder(nameInput.val(), nameInput, clickEvent);
     }
     close_sidebar_modal();
@@ -3398,7 +3398,7 @@ function position_flyout_right_of(container, flyout) {
 }
 
 function remove_sidebar_flyout(removeHoverNote) {
-  console.log("remove_sidebar_flyout");
+  noisy_log("remove_sidebar_flyout");
   let flyouts = $(`.sidebar-flyout`)
   
   if(removeHoverNote == false){
@@ -3418,7 +3418,7 @@ function remove_sidebar_flyout(removeHoverNote) {
 }
 
 async function list_item_image_flyout(hoverEvent) {
-  console.log("list_item_image_flyout", hoverEvent);
+  noisy_log("list_item_image_flyout", hoverEvent);
   $(`#list-item-image-flyout`).remove(); // never duplicate
   if (hoverEvent.type === "mouseenter") {
     const imgsrc = $(hoverEvent.currentTarget).find("img").attr("src");
@@ -3593,7 +3593,7 @@ async function enable_draggable_change_folder(listItemType) {
         }
       } else {
         let folderItem = find_sidebar_list_item(droppedFolder);
-        console.log("enable_draggable_change_folder dropped", draggedItem, folderItem);
+        noisy_log("enable_draggable_change_folder dropped", draggedItem, folderItem);
         
         for(let i=0; i<selectedItems.length; i++){
           draggedRow = $(selectedItems[i]);

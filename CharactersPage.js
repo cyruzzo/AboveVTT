@@ -75,7 +75,7 @@ const debounce_add_extras = mydebounce(() => {
 
 const sendCharacterUpdateEvent = mydebounce(() => {
   if (window.DM) return;
-  console.log("sendCharacterUpdateEvent")
+  noisy_log("sendCharacterUpdateEvent")
   const pcData = {...recentCharacterUpdates};
   recentCharacterUpdates = {};
   if (is_abovevtt_page()) {
@@ -1087,7 +1087,7 @@ var rollBuffPins = [];
 
 /** @param changes {object} the changes that were observed. EX: {hp: 20} */
 function character_sheet_changed(changes) {
-    console.log("character_sheet_changed", changes);
+    noisy_log("character_sheet_changed", changes);
     recentCharacterUpdates = {...recentCharacterUpdates, ...changes};
     sendCharacterUpdateEvent();
 }
@@ -1598,7 +1598,7 @@ function init_character_list_page_without_avtt() {
       
       }
       else if (!is_characters_list_page() && !is_characters_builder_page()) {
-        console.log("Detected location change from", oldHref, "to", document.location.href);
+        noisy_log("Detected location change from", oldHref, "to", document.location.href);
         window.oldHref = document.location.href;
         init_characters_pages();
       }
@@ -1624,8 +1624,8 @@ function inject_dice_roll(element, clear=true) {
   else{
     const slashCommands = [...element.text().matchAll(multiDiceRollCommandRegex)];
     if (slashCommands.length === 0) return;
+    noisy_log("inject_dice_roll slashCommands", slashCommands);
 
-    console.debug("inject_dice_roll slashCommands", slashCommands);
     let updatedInnerHtml = element.text().replace(/\/</gi, '<');
     for (const command of slashCommands) {
       let originalCommand = command[0];
@@ -1646,7 +1646,7 @@ function inject_dice_roll(element, clear=true) {
     if(clear == true){
       element.empty();
     }
-    console.debug("inject_dice_roll updatedInnerHtml", updatedInnerHtml);
+    noisy_log("inject_dice_roll updatedInnerHtml", updatedInnerHtml);
     element.append(updatedInnerHtml);
   }
 
@@ -2180,7 +2180,7 @@ function observe_character_sheet_changes(documentToObserve) {
      
      
     })
-    // console.log("character_sheet_observer", mutationList);
+    noisy_log("character_sheet_observer", mutationList);
 
 
 
@@ -2334,7 +2334,7 @@ function observe_character_sheet_changes(documentToObserve) {
           
           return button;
         });
-        console.log(`${icons.length} aoe spells discovered`);
+        noisy_log(`${icons.length} aoe spells discovered`);
       }    
     }
     
@@ -2375,7 +2375,7 @@ function observe_character_sheet_changes(documentToObserve) {
      // initial injection of our buttons
     const notes = documentToObserve.find(".ddbc-note-components__component:not('.above-vtt-dice-visited')");
     notes.each(function() {
-      // console.log("character_sheet_observer iterating", mutationList);
+      noisy_log("character_sheet_observer iterating", mutationList);
       try {
         inject_dice_roll($(this));
         $(this).addClass("above-vtt-dice-visited"); // make sure we only parse this element once
@@ -3310,7 +3310,6 @@ function observe_character_sheet_changes(documentToObserve) {
 
         if(is_abovevtt_page()){
            
-            // console.log(`sidebar inserted: ${event.target.classList}`);
           if (mutationTarget.is('.ct-sidebar__pane-content, .ct-sidebar__inner [class*="styles_content"]>div')){
              // The user clicked on something that shows details. Open the sidebar and show it
             show_sidebar(false); 
@@ -3673,14 +3672,14 @@ function inject_join_button_on_character_list_page() {
 function observe_character_theme_change() {
   if (window.theme_observer) window.theme_observer.disconnect();
   window.theme_observer = new MutationObserver(function(mutationList, observer) {
-    // console.log("theme_observer mutationList", mutationList);
+    noisy_log("theme_observer mutationList", mutationList);
     mutationList.every(mutation => {
-      // console.log("theme_observer mutation", mutation, mutation.addedNodes, mutation.addedNodes.length);
+      noisy_log("theme_observer mutation", mutation, mutation.addedNodes, mutation.addedNodes.length);
       if (mutation.addedNodes && mutation.addedNodes.length > 0) {
         const shouldContinue = Array.from(mutation.addedNodes).every(node => {
-          // console.log("theme_observer node", node);
+          noisy_log("theme_observer node", node);
           if (node.textContent && node.textContent.includes("--theme-color")) {
-            // console.log("theme_observer is calling find_and_set_player_color", mutation, node);
+            noisy_log("theme_observer is calling find_and_set_player_color", mutation, node);
             const newColor = node.textContent.match(/#(?:[0-9a-fA-F]{3}){1,2}/)?.[0];
             if (newColor) {
               update_window_color(newColor);

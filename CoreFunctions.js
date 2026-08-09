@@ -632,7 +632,6 @@ function monitor_console_logs() {
           timeStamp: TS(),
           value: Array.from(arguments)
         });
-        // Function.prototype.apply.call(console.log, console, arguments);
         original.apply(console, arguments);
       }
     }
@@ -856,7 +855,7 @@ function add_aoe_statblock_click(target, tokenId = undefined){
   })
 }
 function create_update_token(options, save = true) {
-  console.log("create_update_token");
+  noisy_log("create_update_token");
   let self = this;
   let id = options.id;
   options.scaleCreated = window.CURRENT_SCENE_DATA.scale_factor;
@@ -883,8 +882,16 @@ function create_update_token(options, save = true) {
   }
 
 }
+
+/** Logs that are super noisy should be sent through here.
+ * This allows us to enable these logs on the fly when we need to debug things that would otherwise flood the console */
+function noisy_log(...message) {
+  if (window.enableNoisyLogs === true) {
+    console.debug(...message);
+  }
+}
+
 function add_journal_roll_buttons(target, tokenId=undefined, specificImage=undefined, specificName=undefined){
-  console.group("add_journal_roll_buttons")
   
   let pastedButtons = target.find('.avtt-roll-button, .integrated-dice__container, .avtt-aoe-button');
 
@@ -949,7 +956,7 @@ function add_journal_roll_buttons(target, tokenId=undefined, specificImage=undef
   $newHTML.find('.abovevtt-slash-command-journal').each(function(index){      
     const slashCommands = [...slashCommandElements[index].innerHTML.matchAll(multiDiceRollCommandRegex)];
     if (slashCommands.length === 0) return;
-    console.debug("inject_dice_roll slashCommands", slashCommands);
+    noisy_log("inject_dice_roll slashCommands", slashCommands);
     let updatedInnerHtml = slashCommandElements[index].innerHTML;
     try {
       slashCommands[0][0] = slashCommands[0][0].replace(/\(|\)/ig, '');
@@ -1169,7 +1176,7 @@ function notify_player_join() {
     pc: read_pc_object_from_character_sheet(window.PLAYER_ID)
   };
 
-  console.log("Sending playerjoin msg, abovevtt version: " + playerdata.abovevtt_version + ", sheet ID:" + window.PLAYER_ID);
+  noisy_log("Sending playerjoin msg, abovevtt version: " + playerdata.abovevtt_version + ", sheet ID:" + window.PLAYER_ID);
   whenAvailable('JOURNAL', function () { window.MB.sendMessage("custom/myVTT/playerjoin", playerdata) });
 }
 
@@ -1497,11 +1504,11 @@ var MYCOBALT_TOKEN_EXPIRATION = 0;
  */
 function get_cobalt_token(callback) {
   if (Date.now() < MYCOBALT_TOKEN_EXPIRATION) {
-    console.log("TOKEN IS CACHED");
+    noisy_log("TOKEN IS CACHED");
     callback(MYCOBALT_TOKEN);
     return;
   }
-  console.log("GETTING NEW TOKEN");
+  noisy_log("GETTING NEW TOKEN");
   $.ajax({
     url: "https://auth-service.dndbeyond.com/v1/cobalt-token",
     type: "post",
@@ -1510,7 +1517,7 @@ function get_cobalt_token(callback) {
       withCredentials: true
     },
     success: function(data) {
-      console.log("GOT NEW TOKEN");
+      noisy_log("GOT NEW TOKEN");
       MYCOBALT_TOKEN = data.token;
       MYCOBALT_TOKEN_EXPIRATION = Date.now() + (data.ttl * 1000) - 10000;
       callback(data.token);
@@ -1740,7 +1747,7 @@ function showError(error, ...extraInfo) {
       add_issues_to_error_message(issues, error.message);
     })
     .catch(githubError => {
-      console.log("look_for_github_issue", "Failed to look for github issues", githubError);
+      noisy_log("look_for_github_issue", "Failed to look for github issues", githubError);
     });
   remove_loading_overlay();
 }
@@ -1800,7 +1807,7 @@ function add_issues_to_error_message(issues, errorMessage) {
         browser: get_browser(),
       });
       const errorBody = build_external_error_message(true);
-      console.log("look_for_github_issue", `appending createIssueUrl`, errorMessage, errorBody);
+      noisy_log("look_for_github_issue", `appending createIssueUrl`, errorMessage, errorBody);
       open_github_issue(errorMessage, errorBody);
     });
     $("#above-vtt-error-message .error-message-buttons").append(githubButton);
@@ -2102,7 +2109,7 @@ function update_pc_with_data(playerId, data) {
     console.warn("update_pc_with_data could not find pc with id", playerId);
     return;
   }
-  console.debug(`update_pc_with_data is updating ${playerId} with`, data);
+  noisy_log(`update_pc_with_data is updating ${playerId} with`, data);
   const pc = window.pcs[index];
   window.pcs[index] = {
     ...pc,
@@ -2165,20 +2172,20 @@ const debounce_pc_token_update = mydebounce(() => {
 
 function update_pc_with_api_call(playerId) {
   if (!playerId) {
-    console.log('update_pc_with_api_call was called without a playerId');
+    noisy_log('update_pc_with_api_call was called without a playerId');
     return;
   }
   if (window.PC_TOKENS_NEEDING_UPDATES.includes(playerId)) {
-    console.log(`update_pc_with_api_call isn't adding ${playerId} because we're already waiting for debounce_pc_token_update to handle it`);
+    noisy_log(`update_pc_with_api_call isn't adding ${playerId} because we're already waiting for debounce_pc_token_update to handle it`);
   } else if (Object.keys(window.PC_NEEDS_API_CALL).includes(playerId)) {
-    console.log(`update_pc_with_api_call is already waiting planning to call the API to fetch ${playerId}. Nothing to do right now.`);
+    noisy_log(`update_pc_with_api_call is already waiting planning to call the API to fetch ${playerId}. Nothing to do right now.`);
   } else {
     const pc = find_pc_by_player_id(playerId, false);
     const twoSecondsAgo = new Date(Date.now() - 2000).getTime();
     if (pc && pc.lastSynchronized && pc.lastSynchronized > twoSecondsAgo) {
-      console.log(`update_pc_with_api_call is not adding ${playerId} to window.PC_NEEDS_API_CALL because it has been updated within the last 2 seconds`);
+      noisy_log(`update_pc_with_api_call is not adding ${playerId} to window.PC_NEEDS_API_CALL because it has been updated within the last 2 seconds`);
     } else {
-      console.log(`update_pc_with_api_call is adding ${playerId} to window.PC_NEEDS_API_CALL`);
+      noisy_log(`update_pc_with_api_call is adding ${playerId} to window.PC_NEEDS_API_CALL`);
       window.PC_NEEDS_API_CALL[playerId] = Date.now();
     }
   }
@@ -2190,16 +2197,16 @@ const debounce_fetch_character_from_api = mydebounce(() => {
   const idsAndDates = { ...window.PC_NEEDS_API_CALL }; // make a copy so we can refer to it later
   window.PC_NEEDS_API_CALL = {}; // clear it out in case we get new updates while the API call is active
   const characterIds = Object.keys(idsAndDates);
-  console.log('debounce_fetch_character_from_api is about to call DDBApi before update_pc_with_data for ', characterIds);
+  noisy_log('debounce_fetch_character_from_api is about to call DDBApi before update_pc_with_data for ', characterIds);
   DDBApi.fetchCharacterDetails(characterIds).then((characterDataCollection) => {
     characterDataCollection.forEach((characterData) => {
       // check if we've synchronized this player data while the API call was active because we don't want to update the PC with stale data
       const lastSynchronized = find_pc_by_player_id(characterData.characterId, false)?.lastSynchronized;
       if (!lastSynchronized || lastSynchronized < idsAndDates[characterData.characterId]) {
-        console.log('debounce_fetch_character_from_api is about to call update_pc_with_data with', characterData.characterId, characterData);
+        noisy_log('debounce_fetch_character_from_api is about to call update_pc_with_data with', characterData.characterId, characterData);
         update_pc_with_data(characterData.characterId, characterData);
       } else {
-        console.log(`debounce_fetch_character_from_api is not calling update_pc_with_data for ${characterData.characterId} because ${lastSynchronized} < ${idsAndDates[characterData.characterId]}`);
+        noisy_log(`debounce_fetch_character_from_api is not calling update_pc_with_data for ${characterData.characterId} because ${lastSynchronized} < ${idsAndDates[characterData.characterId]}`);
       }
     });
   });
@@ -2208,7 +2215,7 @@ const debounce_fetch_character_from_api = mydebounce(() => {
 async function harvest_game_id() {
   if (is_campaign_page()) {
     const fromPath = window.location.pathname.split("/").pop();
-    console.log("harvest_game_id found gameId in the url:", fromPath);
+    noisy_log("harvest_game_id found gameId in the url:", fromPath);
     return fromPath;
   }
 
@@ -2287,7 +2294,7 @@ async function harvest_campaign_secret() {
 
   const secretFromLocalStorage = read_campaign_info(window.gameId);
   if (typeof secretFromLocalStorage === "string" && secretFromLocalStorage.length > 0) {
-    console.log("harvest_campaign_secret found it in localStorage");
+    noisy_log("harvest_campaign_secret found it in localStorage");
     return secretFromLocalStorage;
   }
 
@@ -2343,7 +2350,7 @@ async function harvest_campaign_secret() {
         try {
           const joinLink = $(event.target).contents().find(".ddb-campaigns-invite-primary").text().split("/").pop();
           if (typeof joinLink === "string" && joinLink.length > 0) {
-            console.log("harvest_campaign_secret found it by loading the campaign page in an iframe");
+            noisy_log("harvest_campaign_secret found it by loading the campaign page in an iframe");
             finish(joinLink);
           } else if (attempts >= maxAttempts) {
             console.warn("harvest_campaign_secret: campaign join link not populated in iframe after polling");
@@ -2459,12 +2466,12 @@ function find_game_id() {
     }
   }
 
-  console.log("find_game_id found:", window.gameId);
+  noisy_log("find_game_id found:", window.gameId);
   return window.gameId;
 }
 function parse_img(url) {
 	if (typeof url !== "string") {
-		console.log("parse_img is converting", url, "to an empty string");
+		noisy_log("parse_img is converting", url, "to an empty string");
 		return "";
 	}
 	let retval = url.trim();
@@ -2766,7 +2773,7 @@ async function look_for_github_issue(...searchTerms) {
  */
 function inject_sidebar_send_to_gamelog_button(sidebarPaneContent) {
   // we explicitly don't want this to happen in `.ct-game-log-pane` because otherwise it will happen to the injected gamelog messages that we're trying to send here
-  console.log("inject_sidebar_send_to_gamelog_button")
+  noisy_log("inject_sidebar_send_to_gamelog_button")
   let button = $(`<button id='castbutton'">SEND TO GAMELOG</button>`);
   // button.css({
   //  "margin": "10px 0px",
@@ -3006,7 +3013,7 @@ function add_items_to_party_inventory(items = []) {
   }
 
   DDBApi.addItemsToPartyInventory(data).then(response => {
-    console.log('add_items_to_party_inventory response:', response);
+    noisy_log('add_items_to_party_inventory response:', response);
     window.partyInventoryQueue.onResponseReceived();
   }).catch(error => {
     console.error('add_items_to_party_inventory error:', error);
@@ -3046,7 +3053,7 @@ function add_custom_item_to_party_inventory(item) {
   
 
   DDBApi.addCustomItemToPartyInventory(data).then(response => {
-    console.log('add_custom_item_to_party_inventory response:', response);
+    noisy_log('add_custom_item_to_party_inventory response:', response);
     window.partyInventoryQueue.onResponseReceived();
   }).catch(error => {
     console.error('add_custom_item_to_party_inventory error:', error);
@@ -3063,7 +3070,7 @@ function add_currency_to_party_inventory(currency = {cp:0,sp:0,gp:0,ep:0,pp:0}) 
 
 
   DDBApi.addCurrenciesToPartyInventory(data).then(response => {
-    console.log('add_currency_to_party_inventory response:', response);
+    noisy_log('add_currency_to_party_inventory response:', response);
     window.partyInventoryQueue.onResponseReceived();
   }).catch(error => {
     console.error('add_currency_to_party_inventory error:', error);
@@ -3074,7 +3081,7 @@ function add_currency_to_party_inventory(currency = {cp:0,sp:0,gp:0,ep:0,pp:0}) 
 async function fetch_github_issue_comments(issueNumber) {
   const request = await fetch("https://api.github.com/repos/cyruzzo/AboveVTT/issues?labels=bug", { credentials: "omit" });
   const response = await request.json();
-  console.log(response);
+  noisy_log(response);
   return response;
 }
 
@@ -3281,7 +3288,7 @@ function createSendPlayerButton(parent, icon, hasPopupOption=false ) {
 //-end- dialog menus 
 
 function find_or_create_generic_draggable_window(id, titleBarText, addLoadingIndicator = true, addPopoutButton = false, popoutSelector=``, width='80%', height='80%', top='10%', left='10%', showSlow = true, cancelClasses='', hideOnX = false, alwaysDisplayTitle = false, onCloseCallback = () => {}) {
-  console.log(`find_or_create_generic_draggable_window id: ${id}, titleBarText: ${titleBarText}, addLoadingIndicator: ${addLoadingIndicator}, addPopoutButton: ${addPopoutButton}`);
+  noisy_log(`find_or_create_generic_draggable_window id: ${id}, titleBarText: ${titleBarText}, addLoadingIndicator: ${addLoadingIndicator}, addPopoutButton: ${addPopoutButton}`);
 
   const existing = $(`[id="${id.replace('#', '')}"]`);
   if (existing.length > 0) {

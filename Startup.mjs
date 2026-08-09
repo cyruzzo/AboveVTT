@@ -8,15 +8,7 @@ import { init_audio_mixer } from './audio/index.mjs'
 $(function() {
   if (is_abovevtt_page()) { // Only execute if the app is starting up
     console.log("startup calling init_splash");
-
-    if (localStorage.getItem("HardwareAccelWarningDismissed") !== "true") {
-      let canvas = document.createElement('canvas');
-      if(!!(canvas?.getContext("webgl", {failIfMajorPerformanceCaveat: true}) || canvas?.getContext("experimental-webgl", {failIfMajorPerformanceCaveat: true}))){
-        canvas = null;
-      } else{
-        showHardwareAccelWarning();
-      } 
-    }
+    showHardwareAccelWarning();
     init_my_dice_details();
     init_loading_overlay_beholder();
     addBeyond20EventListener("rendered-roll", (request) => {$('.avtt-sidebar-controls #switch_gamelog').click();});
@@ -1279,7 +1271,7 @@ async function fetch_sceneList_and_scenes() {
     window.PLAYER_SCENE_ID = currentSceneData.playerscene;
   } 
 
-  console.log("fetch_sceneList_and_scenes set window.PLAYER_SCENE_ID to", window.PLAYER_SCENE_ID);
+  noisy_log("fetch_sceneList_and_scenes set window.PLAYER_SCENE_ID to", window.PLAYER_SCENE_ID);
 
   let activeScene = undefined;
   if (currentSceneData.dmscene && window.ScenesHandler.scenes.find(s => s.id === currentSceneData.dmscene)) {
@@ -1294,6 +1286,6 @@ async function fetch_sceneList_and_scenes() {
     window.MB.handleScene(activeScene);
   else
     delete window.LOADING
-  console.log("fetch_sceneList_and_scenes done");
+  noisy_log("fetch_sceneList_and_scenes done");
   return activeScene;
 }

@@ -174,7 +174,7 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 						offsetx += ppsx/1.5 * Math.sin(a)*difference
 				}
 				
-				console.log("ppsx " + ppsx + "ppsy " + ppsy + "offsetx " + offsetx + "offsety " + offsety)
+				noisy_log("ppsx " + ppsx + "ppsy " + ppsy + "offsetx " + offsetx + "offsety " + offsety)
 				window.CURRENT_SCENE_DATA.hpps = Math.abs(ppsx);
 				window.CURRENT_SCENE_DATA.vpps = Math.abs(ppsy);
 				window.CURRENT_SCENE_DATA.offsetx = Math.abs(offsetx);
@@ -366,7 +366,7 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 
 
 		if (!scene.hpps) { // THIS IS OLD DATA FROM < 0.0.20!!! WE NEED TO COMPLETE WHAT IS MISSING and TRY TO FIX IT :()
-			console.log("converting pre 0.0.20 scene.... Good lock to you, oh brave adventurer")
+			noisy_log("converting pre 0.0.20 scene.... Good lock to you, oh brave adventurer")
 			scene.hpps = Math.round((6000.0 / scene.scale));
 			scene.vpps = scene.hpps;
 			scene.offsetx = 0;
@@ -451,7 +451,7 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 	}
 
 	display_scene_properties(scene_id) {
-		console.log('inizio....');
+		noisy_log('inizio....');
 		let self = this;
 		let scene = this.scenes[scene_id];
 		let container = $("#scene_properties");
@@ -473,7 +473,7 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 		let scraped_sources={};
 
 		f.on("load", function(event) {
-			console.log('iframe pronto..');
+			noisy_log('iframe pronto..');
 			let iframe = $(event.target);
 			iframe.contents().find("[class*='SourceCard_sourceTitle']").each(function(idx) {
 				let ddbtype=$(this).closest(".sources-listing").attr('id'); // get Sourcebooks of Adventures
@@ -518,7 +518,7 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 
 	build_chapters(keyword, callback) {
 		let self = this;
-		console.log('scansiono ' + keyword);
+		noisy_log('scansiono ' + keyword);
 		//let target_list = $("#" + $(event.target).attr('data-target'));
 		//let adventure_url = 'https://www.dndbeyond.com/sources/' + keyword;
 		let adventure_url="https://www.dndbeyond.com/"+self.sources[keyword].url;
@@ -530,7 +530,7 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 
 		// EVITO DI RISCANSIONARE UN OGGETTO CHE HO GIA'
 		if (Object.keys(self.sources[keyword].chapters).length > 0) {
-			console.log('no.... non scansiono')
+			noisy_log('no.... non scansiono')
 			callback();
 			return;
 		}
@@ -543,10 +543,10 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 
 		f.on("load", function(event) {
 			let iframe = $(event.target);
-			console.log('caricato ' + window.frames['scraper'].location.href);
+			noisy_log('caricato ' + window.frames['scraper'].location.href);
 
 			if (window.frames['scraper'].location.href != adventure_url) {
-				console.log('rilevato cambio url');
+				noisy_log('rilevato cambio url');
 				let title = "Single Chapter";
 				let url = window.frames['scraper'].location.href;
 				let ch_keyword = url.replace('https://www.dndbeyond.com', '').replace('/sources/' + keyword + "/", '').replace('/sources/' + keyword.replace('dnd/', '') + "/", '')
@@ -595,7 +595,7 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 
 		//let chapter_url='https://www.dndbeyond.com/sources/'+source_keyword+'/'+chapter_keyword;
 		let chapter_url = self.sources[source_keyword].chapters[chapter_keyword].url;
-		console.log("checking for scenes in " + chapter_url);
+		noisy_log("checking for scenes in " + chapter_url);
 
 		if (self.sources[source_keyword].chapters[chapter_keyword].type != 'dnb') {
 			callback();
@@ -643,7 +643,7 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 			if(iframe.contents().length == 0){
 				let notOwned = true;
 				iframe.remove();
-				console.log('Book failed to load - probably do not own it');
+				noisy_log('Book failed to load - probably do not own it');
 				callback(notOwned);
 				return;
 			}
@@ -854,13 +854,13 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 			}
 
 			iframe.remove();
-			console.log('INVOKO CALLBACK');
+			noisy_log('INVOKO CALLBACK');
 			callback();
 		});
 	}
 
 	create_update_token(options, noScale = false ) {
-		console.log("create_update_token");
+		noisy_log("create_update_token");
 		let self = this;
 		let id = options.id;
 		if(!noScale)

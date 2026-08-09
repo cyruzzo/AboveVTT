@@ -579,7 +579,7 @@ function init_mixer() {
             window.MIXER.mixerMode = 'soundboard';
         }
     
-        console.log("Playback Mode:", sequentialPlay.attr("title"));
+        noisy_log("Playback Mode:", sequentialPlay.attr("title"));
     });
 
     let crossFade = $(`<button class="cross-fade-button ${window.MIXER.state().fade == true ? 'pressed' : ''}"></button>`);
@@ -717,7 +717,7 @@ function addTracks(filteredTracks, shuffle = false) {
     });
     window.MIXER.addMultiChannels(channelData);
 
-    console.log(`Added ${filteredTracks.length} ${shuffle ? "shuffled " : ""}tracks to the Mixer.`);
+    noisy_log(`Added ${filteredTracks.length} ${shuffle ? "shuffled " : ""}tracks to the Mixer.`);
 }
 
 

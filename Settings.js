@@ -1072,7 +1072,7 @@ function get_avtt_setting_is_global(name) {
 	return avtt_settings().find(s => s.name === name)?.global === 1;
 }
 function set_avtt_setting_value(name, newValue) {
-	console.log(`set_avtt_setting_value ${name} is now ${newValue}`);
+	noisy_log(`set_avtt_setting_value ${name} is now ${newValue}`);
 
 	// store the setting
 	window.EXPERIMENTAL_SETTINGS[name] = newValue;
@@ -1213,7 +1213,7 @@ function persist_default_scene_settings(settings, callback) {
     if (typeof callback !== 'function') {
         callback = function(){};
     }	    
-    console.log("persist_default_scene_settings", settings, JSON.stringify(settings));
+    noisy_log("persist_default_scene_settings", settings, JSON.stringify(settings));
     try{
         localStorage.setItem(`SceneDefaults-${window.gameId}`, JSON.stringify(settings));
         
@@ -1412,7 +1412,6 @@ function init_settings() {
 }
 
 function redraw_settings_panel_token_examples(settings) {
-	console.log("redraw_settings_panel_token_examples", settings);
 	let mergedSettings = {...window.TOKEN_SETTINGS};
 	if (settings !== undefined) {
 		mergedSettings = {...mergedSettings, ...settings};
@@ -1504,7 +1503,7 @@ function build_sidebar_token_options_flyout(availableOptions, setValues, updateV
 	}
 	if (typeof didChange !== 'function') {
 		didChange = function(){
-			console.log("build_sidebar_token_options_flyout was not given adidChange function");
+			noisy_log("build_sidebar_token_options_flyout was not given adidChange function");
 		};
 	}
 
@@ -1927,7 +1926,6 @@ function recover_scenes(){
 				const oldId = document.getElementById('old-link').value;
 				//validate oldlink matches campaign id
 				if(oldId.startsWith(window.CAMPAIGN_INFO.id)) {
-					console.log("TODO: implement attemptRecovery", oldId);
 					attemptRecovery(oldId);
 				} else {
 					alert("Secret does not match current Campaign");
@@ -2401,7 +2399,6 @@ function import_process_datafile_text(fileText) {
 function attemptRecovery(campaignSecret) {
 	AboveApi.exportScenes(campaignSecret).then((scenes) => {
 		if(scenes && scenes.length > 0) {
-			//do we really want/need migrate here? or is there a better way?
 			build_import_loading_indicator('Preparing Import');
 			AboveApi.migrateScenes(window.gameId, scenes)
 				.then(() => {
