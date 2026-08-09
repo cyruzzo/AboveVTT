@@ -1803,11 +1803,6 @@ function open_player_sheet(sheet_url, closeIfOpen = true, playerName = '') {
 		}
 
 
-		// WIP to allow players to add in tokens from their extra tab
-		// observe_character_sheet_companion($(event.target).contents());
-
-
-
 		setTimeout(function() {
 			$("#sheet").find("iframe").each(function() {
 				// we've removed some header stuff, so move the background image up to remove the dead space
