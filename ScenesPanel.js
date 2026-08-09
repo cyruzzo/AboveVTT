@@ -495,9 +495,6 @@ function open_grid_wizard_controls(scene_id, aligner1, aligner2, regrid = functi
 			}	
 		}
 		moveAligners(false, true);
-		
-		console.log('verticalMinorAdjustment');
-
 	});
 	horizontalMinorAdjustment.find('input').on('change input',function(){
 		if(window.CURRENT_SCENE_DATA.gridType == 1){
@@ -511,7 +508,6 @@ function open_grid_wizard_controls(scene_id, aligner1, aligner2, regrid = functi
 			}	
 		}
 		moveAligners(false, true);
-		console.log('horizontalMinorAdjustment');
 	});
 	form.append(gridType, verticalMinorAdjustment, horizontalMinorAdjustment)
 
