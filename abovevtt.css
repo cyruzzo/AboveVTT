@@ -12944,6 +12944,7 @@ p.monster-header+p {
     display: inline-flex;
     align-items: center;
     cursor: pointer !important;
+    vertical-align: middle;
 }
 
 .prof-icon {
@@ -13051,10 +13052,7 @@ p.monster-header+p {
         gap: 10px;
         box-sizing: border-box;
     }
-    table :has(>.prof-checkbox){
-        display: inline-flex;
-        align-items: center;  
-    }
+
     .abilities-table-container .prof-checkbox{
         scale:0.7;
     }
