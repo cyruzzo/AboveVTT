@@ -12943,7 +12943,7 @@ p.monster-header+p {
 .prof-checkbox {
     display: inline-flex;
     align-items: center;
-    cursor: pointer;
+    cursor: pointer !important;
 }
 
 .prof-icon {
