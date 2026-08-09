@@ -1847,7 +1847,6 @@ class MonsterStatBlock {
             const bonusMod = st.bonusModifier || 0;
             const statModInt = this.modInt(statValue) + this.proficiencyBonus + bonusMod;
             const statModString = statModInt >= 0 ? `+${statModInt}` : `${statModInt}`;
-            console.debug(`savingThrowsHtml`, statValue, bonusMod, statModString, statDefinition);
             return `${statDefinition.key} ${this.rollButton("1d20", statModString, "save", statDefinition.key)}`
         }).join(", ");
     }
@@ -2223,7 +2222,7 @@ const fetch_tooltip = mydebounce(async (dataTooltipHref, name, callback, callbac
           const typeAndId = `${type}/${id}`;
           const existingJson = window.tooltipCache[typeAndId];
           if (existingJson !== undefined) {
-              console.log("fetch_tooltip existingJson", existingJson);
+              noisy_log("fetch_tooltip existingJson", existingJson);
               callback(existingJson, callbackTarget);
               return;
           }
@@ -2327,7 +2326,7 @@ const fetch_tooltip = mydebounce(async (dataTooltipHref, name, callback, callbac
       }
 
 
-      console.log("fetch_tooltip starting for ", dataTooltipHref);
+      noisy_log("fetch_tooltip starting for ", dataTooltipHref);
 
       if(dataTooltipHref[0] != undefined){
 
@@ -2352,7 +2351,7 @@ const fetch_tooltip = mydebounce(async (dataTooltipHref, name, callback, callbac
        
         const existingJson = window.tooltipCache[typeAndId];
         if (existingJson !== undefined) {
-          console.log("fetch_tooltip existingJson", existingJson);
+          noisy_log("fetch_tooltip existingJson", existingJson);
           callback(existingJson, callbackTarget);
           return;
         }
@@ -2370,7 +2369,7 @@ const fetch_tooltip = mydebounce(async (dataTooltipHref, name, callback, callbac
             return true;
           },
           success: async function (response) {
-            console.log("fetch_tooltip success", response);
+            noisy_log("fetch_tooltip success", response);
             let responseJSON;
             try{
               responseJSON = JSON.parse(response.replace(/^[^{]*|[^}]*$/g, ""));
@@ -2460,7 +2459,7 @@ function add_tooltip_aoe_buttons(html, tokenId){
       
       return button;
     });
-    console.log(`${icons.length} aoe spells discovered`);
+    noisy_log(`${icons.length} aoe spells discovered`);
   }  
 }
 
@@ -2468,7 +2467,7 @@ function display_tooltip(tooltipJson, container, hoverEvent, tokenId=undefined) 
     if (typeof tooltipJson?.Tooltip === "string") {
         remove_tooltip(0, false);
 
-        console.log("container", container)
+        noisy_log("container", container)
         const tooltipHtmlString = tooltipJson.Tooltip.replaceAll(/<script>[\S\s]+<\/script>/gi, '');
 
 
@@ -2494,6 +2493,8 @@ function add_stat_block_hover(statBlockContainer, tokenId) {
     const tooltip = $(statBlockContainer).find(".tooltip-hover");
     
     tooltip.hover(function (hoverEvent) {
+        if(hoverEvent.target.tagName == 'INPUT')
+          return;
         let currentTarget = $(hoverEvent.currentTarget);
         let cursorOffset = {
           left : 10,
@@ -2538,7 +2539,7 @@ function add_stat_block_hover(statBlockContainer, tokenId) {
 
               const existingJson = window.tooltipCache[typeAndId];
               if (existingJson !== undefined) {
-                console.log("fetch_tooltip existingJson", existingJson);
+                noisy_log("fetch_tooltip existingJson", existingJson);
                 callback(existingJson);
                 return;
               }
@@ -2551,7 +2552,7 @@ function add_stat_block_hover(statBlockContainer, tokenId) {
               const typeAndId = `${type}/${id}`;
               const existingJson = window.tooltipCache[typeAndId];
               if (existingJson !== undefined) {
-                console.log("fetch_tooltip existingJson", existingJson);
+                noisy_log("fetch_tooltip existingJson", existingJson);
                 callback(existingJson);
                 return;
               }
@@ -2576,7 +2577,7 @@ function add_stat_block_hover(statBlockContainer, tokenId) {
 }
 
 function send_html_to_gamelog(outerHtml, whisper) {
-    console.log("send_html_to_gamelog", outerHtml);
+    noisy_log("send_html_to_gamelog", outerHtml);
     outerHtml = outerHtml.replace('disableremoteplayback', 'disableremoteplayback autoplay loop');
     let html = window.MB.encode_message_text(outerHtml);
     const data = {

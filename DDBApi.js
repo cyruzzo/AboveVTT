@@ -14,7 +14,7 @@ class DDBApi {
     }
     const url = `https://auth-service.dndbeyond.com/v1/cobalt-token`;
     const config = { method: 'POST', credentials: 'include' };
-    console.log("DDBApi is refreshing auth token");
+    noisy_log("DDBApi is refreshing auth token");
     const request = await fetch(url, config).then(DDBApi.lookForErrors);
     const response = await request.json();
     MYCOBALT_TOKEN = response.token;
@@ -182,7 +182,7 @@ class DDBApi {
   }
 
   static async fetchAllEncounters() {
-    console.log(`DDBApi.fetchAllEncounters starting`);
+    noisy_log(`DDBApi.fetchAllEncounters starting`);
 
     const url = `https://encounter-service.dndbeyond.com/v1/encounters?skip=0&take=99999`;
     const response = await DDBApi.fetchJsonWithToken(`${url}`)
@@ -191,7 +191,7 @@ class DDBApi {
   }
 
   static async deleteAboveVttEncounters(encounters) {
-    console.log("DDBApi.deleteAboveVttEncounters starting");
+    noisy_log("DDBApi.deleteAboveVttEncounters starting");
     // make sure we don't delete the encounter that we're actively on
     const avttId = is_encounters_page() ? window.location.pathname.split("/").pop() : undefined;
     const avttEncounters = encounters.filter(e => e.id !== avttId && e.name === DEFAULT_AVTT_ENCOUNTER_DATA.name);
@@ -201,9 +201,9 @@ class DDBApi {
     for (const encounter of avttEncounters) {
       if(newFailed.includes(encounter.id))
         continue;
-      console.log("DDBApi.deleteAboveVttEncounters attempting to delete encounter with id:", encounter.id);
+      noisy_log("DDBApi.deleteAboveVttEncounters attempting to delete encounter with id:", encounter.id);
       const response = await DDBApi.deleteWithToken(`https://encounter-service.dndbeyond.com/v1/encounters/${encounter.id}`);
-      console.log("DDBApi.deleteAboveVttEncounters delete encounter response:", response.status);
+      noisy_log("DDBApi.deleteAboveVttEncounters delete encounter response:", response.status);
       if(response.status == 401){
         newFailed.push(encounter.id)
         try{
@@ -218,10 +218,10 @@ class DDBApi {
   }
 
   static async createAboveVttEncounter(campaignId = find_game_id()) {
-    console.log("DDBApi.createAboveVttEncounter", campaignId);
+    noisy_log("DDBApi.createAboveVttEncounter", campaignId);
 
     const campaignInfo = await DDBApi.fetchCampaignInfo(campaignId);
-    console.log("DDBApi.createAboveVttEncounter campaignInfo", campaignInfo);
+    noisy_log("DDBApi.createAboveVttEncounter campaignInfo", campaignInfo);
     if (!campaignInfo.id) {
       throw new Error(`Invalid campaignInfo ${JSON.stringify(campaignInfo)}`);
     }
@@ -237,7 +237,7 @@ class DDBApi {
   static async fetchCampaignInfo(campaignId) {
     if(!campaignId)
       return;
-    console.log("DDBApi.fetchCampaignInfo");
+    noisy_log("DDBApi.fetchCampaignInfo");
     const url = `https://www.dndbeyond.com/api/campaign/stt/active-campaigns/${campaignId}`;
     const response = await DDBApi.fetchJsonWithToken(url);
     return response.data;
@@ -249,7 +249,7 @@ class DDBApi {
     }
     let uniqueMonsterIds = [...new Set(monsterIds)];
     let queryParam = uniqueMonsterIds.map(id => `ids=${id}`).join("&");
-    console.log("DDBApi.fetchMonsters starting with ids", uniqueMonsterIds);
+    noisy_log("DDBApi.fetchMonsters starting with ids", uniqueMonsterIds);
     const url = `https://monster-service.dndbeyond.com/v1/Monster?${queryParam}`;
     const response = await DDBApi.fetchJsonWithToken(url);
     return response.data;

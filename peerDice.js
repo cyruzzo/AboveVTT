@@ -120,7 +120,7 @@ function revealDiceVideo(streamerid) {
 }
 
 function joinDiceRoom(room = window.gameId) {
-    console.log("Joining Dice Room")
+    noisy_log("Joining Dice Room")
     diceroom_id = DICEPRE + room + DICESUF;
     diceplayer_id = DICEPRE + window.PLAYER_ID + DICESUF;
   
@@ -138,7 +138,7 @@ function joinDiceRoom(room = window.gameId) {
         window.diceVideoConnectedPeers = [diceplayer_id];
     }
     window.diceVideoPeer.on('open', (id) => {
-        console.log("Connected with Id: " + id)
+        noisy_log("Connected with Id: " + id)
         diceplayer_id = id;   
         getDiceMedia();
     })

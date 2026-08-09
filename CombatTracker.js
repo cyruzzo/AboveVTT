@@ -277,7 +277,6 @@ function init_combat_tracker(){
 		current=$("#combat_area tr[data-current=1]");
 		let currentTarget = current.attr('data-target');
 		if(current.length==0){
-			console.log('nessuno selezionato');
 			$($("#combat_area tr:not([skipTurn])")[0]).attr('data-current','1');
 			currentTarget = $("#combat_area tr[data-current=1]").attr('data-target');
 			if(window.TOKEN_OBJECTS[currentTarget] != undefined){
@@ -765,7 +764,7 @@ function update_carousel_combat_tracker(){
 			    prevButtonClone.text('<');
 			    nextButtonClone.text('>');
 			    carouselContainer.append(prevButtonClone, table, nextButtonClone);
-	    }
+	    }	
 	    else{
 
     		carouselContainer.find('#endplayerturn').remove();

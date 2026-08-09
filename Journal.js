@@ -478,7 +478,7 @@ class JournalManager{
 		input_note_title.focus();
 	}
 	build_journal(searchText){
-		console.log('build_journal');
+		noisy_log('build_journal');
 		let self=this;
 		
 		// Clear all elements from journal panel except the searchbar, which needs to stay in place between searches
@@ -648,9 +648,9 @@ class JournalManager{
 			}
 			
 			let traverseChaptersDown = function(chapter){
-				console.log('Traverse chapters down');
-				console.log(chapter);
-				console.log(self.chapters);
+				noisy_log('Traverse chapters down');
+				noisy_log(chapter);
+				noisy_log(self.chapters);
 				if(chapter.notes){
 					chapter.notes.forEach(note_id => {
 						if(!relevantNotes[note_id]){
@@ -660,10 +660,10 @@ class JournalManager{
 				}
 				if(chapter.id){
 					let childChapters = self.chapters.filter(c => c.parentID == chapter.id)
-					console.log(childChapters);
+					noisy_log(childChapters);
 					if(childChapters?.length > 0){
 						childChapters.forEach((chapter)=> {
-							console.log('Chapter 2', chapter);
+							noisy_log('Chapter 2', chapter);
 							relevantChapters.push(chapter);
 							traverseChaptersDown(chapter);
 						})
@@ -1570,7 +1570,7 @@ class JournalManager{
 	                    name: "Delete",
 	                    callback: function(itemKey, opt, originalEvent) {
                         	if(confirm("Delete this note?")){
-                        		console.log("deleting note_index"+note_index);
+                        		noisy_log("deleting note_index"+note_index);
                         		currChapter.notes.splice(note_index,1);
                         		delete self.notes[note_id];
                         		self.build_journal(searchText);
@@ -1779,6 +1779,9 @@ class JournalManager{
 		closestNote.find('.abovevtt-slash-command-journal').replaceWith((i, innerHTML) =>{
 			return innerHTML;
 		})
+		if(closestNote[0] == undefined){
+			debugger;
+		}
 		const sanitizedHTML = basic_sanitize_html(closestNote[0].innerHTML).replaceAll(/\[(\/)?spell\]/gi, `[$1spell]`).replaceAll(/\[(\/)?magicitem\]/gi, `[$1magicItem]`).replaceAll(/\[(\/)?item\]/gi, `[$1item]`);
 		const changes = forceSave || $(sanitizedHTML).text().replace(/[\s\n\r]/gi, '') != this.notes[id].plain.replace(/[\s\n\r]/gi, '');
 		if(changes){
@@ -3281,7 +3284,7 @@ class JournalManager{
 					return;
 				}
 
-				console.log(`[PartyLoot] Adding ${quantity} of item ${name} to queue`);
+				noisy_log(`[PartyLoot] Adding ${quantity} of item ${name} to queue`);
 				
 				if (quantity > 10){
 	
@@ -3295,7 +3298,7 @@ class JournalManager{
 								quantity: batchSize
 							}]
 						});
-						console.log(`[PartyLoot] Queued batch of ${batchSize} items`);
+						noisy_log(`[PartyLoot] Queued batch of ${batchSize} items`);
 						remaining -= batchSize;
 					}
 				} else {
@@ -3304,7 +3307,7 @@ class JournalManager{
 						type: 'items',
 						data: itemData
 					});
-					console.log(`[PartyLoot] Queued single batch of ${quantity} items`);
+					noisy_log(`[PartyLoot] Queued single batch of ${quantity} items`);
 				}
 			});
 			$(target).off('click.addAllPartyLootItem').on('click.addAllPartyLootItem', '.item-add-all-button', function (e) {
@@ -4841,7 +4844,6 @@ class JournalManager{
 				});
 			},
 			close: function( event, ui ) {
-				// console.log(event);
 				let taid=$(event.target).find("textarea").attr('id');
 				tinyMCE.get(taid).execCommand('mceSave');
 				$(this).remove();
@@ -6318,7 +6320,7 @@ function render_source_chapter_in_iframe(url) {
 	}
 
 	iframe.on("load", function(event) {
-		console.log(`render_source_chapter_in_iframe is loading ${this.src}`, $(event.target), this);
+		noisy_log(`render_source_chapter_in_iframe is loading ${this.src}`, $(event.target), this);
 		if (!this.src) {
 			// it was just created. no need to do anything until it actually loads something
 			return;

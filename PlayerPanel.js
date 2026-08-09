@@ -1,7 +1,7 @@
 
 function update_pclist() {
 
-	console.log("update_pclist pcs", window.pcs);
+	noisy_log("update_pclist pcs", window.pcs);
 
 	if (window.DM) {
 		// only the players build out the playersPanel. The DM uses tokensPanel

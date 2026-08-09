@@ -97,7 +97,7 @@ class StatHandler {
 
 				let expression = dice + modifier;
 				let roll = new rpgDiceRoller.DiceRoll(expression);
-				console.log(expression + "->" + roll.total);
+				noisy_log(expression + "->" + roll.total);
 				let total = parseFloat(Math.floor(roll.total) + stat/100).toFixed(2);
 				let combatSettingData = getCombatTrackerSettings();
 				if(combatSettingData['tie_breaker'] !='1'){
@@ -114,7 +114,7 @@ class StatHandler {
 				let modifier = Math.floor((data.stats[1].value - 10) / 2.0);
 				let expression = dice + modifier;
 				let roll = new rpgDiceRoller.DiceRoll(expression);
-				console.log(expression + "->" + roll.total);
+				noisy_log(expression + "->" + roll.total);
 				let total = parseFloat(roll.total + data.stats[1].value/100).toFixed(2);
 				let combatSettingData = getCombatTrackerSettings();
 				if(combatSettingData['tie_breaker'] !='1'){
@@ -139,7 +139,7 @@ class StatHandler {
 				let expression = (!isNaN(modifier)) ? dice + modifier : '0';
 				let roll = new rpgDiceRoller.DiceRoll(expression);
 				let decimalAdd = (window.TOKEN_OBJECTS[tokenId]?.options?.customInit != undefined || (window.TOKEN_OBJECTS[tokenId]?.options?.customStat != undefined && window.TOKEN_OBJECTS[tokenId]?.options?.customStat[1]?.mod != undefined)) ? ((modifier * 2) + 10) / 100 : 0
-				console.log(expression + "->" + roll.total);
+				noisy_log(expression + "->" + roll.total);
 				total = parseFloat(roll.total + decimalAdd).toFixed(2);
 			}
 			let combatSettingData = getCombatTrackerSettings();
@@ -159,7 +159,7 @@ class StatHandler {
 				}	
 				let expression = dice + modifier;
 				let roll = new rpgDiceRoller.DiceRoll(expression);
-				console.log(expression + "->" + roll.total);
+				noisy_log(expression + "->" + roll.total);
 				let total = parseFloat(roll.total + stat.data.stats[1].value/100).toFixed(2);
 				let combatSettingData = getCombatTrackerSettings();
 				if(combatSettingData['tie_breaker'] !='1'){

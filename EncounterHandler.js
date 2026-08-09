@@ -64,7 +64,7 @@ class EncounterHandler {
 		}
 		let monsterIds = encounter.monsters.map(m => m.id);
 		if (monsterIds.length > 0) {
-			console.log("fetch_encounter_monsters starting");
+			noisy_log("fetch_encounter_monsters starting");
 			fetch_monsters(monsterIds, callback);
 		}
 	}

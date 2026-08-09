@@ -8,7 +8,7 @@
  */
 function scan_monster(target, stats, tokenId) {
 	console.group("scan_monster")
-	console.log("adding in avtt dice buttons")
+	noisy_log("adding in avtt dice buttons")
 	// remove homebrew panels
 	target.find(".homebrew-creation-actions").remove();
 	target.find(".homebrew-previous-versions").remove();
@@ -194,7 +194,7 @@ function createCountTracker(token, key, remaining, foundDescription, description
 	input.off("change").on("change", function(changeEvent) {
 		resizeInput(input[0]);
 		const updatedValue = changeEvent.target.value;
-		console.log(`add_ability_tracker_inputs ${key} changed to ${updatedValue}`);
+		noisy_log(`add_ability_tracker_inputs ${key} changed to ${updatedValue}`);
 		if(callback && noteId)
 			callback(key, updatedValue, noteId);
 		else

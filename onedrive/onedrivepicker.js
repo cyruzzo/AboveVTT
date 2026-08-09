@@ -180,7 +180,7 @@
                         switch (message.data.type) {
 
                             case "notification":
-                                console.log(`notification: ${message.data}`);
+                                noisy_log(`notification: ${message.data}`);
                                 break;
 
                             case "command":
@@ -223,7 +223,7 @@
 
                                     case "pick":
                            
-                                        console.log(`Picked: ${JSON.stringify(command)}`);
+                                        noisy_log(`Picked: ${JSON.stringify(command)}`);
                                         let embedToken = await getEmbedToken();
                                         let embedLinks=[];
                                         for(let i=0; i<command.items.length; i++){

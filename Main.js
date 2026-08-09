@@ -8,7 +8,7 @@ window.onbeforeunload = function(event)
 		tabCommunicationChannel.postMessage({
       		msgType: 'removeObserver'
     	})
-		console.log("refreshing page, storing zoom first");
+		noisy_log("refreshing page, storing zoom first");
 		add_zoom_to_storage();
 		window.PeerManager.send(PeerEvent.goodbye());
 
@@ -107,7 +107,7 @@ const debounce_font_change = mydebounce(function(){
  */
 function change_zoom(newZoom, x, y, reset = false) {
 	console.group("change_zoom")
-	console.log("zoom", newZoom, x , y)
+	noisy_log("zoom", newZoom, x , y)
 	let zoomCenterX = x || $(window).width() / 2
 	let zoomCenterY = y || $(window).height() / 2
 	// window.VTTMargin is the size of the black area to the left and top of the map
@@ -161,7 +161,7 @@ function change_zoom(newZoom, x, y, reset = false) {
 */
 function add_zoom_to_storage() {
 	console.group("add_zoom_to_storage");
-	console.log("storing zoom");
+	noisy_log("storing zoom");
 
 	const currentDate = Date.now();
 	const zooms = JSON.parse(localStorage.getItem('zoom'))?.filter(z=> !z.title && z.expiryDate != undefined && z.expiryDate>currentDate) || []; // filter out old data that used to be based on scene title rather then id and remove older data to prevent long term storage issues
@@ -211,7 +211,7 @@ function remove_zoom_from_storage(sceneId = window.CURRENT_SCENE_DATA.id) {
 	const zooms = JSON.parse(localStorage.getItem('zoom'))?.filter(z=> !z.title && z.expiryDate != undefined && z.expiryDate>currentDate) || [];
 	const zoomIndex = zooms.findIndex(zoom => zoom.id === sceneId);
 	if (zoomIndex !== -1) {
-		console.log("removing zoom from storage", zooms[zoomIndex]);
+		noisy_log("removing zoom from storage", zooms[zoomIndex]);
 		zooms.splice(zoomIndex, 1);
 	}
 	localStorage.setItem('zoom', JSON.stringify(zooms));
@@ -239,7 +239,7 @@ function apply_zoom_from_storage() {
 			const zooms = JSON.parse(zoomState)?.filter(z => !z.title && z.expiryDate != undefined && z.expiryDate>currentDate) || [];
 			const zoomIndex = zooms.findIndex(zoom => zoom.id === window.CURRENT_SCENE_DATA.id);
 			if(zoomIndex !== -1) {
-				console.log("restoring zoom level", zooms[zoomIndex]);
+				noisy_log("restoring zoom level", zooms[zoomIndex]);
 				change_zoom(zooms[zoomIndex].zoom)
 
 				if(initial_x != undefined && initial_y != undefined)
@@ -249,7 +249,7 @@ function apply_zoom_from_storage() {
 			}
 			else{
 				// Zooms in storage but not for this scene
-				console.log("scene does not have a zoom stored")
+				noisy_log("scene does not have a zoom stored")
 				reset_zoom()
 				if(initial_x != undefined && initial_y != undefined)
 					window.scrollTo(initial_x, initial_y)
@@ -257,7 +257,7 @@ function apply_zoom_from_storage() {
 		}
 		else{
 			// no zooms in storage
-			console.log("no zooms in storage")
+			noisy_log("no zooms in storage")
 			reset_zoom()
 			if(initial_x != undefined && initial_y != undefined)
 				window.scrollTo(initial_x, initial_y)
@@ -354,7 +354,7 @@ function get_reset_zoom() {
 	const wW = w.width()-sidebar_open;
 	const mW = scene_map.width()*sf;
 
-	console.log(wH, mH, wW, mW);
+	noisy_log(wH, mH, wW, mW);
 	return Math.min((wH / mH), (wW / mW));
 }
 
@@ -364,7 +364,7 @@ function get_reset_zoom() {
 */
 function reset_zoom() {
 	console.group("reset_zoom");
-	console.log("zooming on centre of map");
+	noisy_log("zooming on centre of map");
 	// change_zoom is great for mouse zooming, but tricky when just hitting the centre of the map
 	// so don't give it any x/y and just use the scrollIntoView center instead
 	change_zoom(get_reset_zoom(), undefined, undefined, true);
@@ -454,7 +454,7 @@ async function load_scenemap(url, is_video = false, width = null, height = null,
 		window.YTTIMEOUT = null;
 	}
 	$("#youtube_controls_button").css('visibility', 'hidden');
-	console.log("is video? " + is_video);
+
 	if (url.includes("youtube.com") || url.includes("youtu.be")) {
 		$("#youtube_controls_button").css('visibility', '');
 		$("#scene_map_container").toggleClass('video', true);
@@ -538,7 +538,7 @@ async function load_scenemap(url, is_video = false, width = null, height = null,
 
 	}
 	else {
-		console.log("LOAD MAP " + width + " " + height);
+		noisy_log("LOAD MAP " + width + " " + height);
 		$("#scene_map_container").toggleClass('video', true);
 		let newmapSize = 'width: 100vw; height: 100vh;';
 		if (width != null) {
@@ -580,8 +580,8 @@ async function load_scenemap(url, is_video = false, width = null, height = null,
 
 		if (width == null) {
 			newmap.off("loadedmetadata").on("loadedmetadata", function (e) {
-				console.log("video width:", this.videoWidth);
-				console.log("video height:", this.videoHeight);
+				noisy_log("video width:", this.videoWidth);
+				noisy_log("video height:", this.videoHeight);
 				$('#scene_map').width(this.videoWidth);
 				$('#scene_map').height(this.videoHeight);
 				$("#scene_map_container").toggleClass('map-loading', false);
@@ -905,7 +905,6 @@ function load_monster_stat_iframe(monsterId, tokenId) {
 	window.StatHandler.getStat(monsterId, function(stats) {
 		iframe.on("load", function(event) {
 			const contents = $(event.target).contents()
-			console.log('carico mostro');
 			contents.find("body[class*='marketplace']").replaceWith($("<div id='noAccessToContent' style='height: 100%;text-align: center;width: 100%;padding: 10px;font-weight: bold;color: #944;'>You do not have access to this content on DndBeyond.</div>"));
 			contents.find("#mega-menu-target").remove();
 			contents.find(".site-bar").remove();
@@ -1093,7 +1092,6 @@ function build_draggable_monster_window(tokenId) {
  */
 function close_player_monster_stat_block() {
 	$("#resizeDragMon.minimized").dblclick();
-	console.debug("close_player_monster_stat_block is closing the stat block");
 	$("#resizeDragMon").addClass("hideMon");
 }
 
@@ -1338,7 +1336,7 @@ function init_mouse_zoom() {
 		document.addEventListener("touchcancel", function (e) {
 			//still needs to be tested - not sure how to trigger
 			if ((e.touches == undefined || e.touches.length === 0) && touchMode === 2) {
-				console.log("Touch interrupted. Resetting.");
+				noisy_log("Touch interrupted. Resetting.");
 				touchMode = 0;
 				throttledZoom(start_scale, 1); //todo: x,y?
 			}
@@ -1361,7 +1359,7 @@ function init_splash() {
 
 	if (!get_avtt_setting_value("alwaysShowSplash") && localStorage.getItem("AboveVttLastUsedVersion") === window.AVTT_VERSION) {
 		// the user only wants to see the splash screen when there's a new version, and this is not a new version
-		console.log("not showing splash screen", localStorage.getItem("AboveVttLastUsedVersion"), window.AVTT_VERSION)
+		noisy_log("not showing splash screen", localStorage.getItem("AboveVttLastUsedVersion"), window.AVTT_VERSION)
 		return;
 	}
 	localStorage.setItem("AboveVttLastUsedVersion", window.AVTT_VERSION);
@@ -1550,45 +1548,6 @@ function frame_z_index_when_click(moveableFrame, install=false){
 	}
 }
 
-/**
- * Deprecated?
- * NOTE: No reference found within the project
- */
-function observe_character_sheet_companion(documentToObserve){
-	console.group("observe_character_sheet_companion")
-	let mutation_target = documentToObserve.get(0);
-	let mutation_config = { attributes: false, childList: true, characterData: false, subtree: true };
-
-	function handle_observe_character_sheet_companion(e) {
-		e.stopPropagation();
-		console.log(e)
-		let tokenName = $(this).parent().find('.ddbc-extra-name').find("span").text()
-		console.log("pretending to add a companion ", tokenName)
-	}
-	if(window.companion_observer) 
-		window.companion_observer.disconnect();
-	window.companion_observer = new MutationObserver(function() {
-		let extras = documentToObserve.find(".ct-extra-row__preview:not('.above-vtt-visited')");
-		if (extras.length > 0){
-			extras.wrap(function() {
-				$(this).addClass("above-vtt-visited");
-				let button = $("<button class='above-aoe integrated-dice__container' aria-label=Add "+$(this.closest(".ddbc-extra-name"))+" to encounter></button>");
-				button.css("border-width","1px");
-				button.css("min-height","34px");
-				button.click((e) => handle_observe_character_sheet_companion(e))
-				button.attr("data-shape", "set-me");
-				button.attr("data-style", "set-me");
-				button.attr("data-size", "set-me");
-				set_full_path(button, SidebarListItem.Aoe(shape, style, size).fullPath());
-				enable_draggable_token_creation(button);
-				return button;
-			})
-			console.log(`${extras.length} companions discovered`);
-		}
-	});
-	companion_observer.observe(mutation_target,mutation_config);
-	console.groupEnd()
-}
 
 
 /**
@@ -1698,7 +1657,7 @@ function open_player_sheet(sheet_url, closeIfOpen = true, playerName = '') {
 	if($("#sheet.minimized").length > 0) {
 		$("#sheet.minimized").dblclick();
 	}
-	console.log("open_player_sheet"+sheet_url);
+	noisy_log("open_player_sheet"+sheet_url);
 
 	
 	close_player_sheet(); // always close before opening
@@ -1719,7 +1678,7 @@ function open_player_sheet(sheet_url, closeIfOpen = true, playerName = '') {
 	// lock this sheet
 	window.MB.sendMessage("custom/myVTT/lock", { player_sheet: sheet_url });
 	iframe.off("load").on("load", function(event) {
-		console.log("fixing up the character sheet");
+		noisy_log("fixing up the character sheet");
 		const where = $(event.target)[0].contentDocument;
 
 		window.AVTT_INJECT("char", where);
@@ -1796,7 +1755,7 @@ function open_player_sheet(sheet_url, closeIfOpen = true, playerName = '') {
 			}
 			</style>
 		`);
-		console.log("removing headers");
+		noisy_log("removing headers");
 
 		if (window.JOINTHEDICESTREAM) {
 			joinDiceRoom();
@@ -2088,7 +2047,7 @@ function init_sidebar_resize_handle() {
  * Initializes the user interface.
  */
 function init_ui() {
-	console.log("init_ui");
+	noisy_log("init_ui");
 
 	// On iOS make sure browser zoom is zero-d out
 	if (isIOS()) { //might also be useful on other mobile. not sure.
@@ -2283,7 +2242,7 @@ function init_ui() {
 		let  mousex = Math.round((e.pageX - window.VTTMargin) * (1.0 / window.ZOOM));
 		let  mousey = Math.round((e.pageY - window.VTTMargin) * (1.0 / window.ZOOM));
 
-		console.log("mousex " + mousex + " mousey " + mousey);
+		noisy_log("mousex " + mousex + " mousey " + mousey);
 
 		data = {
 			x: mousex,
@@ -2587,7 +2546,7 @@ function init_zoom_buttons() {
 	let zoom_section = $("<div id='zoom_buttons' />");
 	const youtube_controls_button = $(`<div id='youtube_controls_button' class='ddbc-tab-options--layout-pill hasTooltip button-icon hideable' data-name='Quick toggle youtube controls'></div>`);
 	youtube_controls_button.click(function (event) {
-		console.log("youtube_controls_button", event);
+		noisy_log("youtube_controls_button", event);
 		const iconWrapper = $(event.currentTarget).find(".ddbc-tab-options__header-heading");
 		if (iconWrapper.hasClass('ddbc-tab-options__header-heading--is-active')) {
 			iconWrapper.removeClass('ddbc-tab-options__header-heading--is-active');
@@ -2612,7 +2571,7 @@ function init_zoom_buttons() {
 			</div></div>
 			`);
 		dm_screen_button.click(function (event) {
-			console.log("dm_screen_button", event);
+			noisy_log("dm_screen_button", event);
 			const dmScreen = $(`#dmScreenDragContainer`);
 			if (dmScreen.length > 0){
 				dmScreen.show();
@@ -2628,7 +2587,7 @@ function init_zoom_buttons() {
 
 
 		projector_toggle.click(function (event) {
-			console.log("projector_toggle", event);
+			noisy_log("projector_toggle", event);
 			const iconWrapper = $(event.currentTarget).find(".ddbc-tab-options__header-heading");
 			if (iconWrapper.hasClass('ddbc-tab-options__header-heading--is-active')) {
 				iconWrapper.removeClass('ddbc-tab-options__header-heading--is-active');
@@ -2643,7 +2602,7 @@ function init_zoom_buttons() {
 				
 		const projector_zoom_lock = $(`<div id='projector_zoom_lock' class='ddbc-tab-options--layout-pill hasTooltip button-icon hideable' data-name='Quick toggle projector zoom lock'></div>`);
 		projector_zoom_lock.click(function (event) {
-			console.log("projector_toggle", event);
+			noisy_log("projector_toggle", event);
 			const iconWrapper = $(event.currentTarget).find(".ddbc-tab-options__header-heading");
 			if (iconWrapper.hasClass('ddbc-tab-options__header-heading--is-active')) {
 				iconWrapper.removeClass('ddbc-tab-options__header-heading--is-active');
@@ -2671,7 +2630,7 @@ function init_zoom_buttons() {
 
 		const cursor_ruler_toggle = $(`<div id='cursor_ruler_toggle' class='ddbc-tab-options--layout-pill hasTooltip button-icon hideable' data-name='Send Cursor/Ruler To Players'></div>`);
 		cursor_ruler_toggle.click(function (event) {
-			console.log("cursor_ruler_toggle", event);
+			noisy_log("cursor_ruler_toggle", event);
 			const iconWrapper = $(event.currentTarget).find(".ddbc-tab-options__header-heading");
 			if (iconWrapper.hasClass('ddbc-tab-options__header-heading--is-active')) {
 				iconWrapper.removeClass('ddbc-tab-options__header-heading--is-active');
@@ -3685,7 +3644,7 @@ function resize_player_sheet_full_width() {
 function resize_player_sheet_thin() {
 	reset_character_sheet_css();
 	if (window.innerWidth < 1024) {
-		console.log("resize_player_sheet_thin calling is setting full, and calling reposition_player_sheet");
+		noisy_log("resize_player_sheet_thin calling is setting full, and calling reposition_player_sheet");
 		player_sheet_layout = "full";
 		reposition_player_sheet();
 		return;
@@ -3809,7 +3768,6 @@ function reset_character_sheet_css() {
 		"height": maxHeight,
 	});
 	let scrollBarWidth = $.position.scrollbarWidth();
-	console.debug("scrollBarWidth", scrollBarWidth);
 	$(".ct-sidebar").css({ "height": `calc(100vh - ${scrollBarWidth - 2}px)` });
 	$(".ct-character-header-tablet").css({ "background": "rgba(0, 0, 0, 0.85)" });
 }
@@ -4061,7 +4019,7 @@ function adjust_site_bar() {
 		fullWidth = "100%"; // when the DM is viewing, cover the entire thing
 	}
 
-	console.log(`adjust_site_bar setting width to ${fullWidth}`);
+	noisy_log(`adjust_site_bar setting width to ${fullWidth}`);
 	$(".site-bar").css({
 		"position": "fixed",
 		"height": "30px",

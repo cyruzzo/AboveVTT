@@ -179,7 +179,7 @@ const debounceHandleInjected = mydebounce(() => {
 									console.warn("imageHtml failed to load image", el, e);
 									return;
 								}
-								console.log("imageHtml failed to load image. Trying nextUrl", nextUrl, el, e);
+								noisy_log("imageHtml failed to load image. Trying nextUrl", nextUrl, el, e);
 								el.attr("src", nextUrl);
 								el.attr("href", nextUrl);
 							}
@@ -327,12 +327,12 @@ class MessageBroker {
 				recovered = true;
 			}
 			let cb;
-			console.log('Empting callback queue list');
+			noisy_log('Empting callback queue list');
 			while (cb = self.callbackAboveQueue.shift()) {
 				cb();
 			};
 			if (recovered && (!window.DM)) {
-				console.log('asking the DM for recovery!');
+				noisy_log('asking the DM for recovery!');
 				debounceSyncMeUp();
 	 		}
 			setupMBIntervals();
@@ -619,10 +619,10 @@ class MessageBroker {
 						if(tries==0)
 							self.stats.peers[msg.sender].future++;
 						
-						console.log("MSG in the future. (was expecting "+shouldbethis+" but we got "+msg.sequence+ " retries :" + tries);
+						noisy_log("MSG in the future. (was expecting "+shouldbethis+" but we got "+msg.sequence+ " retries :" + tries);
 						if(tries<20){
 							setTimeout(self.onmessage,300,event,tries+1);
-							console.log("trying to fix");
+							noisy_log("trying to fix");
 							return;
 						}
 						else{
@@ -636,7 +636,7 @@ class MessageBroker {
 								console.error("Sequence message is in the past. We should try to recover");
 							}
 							else{
-								console.log("message in the past, but the che connection is new.. so.. I guess it's ok");
+								noisy_log("message in the past, but the che connection is new.. so.. I guess it's ok");
 							}
 							
 					}
@@ -904,7 +904,7 @@ class MessageBroker {
 
 				// CHECK FOR INIT ROLLS (auto add to combat tracker)
 				if (msg.data.action.toLowerCase() == "initiative") {
-					console.log(msg.data);
+					noisy_log(msg.data);
 					let total = parseFloat(msg.data.rolls[0].result.total);
 					let entityid = msg.data.context.entityId;
 
@@ -979,7 +979,7 @@ class MessageBroker {
 				"custom/myVTT/pointer",
 				"custom/myVTT/place-extras-token"
 			].includes(msg.eventType))) {
-				console.log("skipping msg from a different scene");
+				noisy_log("skipping msg from a different scene");
 				return;
 			}
 			if(msg.eventType == "character-sheet/item-shared/fulfilled"){
@@ -1109,7 +1109,7 @@ class MessageBroker {
 			} else if(msg.eventType == ('custom/myVTT/character-update')){
 				update_pc_with_data(msg.data.characterId, msg.data.pcData);
 			} else if(msg.eventType == ('character-sheet/character-update/fulfilled')) {
-				console.log('update_pc character-sheet/character-update/fulfilled', msg);
+				noisy_log('update_pc character-sheet/character-update/fulfilled', msg);
 				update_pc_with_api_call(msg.data?.characterId);
 			} else if (msg.eventType == "custom/myVTT/reveal") {
 				window.REVEALED.push(msg.data);
@@ -1488,8 +1488,7 @@ class MessageBroker {
 				}
 
 				peer.addEventListener('track', (event) => {
-					console.log("aggiungo video!!!!");
-				     addVideo(event.streams[0],msg.data.from);
+				    addVideo(event.streams[0],msg.data.from);
 				});
 				window.makingOffer = [];
 				window.makingOffer[msg.data.from] = false;
@@ -1517,7 +1516,6 @@ class MessageBroker {
 					try {
 						window.makingOffer[msg.data.from] = true;
 						peer.createOffer({offerToReceiveVideo: 1}).then( (desc) => {
-							console.log("fatto setLocalDescription");
 							peer.setLocalDescription(desc);
 							self.sendMessage("custom/myVTT/okletmeseeyourdice",{
 								to: msg.data.from,
@@ -1559,7 +1557,6 @@ class MessageBroker {
 				}
 
 				peer.addEventListener('track', (event) => {
-					console.log("aggiungo video!!!!");
 				  addVideo(event.streams[0],msg.data.from);
 				});
 				window.makingOffer = [];
@@ -1568,7 +1565,6 @@ class MessageBroker {
 					try {
 						window.makingOffer[msg.data.from] = true;
 						peer.createOffer({offerToReceiveVideo: 1}).then( (desc) => {
-							console.log("fatto setLocalDescription");
 							peer.setLocalDescription(desc);
 							self.sendMessage("custom/myVTT/okletmeseeyourdice",{
 								to: msg.data.from,
@@ -1625,13 +1621,11 @@ class MessageBroker {
 				}		
 				peer = window.STREAMPEERS[msg.data.from];
 				peer.setRemoteDescription(msg.data.offer);
-				console.log("fatto setRemoteDescription");
 				window.STREAMPEERS[msg.data.from] = peer;	
 	
 		
 				peer.createAnswer().then( (desc) => {
 				peer.setLocalDescription(desc);
-				console.log("fatto setLocalDescription");
 					
 				window.MB.sendMessage("custom/myVTT/okseethem",{
 						from: window.MYSTREAMID,
@@ -1649,7 +1643,6 @@ class MessageBroker {
 
 				let peer=window.STREAMPEERS[msg.data.from];
 				peer.setRemoteDescription(msg.data.answer);
-				console.log("fatto setRemoteDescription");
 			} else if (msg.eventType === "custom/myVTT/peerReady") {
 				window.PeerManager.receivedPeerReady(msg);
 			} else if (msg.eventType === "custom/myVTT/peerConnect") {
@@ -1845,7 +1838,7 @@ class MessageBroker {
 				window.CURRENT_SCENE_DATA.offsety=parseFloat(window.CURRENT_SCENE_DATA.offsety*window.CURRENT_SCENE_DATA.scale_factor);
 				$('#vision_menu #draw_line_width').val(window.CURRENT_SCENE_DATA.hpps);
 				$('#fog_menu #draw_line_width').val(window.CURRENT_SCENE_DATA.hpps);
-				console.log("SETTO BACKGROUND A " + msg.data);
+
 				$("#tokens").children().remove();
 				$(".aura-element[id^='aura_'").remove();
 				$(".aura-clip-container").remove();
@@ -2172,13 +2165,13 @@ class MessageBroker {
 
 		if(nextAfterCurrent.length > 0){
 			let nextCombatantId = nextAfterCurrent.attr('data-target');
-			console.log(nextCombatantId);
+			noisy_log(nextCombatantId);
 			if(nextCombatantId && window.TOKEN_OBJECTS[nextCombatantId]){
 				let token = window.TOKEN_OBJECTS[nextCombatantId];
-				console.log(token);
+				noisy_log(token);
 				if(token.isPlayer()){
 					let playerId = getPlayerIDFromSheet(token.options.id);
-					console.log(playerId)
+					noisy_log(playerId)
 					if(playerId && playerId != -1 && playerId != 'DM'){
 						nextPlayerId = playerId;
 					}
@@ -2488,7 +2481,7 @@ class MessageBroker {
 			}
 			else if(window.MIXER){
 				const state = window.MIXER.remoteState();
-				console.log('pushing mixer state to players', state);
+				noisy_log('pushing mixer state to players', state);
 				window.MB.sendMessage('custom/myVTT/mixer', state);
 				if (window.YTPLAYER) {
 						window.YTPLAYER.volume = $("#youtube_volume").val();
