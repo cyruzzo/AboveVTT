@@ -2122,6 +2122,14 @@ class JournalManager{
 				}
 				self.persistStatBlockContent(id, note_text, note_container, {forceSave: true, rescanStatBlock: false});
 			})
+			note_container.off('pointerdown.profChange, touchstart.profChange').on('pointerdown.profChange, touchstart.profChange', '.prof-checkbox', (e)=>{
+				e.preventDefault();
+				const target = $(e.currentTarget);
+				const currentState = parseInt(target.attr('data-state'));
+				const newState = (currentState + 1) % 4;
+				target.attr('data-state', newState);
+				self.persistStatBlockContent(id, note_text, note_container, {forceSave: true, rescanStatBlock: false});
+			})
 			this.positionNotePins(id, note_text);
 			note_text[0].scrollTop = scrollTop;
 			
@@ -2214,14 +2222,7 @@ class JournalManager{
 					$table.after(add_table_row);
 				});
 			
-				note_container.off('pointerdown.profChange, touchstart.profChange').on('pointerdown.profChange, touchstart.profChange', '.prof-checkbox', (e)=>{
-					e.preventDefault();
-					const target = $(e.currentTarget);
-					const currentState = parseInt(target.attr('data-state'));
-					const newState = (currentState + 1) % 4;
-					target.attr('data-state', newState);
-					self.persistStatBlockContent(id, note_text, note_container, {forceSave: true, rescanStatBlock: false});
-				})
+
 				note_container.off('pointerdown.addRow, touchstart.addRow').on('pointerdown.addRow, touchstart.addRow', '.add-table-row', function (e) {
 					e.preventDefault();
 					const table = $(e.target).prev('table');
@@ -2938,7 +2939,9 @@ class JournalManager{
 
                 return `${languageText}`
             })
-			input = input.replace(/\[profCheckbox\]/gi, `<div data-state="0" class="prof-checkbox" contenteditable="false"><svg name="preventRemove" class="prof-icon"> <circle cx="9" cy="9" r="6" class="base-circle"></circle> <path d="M 9 3 A 3 3 0 0 0 9 15 Z" class="half-fill"></path> <circle cx="9" cy="9" r="6" class="full-fill"></circle> <circle cx="9" cy="9" r="8" class="ring-stroke"></circle> </svg></div>`);
+			input = input.replace(/\[prof\s*(\d*)\]/gi, function(m, m1){
+				const state = isNaN(parseInt(m1)) ?  0 : parseInt(m1) % 4;
+			});
 			input = input.replace(/\[checkbox checked\]/gi, `<input type="checkbox" checked>`);
 			input = input.replace(/\[checkbox\]/gi, `<input type="checkbox">`);
             input = input.replace(/\[note\](.*?)\[\/note\]/g, function(m){
@@ -4223,6 +4226,68 @@ class JournalManager{
 			.ddbc-creature-block:after {
 			    bottom: -3px
 			}
+			.prof-checkbox {
+				display: inline-flex;
+				align-items: center;
+				cursor: pointer;
+			}
+			.prof-icon {
+				width: 18px;
+				height: 18px;
+			}
+			.base-circle {
+				fill: none;
+				stroke: color-mix(in srgb, var(--font-color, #333) 50%, transparent 0%) !important;
+				stroke-width: 1;
+			}
+
+			.half-fill, .full-fill, .ring-stroke {
+				opacity: 0;
+				transition: opacity 0.15s ease;
+			}
+
+			.prof-checkbox[data-state="1"] .half-fill {
+				opacity: 1;
+			}
+
+			.prof-checkbox[data-state="2"] .full-fill {
+				opacity: 1;
+
+			}
+
+			.prof-checkbox[data-state="3"] .full-fill {
+				opacity: 1;
+			}
+			.prof-checkbox[data-state="3"] .ring-stroke {
+				opacity: 1;
+				fill: none;
+
+				stroke-width: 1;
+			}
+			table :has(>.prof-checkbox){
+				display: inline-flex;
+				align-items: center;  
+			}
+			.prof-checkbox .base-circle{
+				stroke: color-mix(in srgb, var(--font-color, #333) 50%, transparent 0%) !important;
+			}
+			.prof-checkbox[data-state="1"] .half-fill {
+				fill: var(--font-color, #333) !important;
+			}
+
+			.prof-checkbox[data-state="2"] .full-fill {
+
+				fill: var(--font-color, #333) !important;
+			}
+
+			.prof-checkbox[data-state="3"] .full-fill {
+
+				fill: var(--font-color, #333) !important;
+			}
+			.prof-checkbox[data-state="3"] .ring-stroke {
+				fill: none !important;
+				stroke: var(--font-color, #333) !important;
+			}
 			.dnd-sheet {
 				font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 				color: var(--pc-template-text-color, #111);
@@ -4233,26 +4298,7 @@ class JournalManager{
 				font-size: 11px;
 				line-height: 1.2;
 
-				.prof-checkbox .base-circle{
-					stroke: color-mix(in srgb, var(--font-color, #333) 50%, transparent 0%) !important;
-				}
-				.prof-checkbox[data-state="1"] .half-fill {
-					fill: var(--font-color, #333) !important;
-				}
-
-				.prof-checkbox[data-state="2"] .full-fill {
-
-					fill: var(--font-color, #333) !important;
-				}
-
-				.prof-checkbox[data-state="3"] .full-fill {
-
-					fill: var(--font-color, #333) !important;
-				}
-				.prof-checkbox[data-state="3"] .ring-stroke {
-					fill: none !important;
-					stroke: var(--font-color, #333) !important;
-				}
+				
 
 				.table-row-drag-handle {
 					width: 15px;
@@ -4340,6 +4386,10 @@ class JournalManager{
 					border-radius: 4px;
 					box-sizing: border-box;
 				}
+				
+				.abilities-table-container .prof-checkbox{
+					scale:0.7;
+				}
 				.section-title {
 					font-size: 10px;
 					font-weight: bold;
@@ -4375,52 +4425,7 @@ class JournalManager{
 					visibility: visible !important;
 					background: rgba(0, 0, 0, 0.08);
 				}
-				.prof-checkbox {
-					display: inline-flex;
-					align-items: center;
-					gap: 8px;
-					cursor: pointer;
-					user-select: none;
-					font-family: sans-serif;
-				}
-
-				.prof-icon {
-					width: 18px;
-					height: 18px;
-				}
-
-	
-				.base-circle {
-					fill: none;
-					stroke: color-mix(in srgb, var(--font-color, #333) 50%, transparent 0%) !important;
-					stroke-width: 1;
-				}
-
-				.half-fill, .full-fill, .ring-stroke {
-					opacity: 0;
-					transition: opacity 0.15s ease;
-				}
-
-				.prof-checkbox[data-state="1"] .half-fill {
-					opacity: 1;
-					fill: #333;
-				}
-
-				.prof-checkbox[data-state="2"] .full-fill {
-					opacity: 1;
-					fill: #333;
-				}
-
-				.prof-checkbox[data-state="3"] .full-fill {
-					opacity: 1;
-					fill: #333;
-				}
-				.prof-checkbox[data-state="3"] .ring-stroke {
-					opacity: 1;
-					fill: none;
-					stroke: #333;
-					stroke-width: 1;
-				}
+				
 				.note-text .table-row-drag-handle {
 					width: 15px;
 					min-width: 15px;
