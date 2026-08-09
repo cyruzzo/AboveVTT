@@ -959,6 +959,7 @@ class SidebarListItem {
   nameOrContainingFolderMatches(searchTerm) {
     if (typeof this.name !== "string") return false;
     let fullPath = this.fullPath().replace(/^(\/Scenes)/i, '')
+    searchTerm = searchTerm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); 
     return fullPath.match(new RegExp(searchTerm, 'i')) != null;
   }
 }
