@@ -2829,7 +2829,7 @@ class JournalManager{
 						item = window.ITEMS_CACHE.filter(d => d.name.toLowerCase() == text.toLowerCase())
 					}
 					if(!item.length){
-						let item = window.SPELLS_CACHE.filter(d => d.definition.name.toLowerCase() == text.toLowerCase() && d.isLegacy == isLegacy)
+						item = window.SPELLS_CACHE.filter(d => d.definition.name.toLowerCase() == text.toLowerCase() && d.definition.isLegacy == isLegacy)
 						if(!item.length){
 							item = window.SPELLS_CACHE.filter(d => d.definition.name.toLowerCase() == text.toLowerCase())
 						}
@@ -2859,11 +2859,14 @@ class JournalManager{
 							return p.name; 
 						}).join(', ');
 						noteCell.text(`${propertyNames}`);
-					}
+					} else if(type == 'spell' && range != undefined && noteCell.text().trim() == ''){
+						const aoeValue = range.aoeValue;
+						const aoeType = range.aoeType;
+						const aoeText = aoeValue && aoeType ? `${aoeValue}-foot${aoeType == 'Sphere' ? '-radius' : ''} ${aoeType}` : '';
+							
+						noteCell.text(`Range ${range.rangeValue > 0 ? `${range.rangeValue} ft.` : `${range.origin}`}${aoeText != '' ? `, ${aoeText}` : ''}`);
 						
-
-					
-
+					}
 				}
 			}
 		}
