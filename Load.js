@@ -26,7 +26,32 @@
             return; //don't load anything
         }
     } else{
-        //Load this as soon as possible for new dice
+        //Load this as soon as possible for new dice, gets the workers for the dice 
+        (function() {
+            const OriginalWorker = window.Worker;
+            window.Worker = function(scriptURL, options) {
+                const worker = new OriginalWorker(scriptURL, options);
+                if(window.ActiveWorkers == undefined) window.ActiveWorkers = {};
+                
+                const originalPostMessage = worker.postMessage;
+                worker.postMessage = async function(message, transfer) {
+                    console.log('worker Messages', message);
+                    if (message && typeof message === 'object' && message.type == 'resize') {
+                        await originalPostMessage.call(worker, message, transfer);
+                        // Need to do this due to a DDB bug that causes an infinite loop that hurts lower end pcs performance
+                        // We reset the props after resizing the window since on resize DDB resets frameloop to 'always' 
+                        // Without resizing the window it stays 'demand' but we force resize events
+                        // This bug exists on base DDB without AboveVTT but being in AVTT makes it worse on performance
+                        worker.postMessage({"type": "props", "payload": { "dpr": 1, "frameloop": "demand" }});
+                        return;
+                    }
+                    return originalPostMessage.call(worker, message, transfer);
+                };
+                window.ActiveWorkers[scriptURL] = worker;
+                return worker;
+            };
+        })();
+
         function interceptRollEvent(e) {
             if(e.button == 2) return;
             const newDice = $("[class*='DiceContainer_button']").length > 0;
