@@ -379,7 +379,7 @@ function import_pc_template_html(files, parentEle, customStatId, tokenId) {
           window.JOURNAL.track_ability(target, value, customStatId);
         }
       })
-      debounceRescanStatBlock(parentEle, customStatId, tokenId);
+      debounceRescanStatBlock(parentEle.closest('.resize_drag_window'), customStatId, tokenId);
       window.JOURNAL.notes[customStatId].text = sanitizedHTML.replaceAll(/\[(\/)?spell\]/gi, `[$1spell]`).replaceAll(/\[(\/)?magicitem\]/gi, `[$1magicItem]`).replaceAll(/\[(\/)?item\]/gi, `[$1item]`); 
       window.JOURNAL.notes[customStatId].plain = $(window.JOURNAL.notes[customStatId].text).text();
       debounceSendNote(customStatId, window.JOURNAL.notes[customStatId], tokenId);
