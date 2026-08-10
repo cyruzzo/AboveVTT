@@ -506,19 +506,33 @@ function init_mixer() {
 
     // clear button
 
-    let addPlaylistButton = $('<button id="add-playlist">Add Playlist</button>');
+    let addPlaylistButton = $('<button id="add-playlist" title="Add Playlist"><span class="material-symbols-outlined">playlist_add</span></button>');
    
     const playlistFields = $("<div id='playlistFields'></div>")
     const playlistName = $(`<input class='trackName trackInput' placeholder='Playlist Name'/>`)
     const okButton = $('<button class="add-track-ok-button">OK</button>');  
     const cancelButton = $('<button class="add-track-cancel-button">X</button>');  
     let copyPlaylist = false;
+    const setMixerListHeight = (offset) => {
+        const size = $('#sounds-panel .sidebar-panel-header').height();
+        const mixerListHeight = Math.max(0, size - offset);
+        $('#mixer-channels').css({
+            'transition': 'max-height 250ms ease',
+            'max-height': `${mixerListHeight}px`
+        });
+        setTimeout(() => {
+            $('#mixer-channels').css('transition', '');
+        }, 250);
+    }
     addPlaylistButton.off().on("click", function(){
         copyPlaylist = false;
         playlistFields.css("height", "25px");
+        setMixerListHeight(93);
     });
     cancelButton.off().on("click", function(){
         playlistFields.css("height", "0px");
+        const size = $('#sounds-panel .sidebar-panel-header').height();
+        setMixerListHeight(68);
     });
     okButton.off().on("click", function(){
         playlistFields.css("height", "0px");
@@ -529,10 +543,11 @@ function init_mixer() {
                 window.MIXER.addPlaylist(playlistName.val(), true);
         }
         playlistName.val('');
+        setMixerListHeight(68);
     });
     playlistFields.append(playlistName, okButton, cancelButton);
 
-    let copyPlaylistButton = $('<button id="add-playlist">Copy</button>');
+    let copyPlaylistButton = $('<button id="copy-playlist" title="Copy Playlist"><span class="material-symbols-outlined">copy_all</span></button>');
     copyPlaylistButton.off().on('click', function(e){
         copyPlaylist = true;
         playlistFields.css("height", "25px");
@@ -540,7 +555,7 @@ function init_mixer() {
         playlistName.select();
     });
 
-    let removePlaylistButton = $('<button id="remove-playlist">Remove</button>');
+    let removePlaylistButton = $('<button id="remove-playlist" title="Delete Playlist"><span class="material-symbols-outlined">delete</span></button>');
 
     removePlaylistButton.off().on('click', function(e){
         window.MIXER.deletePlaylist(window.MIXER.selectedPlaylist());
