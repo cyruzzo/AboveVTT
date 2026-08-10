@@ -1283,7 +1283,7 @@ class DiceRoller {
                 noisy_log("rolledExpressions: ", rolledExpressions);
                 let valuesToMatch = r.result.values;
                 rolledExpressions.forEach(diceExpression => {
-                    cnoisy_log("diceExpression: ", diceExpression);
+                    noisy_log("diceExpression: ", diceExpression);
                     let diceType = diceExpression.match(/d\d+/g);
                     let numberOfDice = parseInt(diceExpression.split("d")[0]);
                     if (matchedValues[diceType] === undefined) {

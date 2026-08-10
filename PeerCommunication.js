@@ -352,7 +352,6 @@ function peer_said_goodbye(eventData) {
 
 /** called when we receive a {@link PeerEvent.preferencesChange} event */
 function peer_changed_preferences(eventData) {
-  console.debug("peer_changed_preferences", eventData);
 
   store_peer_preferences(eventData);
 
