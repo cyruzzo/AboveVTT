@@ -2210,6 +2210,9 @@ function getNonLegacyItemId(options){
     return newItem[0].id;
 }
 const fetch_tooltip = mydebounce(async (dataTooltipHref, name, callback, callbackTarget) => {
+  return await fetch_tooltip_immediate(dataTooltipHref, name, callback, callbackTarget);
+}, 200);
+const fetch_tooltip_immediate = async (dataTooltipHref, name, callback, callbackTarget) => {
     // dataTooltipHref will look something like this `//www.dndbeyond.com/spells/2329-tooltip?disable-webm=1&disable-webm=1`
     // we only want the `spells/2329` part of that
     try {
@@ -2399,8 +2402,7 @@ const fetch_tooltip = mydebounce(async (dataTooltipHref, name, callback, callbac
     } catch(error) {
         console.warn("Failed to find tooltip info in", dataTooltipHref, error);
     }
-}, 200);
-
+}
 
 function add_tooltip_aoe_buttons(html, tokenId){
   const icons = html.find(".aoe-size i:not('.above-vtt-visited')");

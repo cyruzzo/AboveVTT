@@ -795,8 +795,8 @@ async function embedDDBSection(target){
     let url = $section.text().replaceAll("’", "'");
     if(!url.includes('dndbeyond.com/sources'))
       continue;
-    const promise = new Promise(async (resolve, reject) => { 
-      fetch_tooltip([undefined, url], url, (tooltip)=>{
+    const promise = new Promise((resolve, reject) => { 
+      fetch_tooltip_immediate([undefined, url], url, (tooltip)=>{
         resolve(tooltip);
       });
     });
