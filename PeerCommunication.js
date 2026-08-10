@@ -106,7 +106,7 @@ class PeerEvent {
 /** Every time PeerManager receives an event on a connection, it sends it here to be handled. Nothing else should call this function */
 function handle_peer_event(eventData) {
   try {
-    noisy_log("handle_peer_event", eventData);
+    noisy_log(4, "handle_peer_event", eventData);
     switch (eventData.message) {
       case PeerEventType.cursor:            handle_peer_cursor_event(eventData); break;
       case PeerEventType.goodbye:           peer_said_goodbye(eventData); break;
@@ -514,13 +514,13 @@ function init_peer_fade_function(playerId) {
 
 /** a debounced function that will send {@link PeerEvent.cursor} event to all peers */
 const sendRulerPositionToPeers = throttle( () => {
-  noisy_log("sendRulerPositionToPeers");
+  noisy_log(4, "sendRulerPositionToPeers");
   window.PeerManager.send(PeerEvent.cursor(undefined, undefined, undefined, true));
 }, 50);
 
 /** a debounced function that will send {@link PeerEvent.cursor} event to all peers */
 const sendTokenPositionToPeers = throttle( (tokenX, tokenY, tokenId, includeRuler) => {
-  noisy_log("sendTokenPositionToPeers", tokenX, tokenY, tokenId, includeRuler);
+  noisy_log(4, "sendTokenPositionToPeers", tokenX, tokenY, tokenId, includeRuler);
   window.PeerManager.send(PeerEvent.cursor(tokenX, tokenY, tokenId, includeRuler));
 }, 50);
 
@@ -529,12 +529,12 @@ const sendCursorPositionToPeers = throttle( (mouseMoveEvent) => {
   try {
     if (pauseCursorEventListener) return;
     if (is_player_sheet_open()) {
-      noisy_log("sendCursorPositionToPeers is_player_sheet_open");
+      noisy_log(4, "sendCursorPositionToPeers is_player_sheet_open");
       return;  // ideally, we would add the event listener to the map only, but I couldn't find a clean way to do that without restructuring things
     }
 
     let [mouseX, mouseY] = get_event_cursor_position(mouseMoveEvent, true);
-    noisy_log("sendCursorPositionToPeers", mouseX, mouseY);
+    noisy_log(4, "sendCursorPositionToPeers", mouseX, mouseY);
     window.PeerManager.send(PeerEvent.cursor(mouseX, mouseY, undefined, false));
   } catch (error) {
     console.log("Failed to sendCursorPositionToPeers", error);
@@ -603,7 +603,7 @@ function handle_peer_cursor_event(eventData) {
         return; // we're handling the ruler data. No need to check cursors below
     }
   } catch (error) {
-    noisy_log("handle_peer_cursor_event", eventData, error);
+    noisy_log(4, "handle_peer_cursor_event", eventData, error);
   }
 }
 
@@ -646,7 +646,7 @@ function update_peer_cursor(eventData) {
       if (!currentTurn.includes(pendingEvent.playerId)) return; // combat is active, but this cursor does not match the current turn
     }
 
-    noisy_log("update_peer_cursor", pendingEvent);
+    noisy_log(4, "update_peer_cursor", pendingEvent);
 
     const playerId = pendingEvent.playerId === dm_id ? "DM" : pendingEvent.playerId; // dm_id has whitespace in it which messes with html selectors
     let cursorPosition = $(`#cursorPosition-${playerId}`);
@@ -730,7 +730,7 @@ function update_peer_ruler(eventData) {
     }
 
     // we're not checking receiveRulerFromPeers because we did that in handle_peer_cursor_event
-    noisy_log("update_peer_ruler", pendingEvent);
+    noisy_log(4, "update_peer_ruler", pendingEvent);
 
     if (window.CURRENT_SCENE_DATA && window.CURRENT_SCENE_DATA.id !== pendingEvent.sceneId) return; // they're on a different scene
     const waypointManager = get_peer_waypoint_manager(pendingEvent.playerId, pendingEvent.color);
@@ -747,21 +747,21 @@ function peer_is_dragging_token(eventData) {
   if (typeof eventData.tokenId !== "string" || eventData.tokenId.length === 0) return;
   let html = window.PEER_TOKEN_DRAGGING[eventData.playerId];
   if (!html || html.length === 0) {
-    noisy_log("peer_is_dragging_token no html", eventData);
+    noisy_log(4, "peer_is_dragging_token no html", eventData);
     html = $(`#tokens div[data-id='${eventData.tokenId}']`).clone();
     html.attr("data-clone-id", `dragging-${eventData.tokenId}`);
     html.attr("data-id", ``);
     html.removeClass('tokenselected underDarkness ui-draggable-dragging pause_click ui-draggable ui-draggable-handle');
     html.css('opacity', '0.5')
     if (!html || html.length === 0) {
-      noisy_log("peer_is_dragging_token no token on scene matching", `#tokens div[data-id='${eventData.tokenId}']`, eventData);
+      noisy_log(4, "peer_is_dragging_token no token on scene matching", `#tokens div[data-id='${eventData.tokenId}']`, eventData);
       return;
     }
     window.PEER_TOKEN_DRAGGING[eventData.playerId] = html;
     $("#tokens").append(html);
   }
 
-  noisy_log("peer_is_dragging_token updating drag token css", eventData, html);
+  noisy_log(4, "peer_is_dragging_token updating drag token css", eventData, html);
   html.css({
     top: eventData.y,
     left: eventData.x

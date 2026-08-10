@@ -8676,7 +8676,6 @@ function redraw_light(darknessMoved = false, limitActiveRays = 0) {
 				}
 			}
 		}
-
 	}
 
 
