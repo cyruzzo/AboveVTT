@@ -2309,21 +2309,21 @@ class JournalManager{
 				monsterIds.push(monsterId);
 				window.JOURNAL.addTokenDragToMonsterLink(self);
 			}
-			if(self.href.match(/\/spells\/[0-9]|\/magic-items\/[0-9]|\/monsters\/[0-9]|\/sources\//gi)){
-				$self.attr('data-moreinfo', `${self.href}`);
+			if($self.attr('href')?.match(/\/spells\/[0-9]|\/magic-items\/[0-9]|\/monsters\/[0-9]|\/sources\//gi)){
+				$self.attr('data-moreinfo', `${$self.attr('href')}`);
 			}
 			if(!$self.hasClass('monster-tooltip')){
-				window.JOURNAL.getDataTooltip(self.href, function(url, typeClass, isRitual){
+				window.JOURNAL.getDataTooltip($self.attr('href'), function(url, typeClass, isRitual){
 					const matched = url.match(/\/(\d+)[^/]*-tooltip(\?.*)?$/i)
 					if(matched){
 						const tooltipId = matched[1];
-						let newHref = self.href.split(/\/(spells|magic-items|equipments|adventuring-gear)\//gi);
+						let newHref = $self.attr('href').split(/\/(spells|magic-items|equipments|adventuring-gear|armor)\//gi);
 						if(newHref.length>1)
 							newHref[newHref.length-1] = newHref[newHref.length-1].replace('/','-');
 						newHref = newHref.join('/')
 						const newUrl = `${newHref.replace(/(\d+-)?([^/]*)(-tooltip)?(\?.*)?$/i, `${tooltipId}-$2`)}`;
 						$self.attr('href', newUrl);
-						if(self.href.match(/\/spells\/[0-9]|\/magic-items\/[0-9]|\/monsters\/[0-9]|\/sources\//gi)){
+						if($self.attr('href')?.match(/\/spells\/[0-9]|\/magic-items\/[0-9]|\/monsters\/[0-9]|\/sources\//gi)){
 							$self.attr('data-moreinfo', `${newUrl}`);
 						}
 					}
@@ -2439,26 +2439,27 @@ class JournalManager{
 		}
 	}
 	async getDataTooltip(url, callback){
+		if(url == "" || url == undefined) return;
 		if(window.spellIdCache == undefined){
 			window.spellIdCache = {};
 		}
-		const urlRegex = /www\.dndbeyond\.com\/[a-zA-Z\-]+\/([0-9]+)/g;
-		const urlType = /www\.dndbeyond\.com\/([a-zA-Z\-]+)/g;
-		let itemId = (url.matchAll(urlRegex).next().value) ? url.matchAll(urlRegex).next().value[1] : 0;
-		let itemType = url.matchAll(urlType).next().value[1];
+		const urlRegex = /^(https:\/\/)?(www\.dndbeyond\.com)?\/[a-zA-Z\-]+\/([0-9]+)/g;
+		const urlType = /^(https:\/\/)?(www\.dndbeyond\.com)?\/([a-zA-Z\-]+)/g;
+		let itemId = (url.matchAll(urlRegex).next().value) ? url.matchAll(urlRegex).next().value[3] : 0;
+		let itemType = url.matchAll(urlType).next().value[3];
 		url = url.toLowerCase();
 		if(itemType == 'sources' || itemType == 'compendium')
 			return 
 		itemType = itemType == 'equipment' ? 'adventuring-gear' : itemType
 		if(itemId == 0 || (['spells', 'magic-items', 'adventuring-gear'].includes(itemType) && get_avtt_setting_value('2024Tooltips'))){
 			if(window.spellIdCache[url]){
-				callback(`www.dndbeyond.com/${window.spellIdCache[url].type}/${window.spellIdCache[url].id}-tooltip?disable-webm=1`, itemType.slice(0, -1), window.spellIdCache[url].isRitual);	
+				callback(`www.dndbeyond.com/${window.spellIdCache[url].type}/${window.spellIdCache[url].id}-tooltip?disable-webm=1`, itemType.trim(), window.spellIdCache[url].isRitual);	
 				return;
 			}
 			else if(itemId>0 && ['spells', 'magic-items', 'adventuring-gear'].includes(itemType)){       
 				if(itemType == 'spells')
 					itemId = getNonLegacySpellId({id: itemId});
-				else if(itemType == 'magic-items' || itemType == 'adventuring-gear')
+				else if(itemType == 'magic-items' || itemType == 'adventuring-gear' || itemType == 'armor')
 					itemId = getNonLegacyItemId({id: itemId});
 			}
 			else{
@@ -2482,8 +2483,8 @@ class JournalManager{
 					}	
 					itemId = `${spell[0].definition.id}-${splitUrl[splitUrl.length-1].replace('/', '-')}`;
 				}
-				else if(window.ITEMS_CACHE && (itemType == 'magic-items' || itemType == 'adventuring-gear')){
-					const splitUrl = url.split(/(magic-items|adventuring-gear|equipment)\//gi);
+				else if(window.ITEMS_CACHE && (itemType == 'magic-items' || itemType == 'adventuring-gear' || itemType == 'armor')){
+					const splitUrl = url.split(/(magic-items|adventuring-gear|equipment|armor)\//gi);
 					const name = decodeURIComponent(splitUrl[splitUrl.length-1].replaceAll('-', ' ')).replaceAll("’", "'");
 					const isLegacy = !get_avtt_setting_value('2024Tooltips');
 					let item = window.ITEMS_CACHE.filter(d => d.name.toLowerCase() == name.toLowerCase() && d.isLegacy == isLegacy)
@@ -2494,7 +2495,8 @@ class JournalManager{
 					if(!item.length){
 						console.warn(`item not found`, name);
 						return;
-					}		
+					}	
+					itemType = item[0].filterType.toLowerCase() == 'armor' ? 'armor' : itemType;
 					itemId = `${item[0].id}-${splitUrl[splitUrl.length-1].replace('/', '-')}`;
 				}
 				else{	
@@ -2518,8 +2520,24 @@ class JournalManager{
 				return d.definition.id == newItemId
 			})[0]?.definition.ritual 
 			: false;
+		
+		if(itemType == 'adventuring-gear'){
+			const splitUrl = url.split(/(adventuring-gear|equipment)\/\d+-/gi);		
+			const name = decodeURIComponent(splitUrl[splitUrl.length-1].replaceAll('-', ' ')).replaceAll("’", "'");
+				
+			const isArmor = itemType == 'adventuring-gear' ? window.ITEMS_CACHE?.filter(d=> {
+				let newItemId = itemId;
+
+				if(typeof itemId == 'string') newItemId = itemId.replace(/(\d+)-.*/gi,'$1');
+					return d.id == newItemId && d.name.toLowerCase() == name.toLowerCase()
+			})[0]?.filterType?.toLowerCase() == 'armor'
+			: false;	
+			itemType = isArmor ? 'armor' : itemType;
+		}
+		
+
 		window.spellIdCache[url] = {id: itemId, type: itemType, isRitual};
-		callback(`www.dndbeyond.com/${itemType}/${itemId}-tooltip?disable-webm=1`, itemType.slice(0, -1), isRitual);
+		callback(`www.dndbeyond.com/${itemType}/${itemId}-tooltip?disable-webm=1`, itemType.trim(), isRitual);
 	}
 	async getNotes(){
 	for(let note in window.JOURNAL.notes){
@@ -2744,11 +2762,12 @@ class JournalManager{
 				
 				const itemId = `${item[0].id}-${text.replace(/[\s\/\\]/g, '-')}`;
 				const isMagic = item[0].magic;
-				const dataTooltipHref = `www.dndbeyond.com/${isMagic ? 'magic-items' : 'adventuring-gear'}/${itemId}-tooltip?disable-webm=1`;
+				const {cost, weight, bundleSize, properties, range, longRange, filterType } = item[0];
+				
+				const dataTooltipHref = `www.dndbeyond.com/${isMagic ? 'magic-items' : filterType.toLowerCase() == 'armor' ? 'armor' : 'adventuring-gear'}/${itemId}-tooltip?disable-webm=1`;
 				const href = `/${isMagic ? 'magic-items' : 'equipment'}/${itemId}`;
 				const link = `<a class="tooltip-hover ${isMagic ? 'magic-item-tooltip' : 'item-tooltip adventuring-gear-tooltip'}" href="${href}" data-tooltip-href="${dataTooltipHref}">${text}</a>`;
 				cell.html(link);
-				const {cost, weight, bundleSize, properties, range, longRange } = item[0];
 				const weightCell = cell.next('td');
 				const quantityCell = weightCell.next('td');
 				const costCell = quantityCell.next('td');
