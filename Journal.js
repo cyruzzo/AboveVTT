@@ -2748,6 +2748,35 @@ class JournalManager{
 				const href = `/${isMagic ? 'magic-items' : 'equipment'}/${itemId}`;
 				const link = `<a class="tooltip-hover ${isMagic ? 'magic-item-tooltip' : 'item-tooltip adventuring-gear-tooltip'}" href="${href}" data-tooltip-href="${dataTooltipHref}">${text}</a>`;
 				cell.html(link);
+				const {cost, weight, bundleSize, properties, range, longRange } = item[0];
+				const weightCell = cell.next('td');
+				const quantityCell = weightCell.next('td');
+				const costCell = quantityCell.next('td');
+				const noteCell = costCell.next('td');
+				if(weightCell.text().trim() == '' && weight != undefined){
+					weightCell.text(`${weight} lb`);
+				}
+				if(quantityCell.text().trim() == '' && bundleSize != undefined){
+					quantityCell.text(`${bundleSize}`);
+				}
+				if(costCell.text().trim() == '' && cost != undefined){
+					costCell.text(`${cost}`);
+				}
+				if(noteCell.text().trim() == '' && properties != undefined){
+					const propertyNames = properties.map(p => {
+						if(p.name.toLowerCase() == 'range'){
+							return `Range (${range}${longRange ? `/${longRange}` : ''})`;
+						} else if(ddbConfigJson.weaponProperties.filter(d => d.id == p.id).length > 0){
+							return `[wprop]${p.name}[/wprop]`;
+						}
+						return p.name; 
+					}).join(', ');
+					noteCell.text(`${propertyNames}`);
+				}
+					
+
+				
+
 			}
 		}
 
@@ -5533,8 +5562,8 @@ class JournalManager{
 													<tr>
 														<th>Name</th>
 														<th>Weight</th>
-														<th>QTY</th>
-														<th>Cost (GP)</th>
+														<th>Qty</th>
+														<th>Cost (gp)</th>
 														<th>Notes</th>
 													</tr>
 												</thead>
