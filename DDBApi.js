@@ -52,6 +52,8 @@ class DDBApi {
         const id = charClass.id;
         const classSpells = await DDBApi.fetchJsonWithToken(`https://character-service.dndbeyond.com/character/v5/game-data/spells?campaignId=${window.gameId}&classId=${id}&classLevel=20&sharingSetting=2`);    
         spells = [...spells, ...classSpells.data]
+        const classAlwaysKnownSpells = await DDBApi.fetchJsonWithToken(`https://character-service.dndbeyond.com/character/v5/game-data/always-known-spells?campaignId=${window.gameId}&classId=${id}&classLevel=20&sharingSetting=2`);    
+        spells = [...spells, ...classAlwaysKnownSpells.data]
     }
     window.SPELLS_CACHE = [...new Map(spells.map(item => [item.definition.id, item])).values()];
     return window.SPELLS_CACHE;
