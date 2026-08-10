@@ -33,7 +33,7 @@
         //Load this as soon as possible for new dice, gets the workers for the dice 
         (function() {
             function noisy_log(...message) {
-                if (window.enableNoisyLogs === true) {
+                if (window.enableNoisyLogs != undefined) {
                     console.debug(...message);
                 }
             }

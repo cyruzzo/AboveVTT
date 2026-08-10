@@ -795,8 +795,8 @@ async function embedDDBSection(target){
     let url = $section.text().replaceAll("’", "'");
     if(!url.includes('dndbeyond.com/sources'))
       continue;
-    const promise = new Promise(async (resolve, reject) => { 
-      fetch_tooltip([undefined, url], url, (tooltip)=>{
+    const promise = new Promise((resolve, reject) => { 
+      fetch_tooltip_immediate([undefined, url], url, (tooltip)=>{
         resolve(tooltip);
       });
     });
@@ -883,11 +883,24 @@ function create_update_token(options, save = true) {
 
 }
 /** Logs that are super noisy should be sent through here.
- * This allows us to enable these logs on the fly when we need to debug things that would otherwise flood the console */
+ * This allows us to enable these logs on the fly when we need to debug things that would otherwise flood the console 
+ * @param message the args of the console log 
+ * iIf the first value is a number it will only display that log if window.enableNoiseLogs is >= to that number
+ * 
+ * 0: important debugging logs but not needed for logs sent from users
+ * 
+ * 4: Very spamy logs, often mouse move events
+ * */
 function noisy_log(...message) {
-    if (window.enableNoisyLogs === true) {
-        console.debug(...message);
-    }
+  if(window.enableNoisyLogs==undefined) return;
+  const level = parseInt(message[0]);
+  if(!isNaN(level)){
+    message.shift();
+    if(window.enableNoisyLogs >= level) 
+      console.debug(...message);
+    return;
+  }
+  console.debug(...message); 
 }
 
 function add_journal_roll_buttons(target, tokenId=undefined, specificImage=undefined, specificName=undefined){
@@ -1378,6 +1391,7 @@ function inject_dice(){
   if(window.encounterObserver){
     window.encounterObserver.disconnect();
   }
+
   window.encounterObserver = new MutationObserver(function(mutationList, observer) {
 
     mutationList.forEach(mutation => {

@@ -24,10 +24,10 @@ async function buildDMScreen(container) {
         dmg2024Owned: false,
         dmg2014Owned: false
     }
-    await fetch_tooltip([undefined, "https://www.dndbeyond.com/sources/dnd/dmg-2014/running-the-game#ImprovisingDamage"], '2014_DMG_OWNED', function(data){
+    await fetch_tooltip_immediate([undefined, "https://www.dndbeyond.com/sources/dnd/dmg-2014/running-the-game#ImprovisingDamage"], '2014_DMG_OWNED', function(data){
         window.ownedBooks.dmg2014Owned = data.Tooltip.length > 0; 
     });
-    await fetch_tooltip([undefined, "https://www.dndbeyond.com/sources/dnd/dmg-2024/the-basics#WhatDoesaDMDo"], 'DMG_OWNED', function (data) {
+    await fetch_tooltip_immediate([undefined, "https://www.dndbeyond.com/sources/dnd/dmg-2024/the-basics#WhatDoesaDMDo"], 'DMG_OWNED', function (data) {
         window.ownedBooks.dmg2024Owned = data.Tooltip.length > 0;
         if (container) {
             let cont = $(`

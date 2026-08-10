@@ -2149,8 +2149,10 @@ function observe_character_sheet_changes(documentToObserve) {
     if(window.DRAGGING || (typeof arrowKeysHeld !== 'undefined' && (arrowKeysHeld[0] || arrowKeysHeld[1] || arrowKeysHeld[2] || arrowKeysHeld[3])))
       return;
 
-      //support DDB character sheet overhaul
+    noisy_log(2, "character_sheet_observer", mutationList);
 
+
+    //support DDB character sheet overhaul
     const overhaul_iframe = $("#ddbfix-vtt-iframe[src*='abovevtt=true']:not(.abovevtt-visited)")
     overhaul_iframe.each(function(){
       const iframe = $(this);
@@ -2180,9 +2182,6 @@ function observe_character_sheet_changes(documentToObserve) {
      
      
     })
-    noisy_log("character_sheet_observer", mutationList);
-
-
 
     if(is_abovevtt_page()){
       if($('.dice-rolling-panel, [data-floating-ui-portal]').length == 0 && window.diceWarning == undefined){
@@ -2375,7 +2374,6 @@ function observe_character_sheet_changes(documentToObserve) {
      // initial injection of our buttons
     const notes = documentToObserve.find(".ddbc-note-components__component:not('.above-vtt-dice-visited')");
     notes.each(function() {
-      noisy_log("character_sheet_observer iterating", mutationList);
       try {
         inject_dice_roll($(this));
         $(this).addClass("above-vtt-dice-visited"); // make sure we only parse this element once

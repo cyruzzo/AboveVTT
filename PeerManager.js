@@ -364,10 +364,10 @@ class PeerManager {
         if (this.allowCursorAndRulerStreaming) {
           if (data.coords.length > 0) {
             connectionsToSendTo = this.connections.filter(pc => !this.skipRulerEvents.includes(pc.playerId));
-            noisy_log("PeerManager.send filtering ruler event", this.skipRulerEvents, connectionsToSendTo);
+            noisy_log(4, "PeerManager.send filtering ruler event", this.skipRulerEvents, connectionsToSendTo);
           } else {
             connectionsToSendTo = this.connections.filter(pc => !this.skipCursorEvents.includes(pc.playerId));
-            noisy_log("PeerManager.send filtering cursor event", this.skipCursorEvents, connectionsToSendTo);
+            noisy_log(4, "PeerManager.send filtering cursor event", this.skipCursorEvents, connectionsToSendTo);
           }
         } else {
           connectionsToSendTo = [];
