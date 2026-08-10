@@ -882,13 +882,12 @@ function create_update_token(options, save = true) {
   }
 
 }
-
 /** Logs that are super noisy should be sent through here.
  * This allows us to enable these logs on the fly when we need to debug things that would otherwise flood the console */
 function noisy_log(...message) {
-  if (window.enableNoisyLogs === true) {
-    console.debug(...message);
-  }
+    if (window.enableNoisyLogs === true) {
+        console.debug(...message);
+    }
 }
 
 function add_journal_roll_buttons(target, tokenId=undefined, specificImage=undefined, specificName=undefined){

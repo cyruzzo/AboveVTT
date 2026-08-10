@@ -26,8 +26,17 @@
             return; //don't load anything
         }
     } else{
+        
+        /** Logs that are super noisy should be sent through here.
+         * This allows us to enable these logs on the fly when we need to debug things that would otherwise flood the console */
+
         //Load this as soon as possible for new dice, gets the workers for the dice 
         (function() {
+            function noisy_log(...message) {
+                if (window.enableNoisyLogs === true) {
+                    console.debug(...message);
+                }
+            }
             const OriginalWorker = window.Worker;
             window.Worker = function(scriptURL, options) {
                 const worker = new OriginalWorker(scriptURL, options);
@@ -35,7 +44,7 @@
                 
                 const originalPostMessage = worker.postMessage;
                 worker.postMessage = async function(message, transfer) {
-                    console.log('worker Messages', message);
+                    noisy_log('worker Messages', message);
                     if (message && typeof message === 'object' && message.type == 'resize') {
                         await originalPostMessage.call(worker, message, transfer);
                         // Need to do this due to a DDB bug that causes an infinite loop that hurts lower end pcs performance
