@@ -2317,7 +2317,7 @@ class JournalManager{
 					const matched = url.match(/\/(\d+)[^/]*-tooltip(\?.*)?$/i)
 					if(matched){
 						const tooltipId = matched[1];
-						let newHref = $self.attr('href').split(/\/(spells|magic-items|equipments|adventuring-gear|armor)\//gi);
+						let newHref = $self.attr('href').split(/\/?(spells|magic-items|equipment|adventuring-gear|armor|weapons)\//gi);
 						if(newHref.length>1)
 							newHref[newHref.length-1] = newHref[newHref.length-1].replace('/','-');
 						newHref = newHref.join('/')
@@ -2438,6 +2438,7 @@ class JournalManager{
 
 		}
 	}
+	
 	async getDataTooltip(url, callback){
 		if(url == "" || url == undefined) return;
 		if(window.spellIdCache == undefined){
@@ -2452,21 +2453,24 @@ class JournalManager{
 			return 
 		itemType = itemType == 'equipment' ? 'adventuring-gear' : itemType
 		if(itemId == 0 || (['spells', 'magic-items', 'adventuring-gear'].includes(itemType) && get_avtt_setting_value('2024Tooltips'))){
-			if(window.spellIdCache[url]){
+			if(window.spellIdCache[url]){				
 				callback(`www.dndbeyond.com/${window.spellIdCache[url].type}/${window.spellIdCache[url].id}-tooltip?disable-webm=1`, itemType.trim(), window.spellIdCache[url].isRitual);	
 				return;
 			}
 			else if(itemId>0 && ['spells', 'magic-items', 'adventuring-gear'].includes(itemType)){       
 				if(itemType == 'spells')
 					itemId = getNonLegacySpellId({id: itemId});
-				else if(itemType == 'magic-items' || itemType == 'adventuring-gear' || itemType == 'armor')
-					itemId = getNonLegacyItemId({id: itemId});
+				else if(itemType == 'magic-items' || itemType == 'adventuring-gear' || itemType == 'armor' || itemType == 'weapons'){
+					const tooltipName = decodeURIComponent(url.split(/(magic-items|adventuring-gear|equipment|armor|weapons)\/\d+-/gi)[url.split(/(magic-items|adventuring-gear|equipment|armor|weapons)\/\d+-/gi).length-1].replaceAll('-', ' ')).replaceAll("’", "'");
+					itemId = getNonLegacyItemId({id: itemId, tooltipName: tooltipName});
+				}
+					
 			}
 			else{
 				if(url.includes('weapon-properties')){
 					let splitUrl = url.split('/');
-					let name = decodeURIComponent(splitUrl[splitUrl.length-1].replaceAll('-', ' ')).replaceAll("’", "'");;
-					itemId = window.ddbConfigJson.weaponProperties.filter(d=> d.name.toLowerCase() == name.toLowerCase())[0]?.id
+					let name = decodeURIComponent(splitUrl[splitUrl.length-1].replaceAll('-', ' ')).replaceAll("’", "'");
+					itemId = window.ddbConfigJson.weaponProperties.filter(d=> d.name.toLowerCase().replaceAll('-', ' ').replaceAll("’", "'") == name.toLowerCase())[0]?.id
 				}
 				else if(window.SPELLS_CACHE && itemType == 'spells'){
 					const splitUrl = url.split('spells/');
@@ -2483,8 +2487,8 @@ class JournalManager{
 					}	
 					itemId = `${spell[0].definition.id}-${splitUrl[splitUrl.length-1].replace('/', '-')}`;
 				}
-				else if(window.ITEMS_CACHE && (itemType == 'magic-items' || itemType == 'adventuring-gear' || itemType == 'armor')){
-					const splitUrl = url.split(/(magic-items|adventuring-gear|equipment|armor)\//gi);
+				else if(window.ITEMS_CACHE && (itemType == 'magic-items' || itemType == 'adventuring-gear' || itemType == 'armor' || itemType == 'weapons')){
+					const splitUrl = url.split(/(magic-items|adventuring-gear|equipment|armor|weapons)\//gi);
 					const name = decodeURIComponent(splitUrl[splitUrl.length-1].replaceAll('-', ' ')).replaceAll("’", "'");
 					const isLegacy = !get_avtt_setting_value('2024Tooltips');
 					let item = window.ITEMS_CACHE.filter(d => d.name.toLowerCase() == name.toLowerCase() && d.isLegacy == isLegacy)
@@ -2496,7 +2500,8 @@ class JournalManager{
 						console.warn(`item not found`, name);
 						return;
 					}	
-					itemType = item[0].filterType.toLowerCase() == 'armor' ? 'armor' : itemType;
+					const filterType = item[0].filterType.toLowerCase() == 'weapon' ? 'weapons' : item[0].filterType.toLowerCase() == 'armor' ? 'armor' : itemType;
+					itemType = ['armor', 'weapons'].includes(filterType) ? filterType : itemType;
 					itemId = `${item[0].id}-${splitUrl[splitUrl.length-1].replace('/', '-')}`;
 				}
 				else{	
@@ -2525,19 +2530,27 @@ class JournalManager{
 			const splitUrl = url.split(/(adventuring-gear|equipment)\/\d+-/gi);		
 			const name = decodeURIComponent(splitUrl[splitUrl.length-1].replaceAll('-', ' ')).replaceAll("’", "'");
 				
-			const isArmor = itemType == 'adventuring-gear' ? window.ITEMS_CACHE?.filter(d=> {
+			const filterType = itemType == 'adventuring-gear' ? window.ITEMS_CACHE?.flatMap(d=> {
 				let newItemId = itemId;
 
-				if(typeof itemId == 'string') newItemId = itemId.replace(/(\d+)-.*/gi,'$1');
-					return d.id == newItemId && d.name.toLowerCase() == name.toLowerCase()
-			})[0]?.filterType?.toLowerCase() == 'armor'
+				if(typeof itemId == 'string') newItemId = itemId.replace(/(\d+)-.*/gi,'$1')
+				if(d.id == newItemId && d.name.toLowerCase() == name.toLowerCase()){
+					if(d.filterType.toLowerCase() == 'weapon')
+						return ['weapons'];
+					else if(d.filterType.toLowerCase() == 'armor')
+						return ['armor'];
+
+				}
+				return [];
+			})[0]
 			: false;	
-			itemType = isArmor ? 'armor' : itemType;
+			itemType = ['armor', 'weapons'].includes(filterType) ? filterType : itemType;
 		}
 		
-
+		
 		window.spellIdCache[url] = {id: itemId, type: itemType, isRitual};
 		callback(`www.dndbeyond.com/${itemType}/${itemId}-tooltip?disable-webm=1`, itemType.trim(), isRitual);
+	
 	}
 	async getNotes(){
 	for(let note in window.JOURNAL.notes){
@@ -2739,66 +2752,122 @@ class JournalManager{
 	}
 	async translateHtmlAndBlocks(target, displayNoteId, isStatBlock=true) {
 		await embedDDBSection(target);
-		const equipmentBlock = target.find('.dnd-sheet .equipment-block');
-		if(equipmentBlock.length > 0 && window.ITEMS_CACHE != undefined){
-			const firstCells = equipmentBlock.find('table tbody tr td:is(:first-child:not(.table-row-drag-handle), .table-row-drag-handle+td)');
-			for(let i=0; i<firstCells.length; i++){
+		if(window.ITEMS_CACHE != undefined){
+			const equipmentBlock = target.find('.dnd-sheet .equipment-block');
+			if(equipmentBlock.length > 0){
+				const firstCells = equipmentBlock.find('table tbody tr td:is(:first-child:not(.table-row-drag-handle), .table-row-drag-handle+td)');
+				for(let i=0; i<firstCells.length; i++){
 
-				const cell = $(firstCells[i]);
-				if(cell.find('a').length > 0) continue;
-				const text = cell.text();
-				if(text.match(/(\[(magicitem|item)\])/gi)) continue;
+					const cell = $(firstCells[i]);
+					if(cell.find('a').length > 0) continue;
+					const text = cell.text();
+					if(text.match(/(\[(magicitem|item)\])/gi)) continue;
 
-				const isLegacy = !get_avtt_setting_value('2024Tooltips');
-				let item = window.ITEMS_CACHE.filter(d => d.name.toLowerCase() == text.toLowerCase() && d.isLegacy == isLegacy)
-				if(!item.length){
-					console.warn(`item not found`, text, `isLegacy`, isLegacy);
-					item = window.ITEMS_CACHE.filter(d => d.name.toLowerCase() == text.toLowerCase())
-				}
-				if(!item.length){
-					console.warn(`item not found`, text);
-					continue;
-				}
-				
-				const itemId = `${item[0].id}-${text.replace(/[\s\/\\]/g, '-')}`;
-				const isMagic = item[0].magic;
-				const {cost, weight, bundleSize, properties, range, longRange, filterType } = item[0];
-				
-				const dataTooltipHref = `www.dndbeyond.com/${isMagic ? 'magic-items' : filterType.toLowerCase() == 'armor' ? 'armor' : 'adventuring-gear'}/${itemId}-tooltip?disable-webm=1`;
-				const href = `/${isMagic ? 'magic-items' : 'equipment'}/${itemId}`;
-				const link = `<a class="tooltip-hover ${isMagic ? 'magic-item-tooltip' : 'item-tooltip adventuring-gear-tooltip'}" href="${href}" data-tooltip-href="${dataTooltipHref}">${text}</a>`;
-				cell.html(link);
-				const weightCell = cell.next('td');
-				const quantityCell = weightCell.next('td');
-				const costCell = quantityCell.next('td');
-				const noteCell = costCell.next('td');
-				if(weightCell.text().trim() == '' && weight != undefined){
-					weightCell.text(`${weight} lb`);
-				}
-				if(quantityCell.text().trim() == '' && bundleSize != undefined){
-					quantityCell.text(`${bundleSize}`);
-				}
-				if(costCell.text().trim() == '' && cost != undefined){
-					costCell.text(`${cost}`);
-				}
-				if(noteCell.text().trim() == '' && properties != undefined){
-					const propertyNames = properties.map(p => {
-						if(p.name.toLowerCase() == 'range'){
-							return `Range (${range}${longRange ? `/${longRange}` : ''})`;
-						} else if(ddbConfigJson.weaponProperties.filter(d => d.id == p.id).length > 0){
-							return `[wprop]${p.name}[/wprop]`;
-						}
-						return p.name; 
-					}).join(', ');
-					noteCell.text(`${propertyNames}`);
-				}
+					const isLegacy = !get_avtt_setting_value('2024Tooltips');
+					let item = window.ITEMS_CACHE.filter(d => d.name.toLowerCase() == text.toLowerCase() && d.isLegacy == isLegacy)
+					if(!item.length){
+						console.warn(`item not found`, text, `isLegacy`, isLegacy);
+						item = window.ITEMS_CACHE.filter(d => d.name.toLowerCase() == text.toLowerCase())
+					}
+					if(!item.length){
+						console.warn(`item not found`, text);
+						continue;
+					}
+					
+					const itemId = `${item[0].id}-${text.replace(/[\s\/\\]/g, '-')}`;
+					const isMagic = item[0].magic;
+					const {cost, weight, bundleSize, properties, range, longRange, filterType } = item[0];
+					
+					const dataTooltipHref = `www.dndbeyond.com/${isMagic ? 'magic-items' : filterType.toLowerCase() == 'armor' ? 'armor' : filterType.toLowerCase() == 'weapon' ? 'weapons' : 'adventuring-gear'}/${itemId}-tooltip?disable-webm=1`;
+					const href = `/${isMagic ? 'magic-items' : 'equipment'}/${itemId}`;
+					const link = `<a class="tooltip-hover ${isMagic ? 'magic-item-tooltip' : 'item-tooltip adventuring-gear-tooltip'}" href="${href}" data-tooltip-href="${dataTooltipHref}">${text}</a>`;
+					cell.html(link);
+					const weightCell = cell.next('td');
+					const quantityCell = weightCell.next('td');
+					const costCell = quantityCell.next('td');
+					const noteCell = costCell.next('td');
+					if(weightCell.text().trim() == '' && weight != undefined){
+						weightCell.text(`${weight} lb`);
+					}
+					if(quantityCell.text().trim() == '' && bundleSize != undefined){
+						quantityCell.text(`${bundleSize}`);
+					}
+					if(costCell.text().trim() == '' && cost != undefined){
+						costCell.text(`${cost}`);
+					}
+					if(noteCell.text().trim() == '' && properties != undefined){
+						const propertyNames = properties.map(p => {
+							if(p.name.toLowerCase() == 'range'){
+								return `Range (${range}${longRange ? `/${longRange}` : ''})`;
+							} else if(ddbConfigJson.weaponProperties.filter(d => d.id == p.id).length > 0){
+								return `[wprop]${p.name}[/wprop]`;
+							}
+							return p.name; 
+						}).join(', ');
+						noteCell.text(`${propertyNames}`);
+					}
+						
+
 					
 
-				
+				}
+			}
+			
+			const attacksBlock = target.find('.dnd-sheet .attacks-field');
+			if(attacksBlock.length > 0 && window.SPELLS_CACHE != undefined){
+				const firstCells = attacksBlock.find('table tbody tr td:is(:first-child:not(.table-row-drag-handle), .table-row-drag-handle+td)');
+				for(let i=0; i<firstCells.length; i++){
 
+					const cell = $(firstCells[i]);
+					if(cell.find('a').length > 0) continue;
+					const text = cell.text();
+					if(text.match(/(\[(magicitem|item)\])/gi)) continue;
+					let type = 'item';
+					const isLegacy = !get_avtt_setting_value('2024Tooltips');
+					let item = window.ITEMS_CACHE.filter(d => d.name.toLowerCase() == text.toLowerCase() && d.isLegacy == isLegacy)
+					if(!item.length){
+						item = window.ITEMS_CACHE.filter(d => d.name.toLowerCase() == text.toLowerCase())
+					}
+					if(!item.length){
+						let item = window.SPELLS_CACHE.filter(d => d.definition.name.toLowerCase() == text.toLowerCase() && d.isLegacy == isLegacy)
+						if(!item.length){
+							item = window.SPELLS_CACHE.filter(d => d.definition.name.toLowerCase() == text.toLowerCase())
+						}
+						if(!item.length){
+							console.warn(`item/spell not found`, text);
+							continue;
+						}
+						type = 'spell';
+					}
+					
+					const itemId = `${type == 'spell' ? item[0].definition.id : item[0].id}-${text.replace(/[\s\/\\]/g, '-')}`;
+					const isMagic = item[0].magic;
+					const { properties, range, longRange, filterType } = item[0];
+					
+					const dataTooltipHref = `www.dndbeyond.com/${type == 'spell' ? 'spells' : isMagic ? 'magic-items' : filterType.toLowerCase() == 'armor' ? 'armor' : 'adventuring-gear'}/${itemId}-tooltip?disable-webm=1`;
+					const href = `/${type == 'spell' ? 'spells' : isMagic ? 'magic-items' : 'equipment'}/${itemId}`;
+					const link = `<a class="tooltip-hover ${type == 'spell' ? 'spell-tooltip' : isMagic ? 'magic-item-tooltip' : 'item-tooltip adventuring-gear-tooltip'}" href="${href}" data-tooltip-href="${dataTooltipHref}">${text}</a>`;
+					cell.html(link);
+					const noteCell = cell.siblings('td:last-of-type');
+					if(noteCell.text().trim() == '' && properties != undefined){
+						const propertyNames = properties.map(p => {
+							if(p.name.toLowerCase() == 'range'){
+								return `Range (${range}${longRange ? `/${longRange}` : ''})`;
+							} else if(ddbConfigJson.weaponProperties.filter(d => d.id == p.id).length > 0){
+								return `[wprop]${p.name}[/wprop]`;
+							}
+							return p.name; 
+						}).join(', ');
+						noteCell.text(`${propertyNames}`);
+					}
+						
+
+					
+
+				}
 			}
 		}
-
+		
 
 		let pastedButtons = target.find('.avtt-roll-button, [data-rolltype="recharge"], .integrated-dice__container, span[data-dicenotation]');
     	target.find('>style:first-of-type, >style#contentStyles').remove();

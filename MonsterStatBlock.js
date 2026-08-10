@@ -2164,7 +2164,7 @@ function getNonLegacySpellId(options){
     }
     let newSpell
     if(options.tooltipName){
-      newSpell = window.SPELLS_CACHE.filter(d=> d.definition.name.toLowerCase() == options.tooltipName && (!d.definition.isLegacy || d.definition.isHomebrew)); 
+      newSpell = window.SPELLS_CACHE.filter(d=> d.definition.name.toLowerCase() == options.tooltipName.toLowerCase() && (!d.definition.isLegacy || d.definition.isHomebrew)); 
       return newSpell[0].definition.id;
     } else if(options.id){
         const spell = window.SPELLS_CACHE.filter(d=> d.definition.id == options.id);
@@ -2177,7 +2177,7 @@ function getNonLegacySpellId(options){
     }
     if(!newSpell[0]){
         console.warn('Legacy fallback', options)
-        newSpell = window.SPELLS_CACHE.filter(d=> d.name.toLowerCase() == options.tooltipName && d.isLegacy);
+        newSpell = window.SPELLS_CACHE.filter(d=> d.name.toLowerCase() == options.tooltipName.toLowerCase() && d.isLegacy);
     }
     if(!newSpell[0]){
       console.warn('Spell does not exist');
@@ -2191,9 +2191,9 @@ function getNonLegacyItemId(options){
     }
     let newItem 
     if(options.tooltipName){
-      newItem = window.ITEMS_CACHE.filter(d=> d.name.toLowerCase() == options.tooltipName && (!d.isLegacy || d.isHomebrew)); 
-      return newItem[0].id;
-    } else if(options.id){
+      newItem = window.ITEMS_CACHE.filter(d=> d.name.toLowerCase() == options.tooltipName.toLowerCase() && (!d.isLegacy || d.isHomebrew) && (!options.id || d.id == options.id));
+    } 
+    if(!newItem?.[0] && options.id){
         const item =  window.ITEMS_CACHE.filter(d=> d.id == options.id);
         const name = item[0].name.toLowerCase();
         newItem = window.ITEMS_CACHE.filter(d=> d.name.toLowerCase() == name && (!d.isLegacy || d.isHomebrew));
@@ -2201,7 +2201,7 @@ function getNonLegacyItemId(options){
     }
     if(!newItem[0]){
         console.warn('Legacy fallback', options)
-        newItem = window.ITEMS_CACHE.filter(d=> d.name.toLowerCase() == options.tooltipName && d.isLegacy);
+        newItem = window.ITEMS_CACHE.filter(d=> d.name.toLowerCase() == options.tooltipName.toLowerCase() && d.isLegacy);
     }
     if(!newItem[0]){
       console.warn('Item does not exist', options);
@@ -2340,8 +2340,10 @@ const fetch_tooltip_immediate = async (dataTooltipHref, name, callback, callback
         if(get_avtt_setting_value('2024Tooltips')){
           if(type == 'spells')
             id= getNonLegacySpellId({id});
-          else if(type == 'magic-items' || type == 'adventuring-gear' || type == 'armor')
-            id = getNonLegacyItemId({id});
+          else if(type == 'magic-items' || type == 'adventuring-gear' || type == 'armor' || type == 'weapons'){ 
+            id = getNonLegacyItemId({id, tooltipName: name});
+          }
+
         }
         const typeAndId = `${type}/${id}`;
        
