@@ -2340,7 +2340,7 @@ const fetch_tooltip_immediate = async (dataTooltipHref, name, callback, callback
         if(get_avtt_setting_value('2024Tooltips')){
           if(type == 'spells')
             id= getNonLegacySpellId({id});
-          else if(type == 'magic-items' || type == 'adventuring-gear')
+          else if(type == 'magic-items' || type == 'adventuring-gear' || type == 'armor')
             id = getNonLegacyItemId({id});
         }
         const typeAndId = `${type}/${id}`;
