@@ -865,9 +865,14 @@ class DiceRoller {
             return;
         }
         if(!is_abovevtt_page() && !window.unlockSidebar){
-            const lockSidebarButton = $(".ct-sidebar__control--unlock, [class*='styles_controls'] [aria-label='Unlocked']");
-            window.unlockSidebar = lockSidebarButton.length > 0;
-            await lockSidebarButton.click();
+            if(!document.querySelector(".ct-sidebar__control--unlock, [class*='styles_controls'] [aria-label='Show sidebar']")){
+                const lockSidebarButton = $(".ct-sidebar__control--unlock, [class*='styles_controls'] [aria-label='Unlocked']");
+                window.unlockSidebar = lockSidebarButton.length > 0;
+                await lockSidebarButton.click();
+            }
+ 
+            
+            
         }
         $('[data-floating-ui-portal], .roll-mod-container').addClass('hidden');
         if ($(".dice-toolbar").hasClass("rollable") || $(`[class*='DiceContainer_customDiceRollOpen']`).length>0) {
