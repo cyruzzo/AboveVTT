@@ -2721,6 +2721,37 @@ class JournalManager{
 	}
 	async translateHtmlAndBlocks(target, displayNoteId, isStatBlock=true) {
 		await embedDDBSection(target);
+		const equipmentBlock = target.find('.dnd-sheet .equipment-block');
+		if(equipmentBlock.length > 0 && window.ITEMS_CACHE != undefined){
+			const firstCells = equipmentBlock.find('table tbody tr td:is(:first-child:not(.table-row-drag-handle), .table-row-drag-handle+td)');
+			for(let i=0; i<firstCells.length; i++){
+
+				const cell = $(firstCells[i]);
+				if(cell.find('a').length > 0) continue;
+				const text = cell.text();
+				if(text.match(/(\[(magicitem|item)\])/gi)) continue;
+
+				const isLegacy = !get_avtt_setting_value('2024Tooltips');
+				let item = window.ITEMS_CACHE.filter(d => d.name.toLowerCase() == text.toLowerCase() && d.isLegacy == isLegacy)
+				if(!item.length){
+					console.warn(`item not found`, text, `isLegacy`, isLegacy);
+					item = window.ITEMS_CACHE.filter(d => d.name.toLowerCase() == text.toLowerCase())
+				}
+				if(!item.length){
+					console.warn(`item not found`, text);
+					continue;
+				}
+				
+				const itemId = `${item[0].id}-${text.replace(/[\s\/\\]/g, '-')}`;
+				const isMagic = item[0].magic;
+				const dataTooltipHref = `www.dndbeyond.com/${isMagic ? 'magic-items' : 'adventuring-gear'}/${itemId}-tooltip?disable-webm=1`;
+				const href = `/${isMagic ? 'magic-items' : 'equipment'}/${itemId}`;
+				const link = `<a class="tooltip-hover ${isMagic ? 'magic-item-tooltip' : 'item-tooltip adventuring-gear-tooltip'}" href="${href}" data-tooltip-href="${dataTooltipHref}">${text}</a>`;
+				cell.html(link);
+			}
+		}
+
+
 		let pastedButtons = target.find('.avtt-roll-button, [data-rolltype="recharge"], .integrated-dice__container, span[data-dicenotation]');
     	target.find('>style:first-of-type, >style#contentStyles').remove();
 		
@@ -5494,7 +5525,7 @@ class JournalManager{
 										</div>
 										<div class="treasure-field" contenteditable="true">&nbsp;</div>
 									</div>
-									<div class="container-block">
+									<div class="container-block equipment-block">
 										<div class="section-title">Equipment</div>
 										<div class="equipment-field" contenteditable="true">
 											<table>
