@@ -12965,7 +12965,12 @@ p.monster-header+p {
     transition: opacity 0.15s ease;
 }
 
-.prof-checkbox[data-state="1"] .half-fill {
+.prof-checkbox[data-state="3"] .half-fill {
+    opacity: 1;
+    fill: #333;
+}
+
+.prof-checkbox[data-state="1"] .full-fill {
     opacity: 1;
     fill: #333;
 }
@@ -12974,12 +12979,7 @@ p.monster-header+p {
     opacity: 1;
     fill: #333;
 }
-
-.prof-checkbox[data-state="3"] .full-fill {
-    opacity: 1;
-    fill: #333;
-}
-.prof-checkbox[data-state="3"] .ring-stroke {
+.prof-checkbox[data-state="2"] .ring-stroke {
     opacity: 1;
     fill: none;
     stroke: #333;
@@ -13214,6 +13214,10 @@ p.monster-header+p {
         gap: 6px;
         margin-bottom: 6px;
         box-sizing: border-box;
+    }
+    .hp-row.hp-input{
+        font-size: 16px;
+        font-weight: bold;
     }
     .hp-row .col {
         flex: 1;
