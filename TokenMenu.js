@@ -3471,7 +3471,7 @@ function build_menu_stat_inputs(tokenIds) {
 					newMaxHP = Math.max(0, parseInt(eval(sanitizedString)));
 				}
 				token.maxHp = newMaxHP;
-				debouceChangeInput(token);
+				token.place_sync_persist();
 				if(tokens.length == 1){
 					$(".maxHpMenuInput").val(newMaxHP);
 				}
@@ -3523,7 +3523,7 @@ function build_menu_stat_inputs(tokenIds) {
 					newTempHP = Math.max(0, parseInt(eval(sanitizedString)));
 				}
 				token.tempHp = newTempHP;
-				debouceChangeInput(token);
+				token.place_sync_persist();
 				if(tokens.length == 1){
 					$(".tempHpMenuInput").val(newTempHP);
 				}
