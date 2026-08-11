@@ -13219,6 +13219,9 @@ p.monster-header+p {
     .hp-row.hp-input{
         font-size: 16px;
         font-weight: bold;
+        strong{
+            font-weight: bold;
+        }
     }
     .hp-row .col {
         flex: 1;

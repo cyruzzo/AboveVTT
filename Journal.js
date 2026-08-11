@@ -4700,6 +4700,9 @@ class JournalManager{
 				.hp-row.hp-input{
 					font-size: 16px;
 					font-weight: bold;
+					strong{
+						font-weight: bold;
+					}
 				}
 				.hp-row .col {
 					flex: 1;
@@ -5467,14 +5470,13 @@ class JournalManager{
 												<div class="box-field" contenteditable="true">&nbsp;</div>
 											</div>
 										</div>
-										<div class="hp-row">
-											
+										<div class="hp-row">	
 											<div class="col">
 												<div class="hp-subgrid">
 													<div><span class="label">Hit Dice</span>
 														<div class="box-field" contenteditable="true"><input type="checkbox" /> 1d10</div>
 													</div>
-													<div><span class="label">Resistances & Vulnerabilities</span>
+													<div><span class="label">Defenses</span>
 														<div class="box-field" contenteditable="true">&nbsp;</div>
 													</div>
 													<div><span class="label">Conditions</span>
