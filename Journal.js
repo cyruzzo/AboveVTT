@@ -4679,6 +4679,9 @@ class JournalManager{
 					background: var(--pc-template-box-bg, #fdfdfd);
 					border-radius: 4px;
 					box-sizing: border-box;
+					.custom-stat {
+						font-weight: bold;
+					}
 				}
 				.metric-val {
 					font-size: 16px;
@@ -4827,10 +4830,10 @@ class JournalManager{
 				}
 				.currency-container {
 					display: flex;
-					justify-content: space-between;
-					margin-bottom: 6px;
-					margin-top: 4px;
+					justify-content: flex-start;
+					gap: 5px;
 					box-sizing: border-box;
+					margin-bottom: 4px;
 				}
 				.coin-slot {
 					display: flex;
