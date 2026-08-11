@@ -4524,11 +4524,11 @@ class JournalManager{
 					box-sizing: border-box;
 				}
 				.left-column {
-					width: 190px;
 					display: flex;
 					flex-direction: column;
 					gap: 10px;
 					box-sizing: border-box;
+					width: fit-content;
 				}
 				.abilities-table-container, .skills-box {
 					border: 1px solid var(--pc-template-border-color, #333);
@@ -4620,6 +4620,9 @@ class JournalManager{
 				tbody tr td:is(:first-child, .table-row-drag-handle+:nth-child(2), :last-child) {
 					text-align: left;
 				} 
+				.abilities-table-container table{
+					white-space: nowrap;
+				}	
 				:is(.skills-box, .abilities-table-container) tbody  tr td:last-child{
 					text-align: center;
 				}
