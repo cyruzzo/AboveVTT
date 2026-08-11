@@ -2797,12 +2797,10 @@ class JournalManager{
 					}
 					if(noteCell.text().trim() == '' && properties != undefined){
 						const propertyNames = properties.map(p => {
-							if(p.name.toLowerCase() == 'range'){
-								return `Range (${range}${longRange ? `/${longRange}` : ''})`;
-							} else if(ddbConfigJson.weaponProperties.filter(d => d.id == p.id).length > 0){
-								return `[wprop]${p.name}[/wprop]`;
+							if(ddbConfigJson.weaponProperties.filter(d => d.id == p.id).length > 0){
+								return `[wprop]${p.name}[/wprop]${p.name.toLowerCase() == 'thrown' || p.name.toLowerCase() == 'range' ? ` (${range}${longRange ? `/${longRange}` : ''})` : ''}`;
 							}
-							return p.name; 
+							return p.name; s
 						}).join(', ');
 						noteCell.text(`${propertyNames}`);
 					}
@@ -2850,14 +2848,13 @@ class JournalManager{
 					cell.html(link);
 					const noteCell = cell.siblings('td:last-of-type');
 					if(noteCell.text().trim() == '' && properties != undefined){
-						const propertyNames = properties.map(p => {
-							if(p.name.toLowerCase() == 'range'){
-								return `Range (${range}${longRange ? `/${longRange}` : ''})`;
-							} else if(ddbConfigJson.weaponProperties.filter(d => d.id == p.id).length > 0){
-								return `[wprop]${p.name}[/wprop]`;
+						let propertyNames = properties.map(p => {
+							if(ddbConfigJson.weaponProperties.filter(d => d.id == p.id).length > 0){
+								return `[wprop]${p.name}[/wprop]${p.name.toLowerCase() == 'thrown' || p.name.toLowerCase() == 'range' ? ` (${range}${longRange ? `/${longRange}` : ''})` : ''}`;
 							}
 							return p.name; 
 						}).join(', ');
+						
 						noteCell.text(`${propertyNames}`);
 					} else if(type == 'spell' && range != undefined && noteCell.text().trim() == ''){
 						const aoeValue = range.aoeValue;
@@ -4402,29 +4399,32 @@ class JournalManager{
 				transition: opacity 0.15s ease;
 			}
 
-			.prof-checkbox[data-state="1"] .half-fill {
+			.prof-checkbox[data-state="3"] .half-fill {
+				opacity: 1;
+			}
+
+			.prof-checkbox[data-state="1"] .full-fill {
 				opacity: 1;
 			}
 
 			.prof-checkbox[data-state="2"] .full-fill {
 				opacity: 1;
-
 			}
-
-			.prof-checkbox[data-state="3"] .full-fill {
-				opacity: 1;
-			}
-			.prof-checkbox[data-state="3"] .ring-stroke {
+			.prof-checkbox[data-state="2"] .ring-stroke {
 				opacity: 1;
 				fill: none;
-
 				stroke-width: 1;
 			}
 
 			.prof-checkbox .base-circle{
 				stroke: color-mix(in srgb, var(--font-color, #333) 50%, transparent 0%) !important;
 			}
-			.prof-checkbox[data-state="1"] .half-fill {
+			.prof-checkbox[data-state="3"] .half-fill {
+				fill: var(--font-color, #333) !important;
+			}
+
+			.prof-checkbox[data-state="1"] .full-fill {
+
 				fill: var(--font-color, #333) !important;
 			}
 
@@ -4432,12 +4432,7 @@ class JournalManager{
 
 				fill: var(--font-color, #333) !important;
 			}
-
-			.prof-checkbox[data-state="3"] .full-fill {
-
-				fill: var(--font-color, #333) !important;
-			}
-			.prof-checkbox[data-state="3"] .ring-stroke {
+			.prof-checkbox[data-state="2"] .ring-stroke {
 				fill: none !important;
 				stroke: var(--font-color, #333) !important;
 			}
@@ -4698,6 +4693,10 @@ class JournalManager{
 					gap: 6px;
 					margin-bottom: 6px;
 					box-sizing: border-box;
+				}
+				.hp-row.hp-input{
+					font-size: 16px;
+					font-weight: bold;
 				}
 				.hp-row .col {
 					flex: 1;
@@ -5453,23 +5452,30 @@ class JournalManager{
 										</div>
 									</div>
 									<div class="hp-box">
-										<div class="hp-row">
+										<div class="hp-row hp-input">
+											<div class="col"><span class="label">Current Hit Points</span>
+												<div class="box-field" contenteditable="true">&nbsp;</div>
+											</div>
 											<div class="col"><span class="label">Maximum Hit Points</span>
 												<div class="box-field" contenteditable="true"><strong class="custom-avghp custom-stat">
 														10</strong></div>
 											</div>
-											<div class="col"><span class="label">Current Hit Points</span>
+											<div class="col"><span class="label">Temporary Hit Points</a></span>
 												<div class="box-field" contenteditable="true">&nbsp;</div>
 											</div>
 										</div>
 										<div class="hp-row">
-											<div class="col"><span class="label">Temporary Hit Points</a></span>
-												<div class="box-field" contenteditable="true">&nbsp;</div>
-											</div>
+											
 											<div class="col">
 												<div class="hp-subgrid">
 													<div><span class="label">Hit Dice</span>
 														<div class="box-field" contenteditable="true"><input type="checkbox" /> 1d10</div>
+													</div>
+													<div><span class="label">Resistances & Vulnerabilities</span>
+														<div class="box-field" contenteditable="true">&nbsp;</div>
+													</div>
+													<div><span class="label">Conditions</span>
+														<div class="box-field" contenteditable="true">&nbsp;</div>
 													</div>
 													<div><span class="label">Death Saves</span>
 														<div class="box-field" contenteditable="true">&nbsp;</div>
