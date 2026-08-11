@@ -8068,6 +8068,7 @@ div#file-listing-section .sidebar-panel-loading-indicator {
         -1px 1px 0  #000,
         1px 1px 0  #000;
     padding-left: 3px;
+    min-width:200px !important;
 }
 
 .resize_drag_window .encounter-body{
