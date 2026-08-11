@@ -45,11 +45,6 @@
                 const originalPostMessage = worker.postMessage;
                 worker.postMessage = async function(message, transfer) {
                     noisy_log('worker Messages', message);
-                    if(message.type == 'dice/roll/deferred'){
-                        for(let dice of message.payload.data.rolls[0].diceNotation.set[0].dice){
-                            dice.dieValue = Math.random() > 0.5 ? parseInt(dice.dieType.replace('d', '')) : 1;
-                        }
-                    }
                     if (message && typeof message === 'object' && message.type == 'resize') {
                         await originalPostMessage.call(worker, message, transfer);
                         // Need to do this due to a DDB bug that causes an infinite loop that hurts lower end pcs performance
@@ -61,10 +56,6 @@
                     }
                     return originalPostMessage.call(worker, message, transfer);
                 };
-                const originalOnMessage = worker.onmessage;
-                worker.onmessage = function(event) {
-                    console.log('worker Messages', event.data);
-                }
                 window.ActiveWorkers[scriptURL] = worker;
                 return worker;
             };
