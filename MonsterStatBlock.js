@@ -103,12 +103,13 @@ async function display_stat_block_in_container(statBlock, container, tokenId, cu
 
 
       container.off('focusout.editable').on('focusout.editable', '.dnd-sheet [contenteditable="true"]', (e)=>{
-        if($('[contenteditable="true"] :is(:focus, :focus-within)').length>0) return;
-        if($(e.target).is('.injected-input')) return;  
-        const note_text = container.find('.avtt-stat-block-container').first();
-        window.JOURNAL.persistStatBlockContent(customStatId, note_text, container, {tokenId, forceSave: true, rescanStatBlock: true});
-
-			});
+          setTimeout(()=>{
+            if(container.find('[contenteditable="true"]:is(:focus, :focus-within)').length>0) return;
+            if($(e.target).is('.injected-input')) return;  
+            const note_text = container.find('.avtt-stat-block-container').first();
+            window.JOURNAL.persistStatBlockContent(customStatId, note_text, container, {tokenId, forceSave: true, rescanStatBlock: true});
+          }, 10);
+        });
 			container.off('change.checkbox').on('change.checkbox', 'input[type="checkbox"], .dnd-sheet input', (e)=>{
 				if (e.target && e.target.nodeName === 'INPUT' && e.target.type === 'checkbox') {				
 					if (e.target.checked) {

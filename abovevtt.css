@@ -13366,14 +13366,14 @@ p.monster-header+p {
         box-sizing: border-box;
     }
     .coin-input {
-        width: 40px;
-        min-height: 24px;
         height: auto;
         border: 1px solid #ccc;
         background: transparent;
         text-align: right;
         display: inline-block;
-        line-height: 24px;
+        padding: 3px;
+        width: fit-content;
+        min-width: 30px;
     }
     .treasure-field {
         min-height: 80px;

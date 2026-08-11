@@ -2111,9 +2111,11 @@ class JournalManager{
 				render_source_chapter_in_iframe(event.target.href);
 			});
 			note.off('focusout.editable').on('focusout.editable', '[contenteditable="true"]', (e)=>{
-				if($('[contenteditable="true"] :is(:focus, :focus-within)').length>0) return;
-				if($(e.target).is('.injected-input')) return;  
-				self.persistStatBlockContent(id, note_text, note_container, {rescanStatBlock: true});
+				setTimeout(()=>{
+					if(note.find('[contenteditable="true"]:is(:focus, :focus-within)').length>0) return;
+					if($(e.target).is('.injected-input')) return;  
+					self.persistStatBlockContent(id, note_text, note_container, {rescanStatBlock: true});
+				}, 10);
 			});
 			note.off('change.checkbox').on('change.checkbox', 'input', (e)=>{
 				if (e.target && e.target.nodeName === 'INPUT' && e.target.type === 'checkbox') {				
@@ -4529,6 +4531,7 @@ class JournalManager{
 					gap: 10px;
 					box-sizing: border-box;
 					width: fit-content;
+					max-width:200px;
 				}
 				.abilities-table-container, .skills-box {
 					border: 1px solid var(--pc-template-border-color, #333);
@@ -4851,15 +4854,14 @@ class JournalManager{
 					box-sizing: border-box;
 				}
 				.coin-input {
-					width: 40px;
-					min-height: 24px;
 					height: auto;
-					border: 1px solid var(--pc-template-border-color, #ccc);
-					background: var(--pc-template-box-bg, transparent);
-					color: var(--pc-template-text-color, #111);
+					border: 1px solid #ccc;
+					background: transparent;
 					text-align: right;
 					display: inline-block;
-					line-height: 24px;
+					padding: 3px;
+					width: fit-content;
+					min-width: 30px;
 				}
 				.treasure-field {
 					min-height: 80px;
