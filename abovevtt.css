@@ -2824,7 +2824,7 @@ body>[class*='styles_mobileNav']>button{
     outline-offset: 0;
     filter: none;
 }
-[data-id^='/profile'] .hpbar:before {
+.hpbar:before {
     opacity: 0;
     pointer-events:none;
     display: flex;
@@ -2851,7 +2851,7 @@ body>[class*='styles_mobileNav']>button{
     transition: opacity 0s 0s;
 }
 
-[data-id^='/profile'] .hpbar:hover:before {
+.hpbar:hover:before {
     opacity:1;
     transition: opacity 200ms 400ms;
 }
