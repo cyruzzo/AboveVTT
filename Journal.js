@@ -4679,6 +4679,9 @@ class JournalManager{
 					background: var(--pc-template-box-bg, #fdfdfd);
 					border-radius: 4px;
 					box-sizing: border-box;
+					.custom-stat {
+						font-weight: bold;
+					}
 				}
 				.metric-val {
 					font-size: 16px;
@@ -4827,10 +4830,10 @@ class JournalManager{
 				}
 				.currency-container {
 					display: flex;
-					justify-content: space-between;
-					margin-bottom: 6px;
-					margin-top: 4px;
+					justify-content: flex-start;
+					gap: 5px;
 					box-sizing: border-box;
+					margin-bottom: 4px;
 				}
 				.coin-slot {
 					display: flex;
@@ -5265,11 +5268,6 @@ class JournalManager{
 							<div class="main-container">
 								<div class="left-column">
 									<div class="abilities-table-container">
-										<div class="section-title"><span class="ignore-abovevtt-formating">Heroic Inspiration</span></div>
-										<div class="box-field heroic-inspiration"><input id="template-heroic-inspiration" type="checkbox" />
-										</div>
-									</div>
-									<div class="abilities-table-container">
 										<div class="section-title">Abilities</div>
 										<div class="box-field">
 											<table contenteditable="true">
@@ -5455,6 +5453,10 @@ class JournalManager{
 										</div>
 										<div class="combat-metric"><span class="label">Proficiency Bonus</span>
 											<div class="metric-val" contenteditable="true">+2</div>
+										</div>
+										<div class="combat-metric">
+											<span class="label">Heroic Inspiration</span>
+											<div class="box-field heroic-inspiration"><input type="checkbox" id="template-heroic-inspiration"></div>
 										</div>
 									</div>
 									<div class="hp-box">
