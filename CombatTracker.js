@@ -1321,11 +1321,9 @@ function ct_add_token(token,persist=true,disablerolling=false, adv=false, dis=fa
 			let value = $(this).val().trim();
 			if (value.startsWith("+") || value.startsWith("-")) {
 				value = Math.max(0, parseInt(token.hp) + parseInt(value));
-				$(this).val(value);
 			} else{
 				const sanitizedString = value.replaceAll(/[^\d+-/*().]/gi, '');
 				value = Math.max(0, parseInt(eval(sanitizedString)));
-				$(this).val(value);
 			}
 
 			token.totalHp = value;
@@ -1339,7 +1337,7 @@ function ct_add_token(token,persist=true,disablerolling=false, adv=false, dis=fa
 				window.TOKEN_OBJECTS[token.options.id].totalHp = value;
 				window.TOKEN_OBJECTS[token.options.id].place_sync_persist();
 			}							
-				
+			$(this).val(window.all_token_objects[token.options.id].hp);
 			window.all_token_objects[token.options.id].update_combat_tracker()
 			window.all_token_objects[token.options.id].update_quick_roll();	
 		});
