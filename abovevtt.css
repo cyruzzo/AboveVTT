@@ -2271,21 +2271,24 @@ table.portal-table :is(td, th){
 
 input.menu-input.acMenuInput[readonly],
 input.menu-input.maxHpMenuInput[readonly], 
-input.menu-input.hpMenuInput[readonly] {
+input.menu-input.hpMenuInput[readonly],
+input.menu-input.tempHpMenuInput[readonly] {
     filter:brightness(0.7);
     opacity:0.4;   
 }
 
 input.menu-input.acMenuInput[readonly]::-moz-selection,
 input.menu-input.maxHpMenuInput[readonly]::-moz-selection, 
-input.menu-input.hpMenuInput[readonly]::-moz-selection {
+input.menu-input.hpMenuInput[readonly]::-moz-selection,
+input.menu-input.tempHpMenuInput[readonly]::-moz-selection {
     background: none !important;
     color:#000;
 }
 
 input.menu-input.acMenuInput[readonly]::selection,
 input.menu-input.maxHpMenuInput[readonly]::selection, 
-input.menu-input.hpMenuInput[readonly]::selection {
+input.menu-input.hpMenuInput[readonly]::selection,
+input.menu-input.tempHpMenuInput[readonly]::selection {
     background: #0000 !important;
     color:#000;
 }
@@ -2293,7 +2296,8 @@ input.menu-input.hpMenuInput[readonly]::selection {
 
 input.menu-input.acMenuInput[readonly]:focus,
 input.menu-input.maxHpMenuInput[readonly]:focus, 
-input.menu-input.hpMenuInput[readonly]:focus  {
+input.menu-input.hpMenuInput[readonly]:focus,
+input.menu-input.tempHpMenuInput[readonly]:focus {
     outline:none;
 }
 #combat_area .ct_dead[data-current][data-target*="characters"]{
@@ -2820,7 +2824,7 @@ body>[class*='styles_mobileNav']>button{
     outline-offset: 0;
     filter: none;
 }
-[data-id^='/profile'] .hpbar:before {
+.hpbar:before {
     opacity: 0;
     pointer-events:none;
     display: flex;
@@ -2847,7 +2851,7 @@ body>[class*='styles_mobileNav']>button{
     transition: opacity 0s 0s;
 }
 
-[data-id^='/profile'] .hpbar:hover:before {
+.hpbar:hover:before {
     opacity:1;
     transition: opacity 200ms 400ms;
 }
@@ -7401,7 +7405,7 @@ button.avtt-roll-formula-button {
     z-index: 110000;
     background: #fff;
     border-radius: 10px;
-    width: 245px;
+    width: 265px;
     max-height: 100%;
 }
 .aboveDiceTotal{
@@ -8662,7 +8666,7 @@ button span.onedrive-btn-status{
     font-family: Roboto,Open Sans,Helvetica,sans-serif;
 }
 #tokenOptionsContainer .menu-input {
-    width: 50px;
+    width: 40px;
     text-align: center;
     margin: 5px;
 }

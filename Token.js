@@ -159,6 +159,17 @@ class Token {
 	set hp(newValue) {
 		this.baseHp = newValue;
 	}
+	set totalHp(newValue) {
+		if(newValue > this.maxHp){
+			this.baseHp = this.maxHp;
+			this.tempHp = newValue - this.maxHp;
+		} else if(this.tempHp > 0 && newValue < this.hp){
+			this.tempHp = Math.max(0, this.tempHp - (this.hp - newValue));
+			this.baseHp = newValue - this.tempHp;
+		} else{
+			this.baseHp = newValue - this.tempHp;
+		}
+	}
 
 	/** @return {number} the percentage of this token's base HP divided by it's max hp */
 	get hpPercentage() {
@@ -174,13 +185,13 @@ class Token {
 		return 0;
 	}
 	set baseHp(newValue) {
-		let currentHP = this.hp
+		let currentHP = this.baseHp;
 		if (this.options.hitPointInfo) {
-			this.options.hitPointInfo.current = newValue;
+			this.options.hitPointInfo.current = Math.min(this.maxHp, newValue);
 		} else {
 			this.options.hitPointInfo = {
 				maximum: this.maxHp,
-				current: newValue,
+				current: Math.min(this.maxHp, newValue),
 				temp: this.tempHp
 			};
 		}
@@ -1413,10 +1424,10 @@ class Token {
 				}
 				
 				if(window.all_token_objects[tokenID] != undefined){
-					window.all_token_objects[tokenID].hp = value;
+					window.all_token_objects[tokenID].totalHp = value;
 				}			
 				if(window.TOKEN_OBJECTS[tokenID] != undefined){		
-					window.TOKEN_OBJECTS[tokenID].hp = value;
+					window.TOKEN_OBJECTS[tokenID].totalHp = value;
 					window.TOKEN_OBJECTS[tokenID].update_from_page();
 				}
 				window.all_token_objects[tokenID].update_combat_tracker()

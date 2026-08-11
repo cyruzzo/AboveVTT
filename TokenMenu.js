@@ -1583,6 +1583,9 @@ function token_context_menu_expanded(tokenIds, e, crossScenePortalData) {
 	$(".maxHpMenuInput").on('focus', function(event){
 		event.target.select();
 	});
+	$(".tempHpMenuInput").on('focus', function(event){
+		event.target.select();
+	});
 	$(".acMenuInput").on('focus', function(event){
 		event.target.select();
 	});
@@ -1597,16 +1600,18 @@ function token_context_menu_expanded(tokenIds, e, crossScenePortalData) {
 		$(".maxHpMenuInput").prop('readonly', false);
 		$(".acMenuInput").prop('readonly', false);
 		$(".hpMenuInput").prop('readonly', false);
+		$(".tempHpMenuInput").prop('readonly', false);
 	}
 	else { 
 		if(tokens[0].isPlayer()){
-			$(".maxHpMenuInput, .acMenuInput, .hpMenuInput").off('click.message').on('click.message', function(){
+			$(".maxHpMenuInput, .acMenuInput, .hpMenuInput, .tempHpMenuInput").off('click.message').on('click.message', function(){
 				showTempMessage('Player HP/AC must be adjusted on the character sheet.')
 			})
 		}
 		$(".maxHpMenuInput").prop('readonly', true);
 		$(".acMenuInput").prop('readonly', true);
 		$(".hpMenuInput").prop('readonly', true);
+		$(".tempHpMenuInput").prop('readonly', true);
 	}	
 	if(window.DM || (tokens.length == 1 && (tokens[0].options.player_owned == true || tokens[0].isPlayer()))){
 		let tokenNames = tokens.map(t => t.options.name);
@@ -3305,26 +3310,31 @@ function build_menu_stat_inputs(tokenIds) {
 	let elev = '';
 
 	if(tokens.length == 1 && ((tokens[0].options.player_owned && !tokens[0].options.disablestat) || (!tokens[0].options.hidestat && tokens[0].isPlayer() && !tokens[0].options.disablestat) || tokens[0].options.id.includes(window.PLAYER_ID) || window.window.DM)){
-		hp = tokens[0].hp;
+		hp = tokens[0].baseHp;
 		max_hp = tokens[0].maxHp;
+		temp_hp = tokens[0].tempHp;
 		ac = tokens[0].ac;
 		elev = (typeof tokens[0].options.elev !== 'undefined') ? tokens[0].options.elev : '';
 	}
 	else if(window.DM && tokens.length>1){
 		hp = '';
 		max_hp = '';
+		temp_hp = '';
 		ac = '';
 		elev = '';
 	}
 	else{
 		hp = "????";
 		max_hp = "????";
+		temp_hp = '????';
 		ac = "????";
 		elev = (typeof tokens[0].options.elev !== 'undefined') ? tokens[0].options.elev : '';
 	}
 
-	let hpMenuInput = $(`<label class='menu-input-label'>HP<input value='${hp}' class='menu-input hpMenuInput' type="text"></label>`);
+	let hpMenuInput = $(`<label class='menu-input-label'>HP<input value='${hp}' class='menu-input hpMenuInput' type="text"></label>`);	
 	let maxHpMenuInput = $(`<label class='menu-input-label'>Max HP<input value='${max_hp}' class='menu-input maxHpMenuInput' type="text"></label>`);
+	let tempHpMenuInput = $(`<label class='menu-input-label'>Temp HP<input value='${temp_hp}' class='menu-input tempHpMenuInput' type="text"></label>`);
+
 	let acMenuInput = $(`<label class='menu-input-label'>AC<input value='${ac}' class='menu-input acMenuInput' type="text"></label>`);
 	let elevMenuInput = $(`<label class='menu-input-label'>Elevation<input value='${elev}' class='menu-input elevMenuInput' type="number"></label>`);
 
@@ -3332,6 +3342,7 @@ function build_menu_stat_inputs(tokenIds) {
 	body.append(acMenuInput);
 	body.append(hpMenuInput);
 	body.append(maxHpMenuInput);
+	body.append(tempHpMenuInput);
 
 	const debounceTriggerKeyboard = mydebounce((input, keyboardEvent)=>{
 		input.trigger(keyboardEvent);
@@ -3352,7 +3363,20 @@ function build_menu_stat_inputs(tokenIds) {
 		});
 		maxHpMenuInput.find('input').on('wheel', function(e) {
 			const input = $(this);
-			if(!input.is(':focus'))s
+			if(!input.is(':focus'))
+				return;
+			e.preventDefault();
+			const delta = e.originalEvent.deltaY < 0 ? 1 : -1;
+			const current = parseInt(input.val());
+			if(isNaN(current)) return;
+			input.val(Math.max(1, current + delta));
+			const keyboardEvent = $.Event('keyup');
+			keyboardEvent.key = 'Enter'; 
+			debounceTriggerKeyboard(input, keyboardEvent);
+		});
+		tempHpMenuInput.find('input').on('wheel', function(e) {
+			const input = $(this);
+			if(!input.is(':focus'))
 				return;
 			e.preventDefault();
 			const delta = e.originalEvent.deltaY < 0 ? 1 : -1;
@@ -3375,16 +3399,22 @@ function build_menu_stat_inputs(tokenIds) {
 					return;
 				let newHP = newValue;
 				if(newValue.indexOf("+") == 0 || newValue.indexOf("-") == 0){
-					newHP = token.hp + parseInt(newValue);
+					newHP = token.baseHp + parseInt(newValue);
 				} else{
 					const sanitizedString = newHP.replaceAll(/[^\d+-/*().]/gi, '');
 					newHP = Math.max(0, parseInt(eval(sanitizedString)));
 				}
-
-				token.hp = newHP - token.tempHp;
+				if(newHP > token.maxHp){
+					token.hp = token.maxHp;
+					token.tempHp = newHP - token.maxHp;
+					newHP = token.maxHp;
+				} else {
+					token.hp = newHP;
+				}
 				token.place_sync_persist();
 				if(tokens.length == 1){
 					$(".hpMenuInput").val(newHP);
+					$(".tempHpMenuInput").val(token.tempHp);
 				}
 				else{
 					$(".hpMenuInput").val('');
@@ -3401,15 +3431,22 @@ function build_menu_stat_inputs(tokenIds) {
 				return;
 			let newHP = newValue;
 			if(newValue.indexOf("+") == 0 || newValue.indexOf("-") == 0){
-				newHP = token.hp + parseInt(newValue);
+				newHP = token.baseHp + parseInt(newValue);
 			} else{
 				const sanitizedString = newHP.replaceAll(/[^\d+-/*().]/gi, '');
 				newHP = Math.max(0, parseInt(eval(sanitizedString)));
 			}
-			token.hp = newHP - token.tempHp;
+			if(newHP > token.maxHp){
+				token.hp = token.maxHp;
+				token.tempHp = newHP - token.maxHp;
+				newHP = token.maxHp;
+			} else {
+				token.hp = newHP;
+			}
 			token.place_sync_persist();
 			if(tokens.length == 1){
 				$(".hpMenuInput").val(newHP);
+				$(".tempHpMenuInput").val(token.tempHp);
 			}
 			else{
 				$(".hpMenuInput").val('');
@@ -3466,6 +3503,58 @@ function build_menu_stat_inputs(tokenIds) {
 			}
 			else{
 				$(".maxHpMenuInput").val('');
+			}
+		});
+	});
+
+	tempHpMenuInput.find('input').on('keyup', function(event) {
+		let newValue = event.target.value;
+		if($(event.target).prop('readonly') || newValue == '')
+			return;		
+		if (event.key == "Enter" && newValue !== undefined && newValue.length > 0) {
+			tokens.forEach(token => {
+				if(token.isPlayer())
+					return;
+				let newTempHP = newValue;
+				if(newValue.indexOf("+") == 0 || newValue.indexOf("-") == 0){
+					newTempHP = token.tempHp + parseInt(newValue);
+				} else{
+					const sanitizedString = newTempHP.replaceAll(/[^\d+-/*().]/gi, '');
+					newTempHP = Math.max(0, parseInt(eval(sanitizedString)));
+				}
+				token.tempHp = newTempHP;
+				debouceChangeInput(token);
+				if(tokens.length == 1){
+					$(".tempHpMenuInput").val(newTempHP);
+				}
+				else{
+					$(".tempHpMenuInput").val('');
+				}
+				
+			});
+		}
+	});
+	tempHpMenuInput.find('input').on('focusout', function(event) {
+		let newValue = event.target.value;
+		if($(event.target).prop('readonly') || newValue == '')
+			return;
+		tokens.forEach(token => {
+			if(token.isPlayer())
+				return;
+			let newTempHP = newValue;
+			if(newValue.indexOf("+") == 0 || newValue.indexOf("-") == 0){
+				newTempHP = token.tempHp + parseInt(newValue);
+			} else{
+				const sanitizedString = newTempHP.replaceAll(/[^\d+-/*().]/gi, '');
+				newTempHP = Math.max(0, parseInt(eval(sanitizedString)));
+			}
+			token.tempHp = newTempHP;
+			token.place_sync_persist();
+			if(tokens.length == 1){
+				$(".tempHpMenuInput").val(newTempHP);
+			}
+			else{
+				$(".tempHpMenuInput").val('');
 			}
 		});
 	});
@@ -5370,17 +5459,24 @@ function add_to_quick_roll_menu(token, autoRollAfterAoe = false) {
 				value = Math.max(0, parseInt(eval(sanitizedString)));
 				hp_input.val(value);
 			}
-
+			if(value > token.maxHp){
+				token.hp = token.maxHp;
+				token.tempHp = value - token.maxHp;
+				if(window.all_token_objects[token.options.id] != undefined){
+					window.all_token_objects[token.options.id].hp = token.maxHp;
+					window.all_token_objects[token.options.id].tempHp = value - token.maxHp;
+				}
+				value = token.maxHp;
+				
+			} else {
+				token.hp = value;
+				if(window.all_token_objects[token.options.id] != undefined){
+					window.all_token_objects[token.options.id].hp = value;
+				}
+			}
 			old.find(".hp").val(value);	
 
-			if(window.all_token_objects[token.options.id] != undefined){
-				window.all_token_objects[token.options.id].hp = value;
-			}			
-			if(window.TOKEN_OBJECTS[token.options.id] != undefined){		
-				window.TOKEN_OBJECTS[token.options.id].hp = value;	
-				window.TOKEN_OBJECTS[token.options.id].update_from_page()
-				debounceChange(window.TOKEN_OBJECTS[token.options.id]);
-			}			
+			debounceChange(window.TOKEN_OBJECTS[token.options.id]);			
 
 			window.all_token_objects[token.options.id].update_combat_tracker()
 			window.all_token_objects[token.options.id].update_quick_roll();
