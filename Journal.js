@@ -5265,11 +5265,6 @@ class JournalManager{
 							<div class="main-container">
 								<div class="left-column">
 									<div class="abilities-table-container">
-										<div class="section-title"><span class="ignore-abovevtt-formating">Heroic Inspiration</span></div>
-										<div class="box-field heroic-inspiration"><input id="template-heroic-inspiration" type="checkbox" />
-										</div>
-									</div>
-									<div class="abilities-table-container">
 										<div class="section-title">Abilities</div>
 										<div class="box-field">
 											<table contenteditable="true">
@@ -5455,6 +5450,10 @@ class JournalManager{
 										</div>
 										<div class="combat-metric"><span class="label">Proficiency Bonus</span>
 											<div class="metric-val" contenteditable="true">+2</div>
+										</div>
+										<div class="combat-metric">
+											<span class="label">Heroic Inspiration</span>
+											<div class="box-field heroic-inspiration"><input type="checkbox" id="template-heroic-inspiration"></div>
 										</div>
 									</div>
 									<div class="hp-box">
