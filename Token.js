@@ -161,11 +161,15 @@ class Token {
 	}
 	set totalHp(newValue) {
 		if(newValue > this.maxHp){
-			this.baseHp = this.maxHp;
-			this.tempHp = newValue - this.maxHp;
+			if(this.tempHp > 0){
+				this.baseHp = this.maxHp > newValue - this.tempHp ? newValue - this.tempHp : this.maxHp;
+			} else {
+				this.baseHp = this.maxHp;	
+				this.tempHp = newValue - this.maxHp;
+			}
 		} else if(this.tempHp > 0 && newValue < this.hp){
 			this.tempHp = Math.max(0, this.tempHp - (this.hp - newValue));
-			this.baseHp = newValue - this.tempHp;
+			this.baseHp = (newValue - this.tempHp);
 		} else{
 			this.baseHp = newValue - this.tempHp;
 		}
@@ -1268,7 +1272,7 @@ class Token {
 			}
 			this.totalHp = parseInt(old.find(".hp").val());
 			this.maxHp = parseInt(old.find(".max_hp").val());
-			
+			old.find(".hp").val(this.hp);
 			this.update_dead_cross(old)
 			this.update_health_aura(old)
 		}
@@ -1416,11 +1420,9 @@ class Token {
 				let value = $(this).val().trim();	
 				if (value.startsWith("+") || value.startsWith("-")) {
 					value = Math.max(0, parseInt(window.all_token_objects[tokenID].hp) + parseInt(value));
-					$(this).val(value);
 				} else{
 					const sanitizedString = value.replaceAll(/[^\d+-/*().]/gi, '');
 					value = Math.max(0, parseInt(eval(sanitizedString)));
-					$(this).val(value);
 				}
 				
 				if(window.all_token_objects[tokenID] != undefined){
@@ -1428,8 +1430,10 @@ class Token {
 				}			
 				if(window.TOKEN_OBJECTS[tokenID] != undefined){		
 					window.TOKEN_OBJECTS[tokenID].totalHp = value;
+					$(this).val(window.TOKEN_OBJECTS[tokenID].hp);
 					window.TOKEN_OBJECTS[tokenID].update_from_page();
 				}
+				
 				window.all_token_objects[tokenID].update_combat_tracker()
 				window.all_token_objects[tokenID].update_quick_roll();
 				debounceChange();
