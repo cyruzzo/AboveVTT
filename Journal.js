@@ -2761,7 +2761,7 @@ class JournalManager{
 					const cell = $(firstCells[i]);
 					if(cell.find('a').length > 0) continue;
 					const text = cell.text();
-					if(text.match(/(\[(magicitem|item)\])/gi)) continue;
+					if(text.match(/(\[(magicitem|item)\])/gi) || text.trim() === '') continue;
 
 					const isLegacy = !get_avtt_setting_value('2024Tooltips');
 					let item = window.ITEMS_CACHE.filter(d => d.name.toLowerCase() == text.toLowerCase() && d.isLegacy == isLegacy)
@@ -2819,7 +2819,7 @@ class JournalManager{
 					const cell = $(firstCells[i]);
 					if(cell.find('a').length > 0) continue;
 					const text = cell.text();
-					if(text.match(/(\[(magicitem|item)\])/gi)) continue;
+					if(text.match(/(\[(magicitem|item)\])/gi) || text.trim() === '') continue;
 					let type = 'item';
 					const isLegacy = !get_avtt_setting_value('2024Tooltips');
 					let item = window.ITEMS_CACHE.filter(d => d.name.toLowerCase() == text.toLowerCase() && d.isLegacy == isLegacy)
