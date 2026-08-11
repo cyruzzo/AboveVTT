@@ -13045,6 +13045,7 @@ p.monster-header+p {
         border-radius: 3px;
         box-sizing: border-box;
         overflow-wrap: break-word;
+        flex:1;
     }
     .label {
         font-size: 8px;
@@ -13066,7 +13067,7 @@ p.monster-header+p {
         gap: 10px;
         box-sizing: border-box;
         width: fit-content;
-        max-width:200px;
+        max-width:230px;
     }
 
     .abilities-table-container .prof-checkbox{
@@ -13253,6 +13254,8 @@ p.monster-header+p {
     .hp-subgrid > div {
         flex: 1;
         box-sizing: border-box;
+        display:flex;
+        flex-direction: column;
     }
     .container-block {
         border: 1px solid #333;
@@ -13323,6 +13326,8 @@ p.monster-header+p {
         margin-bottom: 8px;
         background: #fff;
         box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
     }
     .bio-appearance { min-height: 90px; height: auto; border: 1px solid #444; padding: 4px; background: #fdfdfd; border-radius: 3px; box-sizing: border-box; overflow-wrap: break-word; }
     .bio-backstory { min-height: 140px; height: auto; border: 1px solid #444; padding: 4px; background: #fdfdfd; border-radius: 3px; box-sizing: border-box; overflow-wrap: break-word; }
@@ -13343,6 +13348,7 @@ p.monster-header+p {
         border-radius: 3px;
         box-sizing: border-box;
         overflow-wrap: break-word;
+        flex:1;
     }
     .attunement-content {
         font-size: 11px;

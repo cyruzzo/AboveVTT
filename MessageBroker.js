@@ -633,7 +633,7 @@ class MessageBroker {
 					if(msg.sequence < shouldbethis){
 							if((msg.sequence - self.stats.peers[msg.sender].first_sequence) > 10){
 								self.stats.peers[msg.sender].past++;
-								console.error("Sequence message is in the past. We should try to recover");
+								noisy_log(0, "Sequence message is in the past. We should try to recover");
 							}
 							else{
 								noisy_log("message in the past, but the che connection is new.. so.. I guess it's ok");

@@ -582,7 +582,8 @@ function monitor_console_logs() {
         if (console.concerningLogs.length > 100) {
           console.concerningLogs.length = 100;
         }
-        if (get_avtt_setting_value("aggressiveErrorMessages")) {
+
+        if (get_avtt_setting_value("aggressiveErrorMessages") && !log.value?.some(v => v.doNotRelog == true)) {
           showError(new Error(`${log.type} ${log.message}`), ...log.value);
         }
       } else {
@@ -1610,6 +1611,7 @@ function showErrorMessage(error, ...extraInfo) {
   }
 
   const stack = error.stack || new Error().stack;
+  error.doNotRelog = true;
   console.error(error, ...extraInfo);
   if(stack.includes('Internal Server Error') && stack.includes('AboveApi.getScene')){
     if(!window.DM){
