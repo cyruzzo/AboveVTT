@@ -1328,17 +1328,16 @@ function ct_add_token(token,persist=true,disablerolling=false, adv=false, dis=fa
 				$(this).val(value);
 			}
 
-			old.find(".hp").val(value);	
-
+			token.totalHp = value;
 			if(window.all_token_objects[token.options.id] != undefined){
 				window.all_token_objects[token.options.id].totalHp = value;
-
-				debounceChange(window.all_token_objects[token.options.id]);
+				if(window.TOKEN_OBJECTS[token.options.id] == undefined){
+					window.all_token_objects[token.options.id].sync();
+				}
 			}			
 			if(window.TOKEN_OBJECTS[token.options.id] != undefined){		
 				window.TOKEN_OBJECTS[token.options.id].totalHp = value;
-				window.TOKEN_OBJECTS[token.options.id].update_from_page();
-				debounceChange(window.TOKEN_OBJECTS[token.options.id]);
+				window.TOKEN_OBJECTS[token.options.id].place_sync_persist();
 			}							
 				
 			window.all_token_objects[token.options.id].update_combat_tracker()
@@ -1360,15 +1359,16 @@ function ct_add_token(token,persist=true,disablerolling=false, adv=false, dis=fa
 				$(this).val(value)
 			}
 
-			old.find(".max_hp").val(value);
+			token.maxHp = value;
 			if(window.all_token_objects[token.options.id] != undefined){
 				window.all_token_objects[token.options.id].maxHp = value;
-				debounceChange(window.all_token_objects[token.options.id]);
+				if(window.TOKEN_OBJECTS[token.options.id] == undefined){
+					window.all_token_objects[token.options.id].sync();
+				}
 			}
 			if(window.TOKEN_OBJECTS[token.options.id] != undefined){		
 				window.TOKEN_OBJECTS[token.options.id].maxHp = value;
-				window.TOKEN_OBJECTS[token.options.id].update_from_page();
-				debounceChange(window.TOKEN_OBJECTS[token.options.id]);
+				window.TOKEN_OBJECTS[token.options.id].place_sync_persist();
 			}							
 			window.all_token_objects[token.options.id].update_combat_tracker()
 			window.all_token_objects[token.options.id].update_quick_roll();		
@@ -1376,7 +1376,9 @@ function ct_add_token(token,persist=true,disablerolling=false, adv=false, dis=fa
 		maxhp_input.click(function(e) {
 			$(e.target).select();
 		});
-
+		const debounceTriggerChange = mydebounce(function(input) {
+			input.trigger('change');
+		}, 100);
 		hp_input.on('wheel', function(e) {
 			const input = $(this);
 			if(!input.is(':focus'))
@@ -1385,7 +1387,7 @@ function ct_add_token(token,persist=true,disablerolling=false, adv=false, dis=fa
 			const delta = e.originalEvent.deltaY < 0 ? 1 : -1;
 			const current = parseInt(token.hp) || 0;
 			input.val(Math.max(0, current + delta));
-			input.trigger('change');
+			debounceTriggerChange(input);
 		});
 		maxhp_input.on('wheel', function(e) {
 			const input = $(this);
@@ -1395,7 +1397,7 @@ function ct_add_token(token,persist=true,disablerolling=false, adv=false, dis=fa
 			const delta = e.originalEvent.deltaY < 0 ? 1 : -1;
 			const current = parseInt(token.maxHp) || 0;
 			input.val(Math.max(1, current + delta));
-			input.trigger('change');
+			debounceTriggerChange(input);
 		});
 	}
 	else {

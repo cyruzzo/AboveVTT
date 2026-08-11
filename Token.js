@@ -1266,7 +1266,7 @@ class Token {
 				const value = eval(sanitizedString);
 				old.find(".max_hp").val(Math.max(0, parseInt(value)));
 			}
-			this.hp = parseInt(old.find(".hp").val()) - this.tempHp;
+			this.totalHp = parseInt(old.find(".hp").val());
 			this.maxHp = parseInt(old.find(".max_hp").val());
 			
 			this.update_dead_cross(old)
