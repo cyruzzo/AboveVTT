@@ -3170,7 +3170,10 @@ class JournalManager{
 				}
 				return currentSpan[0].innerHTML;
             })		
- 
+ 			input = input.replace(/\[track id=([a-zA-Z\s]+)\]([\d]+)\[\/track\]/g, function(m, m1, m2){
+				return `<span class="add-input each avtt-custom-tracker" data-number="${m2}" data-spell="${m1}"></span>`
+			})
+            	
             input = input.replace(/\&nbsp\;/g, ' ');
             // Replace quotes to entity
             input = input.replace(/\'/g, '&rsquo;');
@@ -5666,37 +5669,37 @@ class JournalManager{
 												</thead>
 												<tbody>
 													<tr>
-														<td>[magicItem]Cloak of Protection[/magicItem]</td>
-														<td>&nbsp;</td>
-														<td>1</td>
-														<td>&nbsp;</td>
-														<td>&nbsp;</td>
-													</tr>
-													<tr>
-														<td>[magicItem]Dagger of Venom[/magicItem]</td>
-														<td>1 lbs</td>
-														<td>1</td>
-														<td>&nbsp;</td>
-														<td>&nbsp;</td>
-													</tr>
-													<tr>
-														<td>[item]Rope[/item]</td>
-														<td>5 lbs</td>
-														<td>50 ft</td>
-														<td>1</td>
-														<td>&nbsp;</td>
-													</tr>
-													<tr>
-														<td>&nbsp;[track][item]Arrows[/item] 20[/track]</td>
+														<td>Cloak of Protection</td>
 														<td>&nbsp;</td>
 														<td>&nbsp;</td>
 														<td>&nbsp;</td>
 														<td>&nbsp;</td>
 													</tr>
 													<tr>
-														<td>&nbsp;[track][item]Rations[/item] 10[/track]&nbsp;</td>
+														<td>Dagger of Venom</td>
 														<td>&nbsp;</td>
 														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+													</tr>
+													<tr>
+														<td>Rope</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+													</tr>
+													<tr>
+														<td>Arrows</td>
+														<td>&nbsp;</td>
+														<td>[track id=Arrows]20[/track]</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+													</tr>
+													<tr>
+														<td>Rations</td>
+														<td>&nbsp;</td>
+														<td>[track id=Rations]10[/track]</td>
 														<td>&nbsp;</td>
 														<td>&nbsp;</td>
 													</tr>
