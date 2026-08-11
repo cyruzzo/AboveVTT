@@ -8911,6 +8911,8 @@ button#changeTokenImage:before{
 }
 
 .VTTToken:not(.freeform):not(.hasbase) .hpvisualbar:before{
+    --capped-total-percentage: min(100%, var(--total-percentage));
+    --overflow-percentage: max(0%, calc(var(--total-percentage) - 100%));
     --mask-size:calc(100% - 7px);
     border-radius: 50%;
     transform: scale(var(--token-scale)) rotate(calc(var(--token-rotation) + var(--token-heading))) scaleX(var(--image-flip-x, 1));
@@ -8919,8 +8921,10 @@ button#changeTokenImage:before{
     top: 0px;
     left: 0px;
     background-color: #000;
-    background-image: conic-gradient(transparent calc(100% - var(--total-percentage)), 
-                            var(--token-temp-hpbar) calc(100% - var(--total-percentage)) calc(100% - var(--hp-percentage)), 
+    background-image:
+        conic-gradient(transparent 0 calc(100% - var(--overflow-percentage)), var(--token-temp-hpbar) calc(100% - var(--overflow-percentage)) 100%),
+        conic-gradient(transparent calc(100% - var(--capped-total-percentage)), 
+                            var(--token-temp-hpbar) calc(100% - var(--capped-total-percentage)) calc(100% - var(--hp-percentage)), 
                             var(--token-hpbar-aura-color) calc(100% - var(--hp-percentage)) 100%) !important;
     clip-path: circle();
     -webkit-mask: radial-gradient(45% 45% at center,transparent var(--mask-size),#fff var(--mask-size) 105%);
@@ -8942,10 +8946,14 @@ button#changeTokenImage:before{
 
 .VTTToken .base ~ .hpvisualbar:before {
     border-radius:50%;
+    --capped-total-percentage: min(100%, var(--total-percentage));
+    --overflow-percentage: max(0%, calc(var(--total-percentage) - 100%));
     background-size: 100%;
     background-color: transparent;
-    background-image: conic-gradient(transparent calc(100% - var(--total-percentage)), 
-                        var(--token-temp-hpbar) calc(100% - var(--total-percentage)) calc(100% - var(--hp-percentage)), 
+    background-image:
+        conic-gradient(transparent 0 calc(100% - var(--overflow-percentage)), var(--token-temp-hpbar) calc(100% - var(--overflow-percentage)) 100%),
+        conic-gradient(transparent calc(100% - var(--capped-total-percentage)), 
+                        var(--token-temp-hpbar) calc(100% - var(--capped-total-percentage)) calc(100% - var(--hp-percentage)), 
                         var(--token-hpbar-aura-color) calc(100% - var(--hp-percentage)) 100%) !important;
     clip-path: circle();
     -webkit-mask: radial-gradient(45% 45% at center,transparent var(--mask-size),#fff 105%);
