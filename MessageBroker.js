@@ -106,10 +106,10 @@ const debounceHandleInjected = mydebounce(() => {
 							let newHp = Math.max(0, parseInt(token.hp) - parseInt(damage));
 
 							if(window.all_token_objects[id] != undefined){
-								window.all_token_objects[id].hp = newHp;
+								window.all_token_objects[id].totalHp = newHp;
 							}			
 							if(token != undefined){		
-								token.hp = newHp;
+								token.totalHp = newHp;
 								token.place_sync_persist()
 							}		
 							addFloatingCombatText(id, damage, damage<0);
@@ -850,10 +850,10 @@ class MessageBroker {
 											let newHp = Math.max(0, parseInt(token.hp) - parseInt(damage));
 
 											if (window.all_token_objects[id] != undefined) {
-												window.all_token_objects[id].hp = newHp;
+												window.all_token_objects[id].totalHp = newHp;
 											}
 											if (token != undefined) {
-												token.hp = newHp;
+												token.totalHp = newHp;
 												token.place_sync_persist()
 												addFloatingCombatText(id, damage, damage < 0);
 											}

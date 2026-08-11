@@ -1331,12 +1331,12 @@ function ct_add_token(token,persist=true,disablerolling=false, adv=false, dis=fa
 			old.find(".hp").val(value);	
 
 			if(window.all_token_objects[token.options.id] != undefined){
-				window.all_token_objects[token.options.id].hp = value;
+				window.all_token_objects[token.options.id].totalHp = value;
 
 				debounceChange(window.all_token_objects[token.options.id]);
 			}			
 			if(window.TOKEN_OBJECTS[token.options.id] != undefined){		
-				window.TOKEN_OBJECTS[token.options.id].hp = value;
+				window.TOKEN_OBJECTS[token.options.id].totalHp = value;
 				window.TOKEN_OBJECTS[token.options.id].update_from_page();
 				debounceChange(window.TOKEN_OBJECTS[token.options.id]);
 			}							
