@@ -1306,7 +1306,7 @@ class MessageBroker {
 						}
 					}
 
-					const openStatBlock = $(`.custom-stat-block[data-stat-id="${msg.data.id}"]`)
+					const openStatBlock = $(`.custom-stat-block[data-stat-id="${msg.data.id}"]`).closest('.moveableWindow:not(.hideMon)');
 					if(openStatBlock.length > 0 && window.JOURNAL.notes[msg.data.id] != undefined){
 						currScroll = openStatBlock[0].scrollTop;
 						const container = await load_monster_stat(msg.data.id, msg.data.tokenId, window.JOURNAL.notes[msg.data.id].text);
