@@ -1332,11 +1332,11 @@ function ct_add_token(token,persist=true,disablerolling=false, adv=false, dis=fa
 				if(window.TOKEN_OBJECTS[token.options.id] == undefined){
 					window.all_token_objects[token.options.id].sync();
 				}
-			}			
+			}
 			if(window.TOKEN_OBJECTS[token.options.id] != undefined){		
 				window.TOKEN_OBJECTS[token.options.id].totalHp = value;
 				window.TOKEN_OBJECTS[token.options.id].place_sync_persist();
-			}							
+			}		
 			$(this).val(window.all_token_objects[token.options.id].hp);
 			window.all_token_objects[token.options.id].update_combat_tracker()
 			window.all_token_objects[token.options.id].update_quick_roll();	
