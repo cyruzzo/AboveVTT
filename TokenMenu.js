@@ -4999,8 +4999,6 @@ function open_quick_roll_menu(e, options = {left: e.clientX + "px", top: e.clien
 	let qrm_roll=$("<button id='qrm_roll_button' >ROLL</button>");
 	qrm_roll.css('width', '13%');
 	qrm_roll.click(function() {
-		$('#qrm_apply_damage').show()
-		$('#qrm_apply_healing').show()
 		$("#quick_roll_area").children('tr').children('td').find('#roll_bonus').each(function (){
 			let modifier = $(this).val().toLowerCase();
 			// Add a + if the user doesn't add anything. 
@@ -5424,8 +5422,8 @@ function add_to_quick_roll_menu(token, autoRollAfterAoe = false) {
 	maxhp_input.val(token.maxHp);
 
 	if (!token.isPlayer()) {
-		const debounceChange = mydebounce((token) => {
-			token.sync();
+		const debounceTriggerEvent = mydebounce((input) => {
+			input.trigger('change');
 		}, 1500)
 		hp_input.on('wheel', function(e) {
 			const input = $(this);
@@ -5435,7 +5433,7 @@ function add_to_quick_roll_menu(token, autoRollAfterAoe = false) {
 			const delta = e.originalEvent.deltaY < 0 ? 1 : -1;
 			const current = parseInt(token.hp) || 0;
 			input.val(Math.max(0, current + delta));
-			input.trigger('change');
+			debounceTriggerEvent(input);
 		});
 		maxhp_input.on('wheel', function(e) {
 			const input = $(this);
@@ -5445,7 +5443,7 @@ function add_to_quick_roll_menu(token, autoRollAfterAoe = false) {
 			const delta = e.originalEvent.deltaY < 0 ? 1 : -1;
 			const current = parseInt(token.maxHp) || 0;
 			input.val(Math.max(1, current + delta));
-			input.trigger('change');
+			debounceTriggerEvent(input);
 		});
 		hp_input.change(function(e) {
 			let selector = "div[data-id='" + token.options.id + "']";
@@ -5459,24 +5457,11 @@ function add_to_quick_roll_menu(token, autoRollAfterAoe = false) {
 				value = Math.max(0, parseInt(eval(sanitizedString)));
 				hp_input.val(value);
 			}
-			if(value > token.maxHp){
-				token.hp = token.maxHp;
-				token.tempHp = value - token.maxHp;
-				if(window.all_token_objects[token.options.id] != undefined){
-					window.all_token_objects[token.options.id].hp = token.maxHp;
-					window.all_token_objects[token.options.id].tempHp = value - token.maxHp;
-				}
-				value = token.maxHp;
-				
-			} else {
-				token.hp = value;
-				if(window.all_token_objects[token.options.id] != undefined){
-					window.all_token_objects[token.options.id].hp = value;
-				}
+			token.totalHp = value;
+			if(window.all_token_objects[token.options.id] != undefined){
+				window.all_token_objects[token.options.id].totalHp = value;
 			}
-			old.find(".hp").val(value);	
-
-			debounceChange(window.TOKEN_OBJECTS[token.options.id]);			
+			token.place_sync_persist();		
 
 			window.all_token_objects[token.options.id].update_combat_tracker()
 			window.all_token_objects[token.options.id].update_quick_roll();
@@ -5904,18 +5889,7 @@ function qrm_apply_hp_adjustment(healing=false){
 		
 		if(token.options?.hitPointInfo?.maximum>0 && token.options?.itemType != 'pc'){
 			let _hp = $(this).find('#qrm_hp');
-			let _max_hp = $(this).find('#qrm_maxhp');
-
-			let _hp_val = parseInt($(this).find('#qrm_hp').val());//make string an int before comparing otherwise '11' is less than '6'
-			let _max_hp_val = parseInt($(this).find('#qrm_maxhp').val())
-			//Lets not allow healing over maxhp
-			//Unless we are at max_hp then assume they want the temp hp? IDK about this.
-			if (_hp_val < _max_hp_val && _hp_val - damage > _max_hp_val){
-				_hp.val(_max_hp_val);
-			}
-			else{
-				_hp.val(Math.max(0, token.hp - damage));
-			}
+			_hp.val(Math.max(0, token.hp - damage));
 			_hp.trigger('change');
 		}
 		else {
@@ -5935,10 +5909,6 @@ function qrm_apply_hp_adjustment(healing=false){
 				window.MB.inject_chat(msgdata);
 			}
 		}
-		//token.place_sync_persist();	
-		// bit of overlap with place_sync_persist nad update_and_sync, so probably break it up, just to only sync once.
-		token.place()
-		token.update_and_sync();
 		qrm_update_popout();
 	});
 }

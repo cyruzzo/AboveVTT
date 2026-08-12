@@ -583,7 +583,7 @@ function monitor_console_logs() {
           console.concerningLogs.length = 100;
         }
 
-        if (get_avtt_setting_value("aggressiveErrorMessages") && !log.value?.some(v => v.doNotRelog == true)) {
+        if (get_avtt_setting_value("aggressiveErrorMessages") && !log.value?.some(v => typeof v == 'object' && v.doNotRelog == true)) {
           showError(new Error(`${log.type} ${log.message}`), ...log.value);
         }
       } else {

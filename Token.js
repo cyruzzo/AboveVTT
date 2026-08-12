@@ -162,10 +162,21 @@ class Token {
 	set totalHp(newValue) {
 		if(newValue > this.maxHp){
 			if(this.tempHp > 0){
-				this.baseHp = this.maxHp > newValue - this.tempHp ? newValue - this.tempHp : this.maxHp;
+				if(newValue < this.hp){
+					this.tempHp = Math.max(0, this.tempHp - (this.hp - newValue));
+					this.baseHp = (newValue - this.tempHp);
+				} else if(this.baseHp < this.maxHp){
+					this.baseHp = newValue - this.tempHp < this.maxHp ? newValue - this.tempHp : this.maxHp;
+				} else{
+					this.tempHp = newValue - this.maxHp; // assume if full health they are adding temp hp.
+				}
 			} else {
-				this.baseHp = this.maxHp;	
-				this.tempHp = newValue - this.maxHp;
+				if(newValue > this.hp && this.baseHp < this.maxHp){
+					this.baseHp = this.maxHp;
+				}
+				else{
+					this.tempHp = newValue - this.maxHp;
+				}
 			}
 		} else if(this.tempHp > 0 && newValue < this.hp){
 			this.tempHp = Math.max(0, this.tempHp - (this.hp - newValue));
