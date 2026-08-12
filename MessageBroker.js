@@ -2582,24 +2582,26 @@ class MessageBroker {
 		if(eventType.startsWith("custom")){
 			if(eventType == "custom/myVTT/note"){
 				const copyData = $.extend(true, {}, data);
-				const msgId = uuid();
-				copyData.note.plain = "";
-				let text = `${copyData.note.text}`;
-				let order = 0;
-				const textLength = JSON.stringify(text).length;
-				const lastIndex = Math.floor(textLength/120000);
-				copyData.lastIndex = lastIndex;
-				copyData.uuid = msgId;
-				while(order<lastIndex){
-					copyData.order = order;
-					let sendNote = text.slice(0, 120000)
-					copyData.note.text = sendNote;
-					this.sendAboveMB('custom/myVTT/note', copyData, skipSceneId, forceSceneId)
-					order+=1;
-					text = text.slice(120000, text.length)
+				if(!copyData.delete){
+					const msgId = uuid();
+					copyData.note.plain = "";
+					let text = `${copyData.note.text}`;
+					let order = 0;
+					const textLength = JSON.stringify(text).length;
+					const lastIndex = Math.floor(textLength/120000);
+					copyData.lastIndex = lastIndex;
+					copyData.uuid = msgId;
+					while(order<lastIndex){
+						copyData.order = order;
+						let sendNote = text.slice(0, 120000)
+						copyData.note.text = sendNote;
+						this.sendAboveMB(eventType, copyData, skipSceneId, forceSceneId)
+						order+=1;
+						text = text.slice(120000, text.length)
+					}
+					copyData.note.text = text;
 				}
-				copyData.note.text = text;
-				this.sendAboveMB('custom/myVTT/note', copyData, skipSceneId, forceSceneId)
+				this.sendAboveMB(eventType, copyData, skipSceneId, forceSceneId)
 			}else{
 				this.sendAboveMB(eventType,data,skipSceneId,forceSceneId);
 			}		
