@@ -1779,9 +1779,7 @@ class JournalManager{
 		closestNote.find('.abovevtt-slash-command-journal').replaceWith((i, innerHTML) =>{
 			return innerHTML;
 		})
-		if(closestNote[0] == undefined){
-			debugger;
-		}
+
 		const sanitizedHTML = basic_sanitize_html(closestNote[0].innerHTML).replaceAll(/\[(\/)?spell\]/gi, `[$1spell]`).replaceAll(/\[(\/)?magicitem\]/gi, `[$1magicItem]`).replaceAll(/\[(\/)?item\]/gi, `[$1item]`);
 		const changes = forceSave || $(sanitizedHTML).text().replace(/[\s\n\r]/gi, '') != this.notes[id].plain.replace(/[\s\n\r]/gi, '');
 		if(changes){
@@ -2074,7 +2072,7 @@ class JournalManager{
 				
 			}
 		}
-		let note_text= noteAlreadyOpen ? note.find('.note-text') : $("<div class='note-text'/>");
+		let note_text = noteAlreadyOpen ? note.find('.note-text').first() : $("<div class='note-text'/>");
 		if(noteAlreadyOpen){
 			note_text.empty();
 			const titleBarMinimized = note_container.find('.title_bar.minimized');
@@ -2090,7 +2088,7 @@ class JournalManager{
 		$(note_text).find('.injected-input, .added-input-desc').remove();
 		$(note_text).find('.add-input:not(.avtt-custom-tracker)').replaceWith((i, innerHtml) => {
 			return innerHtml;
-		})
+		});
 
 		this.translateHtmlAndBlocks(note_text, id).then(() => {	
 			add_journal_roll_buttons(note_text);
@@ -2142,7 +2140,7 @@ class JournalManager{
 				note_text.find('a').attr('contenteditable', 'false');
 				note_container.find('.popout-button, .lockStatButton, .download_button, .upload_button').remove();
 				const lockStatButton = $(`<div class='lockStatButton' style="cursor: pointer; position: relative; display:inline-block; color: #ddd;">
-											<span title="lock buttons" class="material-symbols-outlined" style="font-size: 20px; position: relative; top: 4px;">
+											<span title="Lock roll buttons so the text cursor isn't placed inside them on click" class="material-symbols-outlined" style="font-size: 20px; position: relative; top: 4px;">
 											${!window.lockTemplateStatBlocks ? "lock_open_right" : "lock"}
 											</span>
 										</div>`)
@@ -2834,7 +2832,7 @@ class JournalManager{
 							item = window.SPELLS_CACHE.filter(d => d.definition.name.toLowerCase() == text.toLowerCase())
 						}
 						if(!item.length){
-							console.warn(`item/spell not found`, text);
+							noisy_log(2, `item/spell not found`, text);
 							continue;
 						}
 						type = 'spell';
@@ -5708,23 +5706,23 @@ class JournalManager{
 													<tr>
 														<td>Arrows</td>
 														<td>&nbsp;</td>
-														<td>[track id=Arrows]20[/track]</td>
+														<td>20</td>
 														<td>&nbsp;</td>
 														<td>&nbsp;</td>
 													</tr>
 													<tr>
 														<td>Rations</td>
 														<td>&nbsp;</td>
-														<td>[track id=Rations]10[/track]</td>
+														<td>10</td>
 														<td>&nbsp;</td>
 														<td>&nbsp;</td>
 													</tr>
 													<tr>
+														<td>Healer's Kit</td>
 														<td>&nbsp;</td>
 														<td>&nbsp;</td>
 														<td>&nbsp;</td>
-														<td>&nbsp;</td>
-														<td>&nbsp;</td>
+														<td>[track id=healersKit]10[/track] uses remaining</td>
 													</tr>
 													<tr>
 														<td>&nbsp;</td>
