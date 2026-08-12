@@ -4441,6 +4441,7 @@ class JournalManager{
 				fill: none !important;
 				stroke: var(--font-color, #333) !important;
 			}
+
 			.dnd-sheet {
 				font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 				color: var(--pc-template-text-color, #111);
@@ -4510,6 +4511,7 @@ class JournalManager{
 					box-sizing: border-box;
 					overflow-wrap: break-word;
 					color: var(--pc-template-text-color, #111);
+					flex: 1;
 				}
 				.label {
 					font-size: 8px;
@@ -4531,7 +4533,7 @@ class JournalManager{
 					gap: 10px;
 					box-sizing: border-box;
 					width: fit-content;
-					max-width:200px;
+					max-width:230px;
 				}
 				.abilities-table-container, .skills-box {
 					border: 1px solid var(--pc-template-border-color, #333);
@@ -4725,6 +4727,8 @@ class JournalManager{
 				.hp-subgrid > div {
 					flex: 1;
 					box-sizing: border-box;
+					display:flex;
+       				flex-direction: column;
 				}
 				.container-block {
 					border: 1px solid var(--pc-template-border-light, #333);
@@ -4799,6 +4803,8 @@ class JournalManager{
 					margin-bottom: 8px;
 					background: var(--pc-template-sheet-bg, #fff);
 					box-sizing: border-box;
+					display: flex;
+        			flex-direction: column;
 				}
 				.bio-appearance { min-height: 90px; height: auto; border: 1px solid var(--pc-template-border-color, #444); padding: 4px; background: var(--pc-template-box-bg, var(--pc-template-box-bg, #fdfdfd)); border-radius: 3px; box-sizing: border-box; overflow-wrap: break-word; color: var(--pc-template-text-color, #111);}
 				.bio-backstory { min-height: 140px; height: auto; border: 1px solid var(--pc-template-border-color, #444); padding: 4px; background: var(--pc-template-box-bg, #fdfdfd); border-radius: 3px; box-sizing: border-box; overflow-wrap: break-word; color: var(--pc-template-text-color, #111);}
@@ -4819,6 +4825,7 @@ class JournalManager{
 					border-radius: 3px;
 					box-sizing: border-box;
 					overflow-wrap: break-word;
+					flex:1;
 				}
 				.attunement-content {
 					font-size: 11px;

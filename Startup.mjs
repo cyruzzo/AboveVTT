@@ -59,15 +59,7 @@ $(function() {
       .then(set_campaign_secret)      // set it to window.CAMPAIGN_SECRET
       .then(store_campaign_info)      // store gameId and campaign secret in localStorage for use on other pages
       .then(async () => {
-        startup_step("Building Spells Cache");
-        DDBApi.fetchSpellsJsonWithToken();
-        startup_step("Building Items Cache")
-        DDBApi.fetchItemsJsonWithToken().then((data)=>{
-          window.ITEMS_CACHE = data;
-        });
-        startup_step("Fetching Party Inventory")
-        DDBApi.debounceGetPartyInventory();
-        startup_step("Fetching Campaign Info")
+
         const maxRetries = 5
         const baseDelay = 500
         for (let attempt = 1; attempt <= maxRetries; attempt++) {
@@ -88,7 +80,14 @@ $(function() {
         window.AVTT_CAMPAIGN_INFO = await AboveApi.getCampaignData();
         return window.CAMPAIGN_INFO.dmId;
       })
-      .then((campaignDmId) => {
+      .then(async (campaignDmId) => {
+        startup_step("Fetching Party Inventory/Items/Spells")
+        await Promise.all([
+          DDBApi.debounceGetPartyInventory(),
+          DDBApi.fetchSpellsJsonWithToken(),
+          DDBApi.fetchItemsJsonWithToken()
+        ]);
+        startup_step("Fetching Campaign Info")
         const isDmPage = is_encounters_page();
         const isSpectator = is_spectator_page();
         const userId = $(`#message-broker-client[data-userid]`)?.attr('data-userid') || Cobalt?.User?.ID;

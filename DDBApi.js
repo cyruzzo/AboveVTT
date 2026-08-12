@@ -47,14 +47,15 @@ class DDBApi {
     if(window.SPELLS_CACHE)
         return window.SPELLS_CACHE;
     const classes = await DDBApi.fetchJsonWithToken(`https://character-service.dndbeyond.com/character/v5/game-data/classes?campaignId=${window.gameId}&sharingSetting=2`);
-    let spells = [];
-    for(let charClass of classes.data){
+    const classSpellData = await Promise.all((classes.data || []).map(async (charClass) => {
         const id = charClass.id;
-        const classSpells = await DDBApi.fetchJsonWithToken(`https://character-service.dndbeyond.com/character/v5/game-data/spells?campaignId=${window.gameId}&classId=${id}&classLevel=20&sharingSetting=2`);    
-        spells = [...spells, ...classSpells.data]
-        const classAlwaysKnownSpells = await DDBApi.fetchJsonWithToken(`https://character-service.dndbeyond.com/character/v5/game-data/always-known-spells?campaignId=${window.gameId}&classId=${id}&classLevel=20&sharingSetting=2`);    
-        spells = [...spells, ...classAlwaysKnownSpells.data]
-    }
+        const [classSpells, classAlwaysKnownSpells] = await Promise.all([
+            DDBApi.fetchJsonWithToken(`https://character-service.dndbeyond.com/character/v5/game-data/spells?campaignId=${window.gameId}&classId=${id}&classLevel=20&sharingSetting=2`),
+            DDBApi.fetchJsonWithToken(`https://character-service.dndbeyond.com/character/v5/game-data/always-known-spells?campaignId=${window.gameId}&classId=${id}&classLevel=20&sharingSetting=2`)
+        ]);
+        return [...(classSpells.data || []), ...(classAlwaysKnownSpells.data || [])];
+    }));
+    const spells = classSpellData.flat();
     window.SPELLS_CACHE = [...new Map(spells.map(item => [item.definition.id, item])).values()];
     return window.SPELLS_CACHE;
 }
@@ -71,24 +72,36 @@ class DDBApi {
   }
 
   static async fetchItemsJsonWithToken(itemsArray = [], page = 0, pageSize = 1000) {
-    const url = `https://character-service.dndbeyond.com/character/v5.1/game-data/items?campaignId=${find_game_id()}&sharingSetting=2&page=${page}&pageSize=${pageSize}`;
-    const response = await DDBApi.fetchJsonWithToken(url);
-    if (!response) {
-      console.warn(`DDBApi.fetchItemsJsonWithToken received no response for url: ${url}`);
-      return itemsArray;
-    } 
-    itemsArray.push(...response.data);
-    if (response.pagination.total > response.pagination.skip + response.pagination.take) {
-      return await DDBApi.fetchItemsJsonWithToken(itemsArray, page + 1, pageSize);
-    }
-    window.ITEMS_CACHE = itemsArray
-    return itemsArray;
+    if(window.ITEMS_CACHE)
+      return window.ITEMS_CACHE;
+
+    const fetchPage = async (pageNumber) => {
+      const url = `https://character-service.dndbeyond.com/character/v5.1/game-data/items?campaignId=${find_game_id()}&sharingSetting=2&page=${pageNumber}&pageSize=${pageSize}`;
+      const response = await DDBApi.fetchJsonWithToken(url);
+      if (!response) {
+        console.warn(`DDBApi.fetchItemsJsonWithToken received no response for url: ${url}`);
+        return { data: [] };
+      }
+      return response;
+    };
+
+    const firstPageResponse = await fetchPage(page);
+    const totalItems = firstPageResponse?.pagination?.total ?? 0;
+    const totalPages = Math.max(1, Math.ceil(totalItems / Math.max(pageSize, 1)));
+    const remainingPageNumbers = Array.from({ length: Math.max(0, totalPages - 1) }, (_, index) => index + 1);
+    const remainingPages = await Promise.all(remainingPageNumbers.map(fetchPage));
+
+    const mergedItems = [firstPageResponse, ...remainingPages]
+      .flatMap(response => response?.data || []);
+    window.ITEMS_CACHE = [...(itemsArray || []), ...mergedItems];
+    return window.ITEMS_CACHE;
   }
   static debounceGetPartyInventory = mydebounce(async() => {
     const partyInventory = await DDBApi.fetchJsonWithToken(`https://character-service.dndbeyond.com/character/v5/party/inventory/${find_game_id()}`);
     window.PARTY_INVENTORY_DATA = partyInventory.data;
     if(window.JOURNAL)
       window.JOURNAL.update_party_available_currency();
+    return window.PARTY_INVENTORY_DATA;
   }, 500);
   static async addItemsToPartyInventory(items) {
     DDBApi.postJsonWithToken("https://character-service.dndbeyond.com/character/v5/inventory/item", items);

@@ -1562,7 +1562,7 @@ function replaceModifiersInSlashCommand(slashCommandText, entityType, entityId) 
     }
 
     const modifiers = getCharacterStatModifiers(entityType, entityId);
-    if (modifiers === undefined) {
+    if (modifiers === undefined && validModifierSubstitutions.test(expression)) {
         // This will happen if the DM opens a character sheet before the character stats have loaded
         console.warn("getCharacterStatModifiers returned undefined. This command may not parse properly", slashCommandText);
         return slashCommandText; // missing required info

@@ -251,7 +251,7 @@ async function display_stat_block_in_container(statBlock, container, tokenId, cu
                                               width: 20px;
                                               height: 20px;
                                               color: #ddd;">
-                                  <span title="lock buttons" class="material-symbols-outlined" style="font-size:20px;">
+                                  <span title="Lock roll buttons so the text cursor isn't placed inside them on click" class="material-symbols-outlined" style="font-size:20px;">
                                     ${!window.lockTemplateStatBlocks ? "lock_open_right" : "lock"}
                                   </span>
                                 </div>`)
