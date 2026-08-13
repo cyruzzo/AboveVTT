@@ -1290,8 +1290,8 @@ class Token {
 
 		this.update_condition_timers();
 		this.update_age();
-
 		toggle_player_selectable(this, old)
+		this.toggle_stats(old);
 	}
 
 
@@ -1403,8 +1403,8 @@ class Token {
 		hpbar.append(divider);
 		hpbar.append(maxhp_input);
 		if (!this.isPlayer()) {
-			const debounceChange = mydebounce(() => {
-				self.sync()
+			const debounceTriggerEvent = mydebounce((input) => {
+				input.trigger('change');
 			}, 1500)
 			hp_input.on('wheel', function(e) {
 				const input = $(this);
@@ -1414,7 +1414,7 @@ class Token {
 				const delta = e.originalEvent.deltaY < 0 ? 1 : -1;
 				const current = parseInt(self.hp) || 0;
 				input.val(Math.max(0, current + delta));
-				input.trigger('change');
+				debounceTriggerEvent(input);
 			});
 			maxhp_input.on('wheel', function(e) {
 				const input = $(this);
@@ -1424,13 +1424,13 @@ class Token {
 				const delta = e.originalEvent.deltaY < 0 ? 1 : -1;
 				const current = parseInt(self.maxHp) || 0;
 				input.val(Math.max(1, current + delta));
-				input.trigger('change');
+				debounceTriggerEvent(input);
 			});
 			hp_input.change(function(e) {
-				let tokenID = $(this).parent().parent().attr("data-id");
+				let tokenID = self.options.id;
 				let value = $(this).val().trim();	
 				if (value.startsWith("+") || value.startsWith("-")) {
-					value = Math.max(0, parseInt(window.all_token_objects[tokenID].hp) + parseInt(value));
+					value = Math.max(0, parseInt(self.hp) + parseInt(value));
 				} else{
 					const sanitizedString = value.replaceAll(/[^\d+-/*().]/gi, '');
 					value = Math.max(0, parseInt(eval(sanitizedString)));
@@ -1440,14 +1440,14 @@ class Token {
 					window.all_token_objects[tokenID].totalHp = value;
 				}			
 				if(window.TOKEN_OBJECTS[tokenID] != undefined){		
-					window.TOKEN_OBJECTS[tokenID].totalHp = value;
-					$(this).val(window.TOKEN_OBJECTS[tokenID].hp);
-					window.TOKEN_OBJECTS[tokenID].update_from_page();
+					self.totalHp = value;
+					$(this).val(self.hp);
+					self.place();
 				}
 				
-				window.all_token_objects[tokenID].update_combat_tracker()
-				window.all_token_objects[tokenID].update_quick_roll();
-				debounceChange();
+				self.update_combat_tracker()
+				self.update_quick_roll();
+				self.sync();
 			});
 			hp_input.on('mouseup', function(e) {
 				e.preventDefault();
@@ -1455,10 +1455,10 @@ class Token {
 				$(e.target).select();
 			});
 			maxhp_input.change(function(e) {
-				let tokenID = $(this).parent().parent().attr("data-id");
+				let tokenID = self.options.id;
 				let value = $(this).val().trim();
 				if (value.startsWith("+") || value.startsWith("-")) {
-					value = Math.max(0, parseInt(window.all_token_objects[tokenID].maxHp) + parseInt(value))
+					value = Math.max(0, parseInt(self.maxHp) + parseInt(value))
 					$(this).val(value);
 				} else{
 					const sanitizedString = value.replaceAll(/[^\d+-/*().]/gi, '');
@@ -1469,12 +1469,12 @@ class Token {
 					window.all_token_objects[tokenID].maxHp = value;
 				}
 				if(window.TOKEN_OBJECTS[tokenID] != undefined){		
-					window.TOKEN_OBJECTS[tokenID].maxHp = value;
-					window.TOKEN_OBJECTS[tokenID].update_from_page();;
+					self.maxHp = value;
+					self.place();
 				}
-				window.all_token_objects[tokenID].update_combat_tracker()
-				window.all_token_objects[tokenID].update_quick_roll();
-				debounceChange();
+				self.update_combat_tracker()
+				self.update_quick_roll();
+				self.sync();
 			});
 			maxhp_input.on('mouseup', function(e) {
 				e.preventDefault();
@@ -1614,8 +1614,8 @@ class Token {
 				token.find(".hpbar").css("visibility", "hidden");
 			} else {
 				token.find(".hpbar").css("visibility", "visible");
+				token.find(".hpbar").css("--base-hp", this.baseHp);
 				if(this.tempHp >= 0){
-					token.find(".hpbar").css("--base-hp", this.baseHp);
 					token.find(".hpbar").css("--temp-hp", this.tempHp);
 				}
 			}

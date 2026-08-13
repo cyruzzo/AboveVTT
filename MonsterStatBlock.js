@@ -262,7 +262,7 @@ async function display_stat_block_in_container(statBlock, container, tokenId, cu
           container.find('.dnd-sheet button').attr("contenteditable", "false");
           span.text('lock');
         } else{
-          container.find('.dnd-sheet [contenteditable]:not(a):not(.table-row-drag-handle)').attr("contenteditable", "true");
+          container.find('.dnd-sheet [contenteditable]:not(a):not(.table-row-drag-handle):not(.add-table-row)').attr("contenteditable", "true");
           span.text('lock_open_right');
         }
       })
@@ -270,7 +270,7 @@ async function display_stat_block_in_container(statBlock, container, tokenId, cu
       if(window.lockTemplateStatBlocks){
          container.find('.dnd-sheet button').attr("contenteditable", "false");
       } else{
-        container.find('.dnd-sheet [contenteditable]:not(a):not(.table-row-drag-handle)').attr("contenteditable", "true");
+        container.find('.dnd-sheet [contenteditable]:not(a):not(.table-row-drag-handle):not(.add-table-row)').attr("contenteditable", "true");
       }
 
       const downloadStat = $(`<div class='download_button' style="cursor: pointer; position: absolute;
@@ -337,7 +337,7 @@ async function display_stat_block_in_container(statBlock, container, tokenId, cu
         }
         if($table.next('.add-table-row').length>0)
           return;
-        const add_table_row = $(`<button class="add-table-row">+</button>`); 	
+        const add_table_row = $(`<button class="add-table-row" contenteditable="false">+</button>`); 	
 				$table.after(add_table_row);
 
 
@@ -537,7 +537,7 @@ const debounceRescanStatBlock = mydebounce(async (container, noteId, tokenId) =>
     }
     if($table.next('.add-table-row').length>0)
       return;
-    const add_table_row = $(`<button class="add-table-row">+</button>`);	
+    const add_table_row = $(`<button class="add-table-row" contenteditable="false">+</button>`);
     $table.after(add_table_row);
   });
   container.off('pointerdown.profChange, touchstart.profChange').on('pointerdown.profChange, touchstart.profChange', '.prof-checkbox', (e)=>{
@@ -565,7 +565,7 @@ const debounceRescanStatBlock = mydebounce(async (container, noteId, tokenId) =>
   if(window.lockTemplateStatBlocks){
     container.find('.dnd-sheet button').attr("contenteditable", "false");
   } else{
-    container.find('.dnd-sheet [contenteditable]:not(a):not(.table-row-drag-handle)').attr("contenteditable", "true");
+    container.find('.dnd-sheet [contenteditable]:not(a):not(.table-row-drag-handle):not(.add-table-row)').attr("contenteditable", "true");
   }
 }, 1000);
 
