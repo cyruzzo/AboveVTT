@@ -222,6 +222,7 @@ function inject_chat_buttons() {
     '/roll 1d4 punch:bludgeoning damage'
     '/hit 2d20kh1+2 longsword'
     '/dmg 1d8-2 longsword:slashing'
+    '/dmg 8d6 Fireball:Fire:Dex 14'
     '/save 2d20kl1 DEX'
     '/skill 1d20+1d4 Thieves' Tools + Guidance'
     '/heal 1d4+WIS Healing Word'
