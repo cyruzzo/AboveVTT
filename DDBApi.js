@@ -8,6 +8,40 @@ const DEFAULT_AVTT_ENCOUNTER_DATA = {
 
 class DDBApi {
 
+  static #activeRequestCount = 0;
+  static #maxConcurrentRequests = 5;
+  static #requestQueue = [];
+
+  static #scheduleRequest(request) {
+    return new Promise((resolve, reject) => {
+      DDBApi.#requestQueue.push(async () => {
+        DDBApi.#activeRequestCount++;
+        try {
+          resolve(await request());
+        }
+        catch (error) {
+          reject(error);
+        }
+        finally {
+          DDBApi.#activeRequestCount--;
+          const nextRequest = DDBApi.#requestQueue.shift();
+          if (nextRequest) {
+            nextRequest();
+          }
+        }
+      });
+
+      if (DDBApi.#activeRequestCount < DDBApi.#maxConcurrentRequests) {
+        const nextRequest = DDBApi.#requestQueue.shift();
+        if (nextRequest) {
+          nextRequest();
+        }
+      }else{ 
+        console.debug(`DDBApi: Request queued. Active requests: ${DDBApi.#activeRequestCount}, Queue length: ${DDBApi.#requestQueue.length}`);
+      }
+    });
+  }
+
   static async #refreshToken() {
     if (Date.now() < MYCOBALT_TOKEN_EXPIRATION) {
       return MYCOBALT_TOKEN;
@@ -43,22 +77,7 @@ class DDBApi {
     }
 
   }
-  static async fetchSpellsJsonWithToken(){
-    if(window.SPELLS_CACHE)
-        return window.SPELLS_CACHE;
-    const classes = await DDBApi.fetchJsonWithToken(`https://character-service.dndbeyond.com/character/v5/game-data/classes?campaignId=${window.gameId}&sharingSetting=2`);
-    const classSpellData = await Promise.all((classes.data || []).map(async (charClass) => {
-        const id = charClass.id;
-        const [classSpells, classAlwaysKnownSpells] = await Promise.all([
-            DDBApi.fetchJsonWithToken(`https://character-service.dndbeyond.com/character/v5/game-data/spells?campaignId=${window.gameId}&classId=${id}&classLevel=20&sharingSetting=2`),
-            DDBApi.fetchJsonWithToken(`https://character-service.dndbeyond.com/character/v5/game-data/always-known-spells?campaignId=${window.gameId}&classId=${id}&classLevel=20&sharingSetting=2`)
-        ]);
-        return [...(classSpells.data || []), ...(classAlwaysKnownSpells.data || [])];
-    }));
-    const spells = classSpellData.flat();
-    window.SPELLS_CACHE = [...new Map(spells.map(item => [item.definition.id, item])).values()];
-    return window.SPELLS_CACHE;
-}
+
 
   static async fetchJsonWithToken(url, extraConfig = {}) {
     const token = await DDBApi.#refreshToken();
@@ -70,7 +89,18 @@ class DDBApi {
     const request = await fetch(url, config).then(DDBApi.lookForErrors)
     return await request.json();
   }
-
+  static async #fetchLimitedJsonWithToken(url, extraConfig = {}) {
+    const token = await DDBApi.#refreshToken();
+    const config = {...extraConfig,
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      }
+    }
+    return await DDBApi.#scheduleRequest(async () => {
+      const request = await fetch(url, config).then(DDBApi.lookForErrors);
+      return request.json();
+    });
+  }
   static async fetchItemsJsonWithToken(itemsArray = [], page = 0, pageSize = 1000) {
     if(window.ITEMS_CACHE)
       return window.ITEMS_CACHE;
@@ -96,6 +126,23 @@ class DDBApi {
     window.ITEMS_CACHE = [...(itemsArray || []), ...mergedItems];
     return window.ITEMS_CACHE;
   }
+  static async fetchSpellsJsonWithToken(){
+    if(window.SPELLS_CACHE)
+        return window.SPELLS_CACHE;
+    const classes = await DDBApi.#fetchLimitedJsonWithToken(`https://character-service.dndbeyond.com/character/v5/game-data/classes?campaignId=${window.gameId}&sharingSetting=2`);
+    const classSpellData = await Promise.all((classes.data || []).map(async (charClass) => {
+        const id = charClass.id;
+        const [classSpells, classAlwaysKnownSpells] = await Promise.all([
+            DDBApi.#fetchLimitedJsonWithToken(`https://character-service.dndbeyond.com/character/v5/game-data/spells?campaignId=${window.gameId}&classId=${id}&classLevel=20&sharingSetting=2`),
+            DDBApi.#fetchLimitedJsonWithToken(`https://character-service.dndbeyond.com/character/v5/game-data/always-known-spells?campaignId=${window.gameId}&classId=${id}&classLevel=20&sharingSetting=2`)
+        ]);
+        return [...(classSpells.data || []), ...(classAlwaysKnownSpells.data || [])];
+    }));
+    const spells = classSpellData.flat();
+    window.SPELLS_CACHE = [...new Map(spells.map(item => [item.definition.id, item])).values()];
+    return window.SPELLS_CACHE;
+}
+
   static debounceGetPartyInventory = mydebounce(async() => {
     const partyInventory = await DDBApi.fetchJsonWithToken(`https://character-service.dndbeyond.com/character/v5/party/inventory/${find_game_id()}`);
     window.PARTY_INVENTORY_DATA = partyInventory.data;

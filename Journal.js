@@ -2478,11 +2478,11 @@ class JournalManager{
 					const isLegacy = !get_avtt_setting_value('2024Tooltips');
 					let spell = window.SPELLS_CACHE.filter(d => d.definition.name.toLowerCase() == name.toLowerCase() && d.definition.isLegacy == isLegacy)
 					if(!spell.length){
-						console.warn(`spell not found`, name, `isLegacy`, isLegacy);
+						noisy_log(3, `spell not found`, name, `isLegacy`, isLegacy);
 						spell = window.SPELLS_CACHE.filter(d => d.definition.name.toLowerCase() == name.toLowerCase())
 					}
 					if(!spell.length){
-						console.warn(`spell not found`, name);
+						noisy_log(3, `spell not found`, name);
 						return;
 					}	
 					itemId = `${spell[0].definition.id}-${splitUrl[splitUrl.length-1].replace('/', '-')}`;
@@ -2493,11 +2493,11 @@ class JournalManager{
 					const isLegacy = !get_avtt_setting_value('2024Tooltips');
 					let item = window.ITEMS_CACHE.filter(d => d.name.toLowerCase() == name.toLowerCase() && d.isLegacy == isLegacy)
 					if(!item.length){
-						console.warn(`item not found`, name, `isLegacy`, isLegacy);
+						noisy_log(3, `item not found`, name, `isLegacy`, isLegacy);
 						item = window.ITEMS_CACHE.filter(d => d.name.toLowerCase() == name.toLowerCase())
 					}
 					if(!item.length){
-						console.warn(`item not found`, name);
+						noisy_log(3, `item not found`, name);
 						return;
 					}	
 					const filterType = item[0].filterType.toLowerCase() == 'weapon' ? 'weapons' : item[0].filterType.toLowerCase() == 'armor' ? 'armor' : itemType;
@@ -2832,7 +2832,7 @@ class JournalManager{
 							item = window.SPELLS_CACHE.filter(d => d.definition.name.toLowerCase() == text.toLowerCase())
 						}
 						if(!item.length){
-							noisy_log(2, `item/spell not found`, text);
+							noisy_log(3, `item/spell not found`, text);
 							continue;
 						}
 						type = 'spell';
