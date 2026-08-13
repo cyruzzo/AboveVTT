@@ -3283,6 +3283,7 @@ button.roll-button-mod.adv {
     backdrop-filter: blur(15px);
     left: calc(50% - 160px);
     transform:translateX(-50%);
+    user-select: auto;
 }
 #above-vtt-error-message.small-error{
     width: 10%;

@@ -129,7 +129,7 @@ class DiceRoll {
      * @param entityId {string|undefined} the id of the entity associated with this roll. If {entityType} is "character" this should be the id for that character. If {entityType} is "monster" this should be the id for that monster. If {entityType} is "user" this should be the id for that user.
      * @param sendToOverride {string|undefined} if undefined, the roll will go to whatever the gamelog is set to.
      */
-    constructor(expression, action = undefined, rollType = undefined, name = undefined, avatarUrl = undefined, entityType = undefined, entityId = undefined, sendToOverride = undefined, damageType = undefined) {
+    constructor(expression, action = undefined, rollType = undefined, name = undefined, avatarUrl = undefined, entityType = undefined, entityId = undefined, sendToOverride = undefined, damageType = undefined, spellSave = undefined) {
 
         let parsedExpression = expression.toLowerCase().replaceAll(/\s+/g, "").replaceAll(/^(d\d+)|([+-])(d\d+)/g, '$21$1$3');; // remove all spaces and 1's to d6 -> 1d6, d8 -> 1d8 etc.
         $(document).off('change.dicevisibility').on('change.dicevisibility', 'input[id|="dice-visibility-option"]', (e)=>{
@@ -170,6 +170,7 @@ class DiceRoll {
         this.rollType = rollType;
         this.sendToOverride = sendToOverride || gamelog_send_to_text();
         this.damageType = damageType;
+        this.spellSave = spellSave;
         if (name) this.name = name;
         if (avatarUrl) this.avatarUrl = avatarUrl;
         if (entityType) this.entityType = entityType;
@@ -222,11 +223,11 @@ class DiceRoll {
         let expression = modifiedSlashCommand.replace(diceRollCommandRegex, "").match(allowedExpressionCharactersRegex)?.[0];
         let action = modifiedSlashCommand.replace(diceRollCommandRegex, "").replace(allowedExpressionCharactersRegex, "");
         noisy_log("DiceRoll.fromSlashCommand text: ", slashCommandText, ", slashCommand:", slashCommand, ", expression: ", expression, ", action: ", action);
-        let rollType = undefined;
-        let damageType = undefined;
+        let rollType = undefined, damageType = undefined, spellSave = undefined;
+        
         if (slashCommand.startsWith("/r")) {
             // /r and /roll allow users to set both the action and the rollType by separating them with `:` so try to parse that out
-            [action, rollType] = action.split(":") || [undefined, undefined];
+            [action, rollType, spellSave] = action.split(":") || [undefined, undefined, undefined];
             const damageRegex = /([\s]+)?damage/gi;
             if(rollType?.match(damageRegex)){
                 [damageType, rollType] = [rollType.replaceAll(damageRegex, ''), 'damage'];
@@ -234,7 +235,7 @@ class DiceRoll {
         } else if (slashCommand.startsWith("/hit")) {
             rollType = "to hit";
         } else if (slashCommand.startsWith("/dmg")) {
-            [action, damageType] = action.split(":") || [action, undefined];
+            [action, damageType, spellSave] = action.split(":") || [action, undefined, undefined];
             rollType = "damage";
         } else if (slashCommand.startsWith("/skill")) {
             rollType = "check";
@@ -243,7 +244,7 @@ class DiceRoll {
         } else if (slashCommand.startsWith("/heal")) {
             rollType = "heal";
         }
-        return new DiceRoll(expression, action, rollType, name, avatarUrl, entityType, entityId, sendToOverride, damageType);
+        return new DiceRoll(expression, action, rollType, name, avatarUrl, entityType, entityId, sendToOverride, damageType, spellSave);
     }
 }
 function getRollData(rollButton){
@@ -542,7 +543,7 @@ class DiceRoller {
             }
             
             let self = this;
-
+            
             let msgdata = {}
             diceRoll.expression = diceRoll.expression.replaceAll(/$\+0|\+0(\D)/gi, '$1')
             let roll = new rpgDiceRoller.DiceRoll(diceRoll.expression); 
@@ -588,16 +589,15 @@ class DiceRoller {
 
             const ddb3dDiceShareToggle = getDdb3dDiceShareToggle();
 
+            if(spellSave == undefined){
+                spellSave = this.#pendingSpellSave ?? diceRoll.spellSave;
+            }
+            if(damageType == undefined){
+                damageType = this.#pendingDamageType ?? diceRoll.damageType; 
+            }
+
             if (window.EXPERIMENTAL_SETTINGS['rpgRoller'] == true || ((is_abovevtt_page() || window.sendToTab != undefined) && !ddb3dDiceShareToggle)){
-                if(spellSave == undefined && this.#pendingSpellSave != undefined){
-                    spellSave = this.#pendingSpellSave;
-                }
-                if(damageType == undefined && this.#pendingDamageType != undefined){
-                    damageType = this.#pendingDamageType;
-                }
-                else if(damageType == undefined && diceRoll.damageType != undefined){
-                    damageType = diceRoll.damageType;
-                }
+                           
                 let doubleCrit = false;
                 let output = roll.output.replace(regExpression, '');
                 let total = roll.total;
@@ -653,15 +653,7 @@ class DiceRoller {
                
             }                         
             else{
-                if(spellSave == undefined && this.#pendingSpellSave != undefined){
-                    spellSave = this.#pendingSpellSave;
-                }
-                if(damageType == undefined && this.#pendingDamageType != undefined){
-                    damageType = this.#pendingDamageType;
-                }
-                else if(damageType == undefined && diceRoll.damageType != undefined){
-                    damageType = diceRoll.damageType;
-                }
+
                 let rollData = {
                     roll: roll,
                     expression: diceRoll.expression,
