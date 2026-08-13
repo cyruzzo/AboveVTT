@@ -5463,8 +5463,8 @@ function add_to_quick_roll_menu(token, autoRollAfterAoe = false) {
 			}
 			token.place_sync_persist();		
 
-			window.all_token_objects[token.options.id].update_combat_tracker()
-			window.all_token_objects[token.options.id].update_quick_roll();
+			token.update_combat_tracker()
+			token.update_quick_roll();
 		});
 		hp_input.click(function(e) {
 			$(e.target).select();
@@ -5474,7 +5474,7 @@ function add_to_quick_roll_menu(token, autoRollAfterAoe = false) {
 			let old = $("#tokens").find(selector);
 			let value = maxhp_input.val().trim();
 			if (value.startsWith("+") || value.startsWith("-")) {
-				value = Math.max(0, parseInt(token.hp) + parseInt(value));
+				value = Math.max(0, parseInt(token.maxHp) + parseInt(value));
 				maxhp_input.val(value);
 			} else{
 				const sanitizedString = value.replaceAll(/[^\d+-/*().]/gi, '');
@@ -5487,12 +5487,12 @@ function add_to_quick_roll_menu(token, autoRollAfterAoe = false) {
 				window.all_token_objects[token.options.id].maxHp = value;
 			}
 			if(window.TOKEN_OBJECTS[token.options.id] != undefined){		
-				window.TOKEN_OBJECTS[token.options.id].maxHp = value;	
-				window.TOKEN_OBJECTS[token.options.id].update_from_page()
-				debounceChange(window.TOKEN_OBJECTS[token.options.id]);
+				token.maxHp = value;	
+				token.place();
 			}			
-			window.all_token_objects[token.options.id].update_combat_tracker()
-			window.all_token_objects[token.options.id].update_quick_roll();
+			token.update_combat_tracker()
+			token.update_quick_roll();
+			token.sync();
 		});
 		maxhp_input.click(function(e) {
 			$(e.target).select();

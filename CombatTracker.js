@@ -1326,20 +1326,18 @@ function ct_add_token(token,persist=true,disablerolling=false, adv=false, dis=fa
 				value = Math.max(0, parseInt(eval(sanitizedString)));
 			}
 
-			token.totalHp = value;
-			if(window.all_token_objects[token.options.id] != undefined){
-				window.all_token_objects[token.options.id].totalHp = value;
-				if(window.TOKEN_OBJECTS[token.options.id] == undefined){
-					window.all_token_objects[token.options.id].sync();
-				}
-			}
+			const tokenObj = window.all_token_objects[token.options.id];
+			window.all_token_objects[token.options.id].totalHp = value;
+			
 			if(window.TOKEN_OBJECTS[token.options.id] != undefined){		
 				window.TOKEN_OBJECTS[token.options.id].totalHp = value;
-				window.TOKEN_OBJECTS[token.options.id].place_sync_persist();
+				token.place();
 			}		
-			$(this).val(window.all_token_objects[token.options.id].hp);
-			window.all_token_objects[token.options.id].update_combat_tracker()
-			window.all_token_objects[token.options.id].update_quick_roll();	
+			
+			$(this).val(tokenObj.hp);
+			tokenObj.sync();
+			tokenObj.update_combat_tracker()
+			tokenObj.update_quick_roll();	
 		});
 		hp_input.click(function(e) {
 			$(e.target).select();
@@ -1356,20 +1354,16 @@ function ct_add_token(token,persist=true,disablerolling=false, adv=false, dis=fa
 				value = Math.max(0, parseInt(eval(sanitizedString)));
 				$(this).val(value)
 			}
-
-			token.maxHp = value;
-			if(window.all_token_objects[token.options.id] != undefined){
-				window.all_token_objects[token.options.id].maxHp = value;
-				if(window.TOKEN_OBJECTS[token.options.id] == undefined){
-					window.all_token_objects[token.options.id].sync();
-				}
-			}
+			const tokenObj = window.all_token_objects[token.options.id];
+			tokenObj.maxHp = value;	
 			if(window.TOKEN_OBJECTS[token.options.id] != undefined){		
 				window.TOKEN_OBJECTS[token.options.id].maxHp = value;
-				window.TOKEN_OBJECTS[token.options.id].place_sync_persist();
-			}							
-			window.all_token_objects[token.options.id].update_combat_tracker()
-			window.all_token_objects[token.options.id].update_quick_roll();		
+				token.place();
+			}
+									
+			tokenObj.sync();
+			tokenObj.update_combat_tracker()
+			tokenObj.update_quick_roll();		
 		});
 		maxhp_input.click(function(e) {
 			$(e.target).select();
