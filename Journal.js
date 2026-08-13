@@ -2151,7 +2151,7 @@ class JournalManager{
 					note_text.find('.dnd-sheet button').attr("contenteditable", "false");
 					span.text('lock');
 				} else{
-					note_text.find('.dnd-sheet [contenteditable]:not(a):not(.table-row-drag-handle)').attr("contenteditable", "true");
+					note_text.find('.dnd-sheet [contenteditable]:not(a):not(.table-row-drag-handle):not(.add-table-row)').attr("contenteditable", "true");
 					span.text('lock_open_right');
 				}
 				})
@@ -2159,7 +2159,7 @@ class JournalManager{
 				if(window.lockTemplateStatBlocks){
 					note_text.find('.dnd-sheet button').attr("contenteditable", "false");
 				} else{
-					note_text.find('.dnd-sheet [contenteditable]:not(a):not(.table-row-drag-handle)').attr("contenteditable", "true");
+					note_text.find('.dnd-sheet [contenteditable]:not(a):not(.table-row-drag-handle):not(.add-table-row)').attr("contenteditable", "true");
 				}
 
 				const downloadStat = $(`<div class='download_button' style="cursor: pointer; position: relative; display:inline-block; color: #ddd;">
@@ -2221,7 +2221,7 @@ class JournalManager{
 					
 					if($table.next('.add-table-row').length>0)
 						return;
-					const add_table_row = $(`<button class="add-table-row">+</button>`);
+					const add_table_row = $(`<button class="add-table-row" contenteditable="false">+</button>`);
 					$table.after(add_table_row);
 				});
 			
