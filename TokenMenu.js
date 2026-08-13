@@ -3301,8 +3301,25 @@ function create_animation_presets_edit(isVision = false){
 
 	adjust_create_import_edit_container(dialog, undefined, undefined, 975);
 }
+function calculate_hp(inputValue, currentValue) {
+	const sanitizedString = inputValue.replaceAll(/[^\d+-/*().]/gi, '');
+	const evalResult = round_down_divisions(sanitizedString);
+	if (evalResult === undefined) {
+		return undefined;
+	}
+	const calc = inputValue.startsWith('+') || inputValue.startsWith('-')
+		? parseInt(currentValue) + parseInt(evalResult)
+		: evalResult;
+	const newValue = Math.max(0, calc);
+	if(isNaN(newValue) || !Number.isFinite(newValue)) {
+		console.warn(`Invalid HP calculation: ${inputValue} resulted in ${newValue}`);
+		return undefined;
+	}
+	return newValue;
+}
 function round_down_divisions(expression) {
 	let position = 0;
+	let invalid = false;
 
 	function parseExpression() {
 		let value = parseTerm();
@@ -3328,22 +3345,34 @@ function round_down_divisions(expression) {
 		if (expression[position] === '(') {
 			position++;
 			const value = parseExpression();
-			position++;
+			if (expression[position] !== ')') {
+				invalid = true;
+			} else {
+				position++;
+			}
 			return value;
 		}
-		if (expression[position] === '-') {
-			position++;
-			return -parseFactor();
+		if (expression[position] === '-' || expression[position] === '+') {
+			const operator = expression[position++];
+			const value = parseFactor();
+			return operator === '-' ? -value : value;
 		}
 		const start = position;
 		while (position < expression.length && /\d/.test(expression[position])) {
 			position++;
 		}
+		if (start === position) {
+			invalid = true;
+			return 0;
+		}
 		return Number(expression.slice(start, position));
 	}
 
-	return parseExpression();
+	const result = parseExpression();
+	return invalid || position !== expression.length || !Number.isFinite(result) ? undefined : result;
 }
+
+
 
 function build_menu_stat_inputs(tokenIds) {
 	let tokens = tokenIds.map(id => window.TOKEN_OBJECTS[id]).filter(t => t !== undefined);
@@ -3443,13 +3472,9 @@ function build_menu_stat_inputs(tokenIds) {
 					return;
 				let newHP = newValue;
 				
-				const sanitizedString = newHP.replaceAll(/[^\d+-/*().]/gi, '');
-				const evalResult = round_down_divisions(sanitizedString);
-				if (newHP.startsWith("+") || newHP.startsWith("-")) {
-					newHP = Math.max(0, parseInt(token.baseHp) + parseInt(evalResult));
-				} else{
-					newHP = Math.max(0, evalResult);
-				}
+				newHP = calculate_hp(newHP, token.baseHp);
+				if (newHP === undefined)
+					return;
 
 				if(newHP > token.maxHp){
 					token.hp = token.maxHp;
@@ -3478,13 +3503,9 @@ function build_menu_stat_inputs(tokenIds) {
 				return;
 			let newHP = newValue;
 
-			const sanitizedString = newHP.replaceAll(/[^\d+-/*().]/gi, '');
-			const evalResult = round_down_divisions(sanitizedString);
-			if (newHP.startsWith("+") || newHP.startsWith("-")) {
-				newHP = Math.max(0, parseInt(token.baseHp) + parseInt(evalResult));
-			} else{
-				newHP = Math.max(0, evalResult);
-			}
+			newHP = calculate_hp(newHP, token.baseHp);
+			if (newHP === undefined)
+				return;
 
 			if(newHP > token.maxHp){
 				token.hp = token.maxHp;
@@ -3515,13 +3536,9 @@ function build_menu_stat_inputs(tokenIds) {
 					return;
 				let newMaxHP = newValue;
 
-				const sanitizedString = newMaxHP.replaceAll(/[^\d+-/*().]/gi, '');
-				const evalResult = round_down_divisions(sanitizedString);
-				if (newMaxHP.startsWith("+") || newMaxHP.startsWith("-")) {
-					newMaxHP = Math.max(0, parseInt(token.maxHp) + parseInt(evalResult));
-				} else{
-					newMaxHP = Math.max(0, evalResult);
-				}
+				newMaxHP = calculate_hp(newMaxHP, token.maxHp);
+				if (newMaxHP === undefined)
+					return;
 				
 				token.maxHp = newMaxHP;
 				token.place_sync_persist();
@@ -3544,13 +3561,9 @@ function build_menu_stat_inputs(tokenIds) {
 				return;
 			let newMaxHP = newValue;
 
-			const sanitizedString = newMaxHP.replaceAll(/[^\d+-/*().]/gi, '');
-			const evalResult = round_down_divisions(sanitizedString);
-			if (newMaxHP.startsWith("+") || newMaxHP.startsWith("-")) {
-				newMaxHP = Math.max(0, parseInt(token.maxHp) + parseInt(evalResult));
-			} else{
-				newMaxHP = Math.max(0, evalResult);
-			}
+			newMaxHP = calculate_hp(newMaxHP, token.maxHp);
+			if (newMaxHP === undefined)
+				return;
 
 			token.maxHp = newMaxHP;
 			token.place_sync_persist();
@@ -3573,13 +3586,9 @@ function build_menu_stat_inputs(tokenIds) {
 					return;
 				let newTempHP = newValue;
 
-				const sanitizedString = newTempHP.replaceAll(/[^\d+-/*().]/gi, '');
-				const evalResult = round_down_divisions(sanitizedString);
-				if (newTempHP.startsWith("+") || newTempHP.startsWith("-")) {
-					newTempHP = Math.max(0, parseInt(token.tempHp) + parseInt(evalResult));
-				} else{
-					newTempHP = Math.max(0, evalResult);
-				}
+				newTempHP = calculate_hp(newTempHP, token.tempHp);
+				if (newTempHP === undefined)
+					return;
 
 				token.tempHp = newTempHP;
 				token.place_sync_persist();
@@ -3602,13 +3611,9 @@ function build_menu_stat_inputs(tokenIds) {
 				return;
 			let newTempHP = newValue;
 
-			const sanitizedString = newTempHP.replaceAll(/[^\d+-/*().]/gi, '');
-			const evalResult = round_down_divisions(sanitizedString);
-			if (newTempHP.startsWith("+") || newTempHP.startsWith("-")) {
-				newTempHP = Math.max(0, parseInt(token.tempHp) + parseInt(evalResult));
-			} else{
-				newTempHP = Math.max(0, evalResult);
-			}
+			newTempHP = calculate_hp(newTempHP, token.tempHp);
+			if (newTempHP === undefined)
+				return;
 
 			token.tempHp = newTempHP;
 			token.place_sync_persist();
@@ -5512,13 +5517,9 @@ function add_to_quick_roll_menu(token, autoRollAfterAoe = false) {
 			let old = $("#tokens").find(selector);
 			let value = hp_input.val().trim();
 
-			const sanitizedString = value.replaceAll(/[^\d+-/*().]/gi, '');
-			const evalResult = round_down_divisions(sanitizedString);
-			if (value.startsWith("+") || value.startsWith("-")) {
-				value = Math.max(0, parseInt(token.hp) + parseInt(evalResult));
-			} else{
-				value = Math.max(0, evalResult);
-			}
+			value = calculate_hp(value, token.hp);
+			if (value === undefined)
+				return;
 
 			hp_input.val(value);
 			token.totalHp = value;
@@ -5539,13 +5540,9 @@ function add_to_quick_roll_menu(token, autoRollAfterAoe = false) {
 			let old = $("#tokens").find(selector);
 			let value = maxhp_input.val().trim();
 
-			const sanitizedString = value.replaceAll(/[^\d+-/*().]/gi, '');
-			const evalResult = round_down_divisions(sanitizedString);
-			if (value.startsWith("+") || value.startsWith("-")) {
-				value = Math.max(0, parseInt(token.maxHp) + parseInt(evalResult));
-			} else{
-				value = Math.max(0, evalResult);
-			}
+			value = calculate_hp(value, token.maxHp);
+			if (value === undefined)
+				return;
 
 			old.find(".max_hp").val(value);
 			if(window.all_token_objects[token.options.id] != undefined){
@@ -5564,8 +5561,8 @@ function add_to_quick_roll_menu(token, autoRollAfterAoe = false) {
 		});
 	}
 	else {
-		hp_input.keydown(function(e) { if (e.keyCode == '13') token.update_from_page(); e.preventDefault(); }); // DISABLE WITHOUT MAKING IT LOOK UGLY
-		maxhp_input.keydown(function(e) { if (e.keyCode == '13') token.update_from_page(); e.preventDefault(); });
+		hp_input.keydown(function(e) { if (e.keyCode == '13') e.preventDefault(); }); // DISABLE WITHOUT MAKING IT LOOK UGLY
+		maxhp_input.keydown(function(e) { if (e.keyCode == '13') e.preventDefault(); });
 	}
 
 	const qrm_resistance_button = $(`<button title="resistance" class='resistanceButton qrm_buttons_bar' style="display:inline-flex;"><span class="material-symbols-outlined">person_shield</span></button>`);

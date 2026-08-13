@@ -1319,13 +1319,9 @@ function ct_add_token(token,persist=true,disablerolling=false, adv=false, dis=fa
 			let selector = "div[data-id='" + token.options.id + "']";
 			let old = $("#tokens").find(selector);
 			let value = $(this).val().trim();
-			const sanitizedString = value.replaceAll(/[^\d+-/*().]/gi, '');
-			const evalResult = eval(sanitizedString);
-			if (value.startsWith("+") || value.startsWith("-")) {
-				value = Math.max(0, parseInt(token.hp) + parseInt(evalResult));
-			} else{
-				value = Math.max(0, evalResult);
-			}
+			value = calculate_hp(value, token.hp);
+			if (value === undefined)
+				return;
 
 			const tokenObj = window.all_token_objects[token.options.id];
 			window.all_token_objects[token.options.id].totalHp = value;
@@ -1348,13 +1344,9 @@ function ct_add_token(token,persist=true,disablerolling=false, adv=false, dis=fa
 			let old = $("#tokens").find(selector);
 			let value = $(this).val().trim();
 			
-			const sanitizedString = value.replaceAll(/[^\d+-/*().]/gi, '');
-			const evalResult = eval(sanitizedString);
-			if (value.startsWith("+") || value.startsWith("-")) {
-				value = Math.max(0, parseInt(token.maxHp) + parseInt(evalResult));
-			} else{
-				value = Math.max(0, evalResult);
-			}
+			value = calculate_hp(value, token.maxHp);
+			if (value === undefined)
+				return;
 			$(this).val(value)
 
 			const tokenObj = window.all_token_objects[token.options.id];

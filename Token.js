@@ -1406,13 +1406,9 @@ class Token {
 				let tokenID = self.options.id;
 				let value = $(this).val().trim();	
 
-				const sanitizedString = value.replaceAll(/[^\d+-/*().]/gi, '');
-				const evalResult = round_down_divisions(sanitizedString);
-				if (value.startsWith("+") || value.startsWith("-")) {
-					value = Math.max(0, parseInt(self.hp) + parseInt(evalResult));
-				} else{
-					value = Math.max(0, evalResult);
-				}
+				value = calculate_hp(value, self.hp);
+				if (value === undefined)
+					return;
 				
 				
 				if(window.all_token_objects[tokenID] != undefined){
@@ -1437,13 +1433,9 @@ class Token {
 				let tokenID = self.options.id;
 				let value = $(this).val().trim();
 		
-				const sanitizedString = value.replaceAll(/[^\d+-/*().]/gi, '');
-				const evalResult = round_down_divisions(sanitizedString);
-				if (value.startsWith("+") || value.startsWith("-")) {
-					value = Math.max(0, parseInt(self.maxHp) + parseInt(evalResult));
-				} else{
-					value = Math.max(0, evalResult);
-				}
+				value = calculate_hp(value, self.maxHp);
+				if (value === undefined)
+					return;
 				$(this).val(value);
 
 				if(window.all_token_objects[tokenID] != undefined){
