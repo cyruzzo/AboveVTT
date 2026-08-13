@@ -1779,7 +1779,19 @@ class JournalManager{
 		closestNote.find('.abovevtt-slash-command-journal').replaceWith((i, innerHTML) =>{
 			return innerHTML;
 		})
-
+		const customTrackers = closestNote.find('.avtt-custom-tracker');
+		customTrackers.replaceWith((i, innerHTML) =>{
+			const trackerVal = customTrackers[i].getAttribute('data-number');
+			const trackerId = customTrackers[i].getAttribute('data-spell');
+			const previousSpan = $(customTrackers[i]).prev('span');
+			let text;
+			if(previousSpan.text() == trackerId){
+				previousSpan.remove();
+				text = trackerId;
+			}
+			innerHTML = `[track${text ? '' : ` id=${trackerId}`}]${`${text ?? ''}${trackerVal}`.trim()}[/track]`;
+			return innerHTML;
+		});
 		const sanitizedHTML = basic_sanitize_html(closestNote[0].innerHTML).replaceAll(/\[(\/)?spell\]/gi, `[$1spell]`).replaceAll(/\[(\/)?magicitem\]/gi, `[$1magicItem]`).replaceAll(/\[(\/)?item\]/gi, `[$1item]`);
 		const changes = forceSave || $(sanitizedHTML).text().replace(/[\s\n\r]/gi, '') != this.notes[id].plain.replace(/[\s\n\r]/gi, '');
 		if(changes){
@@ -2081,8 +2093,6 @@ class JournalManager{
 			} else{
 				note_container.css('display', '') // if note is hidden for popout this will display it
 			}
-			
-
 		}
 		note_text.append(self.notes[id].text); // valid tags are controlled by tinyMCE.init()
 		$(note_text).find('.injected-input, .added-input-desc').remove();
