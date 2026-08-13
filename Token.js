@@ -1252,46 +1252,22 @@ class Token {
 		let selector = "div[data-id='" + this.options.id + "']";
 		let old = $("#tokens").find(selector);
 
-		if(old.is(':animated')){	
-			this.stopAnimation(); // stop the animation and jump to the end.	
-		}
-
 		this.options.left = old.css("left");
 		this.options.top = old.css("top");
 		this.options.scaleCreated = window.CURRENT_SCENE_DATA.scale_factor;
 
-		
-		// one of either
-		// is a monster?
-		// is the DM
-		// not the DM and player controlled
-		// AND stats aren't disabled and has hp bar
-		if ( ( (!(this.options.monster > 0)) || window.DM || (!window.DM && this.options.player_owned)) && old.has(".hp").length > 0) {
-			if (old.find(".hp").val().trim().startsWith("+") || old.find(".hp").val().trim().startsWith("-")) {
-				old.find(".hp").val(Math.max(0, this.hp + parseInt(old.find(".hp").val())));
-			}else{
-				const sanitizedString = old.find(".hp").val().replaceAll(/[^\d+-/*().]/gi, '');
-				const value = eval(sanitizedString);
-				old.find(".hp").val(Math.max(0, parseInt(value)));
-			}
-			if (old.find(".max_hp").val().trim().startsWith("+") || old.find(".max_hp").val().trim().startsWith("-")) {
-				old.find(".max_hp").val(Math.max(0, this.maxHp + parseInt(old.find(".max_hp").val())));
-			}else{
-				const sanitizedString = old.find(".max_hp").val().replaceAll(/[^\d+-/*().]/gi, '');
-				const value = eval(sanitizedString);
-				old.find(".max_hp").val(Math.max(0, parseInt(value)));
-			}
-			this.totalHp = parseInt(old.find(".hp").val());
-			this.maxHp = parseInt(old.find(".max_hp").val());
-			old.find(".hp").val(this.hp);
-			this.update_dead_cross(old)
-			this.update_health_aura(old)
-		}
+		this.update_dead_cross(old);
+		this.update_health_aura(old);
+
+		const hpbar = old.find(".hpbar");
+		hpbar.css({
+			"--base-hp": this.baseHp ?? 0,
+			"--temp-hp": this.tempHp ?? 0
+		});
 
 		this.update_condition_timers();
 		this.update_age();
 		toggle_player_selectable(this, old)
-		this.toggle_stats(old);
 	}
 
 
@@ -1429,12 +1405,15 @@ class Token {
 			hp_input.change(function(e) {
 				let tokenID = self.options.id;
 				let value = $(this).val().trim();	
+
+				const sanitizedString = value.replaceAll(/[^\d+-/*().]/gi, '');
+				const evalResult = round_down_divisions(sanitizedString);
 				if (value.startsWith("+") || value.startsWith("-")) {
-					value = Math.max(0, parseInt(self.hp) + parseInt(value));
+					value = Math.max(0, parseInt(self.hp) + parseInt(evalResult));
 				} else{
-					const sanitizedString = value.replaceAll(/[^\d+-/*().]/gi, '');
-					value = Math.max(0, parseInt(eval(sanitizedString)));
+					value = Math.max(0, evalResult);
 				}
+				
 				
 				if(window.all_token_objects[tokenID] != undefined){
 					window.all_token_objects[tokenID].totalHp = value;
@@ -1457,14 +1436,16 @@ class Token {
 			maxhp_input.change(function(e) {
 				let tokenID = self.options.id;
 				let value = $(this).val().trim();
+		
+				const sanitizedString = value.replaceAll(/[^\d+-/*().]/gi, '');
+				const evalResult = round_down_divisions(sanitizedString);
 				if (value.startsWith("+") || value.startsWith("-")) {
-					value = Math.max(0, parseInt(self.maxHp) + parseInt(value))
-					$(this).val(value);
+					value = Math.max(0, parseInt(self.maxHp) + parseInt(evalResult));
 				} else{
-					const sanitizedString = value.replaceAll(/[^\d+-/*().]/gi, '');
-					value = Math.max(0, parseInt(eval(sanitizedString)));
-					$(this).val(value);
+					value = Math.max(0, evalResult);
 				}
+				$(this).val(value);
+
 				if(window.all_token_objects[tokenID] != undefined){
 					window.all_token_objects[tokenID].maxHp = value;
 				}
@@ -1486,8 +1467,8 @@ class Token {
 			hpbar.off('click.message').on('click.message', 'input' ,function(){
 				showTempMessage('Player HP must be adjusted on the character sheet.')
 			})
-			hp_input.keydown(function(e) { if (e.keyCode == '13') self.update_from_page(); e.preventDefault(); }); // DISABLE WITHOUT MAKING IT LOOK UGLY
-			maxhp_input.keydown(function(e) { if (e.keyCode == '13') self.update_from_page(); e.preventDefault(); });
+			hp_input.keydown(function(e) { if (e.keyCode == '13') e.preventDefault(); }); // DISABLE WITHOUT MAKING IT LOOK UGLY
+			maxhp_input.keydown(function(e) { if (e.keyCode == '13') e.preventDefault(); });
 		}
 
 		if(this.options.hidehpbar) {

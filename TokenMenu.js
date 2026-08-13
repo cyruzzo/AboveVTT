@@ -3301,6 +3301,50 @@ function create_animation_presets_edit(isVision = false){
 
 	adjust_create_import_edit_container(dialog, undefined, undefined, 975);
 }
+function round_down_divisions(expression) {
+	let position = 0;
+
+	function parseExpression() {
+		let value = parseTerm();
+		while (position < expression.length && (expression[position] === '+' || expression[position] === '-')) {
+			const operator = expression[position++];
+			const nextValue = parseTerm();
+			value = operator === '+' ? value + nextValue : value - nextValue;
+		}
+		return value;
+	}
+
+	function parseTerm() {
+		let value = parseFactor();
+		while (position < expression.length && (expression[position] === '*' || expression[position] === '/')) {
+			const operator = expression[position++];
+			const nextValue = parseFactor();
+			value = operator === '*' ? value * nextValue : Math.trunc(value / nextValue);
+		}
+		return value;
+	}
+
+	function parseFactor() {
+		if (expression[position] === '(') {
+			position++;
+			const value = parseExpression();
+			position++;
+			return value;
+		}
+		if (expression[position] === '-') {
+			position++;
+			return -parseFactor();
+		}
+		const start = position;
+		while (position < expression.length && /\d/.test(expression[position])) {
+			position++;
+		}
+		return Number(expression.slice(start, position));
+	}
+
+	return parseExpression();
+}
+
 function build_menu_stat_inputs(tokenIds) {
 	let tokens = tokenIds.map(id => window.TOKEN_OBJECTS[id]).filter(t => t !== undefined);
 	let body = $("<div id='menuStatDiv'></div>");
@@ -3398,12 +3442,15 @@ function build_menu_stat_inputs(tokenIds) {
 				if(token.isPlayer())
 					return;
 				let newHP = newValue;
-				if(newValue.indexOf("+") == 0 || newValue.indexOf("-") == 0){
-					newHP = token.baseHp + parseInt(newValue);
+				
+				const sanitizedString = newHP.replaceAll(/[^\d+-/*().]/gi, '');
+				const evalResult = round_down_divisions(sanitizedString);
+				if (newHP.startsWith("+") || newHP.startsWith("-")) {
+					newHP = Math.max(0, parseInt(token.baseHp) + parseInt(evalResult));
 				} else{
-					const sanitizedString = newHP.replaceAll(/[^\d+-/*().]/gi, '');
-					newHP = Math.max(0, parseInt(eval(sanitizedString)));
+					newHP = Math.max(0, evalResult);
 				}
+
 				if(newHP > token.maxHp){
 					token.hp = token.maxHp;
 					token.tempHp = newHP - token.maxHp;
@@ -3430,12 +3477,15 @@ function build_menu_stat_inputs(tokenIds) {
 			if(token.isPlayer())
 				return;
 			let newHP = newValue;
-			if(newValue.indexOf("+") == 0 || newValue.indexOf("-") == 0){
-				newHP = token.baseHp + parseInt(newValue);
+
+			const sanitizedString = newHP.replaceAll(/[^\d+-/*().]/gi, '');
+			const evalResult = round_down_divisions(sanitizedString);
+			if (newHP.startsWith("+") || newHP.startsWith("-")) {
+				newHP = Math.max(0, parseInt(token.baseHp) + parseInt(evalResult));
 			} else{
-				const sanitizedString = newHP.replaceAll(/[^\d+-/*().]/gi, '');
-				newHP = Math.max(0, parseInt(eval(sanitizedString)));
+				newHP = Math.max(0, evalResult);
 			}
+
 			if(newHP > token.maxHp){
 				token.hp = token.maxHp;
 				token.tempHp = newHP - token.maxHp;
@@ -3464,12 +3514,15 @@ function build_menu_stat_inputs(tokenIds) {
 				if(token.isPlayer())
 					return;
 				let newMaxHP = newValue;
-				if(newValue.indexOf("+") == 0 || newValue.indexOf("-") == 0){
-					newMaxHP = token.maxHp + parseInt(newValue);
+
+				const sanitizedString = newMaxHP.replaceAll(/[^\d+-/*().]/gi, '');
+				const evalResult = round_down_divisions(sanitizedString);
+				if (newMaxHP.startsWith("+") || newMaxHP.startsWith("-")) {
+					newMaxHP = Math.max(0, parseInt(token.maxHp) + parseInt(evalResult));
 				} else{
-					const sanitizedString = newMaxHP.replaceAll(/[^\d+-/*().]/gi, '');
-					newMaxHP = Math.max(0, parseInt(eval(sanitizedString)));
+					newMaxHP = Math.max(0, evalResult);
 				}
+				
 				token.maxHp = newMaxHP;
 				token.place_sync_persist();
 				if(tokens.length == 1){
@@ -3490,12 +3543,15 @@ function build_menu_stat_inputs(tokenIds) {
 			if(token.isPlayer())
 				return;
 			let newMaxHP = newValue;
-			if(newValue.indexOf("+") == 0 || newValue.indexOf("-") == 0){
-				newMaxHP = token.maxHp + parseInt(newValue);
+
+			const sanitizedString = newMaxHP.replaceAll(/[^\d+-/*().]/gi, '');
+			const evalResult = round_down_divisions(sanitizedString);
+			if (newMaxHP.startsWith("+") || newMaxHP.startsWith("-")) {
+				newMaxHP = Math.max(0, parseInt(token.maxHp) + parseInt(evalResult));
 			} else{
-				const sanitizedString = newMaxHP.replaceAll(/[^\d+-/*().]/gi, '');
-				newMaxHP = Math.max(0, parseInt(eval(sanitizedString)));
+				newMaxHP = Math.max(0, evalResult);
 			}
+
 			token.maxHp = newMaxHP;
 			token.place_sync_persist();
 			if(tokens.length == 1){
@@ -3516,12 +3572,15 @@ function build_menu_stat_inputs(tokenIds) {
 				if(token.isPlayer())
 					return;
 				let newTempHP = newValue;
-				if(newValue.indexOf("+") == 0 || newValue.indexOf("-") == 0){
-					newTempHP = token.tempHp + parseInt(newValue);
+
+				const sanitizedString = newTempHP.replaceAll(/[^\d+-/*().]/gi, '');
+				const evalResult = round_down_divisions(sanitizedString);
+				if (newTempHP.startsWith("+") || newTempHP.startsWith("-")) {
+					newTempHP = Math.max(0, parseInt(token.tempHp) + parseInt(evalResult));
 				} else{
-					const sanitizedString = newTempHP.replaceAll(/[^\d+-/*().]/gi, '');
-					newTempHP = Math.max(0, parseInt(eval(sanitizedString)));
+					newTempHP = Math.max(0, evalResult);
 				}
+
 				token.tempHp = newTempHP;
 				token.place_sync_persist();
 				if(tokens.length == 1){
@@ -3542,12 +3601,15 @@ function build_menu_stat_inputs(tokenIds) {
 			if(token.isPlayer())
 				return;
 			let newTempHP = newValue;
-			if(newValue.indexOf("+") == 0 || newValue.indexOf("-") == 0){
-				newTempHP = token.tempHp + parseInt(newValue);
+
+			const sanitizedString = newTempHP.replaceAll(/[^\d+-/*().]/gi, '');
+			const evalResult = round_down_divisions(sanitizedString);
+			if (newTempHP.startsWith("+") || newTempHP.startsWith("-")) {
+				newTempHP = Math.max(0, parseInt(token.tempHp) + parseInt(evalResult));
 			} else{
-				const sanitizedString = newTempHP.replaceAll(/[^\d+-/*().]/gi, '');
-				newTempHP = Math.max(0, parseInt(eval(sanitizedString)));
+				newTempHP = Math.max(0, evalResult);
 			}
+
 			token.tempHp = newTempHP;
 			token.place_sync_persist();
 			if(tokens.length == 1){
@@ -5449,15 +5511,18 @@ function add_to_quick_roll_menu(token, autoRollAfterAoe = false) {
 			let selector = "div[data-id='" + token.options.id + "']";
 			let old = $("#tokens").find(selector);
 			let value = hp_input.val().trim();
-			if (value.startsWith("+") || value.trim().startsWith("-")) {
-				value = Math.max(0, parseInt(token.hp) + parseInt(value));
-				hp_input.val(value);
+
+			const sanitizedString = value.replaceAll(/[^\d+-/*().]/gi, '');
+			const evalResult = round_down_divisions(sanitizedString);
+			if (value.startsWith("+") || value.startsWith("-")) {
+				value = Math.max(0, parseInt(token.hp) + parseInt(evalResult));
 			} else{
-				const sanitizedString = value.replaceAll(/[^\d+-/*().]/gi, '');
-				value = Math.max(0, parseInt(eval(sanitizedString)));
-				hp_input.val(value);
+				value = Math.max(0, evalResult);
 			}
+
+			hp_input.val(value);
 			token.totalHp = value;
+
 			if(window.all_token_objects[token.options.id] != undefined){
 				window.all_token_objects[token.options.id].totalHp = value;
 			}
@@ -5473,13 +5538,13 @@ function add_to_quick_roll_menu(token, autoRollAfterAoe = false) {
 			let selector = "div[data-id='" + token.options.id + "']";
 			let old = $("#tokens").find(selector);
 			let value = maxhp_input.val().trim();
+
+			const sanitizedString = value.replaceAll(/[^\d+-/*().]/gi, '');
+			const evalResult = round_down_divisions(sanitizedString);
 			if (value.startsWith("+") || value.startsWith("-")) {
-				value = Math.max(0, parseInt(token.maxHp) + parseInt(value));
-				maxhp_input.val(value);
+				value = Math.max(0, parseInt(token.maxHp) + parseInt(evalResult));
 			} else{
-				const sanitizedString = value.replaceAll(/[^\d+-/*().]/gi, '');
-				value = Math.max(0, parseInt(eval(sanitizedString)));
-				maxhp_input.val(value);
+				value = Math.max(0, evalResult);
 			}
 
 			old.find(".max_hp").val(value);
