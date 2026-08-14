@@ -1762,6 +1762,7 @@ class JournalManager{
 	* @param {Boolean|undefined} options.forceSave forces saving of the note even if no changes found in text
 	* @param {Boolean|undefined} options.rescanStatBlock reruns any autoformatting we do to statblocks */
 	persistStatBlockContent = (id, note_text, note_container, options = { tokenId: undefined, forceSave: false, rescanStatBlock: true }) => {
+		const currScroll = note_container.find('.avtt-stat-block-container, .note-text').first()[0].scrollTop;
 		const { tokenId, forceSave, rescanStatBlock } = options;
 		const closestNote = note_text.clone(true, true);
 		const avttImages = closestNote.find('img[data-src*="above-bucket-not-a-url"]');
@@ -1792,15 +1793,26 @@ class JournalManager{
 			innerHTML = `[track${text ? '' : ` id=${trackerId}`}]${`${text ?? ''}${trackerVal}`.trim()}[/track]`;
 			return innerHTML;
 		});
-		const sanitizedHTML = basic_sanitize_html(closestNote[0].innerHTML).replaceAll(/\[(\/)?spell\]/gi, `[$1spell]`).replaceAll(/\[(\/)?magicitem\]/gi, `[$1magicItem]`).replaceAll(/\[(\/)?item\]/gi, `[$1item]`);
+		closestNote.find('.image').remove();
+		let sanitizedHTML = basic_sanitize_html(closestNote[0].innerHTML).replaceAll(/\[(\/)?spell\]/gi, `[$1spell]`).replaceAll(/\[(\/)?magicitem\]/gi, `[$1magicItem]`).replaceAll(/\[(\/)?item\]/gi, `[$1item]`);
 		const changes = forceSave || $(sanitizedHTML).text().replace(/[\s\n\r]/gi, '') != this.notes[id].plain.replace(/[\s\n\r]/gi, '');
 		if(changes){
+			if(tokenId){		
+				if(window.TOKEN_OBJECTS[tokenId]){
+					assignPcTemplateStats(closestNote.find('.dnd-sheet'), window.TOKEN_OBJECTS[tokenId].options);
+					window.TOKEN_OBJECTS[tokenId].place();
+				}
+				if(window.all_token_objects[tokenId]){
+					assignPcTemplateStats(closestNote.find('.dnd-sheet'), window.all_token_objects[tokenId].options);
+				    window.all_token_objects[tokenId].sync();
+				}
+			}
 			this.notes[id].text = sanitizedHTML;
 			this.notes[id].plain = $(sanitizedHTML).text();
 			window.JOURNAL.setPersistTimeout();
 			debounceSendNote(id, this.notes[id], tokenId);
 			if(rescanStatBlock){
-				debounceRescanStatBlock(note_container, id, tokenId);
+				debounceRescanStatBlock(note_container, id, tokenId, currScroll);
 			}
 		}
 	};
@@ -5461,12 +5473,11 @@ class JournalManager{
 								<div class="mid-column">
 									<div class="combat-stats-grid">
 										<div class="combat-metric"><span class="label">Armor Class</span>
-											<div class="metric-val" contenteditable="true"><strong class="custom-ac custom-stat">16</strong>
+											<div class="metric-val" contenteditable="true">16
 											</div>
 										</div>
 										<div class="combat-metric"><span class="label">Initiative</span>
-											<div class="metric-val"><strong class="custom-initiative custom-stat"
-													contenteditable="true">+1</strong></div>
+											<div class="metric-val">+1</div>
 										</div>
 										<div class="combat-metric"><span class="label">Speed</span>
 											<div class="metric-val" contenteditable="true">30 ft.</div>
@@ -5485,8 +5496,7 @@ class JournalManager{
 												<div class="box-field" contenteditable="true">&nbsp;</div>
 											</div>
 											<div class="col"><span class="label">Maximum Hit Points</span>
-												<div class="box-field" contenteditable="true"><strong class="custom-avghp custom-stat">
-														10</strong></div>
+												<div class="box-field" contenteditable="true">10</div>
 											</div>
 											<div class="col"><span class="label">Temporary Hit Points</a></span>
 												<div class="box-field" contenteditable="true">&nbsp;</div>

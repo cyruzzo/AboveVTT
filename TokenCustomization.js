@@ -557,7 +557,7 @@ class TokenCustomization {
                 if(this.id.includes("_AboveVTT_Tokens_"))
                     n = this.id.replace('_AboveVTT_Tokens_', '').replaceAll("_", ' ');
                 else
-                    console.warn("Failed to find the name of a token customization", this);
+                    noisy_log(2, "Failed to find the name of a token customization", this);
             }
         }
         return n || "undefined";
