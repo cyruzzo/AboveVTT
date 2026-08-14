@@ -1388,7 +1388,7 @@ class Token {
 					return;
 				e.preventDefault();
 				const delta = e.originalEvent.deltaY < 0 ? 1 : -1;
-				const current = parseInt(self.hp) || 0;
+				const current = parseInt(input.val()) || 0;
 				input.val(Math.max(0, current + delta));
 				debounceTriggerEvent(input);
 			});
@@ -1398,7 +1398,7 @@ class Token {
 					return;
 				e.preventDefault();
 				const delta = e.originalEvent.deltaY < 0 ? 1 : -1;
-				const current = parseInt(self.maxHp) || 0;
+				const current = parseInt(input.val()) || 0;
 				input.val(Math.max(1, current + delta));
 				debounceTriggerEvent(input);
 			});

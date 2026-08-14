@@ -3419,7 +3419,7 @@ function build_menu_stat_inputs(tokenIds) {
 
 	const debounceTriggerKeyboard = mydebounce((input, keyboardEvent)=>{
 		input.trigger(keyboardEvent);
-	})
+	}, 1500)
 	if(!isNaN(hp) && !isNaN(max_hp)){
 		hpMenuInput.find('input').on('wheel', function(e) {
 			const input = $(this);
@@ -3455,7 +3455,7 @@ function build_menu_stat_inputs(tokenIds) {
 			const delta = e.originalEvent.deltaY < 0 ? 1 : -1;
 			const current = parseInt(input.val());
 			if(isNaN(current)) return;
-			input.val(Math.max(1, current + delta));
+			input.val(Math.max(0, current + delta));
 			const keyboardEvent = $.Event('keyup');
 			keyboardEvent.key = 'Enter'; 
 			debounceTriggerKeyboard(input, keyboardEvent);
@@ -5497,7 +5497,7 @@ function add_to_quick_roll_menu(token, autoRollAfterAoe = false) {
 				return;
 			e.preventDefault();
 			const delta = e.originalEvent.deltaY < 0 ? 1 : -1;
-			const current = parseInt(token.hp) || 0;
+			const current = parseInt(input.val()) || 0;
 			input.val(Math.max(0, current + delta));
 			debounceTriggerEvent(input);
 		});
@@ -5507,7 +5507,7 @@ function add_to_quick_roll_menu(token, autoRollAfterAoe = false) {
 				return;
 			e.preventDefault();
 			const delta = e.originalEvent.deltaY < 0 ? 1 : -1;
-			const current = parseInt(token.maxHp) || 0;
+			const current = parseInt(input.val()) || 0;
 			input.val(Math.max(1, current + delta));
 			debounceTriggerEvent(input);
 		});
