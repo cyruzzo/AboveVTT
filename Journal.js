@@ -1762,6 +1762,7 @@ class JournalManager{
 	* @param {Boolean|undefined} options.forceSave forces saving of the note even if no changes found in text
 	* @param {Boolean|undefined} options.rescanStatBlock reruns any autoformatting we do to statblocks */
 	persistStatBlockContent = (id, note_text, note_container, options = { tokenId: undefined, forceSave: false, rescanStatBlock: true }) => {
+		const currScroll = note_container.find('.avtt-stat-block-container, .note-text').first()[0].scrollTop;
 		const { tokenId, forceSave, rescanStatBlock } = options;
 		const closestNote = note_text.clone(true, true);
 		const avttImages = closestNote.find('img[data-src*="above-bucket-not-a-url"]');
@@ -1792,7 +1793,8 @@ class JournalManager{
 			innerHTML = `[track${text ? '' : ` id=${trackerId}`}]${`${text ?? ''}${trackerVal}`.trim()}[/track]`;
 			return innerHTML;
 		});
-		const sanitizedHTML = basic_sanitize_html(closestNote[0].innerHTML).replaceAll(/\[(\/)?spell\]/gi, `[$1spell]`).replaceAll(/\[(\/)?magicitem\]/gi, `[$1magicItem]`).replaceAll(/\[(\/)?item\]/gi, `[$1item]`);
+		closestNote.find('.image').remove();
+		let sanitizedHTML = basic_sanitize_html(closestNote[0].innerHTML).replaceAll(/\[(\/)?spell\]/gi, `[$1spell]`).replaceAll(/\[(\/)?magicitem\]/gi, `[$1magicItem]`).replaceAll(/\[(\/)?item\]/gi, `[$1item]`);
 		const changes = forceSave || $(sanitizedHTML).text().replace(/[\s\n\r]/gi, '') != this.notes[id].plain.replace(/[\s\n\r]/gi, '');
 		if(changes){
 			if(tokenId){		
@@ -1810,7 +1812,7 @@ class JournalManager{
 			window.JOURNAL.setPersistTimeout();
 			debounceSendNote(id, this.notes[id], tokenId);
 			if(rescanStatBlock){
-				debounceRescanStatBlock(note_container, id, tokenId);
+				debounceRescanStatBlock(note_container, id, tokenId, currScroll);
 			}
 		}
 	};

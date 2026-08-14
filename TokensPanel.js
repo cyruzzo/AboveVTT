@@ -1144,9 +1144,9 @@ function assignPcTemplateStats(container, options){
         5: /^cha/gi
     }
     container.find('tr').map((i, el) => {
-    const statName = $(el).find('td.table-row-drag-handle+td, td:nth-of-type(2)').text().trim();
-    const statMod = $(el).find('td.table-row-drag-handle+td+td, td:nth-of-type(3)').text().trim().match(/([+-][0-9]+)/gi)?.[0];
-    const statSave = $(el).find('td.table-row-drag-handle+td+td+td, td:nth-of-type(4)').text().trim().match(/([+-][0-9]+)/gi)?.[0];
+        const statName = $(el).find('td.table-row-drag-handle+td, td:nth-of-type(1)').text().trim();
+        const statMod = $(el).find('td.table-row-drag-handle+td+td, td:nth-of-type(2)').text().trim().match(/([+-][0-9]+)/gi)?.[0];
+        const statSave = $(el).find('td.table-row-drag-handle+td+td+td, td:nth-of-type(3)').text().trim().match(/([+-][0-9]+)/gi)?.[0];
         if (statName) {
             if (!options.customStat) {
                 options.customStat = {};
@@ -1735,7 +1735,7 @@ async function create_and_place_token(listItem, hidden = undefined, specificImag
             }
         }
 
-        assignPcTemplateStats($(searchText), options);
+        options = assignPcTemplateStats($(`<div>${searchText}</div>`), options);
 
         if (options.customStat == undefined &&$(searchText).find('table.abilities-saves, table.stat-table').length > 0) {
             let physicalStats = $(searchText).find('table.abilities-saves.physical, table.stat-table.physical');
