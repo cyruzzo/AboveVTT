@@ -1143,7 +1143,7 @@ function setPcTemplateStats(container, options){
         4: /^wis/gi,
         5: /^cha/gi
     }
-    container.find('tr').map((i, el) => {
+    container.find('.abilities-table-container .box-field table tr').map((i, el) => {
         const statName = $(el).find('td.table-row-drag-handle+td, td:nth-of-type(1)').text().trim();
         const statMod = $(el).find('td.table-row-drag-handle+td+td, td:nth-of-type(2)').text().trim().match(/([+-][0-9]+)/gi)?.[0];
         const statSave = $(el).find('td.table-row-drag-handle+td+td+td, td:nth-of-type(3)').text().trim().match(/([+-][0-9]+)/gi)?.[0];
