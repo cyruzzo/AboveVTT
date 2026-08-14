@@ -1985,6 +1985,64 @@ class JournalManager{
 						profCheck.dataset.state = newState;
 					}
 				});
+
+				
+				function pcTemplateFocusTarget(sheetEl){
+					const targets = [];
+					sheetEl.querySelectorAll('td, th, [contenteditable]:not(a)').forEach((el) => {
+						if (el.classList.contains('table-row-drag-handle') || el.classList.contains('header-spacer') || el.classList.contains('add-table-row')) {
+							return;
+						}
+						if (el.offsetParent === null) {
+							return; // hidden
+						}
+						if (!el.isContentEditable) {
+							return;
+						}
+						if (el.matches('td, th')) {
+							targets.push(el);
+						} else {
+							if (el.closest('td, th')) {
+								return; 
+							}
+							targets.push(el);
+						}
+					});
+					return targets;
+				}
+
+				function placeCaretAtStart(el){
+					if (typeof el.focus === 'function') {
+						el.focus();
+					}
+					const range = document.createRange();
+					range.setStart(el, 0);
+					range.collapse(true);
+					const selection = window.getSelection();
+					selection.removeAllRanges();
+					selection.addRange(range);
+				}
+
+				document.addEventListener('keydown', (e) => {
+					if (e.key !== 'Tab') return;
+					const selection = window.getSelection();
+					if (!selection || selection.rangeCount === 0) return;
+					let anchorEl = selection.anchorNode;
+					if (anchorEl && anchorEl.nodeType === Node.TEXT_NODE) {
+						anchorEl = anchorEl.parentElement;
+					}
+					if (!anchorEl) return;
+					const sheet = anchorEl.closest('.dnd-sheet');
+					if (!sheet) return; 
+					const current = anchorEl.closest('td, th') || anchorEl.closest('[contenteditable]:not(a)');
+					if (!current) return;
+					const targets = pcTemplateFocusTarget(sheet);
+					const currentIndex = targets.indexOf(current);
+					if (currentIndex === -1) return;
+					const nextIndex = (currentIndex + (e.shiftKey ? -1 : 1) + targets.length) % targets.length;
+					e.preventDefault();
+					placeCaretAtStart(targets[nextIndex]);
+				});
 			</script>`;
 			download(html,`${window.CAMPAIGN_INFO.name}-${datetime}-pctemplate.html`,"text/html");
 				
