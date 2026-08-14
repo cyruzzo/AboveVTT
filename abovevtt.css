@@ -7406,8 +7406,17 @@ button.avtt-roll-formula-button {
     z-index: 110000;
     background: #fff;
     border-radius: 10px;
-    width: 265px;
+    width: 260px;
     max-height: 100%;
+
+    #tokenOptionsContainer>.token-image-modal-url-label-wrapper:has([name="name"]){
+        .token-image-modal-footer-title{
+            flex-grow:0;
+        }
+        [name="name"]{
+            flex-grow:1;
+        }
+    } 
 }
 .aboveDiceTotal{
     display: block;
@@ -8667,25 +8676,24 @@ button span.onedrive-btn-status{
     font-family: Roboto,Open Sans,Helvetica,sans-serif;
 }
 #tokenOptionsContainer .menu-input {
-    width: 40px;
+    width: 45px;
     text-align: center;
-    margin: 5px;
+    margin: 3px;
 }
 .menu-input-label{
     text-align: center;
     background: none;
-    font-size: 10px;   
-    font-weight: 700;
+    font-size: 10px;
+    font-weight: 500;
     text-transform: uppercase;
-    letter-spacing: 1px;
     height: 24px;
     color: #738694;
-    font-family: Roboto,Open Sans,Helvetica,sans-serif;
+    font-family: Roboto, Open Sans, Helvetica, sans-serif;
 }
 
 #menuStatDiv {
     width: 100%; 
-    padding: 5px;
+    padding: 5px 0;
     display: flex;
     align-content: center;
     justify-content: center;

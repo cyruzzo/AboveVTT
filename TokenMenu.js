@@ -3993,8 +3993,7 @@ function build_conditions_and_markers_flyout_menu(tokenIds) {
 
 	let removeAllItem = $(`<li class="icon-condition icon-close-red"><span>Remove All</span></li>`);
 	removeAllItem.on("click", function () {
-		$(".active-condition").click(); // anything that is active should be deactivated.
-
+		body.find(".active-condition").click(); // anything that is active should be deactivated.
 	});
 	conditionsList.prepend(removeAllItem);
 

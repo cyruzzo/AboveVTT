@@ -1134,7 +1134,7 @@ function random_number_suffix(suffixNumbers = []) {
  * @param {JQuery<HTMLElement>} container is the conainer that has the statblock in it
  * @param {Object} options is the token options we want to update
  */
-function assignPcTemplateStats(container, options){
+function setPcTemplateStats(container, options){
     const match = {
         0: /^str/gi,
         1: /^dex/gi,
@@ -1195,7 +1195,8 @@ function assignPcTemplateStats(container, options){
  */
 function sync_pc_template(token, container) {
   container = container ?? $(`.custom-stat-block[data-token-id='${token.options.id}']`).parent();
-  const hpRow = container.find(".dnd-sheet .hp-row.hp-input .col .box-field");
+  
+  const hpRow = container.is('.dnd-sheet') ? container.find(".hp-row.hp-input .col .box-field") : container.find(".dnd-sheet .hp-row.hp-input .col .box-field");
   if (hpRow.length > 0) {
     const hpIndex = {
       0: 'current',
@@ -1735,7 +1736,7 @@ async function create_and_place_token(listItem, hidden = undefined, specificImag
             }
         }
 
-        options = assignPcTemplateStats($(`<div>${searchText}</div>`), options);
+        options = setPcTemplateStats($(`<div>${searchText}</div>`), options);
 
         if (options.customStat == undefined &&$(searchText).find('table.abilities-saves, table.stat-table').length > 0) {
             let physicalStats = $(searchText).find('table.abilities-saves.physical, table.stat-table.physical');

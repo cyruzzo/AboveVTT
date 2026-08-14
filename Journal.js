@@ -1799,11 +1799,11 @@ class JournalManager{
 		if(changes){
 			if(tokenId){		
 				if(window.TOKEN_OBJECTS[tokenId]){
-					assignPcTemplateStats(closestNote.find('.dnd-sheet'), window.TOKEN_OBJECTS[tokenId].options);
+					setPcTemplateStats(closestNote.find('.dnd-sheet'), window.TOKEN_OBJECTS[tokenId].options);
 					window.TOKEN_OBJECTS[tokenId].place();
 				}
 				if(window.all_token_objects[tokenId]){
-					assignPcTemplateStats(closestNote.find('.dnd-sheet'), window.all_token_objects[tokenId].options);
+					setPcTemplateStats(closestNote.find('.dnd-sheet'), window.all_token_objects[tokenId].options);
 				    window.all_token_objects[tokenId].sync();
 				}
 			}
@@ -1816,15 +1816,18 @@ class JournalManager{
 			}
 		}
 	};
-	/**Downloads and PC template statblock as an offline sheet that can be reuploaded with changes later.
+	/**Downloads PC template statblock as an offline sheet that can be reuploaded with changes later.
 	 * @param {string} id is the note id we want to download */
-	downloadStatBlock = (id) => {
+	downloadStatBlock = (id, token) => {
 		build_import_loading_indicator('Preparing Export File');
 
 		const currentdate = new Date(); 
 		const datetime = `${currentdate.getFullYear()}-${(currentdate.getMonth()+1)}-${currentdate.getDate()}`
 		const santizedHtml = basic_sanitize_html(window.JOURNAL.notes[id].text);
 		let html = $(`${santizedHtml}`);
+		if(token){
+			sync_pc_template(token, html);
+		}
 		html.find('.injected-input, .added-input-desc').remove();
 		html.find('.add-input:not(.avtt-custom-tracker)').replaceWith((i, innerHtml) => {
 			return innerHtml;
