@@ -285,7 +285,7 @@ async function display_stat_block_in_container(statBlock, container, tokenId, cu
                                   </span>
                                 </div>`)
       downloadStat.off('click.exportStatBlock').on('click.exportStatBlock', function () { 
-        window.JOURNAL.downloadStatBlock(window.TOKEN_OBJECTS[tokenId].options.statBlock);
+        window.JOURNAL.downloadStatBlock(window.TOKEN_OBJECTS[tokenId].options.statBlock, token);
       });
       const uploadStat = $(`<div class='upload_button' style="cursor: pointer; position: absolute;
                                               left: 45px;
@@ -384,7 +384,7 @@ function import_pc_template_html(files, parentEle, customStatId, tokenId) {
       const containerInside = parentEle.find('.avtt-stat-block-container, .note-text').first();      
       const currScroll = containerInside.length ? containerInside[0].scrollTop : parentEle[0].scrollTop;
       if(token){
-        assignPcTemplateStats(parentEle, token.options);
+        setPcTemplateStats(parentEle, token.options);
         token.place();
       }
       window.JOURNAL.notes[customStatId].text = sanitizedHTML.replaceAll(/\[(\/)?spell\]/gi, `[$1spell]`).replaceAll(/\[(\/)?magicitem\]/gi, `[$1magicItem]`).replaceAll(/\[(\/)?item\]/gi, `[$1item]`); 
