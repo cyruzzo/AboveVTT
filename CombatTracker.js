@@ -1365,14 +1365,14 @@ function ct_add_token(token,persist=true,disablerolling=false, adv=false, dis=fa
 		});
 		const debounceTriggerChange = mydebounce(function(input) {
 			input.trigger('change');
-		}, 100);
+		}, 1500);
 		hp_input.on('wheel', function(e) {
 			const input = $(this);
 			if(!input.is(':focus'))
 				return;
 			e.preventDefault();
 			const delta = e.originalEvent.deltaY < 0 ? 1 : -1;
-			const current = parseInt(token.hp) || 0;
+			const current = parseInt(input.val()) || 0;
 			input.val(Math.max(0, current + delta));
 			debounceTriggerChange(input);
 		});
@@ -1382,7 +1382,7 @@ function ct_add_token(token,persist=true,disablerolling=false, adv=false, dis=fa
 				return;
 			e.preventDefault();
 			const delta = e.originalEvent.deltaY < 0 ? 1 : -1;
-			const current = parseInt(token.maxHp) || 0;
+			const current = parseInt(input.val()) || 0;
 			input.val(Math.max(1, current + delta));
 			debounceTriggerChange(input);
 		});
