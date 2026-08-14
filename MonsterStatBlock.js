@@ -86,6 +86,7 @@ async function display_stat_block_in_container(statBlock, container, tokenId, cu
     }
     window.JOURNAL.add_journal_tooltip_targets($html);
     if(customStatBlock){
+      sync_pc_template(token, container);
       let imageUrl = parse_img(token.options.imgsrc);
 
       if(token.options.imgsrc.startsWith('above-bucket-not-a-url')){
@@ -417,6 +418,7 @@ const debounceRescanStatBlock = mydebounce(async (container, noteId, tokenId) =>
   add_aoe_statblock_click(targetRescan, tokenId);
   targetRescan.find('a').attr('contenteditable', 'false');
   if(tokenId){
+    sync_pc_template(window.all_token_objects[tokenId], container);
     container.find("img.monster-image, .monster-image").each((i,block) => {
       createSendPlayerButton(block, "login", true).insertAfter(block);
     });
@@ -568,6 +570,7 @@ const debounceRescanStatBlock = mydebounce(async (container, noteId, tokenId) =>
     container.find('.dnd-sheet [contenteditable]:not(a):not(.table-row-drag-handle):not(.add-table-row)').attr("contenteditable", "true");
   }
 }, 1000);
+
 
 
 async function build_monster_stat_block(statBlock, token) {

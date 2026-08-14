@@ -3514,6 +3514,7 @@ class Token {
 						draw_selected_token_bounding_box();
 					}, animationDuration)
 				}),
+				new Promise(() => {sync_pc_template(this)})
 			]).catch((error) => {
 		        showError(error, `Failed to start AboveVTT on ${window.location.href}`);
 		    });  

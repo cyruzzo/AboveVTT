@@ -1129,6 +1129,85 @@ function random_number_suffix(suffixNumbers = []) {
     }
     return randomNumber;
 }
+/**
+ * Processes a pc template statblock and assigns the stats to the token options
+ * @param {JQuery<HTMLElement>} container is the conainer that has the statblock in it
+ * @param {Object} options is the token options we want to update
+ */
+function assignPcTemplateStats(container, options){
+    const match = {
+        0: /^str/gi,
+        1: /^dex/gi,
+        2: /^con/gi,
+        3: /^int/gi,
+        4: /^wis/gi,
+        5: /^cha/gi
+    }
+    container.find('tr').map((i, el) => {
+    const statName = $(el).find('td.table-row-drag-handle+td, td:nth-of-type(2)').text().trim();
+    const statMod = $(el).find('td.table-row-drag-handle+td+td, td:nth-of-type(3)').text().trim().match(/([+-][0-9]+)/gi)?.[0];
+    const statSave = $(el).find('td.table-row-drag-handle+td+td+td, td:nth-of-type(4)').text().trim().match(/([+-][0-9]+)/gi)?.[0];
+        if (statName) {
+            if (!options.customStat) {
+                options.customStat = {};
+            }
+            for (let key in match) {
+                if (match[key].test(statName)) {
+                    options.customStat[key] = {
+                        mod: statMod,
+                        save: statSave
+                    }
+                }
+            } 
+        }
+    }); 
+
+    const armorText = container.find('.combat-metric>.label:contains("Armor Class")+.metric-val').text().trim().match(/([0-9]+)/gi)?.[0];
+    if (armorText) {
+        options.armorClass = armorText;
+    }
+
+    const initiativeText = container.find('.combat-metric>.label:contains("Initiative")+.metric-val').text().trim().match(/([+-][0-9]+)/gi)?.[0];
+    if (initiativeText) {
+        options.customInit = initiativeText;
+    }
+
+    const hpRow = container.find(".hp-row.hp-input .col .box-field");
+    if (hpRow.length > 0) {
+    const hpIndex = {
+        0: 'current',
+        1: 'maximum',
+        2: 'temp'
+    }
+    hpRow.map((i, el) => {
+        const hpText = $(el).text().trim().match(/([0-9]+)/gi)?.[0];
+        if (hpText) {
+            options.hitPointInfo = options.hitPointInfo || {};
+            options.hitPointInfo[hpIndex[i]] = hpText;
+        }
+    }); 
+    }
+
+    return options;
+}
+/**Syncs token data back to pc template
+ * @param {Token} token is the token we want to sync back to the pc template
+ */
+function sync_pc_template(token, container) {
+  container = container ?? $(`.custom-stat-block[data-token-id='${token.options.id}']`).parent();
+  const hpRow = container.find(".dnd-sheet .hp-row.hp-input .col .box-field");
+  if (hpRow.length > 0) {
+    const hpIndex = {
+      0: 'current',
+      1: 'maximum',
+      2: 'temp'
+    }
+    hpRow.map((i, el) => {
+      $(el).text(token.options.hitPointInfo[hpIndex[i]]);
+    }); 
+  }
+}
+
 
 /**
  * Creates a {Token} object and places it on the scene.
@@ -1140,8 +1219,6 @@ function random_number_suffix(suffixNumbers = []) {
  * @param disableSnap {boolean} if true, tokens will not snap to the grid. This is false by default and only used when placing multiple tokens
  * @param nameOverride {string} if present will override the list items name with this name. This is for dragging out player aoe tokens from sheets
  */
-
-
 async function create_and_place_token(listItem, hidden = undefined, specificImage= undefined, eventPageX = undefined, eventPageY = undefined, disableSnap = false, nameOverride = "", mapPoint=false, extraOptions=undefined) {
 
 
@@ -1657,8 +1734,10 @@ async function create_and_place_token(listItem, hidden = undefined, specificImag
                 showErrorMessage(`Failed to fetch character data from DDB for url: ${pcURL}; It's possible the url is incorrect or you do not have access to the character`);
             }
         }
-        
-        if ($(searchText).find('table.abilities-saves, table.stat-table').length > 0) {
+
+        assignPcTemplateStats($(searchText), options);
+
+        if (options.customStat == undefined &&$(searchText).find('table.abilities-saves, table.stat-table').length > 0) {
             let physicalStats = $(searchText).find('table.abilities-saves.physical, table.stat-table.physical');
             let mentalStats = $(searchText).find('table.abilities-saves.mental, table.stat-table.mental');
             options.customStat = {
