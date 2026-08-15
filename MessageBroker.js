@@ -969,9 +969,12 @@ class MessageBroker {
 				return;
 			} else if (msg.eventType == "dice/roll/deferred") {
 				const isPlayer = !(is_spectator_page() || window.DM)
-				const ddb3dDiceShareToggle = !isPlayer ? get_avtt_setting_value("streamDiceRolls") : getDdb3dDiceShareToggle() == 'shared';
-				
-				if(ddb3dDiceShareToggle == true && (isPlayer || (!isPlayer && (msg.messageTarget == window.gameId || (!is_spectator_page() && msg.messageTarget == `${window.myUser}`) || (window.DM && (msg.messageTarget == 'dm' || msg.messageTarget == 'dungeonmaster')))))){
+				if(isPlayer)
+					return;
+				const ddb3dDiceShareToggle = get_avtt_setting_value("streamDiceRolls");
+				const showSelfRoll = !is_spectator_page() && msg.messageTarget == `${window.myUser}`;
+				const showDMRoll = window.DM && (msg.messageTarget == 'dm' || msg.messageTarget == 'dungeonmaster');
+				if(ddb3dDiceShareToggle == true && (msg.messageTarget == window.gameId || showSelfRoll || showDMRoll)){
 					Object.keys(window.ActiveWorkers).forEach(key => {
 						if(key.includes('physics')){
 							window.ActiveWorkers[key].postMessage({
