@@ -6100,8 +6100,11 @@ class JournalManager{
 						e.preventDefault();
 						e.stopPropagation();
 						const container = $(editor.getContainer()).closest('.note, .ui-dialog-content')
-						const height = container.height();
-						container[0].scrollBy(0, e.key === 'PageUp' ? -height : height);
+						const height = container.height() - 80;
+						container[0].scrollBy({
+							top: e.key === 'PageUp' ? -height : height,
+							left: 0
+						});
 					}
 				});
 				editor.addButton('fontsizeinput', {
