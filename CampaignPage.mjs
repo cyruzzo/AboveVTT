@@ -116,12 +116,13 @@ function inject_instructions() {
   // SCB: Append our logo
   contentDiv.append(`<img class='above-vtt-logo above-vtt-right-margin-5px' width='120px' src='${window.EXTENSION_PATH}assets/logo.png' alt="above vtt logo" />`);
 
-  let instructionsButton = $("<a style='padding:10px 5px;' class='above-vtt-campaignscreen-white-button above-vtt-right-margin-5px instructions btn modal-link ddb-campaigns-detail-body-listing-campaign-link'>Instructions</a>");
+          
+  let instructionsButton = $("<a style='padding: 7px; filter: drop-shadow(1px 1px 1px black); border-radius: 5px;  top: -2px; position: relative; text-wrap: nowrap; border: none;' class='above-vtt-campaignscreen-white-button above-vtt-right-margin-5px instructions btn modal-link ddb-campaigns-detail-body-listing-campaign-link'>Instructions</a>");
   contentDiv.append(instructionsButton);
   instructionsButton.click(function(e) {
     $("#campaign_banner").toggle();
   });
-  let spectatorJoinButton = $("<a style='padding:10px 25px;' class='above-vtt-campaignscreen-blue-button above-vtt-right-margin-5px button joinspectator btn modal-link ddb-campaigns-detail-body-listing-campaign-link'>Spectate</a>");
+  let spectatorJoinButton = $("<a style='background: #600606 !important; padding: 6px; filter: drop-shadow(1px 1px 1px black); border-radius: 5px; box-shadow: inset 0px 0px 20px -13px #F00; top: -2px; position: relative; text-wrap: nowrap; border: none;' class='above-vtt-campaignscreen-blue-button above-vtt-right-margin-5px button joinspectator btn modal-link ddb-campaigns-detail-body-listing-campaign-link'>Spectate</a>");
   contentDiv.append(spectatorJoinButton);
   spectatorJoinButton.click(function (e) {
     e.preventDefault();
@@ -207,7 +208,7 @@ function inject_dm_join_button() {
     </div>
   `);
 
-  let dmJoinButton = $("<a style='padding:10px 25px;' class='above-vtt-campaignscreen-blue-button above-vtt-right-margin-5px button joindm btn modal-link ddb-campaigns-detail-body-listing-campaign-link'>Join as DM</a>");
+  let dmJoinButton = $("<a style='background: #600606 !important; padding: 6px; filter: drop-shadow(1px 1px 1px black); border-radius: 5px; box-shadow: inset 0px 0px 20px -13px #F00; top: -2px; position: relative; text-wrap: nowrap; border: none;' class='above-vtt-campaignscreen-blue-button above-vtt-right-margin-5px button joindm btn modal-link ddb-campaigns-detail-body-listing-campaign-link'>Join as DM</a>");
   $(".above-vtt-content-div").append(dmJoinButton);
   dmJoinButton.click(function(e) {
     e.preventDefault();
