@@ -12964,10 +12964,6 @@ p.monster-header+p {
     position: fixed;
     top: 0px;
     left: 0px;
-    bottom: 0px;
-    right: -340px;
-    width: calc(100% - var(--sidebar-width, 340px));
-    height: 100%;
 }
 .clear-dice:active {
     box-shadow: inset 2px 1px 3px -1px #000, inset 1px 2px 3px -1px #000;
