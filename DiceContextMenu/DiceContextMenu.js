@@ -400,8 +400,6 @@ class DiceContextMenuSection {
 
     }
 
-       
-
     build() {
         let sectionHtml = $(`
             <ul class="dcm-section" data-index="${this.index}">

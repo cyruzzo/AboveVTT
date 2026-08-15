@@ -512,9 +512,7 @@ class DiceRoller {
         self.#timeoutId = setTimeout(function () {
             clearTimeout(self.#timeoutId);
             self.#timeoutId = undefined;
-            const newDice = $("[class*='DiceContainer_button']").length > 0
-            if(newDice)
-                self.sendNewFulfilled()
+            self.sendNewFulfilled()
             console.warn("DiceRoller timed out after 5 seconds! Sending message");
         }, self.timeoutDuration);
     }
@@ -1088,14 +1086,13 @@ class DiceRoller {
     }
     /** wraps all messages that are sent by DDB, and processes any that we need to process, else passes it along as-is */
     async #wrappedDispatch(message) {
-        const newDice = $("[class*='DiceContainer_button']").length > 0
         
         if(this.#waitingForRoll && message.source == 'Beyond20'){
             return;
         }
         const ddb3dDiceShareToggle = getDdb3dDiceShareToggle() != 'disabled';
 
-        if (message.eventType === "dice/roll/fulfilled" && newDice && ddb3dDiceShareToggle && this.#pendingMessages[message.data.rollId] == undefined && !['death', 'hitdice'].includes(message.data?.action?.toLowerCase().replaceAll(/\s/gi, '')))
+        if (message.eventType === "dice/roll/fulfilled" && ddb3dDiceShareToggle && this.#pendingMessages[message.data.rollId] == undefined && !['death', 'hitdice'].includes(message.data?.action?.toLowerCase().replaceAll(/\s/gi, '')))
             return;
         
         if (!this.#waitingForRoll || (message.eventType === "dice/roll/fulfilled" && !ddb3dDiceShareToggle)) {
@@ -1108,10 +1105,7 @@ class DiceRoller {
                     this.ddbDispatch(message);
                     return;
                 }
-                if(!newDice){
-                    this.handleOldFulfilled(message);
-                    return;
-                }   
+ 
                 clearTimeout(this.backupSendTimeout)
                 this.sendNewFulfilled();           
             } else{
@@ -1168,38 +1162,29 @@ class DiceRoller {
                 pendingCritRange: this.#pendingCritRange,
                 pendingCritType: this.#pendingCritType
             };
-            if(newDice)
-                this.#orderedPendingIds.push(ddbMessage.data.rollId);
+            
+            this.#orderedPendingIds.push(ddbMessage.data.rollId);
             
             if (ddbMessage.data?.context?.avatarUrl?.startsWith("above-bucket-not-a-url")) {
                 ddbMessage.data.context.avatarUrl = await getAvttStorageUrl(ddbMessage.data.context.avatarUrl, true)
             }
-            if(!newDice){
-                await this.#swapDiceRollMetadata(ddbMessage);
-            }
+
             else{
                 ddbMessage = await this.#swapRollData(ddbMessage)
             }
                 
             this.ddbDispatch(ddbMessage);
-            this.#resetVariables(newDice);
+            this.#resetVariables();
             const self = this; 
-            setTimeout(function() {
-                if (newDice){
-                    self.nextRoll(self.#pendingMessages[ddbMessage.data.rollId].ddbMessage, self.#pendingMessages[ddbMessage.data.rollId].pendingCritRange, self.#pendingMessages[ddbMessage.data.rollId].pendingCritType, self.#pendingMessages[ddbMessage.data.rollId].pendingDamageType);
-                }
-            }, 60)
-            if(newDice){
-                clearTimeout(this.backupSendTimeout)
-                this.backupSendTimeout = setTimeout(() => { // if dice are slow to roll display result early
-                    this.sendNewFulfilled();
-                }, 1000)
-            }
+            self.nextRoll(self.#pendingMessages[ddbMessage.data.rollId].ddbMessage, self.#pendingMessages[ddbMessage.data.rollId].pendingCritRange, self.#pendingMessages[ddbMessage.data.rollId].pendingCritType, self.#pendingMessages[ddbMessage.data.rollId].pendingDamageType);
+           
+            clearTimeout(this.backupSendTimeout)
+            this.backupSendTimeout = setTimeout(() => { // if dice are slow to roll display result early
+                this.sendNewFulfilled();
+            }, 1000)
+            
         } else if (message.eventType === "dice/roll/fulfilled" && this.#pendingMessages[message.data.rollId] !== undefined) {
-            if (!newDice)
-                this.handleOldFulfilled(message);
-            else
-                this.sendNewFulfilled()
+            this.sendNewFulfilled()
         } else if (message.eventType === "dice/roll/fulfilled"){
             this.ddbDispatch(message);
         }
@@ -1414,9 +1399,8 @@ class DiceRoller {
     }
 }
 function getDdb3dDiceShareToggle(){
-    const newDice = $("[class*='DiceContainer_button']").length > 0
     const userDiceData = localStorage.getItem('userDiceData')
-    return newDice && userDiceData !== null && window.MB?.userid != undefined ? JSON.parse(localStorage.getItem('userDiceData')).state?.[window.MB.userid]?.settings?.visibility : true;
+    return userDiceData !== null && window.MB?.userid != undefined ? JSON.parse(localStorage.getItem('userDiceData')).state?.[window.MB.userid]?.settings?.visibility : true;
 }
 function replace_gamelog_message_expressions(listItem) {
 
