@@ -80,7 +80,9 @@ function standard_dice_context_menu(expression, modifierString = "", action = un
         diceRoll.sendToOverride = dcm.checkedRow(0)?.title?.replace(/\s+/g, "");
      
         window.diceRoller.roll(diceRoll);
-        
+        $(".roll-mod-container").removeClass("show");
+        $(".dice-roller > div img[data-count]").removeAttr("data-count");
+        $(".dice-roller > div span").remove();
     });
 
     return menu;
@@ -154,7 +156,9 @@ function damage_dice_context_menu(diceExpression, modifierString = "", action = 
             const doubleDamage = rollAsIndex === 2 ? 3 : undefined;
 
             window.diceRoller.roll(diceRoll, undefined, rollAsIndex == 2 ? 3 : undefined, undefined, spellSave, damageType, doubleDamage);
-            
+            $(".roll-mod-container").removeClass("show");
+            $(".dice-roller > div img[data-count]").removeAttr("data-count");
+            $(".dice-roller > div span").remove();
         });
 
     return menu;

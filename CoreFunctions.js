@@ -480,8 +480,9 @@ Other Commands:
         rollButton.click();
       }
     });
-    let diceRollOverride;
-    rollButton.on("click", function (e) {
+
+
+    const getExpression = function(button) {
       $('[data-dd-action-name="Close Roll Dice"]').click();
       let modValue = parseInt($('.roll-input-mod').val())
 
@@ -509,51 +510,30 @@ Other Commands:
       });
       advDis = undefined;
       $('.dice-toolbar__dropdown-selected>div:first-of-type')?.click();
-      let expression = `${rollExpression.join("+")}${modValue<0 ? modValue : `+${modValue}`}`
-      const diceRoll = new DiceRoll(expression);
-      if(diceRollOverride != undefined){
-        diceRoll.sendToOverride = diceRollOverride;
-        diceRollOverride = undefined;
-      }
-      window.diceRoller.roll(diceRoll);
+      let expression = `${rollExpression.join("+")}${modValue<0 ? modValue : `+${modValue}`}`;
+      return expression;
+    }
+
+    rollButton.on("click", function (e) {
+      const expression = getExpression(rollButton);
+      window.diceRoller.roll(new DiceRoll(expression));
 
       $(".roll-mod-container").removeClass("show");
       $(".dice-roller > div img[data-count]").removeAttr("data-count");
       $(".dice-roller > div span").remove();
     });
-     $.contextMenu({
-      selector: '.roll-button',
-      build: function(element, e) {
-        let menuItems = {};
-        menuItems["Self"] = {
-          name: "Self",
-					callback: function(itemKey, opt, originalEvent) {
-            diceRollOverride = 'Self';
-            rollButton.click();
-					}
+    rollButton.on("contextmenu", function (e) {
+      e.preventDefault();
+        const expression = getExpression(rollButton);
+      	if (expression !== "1d20" && !/^1d20/gi.test(expression)) {
+          damage_dice_context_menu(`${expression}`)
+            .present(e.clientY-15, e.clientX+45);
+        } else {
+          standard_dice_context_menu(`${expression}`)
+            .present(e.clientY-15, e.clientX+45);
         }
-        if(!window.DM){
-          menuItems["dm"] = {
-            name: "Dungeon Master",
-            callback: function(itemKey, opt, originalEvent) {
-              diceRollOverride = 'DM';
-              rollButton.click();
-            }
-          }
-        }
+    })
 
-        menuItems["everyone"] = {
-          name: "Everyone",
-					callback: function(itemKey, opt, originalEvent) {
-            diceRollOverride = 'Everyone';
-            rollButton.click();
-					}
-        }
-        return {
-          items: menuItems
-        };
-      }
-    });
   }
 
   if (window.chatObserver === undefined) {
