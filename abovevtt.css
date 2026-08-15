@@ -2877,19 +2877,22 @@ body>[class*='styles_mobileNav']>button{
 }
 
 .above-vtt-campaignscreen-blue-button {
-    color:white;
-    background:#1b9af0;
+    color:white !important;
+    background:#1b9af0 !important;
+    background-image: none !important;
 }
 
 .above-vtt-campaignscreen-black-button {
-    color:white;
-    background:black;
+    color:white !important;
+    background:black !important;
+    background-image: none !important;
 }
 
 .above-vtt-campaignscreen-white-button {
     cursor: pointer;
-    color:#1b9af0;
-    background:white;
+    color:#1b9af0 !important;
+    background:white !important;
+    background-image: none !important;
 }
 
 .sidebar__inner {
