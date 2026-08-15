@@ -3439,28 +3439,6 @@ function init_help_menu() {
 	});
 }
 
-/**
- * Load dice configuration from DDB.
- */
-function init_my_dice_details(){
-	get_cobalt_token(function (token) {
-		window.ajaxQueue.addRequest({
-			type: 'GET',
-			url: "https://dice-service.dndbeyond.com/diceuserconfig/v1/get",
-			contentType: "application/json; charset=utf-8",
-			dataType: 'json', // added data type
-			beforeSend: function (xhr) {
-				xhr.setRequestHeader('Authorization', 'Bearer ' + token);
-			},
-			xhrFields: {
-				withCredentials: true
-			},
-			success: function(res) {
-				window.mydice = res
-			}
-    	});
-	});
-}
 
 /**
  * Gathers browser information from User Agent.

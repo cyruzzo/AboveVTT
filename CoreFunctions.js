@@ -34,6 +34,9 @@ $(function() {
   } else {
     window.DM = false;
   }
+  if(is_spectator_page() || is_encounters_page()) {
+    $('body').addClass('encounter-builder-page')
+  }
 });
 
 class noLogError extends Error{
@@ -190,7 +193,7 @@ function add_dice_stream_gamelog_button(){
   if(window.JOINTHEDICESTREAM == undefined){
     window.JOINTHEDICESTREAM = window.EXPERIMENTAL_SETTINGS['streamDiceRolls'];
   }
-  if ($('.stream-dice-button').length == 0){
+  /*if ($('.stream-dice-button').length == 0){
     $(".glc-game-log>[class*='Container-Flex']").append($(`<div id="stream_dice"><div class='stream-dice-button ${window.EXPERIMENTAL_SETTINGS['streamDiceRolls'] ? `enabled` : ``}'>Dice Stream ${window.EXPERIMENTAL_SETTINGS['streamDiceRolls'] ? `Enabled` : `Disabled`}</div></div>`));
     $(".stream-dice-button").off().on("click", function () {
       if (window.JOINTHEDICESTREAM) {
@@ -200,7 +203,7 @@ function add_dice_stream_gamelog_button(){
         update_dice_streaming_feature(true);
       } 
     })
-  }
+  }*/
 }
 /**
  * Add Dice buttons into sidebar.
@@ -277,33 +280,21 @@ Other Commands:
   gameLog.append(chatTextWrapper, languageSelect, diceRoller);
 
   $(".dice-roller > div img").on("click", async function(e) {
-    if ($(".dice-toolbar__dropdown, [class*='DiceContainer_button']").length > 0 && !window.EXPERIMENTAL_SETTINGS['rpgRoller']) {
-      // DDB dice are on the screen so let's use those. Ours will synchronize when these change.
-      if (($(".dice-toolbar__dropdown").length > 0 && !$(".dice-toolbar__dropdown").hasClass("dice-toolbar__dropdown-selected")) || $(`[class*='DiceContainer_button']:not([class*='DiceContainer_customDiceRollOpen'])`).length>0) {
-        // make sure it's open
-        await $(".dice-toolbar__dropdown-die, [class*='DiceContainer_button']").click();
-      }
-      // select the DDB dice matching the one that the user just clicked
-      let dieSize = $(this).attr("alt");
-      await $(`.dice-die-button[data-dice='${dieSize}'], [class*='AnchoredPopover_wrapper'] #${dieSize}`).click();
+    const dataCount = $(this).attr("data-count");
+    if (dataCount === undefined) {
+      $(this).attr("data-count", 1);
+      $(this).parent().append(`<span class="dice-badge">1</span>`);
     } else {
-      // there aren't any DDB dice on the screen so use our own
-      const dataCount = $(this).attr("data-count");
-      if (dataCount === undefined) {
-        $(this).attr("data-count", 1);
-        $(this).parent().append(`<span class="dice-badge">1</span>`);
-      } else {
-        $(this).attr("data-count", parseInt(dataCount) + 1);
-        $(this).parent().append(`<span class="dice-badge">${parseInt(dataCount) + 1}</span>`);
+      $(this).attr("data-count", parseInt(dataCount) + 1);
+      $(this).parent().append(`<span class="dice-badge">${parseInt(dataCount) + 1}</span>`);
+    }
+    if ($(".dice-roller > div img[data-count]").length > 0) {
+      if(!$(".roll-mod-container").hasClass('show')){
+        $(".roll-mod-container").addClass("show");
+        $(".roll-mod-container").find('input').val(0);
       }
-      if ($(".dice-roller > div img[data-count]").length > 0) {
-        if(!$(".roll-mod-container").hasClass('show')){
-          $(".roll-mod-container").addClass("show");
-          $(".roll-mod-container").find('input').val(0);
-        }
-      } else {
-        $(".roll-mod-container").removeClass("show");
-      }
+    } else {
+      $(".roll-mod-container").removeClass("show");
     }
   });
 
@@ -1197,24 +1188,48 @@ function notify_player_join() {
 /**
  * Load dice configuration from DDB.
  */
-function init_my_dice_details() {
-  get_cobalt_token(function (token) {
-    window.ajaxQueue.addRequest({
-      type: 'GET',
-      url: "https://dice-service.dndbeyond.com/diceuserconfig/v1/get",
-      contentType: "application/json; charset=utf-8",
-      dataType: 'json', // added data type
-      beforeSend: function (xhr) {
-        xhr.setRequestHeader('Authorization', 'Bearer ' + token);
-      },
-      xhrFields: {
-        withCredentials: true
-      },
-      success: function (res) {
-        window.mydice = res
-      }
+function extract_dice_sets(response) {
+  const diceFamilies = response?.data?.familySets ?? response?.data?.diceSets ?? response?.familySets ?? response?.diceSets ?? response?.data ?? response;
+  if (!Array.isArray(diceFamilies)) return [];
+
+  return diceFamilies.flatMap(family => family?.sets?.definitionData ?? []);
+}
+
+function init_my_dice_details(){
+  window.diceDetailsPromise = new Promise(resolve => {
+    get_cobalt_token(function (token) {
+      const request = url => new Promise(requestResolve => {
+        window.ajaxQueue.addRequest({
+          type: 'GET',
+          url,
+          contentType: "application/json; charset=utf-8",
+          dataType: 'json',
+          beforeSend: function (xhr) {
+            xhr.setRequestHeader('Authorization', 'Bearer ' + token);
+          },
+          xhrFields: {
+            withCredentials: true
+          },
+          success: requestResolve,
+          error: function(xhr, status, error) {
+            console.warn(`Dice service request failed for ${url}`, status, error);
+            requestResolve(undefined);
+          }
+        });
+      });
+
+      Promise.all([
+        request("https://dice-service.dndbeyond.com/diceuserconfig/v1/get"),
+        request("https://dice-service.dndbeyond.com/dice/v1/getallfamilysets")
+      ]).then(([diceConfig, familySets]) => {
+        window.mydice = diceConfig;
+        window.diceSets = extract_dice_sets(familySets);
+        resolve({diceConfig, diceSets: window.diceSets});
+      });
     });
   });
+
+  return window.diceDetailsPromise;
 }
 /**
  * Attempts to convert the output of an rpgDiceRoller DiceRoll to the DDB format.
@@ -1294,135 +1309,287 @@ function process_monitored_logs() {
   });
   return processedLogs.join('\n');
 }
-function inject_dice(){
 
-  $('body #site').append(`
-    <div class='container'>
-        <div id="encounter-builder-root" data-config="{&quot;assetBasePath&quot;:&quot;https://media.dndbeyond.com/encounter-builder&quot;,&quot;authUrl&quot;:&quot;https://auth-service.dndbeyond.com/v1/cobalt-token&quot;,&quot;campaignDetailsPageBaseUrl&quot;:&quot;https://www.dndbeyond.com/campaigns&quot;,&quot;campaignServiceUrlBase&quot;:&quot;https://www.dndbeyond.com/api/campaign&quot;,&quot;characterServiceUrlBase&quot;:&quot;https://character-service-scds.dndbeyond.com/v2/characters&quot;,&quot;diceApi&quot;:&quot;https://dice-service.dndbeyond.com&quot;,&quot;gameLogBaseUrl&quot;:&quot;https://www.dndbeyond.com&quot;,&quot;ddbApiUrl&quot;:&quot;https://api.dndbeyond.com&quot;,&quot;ddbBaseUrl&quot;:&quot;https://www.dndbeyond.com&quot;,&quot;ddbConfigUrl&quot;:&quot;https://www.dndbeyond.com/api/config/json&quot;,&quot;debug&quot;:false,&quot;encounterServiceUrl&quot;:&quot;https://encounter-service.dndbeyond.com/v1&quot;,&quot;featureFlagsDomain&quot;:&quot;https://api.dndbeyond.com&quot;,&quot;mediaBucket&quot;:&quot;https://media.dndbeyond.com&quot;,&quot;monsterServiceUrl&quot;:&quot;https://monster-service.dndbeyond.com/v1/Monster&quot;,&quot;sourceUrlBase&quot;:&quot;https://www.dndbeyond.com/sources/&quot;,&quot;subscriptionUrl&quot;:&quot;https://www.dndbeyond.com/subscribe&quot;,&quot;toastAutoDeleteInterval&quot;:3000000}" >
-           <div class="dice-rolling-panel">
-              <div class="dice-toolbar  ">
-                 <div class="dice-toolbar__dropdown ">
-                    <div class=" dice-toolbar__dropdown-die"><span class="dice-icon-die dice-icon-die--d20"></span></div>
-                    <div role="group" class="MuiButtonGroup-root MuiButtonGroup-outlined dice-toolbar__target css-3fjwge" aria-label="roll actions">
-                       <button class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButtonGroup-grouped MuiButtonGroup-groupedHorizontal MuiButtonGroup-groupedOutlined MuiButtonGroup-groupedOutlinedHorizontal MuiButtonGroup-groupedOutlinedPrimary MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButtonGroup-grouped MuiButtonGroup-groupedHorizontal MuiButtonGroup-groupedOutlined MuiButtonGroup-groupedOutlinedHorizontal MuiButtonGroup-groupedOutlinedPrimary css-79xub" tabindex="0" type="button">
-                          <div class="MuiBox-root css-dgzhqv">
-                             <p class="MuiTypography-root MuiTypography-body1 dice-toolbar__target-roll css-9l3uo3">Roll</p>
-                          </div>
-                       </button>
-                    </div>
-                    <div class="dice-toolbar__dropdown-top" style="display: none;">
-                       <div class="dice-die-button" data-dice="d20">
-                          <span class="dice-icon-die dice-icon-die--d20"></span>
-                          <div class="dice-die-button__tooltip">
-                             <div class="dice-die-button__tooltip__pip"></div>
-                             d20
-                          </div>
-                       </div>
-                       <div class="dice-die-button" data-dice="d12">
-                          <span class="dice-icon-die dice-icon-die--d12"></span>
-                          <div class="dice-die-button__tooltip">
-                             <div class="dice-die-button__tooltip__pip"></div>
-                             d12
-                          </div>
-                       </div>
-                       <div class="dice-die-button" data-dice="d10">
-                          <span class="dice-icon-die dice-icon-die--d10"></span>
-                          <div class="dice-die-button__tooltip">
-                             <div class="dice-die-button__tooltip__pip"></div>
-                             d10
-                          </div>
-                       </div>
-                       <div class="dice-die-button" data-dice="d100">
-                          <span class="dice-icon-die dice-icon-die--d100"></span>
-                          <div class="dice-die-button__tooltip">
-                             <div class="dice-die-button__tooltip__pip"></div>
-                             d100
-                          </div>
-                       </div>
-                       <div class="dice-die-button" data-dice="d8">
-                          <span class="dice-icon-die dice-icon-die--d8"></span>
-                          <div class="dice-die-button__tooltip">
-                             <div class="dice-die-button__tooltip__pip"></div>
-                             d8
-                          </div>
-                       </div>
-                       <div class="dice-die-button" data-dice="d6">
-                          <span class="dice-icon-die dice-icon-die--d6"></span>
-                          <div class="dice-die-button__tooltip">
-                             <div class="dice-die-button__tooltip__pip"></div>
-                             d6
-                          </div>
-                       </div>
-                       <div class="dice-die-button" data-dice="d4">
-                          <span class="dice-icon-die dice-icon-die--d4"></span>
-                          <div class="dice-die-button__tooltip">
-                             <div class="dice-die-button__tooltip__pip"></div>
-                             d4
-                          </div>
-                       </div>
-                    </div>
-                 </div>
-              </div>
-              <canvas class="dice-rolling-panel__container" width="1917" height="908" data-engine="Babylon.js v6.3.0" touch-action="none" tabindex="1" style="touch-action: none; -webkit-tap-highlight-color: transparent;"></canvas>
-           </div>
-        </div> 
-        <script src="https://media.dndbeyond.com/encounter-builder/static/js/main.221d749b.js"></script>
 
-        <style>
 
-          .dice-rolling-panel,.dice-rolling-panel__container {
-              width: 100%;
-              height: 100%;
-              position: fixed;
-              top: 0;
-              pointer-events: none;
-              left: 0;
-          }
+/**WIP This injects the new dice into the page
+ * Needs to get user Data instead of static data here
+ * 
+ */
+function normalize_rendered_dice_animations(manifest) {
+  const normalizedManifest = $.extend(true, {}, manifest);
 
-          .dice-rolling-panel .dice-toolbar {
-              position: fixed;
-              z-index: 1;
-              bottom: 10px;
-              left: 10px;
-              pointer-events: all
-          }
+  for (const dieDefinition of Object.values(normalizedManifest)) {
+    if (!Array.isArray(dieDefinition?.animations)) continue;
 
-        </style>
-    </div>
-  `);
-  if(window.encounterObserver){
-    window.encounterObserver.disconnect();
+    dieDefinition.animations = dieDefinition.animations.map(animation => {
+      if (!animation?.triggerStart || animation.triggerStart === 'dieRemoved') return animation;
+      const requiresRemovalTrigger = animation.loop || animation.definition?.toLowerCase() === 'cleanup';
+      if (!requiresRemovalTrigger) return animation;
+
+      const triggerStops = Array.isArray(animation.triggerStop)
+        ? animation.triggerStop
+        : animation.triggerStop ? [animation.triggerStop] : [];
+      if (triggerStops.includes('dieRemoved')) return animation;
+
+      return {
+        ...animation,
+        triggerStop: [...triggerStops, 'dieRemoved']
+      };
+    });
   }
 
-  window.encounterObserver = new MutationObserver(function(mutationList, observer) {
+  return normalizedManifest;
+}
 
-    mutationList.forEach(mutation => {
-      try {
-        let mutationTarget = $(mutation.target);
-        
-        if(mutationTarget.is('.encounter-details, .encounter-builder, .release-indicator')){
-          mutationTarget.remove();
+async function build_rendered_dice_manifest(setId, manifestUrl) {
+  const absoluteManifestUrl = new URL(manifestUrl.replace(/^\//, ''), 'https://media.dndbeyond.com/dice/').href;
+  const manifestResponse = await fetch(absoluteManifestUrl);
+  if (!manifestResponse.ok) throw new Error(`Unable to fetch dice manifest: ${manifestResponse.status} ${manifestResponse.statusText}`);
+
+  const rawManifest = normalize_rendered_dice_animations(await manifestResponse.json());
+  const resourceBaseUrl = new URL('.', absoluteManifestUrl);
+  const slug = absoluteManifestUrl.match(/\/bundles\/(.+)\/[^/?]+(?:\?.*)?$/)?.[1] ?? setId;
+  const resources = rawManifest.resources ?? {};
+  const fetchJson = async path => {
+    const response = await fetch(new URL(path, resourceBaseUrl));
+    if (!response.ok) throw new Error(`${response.status} ${response.statusText}`);
+    return response.json();
+  };
+
+  const animationGroups = {};
+  for (const [name, definition] of Object.entries(resources.animationGroups ?? {})) {
+    const animationPath = typeof definition === 'object' ? definition.animationJson : definition;
+    if (!animationPath) continue;
+    try {
+      const animation = await fetchJson(animationPath);
+      if (typeof definition === 'object') {
+        for (const [cloneName, clone] of Object.entries(definition.animationClones ?? {})) {
+          animationGroups[cloneName] = $.extend(true, {}, animation, clone);
         }
-        if($(mutation.addedNodes).is('.encounter-builder, .release-indicator')){
-          $(mutation.addedNodes).remove();
-        }
-      } catch(error){
-        console.warn("non_sheet_observer failed to parse mutation", error, mutation);
+      } else animationGroups[name] = animation;
+    } catch (error) {
+      console.warn(`Unable to load dice animation "${name}"`, error);
+    }
+  }
+
+  const particleSystems = {};
+  for (const [name, definition] of Object.entries(resources.particleSystems ?? {})) {
+    if (!definition.particleJson) continue;
+    try {
+      const particleFile = await fetchJson(definition.particleJson);
+      if (particleFile.systems?.[0]) particleSystems[name] = particleFile.systems[0];
+    } catch (error) {
+      console.warn(`Unable to load dice particle system "${name}"`, error);
+    }
+  }
+
+  const shaders = {};
+  for (const [name, definition] of Object.entries(resources.shaders ?? {})) {
+    if (!definition.fragmentShader) continue;
+    try {
+      const response = await fetch(new URL(definition.fragmentShader, resourceBaseUrl));
+      if (!response.ok) throw new Error(`${response.status} ${response.statusText}`);
+      let fragmentShader = await response.text();
+      if (fragmentShader.includes('varying vec4 vColor;') && fragmentShader.includes('maskVal*vColor.a')) {
+        fragmentShader = fragmentShader
+          .replace('varying vec4 vColor;', 'varying float vAgeFade;')
+          .replace('gl_FragColor = vec4(baseColor.rgb, maskVal*vColor.a);', 'gl_FragColor = vec4(baseColor.rgb, maskVal * vAgeFade);');
       }
+      shaders[name] = {vertexShader: '', fragmentShader};
+    } catch (error) {
+      console.warn(`Unable to load dice shader "${name}"`, error);
+    }
+  }
+
+  const {$schema, setName, ...diceDefinitions} = rawManifest;
+  return {id: slug, slug, overrideSetId: setId, resources, animationGroups, particleSystems, shaders, ...diceDefinitions};
+}
+
+function play_rendered_dice_sound({url, volume = 1}) {
+  if (!url) return;
+
+  const audio = new Audio(url);
+  audio.volume = Math.max(0, Math.min(1, volume > 1 ? volume / 100 : volume));
+  audio.play().catch(error => console.warn('Unable to play rendered dice sound', error));
+}
+
+let diceWorkerUrlsPromise;
+
+function discover_dice_worker_urls() {
+  diceWorkerUrlsPromise ??= new Promise(resolve => {
+    const iframe = document.createElement('iframe');
+    let pollingInterval;
+    let timeout;
+    let settled = false;
+    const finish = workerUrls => {
+      if (settled) return;
+      settled = true;
+      clearInterval(pollingInterval);
+      clearTimeout(timeout);
+      iframe.remove();
+      resolve(workerUrls);
+    };
+    const findWorkerUrls = () => {
+      try {
+        const resourceUrls = iframe.contentWindow.performance
+          .getEntriesByType('resource')
+          .map(entry => entry.name);
+        const physicsWorkerUrl = resourceUrls.find(url => url.includes('/dice/mobile/physicsWorker.'));
+        const renderedWorkerUrl = resourceUrls.find(url => url.includes('/dice/mobile/renderedWorker.'));
+        if (physicsWorkerUrl && renderedWorkerUrl) {
+          finish({physicsWorkerUrl, renderedWorkerUrl});
+        }
+      } catch (error) {
+        console.debug('Dice worker URLs are not available from the My Dice iframe yet', error);
+      }
+    };
+
+    iframe.hidden = true;
+    iframe.addEventListener('load', () => {
+      findWorkerUrls();
+      pollingInterval = setInterval(findWorkerUrls, 250);
+    }, {once: true});
+    timeout = setTimeout(() => finish(undefined), 10000);
+    iframe.src = '/my-dice';
+    document.body.append(iframe);
+  });
+
+  return diceWorkerUrlsPromise;
+}
+
+function create_dice_worker(url, name) {
+  return new Worker(url, {
+    name: JSON.stringify({
+      name,
+      isDebug: false,
+      isPhysicsDebug: false,
+      isMobileApp: false,
+      isAnimationsDisabled: false,
+      nodeEnv: 'production',
+      env: 'production',
+      user: {
+        id: window.myUser,
+      }
+    }),
+    type: 'module'
+  });
+}
+
+function initialize_dice_worker(worker, drawingSurface, frameloop) {
+  const props = {dpr: 1, frameloop};
+  worker.postMessage({
+    type: 'init',
+    payload: {
+      props,
+      drawingSurface,
+      width: drawingSurface.width,
+      height: drawingSurface.height,
+      top: 0,
+      left: 0,
+      pixelRatio: 1
+    }
+  }, [drawingSurface]);
+  worker.postMessage({type: 'props', payload: props});
+}
+
+async function configure_rendered_dice(renderer, physicsWorker) {
+  const {diceSets = []} = await (window.diceDetailsPromise ?? Promise.resolve({diceSets: window.diceSets ?? []}));
+  const {setId} = window.mydice.data;
+  const userSettings = window.mydice?.data?.settings;
+
+  renderer.postMessage({type: 'diceSets', payload: diceSets});
+  renderer.postMessage({type: 'preRoll', payload: {data: {setId}}});
+  renderer.postMessage({
+    type: 'userSettings',
+    payload: {
+      shadowQuality: userSettings?.shadowQuality,
+      particlesEnabled: userSettings?.particlesEnabled,
+      volume: userSettings?.volume
+    }
+  });
+  physicsWorker.postMessage({type: 'props', payload: {dpr: 1, frameloop: 'never'}});
+  renderer.postMessage({type: 'props', payload: {dpr: 1, frameloop: 'demand'}});
+}
+
+function handle_rendered_dice_message(event, renderer, physicsWorker) {
+  const {type, payload} = event.data;
+  if (type === 'componentMounted') {
+    configure_rendered_dice(renderer, physicsWorker);
+  } else if (type === 'preRoll') {
+    const {message, manifest} = payload ?? {};
+    const setId = message?.data?.setId;
+    if (!setId || !manifest) {
+      console.warn('Rendered dice manifest preload failed', payload);
+      return;
+    }
+    renderer.postMessage({type: 'manifests', payload: {[setId]: manifest}});
+  } else if (type === 'playSound' || type === 'PlaySound') {
+    play_rendered_dice_sound(payload);
+  } else {
+    console.debug('Unhandled rendered dice message', event.data);
+  }
+}
+
+async function add_new_dice(){
+  const {physicsWorkerUrl, renderedWorkerUrl} = await discover_dice_worker_urls();
+  const canvas = document.createElement("canvas");
+  canvas.classList.add('dice-container');
+
+
+  const canvas2 = document.createElement("canvas");
+  canvas2.classList.add('dice-container');
+
+
+  $('body').append(canvas,canvas2);
+
+
+  const physicsWorker = create_dice_worker(physicsWorkerUrl, 'physics');
+  const renderer = create_dice_worker(renderedWorkerUrl, 'rendered');
+
+  const offscreen = canvas.transferControlToOffscreen();
+  const offscreen2 = canvas2.transferControlToOffscreen();
+
+
+  initialize_dice_worker(physicsWorker, offscreen, 'never');
+  initialize_dice_worker(renderer, offscreen2, 'demand');
+
+  $(window).off('resize.canvas2').on('resize.canvas2', ()=>{
+    const [width, height] = [$(canvas2).width(), $(canvas2).height()];
+    physicsWorker.postMessage({
+        "type": "resize",
+        "payload": {
+            "width": width,
+            "height": height,
+            "top": 0,
+            "left": 0,
+        }
+
     });
-  })
-
- 
- const mutation_target = $('#encounter-builder-root')[0];
- //observers changes to body direct children being removed/added
- const mutation_config = { attributes: false, childList: true, characterData: false, subtree: true };
- window.encounterObserver.observe(mutation_target, mutation_config);
-
- setTimeout(function(){
-   window.encounterObserver.disconnect();
-   delete window.encounterObserver;
- }, 300000);
- 
+    renderer.postMessage({
+        "type": "resize",
+        "payload": {
+            "width": width,
+            "height": height,
+            "top": 0,
+            "left": 0,
+        }
+    });
+  });
+  physicsWorker.onmessage = (e)=>{
+      if(e.data.type == 'preRoll'){
+          renderer.postMessage(e.data);
+          physicsWorker.postMessage({
+              ...e.data,
+              type: 'startRoll'
+          })
+      }   
+      if(e.data.type == 'renderDice'){
+          renderer.postMessage(e.data)
+      }
+  }
+  renderer.onmessage = event => handle_rendered_dice_message(event, renderer, physicsWorker);
+  window.dispatchEvent(new Event('resize'));
 }
 
 function sendPointerEvent(targetSelector='', type="pointerdown", options = {}){
@@ -2060,7 +2227,7 @@ function find_pc_by_player_id(idOrSheet, useDefault = true) {
   }
   if (!window.pcs) {
     if(is_abovevtt_page())
-      console.error("window.pcs is undefined");
+      noisy_log("window.pcs is undefined");
     return useDefault ? generic_pc_object(false) : undefined;
   }
   const regexStr = `characters/${idOrSheet}$`;
@@ -2116,12 +2283,12 @@ function update_pc_with_data(playerId, data) {
     console.warn("update_pc_with_data was given invalid data", playerId, data);
     return;
   }
-  if(!window.pcs){
-    console.warn('update_pc_with_data called before window.pcs initialized');
+  if(!window.pcs || !window.PC_TOKENS_NEEDING_UPDATES){
+    noisy_log(3, 'update_pc_with_data called before window.pcs initialized');
     return;
   }
   const index = window.pcs.findIndex(pc => pc.sheet.includes(playerId));
-  if (index < 0) {
+if (index < 0) {
     console.warn("update_pc_with_data could not find pc with id", playerId);
     return;
   }

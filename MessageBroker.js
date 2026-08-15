@@ -967,6 +967,21 @@ class MessageBroker {
 
 				}
 				return;
+			} else if (msg.eventType == "dice/roll/deferred") {
+				const ddb3dDiceShareToggle = window.DM ? get_avtt_setting_value("streamDiceRolls") : getDdb3dDiceShareToggle() == 'shared';
+				if(ddb3dDiceShareToggle == true && ([window.gameId, `${window.myUser}`].includes(msg.messageTarget) || (window.DM && (msg.messageTarget == 'dm' || msg.messageTarget == 'dungeonmaster')))){
+					Object.keys(window.ActiveWorkers).forEach(key => {
+						if(key.includes('physics')){
+							window.ActiveWorkers[key].postMessage({
+								type: "dice/roll/deferred",
+								payload: {
+									...msg,
+									eventType: "dice/roll/deferred"
+								}
+							})
+						}
+					});
+				}
 			}
 			// WE NEED TO IGNORE CERTAIN MESSAGE IF THEY'RE NOT FROM THE CURRENT SCENE
 			if(window.CURRENT_SCENE_DATA == undefined || (msg.sceneId && window.CURRENT_SCENE_DATA && msg.sceneId !== window.CURRENT_SCENE_DATA.id && [
@@ -1376,9 +1391,10 @@ class MessageBroker {
 							}
 						}
 					}
+					/*
 					if($("[name='streamDiceRolls'].rc-switch-checked").length > 0) {
 						window.MB.sendMessage("custom/myVTT/enabledicestreamingfeature")
-					}
+					}*/
 					window.JOURNAL.sync();
 					window.MB.sendMessage("custom/myVTT/DMAvatar", {
 						avatar: dmAvatarUrl
@@ -1425,228 +1441,6 @@ class MessageBroker {
 					$('video#scene_map').attr('data-volume', msg.data.volume/100)
 				}
 
-			} else if(msg.eventType == "custom/myVTT/whatsyourdicerolldefault"){
-				if( !window.JOINTHEDICESTREAM)
-					return;
-				if( (!diceplayer_id)  || (msg.data.to!= diceplayer_id) )
-					return;
-				let sendToText = gamelog_send_to_text()	
-				if(sendToText == "Everyone") {
-					window.MB.sendMessage("custom/myVTT/revealmydicestream",{
-						streamid: diceplayer_id
-					});		
-				}
-				else if (sendToText == "Dungeon Master" || sendToText == "DM"){
-					window.MB.sendMessage("custom/myVTT/showonlytodmdicestream",{
-						streamid: diceplayer_id
-					});
-				}
-				else{
-					window.MB.sendMessage("custom/myVTT/hidemydicestream",{
-						streamid: diceplayer_id
-					});
-				}
-			} else if(msg.eventType == "custom/myVTT/turnoffsingledicestream"){
-				let dicePeer = window.diceCurrentPeers.filter(d=> d.peer==msg.data.from)[0]
-				if(dicePeer === undefined || (msg.data.to != "everyone" && msg.data.to != diceplayer_id)){
-				 return;
-				}	
-				$("[id^='streamer-"+msg.data.from+"']").remove();
-				dicePeer.close();
-				if(msg.data.to != "everyone"){
-					window.MB.inject_chat({
-						player: window.PLAYER_NAME,
-						img: window.PLAYER_IMG,
-						text: `<span class="flex-wrap-center-chat-message">One of your dice stream connections has failed/disconnected. Try reconnecting to the dice stream if this was not intentional.<br/><br/></div>`,
-						whisper: window.PLAYER_NAME
-					});
-				}
-			} else if(msg.eventType == "custom/myVTT/disabledicestream"){
-				enable_dice_streaming_feature(false);
-			} else if(msg.eventType == "custom/myVTT/showonlytodmdicestream"){
-				if(!window.DM){		
-					hideDiceVideo(msg.data.streamid);
-				}		
-				else{
-					revealDiceVideo(msg.data.streamid);
-				}
-			} else if(msg.eventType == "custom/myVTT/hidemydicestream"){
-					hideDiceVideo(msg.data.streamid);
-			} else if(msg.eventType == "custom/myVTT/revealmydicestream"){
-					revealDiceVideo(msg.data.streamid);
-			} else if(msg.eventType == "custom/myVTT/enabledicestreamingfeature"){
-					enable_dice_streaming_feature(true);				
-			} else if(msg.eventType == "custom/myVTT/wannaseemydicecollection"){
-				if( !window.JOINTHEDICESTREAM)
-					return;
-				if( (!window.MYSTREAMID))
-					return;
-				const configuration = {
-    				iceServers:  [{urls: "stun:stun.l.google.com:19302"}]
-  				};
-				let peer= new RTCPeerConnection(configuration);
-
-				if(window.MYMEDIASTREAM){
-					let stream = window.MYMEDIASTREAM;
-					stream.getTracks().forEach(track => peer.addTrack(track, stream));
-				}
-
-				peer.addEventListener('track', (event) => {
-				    addVideo(event.streams[0],msg.data.from);
-				});
-				window.makingOffer = [];
-				window.makingOffer[msg.data.from] = false;
-				peer.onconnectionstatechange=() => {
-					if(peer.connectionState=="connected"){
-						window.MB.inject_chat({
-							player: window.PLAYER_NAME,
-							img: window.PLAYER_IMG,
-							text: `<span class="flex-wrap-center-chat-message"><p>A dice stream peer has ${peer.connectionState}. <br/><br/></div>`,
-							whisper: window.PLAYER_NAME,
-						});
-					}
-					
-					if(peer.connectionState=="closed" || peer.connectionState=="failed" || peer.connectionState == "disconnected"){
-						peer.restartIce();
-						window.MB.inject_chat({
-							player: window.PLAYER_NAME,
-							img: window.PLAYER_IMG,
-							text: `<span class="flex-wrap-center-chat-message"><p>A dice stream connection has ${peer.connectionState}.</p><p> An automatic reconnect is being attempted. </p><p>If you are still unable to see one or more of your groups dice you may have to manually disable then reenable your dice stream in the chat above.</p><br/><br/></div>`,
-							whisper: window.PLAYER_NAME,
-						});	          
-					}
-				};
-				peer.onnegotiationneeded = () => {
-					try {
-						window.makingOffer[msg.data.from] = true;
-						peer.createOffer({offerToReceiveVideo: 1}).then( (desc) => {
-							peer.setLocalDescription(desc);
-							self.sendMessage("custom/myVTT/okletmeseeyourdice",{
-								to: msg.data.from,
-								from: window.MYSTREAMID,
-								offer: desc,
-								dm: window.DM
-							})
-						});
-					} catch(err) {
-						console.error(err);
-					} finally {
-						setTimeout(function(){
-							window.makingOffer[msg.data.from] = false;
-						}, 500)		    
-					}	
-				};
-			 		
-				peer.onicecandidate = e => {
-					window.MB.sendMessage("custom/myVTT/iceforyourgintonic",{
-						to: msg.data.from,
-						from: window.MYSTREAMID,
-						ice: e.candidate
-					})
-				};				
-				window.STREAMPEERS[msg.data.from]=peer;				
-			} else if(msg.eventType == "custom/myVTT/okletmeseeyourdice"){
-				if( !window.JOINTHEDICESTREAM)
-					return;
-				if( (!window.MYSTREAMID)  || (msg.data.to!= window.MYSTREAMID) )
-					return;
-				const configuration = {
-    				iceServers:  [{urls: "stun:stun.l.google.com:19302"}]
-  				};
-				let peer= new RTCPeerConnection(configuration);
-
-				if(window.MYMEDIASTREAM){
-					let stream=  window.MYMEDIASTREAM;
-					stream.getTracks().forEach(track => peer.addTrack(track, stream));
-				}
-
-				peer.addEventListener('track', (event) => {
-				  addVideo(event.streams[0],msg.data.from);
-				});
-				window.makingOffer = [];
-				window.makingOffer[msg.data.from] = false;
-				peer.onnegotiationneeded = () => {
-					try {
-						window.makingOffer[msg.data.from] = true;
-						peer.createOffer({offerToReceiveVideo: 1}).then( (desc) => {
-							peer.setLocalDescription(desc);
-							self.sendMessage("custom/myVTT/okletmeseeyourdice",{
-								to: msg.data.from,
-								from: window.MYSTREAMID,
-								offer: desc,
-								dm: window.DM
-							})
-						});
-					} catch(err) {
-						console.error(err);
-					} finally {
-						setTimeout(function(){
-							window.makingOffer[msg.data.from] = false;
-						}, 500)		    
-					}	
-				};
-				peer.onconnectionstatechange=() => {
-					if(peer.connectionState=="connected"){
-						window.MB.inject_chat({
-							player: window.PLAYER_NAME,
-							img: window.PLAYER_IMG,
-							text: `<span class="flex-wrap-center-chat-message"><p>A dice stream peer has ${peer.connectionState}. <br/><br/></div>`,
-							whisper: window.PLAYER_NAME,
-						});
-					}
-					if((peer.connectionState=="closed") || (peer.connectionState=="failed" || peer.connectionState == "disconnected")){
-						peer.restartIce();
-						window.MB.inject_chat({
-							player: window.PLAYER_NAME,
-							img: window.PLAYER_IMG,
-							text: `<span class="flex-wrap-center-chat-message"><p>A dice stream connection has ${peer.connectionState}.</p><p> An automatic reconnect is being attempted. </p><p>If you are still unable to see one or more of your groups dice you may have to manually disable then reenable your dice stream in the chat above.</p><br/><br/></div>`,
-							whisper: window.PLAYER_NAME,
-						});
-					}
-				};
-		
-				peer.onicecandidate = e => {
-					window.MB.sendMessage("custom/myVTT/iceforyourgintonic",{
-						to: msg.data.from,
-						from: window.MYSTREAMID,
-						ice: e.candidate
-					})
-				};				
-				window.STREAMPEERS[msg.data.from]=peer;	
-				let ignoreOffer = false;
-				if(msg.data.offer){
-					const offerCollision = (msg.data.offer.type == "offer") && (window.makingOffer[msg.data.from] || window.STREAMPEERS[msg.data.from].signalingState != "stable")
-				  let myStreamParse = parseInt(window.MYSTREAMID) || 0;
-				  let fromStreamParse = parseInt(msg.data.from) || 0;
-				  ignoreOffer = (((myStreamParse > fromStreamParse) && !msg.data.dm) || window.DM) && offerCollision
-				  if (ignoreOffer) {
-				    return;
-				  }
-				}		
-				peer = window.STREAMPEERS[msg.data.from];
-				peer.setRemoteDescription(msg.data.offer);
-				window.STREAMPEERS[msg.data.from] = peer;	
-	
-		
-				peer.createAnswer().then( (desc) => {
-				peer.setLocalDescription(desc);
-					
-				window.MB.sendMessage("custom/myVTT/okseethem",{
-						from: window.MYSTREAMID,
-						to: msg.data.from,
-						answer: desc
-					});
-			});
-				
-				window.STREAMPEERS[msg.data.from] = peer;					
-			} else if(msg.eventType == "custom/myVTT/okseethem"){
-				if( !window.JOINTHEDICESTREAM)
-					return;
-				if( (!window.MYSTREAMID)  || (msg.data.to!= window.MYSTREAMID) )
-					return;
-
-				let peer=window.STREAMPEERS[msg.data.from];
-				peer.setRemoteDescription(msg.data.answer);
 			} else if (msg.eventType === "custom/myVTT/peerReady") {
 				window.PeerManager.receivedPeerReady(msg);
 			} else if (msg.eventType === "custom/myVTT/peerConnect") {
@@ -1666,21 +1460,7 @@ class MessageBroker {
 				}
 			} else if (msg.eventType === "custom/myVTT/videoPeerDisconnect") {
 					$(`.video-meet-area video#${msg.data.id}`).remove();
-			} else if (msg.eventType === "custom/myVTT/diceVideoPeerConnect") {
-				if(msg.data.id != diceplayer_id){
-					let call = window.diceVideoPeer.call(msg.data.id, window.MYMEDIASTREAM)
-					call.on('stream', (stream) => {
-						window.diceVideoConnectedPeers.push(msg.data.id);
-						setDiceRemoteStream(stream, call.peer);   
-						call.on('close', () => {
-							$(`video.remote-dice-video#${call.peer}, #streamer-canvas-${call.peer}`).remove();
-						})   
-					})
-					window.diceCurrentPeers = window.diceCurrentPeers.filter(d=> d.peer != call.peer)
-					window.diceCurrentPeers.push(call);
-				}
-				return;
-			}
+			} 
 
 
 		};
