@@ -1357,78 +1357,6 @@ function normalize_rendered_dice_animations(manifest) {
   return normalizedManifest;
 }
 
-async function build_rendered_dice_manifest(setId, manifestUrl) {
-  const absoluteManifestUrl = new URL(manifestUrl.replace(/^\//, ''), 'https://media.dndbeyond.com/dice/').href;
-  const manifestResponse = await fetch(absoluteManifestUrl);
-  if (!manifestResponse.ok) throw new Error(`Unable to fetch dice manifest: ${manifestResponse.status} ${manifestResponse.statusText}`);
-
-  const rawManifest = normalize_rendered_dice_animations(await manifestResponse.json());
-  const resourceBaseUrl = new URL('.', absoluteManifestUrl);
-  const slug = absoluteManifestUrl.match(/\/bundles\/(.+)\/[^/?]+(?:\?.*)?$/)?.[1] ?? setId;
-  const resources = rawManifest.resources ?? {};
-  const fetchJson = async path => {
-    const response = await fetch(new URL(path, resourceBaseUrl));
-    if (!response.ok) throw new Error(`${response.status} ${response.statusText}`);
-    return response.json();
-  };
-
-  const animationGroups = {};
-  for (const [name, definition] of Object.entries(resources.animationGroups ?? {})) {
-    const animationPath = typeof definition === 'object' ? definition.animationJson : definition;
-    if (!animationPath) continue;
-    try {
-      const animation = await fetchJson(animationPath);
-      if (typeof definition === 'object') {
-        for (const [cloneName, clone] of Object.entries(definition.animationClones ?? {})) {
-          animationGroups[cloneName] = $.extend(true, {}, animation, clone);
-        }
-      } else animationGroups[name] = animation;
-    } catch (error) {
-      console.warn(`Unable to load dice animation "${name}"`, error);
-    }
-  }
-
-  const particleSystems = {};
-  for (const [name, definition] of Object.entries(resources.particleSystems ?? {})) {
-    if (!definition.particleJson) continue;
-    try {
-      const particleFile = await fetchJson(definition.particleJson);
-      if (particleFile.systems?.[0]) particleSystems[name] = particleFile.systems[0];
-    } catch (error) {
-      console.warn(`Unable to load dice particle system "${name}"`, error);
-    }
-  }
-
-  const shaders = {};
-  for (const [name, definition] of Object.entries(resources.shaders ?? {})) {
-    if (!definition.fragmentShader) continue;
-    try {
-      const response = await fetch(new URL(definition.fragmentShader, resourceBaseUrl));
-      if (!response.ok) throw new Error(`${response.status} ${response.statusText}`);
-      let fragmentShader = await response.text();
-      if (fragmentShader.includes('varying vec4 vColor;') && fragmentShader.includes('maskVal*vColor.a')) {
-        fragmentShader = fragmentShader
-          .replace('varying vec4 vColor;', 'varying float vAgeFade;')
-          .replace('gl_FragColor = vec4(baseColor.rgb, maskVal*vColor.a);', 'gl_FragColor = vec4(baseColor.rgb, maskVal * vAgeFade);');
-      }
-      shaders[name] = {vertexShader: '', fragmentShader};
-    } catch (error) {
-      console.warn(`Unable to load dice shader "${name}"`, error);
-    }
-  }
-
-  const {$schema, setName, ...diceDefinitions} = rawManifest;
-  return {id: slug, slug, overrideSetId: setId, resources, animationGroups, particleSystems, shaders, ...diceDefinitions};
-}
-
-function play_rendered_dice_sound({url, volume = 1}) {
-  if (!url) return;
-
-  const audio = new Audio(url);
-  audio.volume = Math.max(0, Math.min(1, volume > 1 ? volume / 100 : volume));
-  audio.play().catch(error => console.warn('Unable to play rendered dice sound', error));
-}
-
 let diceWorkerUrlsPromise;
 
 function discover_dice_worker_urls() {
@@ -1531,16 +1459,6 @@ function handle_rendered_dice_message(event, renderer, physicsWorker) {
   const {type, payload} = event.data;
   if (type === 'componentMounted') {
     configure_rendered_dice(renderer, physicsWorker);
-  } else if (type === 'preRoll') {
-    const {message, manifest} = payload ?? {};
-    const setId = message?.data?.setId;
-    if (!setId || !manifest) {
-      console.warn('Rendered dice manifest preload failed', payload);
-      return;
-    }
-    renderer.postMessage({type: 'manifests', payload: {[setId]: manifest}});
-  } else if (type === 'playSound' || type === 'PlaySound') {
-    play_rendered_dice_sound(payload);
   } else {
     console.debug('Unhandled rendered dice message', event.data);
   }

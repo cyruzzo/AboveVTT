@@ -725,24 +725,14 @@ class DiceRoller {
                 }, 200)
                 return true;
             } 
-
-
-            setTimeout(()=>{
-                const message = self.send_ddb_dice_message(msgdata.rollData.expression, msgdata.player, msgdata.img, msgdata.rollData.rollType, msgdata.rollData.damageType, msgdata.rollData.rollTitle, diceRoll.sendToOverride)
-                self.#resetVariables();
-                self.nextRoll(message, critRange, critType)
-            }, 200)
+            
+            const message = self.send_ddb_dice_message(msgdata.rollData.expression, msgdata.player, msgdata.img, msgdata.rollData.rollType, msgdata.rollData.damageType, msgdata.rollData.rollTitle, diceRoll.sendToOverride)
+            self.#resetVariables();
+            self.nextRoll(message, critRange, critType)
+            
             return true;
                        
-            /*
-            console.group("DiceRoller.parseAndRoll");
-            noisy_log("attempting to parse diceRoll", diceRoll);
 
-
-
-            this.clickDiceButtons(diceRoll);
-            console.groupEnd();
-            return true;*/
         } catch (error) {
             console.warn("failed to parse and send expression as DDB roll; expression: ", diceRoll.expression, error);
             this.#resetVariables();
@@ -844,72 +834,7 @@ class DiceRoller {
         }
 
     }
-    /**
-     * clicks the DDB dice and then clicks the roll button
-     * @param diceRoll {DiceRoll} the DiceRoll object to roll
-     */
-    async clickDiceButtons(diceRoll, retries=1) {
-        if (retries > 5){
-            console.warn(`clickDiceButtons retried dice roll 5 times and failed`, diceRoll);
-            this.#resetVariables();
-            return;
-        }
-        if (diceRoll === undefined) {
-            console.warn("clickDiceButtons was called without a diceRoll object")
-            return;
-        }
-        if(!is_abovevtt_page() && !window.unlockSidebar){
-            if(!document.querySelector(".ct-sidebar__control--unlock, [class*='styles_controls'] [aria-label='Show sidebar']")){
-                const lockSidebarButton = $(".ct-sidebar__control--unlock, [class*='styles_controls'] [aria-label='Unlocked']");
-                window.unlockSidebar = lockSidebarButton.length > 0;
-                await lockSidebarButton.click();
-            }
- 
-            
-            
-        }
-        $('[data-floating-ui-portal], .roll-mod-container').addClass('hidden');
-        if ($(".dice-toolbar").hasClass("rollable") || $(`[class*='DiceContainer_customDiceRollOpen']`).length>0) {
-            // clear any that are already selected so we don't roll too many dice
-            await $(".dice-toolbar__dropdown-die, [data-dd-action-name='Roll Dice Popup > Clear Dice']").click();
-        }
-        
-        if (($(".dice-toolbar__dropdown").length > 0 && !$(".dice-toolbar__dropdown").hasClass("dice-toolbar__dropdown-selected")) || ($("[class*='DiceContainer_button']").length > 0 && $(`[class*='DiceContainer_customDiceRollOpen']`).length == 0)) {
-            // make sure it's open
-            await $(".dice-toolbar__dropdown-die, [class*='DiceContainer_button']").click();
-        }
-        if ($(`.dice-die-button, [class*='AnchoredPopover_wrapper'] [class*='_diceContainer']`).length == 0){
-            const self = this;
-            setTimeout(function(){
-                self.clickDiceButtons(diceRoll, retries + 1)
-            }, 60)
-            return;
-        }
-        for (let diceType in diceRoll.diceToRoll) {
-            let numberOfDice = diceRoll.diceToRoll[diceType];
-            for (let i = 0; i < numberOfDice; i++) {
-                await $(`.dice-die-button[data-dice='${diceType}'], [class*='AnchoredPopover_wrapper'] #${diceType}`).click();
-            }
-        }
 
-
-        if ($(".dice-toolbar").hasClass("rollable")) {
-            noisy_log("diceRoll.sendToOverride", diceRoll.sendToOverride)
-            await $(".dice-toolbar__target").children().first().click();
-        }
-        if ($(`[class*='DiceContainer_button']`).length>0) {    
-            await $(`[data-dd-action-name="Roll Dice Popup > Roll Dice"]`).click();
-        }  
-        clearTimeout(this.diceRollButtonHide);
-        this.diceRollButtonHide = setTimeout(()=>{
-            $('[data-floating-ui-portal], .roll-mod-container').removeClass('hidden');
-            if(!is_abovevtt_page() && window.unlockSidebar == true){
-                delete window.unlockSidebar;
-                $(".ct-sidebar__control--unlock, [class*='styles_controls'] [aria-label='Locked']").click();
-            }
-        }, 500)
-
-    }
     send_ddb_dice_message(expression, displayName, imgUrl, rollType = "roll", damageType, actionType = "custom", sendTo = "") {
         let diceRoll = new DiceRoll(expression);
         diceRoll.action = actionType;
@@ -1153,9 +1078,7 @@ class DiceRoller {
             const nextCritRange = self.#pendingMessages[firstPending]?.pendingCritRange;
             const nextCritType = self.#pendingMessages[firstPending]?.pendingCritType;
             const nextDamageType = self.#pendingMessages[firstPending]?.pendingDamageType;
-            setTimeout(function () {
-                self.nextRoll(alteredMessage, nextCritRange, nextCritType, nextDamageType);
-            }, 60)
+            self.nextRoll(alteredMessage, nextCritRange, nextCritType, nextDamageType); 
         }
         this.#pendingMessages[firstPending] = null;
         delete this.#pendingMessages[firstPending];
