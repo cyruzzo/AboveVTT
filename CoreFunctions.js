@@ -1502,7 +1502,7 @@ async function add_new_dice(){
     width: Math.max(0, window.innerWidth - (is_sidebar_visible() ? get_sidebar_width() : 0)),
     height: window.innerHeight
   });
-  const resizeDiceCanvases = () => {
+  const resizeDiceCanvases = mydebounce(() => {
     const {width, height} = getDiceViewportSize();
 
     canvas.style.width = `${width}px`;
@@ -1529,7 +1529,7 @@ async function add_new_dice(){
             "left": 0,
         }
     });
-  };
+  }, 500);
   
   const initialSize = getDiceViewportSize();
   canvas.width = initialSize.width;
