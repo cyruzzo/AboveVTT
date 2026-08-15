@@ -1357,16 +1357,6 @@ function normalize_rendered_dice_animations(manifest) {
   return normalizedManifest;
 }
 
-
-
-function play_rendered_dice_sound({url, volume = 1}) {
-  if (!url) return;
-
-  const audio = new Audio(url);
-  audio.volume = Math.max(0, Math.min(1, volume > 1 ? volume / 100 : volume));
-  audio.play().catch(error => console.warn('Unable to play rendered dice sound', error));
-}
-
 let diceWorkerUrlsPromise;
 
 function discover_dice_worker_urls() {
@@ -1469,16 +1459,6 @@ function handle_rendered_dice_message(event, renderer, physicsWorker) {
   const {type, payload} = event.data;
   if (type === 'componentMounted') {
     configure_rendered_dice(renderer, physicsWorker);
-  } else if (type === 'preRoll') {
-    const {message, manifest} = payload ?? {};
-    const setId = message?.data?.setId;
-    if (!setId || !manifest) {
-      console.warn('Rendered dice manifest preload failed', payload);
-      return;
-    }
-    renderer.postMessage({type: 'manifests', payload: {[setId]: manifest}});
-  } else if (type === 'playSound' || type === 'PlaySound') {
-    play_rendered_dice_sound(payload);
   } else {
     console.debug('Unhandled rendered dice message', event.data);
   }
