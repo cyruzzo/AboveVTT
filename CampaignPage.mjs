@@ -148,13 +148,13 @@ function inject_instructions() {
   const campaign_banner = $("<div id='campaign_banner'></div>");
   campaign_banner.append(`
     <h4><img class='above-vtt-right-margin-5px' alt='above vtt logo' width='100px' src='${window.EXTENSION_PATH}assets/logo.png'>Basic Instructions!</h4>
-    <br>If you are the DM, press <b>JOIN AS DM</b> above. If you have a free DnDBeyond account make sure you have 1 free encounter slot to join as DM. Free accounts are limited to 8 encounters.<br><br>
+    <br>If you are the DM, press <b>JOIN AS DM</b> above.<br><br>
     Players, press <b>JOIN AboveVTT</b> next to your character at the bottom, and then wait for your DM to join.<br><br>
     Please check that you do not have any other extensions for DndBeyond (like Beyond20) enabled. <b>Disable them</b> or you will not be able to roll dice!<br><br>
-    If you're looking for tutorials, take a look at our <a target='_blank' href='https://www.youtube.com/channel/UCrVm9Al59iHE19IcqaKqqXA'>YouTube Channel!!</a><br>
+    If you're looking for tutorials, take a look at our <a target='_blank' href='https://www.youtube.com/watch?v=AaSClv4jSbk&list=PLW0tvNe3gIM00xQCReTWi8CPrXBJyDQmG'>YouTube Tutorial Playlist</a><br>
     If you need help, or just want to send us your feedback, join the <a target='_blank' href='https://discord.gg/cMkYKqGzRh'>AboveVTT Discord Community</a>.<br>
-    Do you like what you see? Then please support me on <a target='_blank' href='https://www.patreon.com/AboveVTT'>AboveVTT Patreon!</a><br><br>
-    <b>Deprecation</b> Due to technical changes. You no longer can join as DM if you're not the real DM of the campaign. If you need help recovering your local data for this campaign contact us on discord<br><br>
+    Do you like what you see? Then please support me on <a target='_blank' href='https://www.patreon.com/AboveVTT'>AboveVTT Patreon</a><br><br>
+    <b>Deprecation</b> Due to technical changes. You no longer can join as DM if you're not the creator of the campaign.<br><br>
     Use this button to delete all locally held data, to 'clear the cache' as it were: <br>
   `);
   campaign_banner.hide();
