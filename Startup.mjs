@@ -78,9 +78,12 @@ $(function() {
           }
         }
         window.AVTT_CAMPAIGN_INFO = await AboveApi.getCampaignData();
+        
         return window.CAMPAIGN_INFO.dmId;
       })
       .then(async (campaignDmId) => {
+        startup_step("Fetching PCs")
+        await rebuild_window_pcs();
         startup_step("Fetching Party Inventory/Items/Spells")
         await Promise.all([
           DDBApi.debounceGetPartyInventory(),
@@ -92,7 +95,7 @@ $(function() {
         const isSpectator = is_spectator_page();
         const userId = $(`#message-broker-client[data-userid]`)?.attr('data-userid') || Cobalt?.User?.ID;
         if ((isDmPage && campaignDmId == userId) || isSpectator) {
-          inject_dice();
+          add_new_dice();
         }
         return { campaignDmId, userId, isDmPage, isSpectator };
       })
@@ -132,12 +135,7 @@ $(function() {
         $('body').toggleClass('reduceMovement', (window.EXPERIMENTAL_SETTINGS['reduceMovement'] == true));
         $('body').toggleClass('mobileAVTTUI', (window.EXPERIMENTAL_SETTINGS['iconUi'] != false));
         $('body').toggleClass('color-blind-avtt', (window.EXPERIMENTAL_SETTINGS['colorBlindText'] == true));
-          // STREAMING STUFF
 
-        window.STREAMPEERS = {};
-        window.MYSTREAMID = uuid();
-        window.JOINTHEDICESTREAM = window.EXPERIMENTAL_SETTINGS['streamDiceRolls'] == true;
-        enable_dice_streaming_feature(window.JOINTHEDICESTREAM);
 
         tabCommunicationChannel.addEventListener ('message', (event) => {
           if((event.data.msgType == 'addCondition' || event.data.msgType == 'removeCondition') && event.data.sendTo == window.PLAYER_ID){ // Sets a player token's condition on and off
@@ -478,7 +476,7 @@ async function start_above_vtt_common() {
   $("#site").append("<div id='windowContainment'></div>");
   $("body").append(`<style>.ddb-footer{display:none}</style>`);
   startup_step("Gathering player character data");
-  await rebuild_window_pcs();
+ 
   window.color = color_for_player_id(my_player_id()); // shortcut that we should figure out how to not rely on
   localStorage.removeItem(`CampaignCharacters${window.gameId}`); // clean up old pc data
 

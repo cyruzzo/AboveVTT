@@ -48,7 +48,7 @@ class DiceRoll {
             if (validRollTypes.includes(alteredRollType)) {
                 this.#diceRollType = alteredRollType;
             } else {
-                console.warn(`not setting rollType. Expected one of ${JSON.stringify(validRollTypes)}, but received "${newRollType}"`);
+                noisy_log(2, `not setting rollType. Expected one of ${JSON.stringify(validRollTypes)}, but received "${newRollType}"`);
             }
         } catch (error) {
             console.warn("DiceRoll set rollType failed", error);
@@ -587,7 +587,7 @@ class DiceRoller {
             }
             let critClass = `${critSuccess && critFail ? 'crit-mixed' : critSuccess ? 'crit-success' : critFail ? 'crit-fail' : ''}`
 
-            const ddb3dDiceShareToggle = getDdb3dDiceShareToggle();
+            const ddb3dDiceShareToggle = getDdb3dDiceShareToggle() != 'disabled';
 
             if(spellSave == undefined){
                 spellSave = this.#pendingSpellSave ?? diceRoll.spellSave;
@@ -724,15 +724,17 @@ class DiceRoller {
                     self.nextRoll(undefined, critRange, critType)
                 }, 200)
                 return true;
-            } else if (!is_abovevtt_page() && !ddb3dDiceShareToggle && window.MB?.ws != undefined){
-              setTimeout(()=>{
-                  const message = self.send_ddb_dice_message(msgdata.rollData.expression, msgdata.player, msgdata.img, msgdata.rollData.rollType, msgdata.rollData.damageType, msgdata.rollData.rollTitle, diceRoll.sendToOverride)
-                  self.#resetVariables();
-                  self.nextRoll(message, critRange, critType)
-              }, 200)
-              return true;
-            }             
+            } 
 
+
+            setTimeout(()=>{
+                const message = self.send_ddb_dice_message(msgdata.rollData.expression, msgdata.player, msgdata.img, msgdata.rollData.rollType, msgdata.rollData.damageType, msgdata.rollData.rollTitle, diceRoll.sendToOverride)
+                self.#resetVariables();
+                self.nextRoll(message, critRange, critType)
+            }, 200)
+            return true;
+                       
+            /*
             console.group("DiceRoller.parseAndRoll");
             noisy_log("attempting to parse diceRoll", diceRoll);
 
@@ -740,7 +742,7 @@ class DiceRoller {
 
             this.clickDiceButtons(diceRoll);
             console.groupEnd();
-            return true;
+            return true;*/
         } catch (error) {
             console.warn("failed to parse and send expression as DDB roll; expression: ", diceRoll.expression, error);
             this.#resetVariables();
@@ -1066,7 +1068,31 @@ class DiceRoller {
             };
             ddbMessage = this.#swapRollData(ddbMessage);
             this.#orderedPendingIds.push(rollId);
+            if(window.ActiveWorkers){
+                Object.keys(window.ActiveWorkers).forEach(key => {
+                    if(key.includes('physics')){
+                        window.ActiveWorkers[key].postMessage({
+                            type: "dice/roll/deferred",
+                            payload: {
+                                ...ddbMessage,
+                                eventType: "dice/roll/deferred"
+                            }
+                        })
+                    }   
+                });  
+            };
+            if(sendTo.toLowerCase() != 'self'){
+                this.ddbDispatch({
+                    ...ddbMessage,
+                    eventType: "dice/roll/deferred"
+                });
+            }
+           
+           
             this.sendNewFulfilled();
+            
+            
+
             return ddbMessage;
         } catch (error) {
             console.warn(`failed to send expression as DDB roll; expression = ${expression}`, error);
@@ -1102,7 +1128,7 @@ class DiceRoller {
         this.#pendingMessages[message.data.rollId] = null;
         delete this.#pendingMessages[message.data.rollId];  
     }
-    async sendNewFulfilled() {
+    async sendNewFulfilled(deferredOnly = false) {
         if (this.#orderedPendingIds.length == 0)
             return;
         const firstPending = this.#orderedPendingIds.shift(); // we don't use current fulfilled messages as they dont always come in in order due to time it take dice to roll, modify the deferred message in order instead
@@ -1119,7 +1145,9 @@ class DiceRoller {
         }
         noisy_log("altered fulfilled message: ", alteredMessage);
         alteredMessage.dateTime = this.#pendingMessages[firstPending]?.ddbMessage?.dateTime || Date.now();
-        this.ddbDispatch(alteredMessage);
+
+        this.ddbDispatch(alteredMessage);  
+
         if(this.#multiRollArray.length>0){
             const self = this;
             const nextCritRange = self.#pendingMessages[firstPending]?.pendingCritRange;
@@ -1142,7 +1170,7 @@ class DiceRoller {
         if(this.#waitingForRoll && message.source == 'Beyond20'){
             return;
         }
-        const ddb3dDiceShareToggle = getDdb3dDiceShareToggle();
+        const ddb3dDiceShareToggle = getDdb3dDiceShareToggle() != 'disabled';
 
         if (message.eventType === "dice/roll/fulfilled" && newDice && ddb3dDiceShareToggle && this.#pendingMessages[message.data.rollId] == undefined && !['death', 'hitdice'].includes(message.data?.action?.toLowerCase().replaceAll(/\s/gi, '')))
             return;
@@ -1204,7 +1232,6 @@ class DiceRoller {
                 await this.#resetVariables();
                 return;
             }
-            
             noisy_log("capturing pending message: ", message);
             let ddbMessage = { ...message };
             this.#pendingMessages[ddbMessage.data.rollId] = {
@@ -1466,7 +1493,7 @@ class DiceRoller {
 function getDdb3dDiceShareToggle(){
     const newDice = $("[class*='DiceContainer_button']").length > 0
     const userDiceData = localStorage.getItem('userDiceData')
-    return newDice && userDiceData !== null && window.MB?.userid != undefined ? JSON.parse(localStorage.getItem('userDiceData')).state?.[window.MB.userid]?.settings?.visibility != 'disabled' : true;
+    return newDice && userDiceData !== null && window.MB?.userid != undefined ? JSON.parse(localStorage.getItem('userDiceData')).state?.[window.MB.userid]?.settings?.visibility : true;
 }
 function replace_gamelog_message_expressions(listItem) {
 

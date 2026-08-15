@@ -49,7 +49,6 @@ $(function() {
             inject_instructions();
             inject_player_join_buttons();
             inject_dm_join_button();  
-            inject_dice();
           }
          });
       })
