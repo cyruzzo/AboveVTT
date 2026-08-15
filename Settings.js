@@ -455,10 +455,8 @@ function avtt_settings(campaignSettings = false) {
 			class: 'ui'
 		})
 	}
-
-	if (window.DM && !campaignSettings) {
-		// Remove the `dm` an option for the DM and tweak the descriptions to remove references to the DM.
-			settings.push({
+	if((window.DM && !campaignSettings) || is_spectator_page()){
+		settings.push({
 				name: 'streamDiceRolls',
 				label: 'Stream Dice Rolls',
 				type: 'toggle',
@@ -469,6 +467,9 @@ function avtt_settings(campaignSettings = false) {
 				defaultValue: false,
 				class: 'stream'
 			});
+	}
+	if (window.DM && !campaignSettings) {
+		// DM only settings - does not show up in suggsted settings for players
 			settings.push(
 			{
 				name: "disableCombatText",

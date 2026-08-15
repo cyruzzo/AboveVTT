@@ -968,8 +968,8 @@ class MessageBroker {
 				}
 				return;
 			} else if (msg.eventType == "dice/roll/deferred") {
-				const ddb3dDiceShareToggle = window.DM ? get_avtt_setting_value("streamDiceRolls") : getDdb3dDiceShareToggle() == 'shared';
-				if(ddb3dDiceShareToggle == true && ([window.gameId, `${window.myUser}`].includes(msg.messageTarget) || (window.DM && (msg.messageTarget == 'dm' || msg.messageTarget == 'dungeonmaster')))){
+				const ddb3dDiceShareToggle = (window.DM || is_spectator_page()) ? get_avtt_setting_value("streamDiceRolls") : getDdb3dDiceShareToggle() == 'shared';
+				if(ddb3dDiceShareToggle == true && (msg.messageTarget == window.gameId || (!is_spectator_page() && msg.messageTarget == `${window.myUser}`) || (window.DM && (msg.messageTarget == 'dm' || msg.messageTarget == 'dungeonmaster')))){
 					Object.keys(window.ActiveWorkers).forEach(key => {
 						if(key.includes('physics')){
 							window.ActiveWorkers[key].postMessage({
@@ -1391,10 +1391,7 @@ class MessageBroker {
 							}
 						}
 					}
-					/*
-					if($("[name='streamDiceRolls'].rc-switch-checked").length > 0) {
-						window.MB.sendMessage("custom/myVTT/enabledicestreamingfeature")
-					}*/
+
 					window.JOURNAL.sync();
 					window.MB.sendMessage("custom/myVTT/DMAvatar", {
 						avatar: dmAvatarUrl
