@@ -6095,6 +6095,15 @@ class JournalManager{
 			valid_children : '+body[style]',
 			extended_valid_elements: 'svg[name|xmlns|viewBox|width|height|class|fill|stroke],path[d|fill|stroke|stroke-width|class],g[class|fill|stroke|class],circle[cx|cy|r|fill|stroke|class],rect[x|y|width|height|fill|stroke|class],polygon[points|fill|stroke|class]',
 			setup: function (editor) { 
+				editor.on('keydown', function (e) {
+					if (e.key === 'PageUp' || e.key === 'PageDown') {
+						e.preventDefault();
+						e.stopPropagation();
+						const container = $(editor.getContainer()).closest('.note, .ui-dialog-content')
+						const height = container.height();
+						container[0].scrollBy(0, e.key === 'PageUp' ? -height : height);
+					}
+				});
 				editor.addButton('fontsizeinput', {
 					type: 'container',
 					html: '<input type="number" id="mce-custom-font-size" style="width: 40px;height: 16px;text-align:right;padding: 4px 1px;" placeholder="px"> px',
