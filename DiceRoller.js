@@ -1068,31 +1068,31 @@ class DiceRoller {
             };
             ddbMessage = this.#swapRollData(ddbMessage);
             this.#orderedPendingIds.push(rollId);
-            if(window.ActiveWorkers){
-                Object.keys(window.ActiveWorkers).forEach(key => {
-                    if(key.includes('physics')){
-                        window.ActiveWorkers[key].postMessage({
-                            type: "dice/roll/deferred",
-                            payload: {
-                                ...ddbMessage,
-                                eventType: "dice/roll/deferred"
-                            }
-                        })
-                    }   
-                });  
-            };
-            if(sendTo.toLowerCase() != 'self'){
-                this.ddbDispatch({
-                    ...ddbMessage,
-                    eventType: "dice/roll/deferred"
-                });
+            if(!window.EXPERIMENTAL_SETTINGS?.['rpgRoller'] && !(typeof getDdb3dDiceShareToggle == 'function' && !window.DM && getDdb3dDiceShareToggle() == 'disabled')){
+                if(window.ActiveWorkers){
+                    Object.keys(window.ActiveWorkers).forEach(key => {
+                        if(key.includes('physics')){
+                            window.ActiveWorkers[key].postMessage({
+                                type: "dice/roll/deferred",
+                                payload: {
+                                    ...ddbMessage,
+                                    eventType: "dice/roll/deferred"
+                                }
+                            })
+                        }   
+                    });  
+                };
+                if(sendTo.toLowerCase() != 'self'){
+                    this.ddbDispatch({
+                        ...ddbMessage,
+                        eventType: "dice/roll/deferred"
+                    });
+                }
             }
-           
-           
-            this.sendNewFulfilled();
             
-            
-
+                   
+            this.sendNewFulfilled();       
+        
             return ddbMessage;
         } catch (error) {
             console.warn(`failed to send expression as DDB roll; expression = ${expression}`, error);

@@ -263,7 +263,22 @@ Other Commands:
         <img title="d20" alt="d20" height="40px" src="${window.EXTENSION_PATH + "assets/dice/d20.svg"}"/>
       </div>
     </div>
+    
   `)  
+
+  const clearDice = $(`<div class="clear-dice">Clear Dice</div>`);
+  clearDice.off('click.diceClear').on('click.diceClear', function(e) {
+    e.preventDefault();
+    if(window.ActiveWorkers){
+      Object.keys(window.ActiveWorkers).forEach(key => {
+        if(key.includes('dice')){
+          window.ActiveWorkers[key].postMessage({
+              type: "resetStore",
+          });
+        }
+      });
+    }
+  });
   const languageSelect= $(`<select id='chat-language'></select>`)
   const ignoredLanguages = ['All'];
 
@@ -277,7 +292,7 @@ Other Commands:
     languageSelect.append(option);
   }
 
-  gameLog.append(chatTextWrapper, languageSelect, diceRoller);
+  gameLog.append(chatTextWrapper, languageSelect, diceRoller, clearDice);
 
   $(".dice-roller > div img").on("click", async function(e) {
     const dataCount = $(this).attr("data-count");
