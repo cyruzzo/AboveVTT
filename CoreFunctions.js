@@ -439,37 +439,24 @@ Other Commands:
 
   $(".dice-roller > div img").on("contextmenu", function(e) {
     e.preventDefault();
-
-    if ($(".dice-toolbar__dropdown, [class*='DiceContainer_button']").length > 0 && !window.EXPERIMENTAL_SETTINGS['rpgRoller']) {
-      // There are DDB dice on the screen so update those buttons. Ours will synchronize when these change.
-      // the only way I could get this to work was with pure javascript. Everything that I tried with jQuery did nothing
-      let dieSize = $(this).attr("alt");
-      let element = $(`.dice-die-button[data-dice='${dieSize}'], #${dieSize}`)[0];
-      let e = element.ownerDocument.createEvent('MouseEvents');
-      e.initMouseEvent('contextmenu', true, true,
-          element.ownerDocument.defaultView, 1, 0, 0, 0, 0, false,
-          false, false, false, 2, null);
-      element.dispatchEvent(e);
-    } else {
-      let dataCount = $(this).attr("data-count");
-      if (dataCount !== undefined) {
-        dataCount = parseInt(dataCount) - 1;
-        if (dataCount === 0) {
-          $(this).removeAttr("data-count");
-          $(this).parent().find("span").remove();
-        } else {
-          $(this).attr("data-count", dataCount);
-          $(this).parent().append(`<span class="dice-badge">${dataCount}</span>`);
-        }
-      }
-      if ($(".dice-roller > div img[data-count]").length > 0) {
-        if(!$(".roll-mod-container").hasClass('show')){
-          $(".roll-mod-container").addClass("show");
-          $(".roll-mod-container").find('input').val(0);
-        }
+    let dataCount = $(this).attr("data-count");
+    if (dataCount !== undefined) {
+      dataCount = parseInt(dataCount) - 1;
+      if (dataCount === 0) {
+        $(this).removeAttr("data-count");
+        $(this).parent().find("span").remove();
       } else {
-        $(".roll-mod-container").removeClass("show");
+        $(this).attr("data-count", dataCount);
+        $(this).parent().append(`<span class="dice-badge">${dataCount}</span>`);
       }
+    }
+    if ($(".dice-roller > div img[data-count]").length > 0) {
+      if(!$(".roll-mod-container").hasClass('show')){
+        $(".roll-mod-container").addClass("show");
+        $(".roll-mod-container").find('input').val(0);
+      }
+    } else {
+      $(".roll-mod-container").removeClass("show");
     }
   });
 
@@ -508,6 +495,7 @@ Other Commands:
     });
     let diceRollOverride;
     rollButton.on("click", function (e) {
+      $('[data-dd-action-name="Close Roll Dice"]').click();
       let modValue = parseInt($('.roll-input-mod').val())
 
       const rollExpression = [];
