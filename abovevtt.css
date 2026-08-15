@@ -12958,7 +12958,17 @@ p.monster-header+p {
     bottom: -6px;
     top: unset
 }
-
+.dice-container{
+    z-index: 999999999;
+    pointer-events: none;
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    bottom: 0px;
+    right: -340px;
+    width: calc(100% - var(--sidebar-width, 340px));
+    height: 100%;
+}
 
 .dnd-page [contenteditable="true"]{
     cursor: text;

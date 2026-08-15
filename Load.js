@@ -44,7 +44,8 @@
                 
                 const originalPostMessage = worker.postMessage;
                 worker.postMessage = async function(message, transfer) {
-                    noisy_log('worker Messages', message);
+                    try{noisy_log(JSON.parse(options.name).name, 'worker Messages', message);}
+                    catch(e){noisy_log('worker Messages', message);}
                     if (message && typeof message === 'object' && message.type == 'resize') {
                         await originalPostMessage.call(worker, message, transfer);
                         // Need to do this due to a DDB bug that causes an infinite loop that hurts lower end pcs performance
@@ -134,8 +135,7 @@
         "built-in-tokens.js",
         "PeerManager.js",
         "PeerCommunication.js",
-        "peerVideo.js",
-        "peerDice.js",		
+        "peerVideo.js",	
         "DiceRoller.js",
         "DMScreen.js",
         "Main.js",

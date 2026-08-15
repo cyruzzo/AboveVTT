@@ -388,17 +388,6 @@ function avtt_settings(campaignSettings = false) {
 			global: 1
 		},
 		{
-			name: 'streamDiceRolls',
-			label: 'Stream Dice Rolls',
-			type: 'toggle',
-			options: [
-				{ value: true, label: "Streaming", description: `When you roll DDB dice (to Everyone), all players who also enable this feature will see your rolls and you will see theirs. Disclaimer: the dice will start small then grow to normal size after a few rolls. They will be contained to the smaller of your window or the sending screen size.` },
-				{ value: false, label: "Not Streaming", description: `When you enable this, DDB dice rolls will be visible to you and all other players who also enable this. Disclaimer: the dice will start small then grow to normal size after a few rolls. They will be contained to the smaller of your window or the sending screen size.` }
-			],
-			defaultValue: false,
-			class: 'stream'
-		},
-		{
 			name: 'iframeStatBlocks',
 			label: 'Fallback Monster Statblocks',
 			type: 'toggle',
@@ -469,7 +458,17 @@ function avtt_settings(campaignSettings = false) {
 
 	if (window.DM && !campaignSettings) {
 		// Remove the `dm` an option for the DM and tweak the descriptions to remove references to the DM.
-		
+			settings.push({
+				name: 'streamDiceRolls',
+				label: 'Stream Dice Rolls',
+				type: 'toggle',
+				options: [
+					{ value: true, label: "Streaming", description: `You will see DDB dice rolls from all players with this enabled. Note players can see your rolls if not rolling to self regardless.` },
+					{ value: false, label: "Not Streaming", description: `You will not see DDB dice rolls from other players. Note players can still see your rolls if not rolling to self.` }
+				],
+				defaultValue: false,
+				class: 'stream'
+			});
 			settings.push(
 			{
 				name: "disableCombatText",
@@ -1086,17 +1085,6 @@ function set_avtt_setting_value(name, newValue) {
 				use_iframes_for_monsters();
 			} else {
 				stop_using_iframes_for_monsters();
-			}
-			break;
-		case "streamDiceRolls":
-			// TODO: change this to use window.EXPERIMENTAL_SETTINGS[name] instead of using special logic
-			if (newValue === true || newValue === false) {
-				window.JOINTHEDICESTREAM = newValue;
-				enable_dice_streaming_feature(newValue)
-			} else {
-				const defaultValue = get_avtt_setting_default_value(name);
-				window.JOINTHEDICESTREAM = defaultValue;
-				enable_dice_streaming_feature(defaultValue);
 			}
 			break;
 		case "peerStreaming":
@@ -1779,23 +1767,7 @@ function update_token_base_visibility(container) {
 	}
 }
 
-function enable_dice_streaming_feature(enabled){
-	if(enabled)
-	{
-		window.JOINTHEDICESTREAM = true;
-		add_dice_stream_gamelog_button();
-		update_dice_streaming_feature(window.JOINTHEDICESTREAM);
-	}
-	else{
-		$(".stream-dice-button").remove();
-		window.JOINTHEDICESTREAM = false;
-		$("[id^='streamer-']").remove();
-		for (let peer in window.STREAMPEERS) {
-			window.STREAMPEERS[peer].close();
-			delete window.STREAMPEERS[peer]
-		}
-	}
-}
+
 
 function update_dice_streaming_feature(enabled, sendToText=gamelog_send_to_text()) {
 
