@@ -839,11 +839,11 @@ class DiceRoller {
         let diceRoll = new DiceRoll(expression);
         diceRoll.action = actionType;
         diceRoll.rollType = rollType;
-        diceRoll.name = displayName == true ? 'THE DM' : displayName;
+        diceRoll.name = displayName == true ? 'THE DM' : /^spectator-[\d\w]+-[\d\w]+/gi.test(displayName) ?  'Spectator' : displayName;
         diceRoll.avatarUrl = imgUrl;
         // diceRoll.entityId = monster.id;
         // diceRoll.entityType = monsterData.id;
-
+        
         noisy_log("with values", expression, displayName, imgUrl, rollType, damageType, actionType, sendTo)
 
 
@@ -956,7 +956,7 @@ class DiceRoller {
                         entityType: "user",
                         messageScope: sendTo === "everyone" ? "gameId" : "userId",
                         messageTarget: sendTo === "everyone" ? `${window.gameId}` : sendTo === "dungeonmaster" || sendTo === "dm" ? `${window.CAMPAIGN_INFO.dmId}` : `${window.myUser}`,
-                        name: displayName,
+                        name: diceRoll.name,
                         avatarUrl: imgUrl
                     },
                     rollId: rollId,
