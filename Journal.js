@@ -6103,7 +6103,8 @@ class JournalManager{
 						const height = container.height() - 80;
 						container[0].scrollBy({
 							top: e.key === 'PageUp' ? -height : height,
-							left: 0
+							left: 0,
+							behavior: "smooth",
 						});
 					}
 				});
