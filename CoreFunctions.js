@@ -506,6 +506,7 @@ Other Commands:
         rollButton.click();
       }
     });
+    let diceRollOverride;
     rollButton.on("click", function (e) {
       let modValue = parseInt($('.roll-input-mod').val())
 
@@ -534,12 +535,49 @@ Other Commands:
       advDis = undefined;
       $('.dice-toolbar__dropdown-selected>div:first-of-type')?.click();
       let expression = `${rollExpression.join("+")}${modValue<0 ? modValue : `+${modValue}`}`
-
-      window.diceRoller.roll(new DiceRoll(expression));
+      const diceRoll = new DiceRoll(expression);
+      if(diceRollOverride != undefined){
+        diceRoll.sendToOverride = diceRollOverride;
+        diceRollOverride = undefined;
+      }
+      window.diceRoller.roll(diceRoll);
 
       $(".roll-mod-container").removeClass("show");
       $(".dice-roller > div img[data-count]").removeAttr("data-count");
       $(".dice-roller > div span").remove();
+    });
+     $.contextMenu({
+      selector: '.roll-button',
+      build: function(element, e) {
+        let menuItems = {};
+        menuItems["Self"] = {
+          name: "Self",
+					callback: function(itemKey, opt, originalEvent) {
+            diceRollOverride = 'Self';
+            rollButton.click();
+					}
+        }
+        if(!window.DM){
+          menuItems["dm"] = {
+            name: "Dungeon Master",
+            callback: function(itemKey, opt, originalEvent) {
+              diceRollOverride = 'DM';
+              rollButton.click();
+            }
+          }
+        }
+
+        menuItems["everyone"] = {
+          name: "Everyone",
+					callback: function(itemKey, opt, originalEvent) {
+            diceRollOverride = 'Everyone';
+            rollButton.click();
+					}
+        }
+        return {
+          items: menuItems
+        };
+      }
     });
   }
 
@@ -561,6 +599,7 @@ Other Commands:
     })
     $("div.MuiPaper-root.MuiMenu-paper").click();
   }, 0);
+
 }
 function find_currently_open_character_sheet() {
   if (is_characters_page()) {
