@@ -519,7 +519,7 @@ class PeerConnection {
     try {
       return this.connection.dataChannel.readyState;
     } catch (error) {
-      console.warn("PeerConnection.connectionState caught an error", error);
+      noisy_log(2, "PeerConnection.connectionState caught an error", error);
       return "unknown";
     }
   }
@@ -529,7 +529,7 @@ class PeerConnection {
     try {
       return this.connection.open;
     } catch (error) {
-      console.warn("PeerConnection.isOpen caught an error", error);
+      noisy_log(2, "PeerConnection.isOpen caught an error", error);
       return false;
     }
   }
@@ -540,7 +540,7 @@ class PeerConnection {
       const rs = this.readyState;
       return rs !== "connecting" && rs !== "open"; // if we are connecting/connected then we are not stale; otherwise we are stale
     } catch (error) {
-      console.warn("PeerConnection.isStale caught an error", error);
+      noisy_log(2, "PeerConnection.isStale caught an error", error);
       return true;
     }
   }

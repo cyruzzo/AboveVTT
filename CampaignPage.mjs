@@ -276,8 +276,12 @@ function inject_player_join_buttons() {
       return;
     if(characterCard.find(".ddb-campaigns-character-card-footer-links-item-edit").length > 0) {
       const characterPagePathname = characterCard.find(".ddb-campaigns-character-card-footer-links-item-view").attr('href');
-      characterCard.prepend(`<a style='color:white;background: #1b9af0;padding: 2px;' href='https://www.dndbeyond.com${characterPagePathname}?abovevtt=true' target='_blank' class='button ddb-campaigns-character-card-footer-links-item'>JOIN AboveVTT</a>`);
+      characterCard.prepend(`<a style='background: #600606; padding: 3px; filter: drop-shadow(1px 1px 0px black) drop-shadow(1px 0px 0px black); border-radius: 5px; box-shadow: inset 0px 0px 20px -10px #F00; top: -2px; position: relative; text-wrap: nowrap;' href='https://www.dndbeyond.com${characterPagePathname}?abovevtt=true' target='_blank' class='button ddb-campaigns-character-card-footer-links-item'>
+        <img style="margin-right: -4px; height:20px;filter: drop-shadow(1px 1px 0px black) drop-shadow(1px 0px 0px black);" src="chrome-extension://njhhfamdbipgbgehdgipjldkheidcjmi/assets/avtt-logo.png" title="AboveVTT Logo">
+        JOIN AboveVTT
+        </a>`);
     }
   });
+  $(".ddb-campaigns-detail-gamespace--join").parent().append(`<span style="position: absolute; transform: translate(-124px, -16px); font-weight: bold; font-size: 12px;">This is MAPS VTT, not AboveVTT</span>`)
 }
 
