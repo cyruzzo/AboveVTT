@@ -924,11 +924,6 @@ function add_journal_roll_buttons(target, tokenId=undefined, specificImage=undef
 
   const clickHandler = function(clickEvent) { 
     clickEvent.stopPropagation();
-    const rollButton = $(clickEvent.currentTarget);
-    const expression = rollButton.hasClass('avtt-roll-formula-button')
-      ? rollButton.attr('data-slash-command')
-      : `${rollButton.attr('data-exp') || ''}${rollButton.attr('data-mod') || ''}`;
-    if (window.ddbDiceRoller?.roll(expression)) return;
     roll_button_clicked(clickEvent, rollName, rollImage, tokenId ? "monster" : undefined, tokenId)
   };
 
@@ -1462,7 +1457,7 @@ async function configure_rendered_dice(renderer, physicsWorker) {
 
 function play_rendered_dice_sound({url, volume = 1} = {}) {
   if (!url) return;
-  const normalizedVolume = Number(volume);
+  const normalizedVolume = Number(volume) * (window.mydice?.data?.settings?.volume ?? 1);
   const audio = new Audio(url);
   audio.volume = Math.max(0, Math.min(1, normalizedVolume > 1 ? normalizedVolume / 100 : normalizedVolume));
   audio.play().catch(error => console.warn('Unable to play rendered dice sound', error));
