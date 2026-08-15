@@ -52,7 +52,7 @@
                         // We reset the props after resizing the window since on resize DDB resets frameloop to 'always' 
                         // Without resizing the window it stays 'demand' but we force resize events
                         // This bug exists on base DDB without AboveVTT but being in AVTT makes it worse on performance
-                        worker.postMessage({"type": "props", "payload": { "dpr": 1, "frameloop": "demand" }});
+                        setTimeout(()=>{worker.postMessage({"type": "props", "payload": { "dpr": 1, "frameloop": "demand" }})}, 60);
                         return;
                     }
                     return originalPostMessage.call(worker, message, transfer);

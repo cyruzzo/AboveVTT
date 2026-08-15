@@ -1471,24 +1471,21 @@ async function add_new_dice(){
 
 
   const canvas2 = document.createElement("canvas");
+
   canvas2.classList.add('dice-container');
 
+  const getDiceViewportSize = () => ({
+    width: Math.max(0, window.innerWidth - (is_sidebar_visible() ? get_sidebar_width() : 0)),
+    height: window.innerHeight
+  });
+  const resizeDiceCanvases = () => {
+    const {width, height} = getDiceViewportSize();
 
-  $('body').append(canvas,canvas2);
+    canvas.style.width = `${width}px`;
+    canvas.style.height = `${height}px`;
+    canvas2.style.width = `${width}px`;
+    canvas2.style.height = `${height}px`;
 
-
-  const physicsWorker = create_dice_worker(physicsWorkerUrl, 'physics');
-  const renderer = create_dice_worker(renderedWorkerUrl, 'rendered');
-
-  const offscreen = canvas.transferControlToOffscreen();
-  const offscreen2 = canvas2.transferControlToOffscreen();
-
-
-  initialize_dice_worker(physicsWorker, offscreen, 'never');
-  initialize_dice_worker(renderer, offscreen2, 'demand');
-
-  $(window).off('resize.canvas2').on('resize.canvas2', ()=>{
-    const [width, height] = [$(canvas2).width(), $(canvas2).height()];
     physicsWorker.postMessage({
         "type": "resize",
         "payload": {
@@ -1508,7 +1505,30 @@ async function add_new_dice(){
             "left": 0,
         }
     });
-  });
+  };
+  
+  const initialSize = getDiceViewportSize();
+  canvas.width = initialSize.width;
+  canvas2.width = initialSize.width;
+  canvas.height = initialSize.height;
+  canvas2.height = initialSize.height;
+
+  $('body').append(canvas,canvas2);
+
+
+  const physicsWorker = create_dice_worker(physicsWorkerUrl, 'physics');
+  const renderer = create_dice_worker(renderedWorkerUrl, 'rendered');
+
+  const offscreen = canvas.transferControlToOffscreen();
+  const offscreen2 = canvas2.transferControlToOffscreen();
+
+
+  initialize_dice_worker(physicsWorker, offscreen, 'never');
+  initialize_dice_worker(renderer, offscreen2, 'demand');
+
+
+
+  
   physicsWorker.onmessage = (e)=>{
       if(e.data.type == 'preRoll'){
           renderer.postMessage(e.data);
@@ -1522,7 +1542,7 @@ async function add_new_dice(){
       }
   }
   renderer.onmessage = event => handle_rendered_dice_message(event, renderer, physicsWorker);
-  window.dispatchEvent(new Event('resize'));
+  $(window).off('resize.canvas2').on('resize.canvas2', resizeDiceCanvases);
 }
 
 function sendPointerEvent(targetSelector='', type="pointerdown", options = {}){
