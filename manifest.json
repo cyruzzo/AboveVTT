@@ -15,7 +15,7 @@
 			"js": [
 				"Load.js"
 			],
-			"run_at": "document_start"
+			"run_at": "document_end"
 		}
 	],
 	"host_permissions": [
