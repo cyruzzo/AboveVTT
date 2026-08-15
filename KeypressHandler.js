@@ -17,6 +17,7 @@ document.addEventListener('keydown', (e) => {
     e.stopImmediatePropagation();
   }
 }, true);
+document.addEventListener('keydown', pcTemplateTabKey);
 Mousetrap.bind('c', function () {       //combat tracker
     $('#combat_button').click()
 });
@@ -996,4 +997,76 @@ async function avttHandleFilePickerPaste(e) {
         }
     }
     return false;
+}
+
+
+function pcTemplateFocusTarget(sheetEl) {
+    const targets = [];
+    sheetEl.querySelectorAll('td, th, [contenteditable]:not(a)').forEach((el) => {
+        if (el.classList.contains('table-row-drag-handle') || el.classList.contains('header-spacer') || el.classList.contains('add-table-row')) {
+            return;
+        }
+        if (el.offsetParent === null) {
+            return; // hidden
+        }
+        // use isContentEditable (not just the element's/table's own attribute) since editability can be
+        // inherited from a wrapping field div (e.g. .features-field, .equipment-field) rather than the <table>
+        if (!el.isContentEditable) {
+            return;
+        }
+        if (el.matches('td, th')) {
+            targets.push(el);
+        } else {
+            if (el.closest('td, th')) {
+                return; // already represented by its containing cell
+            }
+            targets.push(el);
+        }
+    });
+    return targets;
+}
+
+function placeCaretAtStart(el) {
+    if (typeof el.focus === 'function') {
+        el.focus();
+    }
+    const range = document.createRange();
+    range.setStart(el, 0);
+    range.collapse(true);
+    const selection = window.getSelection();
+    selection.removeAllRanges();
+    selection.addRange(range);
+}
+
+function pcTemplateTabKey(e) {
+    if (e.key !== 'Tab') {
+        return;
+    }
+    const selection = window.getSelection();
+    if (!selection || selection.rangeCount === 0) {
+        return;
+    }
+    let anchorEl = selection.anchorNode;
+    if (anchorEl && anchorEl.nodeType === Node.TEXT_NODE) {
+        anchorEl = anchorEl.parentElement;
+    }
+    if (!anchorEl) {
+        return;
+    }
+    const sheet = anchorEl.closest('.dnd-sheet');
+    if (!sheet) {
+        return; // not inside a stat sheet, let default Tab behavior happen
+    }
+    const current = anchorEl.closest('td, th') || anchorEl.closest('[contenteditable]:not(a)');
+    if (!current) {
+        return;
+    }
+    const targets = pcTemplateFocusTarget(sheet);
+    const currentIndex = targets.indexOf(current);
+    if (currentIndex === -1) {
+        return;
+    }
+    const nextIndex = (currentIndex + (e.shiftKey ? -1 : 1) + targets.length) % targets.length;
+    e.preventDefault();
+    placeCaretAtStart(targets[nextIndex]);
 }
