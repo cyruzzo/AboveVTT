@@ -2087,41 +2087,6 @@ function observe_character_sheet_changes(documentToObserve) {
     localStorage.setItem(`${window.gameId != undefined ? window.gameId : window.myUser}-sendToDefault`, gamelog_send_to_text());
   })
 
- if(window.charWatchForNewDicePanel)
-    window.charWatchForNewDicePanel.disconnect();
-  window.charWatchForNewDicePanel = new MutationObserver((mutations) => {
-    mutations.every(async (mutation) => {
-      if (!mutation.addedNodes) return
-
-      for (let i = 0; i < mutation.addedNodes.length; i++) {
-        if (window.charWatchForNewDicePanel.done)
-          continue;
-        let node = mutation.addedNodes[i]
-        if ((node.className == 'dice-rolling-panel' || $('.dice-rolling-panel').length > 0)) {
-          if ($('[data-floating-ui-portal]').length>0){
-            window.charWatchForNewDicePanel.done = 1;
-            window.charWatchForNewDicePanel.disconnect();
-            $('[data-floating-ui-portal], .roll-mod-container').addClass('hidden');
-            await $("[class*='DiceContainer_button']").click(); // initialize dice panel so first roll doesn't fail
-            setTimeout(async () => {
-              $("[class*='DiceContainer_button']").click();//close dice panel
-              setTimeout(() => {
-                $('[data-floating-ui-portal], .roll-mod-container').removeClass('hidden');
-                $('[data-floating-ui-portal]').off('click.waiting').on('click.waiting', `[data-dd-action-name="Roll Dice Popup > Roll Dice"]`, function () {
-                  window.diceRoller.setWaitingForRoll();
-                })
-              }, 200)
-            }, 200);
-            window.charWatchForNewDicePanel.disconnect();
-            return false;
-          }
-        }
-      }
-      return true // must return true if doesn't break
-    })
-  });
-  window.charWatchForNewDicePanel.observe(document.body, { childList: true, subtree: true, attributes: false, characterData: false });
-  
   if(window.charGamelogObserver)
     window.charGamelogObserver.disconnect();
   window.charGamelogObserver = new MutationObserver((mutations) => {

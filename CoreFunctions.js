@@ -320,19 +320,6 @@ Other Commands:
       if ($("[class*='AnchoredPopover_wrapper']").length>0 && window.diceRoller?.getWaitingForRoll())
         return;
       
-      $(".dice-die-button").each(function() {
-        let dieSize = $(this).attr("data-dice");
-        let ourDiceElement = $(`.dice-roller > div img[alt='${dieSize}']`);
-        let diceCountElement = $(this).find(".dice-die-button__count");
-        ourDiceElement.parent().find("span").remove();
-        if (diceCountElement.length == 0) {
-          ourDiceElement.removeAttr("data-count");
-        } else {
-          let diceCount = parseInt(diceCountElement.text());
-          ourDiceElement.attr("data-count", diceCount);
-          ourDiceElement.parent().append(`<span class="dice-badge">${diceCount}</span>`);
-        }
-      })
       $("[class*='AnchoredPopover_wrapper'] button[id^='d']").each(function () {
         let dieSize = this.id;
         let ourDiceElement = $(`.dice-roller > div img[alt='${dieSize}']`);
