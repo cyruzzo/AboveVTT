@@ -145,14 +145,17 @@ function add_ability_tracker_inputs_on_each(target, tokenId){
 				if (matchForEachSlot){
 					let numberFound = parseInt(matchForEachSlot[1]);
 					$(this).children().each(function (indexInArray, valueOfElement) { 
-						let spellName = $(valueOfElement).clone().text().replace(/\s/g, "")
+						const $element = $(valueOfElement);
+						if($element.is('button'))
+							return;
+						let spellName =  $element.clone().text().replace(/\s/g, "")
 						// token already has this ability tracked
 						if (token.options.abilityTracker?.[spellName] >= 0){
 							numberFound = token.options.abilityTracker[spellName]
 						}else{
 							token.track_ability(spellName, numberFound)
 						}
-						$(valueOfElement).after(
+						 $element.after(
 							createCountTracker(
 								token,
 								spellName, 
@@ -247,7 +250,7 @@ function add_ability_tracker_inputs(target, tokenId) {
 	// //Spell Slots, or technically anything with 'slot'... might be able to refine the regex a bit better...
 	target.find("p").each(function() {
 		let element = $(this);
-		if(element.find('strong').text().match(/at will|day each/gi) || element.find('.add-input').length)
+		if(element.find('strong').text().match(/at will|day each/gi) || element.find('.add-input').length || element.text().match(/^\d+\/day each/gi))
 			return;
 
 		if ($(this).find(".injected-input").length === 0) {

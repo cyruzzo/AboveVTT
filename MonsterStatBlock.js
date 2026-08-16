@@ -2200,11 +2200,11 @@ function getNonLegacySpellId(options){
         options.tooltipName = name;
     }
     if(!newSpell[0]){
-        console.warn('Legacy fallback', options)
-        newSpell = window.SPELLS_CACHE.filter(d=> d.name.toLowerCase() == options.tooltipName.toLowerCase() && d.isLegacy);
+        noisy_log('Legacy fallback', options)
+        newSpell = window.SPELLS_CACHE.filter(d=> d.definition.name.toLowerCase() == options.tooltipName.toLowerCase() && d.definition.isLegacy);
     }
     if(!newSpell[0]){
-      console.warn('Spell does not exist');
+      noisy_log('Spell does not exist');
       return false;
     }
     return newSpell[0].definition.id;
