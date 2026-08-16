@@ -24,6 +24,7 @@ $(function() {
   window.AVTT_VERSION = $("#avttversion").attr('data-version');
   $("head").append('<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons"></link>');
   $("head").append('<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />');
+  window.enableNoisyLogs = get_logging_level();
   if (is_encounters_page()) {
     window.DM = true; // the DM plays from the encounters page
     dmAvatarUrl = $('#site-bar').attr('user-avatar') != undefined ? $('#site-bar').attr('user-avatar') : $('.site-bar .user-interactions-profile-img').attr('src') != undefined ? $('.site-bar .user-interactions-profile-img').attr('src') : $('img[class*="avatarImage"]').attr('src');
@@ -1424,7 +1425,7 @@ function play_rendered_dice_sound({url, volume = 1} = {}) {
   const normalizedVolume = Number(volume) * (window.mydice?.data?.settings?.volume ?? 1);
   const audio = new Audio(url);
   audio.volume = Math.max(0, Math.min(1, normalizedVolume > 1 ? normalizedVolume / 100 : normalizedVolume));
-  audio.play().catch(error => console.warn('Unable to play rendered dice sound', error));
+  audio.play().catch(error => noisy_log(2, 'Unable to play rendered dice sound', error));
 }
 
 function handle_rendered_dice_message(event, renderer, physicsWorker) {
@@ -1603,7 +1604,13 @@ function is_spectator_page() {
 function is_encounters_page() {
   return window.location.search.includes("dm=true");
 }
-
+function get_logging_level() {
+  const match = window.location.search.match(/log=(\d+)/);
+  if (match) {
+    return parseInt(match[1]);
+  }
+  return undefined;
+}
 /** @return {boolean} true if the url has abovevtt=true, and is one of the pages that we allow the app to run on */
 function is_abovevtt_page() {
   // we only run the app on the enounters page (DM), and the characters page (players)

@@ -37,7 +37,7 @@ class DDBApi {
           nextRequest();
         }
       }else{ 
-        console.debug(`DDBApi: Request queued. Active requests: ${DDBApi.#activeRequestCount}, Queue length: ${DDBApi.#requestQueue.length}`);
+        noisy_log(3, `DDBApi: Request queued. Active requests: ${DDBApi.#activeRequestCount}, Queue length: ${DDBApi.#requestQueue.length}`);
       }
     });
   }
