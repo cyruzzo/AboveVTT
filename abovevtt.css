@@ -98,7 +98,8 @@ div#hide_interface_button [data-name]:after {
     top: 15px;
 }
 canvas.dice-rolling-panel__container,
-#character-tools-target>canvas{
+#character-tools-target>canvas,
+.dice-container{
     max-width: calc(100% - var(--sidebar-width, 340px)) !important;
     z-index: 160000 !important;
     visibility: visible;
@@ -12962,7 +12963,7 @@ p.monster-header+p {
     top: unset
 }
 .dice-container{
-    z-index: 999999999;
+    z-index: 99999999;
     pointer-events: none;
     position: fixed;
     top: 0px;
