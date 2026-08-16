@@ -1424,7 +1424,7 @@ function play_rendered_dice_sound({url, volume = 1} = {}) {
   const normalizedVolume = Number(volume) * (window.mydice?.data?.settings?.volume ?? 1);
   const audio = new Audio(url);
   audio.volume = Math.max(0, Math.min(1, normalizedVolume > 1 ? normalizedVolume / 100 : normalizedVolume));
-  audio.play().catch(error => console.warn('Unable to play rendered dice sound', error));
+  audio.play().catch(error => noisy_log(2, 'Unable to play rendered dice sound', error));
 }
 
 function handle_rendered_dice_message(event, renderer, physicsWorker) {
