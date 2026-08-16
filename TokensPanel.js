@@ -4738,7 +4738,7 @@ function register_custom_token_image_context_menu() {
                         if(placedToken !== undefined){
                             for(id of allTokenIds){
                                 const token = window.TOKEN_OBJECTS[id];
-                                if(!token)
+                                if(!token || token.isAoe())
                                     continue;
                                 token.removeAlternativeImage(imgSrc);
 
@@ -4751,7 +4751,7 @@ function register_custom_token_image_context_menu() {
                             }
                             for (id of allTokenIds) {
                                 const token = window.TOKEN_OBJECTS[id];
-                                if (!token)
+                                if (!token || token.isAoe())
                                     continue;
                                 token.options.imgsrc = "";
                                 token.place_sync_persist();
@@ -4787,7 +4787,7 @@ function register_custom_token_image_context_menu() {
                         
                         for(id of allTokenIds){
                             const token = window.TOKEN_OBJECTS[id];
-                            if (!token)
+                            if (!token || token.isAoe())
                                 continue;
                             let listItem = list_item_from_token(token);
                             persistListItem(listItem);  
@@ -4973,7 +4973,7 @@ function display_change_image_modal(placedToken) {
     /// draw tokens in the body
     for (id of allTokenIds){
         const token = window.TOKEN_OBJECTS[id];
-        if(!token)
+        if(!token || token.isAoe())
             continue;
         let listItem = list_item_from_token(token);
         let alternativeImages = token.options.imgsrc != '' ? [token.options.imgsrc] : [];
@@ -5011,8 +5011,11 @@ function display_change_image_modal(placedToken) {
                 const tokenMultiplierAdjustment = (!window.CURRENT_SCENE_DATA.scaleAdjustment) ? 1 : (window.CURRENT_SCENE_DATA.scaleAdjustment.x > window.CURRENT_SCENE_DATA.scaleAdjustment.y) ? window.CURRENT_SCENE_DATA.scaleAdjustment.x : window.CURRENT_SCENE_DATA.scaleAdjustment.y;
                 const hpps = window.CURRENT_SCENE_DATA.hpps * tokenMultiplierAdjustment;
                 for (id of allTokenIds) {
+
                     const token = window.TOKEN_OBJECTS[id];
-                    if(token){ 
+                    if(token?.isAoe())
+                        continue;
+                    if(token){
                         
                         if (token.options.alternativeImagesCustomizations != undefined) {
                             token.options = $.extend(true, {}, 
@@ -5031,7 +5034,8 @@ function display_change_image_modal(placedToken) {
 
 
                     const allToken = window.all_token_objects[id];
-                    if (allToken) {
+                    
+                    if (allToken && !allToken.isAoe()) {
                         allToken.options = {
                             ...token.options
                         }
@@ -5053,7 +5057,7 @@ function display_change_image_modal(placedToken) {
         }
         for (id of allTokenIds){
             const token = window.TOKEN_OBJECTS[id];
-            if(!token)
+            if(!token || token.isAoe())
                 continue;
             if (!token.options.alternativeImages) {
                 token.options.alternativeImages = [];
@@ -5081,7 +5085,7 @@ function display_change_image_modal(placedToken) {
         for (let i = 0; i < links.length; i++) {
             for (id of allTokenIds) {
                 const token = window.TOKEN_OBJECTS[id];
-                if (!token)
+                if (!token || token.isAoe())
                     continue;
                 if (!token.options.alternativeImages) {
                     token.options.alternativeImages = [];
@@ -5106,7 +5110,7 @@ function display_change_image_modal(placedToken) {
         for (let i = 0; i < links.length; i++) {
             for (id of allTokenIds) {
                 const token = window.TOKEN_OBJECTS[id];
-                if (!token)
+                if (!token || token.isAoe())
                     continue;
                 if (!token.options.alternativeImages) {
                     token.options.alternativeImages = [];
@@ -5132,7 +5136,7 @@ function display_change_image_modal(placedToken) {
         for (let i = 0; i < links.length; i++) {  
             for (id of allTokenIds) {
                 const token = window.TOKEN_OBJECTS[id];
-                if (!token)
+                if (!token || token.isAoe())
                     continue;
                 if (!token.options.alternativeImages) {
                     token.options.alternativeImages = [];
