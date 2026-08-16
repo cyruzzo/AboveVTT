@@ -1165,9 +1165,7 @@ async function start_above_vtt_for_players() {
     debounceResizeUI();
     if(!window.CURRENT_SCENE_DATA.is_video || !window.CURRENT_SCENE_DATA.player_map.includes('youtu')){
       $("#youtube_controls_button").css('visibility', 'hidden');
-    }
-    add_dice_stream_gamelog_button()
-     
+    }     
   });
 
   /*prevents repainting due to ddb adjusting player sheet classes and throttling it*/
