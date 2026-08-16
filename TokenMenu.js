@@ -1683,21 +1683,22 @@ function token_context_menu_expanded(tokenIds, e, crossScenePortalData) {
 		`);
 		nameWrapper.append(nameInput); // input below label
 		nameWrapper.append(nameGeneratorButton);
-
-
-		
 		body.append(nameWrapper);
-		let changeImageMenuButton = $("<button id='changeTokenImage' class='material-icons'>Change Token Image</button>")
-		body.append(changeImageMenuButton)
-		changeImageMenuButton.off().on("click", function() {
-			close_token_context_menu();
-			id = tokens[0].options.id;
-			if (!(id in window.TOKEN_OBJECTS)) {
-				return;
-			}
-			let tok = window.TOKEN_OBJECTS[id];
-			display_change_image_modal(tok);
-		});
+
+		if(!(tokens.length == 1 && tokens[0].isAoe())){
+			
+			let changeImageMenuButton = $("<button id='changeTokenImage' class='material-icons'>Change Token Image</button>")
+			body.append(changeImageMenuButton)
+			changeImageMenuButton.off().on("click", function() {
+				close_token_context_menu();
+				id = tokens[0].options.id;
+				if (!(id in window.TOKEN_OBJECTS)) {
+					return;
+				}
+				let tok = window.TOKEN_OBJECTS[id];
+				display_change_image_modal(tok);
+			});
+		}
 	}
 
 
