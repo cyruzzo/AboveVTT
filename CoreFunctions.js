@@ -234,6 +234,15 @@ function clear_selected_dice() {
   $('.dice-roller > div .dice-badge').remove();
   $('.roll-mod-container').removeClass('show');
 }
+
+function get_active_worker_keys() {
+  if(typeof window.ActiveWorkers === 'undefined' || window.ActiveWorkers === null) {
+    console.warn("Dice workers called before initialization. If happening during load most likely other players rolls.");
+    return [];
+  }
+  return Object.keys(window.ActiveWorkers);
+}
+
 /**
  * Add Dice buttons into sidebar.
  *
@@ -298,7 +307,7 @@ Other Commands:
   clearDice.off('click.diceClear').on('click.diceClear', function(e) {
     e.preventDefault();
     if(window.ActiveWorkers){
-      Object.keys(window.ActiveWorkers).forEach(key => {
+      get_active_worker_keys().forEach(key => {
         if(key.includes('dice')){
           window.ActiveWorkers[key].postMessage({
               type: "resetStore",
