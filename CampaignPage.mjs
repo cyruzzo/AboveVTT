@@ -122,7 +122,7 @@ function inject_instructions() {
   instructionsButton.click(function(e) {
     $("#campaign_banner").toggle();
   });
-  let spectatorJoinButton = $("<a style='background: #600606 !important; padding: 6px; filter: drop-shadow(1px 1px 1px black); border-radius: 5px; box-shadow: inset 0px 0px 20px -13px #F00; top: -2px; position: relative; text-wrap: nowrap; border: none;' class='above-vtt-campaignscreen-blue-button above-vtt-right-margin-5px button joinspectator btn modal-link ddb-campaigns-detail-body-listing-campaign-link'>Spectate</a>");
+  let spectatorJoinButton = $("<a style='background: #600606 !important; padding: 6px; filter: drop-shadow(1px 1px 1px black); border-radius: 5px; box-shadow: inset 0px 0px 20px -13px #F00; top: -2px; position: relative; text-wrap: nowrap; border: none; text-shadow: 1px 1px 1px #000;' class='above-vtt-campaignscreen-blue-button above-vtt-right-margin-5px button joinspectator btn modal-link ddb-campaigns-detail-body-listing-campaign-link'>Spectate</a>");
   contentDiv.append(spectatorJoinButton);
   spectatorJoinButton.click(function (e) {
     e.preventDefault();
@@ -208,7 +208,7 @@ function inject_dm_join_button() {
     </div>
   `);
 
-  let dmJoinButton = $("<a style='background: #600606 !important; padding: 6px; filter: drop-shadow(1px 1px 1px black); border-radius: 5px; box-shadow: inset 0px 0px 20px -13px #F00; top: -2px; position: relative; text-wrap: nowrap; border: none;' class='above-vtt-campaignscreen-blue-button above-vtt-right-margin-5px button joindm btn modal-link ddb-campaigns-detail-body-listing-campaign-link'>Join as DM</a>");
+  let dmJoinButton = $("<a style='background: #600606 !important; padding: 6px; filter: drop-shadow(1px 1px 1px black); border-radius: 5px; box-shadow: inset 0px 0px 20px -13px #F00; top: -2px; position: relative; text-wrap: nowrap; border: none;text-shadow: 1px 1px 1px #000;' class='above-vtt-campaignscreen-blue-button above-vtt-right-margin-5px button joindm btn modal-link ddb-campaigns-detail-body-listing-campaign-link'>Join as DM</a>");
   $(".above-vtt-content-div").append(dmJoinButton);
   dmJoinButton.click(function(e) {
     e.preventDefault();
@@ -277,7 +277,7 @@ function inject_player_join_buttons() {
       return;
     if(characterCard.find(".ddb-campaigns-character-card-footer-links-item-edit").length > 0) {
       const characterPagePathname = characterCard.find(".ddb-campaigns-character-card-footer-links-item-view").attr('href');
-      characterCard.prepend(`<a style='background: #600606; padding: 3px; filter: drop-shadow(1px 1px 1px black); border-radius: 5px; box-shadow: inset 0px 0px 20px -10px #F00; top: -2px; position: relative; text-wrap: nowrap;' href='https://www.dndbeyond.com${characterPagePathname}?abovevtt=true' target='_blank' class='button ddb-campaigns-character-card-footer-links-item'>
+      characterCard.prepend(`<a style='background: #600606; padding: 3px; filter: drop-shadow(1px 1px 1px black); border-radius: 5px; box-shadow: inset 0px 0px 20px -10px #F00; top: -2px; position: relative; text-wrap: nowrap; text-shadow: 1px 1px 1px #000;' href='https://www.dndbeyond.com${characterPagePathname}?abovevtt=true' target='_blank' class='button ddb-campaigns-character-card-footer-links-item'>
         <img style="margin-right: -4px; height:20px;filter: drop-shadow(1px 1px 0px black) drop-shadow(1px 0px 0px black);" src="${window.EXTENSION_PATH}assets/avtt-logo.png" title="AboveVTT Logo">
         JOIN AboveVTT
         </a>`);
