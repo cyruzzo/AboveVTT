@@ -103,8 +103,9 @@ class PeerManager {
       const peerError = error instanceof Error ? error
         : Object.assign(new Error(error?.message || String(error)), { type: error?.type });
 
-      console.error("PeerManager peer error", peerError);
+      noisy_log(2, "PeerManager peer error", peerError);
       if (peerErrorsRequiringRebuild.has(peerError.type)) {
+         console.error("PeerManager peer error", peerError);
         rebuild_peerManager();
       }
     });

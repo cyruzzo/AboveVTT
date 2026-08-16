@@ -1333,41 +1333,55 @@ let diceWorkerUrlsPromise;
 
 function discover_dice_worker_urls() {
   diceWorkerUrlsPromise ??= new Promise(resolve => {
-    const iframe = document.createElement('iframe');
-    let pollingInterval;
-    let timeout;
-    let settled = false;
-    const finish = workerUrls => {
-      if (settled) return;
-      settled = true;
-      clearInterval(pollingInterval);
-      clearTimeout(timeout);
-      iframe.remove();
-      resolve(workerUrls);
-    };
-    const findWorkerUrls = () => {
-      try {
-        const resourceUrls = iframe.contentWindow.performance
-          .getEntriesByType('resource')
-          .map(entry => entry.name);
-        const physicsWorkerUrl = resourceUrls.find(url => url.includes('/dice/mobile/physicsWorker.'));
-        const renderedWorkerUrl = resourceUrls.find(url => url.includes('/dice/mobile/renderedWorker.'));
-        if (physicsWorkerUrl && renderedWorkerUrl) {
-          finish({physicsWorkerUrl, renderedWorkerUrl});
+    const maxAttempts = 3;
+    const retryBaseDelay = 2000;
+    const attemptTimeout = 15000;
+    let attempt = 0;
+
+    const discover = () => {
+      attempt++;
+      const iframe = document.createElement('iframe');
+      let pollingInterval;
+      let timeout;
+      let settled = false;
+      const finish = workerUrls => {
+        if (settled) return;
+        settled = true;
+        clearInterval(pollingInterval);
+        clearTimeout(timeout);
+        iframe.remove();
+        if (workerUrls || attempt >= maxAttempts) {
+          resolve(workerUrls);
+        } else {
+          setTimeout(discover, retryBaseDelay * Math.pow(2, attempt - 1));
         }
-      } catch (error) {
-        console.debug('Dice worker URLs are not available from the My Dice iframe yet', error);
-      }
+      };
+      const findWorkerUrls = () => {
+        try {
+          const resourceUrls = iframe.contentWindow.performance
+            .getEntriesByType('resource')
+            .map(entry => entry.name);
+          const physicsWorkerUrl = resourceUrls.find(url => url.includes('/dice/mobile/physicsWorker.'));
+          const renderedWorkerUrl = resourceUrls.find(url => url.includes('/dice/mobile/renderedWorker.'));
+          if (physicsWorkerUrl && renderedWorkerUrl) {
+            finish({physicsWorkerUrl, renderedWorkerUrl});
+          }
+        } catch (error) {
+          console.debug('Dice worker URLs are not available from the My Dice iframe yet', error);
+        }
+      };
+
+      iframe.hidden = true;
+      iframe.addEventListener('load', () => {
+        findWorkerUrls();
+        pollingInterval = setInterval(findWorkerUrls, 250);
+      }, {once: true});
+      timeout = setTimeout(() => finish(undefined), attemptTimeout);
+      iframe.src = '/my-dice';
+      document.body.append(iframe);
     };
 
-    iframe.hidden = true;
-    iframe.addEventListener('load', () => {
-      findWorkerUrls();
-      pollingInterval = setInterval(findWorkerUrls, 250);
-    }, {once: true});
-    timeout = setTimeout(() => finish(undefined), 10000);
-    iframe.src = '/my-dice';
-    document.body.append(iframe);
+    discover();
   });
 
   return diceWorkerUrlsPromise;
@@ -1455,7 +1469,12 @@ function handle_rendered_dice_message(event, renderer, physicsWorker) {
 }
 
 async function add_new_dice(){
-  const {physicsWorkerUrl, renderedWorkerUrl} = await discover_dice_worker_urls();
+  const workerUrls = await discover_dice_worker_urls();
+  if (!workerUrls) {
+    console.warn('Unable to discover DDB dice worker URLs after multiple attempts');
+    return;
+  }
+  const {physicsWorkerUrl, renderedWorkerUrl} = workerUrls;
   const canvas = document.createElement("canvas");
   canvas.classList.add('dice-container');
 
