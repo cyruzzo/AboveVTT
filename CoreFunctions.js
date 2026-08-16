@@ -190,21 +190,49 @@ function build_combat_tracker_loading_indicator(subtext = "One moment while we f
   });
   return loadingIndicator.clone();
 }
-function add_dice_stream_gamelog_button(){    
-  if(window.JOINTHEDICESTREAM == undefined){
-    window.JOINTHEDICESTREAM = window.EXPERIMENTAL_SETTINGS['streamDiceRolls'];
+
+
+function update_dice_badge(diceElement, count) {
+  const $diceElement = $(diceElement);
+  const $badge = $diceElement.parent().find('.dice-badge');
+
+  if (count === 0) {
+    $diceElement.removeAttr('data-count');
+    $badge.remove();
+    return;
   }
-  /*if ($('.stream-dice-button').length == 0){
-    $(".glc-game-log>[class*='Container-Flex']").append($(`<div id="stream_dice"><div class='stream-dice-button ${window.EXPERIMENTAL_SETTINGS['streamDiceRolls'] ? `enabled` : ``}'>Dice Stream ${window.EXPERIMENTAL_SETTINGS['streamDiceRolls'] ? `Enabled` : `Disabled`}</div></div>`));
-    $(".stream-dice-button").off().on("click", function () {
-      if (window.JOINTHEDICESTREAM) {
-        update_dice_streaming_feature(false);
-      }
-      else {
-        update_dice_streaming_feature(true);
-      } 
-    })
-  }*/
+
+  $diceElement.attr('data-count', count);
+  if ($badge.length > 0) {
+    $badge.text(count);
+  } else {
+    $diceElement.parent().append(`<span class="dice-badge">${count}</span>`);
+  }
+}
+
+function get_selected_dice() {
+  return $('.dice-roller > div img[data-count]');
+}
+
+function sync_roll_mod_visibility() {
+  const $selectedDice = get_selected_dice();
+  const $modContainer = $('.roll-mod-container');
+
+  if ($selectedDice.length > 0) {
+    if (!$modContainer.hasClass('show')) {
+      $modContainer.addClass('show');
+      $modContainer.find('input').val(0);
+    }
+  } else {
+    $modContainer.removeClass('show');
+  }
+}
+
+function clear_selected_dice() {
+  const $selectedDice = get_selected_dice();
+  $selectedDice.removeAttr('data-count');
+  $('.dice-roller > div .dice-badge').remove();
+  $('.roll-mod-container').removeClass('show');
 }
 /**
  * Add Dice buttons into sidebar.
@@ -220,7 +248,6 @@ function inject_chat_buttons() {
     // make sure we only ever inject these once. This gets called a lot on the character sheet which is intentional, but just in case we accidentally call it too many times, let's log it, and return
     return;
   }
-  add_dice_stream_gamelog_button();
   const chatTextWrapper = $(`<div class='chat-text-wrapper sidebar-hover-text' data-hover="Dice Rolling Format: /cmd diceNotation action  
     '/r 1d20'
     '/roll 1d4 punch:bludgeoning damage'
@@ -296,22 +323,12 @@ Other Commands:
   gameLog.append(chatTextWrapper, languageSelect, diceRoller, clearDice);
 
   $(".dice-roller > div img").on("click", async function(e) {
-    const dataCount = $(this).attr("data-count");
-    if (dataCount === undefined) {
-      $(this).attr("data-count", 1);
-      $(this).parent().append(`<span class="dice-badge">1</span>`);
-    } else {
-      $(this).attr("data-count", parseInt(dataCount) + 1);
-      $(this).parent().append(`<span class="dice-badge">${parseInt(dataCount) + 1}</span>`);
-    }
-    if ($(".dice-roller > div img[data-count]").length > 0) {
-      if(!$(".roll-mod-container").hasClass('show')){
-        $(".roll-mod-container").addClass("show");
-        $(".roll-mod-container").find('input').val(0);
-      }
-    } else {
-      $(".roll-mod-container").removeClass("show");
-    }
+    const $this = $(this);
+    const dataCount = $this.attr("data-count");
+    const nextCount = dataCount === undefined ? 1 : parseInt(dataCount) + 1;
+
+    update_dice_badge($this, nextCount);
+    sync_roll_mod_visibility();
   });
 
   if(window.rollButtonObserver)
@@ -427,25 +444,19 @@ Other Commands:
 
   $(".dice-roller > div img").on("contextmenu", function(e) {
     e.preventDefault();
-    let dataCount = $(this).attr("data-count");
-    if (dataCount !== undefined) {
-      dataCount = parseInt(dataCount) - 1;
-      if (dataCount === 0) {
-        $(this).removeAttr("data-count");
-        $(this).parent().find("span").remove();
-      } else {
-        $(this).attr("data-count", dataCount);
-        $(this).parent().append(`<span class="dice-badge">${dataCount}</span>`);
-      }
-    }
-    if ($(".dice-roller > div img[data-count]").length > 0) {
-      if(!$(".roll-mod-container").hasClass('show')){
-        $(".roll-mod-container").addClass("show");
-        $(".roll-mod-container").find('input').val(0);
-      }
+
+    const $this = $(this);
+    const currentCount = $this.attr("data-count");
+    const nextCount = currentCount === undefined ? -1 : parseInt(currentCount) - 1;
+
+    if (nextCount === 0) {
+      $this.removeAttr('data-count');
+      $this.parent().find('.dice-badge').remove();
     } else {
-      $(".roll-mod-container").removeClass("show");
+      update_dice_badge($this, nextCount);
     }
+
+    sync_roll_mod_visibility();
   });
 
   if ($(".roll-button").length == 0) {
@@ -485,10 +496,12 @@ Other Commands:
 
     const getExpression = function(button) {
       $('[data-dd-action-name="Close Roll Dice"]').click();
-      let modValue = parseInt($('.roll-input-mod').val())
+      let modValue = parseInt($('.roll-input-mod').val()) || 0;
 
-      const rollExpression = [];
-      const diceToCount = $(".dice-roller > div img[data-count]").length>0 ? $(".dice-roller > div img[data-count]") : $('.dice-die-button__count')
+      const positiveTerms = [];
+      const negativeTerms = [];
+      const selectedDice = get_selected_dice();
+      const diceToCount = selectedDice.length > 0 ? selectedDice : $('.dice-die-button__count');
       diceToCount.each(function() {
         let count, dieType;
         if($(this).is('.dice-die-button__count')){
@@ -499,29 +512,47 @@ Other Commands:
           count = $(this).attr("data-count");
           dieType = $(this).attr("alt");
         }
+
+        const numericCount = parseInt(count);
+        if (Number.isNaN(numericCount) || numericCount === 0) {
+          return;
+        }
+
+        const normalizedTerm = `${Math.abs(numericCount)}${dieType}`;
+        if (numericCount < 0) {
+          negativeTerms.push(normalizedTerm);
+        } else {
+          positiveTerms.push(normalizedTerm);
+        }
+
         if(advDis != undefined){
-          for (let i = 0; i<count; i++){
-            rollExpression.push('2' + dieType + advDis + '1');
-          }       
+          const countValue = Math.abs(numericCount);
+          for (let i = 0; i<countValue; i++){
+            const advantageExpression = '2' + dieType + advDis + '1';
+            if (numericCount < 0) {
+              negativeTerms.push(advantageExpression);
+            } else {
+              positiveTerms.push(advantageExpression);
+            }
+          }
         }
-        else{
-          rollExpression.push(count + dieType);
-        }
-        
       });
       advDis = undefined;
       $('.dice-toolbar__dropdown-selected>div:first-of-type')?.click();
-      let expression = `${rollExpression.join("+")}${modValue<0 ? modValue : `+${modValue}`}`;
+
+      let expression = positiveTerms.join('+');
+      negativeTerms.forEach((term) => {
+        expression = expression ? `${expression}-${term}` : `0-${term}`;
+      });
+
+      expression += modValue < 0 ? `${modValue}` : `+${modValue}`;
       return expression;
     }
 
     rollButton.on("click", function (e) {
       const expression = getExpression(rollButton);
       window.diceRoller.roll(new DiceRoll(expression));
-
-      $(".roll-mod-container").removeClass("show");
-      $(".dice-roller > div img[data-count]").removeAttr("data-count");
-      $(".dice-roller > div span").remove();
+      clear_selected_dice();
     });
     rollButton.on("contextmenu", function (e) {
       e.preventDefault();
