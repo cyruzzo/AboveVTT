@@ -1431,8 +1431,6 @@ function handle_rendered_dice_message(event, renderer, physicsWorker) {
   const {type, payload} = event.data;
   if (type === 'componentMounted') {
     configure_rendered_dice(renderer, physicsWorker);
-  } else if(type === 'preRoll'){
-    renderer.postMessage(event.data);
   } else if (type === 'playSound' || type === 'PlaySound') {
     play_rendered_dice_sound(payload);
   } else if(type === 'dice/roll/fulfilled'){
@@ -1441,6 +1439,8 @@ function handle_rendered_dice_message(event, renderer, physicsWorker) {
     physicsWorker.postMessage(event.data);
   } else if(type === 'workerLog'){
     noisy_log('Dice render worker log', payload); 
+  } else if(type === 'preRoll'){
+    noisy_log('Dice render worker preRoll data', payload);
   } else {
     noisy_log('Unhandled dice render worker message', event.data);
   }
