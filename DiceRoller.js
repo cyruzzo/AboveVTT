@@ -993,7 +993,7 @@ class DiceRoller {
             this.#orderedPendingIds.push(rollId);
             if(!window.EXPERIMENTAL_SETTINGS?.['rpgRoller'] && (window.DM || !(typeof getDdb3dDiceShareToggle == 'function' && !window.DM && getDdb3dDiceShareToggle() == 'disabled'))){
                 if(window.ActiveWorkers){
-                    Object.keys(window.ActiveWorkers).forEach(key => {
+                    get_active_worker_keys().forEach(key => {
                         if(key.includes('physics')){
                             window.ActiveWorkers[key].postMessage({
                                 type: "dice/roll/deferred",
