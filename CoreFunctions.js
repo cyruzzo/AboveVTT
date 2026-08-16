@@ -1733,7 +1733,9 @@ function showErrorMessage(error, ...extraInfo) {
 
   const stack = error.stack || new Error().stack;
   error.doNotRelog = true;
-  console.error(error, ...extraInfo);
+  if (!stack.includes("console.error")) {
+    console.error(error, ...extraInfo);
+  }
   if(stack.includes('Internal Server Error') && stack.includes('AboveApi.getScene')){
     if(!window.DM){
       extraInfo.push('<br/><b>The last scene players were on may have been deleted by the DM. Ask the DM to click the player button beside an existing scene. Even if one is already highlighted click it again to update the server info.</b>')

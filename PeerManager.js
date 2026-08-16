@@ -20,6 +20,7 @@ class PeerManager {
   /** How long to suppress duplicate handshake handling for the same remote peer */
   handshakeCooldownMs = 5000;
 
+
   /** a list of ids to avoid sending cursor events to */
   skipCursorEvents = [];
 
@@ -91,9 +92,21 @@ class PeerManager {
         window.PeerManager.disconnectFromPeer(conn.peer);
       });
     });
-    this.peer.on('error', function (error) {
-      console.error("PeerManager peer error", error);
-      rebuild_peerManager();
+    this.peer.on('error', (error) => {
+      const peerErrorsRequiringRebuild = new Set([
+        "network",
+        "server-error",
+        "socket-error",
+        "socket-closed"
+      ]);
+
+      const peerError = error instanceof Error ? error
+        : Object.assign(new Error(error?.message || String(error)), { type: error?.type });
+
+      console.error("PeerManager peer error", peerError);
+      if (peerErrorsRequiringRebuild.has(peerError.type)) {
+        rebuild_peerManager();
+      }
     });
   }
 
