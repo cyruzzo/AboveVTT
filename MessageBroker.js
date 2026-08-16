@@ -1038,6 +1038,15 @@ class MessageBroker {
 			} else if (msg.eventType == "custom/myVTT/campaignData"){
 				window.AVTT_CAMPAIGN_INFO = msg.data;
 				window.MB.checkHideSceneFromPlayers();
+			} else if(msg.eventType == "custom/myVTT/aoeStyles"){
+				if(!window.DM){
+					window.AOE_STYLE_TOKENS = msg.data?.aoeStyleTokens || {};
+					window.AOE_STYLE_TOKEN_TILING = msg.data?.aoeStyleTokenTiling || {};
+					window.AOE_STYLE_TOKEN_OPACITY = msg.data?.aoeStyleTokenOpacity || {};
+					if(typeof refresh_aoe_style_menu === "function"){
+						refresh_aoe_style_menu();
+					}
+				}
 			} else if(msg.eventType == "custom/myVTT/place-extras-token"){
 				if(window.DM){
 					let left = parseInt(msg.data.centerView.x);
@@ -1409,6 +1418,9 @@ class MessageBroker {
 					window.MB.sendMessage("custom/myVTT/DMAvatar", {
 						avatar: dmAvatarUrl
 					})
+					if(typeof send_aoe_style_tokens_to_players === "function"){
+						send_aoe_style_tokens_to_players();
+					}
 				}
 
 				if (msg.data && msg.data.player_id && msg.data.pc) {

@@ -110,6 +110,20 @@ function setup_aoe_button(buttons) {
     });
 }
 
+function refresh_aoe_style_menu() {
+    const styleSelect = $("#aoe_styles");
+    if (styleSelect.length === 0) return;
+
+    const currentStyle = styleSelect.val();
+    styleSelect.empty();
+    get_available_styles().forEach(function(style) {
+        styleSelect.append($(`<option class="ddbc-tab-options__header-heading"></option>`).val(style).text(style));
+    });
+    if (get_available_styles().some(style => style === currentStyle)) {
+        styleSelect.val(currentStyle);
+    }
+}
+
 function place_aoe_token_at_token(options, token){
     const sc = parseFloat(window.CURRENT_SCENE_DATA.hpps);
     const half = sc * token.options.gridSquares/2;
@@ -327,13 +341,31 @@ function build_aoe_token_options(style, shape, countGridSquares, name = "", line
     );
     
     options.imgsrc = build_aoe_img_name(style, shape, name);
+    options.aoeImage = get_aoe_style_token_image(style);
+    options.aoeImageTiled = get_aoe_style_token_tiling(style);
+    options.aoeImageOpacity = get_aoe_style_token_opacity(style);
     return options
 }
 
 function build_aoe_token_image(token, scale, rotation){
     let tokenImageContainer = $(`<div class=token-image style='transform:scale(var(--token-scale)) rotate(var(--token-rotation))'>`);
     let aoeClassName = token.options.imgsrc.replace("class=","").trim();
-    let tokenImage = $(`<div data-img="true" class='${aoeClassName}'></div>`);
+    let tokenImage;
+    if (token.options.aoeImage) {
+        const shapeClass = aoeClassName.match(/aoe-shape-[\w-]+/)?.[0] || "";
+        tokenImage = $(`<div data-img="true" class="aoe-token-tileable ${shapeClass} div-token-image"></div>`);
+        const applyImageSizing = function() {
+            tokenImage[0].style.setProperty("background-repeat", token.options.aoeImageTiled === false ? "no-repeat" : "repeat", "important");
+            tokenImage[0].style.setProperty("background-size", token.options.aoeImageTiled === false ? "cover" : "300px", "important");
+            if (token.options.aoeImageOpacity !== undefined) {
+                tokenImage[0].style.setProperty("opacity", token.options.aoeImageOpacity, "important");
+                tokenImage[0].style.setProperty("animation", "none", "important");
+            }
+        };
+        updateTokenSrc(token.options.aoeImage, tokenImage).then(applyImageSizing);
+    } else {
+        tokenImage = $(`<div data-img="true" class='${aoeClassName}'></div>`);
+    }
 
     if (token.options.imgsrc.includes("cone")){
         tokenImageContainer.append(`<div class='aoe-border aoe-border-cone'></div>`)
