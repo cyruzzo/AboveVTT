@@ -2838,15 +2838,17 @@ function get_aoe_style_sync_data() {
   return {
     aoeStyleTokens: customization?.tokenOptions?.aoeStyleTokens || {},
     aoeStyleTokenTiling: customization?.tokenOptions?.aoeStyleTokenTiling || {},
-    aoeStyleTokenOpacity: customization?.tokenOptions?.aoeStyleTokenOpacity || {}
+    aoeStyleTokenOpacity: customization?.tokenOptions?.aoeStyleTokenOpacity || {},
+    aoeStyleTokenAnimation: customization?.tokenOptions?.aoeStyleTokenAnimation || {},
+    aoeStyleTokenBorder: customization?.tokenOptions?.aoeStyleTokenBorder || {}
   };
 }
 
-function send_aoe_style_tokens_to_players() {
+const send_aoe_style_tokens_to_players = mydebounce(function(){
   if (window.DM && window.MB) {
     window.MB.sendMessage("custom/myVTT/aoeStyles", get_aoe_style_sync_data());
   }
-}
+}, 1000); 
 
 function normalize_aoe_style_key(style) {
   return String(style || "")
@@ -2896,11 +2898,69 @@ function get_aoe_style_token_opacity(style) {
   return customization?.tokenOptions?.aoeStyleTokenEffects?.[styleKey] === false ? 1 : undefined;
 }
 
+function get_aoe_style_token_animation(style) {
+  if (typeof style !== "string") return true;
+  const styleKey = normalize_aoe_style_key(style);
+  const animated = (!window.DM && window.AOE_STYLE_TOKEN_ANIMATION)
+    ? window.AOE_STYLE_TOKEN_ANIMATION[styleKey]
+    : find_token_customization(ItemType.Folder, RootFolder.Aoe.id)?.tokenOptions?.aoeStyleTokenAnimation?.[styleKey];
+  if (typeof animated === "boolean") return animated;
+
+  return get_aoe_style_token_opacity(style) === undefined;
+}
+
+function get_aoe_style_token_border(style) {
+  if (typeof style !== "string") return true;
+  const styleKey = normalize_aoe_style_key(style);
+  if (!window.DM && window.AOE_STYLE_TOKEN_BORDER) {
+    return window.AOE_STYLE_TOKEN_BORDER[styleKey] !== false;
+  }
+  return find_token_customization(ItemType.Folder, RootFolder.Aoe.id)?.tokenOptions?.aoeStyleTokenBorder?.[styleKey] !== false;
+}
+
+function clamp_aoe_style_opacity(value) {
+  const parsed = parseFloat(value);
+  return Number.isFinite(parsed) ? Math.min(1, Math.max(0.1, parsed)) : 0.5;
+}
+
+/**
+ * Builds the grid of display toggles shown for an AoE style.
+ * @returns {object} the wrapper element and each input so callers can read/persist them
+ */
+function build_aoe_style_toggles(tiled, animated, border, opacity) {
+  const wrapper = $(`<div class="aoe-style-token-toggles"></div>`);
+  const tilingLabel = $(`<label><input type="checkbox" ${tiled ? "checked" : ""} />Tile</label>`);
+  const animationLabel = $(`<label><input type="checkbox" ${animated ? "checked" : ""} />Opacity animation</label>`);
+  const borderLabel = $(`<label><input type="checkbox" ${border ? "checked" : ""} />Border</label>`);
+  const opacityLabel = $(`<label>Opacity<input class="aoe-style-token-opacity" type="number" min="0.1" max="1" step="0.05" value="${opacity ?? 0.5}" title="Opacity from 0.1 to 1" /></label>`);
+  wrapper.append(tilingLabel, animationLabel, borderLabel, opacityLabel);
+  wrapper.on("mousedown click", function(mouseEvent) {
+    mouseEvent.stopPropagation();
+  });
+
+  const controls = {
+    wrapper,
+    tiling: tilingLabel.find("input"),
+    animation: animationLabel.find("input"),
+    border: borderLabel.find("input"),
+    opacity: opacityLabel.find("input")
+  };
+  const syncOpacityAvailability = function() {
+    const animating = controls.animation.prop("checked");
+    controls.opacity.prop("disabled", animating);
+    opacityLabel.toggleClass("disabled", animating);
+  };
+  controls.animation.on("change", syncOpacityAvailability);
+  syncOpacityAvailability();
+  return controls;
+}
+
 /**
  * Displays a draggable window that allows the DM to assign a token image to be used
  * in place of the default AoE style for each available style.
  */
-function edit_aoe_style_tokens() {
+function edit_aoe_style_tokens(restoreState = {}) {
+  const { scrollTop = 0, width = '350px', height, top, left = 'calc(100% - 700px)' } = restoreState;
   $('#aoeStyleTokenWindow .title_bar_close_button').click();
 
   const customization = find_or_create_token_customization(ItemType.Folder, RootFolder.Aoe.id, RootFolder.Aoe.id, RootFolder.Aoe.id);
@@ -2913,8 +2973,14 @@ function edit_aoe_style_tokens() {
   if (typeof customization.tokenOptions.aoeStyleTokenOpacity !== "object" || customization.tokenOptions.aoeStyleTokenOpacity === null) {
     customization.tokenOptions.aoeStyleTokenOpacity = {};
   }
+  if (typeof customization.tokenOptions.aoeStyleTokenAnimation !== "object" || customization.tokenOptions.aoeStyleTokenAnimation === null) {
+    customization.tokenOptions.aoeStyleTokenAnimation = {};
+  }
+  if (typeof customization.tokenOptions.aoeStyleTokenBorder !== "object" || customization.tokenOptions.aoeStyleTokenBorder === null) {
+    customization.tokenOptions.aoeStyleTokenBorder = {};
+  }
 
-  const container = find_or_create_generic_draggable_window(`aoeStyleTokenWindow`, "Adjust AoE Styles", false, false, undefined, '350px', undefined, undefined, 'calc(100% - 700px)', false, 'input, button, select, option, textarea, .aoe-style-token-listing', false, true);
+  const container = find_or_create_generic_draggable_window(`aoeStyleTokenWindow`, "Adjust AoE Styles", false, false, undefined, width, height, top, left, false, 'input, button, select, option, textarea, .aoe-style-token-listing', false, true);
 
   const body = $(`<div class="encounter-body aoe-style-token-body"></div>`);
   const listing = $(`<div class="encounter-listing aoe-style-token-listing"></div>`);
@@ -2947,11 +3013,27 @@ function edit_aoe_style_tokens() {
     send_aoe_style_tokens_to_players();
   };
 
+  const saveStyleAnimation = function(style, animated) {
+    customization.tokenOptions.aoeStyleTokenAnimation[normalize_aoe_style_key(style)] = animated;
+    customization.setTokenOption("aoeStyleTokenAnimation", customization.tokenOptions.aoeStyleTokenAnimation);
+    persist_token_customization(customization);
+    send_aoe_style_tokens_to_players();
+  };
+
+  const saveStyleBorder = function(style, border) {
+    customization.tokenOptions.aoeStyleTokenBorder[normalize_aoe_style_key(style)] = border;
+    customization.setTokenOption("aoeStyleTokenBorder", customization.tokenOptions.aoeStyleTokenBorder);
+    persist_token_customization(customization);
+    send_aoe_style_tokens_to_players();
+  };
+
   get_available_styles().forEach(function(style) {
     const styleKey = normalize_aoe_style_key(style);
     const currentImage = customization.tokenOptions.aoeStyleTokens[styleKey] || "";
     const currentTiling = customization.tokenOptions.aoeStyleTokenTiling[styleKey] !== false;
     const currentOpacity = get_aoe_style_token_opacity(style);
+    const currentAnimated = get_aoe_style_token_animation(style);
+    const currentBorder = get_aoe_style_token_border(style);
 
     const row = $(`<div class="sidebar-list-item-row aoe-style-token-row"></div>`);
     const rowItem = $(`<div class="sidebar-list-item-row-item"></div>`);
@@ -2961,25 +3043,18 @@ function edit_aoe_style_tokens() {
       : $(`<div data-img="true" class="aoe-token-tileable aoe-style-${styleKey} aoe-shape-circle"></div>`);
     if (currentImage.length > 0) {
       updateTokenSrc(currentImage, preview, false).then(function() {
-        preview[0].style.setProperty("background-repeat", currentTiling ? "repeat" : "no-repeat", "important");
-        preview[0].style.setProperty("background-size", currentTiling ? "100px" : "cover", "important");
-        if (currentOpacity !== undefined) {
-          preview[0].style.setProperty("opacity", currentOpacity, "important");
-          preview[0].style.setProperty("animation", "none", "important");
-        }
+        apply_aoe_style_display(preview, { tiled: currentTiling, opacity: currentOpacity, animated: currentAnimated }, "100px");
       });
+    } else {
+      apply_aoe_style_display(preview, { opacity: currentOpacity, animated: currentAnimated });
     }
     imgHolder.append(preview);
 
     const details = $(`<div class="sidebar-list-item-row-details"></div>`);
     details.append(`<div class="sidebar-list-item-row-details-title">${style}</div>`);
     const input = $(`<input class="aoe-style-token-input" type="text" placeholder="https://..." value="${currentImage}" />`);
-    const tilingLabel = $(`<label class="aoe-style-token-tiling-label"><input type="checkbox" ${currentTiling ? "checked" : ""} /> Tile image</label>`);
-    const tilingInput = tilingLabel.find("input");
-    const opacityInput = $(`<label class="aoe-style-token-opacity-label">Opacity <input class="aoe-style-token-opacity" type="number" min="0.1" max="1" step="0.05" value="${currentOpacity ?? 0.5}" title="Opacity from 0.1 to 1" /></label>`);
-    const opacityField = opacityInput.find("input");
-    details.append(input);
-    details.append(tilingLabel, opacityInput);
+    const toggles = build_aoe_style_toggles(currentTiling, currentAnimated, currentBorder, currentOpacity);
+    details.append(input, toggles.wrapper);
 
     const clearButton = $(`<button class="removeItem" title="Use default style" style="font-size:24px;"><svg class="delSVG" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M0 0h24v24H0V0z" fill="none"></path><path d="M16 9v10H8V9h8m-1.5-6h-5l-1 1H5v2h14V4h-3.5l-1-1zM18 7H6v12c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7z"></path></svg></button>`);
 
@@ -3008,16 +3083,18 @@ function edit_aoe_style_tokens() {
     input.on("mousedown click", function(mouseEvent) {
       mouseEvent.stopPropagation();
     });
-    tilingLabel.on("mousedown click", function(mouseEvent) {
-      mouseEvent.stopPropagation();
+    toggles.tiling.on("change", function() {
+      saveStyleTiling(style, toggles.tiling.prop("checked"));
     });
-    tilingInput.on("change", function() {
-      saveStyleTiling(style, tilingInput.prop("checked"));
+    toggles.animation.on("change", function() {
+      saveStyleAnimation(style, toggles.animation.prop("checked"));
     });
-    opacityField.on("change", function() {
-      const parsedOpacity = parseFloat(opacityField.val());
-      const opacity = Number.isFinite(parsedOpacity) ? Math.min(1, Math.max(0.1, parsedOpacity)) : 0.5;
-      opacityField.val(opacity);
+    toggles.border.on("change", function() {
+      saveStyleBorder(style, toggles.border.prop("checked"));
+    });
+    toggles.opacity.on("change", function() {
+      const opacity = clamp_aoe_style_opacity(toggles.opacity.val());
+      toggles.opacity.val(opacity);
       saveStyleOpacity(style, opacity);
     });
 
@@ -3054,12 +3131,9 @@ function edit_aoe_style_tokens() {
     const inputDetails = $(`<div class="sidebar-list-item-row-details aoe-style-token-input-details"></div>`);
     const styleNameInput = $(`<input class="aoe-style-token-input aoe-style-token-name-input" type="text" placeholder="Custom style name" />`);
     const imageInput = $(`<input class="aoe-style-token-input aoe-style-token-image-input" type="text" placeholder="https://..." />`);
-    const tilingLabel = $(`<label class="aoe-style-token-tiling-label"><input type="checkbox" checked /> Tile image</label>`);
-    const tilingInput = tilingLabel.find("input");
-    const opacityInput = $(`<label class="aoe-style-token-opacity-label">Opacity <input class="aoe-style-token-opacity" type="number" min="0.1" max="1" step="0.05" value="0.5" title="Opacity from 0.1 to 1" /></label>`);
-    const opacityField = opacityInput.find("input");
-    const saveButton = $(`<button class="avtt-small-settings-edit aoe-style-token-save-button" type="button" title="Save custom AoE style" aria-label="Save custom AoE style">Save</button>`);
-    inputDetails.append(styleNameInput, imageInput, tilingLabel, opacityInput);
+    const toggles = build_aoe_style_toggles(true, true, true, 0.5);
+    const saveButton = $(`<button class="sidebar-panel-footer-button aoe-style-token-save-button" type="button" title="Save custom AoE style" aria-label="Save custom AoE style">Save</button>`);
+    inputDetails.append(styleNameInput, imageInput, toggles.wrapper);
     inputRowItem.append(inputDetails, saveButton);
     inputRow.append(inputRowItem);
     inputRow.insertBefore(newStyleRow);
@@ -3079,9 +3153,10 @@ function edit_aoe_style_tokens() {
       }
       const parsedImage = await parse_img(imageValue);
       saveStyleImage(styleKey, parsedImage);
-      saveStyleTiling(styleKey, tilingInput.prop("checked"));
-      const parsedOpacity = parseFloat(opacityField.val());
-      saveStyleOpacity(styleKey, Number.isFinite(parsedOpacity) ? Math.min(1, Math.max(0.1, parsedOpacity)) : 0.5);
+      saveStyleTiling(styleKey, toggles.tiling.prop("checked"));
+      saveStyleAnimation(styleKey, toggles.animation.prop("checked"));
+      saveStyleBorder(styleKey, toggles.border.prop("checked"));
+      saveStyleOpacity(styleKey, clamp_aoe_style_opacity(toggles.opacity.val()));
       if (typeof refresh_aoe_style_menu === "function") {
         refresh_aoe_style_menu();
       }
@@ -3111,11 +3186,20 @@ function edit_aoe_style_tokens() {
   });
 
   container.off('redrawListing').on('redrawListing', function() {
+    const windowStyle = container[0].style;
+    const restoreState = {
+      scrollTop: listing.scrollTop(),
+      width: windowStyle.width || undefined,
+      height: windowStyle.height || undefined,
+      top: windowStyle.top || undefined,
+      left: windowStyle.left || undefined
+    };
     close_and_cleanup_generic_draggable_window('aoeStyleTokenWindow');
-    edit_aoe_style_tokens();
+    edit_aoe_style_tokens(restoreState);
   });
 
   container.append(body);
+  listing.scrollTop(scrollTop);
 }
 
 /**

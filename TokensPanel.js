@@ -3915,17 +3915,16 @@ function redraw_token_images_in_modal(sidebarPanel, listItem, placedToken, drawI
         batch.forEach(imageUrl => {
             const tokenDiv = build_token_div_for_sidebar_modal(imageUrl, listItem, placedToken);
             if (listItem?.isTypeAoe()) {
-                const aoeImage = get_aoe_style_token_image(tokenDiv.attr("data-style"));
+                const styleKey = tokenDiv.attr("data-style");
+                const aoeImage = get_aoe_style_token_image(styleKey);
                 const aoeImageTarget = tokenDiv.find(".div-token-image");
                 if (aoeImage && aoeImageTarget.length > 0) {
                     updateTokenSrc(aoeImage, aoeImageTarget).then(function() {
-                        aoeImageTarget[0].style.setProperty("background-repeat", get_aoe_style_token_tiling(tokenDiv.attr("data-style")) ? "repeat" : "no-repeat", "important");
-                        aoeImageTarget[0].style.setProperty("background-size", get_aoe_style_token_tiling(tokenDiv.attr("data-style")) ? "300px" : "cover", "important");
-                        const opacity = get_aoe_style_token_opacity(tokenDiv.attr("data-style"));
-                        if (opacity !== undefined) {
-                            aoeImageTarget[0].style.setProperty("opacity", opacity, "important");
-                            aoeImageTarget[0].style.setProperty("animation", "none", "important");
-                        }
+                        apply_aoe_style_display(aoeImageTarget, {
+                            tiled: get_aoe_style_token_tiling(styleKey),
+                            opacity: get_aoe_style_token_opacity(styleKey),
+                            animated: get_aoe_style_token_animation(styleKey)
+                        });
                     });
                 }
             }
