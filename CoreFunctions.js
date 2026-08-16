@@ -1431,9 +1431,15 @@ function handle_rendered_dice_message(event, renderer, physicsWorker) {
   const {type, payload} = event.data;
   if (type === 'componentMounted') {
     configure_rendered_dice(renderer, physicsWorker);
+  } else if(type === 'preRoll'){
+    renderer.postMessage(event.data);
   } else if (type === 'playSound' || type === 'PlaySound') {
     play_rendered_dice_sound(payload);
-  } else {
+  } else if(type === 'dice/roll/fulfilled'){
+    window.diceRoller.sendNewFulfilled();
+  } else if(type === 'removeRoll'){
+    physicsWorker.postMessage(event.data);
+  }else {
     console.debug('Unhandled rendered dice message', event.data);
   }
 }
@@ -1505,7 +1511,6 @@ async function add_new_dice(){
   
   physicsWorker.onmessage = (e)=>{
       if(e.data.type == 'preRoll'){
-          renderer.postMessage(e.data);
           physicsWorker.postMessage({
               ...e.data,
               type: 'startRoll'
