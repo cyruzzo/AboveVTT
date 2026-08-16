@@ -1321,36 +1321,6 @@ function process_monitored_logs() {
 
 
 
-/**WIP This injects the new dice into the page
- * Needs to get user Data instead of static data here
- * 
- */
-function normalize_rendered_dice_animations(manifest) {
-  const normalizedManifest = $.extend(true, {}, manifest);
-
-  for (const dieDefinition of Object.values(normalizedManifest)) {
-    if (!Array.isArray(dieDefinition?.animations)) continue;
-
-    dieDefinition.animations = dieDefinition.animations.map(animation => {
-      if (!animation?.triggerStart || animation.triggerStart === 'dieRemoved') return animation;
-      const requiresRemovalTrigger = animation.loop || animation.definition?.toLowerCase() === 'cleanup';
-      if (!requiresRemovalTrigger) return animation;
-
-      const triggerStops = Array.isArray(animation.triggerStop)
-        ? animation.triggerStop
-        : animation.triggerStop ? [animation.triggerStop] : [];
-      if (triggerStops.includes('dieRemoved')) return animation;
-
-      return {
-        ...animation,
-        triggerStop: [...triggerStops, 'dieRemoved']
-      };
-    });
-  }
-
-  return normalizedManifest;
-}
-
 let diceWorkerUrlsPromise;
 
 function discover_dice_worker_urls() {
@@ -1444,8 +1414,8 @@ async function configure_rendered_dice(renderer, physicsWorker) {
       particlesEnabled: userSettings?.particlesEnabled,
       volume: userSettings?.volume
     }
-  });
-  physicsWorker.postMessage({type: 'props', payload: {dpr: 1, frameloop: 'never'}});
+  }); 
+     
   renderer.postMessage({type: 'props', payload: {dpr: 1, frameloop: 'demand'}});
 }
 
@@ -1463,8 +1433,16 @@ function handle_rendered_dice_message(event, renderer, physicsWorker) {
     configure_rendered_dice(renderer, physicsWorker);
   } else if (type === 'playSound' || type === 'PlaySound') {
     play_rendered_dice_sound(payload);
+  } else if(type === 'dice/roll/fulfilled'){
+    window.diceRoller.sendNewFulfilled();
+  } else if(type === 'removeRoll'){
+    physicsWorker.postMessage(event.data);
+  } else if(type === 'workerLog'){
+    noisy_log('Dice render worker log', payload); 
+  } else if(type === 'preRoll'){
+    noisy_log('Dice render worker preRoll data', payload);
   } else {
-    console.debug('Unhandled rendered dice message', event.data);
+    noisy_log('Unhandled dice render worker message', event.data);
   }
 }
 
@@ -1535,14 +1513,18 @@ async function add_new_dice(){
   
   physicsWorker.onmessage = (e)=>{
       if(e.data.type == 'preRoll'){
-          renderer.postMessage(e.data);
-          physicsWorker.postMessage({
-              ...e.data,
-              type: 'startRoll'
-          })
+        physicsWorker.postMessage({
+            ...e.data,
+            type: 'startRoll'
+        })
       }   
-      if(e.data.type == 'renderDice'){
-          renderer.postMessage(e.data)
+      else  if (e.data.type === 'componentMounted') {
+        physicsWorker.postMessage({type: 'props', payload: {dpr: 1, frameloop: 'never'}}); 
+      }
+      else if(e.data.type == 'renderDice'){
+        renderer.postMessage(e.data)
+      } else {
+        noisy_log('Unhandled physics worker message', e.data);
       }
   }
   renderer.onmessage = event => handle_rendered_dice_message(event, renderer, physicsWorker);

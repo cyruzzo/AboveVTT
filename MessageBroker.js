@@ -984,6 +984,14 @@ class MessageBroker {
 									eventType: "dice/roll/deferred"
 								}
 							})
+						} if(key.includes('render')){
+							window.ActiveWorkers[key].postMessage({
+								type: "preRoll",
+								payload: {
+									...msg,
+									eventType: "preRoll"
+								}
+							})
 						}
 					});
 				}
