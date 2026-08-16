@@ -443,18 +443,22 @@ class DiceContextMenuRow {
                 <div class="dcm-row-title">
                     <span>${this.title}</span>
                 </div>
+                ${svg_checkmark()}
             </div>
         `);
-        if (this.isChecked) {
-            rowHtml.append(svg_checkmark());
+        if (!this.isChecked) {
+            rowHtml.find(".dcm-checkmark").css("visibility", "hidden");
         }
         rowHtml.on("click", function(rowClickEvent) {
+            rowClickEvent.stopPropagation();
+        });
+        rowHtml.on("pointerdown touchstart", function(rowClickEvent) {
             rowClickEvent.stopPropagation();
             let clickedRow = $(rowClickEvent.currentTarget);
             let clickedRowIndex = clickedRow.attr("data-index");
             let clickedSectionIndex = clickedRow.attr("data-section-index");
-            clickedRow.parent().find(".dcm-checkmark").remove();
-            clickedRow.append(svg_checkmark());
+            clickedRow.parent().find(".dcm-checkmark").css("visibility", "hidden");
+            clickedRow.find(".dcm-checkmark").css("visibility", "visible");   
             window.dcm.didClickRow(clickedSectionIndex, clickedRowIndex);
         });
         return rowHtml;

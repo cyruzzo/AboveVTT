@@ -766,6 +766,7 @@ function inject_dm_roll_default_menu(){
     <style>
       .glc-game-log .gameLogSendToMenu li div:last-of-type svg{
         visibility: hidden;
+        width:20px;
       }
       .glc-game-log .gameLogSendToMenu li.selected div:last-of-type svg{
         visibility: visible;

@@ -12982,6 +12982,9 @@ p.monster-header+p {
     padding: 2px;
     border-radius: 5px;
 }
+.body-rpgcharacter .clear-dice{
+    top:10px;
+}
 .dnd-page [contenteditable="true"]{
     cursor: text;
 }
