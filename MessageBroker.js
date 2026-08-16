@@ -721,7 +721,7 @@ class MessageBroker {
 
 					setTimeout(function () {
 						let target;
-						let listItems = $(`ol>li[class*='GameLogEntry']`);
+						let listItems = $(`ol>li[class*='GameLogEntry']:not(:has([class*='Pending'], .damageButtonsContainer))`);
 						for (let i = 0; i < listItems.length; i++) {
 							if ($(listItems[i]).find('[class*="Pending"]').length > 0)
 								continue;
@@ -975,7 +975,7 @@ class MessageBroker {
 				const showSelfRoll = !is_spectator_page() && msg.messageTarget == `${window.myUser}`;
 				const showDMRoll = window.DM && (msg.messageTarget == 'dm' || msg.messageTarget == 'dungeonmaster');
 				if(ddb3dDiceShareToggle == true && (msg.messageTarget == window.gameId || showSelfRoll || showDMRoll)){
-					Object.keys(window.ActiveWorkers).forEach(key => {
+					get_active_worker_keys().forEach(key => {
 						if(key.includes('physics')){
 							window.ActiveWorkers[key].postMessage({
 								type: "dice/roll/deferred",
