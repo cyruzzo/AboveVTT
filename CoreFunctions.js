@@ -1321,36 +1321,6 @@ function process_monitored_logs() {
 
 
 
-/**WIP This injects the new dice into the page
- * Needs to get user Data instead of static data here
- * 
- */
-function normalize_rendered_dice_animations(manifest) {
-  const normalizedManifest = $.extend(true, {}, manifest);
-
-  for (const dieDefinition of Object.values(normalizedManifest)) {
-    if (!Array.isArray(dieDefinition?.animations)) continue;
-
-    dieDefinition.animations = dieDefinition.animations.map(animation => {
-      if (!animation?.triggerStart || animation.triggerStart === 'dieRemoved') return animation;
-      const requiresRemovalTrigger = animation.loop || animation.definition?.toLowerCase() === 'cleanup';
-      if (!requiresRemovalTrigger) return animation;
-
-      const triggerStops = Array.isArray(animation.triggerStop)
-        ? animation.triggerStop
-        : animation.triggerStop ? [animation.triggerStop] : [];
-      if (triggerStops.includes('dieRemoved')) return animation;
-
-      return {
-        ...animation,
-        triggerStop: [...triggerStops, 'dieRemoved']
-      };
-    });
-  }
-
-  return normalizedManifest;
-}
-
 let diceWorkerUrlsPromise;
 
 function discover_dice_worker_urls() {
