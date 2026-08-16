@@ -3894,7 +3894,13 @@ function redraw_token_images_in_modal(sidebarPanel, listItem, placedToken, drawI
         modalBody.append(tokenDiv);
     }
     if (listItem?.type === ItemType.Aoe) {
-        const withoutDefault = get_available_styles().filter(aoeStyle => aoeStyle !== "Default")
+        const configuredStyles = typeof get_aoe_style_tokens === "function"
+            ? Object.keys(get_aoe_style_tokens())
+            : [];
+        const withoutDefault = [...new Set([
+            ...get_available_styles(),
+            ...configuredStyles
+        ])].filter(aoeStyle => aoeStyle.toLowerCase() !== "default");
         alternativeImages = withoutDefault.map(aoeStyle => {
           return `class=aoe-token-tileable aoe-style-${aoeStyle.toLowerCase()} aoe-shape-${listItem.shape}`
         })
@@ -3908,6 +3914,21 @@ function redraw_token_images_in_modal(sidebarPanel, listItem, placedToken, drawI
 
         batch.forEach(imageUrl => {
             const tokenDiv = build_token_div_for_sidebar_modal(imageUrl, listItem, placedToken);
+            if (listItem?.isTypeAoe()) {
+                const aoeImage = get_aoe_style_token_image(tokenDiv.attr("data-style"));
+                const aoeImageTarget = tokenDiv.find(".div-token-image");
+                if (aoeImage && aoeImageTarget.length > 0) {
+                    updateTokenSrc(aoeImage, aoeImageTarget).then(function() {
+                        aoeImageTarget[0].style.setProperty("background-repeat", get_aoe_style_token_tiling(tokenDiv.attr("data-style")) ? "repeat" : "no-repeat", "important");
+                        aoeImageTarget[0].style.setProperty("background-size", get_aoe_style_token_tiling(tokenDiv.attr("data-style")) ? "300px" : "cover", "important");
+                        const opacity = get_aoe_style_token_opacity(tokenDiv.attr("data-style"));
+                        if (opacity !== undefined) {
+                            aoeImageTarget[0].style.setProperty("opacity", opacity, "important");
+                            aoeImageTarget[0].style.setProperty("animation", "none", "important");
+                        }
+                    });
+                }
+            }
             const image = parse_img(imageUrl);
             if ((currentlySelectedToken && image === currentlySelectedToken) || (selectedTokenImage && image === selectedTokenImage)) {
                 tokenDiv.toggleClass('selected', true);
@@ -3956,7 +3977,9 @@ function build_alternative_image_for_modal(image, options, placedToken, listItem
         mergedOptions = $.extend(true, {}, mergedOptions, placedToken.options);
     }
     if (listItem?.isTypeAoe()) {
-        mergedOptions = $.extend(true, {}, mergedOptions, build_aoe_token_options(listItem.style, listItem.shape, listItem.size, listItem.name));
+        const styleMatch = typeof image === "string" ? image.match(/(?:^|\s)aoe-style-([\w-]+)/i) : undefined;
+        const aoeStyle = styleMatch ? styleMatch[1] : listItem.style;
+        mergedOptions = $.extend(true, {}, mergedOptions, build_aoe_token_options(aoeStyle, listItem.shape, listItem.size, listItem.name));
     }
     mergedOptions.imgsrc = image;
     let tokenDiv = build_example_token(mergedOptions);
@@ -3972,7 +3995,10 @@ function build_alternative_image_for_modal(image, options, placedToken, listItem
     }
     if (listItem?.isTypeAoe()) {
         tokenDiv.attr("data-img", true);
-        tokenDiv.attr("data-style", image.match(/aoe-style-\w+/gm)[0].replace(" aoe-style-",""));
+        const styleMatch = image.match(/(?:^|\s)aoe-style-([\w-]+)/i);
+        if (styleMatch) {
+            tokenDiv.attr("data-style", styleMatch[1]);
+        }
         tokenDiv.attr("data-size", listItem.size);
         tokenDiv.attr("data-shape", listItem.shape);
     }

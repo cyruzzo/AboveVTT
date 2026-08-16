@@ -1743,7 +1743,14 @@ function build_sidebar_list_row(listItem) {
           create_folder_inside(clickedItem);
         });     
       }
-      
+      if(listItem.isRootFolder() && listItem.id == RootFolder.Aoe.id){
+        let addFolder = $(`<button class="token-row-button" title="Assign tokens to AoE Templates"><span class="material-icons">image</span></button>`);
+        rowItem.append(addFolder);
+        addFolder.on("click", function (clickEvent) {
+          clickEvent.stopPropagation();
+          edit_aoe_style_tokens();
+        }); 
+      }
       if(listItem.folderType === ItemType.PC && listItem.id !== RootFolder.Players.id){
         let popoutButton = $(`<div class="players-popout-button subfolder-popout"><svg xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 0 24 24" width="18px" fill="#000000"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M18 19H6c-.55 0-1-.45-1-1V6c0-.55.45-1 1-1h5c.55 0 1-.45 1-1s-.45-1-1-1H5c-1.11 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-6c0-.55-.45-1-1-1s-1 .45-1 1v5c0 .55-.45 1-1 1zM14 4c0 .55.45 1 1 1h2.59l-9.13 9.13c-.39.39-.39 1.02 0 1.41.39.39 1.02.39 1.41 0L19 6.41V9c0 .55.45 1 1 1s1-.45 1-1V4c0-.55-.45-1-1-1h-5c-.55 0-1 .45-1 1z"/></svg></div>`);
         row.append(popoutButton);
@@ -2813,6 +2820,304 @@ function edit_encounter(clickEvent) {
   encounterContainer.trigger('redrawListing');
 
 }
+/**
+ * Returns the map of AoE style name (lowercase) to token image url that the DM has assigned.
+ * @returns {object} a map of styleName -> imageUrl
+ */
+function get_aoe_style_tokens() {
+  if (!window.DM && window.AOE_STYLE_TOKENS) {
+    return window.AOE_STYLE_TOKENS;
+  }
+  const customization = find_token_customization(ItemType.Folder, RootFolder.Aoe.id);
+  const assigned = customization?.tokenOptions?.aoeStyleTokens;
+  return (typeof assigned === "object" && assigned !== null) ? assigned : {};
+}
+
+function get_aoe_style_sync_data() {
+  const customization = find_token_customization(ItemType.Folder, RootFolder.Aoe.id);
+  return {
+    aoeStyleTokens: customization?.tokenOptions?.aoeStyleTokens || {},
+    aoeStyleTokenTiling: customization?.tokenOptions?.aoeStyleTokenTiling || {},
+    aoeStyleTokenOpacity: customization?.tokenOptions?.aoeStyleTokenOpacity || {}
+  };
+}
+
+function send_aoe_style_tokens_to_players() {
+  if (window.DM && window.MB) {
+    window.MB.sendMessage("custom/myVTT/aoeStyles", get_aoe_style_sync_data());
+  }
+}
+
+function normalize_aoe_style_key(style) {
+  return String(style || "")
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9_-]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
+/**
+ * Returns the image url assigned to the given AoE style, or undefined if the default style should be used.
+ * @param style {string} the AoE style name
+ * @returns {string|undefined} the assigned image url
+ */
+function get_aoe_style_token_image(style) {
+  if (typeof style !== "string") return undefined;
+  const image = get_aoe_style_tokens()[normalize_aoe_style_key(style)];
+  return (typeof image === "string" && image.length > 0) ? image : undefined;
+}
+
+/**
+ * Returns whether the assigned image for the given AoE style should repeat.
+ * Existing assignments default to tiled for compatibility with the built-in styles.
+ * @param style {string} the AoE style name
+ * @returns {boolean}
+ */
+function get_aoe_style_token_tiling(style) {
+  if (typeof style !== "string") return true;
+  if (!window.DM && window.AOE_STYLE_TOKEN_TILING) {
+    return window.AOE_STYLE_TOKEN_TILING[normalize_aoe_style_key(style)] !== false;
+  }
+  const customization = find_token_customization(ItemType.Folder, RootFolder.Aoe.id);
+  const tiling = customization?.tokenOptions?.aoeStyleTokenTiling?.[normalize_aoe_style_key(style)];
+  return tiling !== false;
+}
+
+function get_aoe_style_token_opacity(style) {
+  if (typeof style !== "string") return undefined;
+  const styleKey = normalize_aoe_style_key(style);
+  if (!window.DM && window.AOE_STYLE_TOKEN_OPACITY) {
+    const opacity = window.AOE_STYLE_TOKEN_OPACITY[styleKey];
+    return typeof opacity === "number" ? opacity : undefined;
+  }
+  const customization = find_token_customization(ItemType.Folder, RootFolder.Aoe.id);
+  const opacity = customization?.tokenOptions?.aoeStyleTokenOpacity?.[styleKey];
+  if (typeof opacity === "number") return opacity;
+  return customization?.tokenOptions?.aoeStyleTokenEffects?.[styleKey] === false ? 1 : undefined;
+}
+
+/**
+ * Displays a draggable window that allows the DM to assign a token image to be used
+ * in place of the default AoE style for each available style.
+ */
+function edit_aoe_style_tokens() {
+  $('#aoeStyleTokenWindow .title_bar_close_button').click();
+
+  const customization = find_or_create_token_customization(ItemType.Folder, RootFolder.Aoe.id, RootFolder.Aoe.id, RootFolder.Aoe.id);
+  if (typeof customization.tokenOptions.aoeStyleTokens !== "object" || customization.tokenOptions.aoeStyleTokens === null) {
+    customization.tokenOptions.aoeStyleTokens = {};
+  }
+  if (typeof customization.tokenOptions.aoeStyleTokenTiling !== "object" || customization.tokenOptions.aoeStyleTokenTiling === null) {
+    customization.tokenOptions.aoeStyleTokenTiling = {};
+  }
+  if (typeof customization.tokenOptions.aoeStyleTokenOpacity !== "object" || customization.tokenOptions.aoeStyleTokenOpacity === null) {
+    customization.tokenOptions.aoeStyleTokenOpacity = {};
+  }
+
+  const container = find_or_create_generic_draggable_window(`aoeStyleTokenWindow`, "Adjust AoE Styles", false, false, undefined, '350px', undefined, undefined, 'calc(100% - 700px)', false, 'input, button, select, option, textarea, .aoe-style-token-listing', false, true);
+
+  const body = $(`<div class="encounter-body aoe-style-token-body"></div>`);
+  const listing = $(`<div class="encounter-listing aoe-style-token-listing"></div>`);
+  body.append(`<div id='aoeStyleTokenExplanation' style='padding:5px;font-size:12px;'>Assign an image to be used instead of the default AoE style. Leave blank to use the default.</div>`);
+  body.append(listing);
+
+  const saveStyleImage = function(style, imageUrl) {
+    const styleKey = normalize_aoe_style_key(style);
+    if (typeof imageUrl === "string" && imageUrl.length > 0) {
+      customization.tokenOptions.aoeStyleTokens[styleKey] = imageUrl;
+    } else {
+      delete customization.tokenOptions.aoeStyleTokens[styleKey];
+    }
+    customization.setTokenOption("aoeStyleTokens", customization.tokenOptions.aoeStyleTokens);
+    persist_token_customization(customization);
+    send_aoe_style_tokens_to_players();
+  };
+
+  const saveStyleTiling = function(style, tiled) {
+    customization.tokenOptions.aoeStyleTokenTiling[normalize_aoe_style_key(style)] = tiled;
+    customization.setTokenOption("aoeStyleTokenTiling", customization.tokenOptions.aoeStyleTokenTiling);
+    persist_token_customization(customization);
+    send_aoe_style_tokens_to_players();
+  };
+
+  const saveStyleOpacity = function(style, opacity) {
+    customization.tokenOptions.aoeStyleTokenOpacity[normalize_aoe_style_key(style)] = opacity;
+    customization.setTokenOption("aoeStyleTokenOpacity", customization.tokenOptions.aoeStyleTokenOpacity);
+    persist_token_customization(customization);
+    send_aoe_style_tokens_to_players();
+  };
+
+  get_available_styles().forEach(function(style) {
+    const styleKey = normalize_aoe_style_key(style);
+    const currentImage = customization.tokenOptions.aoeStyleTokens[styleKey] || "";
+    const currentTiling = customization.tokenOptions.aoeStyleTokenTiling[styleKey] !== false;
+    const currentOpacity = get_aoe_style_token_opacity(style);
+
+    const row = $(`<div class="sidebar-list-item-row aoe-style-token-row"></div>`);
+    const rowItem = $(`<div class="sidebar-list-item-row-item"></div>`);
+    const imgHolder = $(`<div class="sidebar-list-item-row-img"></div>`);
+    const preview = currentImage.length > 0
+      ? $(`<div data-img="true" aria-label="${style} token image" class="aoe-token-tileable aoe-shape-circle div-token-image"></div>`)
+      : $(`<div data-img="true" class="aoe-token-tileable aoe-style-${styleKey} aoe-shape-circle"></div>`);
+    if (currentImage.length > 0) {
+      updateTokenSrc(currentImage, preview, false).then(function() {
+        preview[0].style.setProperty("background-repeat", currentTiling ? "repeat" : "no-repeat", "important");
+        preview[0].style.setProperty("background-size", currentTiling ? "100px" : "cover", "important");
+        if (currentOpacity !== undefined) {
+          preview[0].style.setProperty("opacity", currentOpacity, "important");
+          preview[0].style.setProperty("animation", "none", "important");
+        }
+      });
+    }
+    imgHolder.append(preview);
+
+    const details = $(`<div class="sidebar-list-item-row-details"></div>`);
+    details.append(`<div class="sidebar-list-item-row-details-title">${style}</div>`);
+    const input = $(`<input class="aoe-style-token-input" type="text" placeholder="https://..." value="${currentImage}" />`);
+    const tilingLabel = $(`<label class="aoe-style-token-tiling-label"><input type="checkbox" ${currentTiling ? "checked" : ""} /> Tile image</label>`);
+    const tilingInput = tilingLabel.find("input");
+    const opacityInput = $(`<label class="aoe-style-token-opacity-label">Opacity <input class="aoe-style-token-opacity" type="number" min="0.1" max="1" step="0.05" value="${currentOpacity ?? 0.5}" title="Opacity from 0.1 to 1" /></label>`);
+    const opacityField = opacityInput.find("input");
+    details.append(input);
+    details.append(tilingLabel, opacityInput);
+
+    const clearButton = $(`<button class="removeItem" title="Use default style" style="font-size:24px;"><svg class="delSVG" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M0 0h24v24H0V0z" fill="none"></path><path d="M16 9v10H8V9h8m-1.5-6h-5l-1 1H5v2h14V4h-3.5l-1-1zM18 7H6v12c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7z"></path></svg></button>`);
+
+    const commitValue = async function() {
+      const value = input.val().trim();
+      const parsed = value.length > 0 ? await parse_img(value) : "";
+      input.val(parsed);
+      saveStyleImage(style, parsed);
+      container.trigger('redrawListing');
+    };
+
+    input.on("keyup", function(keyupEvent) {
+      if (keyupEvent.key === "Enter") {
+        commitValue();
+      } else if (keyupEvent.key === "Escape") {
+        input.val(currentImage);
+        input.blur();
+      }
+    });
+    input.on("focusout", function() {
+      if (input.val().trim() !== currentImage) {
+        commitValue();
+      }
+    });
+
+    input.on("mousedown click", function(mouseEvent) {
+      mouseEvent.stopPropagation();
+    });
+    tilingLabel.on("mousedown click", function(mouseEvent) {
+      mouseEvent.stopPropagation();
+    });
+    tilingInput.on("change", function() {
+      saveStyleTiling(style, tilingInput.prop("checked"));
+    });
+    opacityField.on("change", function() {
+      const parsedOpacity = parseFloat(opacityField.val());
+      const opacity = Number.isFinite(parsedOpacity) ? Math.min(1, Math.max(0.1, parsedOpacity)) : 0.5;
+      opacityField.val(opacity);
+      saveStyleOpacity(style, opacity);
+    });
+
+    clearButton.on("click", function(clickEvent) {
+      clickEvent.stopPropagation();
+      saveStyleImage(style, "");
+      container.trigger('redrawListing');
+    });
+
+    rowItem.append(imgHolder, details, clearButton);
+    row.append(rowItem);
+    listing.append(row);
+  });
+
+  const newStyleRow = $(`<div class="sidebar-list-item-row aoe-style-token-row aoe-style-token-new-row"></div>`);
+  const newStyleRowItem = $(`<div class="sidebar-list-item-row-item"></div>`);
+  const addStyleButton = $(`
+    <button class="token-row-button token-row-add aoe-style-token-add-button" type="button" title="Add custom AoE style" aria-label="Add custom AoE style">
+      <svg viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M7.2 10.8V18h3.6v-7.2H18V7.2h-7.2V0H7.2v7.2H0v3.6h7.2z"></path></svg>
+    </button>
+  `);
+  newStyleRowItem.append(addStyleButton);
+  newStyleRow.append(newStyleRowItem);
+  listing.append(newStyleRow);
+
+  const buildCustomStyleInputRow = function() {
+    if (listing.find(".aoe-style-token-input-row").length > 0) {
+      listing.find(".aoe-style-token-name-input").trigger("focus");
+      return;
+    }
+
+    const inputRow = $(`<div class="sidebar-list-item-row aoe-style-token-row aoe-style-token-input-row"></div>`);
+    const inputRowItem = $(`<div class="sidebar-list-item-row-item"></div>`);
+    const inputDetails = $(`<div class="sidebar-list-item-row-details aoe-style-token-input-details"></div>`);
+    const styleNameInput = $(`<input class="aoe-style-token-input aoe-style-token-name-input" type="text" placeholder="Custom style name" />`);
+    const imageInput = $(`<input class="aoe-style-token-input aoe-style-token-image-input" type="text" placeholder="https://..." />`);
+    const tilingLabel = $(`<label class="aoe-style-token-tiling-label"><input type="checkbox" checked /> Tile image</label>`);
+    const tilingInput = tilingLabel.find("input");
+    const opacityInput = $(`<label class="aoe-style-token-opacity-label">Opacity <input class="aoe-style-token-opacity" type="number" min="0.1" max="1" step="0.05" value="0.5" title="Opacity from 0.1 to 1" /></label>`);
+    const opacityField = opacityInput.find("input");
+    const saveButton = $(`<button class="avtt-small-settings-edit aoe-style-token-save-button" type="button" title="Save custom AoE style" aria-label="Save custom AoE style">Save</button>`);
+    inputDetails.append(styleNameInput, imageInput, tilingLabel, opacityInput);
+    inputRowItem.append(inputDetails, saveButton);
+    inputRow.append(inputRowItem);
+    inputRow.insertBefore(newStyleRow);
+
+    const addCustomStyle = async function() {
+      const styleName = styleNameInput.val().trim();
+      const styleKey = normalize_aoe_style_key(styleName);
+      const imageValue = imageInput.val().trim();
+      if (!styleKey || !imageValue) {
+        showError("Enter a custom style name and image URL before saving the style");
+        return;
+      }
+      const existingStyleKeys = get_available_styles().map(normalize_aoe_style_key);
+      if (existingStyleKeys.includes(styleKey)) {
+        showError("An AoE style with this name already exists", styleName);
+        return;
+      }
+      const parsedImage = await parse_img(imageValue);
+      saveStyleImage(styleKey, parsedImage);
+      saveStyleTiling(styleKey, tilingInput.prop("checked"));
+      const parsedOpacity = parseFloat(opacityField.val());
+      saveStyleOpacity(styleKey, Number.isFinite(parsedOpacity) ? Math.min(1, Math.max(0.1, parsedOpacity)) : 0.5);
+      if (typeof refresh_aoe_style_menu === "function") {
+        refresh_aoe_style_menu();
+      }
+      container.trigger('redrawListing');
+    };
+
+    inputRow.find("input").on("mousedown click", function(mouseEvent) {
+      mouseEvent.stopPropagation();
+    });
+    saveButton.on("click", function(clickEvent) {
+      clickEvent.preventDefault();
+      clickEvent.stopPropagation();
+      addCustomStyle();
+    });
+    styleNameInput.add(imageInput).on("keyup", function(keyupEvent) {
+      if (keyupEvent.key === "Enter") {
+        addCustomStyle();
+      }
+    });
+    styleNameInput.trigger("focus");
+  };
+
+  addStyleButton.on("click", function(clickEvent) {
+    clickEvent.preventDefault();
+    clickEvent.stopPropagation();
+    buildCustomStyleInputRow();
+  });
+
+  container.off('redrawListing').on('redrawListing', function() {
+    close_and_cleanup_generic_draggable_window('aoeStyleTokenWindow');
+    edit_aoe_style_tokens();
+  });
+
+  container.append(body);
+}
+
 /**
  * When an AddToken (plus) button on a row in the sidebar is clicked, this handles that click based on the item represented by the row, and adds a token to the scene for that item.
  * This should only be called with someElement.on("click", did_click_add_button);

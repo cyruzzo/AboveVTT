@@ -5838,6 +5838,57 @@ div#initialPosition_row input[type=number] {
     text-align: left;
     white-space: nowrap;
 }
+.aoe-style-token-input-details {
+    min-width: 0;
+    white-space: normal;
+}
+.aoe-style-token-input {
+    box-sizing: border-box;
+    display: block;
+    max-width: 100%;
+    width: 100%;
+    margin: 2px 0;
+}
+.aoe-style-token-tiling-label {
+    display: block;
+    white-space: nowrap;
+}
+.aoe-style-token-opacity-label {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    white-space: nowrap;
+}
+.aoe-style-token-opacity {
+    box-sizing: border-box;
+    width: 60px;
+}
+.aoe-style-token-add-button,
+.aoe-style-token-save-button {
+    flex: 0 0 auto;
+    width: fit-content;
+}
+.aoe-style-token-add-button{
+    display: block !important;
+}
+.aoe-style-token-new-row .sidebar-list-item-row-item {
+    justify-content: center;
+}
+#aoeStyleTokenWindow > .aoe-style-token-body {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+}
+#aoeStyleTokenWindow .aoe-style-token-listing {
+    flex: 1 1 auto;
+    min-height: 0;
+    max-height: none;
+    pointer-events: auto;
+    overscroll-behavior: contain;
+    touch-action: pan-y;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
 .sidebar-list-item-row-details div {
     display: flex;
     flex-direction: column;
@@ -8896,6 +8947,13 @@ button#changeTokenImage:before{
         overflow: visible;
         height: auto;
     }
+}
+#aoeStyleTokenWindow,
+#aoeStyleTokenWindow * {
+    overscroll-behavior: auto;
+}
+#aoeStyleTokenWindow .aoe-style-token-listing {
+    overscroll-behavior: contain;
 }
 
 .glc-game-log div[class|='tss'][class$='-GameLog'] {

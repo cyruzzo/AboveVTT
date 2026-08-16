@@ -741,7 +741,7 @@ function sanitize_aoe_shape(shape){
     return shape
 }
 function get_available_styles(){
-    return [
+  const styles = [
         "Acid",
         "Bludgeoning",
         "Cold",
@@ -759,7 +759,14 @@ function get_available_styles(){
         "Slashing",
         "Thunder",
         "Water"
-    ]
+      ];
+      if (typeof get_aoe_style_tokens === "function") {
+        const builtInStyleKeys = new Set(styles.map(style => style.toLowerCase()));
+        const customStyles = Object.keys(get_aoe_style_tokens())
+          .filter(style => !builtInStyleKeys.has(style.toLowerCase()));
+        styles.push(...customStyles);
+      }
+      return styles;
 }
 function add_aoe_to_statblock(html){
 

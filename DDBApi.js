@@ -252,49 +252,6 @@ class DDBApi {
     return response.data;
   }
 
-  static async deleteAboveVttEncounters(encounters) {
-    noisy_log("DDBApi.deleteAboveVttEncounters starting");
-    // make sure we don't delete the encounter that we're actively on
-    const avttId = is_encounters_page() ? window.location.pathname.split("/").pop() : undefined;
-    const avttEncounters = encounters.filter(e => e.id !== avttId && e.name === DEFAULT_AVTT_ENCOUNTER_DATA.name);
-    console.debug(`DDBApi.deleteAboveVttEncounters avttId: ${avttId}, avttEncounters:`, avttEncounters);
-    const failedEncounters = JSON.parse(localStorage.getItem('avttFailedDelete'));
-    let newFailed = (failedEncounters != null && failedEncounters != undefined && Array.isArray(failedEncounters)) ? failedEncounters : [];
-    for (const encounter of avttEncounters) {
-      if(newFailed.includes(encounter.id))
-        continue;
-      noisy_log("DDBApi.deleteAboveVttEncounters attempting to delete encounter with id:", encounter.id);
-      const response = await DDBApi.deleteWithToken(`https://encounter-service.dndbeyond.com/v1/encounters/${encounter.id}`);
-      noisy_log("DDBApi.deleteAboveVttEncounters delete encounter response:", response.status);
-      if(response.status == 401){
-        newFailed.push(encounter.id)
-        try{
-          localStorage.setItem('avttFailedDelete', JSON.stringify(newFailed));
-        }
-        catch(e){
-          console.warn('localStorage avttFailedDelete Failed', e)
-        }
-      }    
-    }
-    return find_game_id(); // return this here to be used in createAboveVttEncounter - this return being here seems to prevent bugged encounters. Maybe something do with going ahead to create without finishing deleting, not sure but haven't been able to replicate it with it here.
-  }
-
-  static async createAboveVttEncounter(campaignId = find_game_id()) {
-    noisy_log("DDBApi.createAboveVttEncounter", campaignId);
-
-    const campaignInfo = await DDBApi.fetchCampaignInfo(campaignId);
-    noisy_log("DDBApi.createAboveVttEncounter campaignInfo", campaignInfo);
-    if (!campaignInfo.id) {
-      throw new Error(`Invalid campaignInfo ${JSON.stringify(campaignInfo)}`);
-    }
-
-    const url = "https://encounter-service.dndbeyond.com/v1/encounters";
-    const encounterData = {...DEFAULT_AVTT_ENCOUNTER_DATA, campaign: campaignInfo};
-    console.debug("DDBApi.createAboveVttEncounter attempting to create encounter with data", encounterData);
-    const response = await DDBApi.postJsonWithToken(url, encounterData);
-    console.debug("DDBApi.createAboveVttEncounter response", response);
-    return response.data;
-  }
 
   static async fetchCampaignInfo(campaignId) {
     if(!campaignId)
