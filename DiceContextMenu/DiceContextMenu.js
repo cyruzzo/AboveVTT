@@ -285,10 +285,10 @@ class DiceContextMenuSection {
                 rowInput.on('pointerdown touchstart', function(e){
                     e.stopPropagation();
                 })
-                rowInput.on("keypress change blur", function(e) {
+                rowInput.on("change blur input keydown", function(e) {
                     inputCallback($(this).val());
                     if (e.key === "Enter") {      
-                        $('.dcm-roll-button').click();
+                        $('.dcm-roll-button').trigger('pointerdown');
                     }
                 });
                 let rowHtml = $(`
