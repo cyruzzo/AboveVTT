@@ -2840,7 +2840,8 @@ function get_aoe_style_sync_data() {
     aoeStyleTokenTiling: customization?.tokenOptions?.aoeStyleTokenTiling || {},
     aoeStyleTokenOpacity: customization?.tokenOptions?.aoeStyleTokenOpacity || {},
     aoeStyleTokenAnimation: customization?.tokenOptions?.aoeStyleTokenAnimation || {},
-    aoeStyleTokenBorder: customization?.tokenOptions?.aoeStyleTokenBorder || {}
+    aoeStyleTokenBorder: customization?.tokenOptions?.aoeStyleTokenBorder || {},
+    aoeStyleTokenVideo: customization?.tokenOptions?.aoeStyleTokenVideo || {}
   };
 }
 
@@ -2918,6 +2919,16 @@ function get_aoe_style_token_border(style) {
   return find_token_customization(ItemType.Folder, RootFolder.Aoe.id)?.tokenOptions?.aoeStyleTokenBorder?.[styleKey] !== false;
 }
 
+/** True when the assigned image should render as video, either by file extension or because the DM flagged the link. */
+function get_aoe_style_token_video(style) {
+  if (typeof style !== "string") return false;
+  const styleKey = normalize_aoe_style_key(style);
+  const flagged = (!window.DM && window.AOE_STYLE_TOKEN_VIDEO)
+    ? window.AOE_STYLE_TOKEN_VIDEO[styleKey]
+    : find_token_customization(ItemType.Folder, RootFolder.Aoe.id)?.tokenOptions?.aoeStyleTokenVideo?.[styleKey];
+  return flagged === true || is_aoe_video_image(get_aoe_style_token_image(style));
+}
+
 function clamp_aoe_style_opacity(value) {
   const parsed = parseFloat(value);
   return Number.isFinite(parsed) ? Math.min(1, Math.max(0.1, parsed)) : 0.5;
@@ -2927,13 +2938,15 @@ function clamp_aoe_style_opacity(value) {
  * Builds the grid of display toggles shown for an AoE style.
  * @returns {object} the wrapper element and each input so callers can read/persist them
  */
-function build_aoe_style_toggles(tiled, animated, border, opacity) {
+function build_aoe_style_toggles(settings) {
+  const { tiled, animated, border, opacity, video, videoLocked = false } = settings;
   const wrapper = $(`<div class="aoe-style-token-toggles"></div>`);
   const tilingLabel = $(`<label><input type="checkbox" ${tiled ? "checked" : ""} />Tile</label>`);
   const animationLabel = $(`<label><input type="checkbox" ${animated ? "checked" : ""} />Opacity animation</label>`);
   const borderLabel = $(`<label><input type="checkbox" ${border ? "checked" : ""} />Border</label>`);
+  const videoLabel = $(`<label title="Enable for video links that have no file extension"><input type="checkbox" ${video ? "checked" : ""} />Video</label>`);
   const opacityLabel = $(`<label>Opacity<input class="aoe-style-token-opacity" type="number" min="0.1" max="1" step="0.05" value="${opacity ?? 0.5}" title="Opacity from 0.1 to 1" /></label>`);
-  wrapper.append(tilingLabel, animationLabel, borderLabel, opacityLabel);
+  wrapper.append(tilingLabel, animationLabel, borderLabel, videoLabel, opacityLabel);
   wrapper.on("mousedown click", function(mouseEvent) {
     mouseEvent.stopPropagation();
   });
@@ -2943,15 +2956,24 @@ function build_aoe_style_toggles(tiled, animated, border, opacity) {
     tiling: tilingLabel.find("input"),
     animation: animationLabel.find("input"),
     border: borderLabel.find("input"),
+    video: videoLabel.find("input"),
     opacity: opacityLabel.find("input")
   };
-  const syncOpacityAvailability = function() {
+  if (videoLocked) {
+    controls.video.prop({ checked: true, disabled: true });
+    videoLabel.addClass("disabled");
+  }
+  const syncDependentInputs = function() {
     const animating = controls.animation.prop("checked");
     controls.opacity.prop("disabled", animating);
     opacityLabel.toggleClass("disabled", animating);
+    const isVideo = controls.video.prop("checked");
+    controls.tiling.prop("disabled", isVideo);
+    tilingLabel.toggleClass("disabled", isVideo);
   };
-  controls.animation.on("change", syncOpacityAvailability);
-  syncOpacityAvailability();
+  controls.animation.on("change", syncDependentInputs);
+  controls.video.on("change", syncDependentInputs);
+  syncDependentInputs();
   return controls;
 }
 
@@ -2978,6 +3000,9 @@ function edit_aoe_style_tokens(restoreState = {}) {
   }
   if (typeof customization.tokenOptions.aoeStyleTokenBorder !== "object" || customization.tokenOptions.aoeStyleTokenBorder === null) {
     customization.tokenOptions.aoeStyleTokenBorder = {};
+  }
+  if (typeof customization.tokenOptions.aoeStyleTokenVideo !== "object" || customization.tokenOptions.aoeStyleTokenVideo === null) {
+    customization.tokenOptions.aoeStyleTokenVideo = {};
   }
 
   const container = find_or_create_generic_draggable_window(`aoeStyleTokenWindow`, "Adjust AoE Styles", false, false, undefined, width, height, top, left, false, 'input, button, select, option, textarea, .aoe-style-token-listing', false, true);
@@ -3027,6 +3052,13 @@ function edit_aoe_style_tokens(restoreState = {}) {
     send_aoe_style_tokens_to_players();
   };
 
+  const saveStyleVideo = function(style, video) {
+    customization.tokenOptions.aoeStyleTokenVideo[normalize_aoe_style_key(style)] = video;
+    customization.setTokenOption("aoeStyleTokenVideo", customization.tokenOptions.aoeStyleTokenVideo);
+    persist_token_customization(customization);
+    send_aoe_style_tokens_to_players();
+  };
+
   get_available_styles().forEach(function(style) {
     const styleKey = normalize_aoe_style_key(style);
     const currentImage = customization.tokenOptions.aoeStyleTokens[styleKey] || "";
@@ -3038,12 +3070,15 @@ function edit_aoe_style_tokens(restoreState = {}) {
     const row = $(`<div class="sidebar-list-item-row aoe-style-token-row"></div>`);
     const rowItem = $(`<div class="sidebar-list-item-row-item"></div>`);
     const imgHolder = $(`<div class="sidebar-list-item-row-img"></div>`);
-    const preview = currentImage.length > 0
-      ? $(`<div data-img="true" aria-label="${style} token image" class="aoe-token-tileable aoe-shape-circle div-token-image"></div>`)
-      : $(`<div data-img="true" class="aoe-token-tileable aoe-style-${styleKey} aoe-shape-circle"></div>`);
+    const isVideo = get_aoe_style_token_video(style);
+    const preview = currentImage.length === 0
+      ? $(`<div data-img="true" class="aoe-token-tileable aoe-style-${styleKey} aoe-shape-circle"></div>`)
+      : isVideo
+        ? $(`<video disableRemotePlayback autoplay loop muted data-img="true" aria-label="${style} token image" class="aoe-token-tileable aoe-shape-circle div-token-image"></video>`)
+        : $(`<div data-img="true" aria-label="${style} token image" class="aoe-token-tileable aoe-shape-circle div-token-image"></div>`);
     if (currentImage.length > 0) {
-      updateTokenSrc(currentImage, preview, false).then(function() {
-        apply_aoe_style_display(preview, { tiled: currentTiling, opacity: currentOpacity, animated: currentAnimated }, "100px");
+      updateTokenSrc(currentImage, preview, isVideo).then(function() {
+        apply_aoe_style_display(preview, { tiled: isVideo ? undefined : currentTiling, opacity: currentOpacity, animated: currentAnimated }, "100px");
       });
     } else {
       apply_aoe_style_display(preview, { opacity: currentOpacity, animated: currentAnimated });
@@ -3053,7 +3088,14 @@ function edit_aoe_style_tokens(restoreState = {}) {
     const details = $(`<div class="sidebar-list-item-row-details"></div>`);
     details.append(`<div class="sidebar-list-item-row-details-title">${style}</div>`);
     const input = $(`<input class="aoe-style-token-input" type="text" placeholder="https://..." value="${currentImage}" />`);
-    const toggles = build_aoe_style_toggles(currentTiling, currentAnimated, currentBorder, currentOpacity);
+    const toggles = build_aoe_style_toggles({
+      tiled: currentTiling,
+      animated: currentAnimated,
+      border: currentBorder,
+      opacity: currentOpacity,
+      video: isVideo,
+      videoLocked: is_aoe_video_image(currentImage)
+    });
     details.append(input, toggles.wrapper);
 
     const clearButton = $(`<button class="removeItem" title="Use default style" style="font-size:24px;"><svg class="delSVG" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M0 0h24v24H0V0z" fill="none"></path><path d="M16 9v10H8V9h8m-1.5-6h-5l-1 1H5v2h14V4h-3.5l-1-1zM18 7H6v12c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7z"></path></svg></button>`);
@@ -3091,6 +3133,10 @@ function edit_aoe_style_tokens(restoreState = {}) {
     });
     toggles.border.on("change", function() {
       saveStyleBorder(style, toggles.border.prop("checked"));
+    });
+    toggles.video.on("change", function() {
+      saveStyleVideo(style, toggles.video.prop("checked"));
+      container.trigger('redrawListing');
     });
     toggles.opacity.on("change", function() {
       const opacity = clamp_aoe_style_opacity(toggles.opacity.val());
@@ -3131,7 +3177,7 @@ function edit_aoe_style_tokens(restoreState = {}) {
     const inputDetails = $(`<div class="sidebar-list-item-row-details aoe-style-token-input-details"></div>`);
     const styleNameInput = $(`<input class="aoe-style-token-input aoe-style-token-name-input" type="text" placeholder="Custom style name" />`);
     const imageInput = $(`<input class="aoe-style-token-input aoe-style-token-image-input" type="text" placeholder="https://..." />`);
-    const toggles = build_aoe_style_toggles(true, true, true, 0.5);
+    const toggles = build_aoe_style_toggles({ tiled: true, animated: true, border: true, opacity: 0.5, video: false });
     const saveButton = $(`<button class="sidebar-panel-footer-button aoe-style-token-save-button" type="button" title="Save custom AoE style" aria-label="Save custom AoE style">Save</button>`);
     inputDetails.append(styleNameInput, imageInput, toggles.wrapper);
     inputRowItem.append(inputDetails, saveButton);
@@ -3156,6 +3202,7 @@ function edit_aoe_style_tokens(restoreState = {}) {
       saveStyleTiling(styleKey, toggles.tiling.prop("checked"));
       saveStyleAnimation(styleKey, toggles.animation.prop("checked"));
       saveStyleBorder(styleKey, toggles.border.prop("checked"));
+      saveStyleVideo(styleKey, toggles.video.prop("checked"));
       saveStyleOpacity(styleKey, clamp_aoe_style_opacity(toggles.opacity.val()));
       if (typeof refresh_aoe_style_menu === "function") {
         refresh_aoe_style_menu();

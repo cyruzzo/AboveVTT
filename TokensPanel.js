@@ -3919,9 +3919,10 @@ function redraw_token_images_in_modal(sidebarPanel, listItem, placedToken, drawI
                 const aoeImage = get_aoe_style_token_image(styleKey);
                 const aoeImageTarget = tokenDiv.find(".div-token-image");
                 if (aoeImage && aoeImageTarget.length > 0) {
-                    updateTokenSrc(aoeImage, aoeImageTarget).then(function() {
+                    const isVideo = get_aoe_style_token_video(styleKey);
+                    updateTokenSrc(aoeImage, aoeImageTarget, isVideo).then(function() {
                         apply_aoe_style_display(aoeImageTarget, {
-                            tiled: get_aoe_style_token_tiling(styleKey),
+                            tiled: isVideo ? undefined : get_aoe_style_token_tiling(styleKey),
                             opacity: get_aoe_style_token_opacity(styleKey),
                             animated: get_aoe_style_token_animation(styleKey)
                         });

@@ -4498,6 +4498,9 @@ body.color-blind-avtt {
     position: absolute;
     animation: mymove 5s infinite alternate ease-in-out ;
 }
+video.aoe-token-tileable {
+    object-fit: cover;
+}
 .reduceMovement .aoe-token-tileable {
     --opacity:0.5;
     animation: none !important;
