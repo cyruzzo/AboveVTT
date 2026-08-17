@@ -985,17 +985,20 @@ class DiceRoller {
             this.#orderedPendingIds.push(rollId);
             if(!window.EXPERIMENTAL_SETTINGS?.['rpgRoller'] && (window.DM || !(typeof getDdb3dDiceShareToggle == 'function' && !window.DM && getDdb3dDiceShareToggle() == 'disabled'))){
                 if(window.ActiveWorkers){
-                    get_active_worker_keys().forEach(key => {
-                        if(key.includes('physics')){
-                            window.ActiveWorkers[key].postMessage({
-                                type: "startRoll",
-                                payload: {
-                                    ...ddbMessage,
-                                    eventType: "dice/roll/deferred"
-                                }
-                            })
-                        } 
-                    });  
+                    requestAnimationFrame(() => {
+                        get_active_worker_keys().forEach(key => {
+                            if(key.includes('physics')){
+                                window.ActiveWorkers[key].postMessage({
+                                    type: "startRoll",
+                                    payload: {
+                                        ...ddbMessage,
+                                        eventType: "dice/roll/deferred"
+                                    }
+                                })
+                            } 
+                        }); 
+                    })
+                    
                 };
                 if(sendTo.toLowerCase() != 'self'){
                     this.ddbDispatch({
