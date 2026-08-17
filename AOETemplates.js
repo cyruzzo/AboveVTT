@@ -27,7 +27,8 @@ function setup_aoe_button(buttons) {
     
     const aoeButton = $("<div style='display:inline-block;width:fit-content;' id='aoe_button' data-name='AoE Templates (A)' class='drawbutton hasTooltip menu-button hideable ddbc-tab-options__header-heading'><span class='button-text'><u>A</u>OE</span></div>");
     const aoeMenu = $("<div id='aoe_menu' class='top_menu'></div>");
-
+    const aoeSubMenu = $("<div id='aoe_sub_menu' class='top_menu'></div>");
+    
     aoeMenu.append("<div class='menu-subtitle'>Size</div>");
     
     aoeMenu.append(`<div><input min='5' onclick='$(this).select()'
@@ -38,13 +39,14 @@ function setup_aoe_button(buttons) {
     aoeMenu.append("<div class='menu-subtitle'>Style</div>");
     aoeMenu.append(
         `<div class='ddbc-tab-options--layout-pill'>
-            <select id='aoe_styles' class="ddbc-select ddbc-tab-options__header-heading" >
-                ${get_available_styles().map((aoeStyle) => {
-                    return `<option class="ddbc-tab-options__header-heading" value="${aoeStyle}">${aoeStyle}</option>`;
-                })}
-            </select>
+            <div id='aoe_styles_dropdown' class='aoe-style-dropdown'>
+                <input type='hidden' id='aoe_styles' value='' />
+                <div class='aoe-style-dropdown-toggle ddbc-tab-options__header-heading'></div>
+               
+            </div>
         </div>
             `)
+    aoeSubMenu.append(`<div class='aoe-style-dropdown-list'></div>`);
     aoeMenu.append("<div class='menu-subtitle'>Shape</div>");
 
     aoeMenu.append(`
@@ -71,18 +73,31 @@ function setup_aoe_button(buttons) {
                 Cone 
             </button>
         </div>`);
-    aoeMenu.find("button, select").css("width", "69px")
+    aoeMenu.find("button, select, .aoe-style-dropdown").css("width", "69px")
     aoeMenu.css("position", "fixed");
     aoeMenu.css("top", "25px");
     aoeMenu.css("width", "75px");
     aoeMenu.css('background', "url('/content/1-0-1487-0/skins/waterdeep/images/mon-summary/paper-texture.png')");
 
-    $("body").append(aoeMenu);
+    aoeSubMenu.css({
+        "position": "fixed", 
+        "top": "25px", 
+        "width": "fit-content", 
+        'background': "url('/content/1-0-1487-0/skins/waterdeep/images/mon-summary/paper-texture.png')",
+        'text-transform': 'uppercase',
+        'font-weight': 'bold',
+        'font-size': '12px',
+        'transition': 'none'
+    });
+
+    $("body").append(aoeMenu, aoeSubMenu);
+
+    setup_aoe_style_dropdown();
 
 
     buttons.append(aoeButton);
     aoeMenu.css("left", aoeButton.position().left);
-
+    aoeSubMenu.css("left", aoeButton.position().left + 80);    
 
     $("#aoe_feet_in_menu").keydown(function(e) {
         if (e.key === "Escape") {
@@ -110,18 +125,55 @@ function setup_aoe_button(buttons) {
     });
 }
 
-function refresh_aoe_style_menu() {
-    const styleSelect = $("#aoe_styles");
-    if (styleSelect.length === 0) return;
-
-    const currentStyle = styleSelect.val();
-    styleSelect.empty();
-    get_available_styles().forEach(function(style) {
-        styleSelect.append($(`<option class="ddbc-tab-options__header-heading"></option>`).val(style).text(style));
+function setup_aoe_style_dropdown() {
+    const dropdown = $("#aoe_styles_dropdown");
+    const aoeSubMenu = $("#aoe_sub_menu");
+    dropdown.on("click", ".aoe-style-dropdown-toggle", function(clickEvent) {
+        clickEvent.stopPropagation();
+        if (aoeSubMenu.hasClass("visible")) {
+            aoeSubMenu.removeClass("visible");
+            return;
+        }
+        aoeSubMenu.addClass("visible");
+        const list = aoeSubMenu.find(".aoe-style-dropdown-list");
+        const listTop = list[0].getBoundingClientRect().top;
+        list.css("max-height", `${Math.max(60, window.innerHeight - listTop - 100)}px`);
+        list.find(".aoe-style-dropdown-item.selected")[0]?.scrollIntoView({ block: "nearest" });
     });
-    if (get_available_styles().some(style => style === currentStyle)) {
-        styleSelect.val(currentStyle);
-    }
+
+    aoeSubMenu.on("click", ".aoe-style-dropdown-item", function(clickEvent) {
+        clickEvent.stopPropagation();
+        set_aoe_style_dropdown_value($(clickEvent.currentTarget).attr("data-value"));
+        aoeSubMenu.removeClass("visible");
+    });
+
+    $(document).off("click.aoeStyleDropdown").on("click.aoeStyleDropdown", function() {
+        aoeSubMenu.removeClass("visible");
+    });
+
+    refresh_aoe_style_menu();
+}
+
+function set_aoe_style_dropdown_value(style) {
+    const dropdown = $("#aoe_styles_dropdown");
+    dropdown.find("#aoe_styles").val(style);
+    dropdown.find(".aoe-style-dropdown-toggle").text(style);
+    const aoeSubMenu = $("#aoe_sub_menu");
+    aoeSubMenu.find(".aoe-style-dropdown-item").removeClass("selected");
+    aoeSubMenu.find(`.aoe-style-dropdown-item[data-value="${style}"]`).addClass("selected");
+}
+
+function refresh_aoe_style_menu() {
+    const aoeSubMenu = $("#aoe_sub_menu");
+    if (aoeSubMenu.length === 0) return;
+
+    const styles = get_available_styles();
+    const currentStyle = $("#aoe_styles").val();
+    const list = aoeSubMenu.find(".aoe-style-dropdown-list").empty();
+    styles.forEach(function(style) {
+        list.append($(`<div class="aoe-style-dropdown-item ddbc-tab-options__header-heading"></div>`).attr("data-value", style).text(style));
+    });
+    set_aoe_style_dropdown_value(styles.includes(currentStyle) ? currentStyle : styles[0]);
 }
 
 function place_aoe_token_at_token(options, token){

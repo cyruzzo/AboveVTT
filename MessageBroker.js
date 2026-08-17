@@ -1038,6 +1038,7 @@ class MessageBroker {
 					window.AOE_STYLE_TOKEN_ANIMATION = msg.data?.aoeStyleTokenAnimation || {};
 					window.AOE_STYLE_TOKEN_BORDER = msg.data?.aoeStyleTokenBorder || {};
 					window.AOE_STYLE_TOKEN_VIDEO = msg.data?.aoeStyleTokenVideo || {};
+					window.AOE_STYLE_ORDER = msg.data?.aoeStyleOrder || [];
 					if(typeof refresh_aoe_style_menu === "function"){
 						refresh_aoe_style_menu();
 					}

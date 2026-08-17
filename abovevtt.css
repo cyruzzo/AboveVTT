@@ -324,8 +324,6 @@ button.gamelog-to-everyone-button:hover {
     margin: -3px -3px;
 }
 
-
-
 .ddbc-tab-options--layout-pill .ddbc-tab-options__header-heading {
     display: flex;
     flex-wrap: wrap;
@@ -1887,6 +1885,7 @@ div#scene_properties form > div{
     line-height: 1.1;
     margin: 0px 2px;
 }
+
 .encounter-builder,
 .encounter-details,
 .release-indicator
@@ -15783,11 +15782,29 @@ button#displayedDiceFormulaExit:hover {
     top: 0px;
     left: 0px;
 }
-
+.aoe-style-dropdown-item.ddbc-tab-options__header-heading {
+    display: flex;
+    flex-wrap: wrap;
+    font-family: Roboto Condensed, Roboto, Helvetica, sans-serif;
+    cursor: pointer;
+    color: #838383;
+    line-height: 1;
+    font-weight: 700;
+    font-size: 12px;
+    text-transform: uppercase;
+    background-color: #f2f2f2;
+    margin: 3px 2px;
+    border-radius: 3px;
+    padding: 5px 7px;
+    white-space: nowrap;
+}
 .mobileAVTTUI .top_menu{
     left: 30px !important;
     top: 5px !important;
     transition: none !important;
+}
+.mobileAVTTUI #aoe_sub_menu.top_menu{
+    left: 110px !important;
 }
 .mobileAVTTUI #bucket_menu{
     left:130px !important;

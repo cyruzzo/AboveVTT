@@ -797,7 +797,7 @@ class SidebarListItem {
     if (typeof name !== "string" || name.length === 0) {
       name = `${shape} AoE`;
     }
-    const image = `class=aoe-token-tileable aoe-style-${style} aoe-shape-${shape} ${name ? set_spell_override_style(name) : ""}`
+    const image = `class='aoe-token-tileable aoe-style-${style} aoe-shape-${shape} ${name ? set_spell_override_style(name) : ""}'`
     let item = new SidebarListItem(path_to_html_id(RootFolder.Aoe.path, name), name, image, ItemType.Aoe, RootFolder.Aoe.path, RootFolder.Aoe.id);
     item.shape = shape;
     let parsedSize = parseInt(size);
@@ -2841,7 +2841,8 @@ function get_aoe_style_sync_data() {
     aoeStyleTokenOpacity: customization?.tokenOptions?.aoeStyleTokenOpacity || {},
     aoeStyleTokenAnimation: customization?.tokenOptions?.aoeStyleTokenAnimation || {},
     aoeStyleTokenBorder: customization?.tokenOptions?.aoeStyleTokenBorder || {},
-    aoeStyleTokenVideo: customization?.tokenOptions?.aoeStyleTokenVideo || {}
+    aoeStyleTokenVideo: customization?.tokenOptions?.aoeStyleTokenVideo || {},
+    aoeStyleOrder: customization?.tokenOptions?.aoeStyleOrder || []
   };
 }
 
@@ -2849,7 +2850,7 @@ const send_aoe_style_tokens_to_players = mydebounce(function(){
   if (window.DM && window.MB) {
     window.MB.sendMessage("custom/myVTT/aoeStyles", get_aoe_style_sync_data());
   }
-}, 1000); 
+}, 2000); 
 
 function normalize_aoe_style_key(style) {
   return String(style || "")
@@ -2927,6 +2928,28 @@ function get_aoe_style_token_video(style) {
     ? window.AOE_STYLE_TOKEN_VIDEO[styleKey]
     : find_token_customization(ItemType.Folder, RootFolder.Aoe.id)?.tokenOptions?.aoeStyleTokenVideo?.[styleKey];
   return flagged === true || is_aoe_video_image(get_aoe_style_token_image(style));
+}
+
+function get_aoe_style_order() {
+  if (!window.DM && Array.isArray(window.AOE_STYLE_ORDER)) {
+    return window.AOE_STYLE_ORDER;
+  }
+  const order = find_token_customization(ItemType.Folder, RootFolder.Aoe.id)?.tokenOptions?.aoeStyleOrder;
+  return Array.isArray(order) ? order : [];
+}
+
+
+function sort_styles_by_saved_aoe_order(styles) {
+  const order = get_aoe_style_order();
+  if (order.length === 0) return styles;
+  return [...styles].sort(function(lhs, rhs) {
+    const lhsIndex = order.indexOf(normalize_aoe_style_key(lhs));
+    const rhsIndex = order.indexOf(normalize_aoe_style_key(rhs));
+    if (lhsIndex === -1 && rhsIndex === -1) return 0;
+    if (lhsIndex === -1) return 1;
+    if (rhsIndex === -1) return -1;
+    return lhsIndex - rhsIndex;
+  });
 }
 
 function clamp_aoe_style_opacity(value) {
@@ -3059,6 +3082,15 @@ function edit_aoe_style_tokens(restoreState = {}) {
     send_aoe_style_tokens_to_players();
   };
 
+  const saveStyleOrder = function(order) {
+    customization.setTokenOption("aoeStyleOrder", order);
+    persist_token_customization(customization);
+    send_aoe_style_tokens_to_players();
+    if (typeof refresh_aoe_style_menu === "function") {
+      refresh_aoe_style_menu();
+    }
+  };
+
   get_available_styles().forEach(function(style) {
     const styleKey = normalize_aoe_style_key(style);
     const currentImage = customization.tokenOptions.aoeStyleTokens[styleKey] || "";
@@ -3068,6 +3100,7 @@ function edit_aoe_style_tokens(restoreState = {}) {
     const currentBorder = get_aoe_style_token_border(style);
 
     const row = $(`<div class="sidebar-list-item-row aoe-style-token-row"></div>`);
+    row.attr("data-style-key", styleKey);
     const rowItem = $(`<div class="sidebar-list-item-row-item"></div>`);
     const imgHolder = $(`<div class="sidebar-list-item-row-img"></div>`);
     const isVideo = get_aoe_style_token_video(style);
@@ -3189,12 +3222,12 @@ function edit_aoe_style_tokens(restoreState = {}) {
       const styleKey = normalize_aoe_style_key(styleName);
       const imageValue = imageInput.val().trim();
       if (!styleKey || !imageValue) {
-        showError("Enter a custom style name and image URL before saving the style");
+        showErrorMessage("Enter a custom style name and image URL before saving the style", 'messageOnly');
         return;
       }
       const existingStyleKeys = get_available_styles().map(normalize_aoe_style_key);
       if (existingStyleKeys.includes(styleKey)) {
-        showError("An AoE style with this name already exists", styleName);
+        showErrorMessage("An AoE style with this name already exists", 'messageOnly', styleName);
         return;
       }
       const parsedImage = await parse_img(imageValue);
@@ -3247,6 +3280,18 @@ function edit_aoe_style_tokens(restoreState = {}) {
 
   container.append(body);
   listing.scrollTop(scrollTop);
+  listing.sortable({
+    distance: 5,
+    items: "> .aoe-style-token-row[data-style-key]",
+    tolerance: "pointer",
+    handle: "> *",
+    forcePlaceholderSize: true,
+    update: function() {
+      saveStyleOrder(listing.find("> .aoe-style-token-row[data-style-key]").map(function() {
+        return $(this).attr("data-style-key");
+      }).get());
+    }
+  });
 }
 
 /**
