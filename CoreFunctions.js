@@ -1494,9 +1494,9 @@ async function configure_rendered_dice(renderer, physicsWorker) {
   renderer.postMessage({type: 'props', payload: {dpr: 1, frameloop: 'demand'}});
 }
 
-function play_rendered_dice_sound({url, volume = 1} = {}) {
+function play_rendered_dice_sound({url, volume = 0.5} = {}) {
   if (!url) return;
-  const normalizedVolume = Number(volume) * (window.mydice?.data?.settings?.volume ?? 1);
+  const normalizedVolume = Number(volume) * (window.mydice?.data?.settings?.volume ?? 0.5);
   const audio = new Audio(url);
   audio.volume = Math.max(0, Math.min(1, normalizedVolume > 1 ? normalizedVolume / 100 : normalizedVolume));
   audio.play().catch(error => noisy_log(2, 'Unable to play rendered dice sound', error));
