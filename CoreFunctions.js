@@ -668,7 +668,7 @@ function monitor_console_logs() {
       addLog({
         type: "promiseRejection",
         timeStamp: TS(),
-        value: [event.message, `${event.filename}: ${event.lineno}:${event.colno}`, event.error?.stack]
+        value: [event.message ?? event.reason?.message, event.reason?.stack]
       });
     }
 

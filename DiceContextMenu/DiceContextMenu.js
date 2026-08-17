@@ -202,7 +202,6 @@ class DiceContextMenu {
 	        </div>
         `);
         html.off('pointerdown').on("pointerdown", function (clickEvent) {
-            if(clickEvent.button === 2) return;
             $(".dcm-backdrop").remove();
         });
         html.off('contextmenu').on('contextmenu', function(e) {
