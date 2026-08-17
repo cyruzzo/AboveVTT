@@ -2178,6 +2178,7 @@ function observe_character_sheet_changes(documentToObserve) {
             </span>`
       button.html(newHtml);
       const checkbox = rollMenu.find('[d="M9.00016 16.17L4.83016 12L3.41016 13.41L9.00016 19L21.0002 7.00003L19.5902 5.59003L9.00016 16.17Z"]').closest('svg:not(.avtt-checkbox-fix)')
+      checkbox.css('visibility', 'hidden');
       const newCheckbox = $('.avtt-checkbox-fix').length > 0 ? $('.avtt-checkbox-fix') : checkbox.clone().addClass('avtt-checkbox-fix');
       self.find('div:last-of-type').append(newCheckbox);
       setTimeout(() => { self.closest('[role="presentation"]').find('[class*="MuiBackdrop-invisible"]').click() }, 250);
@@ -2188,6 +2189,7 @@ function observe_character_sheet_changes(documentToObserve) {
       const row = rollMenu.find(`li:contains(${sendTo})`);
       const checkbox = rollMenu.find('[d="M9.00016 16.17L4.83016 12L3.41016 13.41L9.00016 19L21.0002 7.00003L19.5902 5.59003L9.00016 16.17Z"]').closest('svg:not(.avtt-checkbox-fix)')
       const newCheckbox = $('.avtt-checkbox-fix').length > 0 ? $('.avtt-checkbox-fix') : checkbox.clone().addClass('avtt-checkbox-fix');
+      checkbox.css('visibility', 'hidden');
       row.find('div:last-of-type').append(newCheckbox);
     }
     rollMenu = $("ul[role='menu']:has(div:contains('DM')):not(:has([value='trueSelf']))");
