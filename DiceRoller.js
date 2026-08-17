@@ -1010,7 +1010,6 @@ class DiceRoller {
                         ...ddbMessage,
                         eventType: "dice/roll/deferred"
                     });
-
                 }
                 clearTimeout(this.backupSendTimeout)
                 this.backupSendTimeout = setTimeout(() => { // if dice are slow to roll display result early

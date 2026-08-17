@@ -1651,9 +1651,11 @@ function inject_dice_roll(element, clear=true) {
   }
 
 
-  element.find(".integrated-dice__container, .ddb-note-roll").off('click.avttRoll').on('click.avttRoll', function(clickEvent) {
+  element.find(".integrated-dice__container, .ddb-note-roll").off('pointerdown.avttRoll touchstart.avttRoll').on('pointerdown.avttRoll touchstart.avttRoll', function(clickEvent) {
+    if (clickEvent.button === 2) return;
+    clickEvent.preventDefault();
     clickEvent.stopPropagation();
-    
+    clickEvent.stopImmediatePropagation();
     if($(this).hasClass('avtt-roll-formula-button')){
       const slashCommand = $(clickEvent.currentTarget).attr("data-slash-command");
       const diceRoll = DiceRoll.fromSlashCommand(slashCommand, window.PLAYER_NAME, window.PLAYER_IMG, "character", window.PLAYER_ID); // TODO: add gamelog_send_to_text() once that's available on the characters page without avtt running
@@ -2355,7 +2357,10 @@ function observe_character_sheet_changes(documentToObserve) {
       const rollName = window.PLAYER_NAME
 
       const clickHandler = function(e) {
-
+        if (e.button === 2) return;
+        e.preventDefault();
+        e.stopPropagation();
+        e.stopImmediatePropagation();
         let rollData = {} 
         rollData = getRollData(this);
 
@@ -2390,7 +2395,7 @@ function observe_character_sheet_changes(documentToObserve) {
       }
       manualSetRollbuttons.each(function(){
         const button = $(`<button class='avtt-roll-button'></button>`)
-        button.click(clickHandler);
+        button.off('pointerdown.click touchstart.click').on('pointerdown.click touchstart.click', clickHandler);
         button.on("contextmenu", rightClickHandler);
         $(this).wrap(button);
       })
@@ -2426,8 +2431,10 @@ function observe_character_sheet_changes(documentToObserve) {
         $(this).toggleClass('advantageHover', false)
         $(this).toggleClass('disadvantageHover', false)
       })
-      spells.off('click.multiroll').on('click.multiroll', function(e) {
-
+      spells.off('pointerdown.multiroll touchstart.multiroll').on('pointerdown.multiroll touchstart.multiroll', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        e.stopImmediatePropagation();
         if($(this).children('button').length == 0){
           e.stopPropagation();
         }
@@ -2699,8 +2706,9 @@ function observe_character_sheet_changes(documentToObserve) {
         $(this).toggleClass('advantageHover', false)
         $(this).toggleClass('disadvantageHover', false)
       })
-      attackIcons.off('click.multiroll contextmenu.multiroll').on('click.multiroll contextmenu.multiroll', function(e) {
+      attackIcons.off('pointerdown.multiroll touchstart.multiroll').on('pointerdown.multiroll touchstart.multiroll', function(e) {
         e.preventDefault();
+        e.stopPropagation();
         e.stopImmediatePropagation();
         let versatileRoll = window.CHARACTER_AVTT_SETTINGS.versatile;
                      

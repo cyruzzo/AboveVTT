@@ -233,7 +233,7 @@ const debounceHandleInjected = mydebounce(() => {
 			}
 		});
 		if(!found && $('.ct-game-log-pane, [class*="styles_gameLogPane"]').length>0){
-			console.warn(`couldn't find a message matching ${JSON.stringify(current)}`);
+			noisy_log(`couldn't find a message matching ${JSON.stringify(current)}`);
 			// It's possible that we could lose messages due to this not being here, but
 			// if we push the message here, we can end up in an infinite loop.
 			// We may need to revisit this and do better with error handling if we end up missing too many messages.
@@ -683,7 +683,7 @@ class MessageBroker {
 									continue;
 								}
 								if (roll.diceNotation.set[j].dice[k].dieValue >= parseInt(roll.diceNotation.set[j].dice[k].dieType.replace('d', '')) - reduceCrit && roll.result.values.includes(roll.diceNotation.set[j].dice[k].dieValue)) {
-									if (roll.rollKind == 'advantage') {
+									if (roll.diceNotation.set[j].dice.length>1 && roll.rollKind == 'advantage') {
 										if (k > 0 && roll.diceNotation.set[j].dice[k - 1].dieValue <= roll.diceNotation.set[j].dice[k].dieValue) {
 											critSuccess[i] = true;
 										}
@@ -691,7 +691,7 @@ class MessageBroker {
 											critSuccess[i] = true;
 										}
 									}
-									else if (roll.rollKind == 'disadvantage' && roll.diceNotation.set[j].dice[1].dieValue == roll.diceNotation.set[j].dice[0].dieValue) {
+									else if (roll.diceNotation.set[j].dice.length>1 && roll.rollKind == 'disadvantage' && roll.diceNotation.set[j].dice[1].dieValue == roll.diceNotation.set[j].dice[0].dieValue) {
 										critSuccess[i] = true;
 									}
 									else if (roll.rollKind != 'disadvantage') {
@@ -699,7 +699,7 @@ class MessageBroker {
 									}
 								}
 								else if (roll.diceNotation.set[j].dice[k].dieValue == 1 && roll.result.values.includes(roll.diceNotation.set[j].dice[k].dieValue)) {
-									if (roll.rollKind == 'disadvantage') {
+									if (roll.diceNotation.set[j].dice.length>1 && roll.rollKind == 'disadvantage') {
 										if (k > 0 && roll.diceNotation.set[j].dice[k - 1].dieValue >= roll.diceNotation.set[j].dice[k].dieValue) {
 											critFail[i] = true;
 										}
@@ -707,7 +707,7 @@ class MessageBroker {
 											critFail[i] = true;
 										}
 									}
-									else if (roll.rollKind == 'advantage' && roll.diceNotation.set[j].dice[1].dieValue == roll.diceNotation.set[j].dice[0].dieValue) {
+									else if (roll.diceNotation.set[j].dice.length>1 && roll.rollKind == 'advantage' && roll.diceNotation.set[j].dice[1].dieValue == roll.diceNotation.set[j].dice[0].dieValue) {
 										critFail[i] = true;
 									}
 									else if (roll.rollKind != 'advantage') {

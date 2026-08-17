@@ -188,8 +188,11 @@ async function display_stat_block_in_container(statBlock, container, tokenId, cu
       
     })
 
-    container.find("p>em>strong, p>strong>em, div>strong>em, div>em>strong, p>span>em>strong, p>span>strong>em").off("click.roll").on("click.roll", function (e) {
+    container.find("p>em>strong, p>strong>em, div>strong>em, div>em>strong, p>span>em>strong, p>span>strong>em").off("pointerdown.roll touchstart.roll").on("pointerdown.roll touchstart.roll", function (e) {
+      if (e.button === 2) return;
       e.preventDefault();
+      e.stopPropagation();
+      e.stopImmediatePropagation();
       if($(e.target).text().includes('Recharge'))
         return;
       let rollButtons = $(e.currentTarget).closest('em:has(strong), strong:has(em)').nextUntil(':has(.avtt-ability-roll-button)')
@@ -457,8 +460,11 @@ const debounceRescanStatBlock = mydebounce(async (container, noteId, tokenId, cu
       
     })
 
-    container.find("p>em>strong, p>strong>em, div>strong>em, div>em>strong, p>span>em>strong, p>span>strong>em").off("click.roll").on("click.roll", function (e) {
+    container.find("p>em>strong, p>strong>em, div>strong>em, div>em>strong, p>span>em>strong, p>span>strong>em").off("pointerdown.roll touchstart.roll").on("pointerdown.roll touchstart.roll", function (e) {
+      if (e.button === 2) return;
       e.preventDefault();
+      e.stopPropagation();
+      e.stopImmediatePropagation();
       if($(e.target).text().includes('Recharge'))
         return;
       let rollButtons = $(e.currentTarget).closest('em:has(strong), strong:has(em)').nextUntil(':has(.avtt-ability-roll-button)')

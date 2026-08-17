@@ -304,7 +304,7 @@ Other Commands:
   `)  
 
   const clearDice = $(`<div class="clear-dice">Clear Dice</div>`);
-  clearDice.off('click.diceClear').on('click.diceClear', function(e) {
+  clearDice.off('pointerdown.diceClear touchstart.diceClear').on('pointerdown.diceClear touchstart.diceClear', function(e) {
     e.preventDefault();
     if(window.ActiveWorkers){
       get_active_worker_keys().forEach(key => {
@@ -340,9 +340,10 @@ Other Commands:
     sync_roll_mod_visibility();
   });
 
-  if(window.rollButtonObserver)
-    window.rollButtonObserver.disconnect();
-  window.rollButtonObserver = new MutationObserver(function() {
+  if(!window.DM && !is_spectator_page()){
+    if(window.rollButtonObserver)
+      window.rollButtonObserver.disconnect();
+    window.rollButtonObserver = new MutationObserver(function() {
       // Any time the DDB dice buttons change state, we want to synchronize our dice buttons to match theirs.
       if ($("[class*='AnchoredPopover_wrapper']").length>0 && window.diceRoller?.getWaitingForRoll())
         return;
@@ -375,28 +376,32 @@ Other Commands:
           $(".roll-mod-container").removeClass("show");
         }
       }, 0);  
-  })
+    });
+    
 
-  if(window.watchForDicePanel)
-    window.watchForDicePanel.disconnect();
-  window.watchForDicePanel = new MutationObserver((mutations) => {
-   mutations.every(async (mutation) => {
-      if (!mutation.addedNodes) return
+    if(window.watchForDicePanel)
+      window.watchForDicePanel.disconnect();
+    window.watchForDicePanel = new MutationObserver((mutations) => {
+    mutations.every(async (mutation) => {
+        if (!mutation.addedNodes) return
 
-      for (let i = 0; i < mutation.addedNodes.length; i++) {
-        // do things to your newly added nodes here
-        let node = mutation.addedNodes[i]
-        if ((node.className == 'dice-rolling-panel' || $('.dice-rolling-panel').length>0)){
-          const mutation_target = $(".dice-toolbar__dropdown, [class*='AnchoredPopover_wrapper']")[0];
-          const mutation_config = { attributes: true, childList: true, characterData: true, subtree: true };
-          window.rollButtonObserver.observe(mutation_target, mutation_config);
-          window.watchForDicePanel.disconnect();
-          return false;
+        for (let i = 0; i < mutation.addedNodes.length; i++) {
+          // do things to your newly added nodes here
+          let node = mutation.addedNodes[i]
+          if ((node.className == 'dice-rolling-panel' || $('.dice-rolling-panel').length>0)){
+            const mutation_target = $(".dice-toolbar__dropdown, [class*='AnchoredPopover_wrapper']")[0];
+            const mutation_config = { attributes: true, childList: true, characterData: true, subtree: true };
+            window.rollButtonObserver.observe(mutation_target, mutation_config);
+            window.watchForDicePanel.disconnect();
+            return false;
+          }
         }
-      }
-      return true // must return true if doesn't break
-    })
-  });
+        return true // must return true if doesn't break
+      })
+    });
+    watchForDicePanel.observe(document.body, {childList: true, subtree: true, attributes: false, characterData: false});
+  }
+
 
   if (window.sendToDefaultObserver)
     window.sendToDefaultObserver.disconnect();
@@ -440,16 +445,9 @@ Other Commands:
     })
   });
 
-  watchForDicePanel.observe(document.body, {childList: true, subtree: true, attributes: false, characterData: false});
   gamelogObserver.observe(document.body, {childList: true, subtree: true, attributes: false, characterData: false});
 
-  
 
-
-
-  
-
-  
 
   $(".dice-roller > div img").on("contextmenu", function(e) {
     e.preventDefault();
@@ -482,8 +480,11 @@ Other Commands:
     
     $("body").append(modInput);
     let advDis;
-    modInput.off('click.button').on('click.button', 'button.roll-button-mod', function(e){
+    modInput.off('pointerdown.button touchstart.button').on('pointerdown.button touchstart.button', 'button.roll-button-mod', function(e){
+      if(e.button === 2) return;
       e.preventDefault();
+      e.stopPropagation();
+      e.stopImmediatePropagation();
       const clickedButton = $(this)
       const input = modInput.find('input');
       if(clickedButton.hasClass('minus')){
@@ -558,7 +559,11 @@ Other Commands:
       return expression;
     }
 
-    rollButton.on("click", function (e) {
+    rollButton.off('pointerdown.click touchstart.click').on('pointerdown.click touchstart.click', function (e) {
+      if (e.button === 2) return;
+      e.preventDefault();
+      e.stopPropagation();
+      e.stopImmediatePropagation();
       const expression = getExpression(rollButton);
       window.diceRoller.roll(new DiceRoll(expression));
       clear_selected_dice();
@@ -663,7 +668,7 @@ function monitor_console_logs() {
       addLog({
         type: "promiseRejection",
         timeStamp: TS(),
-        value: [event.message, `${event.filename}: ${event.lineno}:${event.colno}`, event.error?.stack]
+        value: [event.message ?? event.reason?.message, event.reason?.stack]
       });
     }
 
@@ -968,7 +973,10 @@ function add_journal_roll_buttons(target, tokenId=undefined, specificImage=undef
   const rollName = specificName ? specificName : tokenExists ? window.all_token_objects[tokenId].options.revealname == true || window.all_token_objects[tokenId].options.player_owned ? window.all_token_objects[tokenId].options.name : '' : window.PLAYER_NAME
 
   const clickHandler = function(clickEvent) { 
-    clickEvent.stopPropagation();
+    if(clickEvent.button === 2) return;
+		clickEvent.preventDefault();
+		clickEvent.stopPropagation();
+		clickEvent.stopImmediatePropagation();
     roll_button_clicked(clickEvent, rollName, rollImage, tokenId ? "monster" : undefined, tokenId)
   };
 
@@ -1176,12 +1184,14 @@ function add_journal_roll_buttons(target, tokenId=undefined, specificImage=undef
   // terminate the clones reference, overkill but rather be safe when it comes to memory
   currentElement = null;
 
-  $currTarget.find(".avtt-roll-button").click(clickHandler);
+  $currTarget.find(".avtt-roll-button").off('pointerdown.click touchstart.click').on('pointerdown.click touchstart.click', clickHandler);
   $currTarget.find(".avtt-roll-button").on("contextmenu", rightClickHandler);
 
-  $currTarget.find("button.avtt-roll-formula-button").off('click.avttRoll').on('click.avttRoll', function(clickEvent) {
+  $currTarget.find("button.avtt-roll-formula-button").off('pointerdown.avttRoll touchstart.avttRoll').on('pointerdown.avttRoll touchstart.avttRoll', function(clickEvent) {
+    if (clickEvent.button === 2) return;
+    clickEvent.preventDefault();
     clickEvent.stopPropagation();
-
+    clickEvent.stopImmediatePropagation();
     const slashCommand = $(clickEvent.currentTarget).attr("data-slash-command");
     const followingText = $(clickEvent.currentTarget)[0].nextSibling?.textContent?.trim()?.split(' ')[0]
     const damageType = followingText && window.ddbConfigJson.damageTypes.some(d => d.name.toLowerCase() == followingText.toLowerCase()) ? followingText : undefined     
@@ -1484,9 +1494,9 @@ async function configure_rendered_dice(renderer, physicsWorker) {
   renderer.postMessage({type: 'props', payload: {dpr: 1, frameloop: 'demand'}});
 }
 
-function play_rendered_dice_sound({url, volume = 1} = {}) {
+function play_rendered_dice_sound({url, volume = 0.5} = {}) {
   if (!url) return;
-  const normalizedVolume = Number(volume) * (window.mydice?.data?.settings?.volume ?? 1);
+  const normalizedVolume = Number(volume) * (window.mydice?.data?.settings?.volume ?? 0.5);
   const audio = new Audio(url);
   audio.volume = Math.max(0, Math.min(1, normalizedVolume > 1 ? normalizedVolume / 100 : normalizedVolume));
   audio.play().catch(error => noisy_log(2, 'Unable to play rendered dice sound', error));
