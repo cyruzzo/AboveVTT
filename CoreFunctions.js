@@ -1489,24 +1489,7 @@ function play_rendered_dice_sound({url, volume = 1} = {}) {
   audio.play().catch(error => noisy_log(2, 'Unable to play rendered dice sound', error));
 }
 
-function handle_rendered_dice_message(event, renderer, physicsWorker) {
-  const {type, payload} = event.data;
-  if (type === 'componentMounted') {
-    configure_rendered_dice(renderer, physicsWorker);
-  } else if (type === 'playSound' || type === 'PlaySound') {
-    play_rendered_dice_sound(payload);
-  } else if(type === 'dice/roll/fulfilled'){
-    window.diceRoller.sendNewFulfilled();
-  } else if(type === 'removeRoll'){
-    physicsWorker.postMessage(event.data);
-  } else if(type === 'workerLog'){
-    noisy_log('Dice render worker log', payload); 
-  } else if(type === 'preRoll'){
-    noisy_log('Dice render worker preRoll data', payload);
-  } else {
-    noisy_log('Unhandled dice render worker message', event.data);
-  }
-}
+
 
 async function add_new_dice(){
   const workerUrls = await discover_dice_worker_urls();
@@ -1580,10 +1563,7 @@ async function add_new_dice(){
   
   physicsWorker.onmessage = (e)=>{
       if(e.data.type == 'preRoll'){
-        physicsWorker.postMessage({
-            ...e.data,
-            type: 'startRoll'
-        })
+        renderer.postMessage(e.data);
       }   
       else  if (e.data.type === 'componentMounted') {
         physicsWorker.postMessage({type: 'props', payload: {dpr: 1, frameloop: 'never'}}); 
@@ -1597,7 +1577,29 @@ async function add_new_dice(){
   renderer.onmessage = event => handle_rendered_dice_message(event, renderer, physicsWorker);
   $(window).off('resize.canvas2').on('resize.canvas2', resizeDiceCanvases);
 }
-
+function handle_rendered_dice_message(event, renderer, physicsWorker) {
+  const {type, payload} = event.data;
+  if (type === 'componentMounted') {
+    configure_rendered_dice(renderer, physicsWorker);
+  } else if (type === 'playSound' || type === 'PlaySound') {
+    play_rendered_dice_sound(payload);
+  } else if(type === 'dice/roll/fulfilled'){
+    window.diceRoller.sendNewFulfilled();
+  } else if(type === 'removeRoll'){
+    physicsWorker.postMessage(event.data);
+  } else if(type === 'workerLog'){
+    noisy_log('Dice render worker log', payload); 
+  } else if(type === 'preRoll'){
+    if(payload.message?.data?.rolls?.length > 0){
+      physicsWorker.postMessage({
+          payload: {...payload.message},
+          type: 'startRoll'
+      });
+    }
+  } else {
+    noisy_log('Unhandled dice render worker message', event.data);
+  }
+}
 function sendPointerEvent(targetSelector='', type="pointerdown", options = {}){
   const pointerEvent = new PointerEvent(type, options)
   const target = $(targetSelector);
