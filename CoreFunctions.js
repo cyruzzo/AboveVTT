@@ -806,6 +806,9 @@ function get_available_styles(){
           .filter(style => !builtInStyleKeys.has(style.toLowerCase()));
         styles.push(...customStyles);
       }
+      if (typeof sort_styles_by_saved_aoe_order === "function") {
+        return sort_styles_by_saved_aoe_order(styles);
+      }
       return styles;
 }
 function add_aoe_to_statblock(html){
@@ -1804,9 +1807,9 @@ function showErrorMessage(error, ...extraInfo) {
     else{
       extraInfo.push('<br/><b>The scene you are trying to load does not exist. You may have deleted it - try setting the DM scene to an existing map.</b>')
     }
-    
   }
-  
+  const messageOnly = extraInfo.shift() == 'messageOnly';
+
   const extraStrings = extraInfo.map(ei => {
     if (typeof ei === "object") {
       return JSON.stringify(ei)
@@ -1815,21 +1818,21 @@ function showErrorMessage(error, ...extraInfo) {
     }
   }).join('<br />');
   if(typeof error.message == 'object'){
-    error.message = JSON.strigify(error.message);
+    error.message = JSON.stringify(error.message);
   }
   let container = $("#above-vtt-error-message");
   if ($('#error-message-stack').length == 0) {
     $("#above-vtt-error-message").remove();
     const container = $(`
-      <div id="above-vtt-error-message">
-        <h2>An unexpected error occurred!</h2>
+      <div id="above-vtt-error-message" ${messageOnly ? `class="small-error"` : ''}>
+        ${messageOnly ? '' : '<h2>An unexpected error occurred!</h2>'}
         <h3 id="error-message">${error.message}</h3>
         <div id="error-message-details" style="max-height: 200px; overflow-y: auto;">${extraStrings}</div>
-        <pre id="error-message-stack" style='max-height: 200px;'>${error.message}<br/>${extraStrings}</pre>
+       ${messageOnly ? '' : `<pre id="error-message-stack" style='max-height: 200px;'>${error.message}<br/>${extraStrings}</pre>`}
         <div id="error-github-issue"></div>
         <div class="error-message-buttons">
           <button id="close-error-button">Close</button>
-          <button id="copy-error-button">Copy logs to clipboard</button>
+          ${messageOnly ? '' : `<button id="copy-error-button">Copy logs to clipboard</button>`}
         </div>
       </div>
     `);
