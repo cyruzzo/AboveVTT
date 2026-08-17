@@ -346,6 +346,7 @@ function build_aoe_token_options(style, shape, countGridSquares, name = "", line
     options.aoeImageOpacity = get_aoe_style_token_opacity(style);
     options.aoeImageAnimated = get_aoe_style_token_animation(style);
     options.aoeImageBorder = get_aoe_style_token_border(style);
+    options.aoeImageVideo = get_aoe_style_token_video(style);
     return options
 }
 
@@ -367,15 +368,25 @@ function apply_aoe_style_display(element, settings, tileSize = "300px") {
     }
 }
 
+function is_aoe_video_image(url) {
+    return typeof url === "string" && ['.mp4', '.webm', '.m4v'].some(d => url.includes(d));
+}
+
 function build_aoe_token_image(token, scale, rotation){
     let tokenImageContainer = $(`<div class=token-image style='transform:scale(var(--token-scale)) rotate(var(--token-rotation))'>`);
     let aoeClassName = token.options.imgsrc.replace("class=","").trim();
     let tokenImage;
     if (token.options.aoeImage) {
         const shapeClass = aoeClassName.match(/aoe-shape-[\w-]+/)?.[0] || "";
-        tokenImage = $(`<div data-img="true" class="aoe-token-tileable ${shapeClass} div-token-image"></div>`);
-        updateTokenSrc(token.options.aoeImage, tokenImage).then(function() {
-            apply_aoe_style_display(tokenImage, { tiled: token.options.aoeImageTiled });
+        const isVideo = token.options.aoeImageVideo === true || is_aoe_video_image(token.options.aoeImage);
+        tokenImage = isVideo
+            ? $(`<video disableRemotePlayback autoplay loop muted data-img="true" class="aoe-token-tileable ${shapeClass} div-token-image"></video>`)
+            : $(`<div data-img="true" class="aoe-token-tileable ${shapeClass} div-token-image"></div>`);
+        updateTokenSrc(token.options.aoeImage, tokenImage, isVideo).then(function() {
+            // a video cannot repeat, so only images take the tiling setting
+            if (!isVideo) {
+                apply_aoe_style_display(tokenImage, { tiled: token.options.aoeImageTiled });
+            }
         });
     } else {
         tokenImage = $(`<div data-img="true" class='${aoeClassName}'></div>`);
