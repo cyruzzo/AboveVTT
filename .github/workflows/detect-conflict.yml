@@ -17,6 +17,8 @@ jobs:
     steps:
       - name: check if prs are dirty
         uses: eps1lon/actions-label-merge-conflict@v3
+        timeout-minutes: 1 
+        continue-on-error: true # Prevents issue with PRs with WIP: as thier name since github api interacts with it
         with:
           dirtyLabel: "Conflicting"
           repoToken: "${{ secrets.GITHUB_TOKEN }}"
