@@ -233,7 +233,7 @@ const debounceHandleInjected = mydebounce(() => {
 			}
 		});
 		if(!found && $('.ct-game-log-pane, [class*="styles_gameLogPane"]').length>0){
-			console.warn(`couldn't find a message matching ${JSON.stringify(current)}`);
+			noisy_log(`couldn't find a message matching ${JSON.stringify(current)}`);
 			// It's possible that we could lose messages due to this not being here, but
 			// if we push the message here, we can end up in an infinite loop.
 			// We may need to revisit this and do better with error handling if we end up missing too many messages.

@@ -21,6 +21,10 @@ function scan_monster(target, stats, tokenId) {
 	const creatureAvatar = window.TOKEN_OBJECTS[tokenId]?.options.imgsrc || stats.data.avatarUrl;
 
 	function clickHandler(clickEvent) {
+		if(clickEvent.button === 2) return;
+		clickEvent.preventDefault();
+		clickEvent.stopPropagation();
+		clickEvent.stopImmediatePropagation();
 		roll_button_clicked(clickEvent, displayName, creatureAvatar, "monster", tokenId)
 	};
 
@@ -85,7 +89,7 @@ function scan_monster(target, stats, tokenId) {
 	)
 
 
-	$(target).find(".avtt-roll-button").click(clickHandler);
+	$(target).find(".avtt-roll-button").off('pointerdown.click touchstart.click').on('pointerdown.click touchstart.click', clickHandler);
 	$(target).find(".avtt-roll-button").on("contextmenu", rightClickHandler);
 	add_ability_tracker_inputs(target, tokenId)
 	
@@ -405,8 +409,12 @@ function scan_player_creature_pane(target) {
     
   })
 
-  container.find("p>em>strong, p>strong>em, div>strong>em, div>em>strong, p>span>em>strong, p>span>strong>em").off("click.roll").on("click.roll", function (e) {
-    e.preventDefault();
+  container.find("p>em>strong, p>strong>em, div>strong>em, div>em>strong, p>span>em>strong, p>span>strong>em").off("pointerdown.roll touchstart.roll").on("pointerdown.roll touchstart.roll", function (e) {
+	if (e.button === 2) return;
+	e.preventDefault();
+	e.stopPropagation();
+	e.stopImmediatePropagation();
+
     if($(e.target).text().includes('Recharge'))
       return;
     let rollButtons = $(e.currentTarget).closest('em:has(strong), strong:has(em)').nextUntil(':has(.avtt-ability-roll-button)').closest('.avtt-roll-button:not([data-rolltype="recharge"])');
@@ -565,7 +573,11 @@ function scan_creature_pane(target, displayName, creatureAvatar) {
 		replace_stat_block_description($(this));
 	});
 
-	target.find(".avtt-roll-button").on("click", function(clickEvent) {
+	target.find(".avtt-roll-button").off('pointerdown.click touchstart.click').on("pointerdown.click touchstart.click", function(clickEvent) {
+		if (e.button === 2) return;
+		e.preventDefault();
+		e.stopPropagation();
+		e.stopImmediatePropagation();
 		roll_button_clicked(clickEvent, displayName, creatureAvatar, "monster")
 	});
 
