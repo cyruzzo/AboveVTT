@@ -21,8 +21,7 @@ class DiceRoll {
     #calculatedExpressionConstant = 0;
     get calculatedConstant() { return this.#calculatedExpressionConstant; }
 
-    #separatedDiceToRoll = {};
-    get diceToRoll() { return this.#separatedDiceToRoll; }
+
 
     // these can be changed after the object is constructed.
 
@@ -192,21 +191,7 @@ class DiceRoll {
             }
         }
 
-        // figure out how many of each DiceType we need to roll
-        this.#individualDiceExpressions.forEach(diceExpression => {
-            let diceType = diceExpression.match(/d\d+/g);
-            let numberOfDice = parseInt(diceExpression.split("d")[0]);
-            if (diceExpression.includes("ro")) {
-                noisy_log("diceExpression: ", diceExpression, ", includes reroll so we're doubling the number of dice for", diceType, ", numberOfDice before doubling: ", numberOfDice);
-                numberOfDice = numberOfDice * 2;
-            }
-            noisy_log("diceExpression: ", diceExpression, ", diceType: ", diceType, ", numberOfDice: ", numberOfDice);
-            if (this.#separatedDiceToRoll[diceType] === undefined) {
-                this.#separatedDiceToRoll[diceType] = numberOfDice;
-            } else {
-                this.#separatedDiceToRoll[diceType] += numberOfDice;
-            }
-        });
+
     }
 
     /**
@@ -554,7 +539,7 @@ class DiceRoller {
             let critSuccess = false;
             let critFail = false;
 
-            let results = roll.output.split(/[\:=]/g)[1].split(/[+-]/g);
+            let results = roll.output.split(/(?<!d\d+ro[<>]?)[\:=]/g)[1].split(/[+-]/g);
             let diceNotations = roll.notation.split(/[+-]/g);
 
             if(!diceNotations[diceNotations.length-1].includes('d')){
@@ -898,7 +883,12 @@ class DiceRoller {
                     } else {
                         convertedExpression.push(currentRoll.value);
                     }
+
+
                     let dice = currentRoll.rolls.map(d => {
+                        if(d.modifiers.has('re-roll-once')){
+                            allValues.push(`${d.initialValue}ro`);
+                        }
                         allValues.push(d.value);
                         console.groupEnd()
                         return { dieType: currentDieType, dieValue: d.value };
@@ -989,6 +979,8 @@ class DiceRoller {
                 pendingCritRange: this.#pendingCritRange,
                 pendingCritType: this.#pendingCritType
             };
+            
+
             ddbMessage = this.#swapRollData(ddbMessage);
             this.#orderedPendingIds.push(rollId);
             if(!window.EXPERIMENTAL_SETTINGS?.['rpgRoller'] && (window.DM || !(typeof getDdb3dDiceShareToggle == 'function' && !window.DM && getDdb3dDiceShareToggle() == 'disabled'))){
@@ -1252,25 +1244,7 @@ class DiceRoller {
                     let calculationValues = matchedValues[diceType].slice(0, numberOfDice);
                     matchedValues[diceType] = matchedValues[diceType].slice(numberOfDice);
 
-                    if (includesReroll) {
-                        // we have twice as many dice values as we need, so we need to figure out which dice values to drop.
-                        // the values are in-order, so we will only keep the front half of the array.
-                        // evaluate each of the calculationValues against the reroll rule.
-                        // any value that evaluates to false, gets dropped. This allows the reroll dice to "shift" into the front half of the array.
-                        // cut the matchedValues down to the expected size. This will drop any reroll dice that we didn't use
-                        const half = Math.ceil(calculationValues.length / 2);
-                        let rolledValues = calculationValues.slice(0, half)
-                        let rerolledValues = calculationValues.slice(half)
-                        const rerollModifier = diceExpression.match(/ro(<|<=|>|>=|=)\d+/);
-                        calculationValues = rolledValues.map(value => {
-                            const rerollExpression = rerollModifier[0].replace('ro', value).replace(/(?<!(<|>))=(?!(<|>))/, "==").replaceAll(/(\D)0+(\d)/gi, '$1$2');
-                            if (eval(rerollExpression)) {
-                                return rerolledValues.shift();
-                            } else {
-                                return value;
-                            }
-                        });
-                    }
+
                     const includesMin = diceExpression.includes("min");
                     if (includesMin) {                
                         // evaluate each of the calculationValues against the min roll rule.
@@ -1296,16 +1270,16 @@ class DiceRoller {
                         let numberToKeep = parseInt(diceExpression.split("kl")[1]);
                         // then sort and only take the lowest values
                         calculationValues = calculationValues.sort((a, b) => a - b).slice(0, numberToKeep);
+                        
                     }
-
                     // finally, replace the diceExpression with the results that we have. For example 2d20 with results [2, 9] will result in "(2+9)", 1d20 with results of [3] will result in "3"
                     let replacementString = calculationValues.length > 1 ? "(" + calculationValues.join("+") + ")" : calculationValues.join("+"); // if there are more than one make sure they get totalled together
-                    replacedExpression = replacedExpression.replace(diceExpression, replacementString);
+                    replacedExpression = replacedExpression.replace(diceExpression, replacementString).replace(/(\d+)ro\+(\d+)/gi, '$2ro');
                     replacedValues = replacedValues.concat(calculationValues);
                 });
 
                 // now that we've replaced all the dice expressions with their results, we need to execute the expression to get the final result
-                let calculatedTotal = eval(replacedExpression);
+                let calculatedTotal = eval(replacedExpression.replace(/ro/gi,''));
                 if((critAttackAction != undefined && pendingCritType == 3) || pendingCrit == 3){
                     calculatedTotal = calculatedTotal * 2; 
                 }
