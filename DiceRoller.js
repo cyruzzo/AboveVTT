@@ -996,13 +996,13 @@ class DiceRoller {
                     get_active_worker_keys().forEach(key => {
                         if(key.includes('physics')){
                             window.ActiveWorkers[key].postMessage({
-                                type: "dice/roll/deferred",
+                                type: "startRoll",
                                 payload: {
                                     ...ddbMessage,
                                     eventType: "dice/roll/deferred"
                                 }
                             })
-                        }   
+                        } 
                     });  
                 };
                 if(sendTo.toLowerCase() != 'self'){
