@@ -2224,11 +2224,11 @@ function getNonLegacyItemId(options){
         options.tooltipName = name;
     }
     if(!newItem[0]){
-        console.warn('Legacy fallback', options)
+        noisy_log('Legacy fallback', options)
         newItem = window.ITEMS_CACHE.filter(d=> d.name.toLowerCase() == options.tooltipName.toLowerCase() && d.isLegacy);
     }
     if(!newItem[0]){
-      console.warn('Item does not exist', options);
+      noisy_log('Item does not exist', options);
       return false;
     }
     return newItem[0].id;
