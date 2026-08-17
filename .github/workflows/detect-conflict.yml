@@ -8,10 +8,11 @@ on:
   # We recommend `pull_request_target` so that github secrets are available.
   # In `pull_request` we wouldn't be able to change labels of fork PRs
   pull_request_target:
-    types: [synchronize]
+    types: [synchronize, opened, reopened]
 
 jobs:
   main:
+    if: github.repository == 'cyruzzo/AboveVTT'
     runs-on: ubuntu-latest
     steps:
       - name: check if prs are dirty
