@@ -1274,7 +1274,7 @@ class DiceRoller {
                     }
                     // finally, replace the diceExpression with the results that we have. For example 2d20 with results [2, 9] will result in "(2+9)", 1d20 with results of [3] will result in "3"
                     let replacementString = calculationValues.length > 1 ? "(" + calculationValues.join("+") + ")" : calculationValues.join("+"); // if there are more than one make sure they get totalled together
-                    replacedExpression = replacedExpression.replace(diceExpression, replacementString).replace(/(\d+)ro\+(\d+)/gi, '$2ro');
+                    replacedExpression = replacedExpression.replace(diceExpression, replacementString).replace(/(\d+)ro\+(\d+)/gi, '$2');
                     replacedValues = replacedValues.concat(calculationValues);
                 });
 
