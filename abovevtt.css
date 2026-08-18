@@ -204,6 +204,11 @@ body > div {
   -ms-user-select: none; 
   user-select: none; 
 }
+.ct-sidebar__inner,
+.ct-character-sheet{
+    user-select: text;
+}
+
 #monster-stat-block,
 .note,
 .note-flyout{
