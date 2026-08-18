@@ -1443,7 +1443,7 @@ function convertToRPGRoller(){
           e.stopPropagation();
           e.preventDefault();
 
-          if (rollData.rollType === "damage") {
+          if (rollData.rollType === "damage" || (rollData.expression !== "1d20" && !/^1d20/gi.test(rollData.expression))) {
             damage_dice_context_menu(rollData.expression, rollData.modifier, rollData.rollTitle, rollData.rollType, window.PLAYER_NAME, window.PLAYER_IMG, undefined, undefined, rollData.damageType, rollData.spellSave)
               .present(e.clientY, e.clientX) // TODO: convert from iframe to main window
           } else {
@@ -1682,7 +1682,7 @@ function inject_dice_roll(element, clear=true) {
       }
       
       
-      if (rollData.rollType === "damage") {
+      if (rollData.rollType === "damage" || (rollData.expression !== "1d20" && !/^1d20/gi.test(rollData.expression))) {
         damage_dice_context_menu(rollData.expression, rollData.modifier, rollData.rollTitle, rollData.rollType, window.PLAYER_NAME, window.PLAYER_IMG, undefined, undefined, rollData.damageType, rollData.spellSave)
           .present(e.clientY, e.clientX) // TODO: convert from iframe to main window
       } else {
@@ -2387,7 +2387,7 @@ function observe_character_sheet_changes(documentToObserve) {
 
         
         
-        if (rollData.rollType === "damage") {
+        if (rollData.rollType === "damage" || (rollData.expression !== "1d20" && !/^1d20/gi.test(rollData.expression))) {
           damage_dice_context_menu(rollData.expression, rollData.modifier, rollData.rollTitle, rollData.rollType, window.PLAYER_NAME, window.PLAYER_IMG, undefined, undefined, rollData.damageType, rollData.spellSave)
             .present(e.clientY, e.clientX) 
         } else {
