@@ -3621,7 +3621,25 @@ function inject_join_button_on_character_list_page() {
   const characterCards = list.find(".ddb-campaigns-character-card-campaign-links");
   characterCards.each((_, campaignLink) => {
     const cardFooter = $(campaignLink).siblings(".ddb-campaigns-character-card-footer").find(".ddb-campaigns-character-card-footer-links");
-    const joinButton = $(`<a href='#' class='button ddb-campaigns-character-card-footer-links-item' style='color:white;background: #1b9af0;text-align: center;border-radius: 2px;box-shadow: inset 0 1px 0 rgb(255 255 255 / 10%), 0 1px 2px rgb(0 0 0 / 5%);background-repeat: repeat-x;border: 1px solid #070707;border-color: rgba(0,0,0,0.1) rgba(0,0,0,0.1) rgba(0,0,0,0.25);margin-top: 5px;padding-left: 4px;padding-right: 4px;'>JOIN AboveVTT</a>`);
+    cardFooter.parent().css("padding", "5px");
+    const joinButton = $(`<a href='#' class='button ddb-campaigns-character-card-footer-links-item' style='    background: #600606;
+                              padding: 3px;
+                              filter: drop-shadow(1px 1px 1px black);
+                              border-radius: 5px;
+                              box-shadow: inset 0px 0px 20px -10px #F00;
+                              top: -2px;
+                              position: relative;
+                              text-wrap: nowrap;
+                              text-shadow: 1px 1px 1px #000;
+                              color: #FFF;
+                              display: flex;
+                              align-items: center;
+                              justify-content: center;
+                              flex-direction: row;
+                              line-height: normal;'> 
+                            <img style="height:17px;filter: drop-shadow(1px 1px 0px black) drop-shadow(1px 0px 0px black);" src="${window.EXTENSION_PATH}assets/avtt-logo.png" title="AboveVTT Logo">
+                            JOIN AboveVTT
+                          </a>`);
     cardFooter.prepend(joinButton);
     joinButton.click(function(e) {
       e.preventDefault();
