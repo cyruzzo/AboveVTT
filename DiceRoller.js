@@ -818,7 +818,7 @@ class DiceRoller {
 
     }
 
-    send_ddb_dice_message(expression, displayName, imgUrl, rollType = "roll", damageType, actionType = "custom", sendTo = "") {
+    send_ddb_dice_message(expression, displayName = window.PLAYER_NAME, imgUrl, rollType = "roll", damageType, actionType = "custom", sendTo = "") {
         let diceRoll = new DiceRoll(expression);
         diceRoll.action = actionType;
         diceRoll.rollType = rollType;
@@ -867,7 +867,11 @@ class DiceRoller {
                 let currentRoll = roll.rolls[i];
                 if (typeof currentRoll === "object") {
                     let currentNotation = notationList[i];
-                    let currentDieType = supportedDieTypes.find(dt => currentNotation.includes(dt)); // we do it this way instead of splitting the string so we can easily clean up things like d20kh1, etc. It's less clever, but it avoids any parsing errors
+                    
+                    let currentDieType = supportedDieTypes.find(dt => {
+                        const regex = new RegExp(`${dt}(\D|$)`, "i");
+                        return currentNotation.match(regex);
+                    }); // we do it this way instead of splitting the string so we can easily clean up things like d20kh1, etc. It's less clever, but it avoids any parsing errors
                     if (!supportedDieTypes.includes(currentDieType)) {
                         console.warn(`found an unsupported dieType ${currentNotation}`);
                         console.groupEnd()
@@ -934,17 +938,17 @@ class DiceRoller {
                 messageScope: sendTo === "everyone" ? "gameId" : "userId",
                 messageTarget: sendTo === "everyone" ? `${window.gameId}` : sendTo === "dungeonmaster" || sendTo === "dm" ? `${window.CAMPAIGN_INFO.dmId}` : `${window.myUser}`,
                 entityId: `${window.myUser}`,
-                entityType: "user",
+                entityType: "character",
                 eventType: "dice/roll/fulfilled",
                 data: {
                     action: actionType,
                     setId: window.mydice.data.setId,
                     context: {
                         entityId: `${window.myUser}`,
-                        entityType: "user",
+                        entityType: "character",
                         messageScope: sendTo === "everyone" ? "gameId" : "userId",
                         messageTarget: sendTo === "everyone" ? `${window.gameId}` : sendTo === "dungeonmaster" || sendTo === "dm" ? `${window.CAMPAIGN_INFO.dmId}` : `${window.myUser}`,
-                        name: diceRoll.name,
+                        name: displayName == false ? "THE DM" : /^spectator-[\d\w]+-[\d\w]+/gi.test(displayName) ?  'Spectator' : displayName,
                         avatarUrl: imgUrl
                     },
                     rollId: rollId,
@@ -997,8 +1001,7 @@ class DiceRoller {
                                 })
                             } 
                         }); 
-                    })
-                    
+                    }) 
                 };
                 if(sendTo.toLowerCase() != 'self'){
                     this.ddbDispatch({
