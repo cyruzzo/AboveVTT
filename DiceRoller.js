@@ -818,7 +818,7 @@ class DiceRoller {
 
     }
 
-    send_ddb_dice_message(expression, displayName, imgUrl, rollType = "roll", damageType, actionType = "custom", sendTo = "") {
+    send_ddb_dice_message(expression, displayName = window.PLAYER_NAME, imgUrl, rollType = "roll", damageType, actionType = "custom", sendTo = "") {
         let diceRoll = new DiceRoll(expression);
         diceRoll.action = actionType;
         diceRoll.rollType = rollType;
@@ -934,17 +934,17 @@ class DiceRoller {
                 messageScope: sendTo === "everyone" ? "gameId" : "userId",
                 messageTarget: sendTo === "everyone" ? `${window.gameId}` : sendTo === "dungeonmaster" || sendTo === "dm" ? `${window.CAMPAIGN_INFO.dmId}` : `${window.myUser}`,
                 entityId: `${window.myUser}`,
-                entityType: "user",
+                entityType: "character",
                 eventType: "dice/roll/fulfilled",
                 data: {
                     action: actionType,
                     setId: window.mydice.data.setId,
                     context: {
                         entityId: `${window.myUser}`,
-                        entityType: "user",
+                        entityType: "character",
                         messageScope: sendTo === "everyone" ? "gameId" : "userId",
                         messageTarget: sendTo === "everyone" ? `${window.gameId}` : sendTo === "dungeonmaster" || sendTo === "dm" ? `${window.CAMPAIGN_INFO.dmId}` : `${window.myUser}`,
-                        name: diceRoll.name,
+                        name: displayName == false ? "THE DM" : /^spectator-[\d\w]+-[\d\w]+/gi.test(displayName) ?  'Spectator' : displayName,
                         avatarUrl: imgUrl
                     },
                     rollId: rollId,
@@ -997,8 +997,7 @@ class DiceRoller {
                                 })
                             } 
                         }); 
-                    })
-                    
+                    }) 
                 };
                 if(sendTo.toLowerCase() != 'self'){
                     this.ddbDispatch({

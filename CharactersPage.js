@@ -1498,7 +1498,11 @@ async function init_character_sheet_page() {
       }
     });
   });
-
+  $('.ct-character-sheet__inner').off('click.stopPropagation').on('click.stopPropagation', '.integrated-dice__container, .avtt-roll-button, .ddbc-combat-attack__icon.above-vtt-visited, .ct-spells-spell__action.above-vtt-visited .ct-spells-spell__at-will, .ddb-note-roll', function(e){
+    e.preventDefault();
+    e.stopPropagation();
+    e.stopImmediatePropagation();
+  });
   // observe window resizing and injeect our join/exit button if necessary
   window.addEventListener('resize', function(event) {
     inject_join_exit_abovevtt_button();
@@ -2433,6 +2437,7 @@ function observe_character_sheet_changes(documentToObserve) {
         $(this).toggleClass('advantageHover', false)
         $(this).toggleClass('disadvantageHover', false)
       })
+      
       spells.off('pointerdown.multiroll touchstart.multiroll').on('pointerdown.multiroll touchstart.multiroll', function(e) {
         e.preventDefault();
         e.stopPropagation();
