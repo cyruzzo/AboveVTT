@@ -296,10 +296,10 @@ async function display_stat_block_in_container(statBlock, container, tokenId, cu
                                               width: 20px;
                                               height: 20px;
                                               color: #ddd;">
-                    <span onclick='import_open_template();' title="Upload HTML Statblock" class="material-symbols-outlined" style="font-size:20px;">
+                    <span onclick='import_open_template("${tokenId}");' title="Upload HTML Statblock" class="material-symbols-outlined" style="font-size:20px;">
                       upload
                     </span>
-                    <input accept='.html' id='input_pc_template' type='file' single style='display: none' />
+                    <input accept='.html' class='import_pc_template' data-id='${tokenId}' type='file' single style='display: none' />
                   </div>
                   `);
       uploadStat.find('input[type="file"]').change(function(e) {
@@ -359,8 +359,8 @@ async function display_stat_block_in_container(statBlock, container, tokenId, cu
 		}
 	}
 
-function import_open_template(){
-  $("#input_pc_template").trigger("click");
+function import_open_template(id){
+  $(`.import_pc_template[data-id='${id}']`).trigger("click");
 }
 function import_pc_template_html(files, parentEle, customStatId, tokenId) {
 	if (!files.length) return;
