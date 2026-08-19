@@ -869,7 +869,7 @@ class DiceRoller {
                     let currentNotation = notationList[i];
                     
                     let currentDieType = supportedDieTypes.find(dt => {
-                        const regex = new RegExp(`${dt}(\D|$)`, "i");
+                        const regex = new RegExp(`${dt}(\\D|$)`, "i");
                         return currentNotation.match(regex);
                     }); // we do it this way instead of splitting the string so we can easily clean up things like d20kh1, etc. It's less clever, but it avoids any parsing errors
                     if (!supportedDieTypes.includes(currentDieType)) {
