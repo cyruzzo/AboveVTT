@@ -306,7 +306,11 @@ async function display_stat_block_in_container(statBlock, container, tokenId, cu
         import_pc_template_html(e.target.files, $html, window.TOKEN_OBJECTS[tokenId]?.options?.statBlock, tokenId);
       });
       container.prepend(lockStatButton, downloadStat, uploadStat);
-
+      container.off('paste').on('paste', '[contentEditable="true"]', function (e) {
+        e.preventDefault();
+        const text = (e.originalEvent?.clipboardData || e.clipboardData || window.clipboardData).getData('text/plain');
+        document.execCommand('insertText', false, text);
+      });
 			container.find('table').each(function() {
         const $table = $(this);
         const rowsContainer = $table.find('tbody').length > 0 ? $table.find('tbody') : $table;
@@ -531,6 +535,11 @@ const debounceRescanStatBlock = mydebounce(async (container, noteId, tokenId, cu
       createSendPlayerButton(block, "login", true).insertAfter(block);
     });
   }
+  container.off('paste').on('paste', '[contentEditable="true"]', function (e) {
+    e.preventDefault();
+    const text = (e.originalEvent?.clipboardData || e.clipboardData || window.clipboardData).getData('text/plain');
+    document.execCommand('insertText', false, text);
+  });
   container.find('table').each(function() {
     const $table = $(this);
     const rowsContainer = $table.find('tbody').length > 0 ? $table.find('tbody') : $table;
