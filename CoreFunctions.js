@@ -2840,6 +2840,7 @@ async function updateTokenSrc(url, container, video=false){
     container.attr('src', url);
     container.css('background', `url(${url})`)
   }
+  container.find('video').attr('src', url);
 }
 
 const throttleGoogleApi = throttledQueue('throttleGoogleApi', 1, 5000); // map throttle
