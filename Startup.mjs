@@ -121,6 +121,7 @@ $(function() {
           throw new Error(`Invalid AboveVTT page: ${window.location.href}`)
         }
       }).then(()=>{
+        refresh_aoe_style_menu();
         addExtensionPathStyles();
         $('body').append(`<script type="text/javascript" src="https://www.dropbox.com/static/api/2/dropins.js" id="dropboxjs" data-app-key="h3iaoazdu0wqrfd"></script>`)
       }).then(() => {     

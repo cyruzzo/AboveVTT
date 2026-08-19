@@ -912,15 +912,15 @@ class Token {
 				window.ON_SCREEN_TOKENS[this.options.id].onScreenDarknessToken = tokenClone;
 
                 const copyImage = tokenClone.find('.token-image');
-
-				if(this.options.imgsrc.startsWith('above-bucket-not-a-url')){
-					const fileSrc = this.options.imgsrc.replace('above-bucket-not-a-url', '');
+				const imageSrc = this.options.aoeImage ?? this.options.imgsrc;
+				if(imageSrc.startsWith('above-bucket-not-a-url')){
+					const fileSrc = imageSrc.replace('above-bucket-not-a-url', '');
 					if (!copyImage.attr('src')?.includes(encodeURI(fileSrc))){
-						updateTokenSrc(this.options.imgsrc, copyImage, this.options.videoToken)
+						updateTokenSrc(imageSrc, copyImage, this.options.videoToken)
 					}
 				}
-				else if (copyImage.attr('src') != parse_img(this.options.imgsrc)){
-					updateTokenSrc(parse_img(this.options.imgsrc), copyImage, this.options.videoToken)
+				else if (copyImage.attr('src') != parse_img(imageSrc)){
+					updateTokenSrc(parse_img(imageSrc), copyImage, this.options.videoToken)
 				}
 			}
 
@@ -2366,21 +2366,22 @@ class Token {
 				}
 				let oldImage =  old.find(".token-image,[data-img]")
 				// token uses an image for it's image
-				if (!this.options.imgsrc.startsWith("class")){
-					if(this.options.imgsrc.startsWith('above-bucket-not-a-url')){
+				const imageSrc = this.options.aoeImage ?? this.options.imgsrc;
+				if (!imageSrc.startsWith("class")){
+					if(imageSrc.startsWith('above-bucket-not-a-url')){
 						
-						const fileSrc = this.options.imgsrc.replace('above-bucket-not-a-url', '');
+						const fileSrc = imageSrc.replace('above-bucket-not-a-url', '');
 						if (!oldImage.attr('src')?.includes(encodeURI(fileSrc))) {
-							getAvttStorageUrl(this.options.imgsrc, true).then((url) => {
+							getAvttStorageUrl(imageSrc, true).then((url) => {
 								let oldFileExtension = oldImage.attr("src").split('.')[oldImage.attr("src").length - 1]
-								let newFileExtention = parse_img(this.options.imgsrc.split('.')[this.options.imgsrc.split('.').length - 1]);
+								let newFileExtention = parse_img(imageSrc.split('.')[imageSrc.split('.').length - 1]);
 								let imgClass = oldImage.attr('class')?.replaceAll('div-token-image', '');
 								let video = false;
 								if (oldFileExtension !== newFileExtention || window.videoTokenOld[this.options.id] != this.options.videoToken) {
 									oldImage.remove();
 									
 									let tokenImage;
-									if (this.options.videoToken == true || ['.mp4', '.webm', '.m4v'].some(d => this.options.imgsrc.includes(d))) {
+									if (this.options.videoToken == true || ['.mp4', '.webm', '.m4v'].some(d => imageSrc.includes(d))) {
 										tokenImage = $("<video disableRemotePlayback autoplay loop muted style='transform:" + imageTransform + "' class='" + imgClass + " div-token-image'/>");
 										video = true;
 									}
@@ -2449,16 +2450,16 @@ class Token {
 						}
 						
 					}
-					else if(oldImage.attr("src")!=parse_img(this.options.imgsrc) || window.videoTokenOld[this.options.id] != this.options.videoToken){
+					else if(oldImage.attr("src")!=parse_img(imageSrc) || window.videoTokenOld[this.options.id] != this.options.videoToken){
 						let oldFileExtension = oldImage.attr("src")?.split('.')[oldImage.attr("src").length-1]
-						let newFileExtention = parse_img(this.options.imgsrc.split('.')[this.options.imgsrc.split('.').length-1]);
+						let newFileExtention = parse_img(imageSrc.split('.')[imageSrc.split('.').length-1]);
 						let imgClass = oldImage.attr('class')?.replaceAll('div-token-image', '');
 						let video = false;
 						if(oldFileExtension !== newFileExtention || window.videoTokenOld[this.options.id] != this.options.videoToken){
 							oldImage.remove();
 							
 							let tokenImage;
-							if(this.options.videoToken == true || ['.mp4', '.webm','.m4v'].some(d => this.options.imgsrc.includes(d))){
+							if(this.options.videoToken == true || ['.mp4', '.webm','.m4v'].some(d => imageSrc.includes(d))){
 								tokenImage = $("<video disableRemotePlayback autoplay loop muted style='transform:"+imageTransform+"' class='"+imgClass+" div-token-image'/>");			
 								video = true;
 							} 
@@ -2474,12 +2475,12 @@ class Token {
 								const underDarkImage = tokenImage.clone();
 								underDarkImage.find('.token-image ~ .token-image').remove();
 								underDarkToken.append(underDarkImage);
-								updateTokenSrc(this.options.imgsrc, underDarkImage, video)
+								updateTokenSrc(imageSrc, underDarkImage, video)
 							}
 						}
 						window.videoTokenOld[this.options.id] = this.options.videoToken;
 						
-						updateTokenSrc(this.options.imgsrc, oldImage, video)
+						updateTokenSrc(imageSrc, oldImage, video)
 						$(`#combat_area tr[data-target='${this.options.id}'] img[class*='Avatar']`).attr("src", parse_img(this.options.imgsrc));
 						oldImage.off('dblclick.highlightToken').on('dblclick.highlightToken', function(e) {
 							self.highlight(true); // dont scroll
@@ -2733,15 +2734,15 @@ class Token {
 						let oldImage = $(`#tokens div[data-id='${this.options.id}'] .token-image`);
 						const copyImage = oldImage.clone();
 						underDarkToken.append(copyImage);
-						
-						if (this.options.imgsrc.startsWith('above-bucket-not-a-url')) {
-							const fileSrc = this.options.imgsrc.replace('above-bucket-not-a-url', '');
+						const imageSrc = this.options.aoeImage ?? this.options.imgsrc;
+						if (imageSrc.startsWith('above-bucket-not-a-url')) {
+							const fileSrc = imageSrc.replace('above-bucket-not-a-url', '');
 							if (!copyImage.attr('src')?.includes(encodeURI(fileSrc))) {
-								updateTokenSrc(this.options.imgsrc, copyImage, this.options.videoToken);
+								updateTokenSrc(imageSrc, copyImage, this.options.videoToken);
 							}
 						}
-						else if(copyImage.attr('src') != parse_img(this.options.imgsrc)){
-							updateTokenSrc(parse_img(this.options.imgsrc), copyImage, this.options.videoToken);
+						else if(copyImage.attr('src') != parse_img(imageSrc)){
+							updateTokenSrc(parse_img(imageSrc), copyImage, this.options.videoToken);
 						}
 				}  	
 				else{
@@ -3471,15 +3472,15 @@ class Token {
 						window.ON_SCREEN_TOKENS[this.options.id].onScreenDarknessToken = tokenClone;
 
 						let copyImage = tokenClone.find('.token-image')
-
-						if (this.options.imgsrc.startsWith('above-bucket-not-a-url')) {
-							const fileSrc = this.options.imgsrc.replace('above-bucket-not-a-url', '');
+						const imageSrc = this.options.aoeImage ?? this.options.imgsrc;
+						if (imageSrc.startsWith('above-bucket-not-a-url')) {
+							const fileSrc = imageSrc.replace('above-bucket-not-a-url', '');
 							if (!copyImage.attr('src')?.includes(encodeURI(fileSrc))) {
-								updateTokenSrc(this.options.imgsrc, copyImage, this.options.videoToken);
+								updateTokenSrc(imageSrc, copyImage, this.options.videoToken);
 							}
 						}
-						else if (copyImage.attr('src') != parse_img(this.options.imgsrc)) {
-							updateTokenSrc(parse_img(this.options.imgsrc), copyImage, this.options.videoToken);
+						else if (copyImage.attr('src') != parse_img(imageSrc)) {
+							updateTokenSrc(parse_img(imageSrc), copyImage, this.options.videoToken);
 						}
 					}	
 			    }
