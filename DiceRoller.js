@@ -130,7 +130,7 @@ class DiceRoll {
      */
     constructor(expression, action = undefined, rollType = undefined, name = window.PLAYER_NAME || "THE DM", avatarUrl = window.PLAYER_IMG, entityType = undefined, entityId = undefined, sendToOverride = undefined, damageType = undefined, spellSave = undefined) {
 
-        let parsedExpression = expression.toLowerCase().replaceAll(/\s+/g, "").replaceAll(/^(d\d+)|([+-])(d\d+)/g, '$21$1$3');; // remove all spaces and 1's to d6 -> 1d6, d8 -> 1d8 etc.
+        let parsedExpression = expression.toLowerCase().replaceAll(/\s+/g, "").replaceAll(/^(d\d+)|([+-])(d\d+)/g, '$21$1$3'); // remove all spaces and 1's to d6 -> 1d6, d8 -> 1d8 etc.
         $(document).off('change.dicevisibility').on('change.dicevisibility', 'input[id|="dice-visibility-option"]', (e)=>{
            // This is a workaround resolve an issue with DDB bug. They write the new data to local storage then override it immediately with initally loaded data.
             const userData = JSON.parse(localStorage.getItem('userDiceData'))
@@ -1342,6 +1342,13 @@ class DiceRoller {
             ddbMessage.avttExpression = `2(${pendingDiceRoll.expression})`;
             ddbMessage.avttExpressionResult = `2(${pendingDiceRoll.expressionResult})`;
         }
+
+        if(ddbMessage.avttExpression != undefined){
+            const removeLeadTrailZero = /^0+(\+|(\-))|[+-]0+$/gi;
+            ddbMessage.avttExpression = ddbMessage.avttExpression.replaceAll(removeLeadTrailZero, '$2');
+            ddbMessage.avttExpressionResult = ddbMessage.avttExpressionResult.replaceAll(removeLeadTrailZero, '$2');
+        }
+
         ddbMessage.avttSpellSave = pendingSpellSave;
         if(ddbMessage.data.rolls.some(d=> d.rollType.includes('damage')))
             ddbMessage.avttDamageType = pendingDamageType;
@@ -1403,6 +1410,7 @@ function replace_gamelog_message_expressions(listItem) {
         let avttExpressionResult = listItem.attr("data-avtt-expression-result");
         if (avttExpressionResult !== undefined && avttExpressionResult.length > 0) {
             expressionResultSpan.text(avttExpressionResult);
+            expressionResultSpan.attr("title", avttExpressionResult);
             noisy_log("injected avttExpressionResult", avttExpressionResult);
         }
     }
