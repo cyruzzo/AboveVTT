@@ -1410,6 +1410,7 @@ function replace_gamelog_message_expressions(listItem) {
         let avttExpressionResult = listItem.attr("data-avtt-expression-result");
         if (avttExpressionResult !== undefined && avttExpressionResult.length > 0) {
             expressionResultSpan.text(avttExpressionResult);
+            expressionResultSpan.attr("title", avttExpressionResult);
             noisy_log("injected avttExpressionResult", avttExpressionResult);
         }
     }

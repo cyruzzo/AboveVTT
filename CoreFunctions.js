@@ -495,11 +495,11 @@ Other Commands:
       }
       else if (clickedButton.hasClass('adv')){
         advDis = 'kh';
-        rollButton.click();
+        rollButton.trigger('pointerdown', { button: 0 });
       }
       else if(clickedButton.hasClass('dis')){
         advDis = 'kl'
-        rollButton.click();
+        rollButton.trigger('pointerdown', { button: 0 });
       }
     });
 
