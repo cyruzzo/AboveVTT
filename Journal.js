@@ -2254,15 +2254,16 @@ class JournalManager{
 					self.downloadStatBlock(id);
 				});
 				const uploadStat = $(`<div class='upload_button' style="cursor: pointer; position: relative; display:inline-block; color: #ddd;">
-					<span onclick='import_open_template();' title="Upload HTML Statblock" class="material-symbols-outlined" style="font-size: 24px; position: relative; top: 4px;">
+					<span onclick='import_open_template("${id}");' title="Upload HTML Statblock" class="material-symbols-outlined" style="font-size: 24px; position: relative; top: 4px;">
 						upload
 					</span>
-					<input accept='.html' id='input_pc_template' type='file' single style='display: none' />
+					<input accept='.html' class='import_pc_template' data-id='${id}' type='file' single style='display: none' />
 					</div>
 				`);
 				uploadStat.find('input[type="file"]').change(function(e) {
 					import_pc_template_html(e.target.files, note_text, id);
 				});
+
 				note_container.find('.title_bar_text').css('display', 'inline-block');
 				note_container.find('.title_bar').prepend(lockStatButton, downloadStat, uploadStat);
 				note_container.find('.title_bar').css({

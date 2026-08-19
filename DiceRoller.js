@@ -128,7 +128,7 @@ class DiceRoll {
      * @param entityId {string|undefined} the id of the entity associated with this roll. If {entityType} is "character" this should be the id for that character. If {entityType} is "monster" this should be the id for that monster. If {entityType} is "user" this should be the id for that user.
      * @param sendToOverride {string|undefined} if undefined, the roll will go to whatever the gamelog is set to.
      */
-    constructor(expression, action = undefined, rollType = undefined, name = undefined, avatarUrl = undefined, entityType = undefined, entityId = undefined, sendToOverride = undefined, damageType = undefined, spellSave = undefined) {
+    constructor(expression, action = undefined, rollType = undefined, name = window.PLAYER_NAME || "THE DM", avatarUrl = window.PLAYER_IMG, entityType = undefined, entityId = undefined, sendToOverride = undefined, damageType = undefined, spellSave = undefined) {
 
         let parsedExpression = expression.toLowerCase().replaceAll(/\s+/g, "").replaceAll(/^(d\d+)|([+-])(d\d+)/g, '$21$1$3');; // remove all spaces and 1's to d6 -> 1d6, d8 -> 1d8 etc.
         $(document).off('change.dicevisibility').on('change.dicevisibility', 'input[id|="dice-visibility-option"]', (e)=>{

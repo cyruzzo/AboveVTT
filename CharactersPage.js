@@ -3622,7 +3622,7 @@ function inject_join_button_on_character_list_page() {
   characterCards.each((_, campaignLink) => {
     const cardFooter = $(campaignLink).siblings(".ddb-campaigns-character-card-footer").find(".ddb-campaigns-character-card-footer-links");
     cardFooter.parent().css("padding", "5px");
-    const joinButton = $(`<a href='#' class='button ddb-campaigns-character-card-footer-links-item' style='    background: #600606;
+    const joinButton = $(`<a href='#' class='button ddb-campaigns-character-card-footer-links-item' style='background: #600606 !important;
                               padding: 3px;
                               filter: drop-shadow(1px 1px 1px black);
                               border-radius: 5px;
@@ -3631,7 +3631,7 @@ function inject_join_button_on_character_list_page() {
                               position: relative;
                               text-wrap: nowrap;
                               text-shadow: 1px 1px 1px #000;
-                              color: #FFF;
+                              color: #FFF !important;
                               display: flex;
                               align-items: center;
                               justify-content: center;
