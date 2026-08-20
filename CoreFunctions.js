@@ -474,6 +474,7 @@ Other Commands:
         <input class="roll-input-mod" type='number' value='0' step='1'></input>
         <button class="roll-button-mod plus">+</button>
         <button class="roll-button-mod adv roll_mods_button icon-advantage markers-icon"></button>
+        <select id='contextSelect' class="roll-button" style="width:20px; left:unset; right:0px; border-radius:0px 10px 10px 0px; background-color:buttonface;"></select>
       </div>`)
     modInput.append(rollButton);
 
@@ -502,7 +503,7 @@ Other Commands:
         rollButton.trigger('pointerdown', { button: 0 });
       }
     });
-
+  
 
     const getExpression = function(button) {
       $('[data-dd-action-name="Close Roll Dice"]').click();
@@ -576,9 +577,25 @@ Other Commands:
             .present(e.clientY-15, e.clientX+45);
         } else {
           standard_dice_context_menu(`${expression}`)
-            .present(e.clientY-15, e.clientX+45);
+            .present(e.clientY-15, e.clientX+48);
         }
     })
+    modInput.off('click.button').on('click.button', '#contextSelect', function(e){
+      e.preventDefault();
+      e.stopPropagation();
+      e.stopImmediatePropagation();
+    });
+    modInput.off('pointerdown.button touchstart.button').on('pointerdown.button touchstart.button', '#contextSelect', function(e){
+      if(e.button === 2) return;
+      e.preventDefault();
+      e.stopPropagation();
+      e.stopImmediatePropagation();
+      const contextMenuEvent = new MouseEvent('contextmenu', {
+        clientX: e.clientX-30,
+        clientY: e.clientY
+      });
+      rollButton[0].dispatchEvent(contextMenuEvent);
+    });
 
   }
 
