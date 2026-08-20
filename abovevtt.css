@@ -13112,6 +13112,7 @@ p.monster-header+p {
     box-shadow: inset 1px 1px 4px -2px #a0a0a0e3, 2px 2px 2px -1px #000000a3, 0px 1px 1px 0px #0006;
     padding: 2px;
     border-radius: 5px;
+    z-index:1;
 }
 .body-rpgcharacter .clear-dice{
     top:10px;
