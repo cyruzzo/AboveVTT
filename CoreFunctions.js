@@ -467,7 +467,7 @@ Other Commands:
   });
 
   if ($(".roll-button").length == 0) {
-    const rollButton = $(`<button class="roll-button">Roll</button>`);
+    const rollButton = $(`<button id='sendRoll' class="roll-button">Roll</button>`);
     const modInput = $(`<div class='roll-mod-container'>
         <button class="roll-button-mod dis roll_mods_button icon-disadvantage markers-icon"></button>
         <button class="roll-button-mod minus">-</button>
@@ -481,7 +481,7 @@ Other Commands:
     
     $("body").append(modInput);
     let advDis;
-    modInput.off('pointerdown.button touchstart.button').on('pointerdown.button touchstart.button', 'button.roll-button-mod', function(e){
+    modInput.find('button.roll-button-mod').off('pointerdown.button touchstart.button').on('pointerdown.button touchstart.button', function(e){
       if(e.button === 2) return;
       e.preventDefault();
       e.stopPropagation();
