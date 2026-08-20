@@ -113,7 +113,7 @@ Mousetrap.bind('shift+v', function () {
 
 Mousetrap.bind('=', function () {       //zoom plus
     if($('.roll-mod-container').hasClass('show')){
-        $('.roll-button-mod.plus').click();
+        $('.roll-button-mod.plus').trigger('pointerdown');;
     }
     else if(window.numpadRollFormula != undefined){
         if(window.numpadRollFormulaMod == undefined)
@@ -177,7 +177,7 @@ Mousetrap.bind('h', function () {       //zoom plus
 }); 
 Mousetrap.bind('+', function () {       //zoom plus
     if($('.roll-mod-container').hasClass('show')){
-        $('.roll-button-mod.plus').click();
+        $('.roll-button-mod.plus').trigger('pointerdown');
     }
     else if(window.numpadRollFormula != undefined){
         if(window.numpadRollFormulaMod == undefined)
@@ -192,7 +192,7 @@ Mousetrap.bind('+', function () {       //zoom plus
 
 Mousetrap.bind('-', function () {       //zoom minus
     if($('.roll-mod-container').hasClass('show')){
-        $('.roll-button-mod.minus').click();
+        $('.roll-button-mod.minus').trigger('pointerdown');
     }
     else if(window.numpadRollFormula != undefined){
         if(window.numpadRollFormulaMod == undefined)
@@ -206,7 +206,13 @@ Mousetrap.bind('-', function () {       //zoom minus
 });
 Mousetrap.bind('enter', function () {       //zoom minus
     if($('.roll-mod-container').hasClass('show')){
-        $('.roll-mod-container>.roll-button').click(); 
+        const pointerEvent = new MouseEvent('pointerdown', {
+            bubbles: true,
+            cancelable: true,
+            clientX: 0,
+            clientY: 0
+        });
+        $('#sendRoll')[0].dispatchEvent(pointerEvent);
     }   
     else if(window.numpadRollFormula != undefined){
         if(window.numpadRollFormulaMod == undefined)
