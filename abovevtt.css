@@ -3158,6 +3158,7 @@ body .gamelogcontainer .sidebar__pane-content {
     left: 0;
     height: 40px;
     border: none;
+    border-radius: 10px 0px 0px 10px;
 }
 
 input.roll-input-mod::-webkit-inner-spin-button,
@@ -3215,7 +3216,7 @@ button.roll-button-mod.minus {
 }
 button.roll-button-mod:is(.dis, .adv) {
     position: absolute;
-    bottom: 20px;
+    bottom: 70px;
     border-radius: 50%;
     left: 40px;
     filter: sepia(0.3) hue-rotate(312deg) saturate(14) drop-shadow(0px 0px 0px #F00);
@@ -3228,9 +3229,8 @@ button.roll-button-mod:is(.dis, .adv) {
     padding: 0px;
 }
 button.roll-button-mod.adv {
-    left: 40px;
+    left: 0px;
     filter: sepia(0.3) hue-rotate(63deg) saturate(8) drop-shadow(0px 0px 0px #0F0);
-    bottom: 40px
 }
 .d-block {
     display: block;
