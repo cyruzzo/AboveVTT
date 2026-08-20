@@ -672,7 +672,7 @@ class DiceRoller {
             this.#pendingDamageType = damageType;
             this.#pendingCrit = forceCritType;
             this.#pendingSendTo = diceRoll.sendToOverride;
-                if (ddb3dDiceShareToggle && !window.EXPERIMENTAL_SETTINGS['rpgRoller'] && !msgdata?.rollData?.expression?.includes('d')) {
+            if (ddb3dDiceShareToggle && !window.EXPERIMENTAL_SETTINGS['rpgRoller'] && !msgdata?.rollData?.expression?.includes('d')) {
                     setTimeout(() => {
                         const message = self.send_ddb_dice_message(msgdata.rollData.expression, msgdata.player, msgdata.img, msgdata.rollData.rollType, msgdata.rollData.damageType, msgdata.rollData.rollTitle, diceRoll.sendToOverride)
                         self.#resetVariables();
@@ -691,7 +691,7 @@ class DiceRoller {
                 }, 200)
                 return true;
             }
-            else if ((!is_abovevtt_page() && window.sendToTab != undefined) || is_gamelog_popout() ){
+            if ((!is_abovevtt_page() && window.sendToTab != undefined) || is_gamelog_popout() ){
                 if(window.sendToTab == undefined)
                     window.sendToTab = isNaN(Number(window.PLAYER_ID)) ? false : Number(window.PLAYER_ID);
                     setTimeout(function(){
@@ -993,7 +993,7 @@ class DiceRoller {
                         get_active_worker_keys().forEach(key => {
                             if(key.includes('physics')){
                                 window.ActiveWorkers[key].postMessage({
-                                    type: "startRoll",
+                                    type: "dice/roll/deferred",
                                     payload: {
                                         ...ddbMessage,
                                         eventType: "dice/roll/deferred"

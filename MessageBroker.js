@@ -968,7 +968,7 @@ class MessageBroker {
 				}
 				return;
 			} else if (msg.eventType == "dice/roll/deferred") {
-				const isPlayer = !(is_spectator_page() || window.DM)
+				const isPlayer = is_characters_page();
 				if(isPlayer)
 					return;
 
