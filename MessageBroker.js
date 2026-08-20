@@ -977,13 +977,15 @@ class MessageBroker {
 				if(ddb3dDiceShareToggle == true && (msg.messageTarget == window.gameId || showSelfRoll || showDMRoll)){
 					get_active_worker_keys().forEach(key => {
 						if(key.includes('physics')){
-							window.ActiveWorkers[key].postMessage({
-								type: "dice/roll/deferred",
-								payload: {
-									...msg,
-									eventType: "dice/roll/deferred"
-								}
-							})
+							requestAnimationFrame(() => {
+								window.ActiveWorkers[key].postMessage({
+									type: "dice/roll/deferred",
+									payload: {
+										...msg,
+										eventType: "dice/roll/deferred"
+									}
+								});
+							});
 						} 
 					});
 				}

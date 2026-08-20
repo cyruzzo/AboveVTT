@@ -2071,7 +2071,7 @@ class JournalManager{
 			note_container.toggleClass(['ui-dialog', 'ui-corner-all', 'ui-widget', 'ui-widget-content', 'ui-front', 'ui-draggable', 'ui-resizable'], !isMinimized);
 		});
 		if(!noteAlreadyOpen){
-			note.attr('title',self.notes[id].title);
+			note_container.find('.title_bar').attr('title',self.notes[id].title);
 			if(window.DM || self.notes[id].text.includes('.dnd-sheet')){
 				let visibility_container=$("<div class='visibility-container'/>");
 
