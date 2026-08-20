@@ -529,13 +529,6 @@ Other Commands:
           return;
         }
 
-        const normalizedTerm = `${Math.abs(numericCount)}${dieType}`;
-        if (numericCount < 0) {
-          negativeTerms.push(normalizedTerm);
-        } else {
-          positiveTerms.push(normalizedTerm);
-        }
-
         if(advDis != undefined){
           const countValue = Math.abs(numericCount);
           for (let i = 0; i<countValue; i++){
@@ -545,6 +538,13 @@ Other Commands:
             } else {
               positiveTerms.push(advantageExpression);
             }
+          }
+        } else{
+          const normalizedTerm = `${Math.abs(numericCount)}${dieType}`;
+          if (numericCount < 0) {
+            negativeTerms.push(normalizedTerm);
+          } else {
+            positiveTerms.push(normalizedTerm);
           }
         }
       });

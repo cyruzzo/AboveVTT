@@ -968,10 +968,9 @@ class MessageBroker {
 				}
 				return;
 			} else if (msg.eventType == "dice/roll/deferred") {
-				const isPlayer = !(is_spectator_page() || window.DM)
-				if(isPlayer)
+				const isPlayer = is_characters_page();
+				if(isPlayer || document.hidden)
 					return;
-
 				const ddb3dDiceShareToggle = get_avtt_setting_value("streamDiceRolls");
 				const showSelfRoll = !is_spectator_page() && msg.messageTarget == `${window.myUser}`;
 				const showDMRoll = window.DM && (msg.messageTarget == 'dm' || msg.messageTarget == 'dungeonmaster');
