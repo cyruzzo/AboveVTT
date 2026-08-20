@@ -3159,8 +3159,19 @@ body .gamelogcontainer .sidebar__pane-content {
     height: 40px;
     border: none;
     border-radius: 10px 0px 0px 10px;
+    border-right: 1px solid;
+    border-image: linear-gradient(to top, transparent 0% 25%, #aaa 25% 75%, transparent 75% 100%) 1;
 }
-
+select#contextSelect {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-color: buttonface !important;
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="8" viewBox="0 0 12 8"><path fill="%23333" d="M1.41 0L6 4.58 10.59 0 12 1.41l-6 6-6-6z"/></svg>') !important;
+    background-repeat: no-repeat !important;
+    background-position: center center !important;
+    background-size: 50% 50% !important;
+}
 input.roll-input-mod::-webkit-inner-spin-button,
 input.roll-input-mod::-webkit-outer-spin-button {
   -webkit-appearance: none;
