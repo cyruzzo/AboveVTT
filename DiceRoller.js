@@ -1013,7 +1013,7 @@ class DiceRoller {
                 this.backupSendTimeout = setTimeout(() => { // if dice are slow to roll display result early
                     this.sendNewFulfilled();
                 }, 1000)
-                return;
+                return ddbMessage;
             }
                          
             this.sendNewFulfilled();       
@@ -1053,7 +1053,7 @@ class DiceRoller {
         this.#pendingMessages[message.data.rollId] = null;
         delete this.#pendingMessages[message.data.rollId];  
     }
-    async sendNewFulfilled(deferredOnly = false) {
+    async sendNewFulfilled() {
         if (this.#orderedPendingIds.length == 0)
             return;
         const firstPending = this.#orderedPendingIds.shift(); // we don't use current fulfilled messages as they dont always come in in order due to time it take dice to roll, modify the deferred message in order instead
