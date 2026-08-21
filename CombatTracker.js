@@ -277,7 +277,6 @@ function init_combat_tracker(){
 		current=$("#combat_area tr[data-current=1]");
 		let currentTarget = current.attr('data-target');
 		if(current.length==0){
-			console.log('nessuno selezionato');
 			$($("#combat_area tr:not([skipTurn])")[0]).attr('data-current','1');
 			currentTarget = $("#combat_area tr[data-current=1]").attr('data-target');
 			if(window.TOKEN_OBJECTS[currentTarget] != undefined){
@@ -755,16 +754,9 @@ function update_carousel_combat_tracker(){
 	    }
 
 	    table.find(`tr[data-target='${firstTokenId}']`).toggleClass('first-in-round', true);
-		const images = table.find(`tr td:first-of-type img[data-id^='above-bucket-not-a-url']`);
-
-		for(let image of images){
-			image = $(image);
-			const imageId = image.attr('data-id');
-			updateImgSrc(imageId, image, image.is('video'), true)
-		}
-
-
-	    if(window.DM){
+		const images = table.find(`tr td:first-of-type img`);
+	    
+		if(window.DM){
 	    		carouselContainer.find('#combat_prev_button, #combat_next_button').remove();
 	    		const prevButtonClone = $('#combat_prev_button').clone(true, true);
 			    const nextButtonClone = $('#combat_next_button').clone(true, true);
@@ -772,7 +764,7 @@ function update_carousel_combat_tracker(){
 			    prevButtonClone.text('<');
 			    nextButtonClone.text('>');
 			    carouselContainer.append(prevButtonClone, table, nextButtonClone);
-	    }
+	    }	
 	    else{
 
     		carouselContainer.find('#endplayerturn').remove();
@@ -782,6 +774,15 @@ function update_carousel_combat_tracker(){
 
 	    	
 	    }
+
+		for(let image of images){
+			image = $(image);
+			const imageId = image.attr('data-id');
+			updateImgSrc(imageId, image, image.is('video'), true)
+		}
+
+
+
     }
 
 
@@ -1312,26 +1313,28 @@ function ct_add_token(token,persist=true,disablerolling=false, adv=false, dis=fa
 	// token update logic for hp pulls hp from token hpbar, so update hp bar manually
 	if (!token.isPlayer()) {
 		const debounceChange = mydebounce(function(token){
-			token.update_and_sync();
+			token.sync();
 		}, 1500)
 		hp_input.change(function(e) {
 			let selector = "div[data-id='" + token.options.id + "']";
 			let old = $("#tokens").find(selector);
-		
-			if ($(this).val().trim().startsWith("+") || $(this).val().trim().startsWith("-")) {
-				$(this).val(Math.max(0, parseInt(token.hp) + parseInt($(this).val())));
-			}
+			let value = $(this).val().trim();
+			value = calculate_hp(value, token.hp);
+			if (value === undefined)
+				return;
 
-			old.find(".hp").val($(this).val().trim());	
-
-			if(window.all_token_objects[token.options.id] != undefined){
-				window.all_token_objects[token.options.id].hp = $(this).val();
-				debounceChange(window.all_token_objects[token.options.id]);
-			}			
+			const tokenObj = window.all_token_objects[token.options.id];
+			window.all_token_objects[token.options.id].totalHp = value;
+			
 			if(window.TOKEN_OBJECTS[token.options.id] != undefined){		
-				window.TOKEN_OBJECTS[token.options.id].hp = $(this).val();
-				debounceChange(window.TOKEN_OBJECTS[token.options.id]);
-			}			
+				window.TOKEN_OBJECTS[token.options.id].totalHp = value;
+				token.place();
+			}		
+			
+			$(this).val(tokenObj.hp);
+			tokenObj.sync();
+			tokenObj.update_combat_tracker()
+			tokenObj.update_quick_roll();	
 		});
 		hp_input.click(function(e) {
 			$(e.target).select();
@@ -1339,34 +1342,39 @@ function ct_add_token(token,persist=true,disablerolling=false, adv=false, dis=fa
 		maxhp_input.change(function(e) {
 			let selector = "div[data-id='" + token.options.id + "']";
 			let old = $("#tokens").find(selector);
+			let value = $(this).val().trim();
+			
+			value = calculate_hp(value, token.maxHp);
+			if (value === undefined)
+				return;
+			$(this).val(value)
 
-			if ($(this).val().trim().startsWith("+") || $(this).val().trim().startsWith("-")) {
-				$(this).val(Math.max(0, token.maxHp + parseInt($(this).val())));
-			}
-
-			old.find(".max_hp").val($(this).val().trim());
-			if(window.all_token_objects[token.options.id] != undefined){
-				window.all_token_objects[token.options.id].maxHp = $(this).val();
-				debounceChange(window.all_token_objects[token.options.id]);
-			}
+			const tokenObj = window.all_token_objects[token.options.id];
+			tokenObj.maxHp = value;	
 			if(window.TOKEN_OBJECTS[token.options.id] != undefined){		
-				window.TOKEN_OBJECTS[token.options.id].maxHp = $(this).val();
-				debounceChange(window.TOKEN_OBJECTS[token.options.id]);
-			}			
+				window.TOKEN_OBJECTS[token.options.id].maxHp = value;
+				token.place();
+			}
+									
+			tokenObj.sync();
+			tokenObj.update_combat_tracker()
+			tokenObj.update_quick_roll();		
 		});
 		maxhp_input.click(function(e) {
 			$(e.target).select();
 		});
-
+		const debounceTriggerChange = mydebounce(function(input) {
+			input.trigger('change');
+		}, 1500);
 		hp_input.on('wheel', function(e) {
 			const input = $(this);
 			if(!input.is(':focus'))
 				return;
 			e.preventDefault();
 			const delta = e.originalEvent.deltaY < 0 ? 1 : -1;
-			const current = parseInt(token.hp) || 0;
+			const current = parseInt(input.val()) || 0;
 			input.val(Math.max(0, current + delta));
-			input.trigger('change');
+			debounceTriggerChange(input);
 		});
 		maxhp_input.on('wheel', function(e) {
 			const input = $(this);
@@ -1374,9 +1382,9 @@ function ct_add_token(token,persist=true,disablerolling=false, adv=false, dis=fa
 				return;
 			e.preventDefault();
 			const delta = e.originalEvent.deltaY < 0 ? 1 : -1;
-			const current = parseInt(token.maxHp) || 0;
+			const current = parseInt(input.val()) || 0;
 			input.val(Math.max(1, current + delta));
-			input.trigger('change');
+			debounceTriggerChange(input);
 		});
 	}
 	else {
@@ -1477,7 +1485,9 @@ function ct_add_token(token,persist=true,disablerolling=false, adv=false, dis=fa
 				if(pcURL){
 					open_player_sheet(pcURL, undefined, token.options.name);
 				}else{
-					load_monster_stat(undefined, token.options.id, customStatBlock)
+					const monsterId = !customStatBlock && token.options.statBlock == token.options.monster ? token.options.monster : undefined;
+					if(!customStatBlock && !monsterId) return;
+					load_monster_stat(monsterId, token.options.id, customStatBlock)
 				}
 
 				return;

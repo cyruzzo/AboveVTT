@@ -8,6 +8,7 @@ import { init_audio_mixer } from './audio/index.mjs'
 $(function() {
   if (is_abovevtt_page()) { // Only execute if the app is starting up
     console.log("startup calling init_splash");
+    showHardwareAccelWarning();
     init_my_dice_details();
     init_loading_overlay_beholder();
     addBeyond20EventListener("rendered-roll", (request) => {$('.avtt-sidebar-controls #switch_gamelog').click();});
@@ -37,7 +38,7 @@ $(function() {
         } catch (e) {
           console.warn(`Failed to parse global settings, using defaults`, e);
           localStorage.removeItem(`ExperimentalSettingsGlobal`);
-        }
+        }       
         window.EXPERIMENTAL_SETTINGS = {...campaignSettings, ...globalSettings};
         if (is_release_build()) {
           // in case someone left this on during beta testing, we should not allow it here
@@ -58,6 +59,7 @@ $(function() {
       .then(set_campaign_secret)      // set it to window.CAMPAIGN_SECRET
       .then(store_campaign_info)      // store gameId and campaign secret in localStorage for use on other pages
       .then(async () => {
+        startup_step("Fetching Campaign Info")
         const maxRetries = 5
         const baseDelay = 500
         for (let attempt = 1; attempt <= maxRetries; attempt++) {
@@ -76,14 +78,24 @@ $(function() {
           }
         }
         window.AVTT_CAMPAIGN_INFO = await AboveApi.getCampaignData();
+        
         return window.CAMPAIGN_INFO.dmId;
       })
-      .then((campaignDmId) => {
+      .then(async (campaignDmId) => {
+        startup_step("Fetching PCs")
+        await rebuild_window_pcs();
+        startup_step("Fetching Party Inventory/Items/Spells")
+        await Promise.all([
+          DDBApi.debounceGetPartyInventory(),
+          DDBApi.fetchSpellsJsonWithToken(),
+          DDBApi.fetchItemsJsonWithToken()
+        ]);
+
         const isDmPage = is_encounters_page();
         const isSpectator = is_spectator_page();
         const userId = $(`#message-broker-client[data-userid]`)?.attr('data-userid') || Cobalt?.User?.ID;
         if ((isDmPage && campaignDmId == userId) || isSpectator) {
-          inject_dice();
+          add_new_dice();
         }
         return { campaignDmId, userId, isDmPage, isSpectator };
       })
@@ -109,15 +121,10 @@ $(function() {
           throw new Error(`Invalid AboveVTT page: ${window.location.href}`)
         }
       }).then(()=>{
+        refresh_aoe_style_menu();
         addExtensionPathStyles();
         $('body').append(`<script type="text/javascript" src="https://www.dropbox.com/static/api/2/dropins.js" id="dropboxjs" data-app-key="h3iaoazdu0wqrfd"></script>`)
       }).then(() => {     
-        DDBApi.fetchItemsJsonWithToken().then(data => {
-          window.ITEMS_CACHE = data;
-        })
-       DDBApi.debounceGetPartyInventory()
-
-       
         const lastSendToDefault = localStorage.getItem(`${gameId}-sendToDefault`, gamelog_send_to_text()); 
 
         if(lastSendToDefault != null){
@@ -129,12 +136,7 @@ $(function() {
         $('body').toggleClass('reduceMovement', (window.EXPERIMENTAL_SETTINGS['reduceMovement'] == true));
         $('body').toggleClass('mobileAVTTUI', (window.EXPERIMENTAL_SETTINGS['iconUi'] != false));
         $('body').toggleClass('color-blind-avtt', (window.EXPERIMENTAL_SETTINGS['colorBlindText'] == true));
-          // STREAMING STUFF
 
-        window.STREAMPEERS = {};
-        window.MYSTREAMID = uuid();
-        window.JOINTHEDICESTREAM = window.EXPERIMENTAL_SETTINGS['streamDiceRolls'] == true;
-        enable_dice_streaming_feature(window.JOINTHEDICESTREAM);
 
         tabCommunicationChannel.addEventListener ('message', (event) => {
           if((event.data.msgType == 'addCondition' || event.data.msgType == 'removeCondition') && event.data.sendTo == window.PLAYER_ID){ // Sets a player token's condition on and off
@@ -202,10 +204,10 @@ $(function() {
               let newHp = Math.max(0, parseInt(token.hp) - parseInt(event.data.damage));
 
               if(window.all_token_objects[id] != undefined){
-                window.all_token_objects[id].hp = newHp;
+                window.all_token_objects[id].totalHp = newHp;
               }     
               if(token != undefined){   
-                token.hp = newHp;
+                token.totalHp = newHp;
                 token.place_sync_persist()
                 addFloatingCombatText(id, event.data.damage, event.data.damage<0);
               }   
@@ -245,7 +247,15 @@ $(function() {
             }
           }                 
           if(event.data.msgType=='placeAoe' && (event.data.sendTo == window.PLAYER_ID || (window.DM && event.data.sendTo == false)))  {
-              let options = build_aoe_token_options(event.data.data.color, event.data.data.shape, event.data.data.feet / window.CURRENT_SCENE_DATA.fpsq, event.data.data.name, event.data.data.lineWidth / window.CURRENT_SCENE_DATA.fpsq)
+              let shape = sanitize_aoe_shape(event.data.data.shape);
+              let feet = event.data.data.feet;
+              const circleIsSquare = window.top.get_avtt_setting_value('circleIsSquare');
+              if(circleIsSquare && shape == 'circle'){
+                shape = 'square';
+                feet *= 2;
+              }
+
+              let options = build_aoe_token_options(event.data.data.color, shape, feet / window.CURRENT_SCENE_DATA.fpsq, event.data.data.name, event.data.data.lineWidth / window.CURRENT_SCENE_DATA.fpsq)
               if(name == 'Darkness' || name == 'Maddening Darkness' ){
                 options = {
                   ...options,
@@ -393,13 +403,13 @@ $(function() {
 
 
 const throttleProjectionScroll = throttle(async (f) => {
-    if(window.Projecting == undefined){
-      await f();
-      setTimeout(function(){
-        delete window.Projecting;
-      }, 1000/60)     
-    }
-}, 1000/60)
+    if(window.Projecting != undefined)
+      return;
+    await f();
+    setTimeout(function(){
+      delete window.Projecting;
+    }, 1000/60)     
+}, 1000/240)
 
 
 function addBeyond20EventListener(name, callback) {
@@ -467,7 +477,7 @@ async function start_above_vtt_common() {
   $("#site").append("<div id='windowContainment'></div>");
   $("body").append(`<style>.ddb-footer{display:none}</style>`);
   startup_step("Gathering player character data");
-  await rebuild_window_pcs();
+ 
   window.color = color_for_player_id(my_player_id()); // shortcut that we should figure out how to not rely on
   localStorage.removeItem(`CampaignCharacters${window.gameId}`); // clean up old pc data
 
@@ -658,7 +668,6 @@ async function start_above_vtt_for_spectator() {
     window.startupSceneId = currentSceneData.playerscene;
     window.LOADING = true;
     const activeScene = await AboveApi.getScene(currentSceneData.playerscene);
-    console.log("attempting to handle scene", activeScene);
     startup_step("Loading Scene");
     window.MB.handleScene(activeScene);
     startup_step("Start up complete");
@@ -758,6 +767,7 @@ function inject_dm_roll_default_menu(){
     <style>
       .glc-game-log .gameLogSendToMenu li div:last-of-type svg{
         visibility: hidden;
+        width:20px;
       }
       .glc-game-log .gameLogSendToMenu li.selected div:last-of-type svg{
         visibility: visible;
@@ -881,22 +891,22 @@ function inject_dm_roll_default_menu(){
       font-size:14px;
     }
     .mce-btn {
-      margin-right: 3px !important;
+      margin-right: 3px;
     }
     .mce-btn {
-        border: 1px solid #b1b1b1 !important;
-        border-color: rgba(0,0,0,0.1) rgba(0,0,0,0.1) rgba(0,0,0,0.25) rgba(0,0,0,0.25) !important;
-        position: relative !important;
-        text-shadow: 0 1px 1px rgba(255,255,255,0.75) !important;
-        display: inline-block !important;
-        *display: inline !important;
-        *zoom:1;-webkit-border-radius: 3px !important;
-        -moz-border-radius: 3px !important;
-        border-radius: 3px !important;
-        -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05) !important;
-        -moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05) !important;
-        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05) !important;
-        background-color: #f0f0f0 !important;
+        border: 1px solid #b1b1b1;
+        border-color: rgba(0,0,0,0.1) rgba(0,0,0,0.1) rgba(0,0,0,0.25) rgba(0,0,0,0.25);
+        position: relative;
+        text-shadow: 0 1px 1px rgba(255,255,255,0.75);
+        display: inline-block;
+        *display: inline;
+        *zoom:1;-webkit-border-radius: 3px;
+        -moz-border-radius: 3px;
+        border-radius: 3px;
+        -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
+        -moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
+        background-color: #f0f0f0;
     }
 
     .mce-i-save:before {
@@ -1156,9 +1166,7 @@ async function start_above_vtt_for_players() {
     debounceResizeUI();
     if(!window.CURRENT_SCENE_DATA.is_video || !window.CURRENT_SCENE_DATA.player_map.includes('youtu')){
       $("#youtube_controls_button").css('visibility', 'hidden');
-    }
-    add_dice_stream_gamelog_button()
-     
+    }     
   });
 
   /*prevents repainting due to ddb adjusting player sheet classes and throttling it*/
@@ -1176,7 +1184,6 @@ async function start_above_vtt_for_players() {
     window.startupSceneId = currentSceneData.playerscene;
     window.LOADING = true;
     const activeScene = await AboveApi.getScene(currentSceneData.playerscene);
-    console.log("attempting to handle scene", activeScene);
     startup_step("Loading Scene");
     window.MB.handleScene(activeScene);
     startup_step("Start up complete");
@@ -1199,7 +1206,7 @@ async function lock_character_gamelog_open() {
   }
 
   // Open the gamelog, and lock it open
-  let gameLogButton = $("div.ct-character-header__group--game-log.ct-character-header__group--game-log-last, [data-original-title='Game Log'] button, button[class*='-gamelog-button'], div[class*='campaignButtonGroup'][class*='GameLogButton']");
+  let gameLogButton = $("div.ct-character-header__group--game-log.ct-character-header__group--game-log-last, [data-original-title='Game Log'] button, button[class*='-gamelog-button'], div[class*='campaignButtonGroup'][class*='GameLogButton'], div[class*='campaignButtonGroup'][aria-roledescription*='Game Log']");
   if(gameLogButton.length == 0){
     $(`[d='M243.9 7.7c-12.4-7-27.6-6.9-39.9 .3L19.8 115.6C7.5 122.8 0 135.9 0 150.1V366.6c0 14.5 7.8 27.8 20.5 34.9l184 103c12.1 6.8 26.9 6.8 39.1 0l184-103c12.6-7.1 20.5-20.4 20.5-34.9V146.8c0-14.4-7.7-27.7-20.3-34.8L243.9 7.7zM71.8 140.8L224.2 51.7l152 86.2L223.8 228.2l-152-87.4zM48 182.4l152 87.4V447.1L48 361.9V182.4zM248 447.1V269.7l152-90.1V361.9L248 447.1z']`).closest('[role="button"]'); // this is a fall back to look for the gamelog svg icon and look for it's button.
   }
@@ -1261,23 +1268,21 @@ async function fetch_sceneList_and_scenes() {
     window.PLAYER_SCENE_ID = currentSceneData.playerscene;
   } 
 
-  console.log("fetch_sceneList_and_scenes set window.PLAYER_SCENE_ID to", window.PLAYER_SCENE_ID);
+  noisy_log("fetch_sceneList_and_scenes set window.PLAYER_SCENE_ID to", window.PLAYER_SCENE_ID);
 
   let activeScene = undefined;
   if (currentSceneData.dmscene && window.ScenesHandler.scenes.find(s => s.id === currentSceneData.dmscene)) {
     window.LOADING = true;
     activeScene = await AboveApi.getScene(currentSceneData.dmscene);
-    console.log("attempting to handle scene", activeScene);
     // window.MB.handleScene(activeScene);
   } else if (window.ScenesHandler.scenes.length > 0) {
     window.LOADING = true;
     activeScene = await AboveApi.getScene(window.ScenesHandler.scenes[0].id);
-    console.log("attempting to handle scene", activeScene);
   }
   if(activeScene)
     window.MB.handleScene(activeScene);
   else
     delete window.LOADING
-  console.log("fetch_sceneList_and_scenes done");
+  noisy_log("fetch_sceneList_and_scenes done");
   return activeScene;
 }

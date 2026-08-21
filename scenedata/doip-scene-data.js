@@ -11233,7 +11233,7 @@ export const get_scene_data_doip = {
 					"player": false,
 					"statBlock": false
 				}
-			},
+			}
 		},	
 		"doip/butterskull-ranch/MapButterskullRanch": {
 			

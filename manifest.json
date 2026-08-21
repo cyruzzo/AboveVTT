@@ -2,7 +2,7 @@
 	"manifest_version": 3,
 	"name": "AboveVTT",
 	"description": "Integrated VTT for D&DBeyond",
-	"version": "1.57",
+	"version": "1.59",
 	"content_scripts": [
 		{
 			"matches": [
@@ -14,7 +14,8 @@
 			],
 			"js": [
 				"Load.js"
-			]
+			],
+			"run_at": "document_end"
 		}
 	],
 	"host_permissions": [
@@ -98,7 +99,6 @@
 			"PeerManager.js",
 			"PeerCommunication.js",
 			"peerVideo.js",
-			"peerDice.js",
 			"onedrive/*",
 			"WeatherOverlay.js",
 			"iframe.html",

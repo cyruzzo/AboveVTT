@@ -133797,7 +133797,7 @@ export const get_scene_data_pbtso = {
 					"revealInFog": false
 				}
 			},
-			"tags": ['2024 Tokens']
+			"tags": ['5.5e Tokens']
 		},
 		"v2/pbtso/a-dangerous-journey/Map101GoblinAmbush": {
 			"tokens": {
@@ -134110,7 +134110,7 @@ export const get_scene_data_pbtso = {
 					"revealInFog": false
 				}
 			},
-			"tags": ['2024 Tokens']
+			"tags": ['5.5e Tokens']
 		},
 		"v2/pbtso/trouble-in-phandalin/Map202RedbrandHideout": {
 			"title": "Map 2.2: Redbrand Hideout",
@@ -143140,7 +143140,7 @@ export const get_scene_data_pbtso = {
 				}
 			},
 			"darkness_filter": "100",
-			"tags": ["2024 Tokens"],
+			"tags": ["5.5e Tokens"],
 			"dm_map_usable": "0",
 			"notes": {
 				"09be47b3-bd19-47ee-aacb-2f5f1eead746": {
@@ -143307,7 +143307,7 @@ export const get_scene_data_pbtso = {
 			}
 		},
 		"v2/pbtso/the-spiders-web/Map301OldOwlWell": {
-			"tags": ['2024 Tokens'],
+			"tags": ['5.5e Tokens'],
 			"tokens": {
 				"07f190c2-482a-4656-9c07-b375fe1aa1ad": {
 					"sizeId": 4,
@@ -144224,7 +144224,7 @@ export const get_scene_data_pbtso = {
 			},
 		},
 		"v2/pbtso/the-spiders-web/Map303WyvernTor": {
-			"tags": ['2024 Tokens'],
+			"tags": ['5.5e Tokens'],
 			"tokens": {
 				"2c6262f5-db4c-4074-8700-5e9d91c45c26": {
 					"disablestat": false,

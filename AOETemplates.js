@@ -27,7 +27,8 @@ function setup_aoe_button(buttons) {
     
     const aoeButton = $("<div style='display:inline-block;width:fit-content;' id='aoe_button' data-name='AoE Templates (A)' class='drawbutton hasTooltip menu-button hideable ddbc-tab-options__header-heading'><span class='button-text'><u>A</u>OE</span></div>");
     const aoeMenu = $("<div id='aoe_menu' class='top_menu'></div>");
-
+    const aoeSubMenu = $("<div id='aoe_sub_menu' class='top_menu'></div>");
+    
     aoeMenu.append("<div class='menu-subtitle'>Size</div>");
     
     aoeMenu.append(`<div><input min='5' onclick='$(this).select()'
@@ -38,13 +39,14 @@ function setup_aoe_button(buttons) {
     aoeMenu.append("<div class='menu-subtitle'>Style</div>");
     aoeMenu.append(
         `<div class='ddbc-tab-options--layout-pill'>
-            <select id='aoe_styles' class="ddbc-select ddbc-tab-options__header-heading" >
-                ${get_available_styles().map((aoeStyle) => {
-                    return `<option class="ddbc-tab-options__header-heading" value="${aoeStyle}">${aoeStyle}</option>`;
-                })}
-            </select>
+            <div id='aoe_styles_dropdown' class='aoe-style-dropdown'>
+                <input type='hidden' id='aoe_styles' value='' />
+                <div class='aoe-style-dropdown-toggle ddbc-tab-options__header-heading'></div>
+               
+            </div>
         </div>
             `)
+    aoeSubMenu.append(`<div class='aoe-style-dropdown-list'></div>`);
     aoeMenu.append("<div class='menu-subtitle'>Shape</div>");
 
     aoeMenu.append(`
@@ -71,18 +73,31 @@ function setup_aoe_button(buttons) {
                 Cone 
             </button>
         </div>`);
-    aoeMenu.find("button, select").css("width", "69px")
+    aoeMenu.find("button, select, .aoe-style-dropdown").css("width", "69px")
     aoeMenu.css("position", "fixed");
     aoeMenu.css("top", "25px");
     aoeMenu.css("width", "75px");
     aoeMenu.css('background', "url('/content/1-0-1487-0/skins/waterdeep/images/mon-summary/paper-texture.png')");
 
-    $("body").append(aoeMenu);
+    aoeSubMenu.css({
+        "position": "fixed", 
+        "top": "25px", 
+        "width": "fit-content", 
+        'background': "url('/content/1-0-1487-0/skins/waterdeep/images/mon-summary/paper-texture.png')",
+        'text-transform': 'uppercase',
+        'font-weight': 'bold',
+        'font-size': '12px',
+        'transition': 'none'
+    });
+
+    $("body").append(aoeMenu, aoeSubMenu);
+
+    setup_aoe_style_dropdown();
 
 
     buttons.append(aoeButton);
     aoeMenu.css("left", aoeButton.position().left);
-
+    aoeSubMenu.css("left", aoeButton.position().left + 80);    
 
     $("#aoe_feet_in_menu").keydown(function(e) {
         if (e.key === "Escape") {
@@ -108,6 +123,57 @@ function setup_aoe_button(buttons) {
         $('#select-button').click();
 
     });
+}
+
+function setup_aoe_style_dropdown() {
+    const dropdown = $("#aoe_styles_dropdown");
+    const aoeSubMenu = $("#aoe_sub_menu");
+    dropdown.on("click", ".aoe-style-dropdown-toggle", function(clickEvent) {
+        clickEvent.stopPropagation();
+        if (aoeSubMenu.hasClass("visible")) {
+            aoeSubMenu.removeClass("visible");
+            return;
+        }
+        aoeSubMenu.addClass("visible");
+        const list = aoeSubMenu.find(".aoe-style-dropdown-list");
+        const listTop = list[0].getBoundingClientRect().top;
+        list.css("max-height", `${Math.max(60, window.innerHeight - listTop - 100)}px`);
+        list.find(".aoe-style-dropdown-item.selected")[0]?.scrollIntoView({ block: "nearest" });
+    });
+
+    aoeSubMenu.on("click", ".aoe-style-dropdown-item", function(clickEvent) {
+        clickEvent.stopPropagation();
+        set_aoe_style_dropdown_value($(clickEvent.currentTarget).attr("data-value"));
+        aoeSubMenu.removeClass("visible");
+    });
+
+    $(document).off("click.aoeStyleDropdown").on("click.aoeStyleDropdown", function() {
+        aoeSubMenu.removeClass("visible");
+    });
+
+    refresh_aoe_style_menu();
+}
+
+function set_aoe_style_dropdown_value(style) {
+    const dropdown = $("#aoe_styles_dropdown");
+    dropdown.find("#aoe_styles").val(style);
+    dropdown.find(".aoe-style-dropdown-toggle").text(style);
+    const aoeSubMenu = $("#aoe_sub_menu");
+    aoeSubMenu.find(".aoe-style-dropdown-item").removeClass("selected");
+    aoeSubMenu.find(`.aoe-style-dropdown-item[data-value="${style}"]`).addClass("selected");
+}
+
+function refresh_aoe_style_menu() {
+    const aoeSubMenu = $("#aoe_sub_menu");
+    if (aoeSubMenu.length === 0) return;
+
+    const styles = get_available_styles();
+    const currentStyle = $("#aoe_styles").val();
+    const list = aoeSubMenu.find(".aoe-style-dropdown-list").empty();
+    styles.forEach(function(style) {
+        list.append($(`<div class="aoe-style-dropdown-item ddbc-tab-options__header-heading"></div>`).attr("data-value", style).text(style));
+    });
+    set_aoe_style_dropdown_value(styles.includes(currentStyle) ? currentStyle : styles[0]);
 }
 
 function place_aoe_token_at_token(options, token){
@@ -321,26 +387,75 @@ function build_aoe_token_options(style, shape, countGridSquares, name = "", line
             darkness: true
         }
     }
-    options = {
-        ...options,
-        ...find_or_create_token_customization('aoe', `_Area_of_Effects_${shape}_AoE`, 'aoeFolder', 'aoeFolder').allCombinedOptions()
-    }
+    options = $.extend(true, {}, 
+        options,
+        find_or_create_token_customization('aoe', `_Area_of_Effects_${shape}_AoE`, 'aoeFolder', 'aoeFolder').allCombinedOptions()
+    );
     
     options.imgsrc = build_aoe_img_name(style, shape, name);
+    options.aoeImage = get_aoe_style_token_image(style);
+    options.aoeImageTiled = get_aoe_style_token_tiling(style);
+    options.aoeImageOpacity = get_aoe_style_token_opacity(style);
+    options.aoeImageAnimated = get_aoe_style_token_animation(style);
+    options.aoeImageBorder = get_aoe_style_token_border(style);
+    options.aoeImageVideo = get_aoe_style_token_video(style);
     return options
+}
+
+/**
+ * Applies the DM configured AoE display settings to an AoE image element.
+ * Tiling is only applied when the style uses a custom image, otherwise the built in style backgrounds would be overwritten.
+ */
+function apply_aoe_style_display(element, settings, tileSize = "300px") {
+    const node = element?.[0];
+    if (!node) return;
+    if (settings.tiled !== undefined) {
+        node.style.setProperty("background-repeat", settings.tiled === false ? "no-repeat" : "repeat", "important");
+        node.style.setProperty("background-size", settings.tiled === false ? "cover" : tileSize, "important");
+    }
+    // the opacity animation drives opacity itself, so a fixed value only applies once that animation is off
+    if (settings.animated === false) {
+        node.style.setProperty("animation", "none", "important");
+        node.style.setProperty("opacity", settings.opacity ?? 0.5, "important");
+    }
+}
+
+function is_aoe_video_image(url) {
+    return typeof url === "string" && ['.mp4', '.webm', '.m4v'].some(d => url.includes(d));
 }
 
 function build_aoe_token_image(token, scale, rotation){
     let tokenImageContainer = $(`<div class=token-image style='transform:scale(var(--token-scale)) rotate(var(--token-rotation))'>`);
     let aoeClassName = token.options.imgsrc.replace("class=","").trim();
-    console.debug("build_aoe_token_image aoeClassName", aoeClassName);
-    let tokenImage = $(`<div data-img="true" class='${aoeClassName}'></div>`);
-
-    if (token.options.imgsrc.includes("cone")){
-        tokenImageContainer.append(`<div class='aoe-border aoe-border-cone'></div>`)
+    let tokenImage;
+    if (token.options.aoeImage) {
+        const shapeClass = aoeClassName.match(/aoe-shape-[\w-]+/)?.[0] || "";
+        const isVideo = token.options.aoeImageVideo === true || is_aoe_video_image(token.options.aoeImage);
+        tokenImage = isVideo
+            ? $(`<video disableRemotePlayback autoplay loop muted data-img="true" class="aoe-token-tileable ${shapeClass} div-token-image"></video>`)
+            : $(`<div data-img="true" class="aoe-token-tileable ${shapeClass} div-token-image"></div>`);
+        updateTokenSrc(token.options.aoeImage, tokenImage, isVideo).then(function() {
+            // a video cannot repeat, so only images take the tiling setting
+            if (!isVideo) {
+                apply_aoe_style_display(tokenImage, { tiled: token.options.aoeImageTiled });
+            }
+        });
+    } else {
+        tokenImage = $(`<div data-img="true" class='${aoeClassName}'></div>`);
     }
-    else {
-        $(tokenImage).addClass("aoe-border-basic")
+
+    apply_aoe_style_display(tokenImage, {
+        opacity: token.options.aoeImageOpacity,
+        animated: token.options.aoeImageAnimated
+    });
+
+    if (token.options.aoeImageBorder !== false) {
+        if (token.options.imgsrc.includes("cone")){
+            tokenImageContainer.append(`<div class='aoe-border aoe-border-cone'></div>`)
+        }
+        else {
+            tokenImage.addClass("aoe-border-basic")
+        }
     }
     tokenImageContainer.append(tokenImage)
     return tokenImageContainer;

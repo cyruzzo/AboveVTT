@@ -277,8 +277,6 @@ function create_text_controller(applyFromWindow = false) {
     })
 
     $(".sp-replacer.sp-light").each(function () {
-        console.log(this)
-        console.log($(this).prev().title)
         $(this).attr("title", $(this).prev().attr("title"))
     });
 

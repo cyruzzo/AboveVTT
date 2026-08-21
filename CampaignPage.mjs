@@ -49,7 +49,6 @@ $(function() {
             inject_instructions();
             inject_player_join_buttons();
             inject_dm_join_button();  
-            inject_dice();
           }
          });
       })
@@ -117,12 +116,13 @@ function inject_instructions() {
   // SCB: Append our logo
   contentDiv.append(`<img class='above-vtt-logo above-vtt-right-margin-5px' width='120px' src='${window.EXTENSION_PATH}assets/logo.png' alt="above vtt logo" />`);
 
-  let instructionsButton = $("<a style='padding:10px 5px;' class='above-vtt-campaignscreen-white-button above-vtt-right-margin-5px instructions btn modal-link ddb-campaigns-detail-body-listing-campaign-link'>Instructions</a>");
+          
+  let instructionsButton = $("<a style='padding: 7px; filter: drop-shadow(1px 1px 1px black); border-radius: 5px;  top: -2px; position: relative; text-wrap: nowrap; border: none;' class='above-vtt-campaignscreen-white-button above-vtt-right-margin-5px instructions btn modal-link ddb-campaigns-detail-body-listing-campaign-link'>Instructions</a>");
   contentDiv.append(instructionsButton);
   instructionsButton.click(function(e) {
     $("#campaign_banner").toggle();
   });
-  let spectatorJoinButton = $("<a style='padding:10px 25px;' class='above-vtt-campaignscreen-blue-button above-vtt-right-margin-5px button joinspectator btn modal-link ddb-campaigns-detail-body-listing-campaign-link'>Spectate</a>");
+  let spectatorJoinButton = $("<a style='background: #600606 !important; padding: 6px; filter: drop-shadow(1px 1px 1px black); border-radius: 5px; box-shadow: inset 0px 0px 20px -13px #F00; top: -2px; position: relative; text-wrap: nowrap; border: none; text-shadow: 1px 1px 1px #000;' class='above-vtt-campaignscreen-blue-button above-vtt-right-margin-5px button joinspectator btn modal-link ddb-campaigns-detail-body-listing-campaign-link'>Spectate</a>");
   contentDiv.append(spectatorJoinButton);
   spectatorJoinButton.click(function (e) {
     e.preventDefault();
@@ -149,13 +149,13 @@ function inject_instructions() {
   const campaign_banner = $("<div id='campaign_banner'></div>");
   campaign_banner.append(`
     <h4><img class='above-vtt-right-margin-5px' alt='above vtt logo' width='100px' src='${window.EXTENSION_PATH}assets/logo.png'>Basic Instructions!</h4>
-    <br>If you are the DM, press <b>JOIN AS DM</b> above. If you have a free DnDBeyond account make sure you have 1 free encounter slot to join as DM. Free accounts are limited to 8 encounters.<br><br>
+    <br>If you are the DM, press <b>JOIN AS DM</b> above.<br><br>
     Players, press <b>JOIN AboveVTT</b> next to your character at the bottom, and then wait for your DM to join.<br><br>
     Please check that you do not have any other extensions for DndBeyond (like Beyond20) enabled. <b>Disable them</b> or you will not be able to roll dice!<br><br>
-    If you're looking for tutorials, take a look at our <a target='_blank' href='https://www.youtube.com/channel/UCrVm9Al59iHE19IcqaKqqXA'>YouTube Channel!!</a><br>
+    If you're looking for tutorials, take a look at our <a target='_blank' href='https://www.youtube.com/watch?v=AaSClv4jSbk&list=PLW0tvNe3gIM00xQCReTWi8CPrXBJyDQmG'>YouTube Tutorial Playlist</a><br>
     If you need help, or just want to send us your feedback, join the <a target='_blank' href='https://discord.gg/cMkYKqGzRh'>AboveVTT Discord Community</a>.<br>
-    Do you like what you see? Then please support me on <a target='_blank' href='https://www.patreon.com/AboveVTT'>AboveVTT Patreon!</a><br><br>
-    <b>Deprecation</b> Due to technical changes. You no longer can join as DM if you're not the real DM of the campaign. If you need help recovering your local data for this campaign contact us on discord<br><br>
+    Do you like what you see? Then please support me on <a target='_blank' href='https://www.patreon.com/AboveVTT'>AboveVTT Patreon</a><br><br>
+    <b>Deprecation</b> Due to technical changes. You no longer can join as DM if you're not the creator of the campaign.<br><br>
     Use this button to delete all locally held data, to 'clear the cache' as it were: <br>
   `);
   campaign_banner.hide();
@@ -208,7 +208,7 @@ function inject_dm_join_button() {
     </div>
   `);
 
-  let dmJoinButton = $("<a style='padding:10px 25px;' class='above-vtt-campaignscreen-blue-button above-vtt-right-margin-5px button joindm btn modal-link ddb-campaigns-detail-body-listing-campaign-link'>Join as DM</a>");
+  let dmJoinButton = $("<a style='background: #600606 !important; padding: 6px; filter: drop-shadow(1px 1px 1px black); border-radius: 5px; box-shadow: inset 0px 0px 20px -13px #F00; top: -2px; position: relative; text-wrap: nowrap; border: none;text-shadow: 1px 1px 1px #000;' class='above-vtt-campaignscreen-blue-button above-vtt-right-margin-5px button joindm btn modal-link ddb-campaigns-detail-body-listing-campaign-link'>Join as DM</a>");
   $(".above-vtt-content-div").append(dmJoinButton);
   dmJoinButton.click(function(e) {
     e.preventDefault();
@@ -273,10 +273,16 @@ function inject_player_join_buttons() {
   console.log("inject_campaign_page_buttons");
   $(".ddb-campaigns-character-card-footer-links").each(function() {
     const characterCard = $(this);
+    if(characterCard.closest('.ddb-campaigns-detail-body-listing-inactive').length>0)
+      return;
     if(characterCard.find(".ddb-campaigns-character-card-footer-links-item-edit").length > 0) {
       const characterPagePathname = characterCard.find(".ddb-campaigns-character-card-footer-links-item-view").attr('href');
-      characterCard.prepend(`<a style='color:white;background: #1b9af0;padding: 2px;' href='https://www.dndbeyond.com${characterPagePathname}?abovevtt=true' target='_blank' class='button ddb-campaigns-character-card-footer-links-item'>JOIN AboveVTT</a>`);
+      characterCard.prepend(`<a style='background: #600606; padding: 3px; filter: drop-shadow(1px 1px 1px black); border-radius: 5px; box-shadow: inset 0px 0px 20px -10px #F00; top: -2px; position: relative; text-wrap: nowrap; text-shadow: 1px 1px 1px #000;' href='https://www.dndbeyond.com${characterPagePathname}?abovevtt=true' target='_blank' class='button ddb-campaigns-character-card-footer-links-item'>
+        <img style="margin-right: -4px; height:20px;filter: drop-shadow(1px 1px 0px black) drop-shadow(1px 0px 0px black);" src="${window.EXTENSION_PATH}assets/avtt-logo.png" title="AboveVTT Logo">
+        JOIN AboveVTT
+        </a>`);
     }
   });
+  $(".ddb-campaigns-detail-gamespace--join").parent().append(`<span style="position: absolute; transform: translate(-124px, -16px); font-weight: bold; font-size: 12px;">This is MAPS VTT, not AboveVTT</span>`)
 }
 

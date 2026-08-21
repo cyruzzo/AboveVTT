@@ -34,7 +34,6 @@ const debounceHandleInjected = mydebounce(() => {
 					window.JOURNAL.add_journal_tooltip_targets(li);
 					add_stat_block_hover(li)
 					add_aoe_statblock_click(li);
-					
 				}
 				let rollType = current.data.injected_data?.rollType?.toLowerCase();
 				let rollAction = current.data.injected_data?.rollTitle?.toLowerCase();
@@ -107,10 +106,10 @@ const debounceHandleInjected = mydebounce(() => {
 							let newHp = Math.max(0, parseInt(token.hp) - parseInt(damage));
 
 							if(window.all_token_objects[id] != undefined){
-								window.all_token_objects[id].hp = newHp;
+								window.all_token_objects[id].totalHp = newHp;
 							}			
 							if(token != undefined){		
-								token.hp = newHp;
+								token.totalHp = newHp;
 								token.place_sync_persist()
 							}		
 							addFloatingCombatText(id, damage, damage<0);
@@ -180,7 +179,7 @@ const debounceHandleInjected = mydebounce(() => {
 									console.warn("imageHtml failed to load image", el, e);
 									return;
 								}
-								console.log("imageHtml failed to load image. Trying nextUrl", nextUrl, el, e);
+								noisy_log("imageHtml failed to load image. Trying nextUrl", nextUrl, el, e);
 								el.attr("src", nextUrl);
 								el.attr("href", nextUrl);
 							}
@@ -193,7 +192,7 @@ const debounceHandleInjected = mydebounce(() => {
 							closeOnContentClick: true,
 							callbacks: {
 								elementParse: function (item) {
-									item.src = `${window.EXTENSION_PATH}iframe.html?src=${encodeURIComponent(item.src)}`;
+									item.src = `${window.EXTENSION_PATH}iframe.html?src=${encodeURIComponent(item.src).replace(/'/g, '%27')}`;
 								}
 							}
 						});
@@ -234,7 +233,7 @@ const debounceHandleInjected = mydebounce(() => {
 			}
 		});
 		if(!found && $('.ct-game-log-pane, [class*="styles_gameLogPane"]').length>0){
-			console.warn(`couldn't find a message matching ${JSON.stringify(current)}`);
+			noisy_log(`couldn't find a message matching ${JSON.stringify(current)}`);
 			// It's possible that we could lose messages due to this not being here, but
 			// if we push the message here, we can end up in an infinite loop.
 			// We may need to revisit this and do better with error handling if we end up missing too many messages.
@@ -242,8 +241,8 @@ const debounceHandleInjected = mydebounce(() => {
 		}
 	}
 }, 500)
-const debounceSendNote = mydebounce(function(id, note){
-	window.MB.sendMessage('custom/myVTT/note',  {note: note, id: id, from:window.PLAYER_ID})
+const debounceSendNote = mydebounce(function(id, note, tokenId){
+	window.MB.sendMessage('custom/myVTT/note',  {note, id, tokenId, from:window.PLAYER_ID})
 }, 2000);
 
 const delayedClear = mydebounce(() => clearFrame());
@@ -328,12 +327,12 @@ class MessageBroker {
 				recovered = true;
 			}
 			let cb;
-			console.log('Empting callback queue list');
+			noisy_log('Empting callback queue list');
 			while (cb = self.callbackAboveQueue.shift()) {
 				cb();
 			};
 			if (recovered && (!window.DM)) {
-				console.log('asking the DM for recovery!');
+				noisy_log('asking the DM for recovery!');
 				debounceSyncMeUp();
 	 		}
 			setupMBIntervals();
@@ -620,10 +619,10 @@ class MessageBroker {
 						if(tries==0)
 							self.stats.peers[msg.sender].future++;
 						
-						console.log("MSG in the future. (was expecting "+shouldbethis+" but we got "+msg.sequence+ " retries :" + tries);
+						noisy_log("MSG in the future. (was expecting "+shouldbethis+" but we got "+msg.sequence+ " retries :" + tries);
 						if(tries<20){
 							setTimeout(self.onmessage,300,event,tries+1);
-							console.log("trying to fix");
+							noisy_log("trying to fix");
 							return;
 						}
 						else{
@@ -634,10 +633,10 @@ class MessageBroker {
 					if(msg.sequence < shouldbethis){
 							if((msg.sequence - self.stats.peers[msg.sender].first_sequence) > 10){
 								self.stats.peers[msg.sender].past++;
-								console.error("Sequence message is in the past. We should try to recover");
+								noisy_log(0, "Sequence message is in the past. We should try to recover");
 							}
 							else{
-								console.log("message in the past, but the che connection is new.. so.. I guess it's ok");
+								noisy_log("message in the past, but the che connection is new.. so.. I guess it's ok");
 							}
 							
 					}
@@ -684,7 +683,7 @@ class MessageBroker {
 									continue;
 								}
 								if (roll.diceNotation.set[j].dice[k].dieValue >= parseInt(roll.diceNotation.set[j].dice[k].dieType.replace('d', '')) - reduceCrit && roll.result.values.includes(roll.diceNotation.set[j].dice[k].dieValue)) {
-									if (roll.rollKind == 'advantage') {
+									if (roll.diceNotation.set[j].dice.length>1 && roll.rollKind == 'advantage') {
 										if (k > 0 && roll.diceNotation.set[j].dice[k - 1].dieValue <= roll.diceNotation.set[j].dice[k].dieValue) {
 											critSuccess[i] = true;
 										}
@@ -692,7 +691,7 @@ class MessageBroker {
 											critSuccess[i] = true;
 										}
 									}
-									else if (roll.rollKind == 'disadvantage' && roll.diceNotation.set[j].dice[1].dieValue == roll.diceNotation.set[j].dice[0].dieValue) {
+									else if (roll.diceNotation.set[j].dice.length>1 && roll.rollKind == 'disadvantage' && roll.diceNotation.set[j].dice[1].dieValue == roll.diceNotation.set[j].dice[0].dieValue) {
 										critSuccess[i] = true;
 									}
 									else if (roll.rollKind != 'disadvantage') {
@@ -700,7 +699,7 @@ class MessageBroker {
 									}
 								}
 								else if (roll.diceNotation.set[j].dice[k].dieValue == 1 && roll.result.values.includes(roll.diceNotation.set[j].dice[k].dieValue)) {
-									if (roll.rollKind == 'disadvantage') {
+									if (roll.diceNotation.set[j].dice.length>1 && roll.rollKind == 'disadvantage') {
 										if (k > 0 && roll.diceNotation.set[j].dice[k - 1].dieValue >= roll.diceNotation.set[j].dice[k].dieValue) {
 											critFail[i] = true;
 										}
@@ -708,7 +707,7 @@ class MessageBroker {
 											critFail[i] = true;
 										}
 									}
-									else if (roll.rollKind == 'advantage' && roll.diceNotation.set[j].dice[1].dieValue == roll.diceNotation.set[j].dice[0].dieValue) {
+									else if (roll.diceNotation.set[j].dice.length>1 && roll.rollKind == 'advantage' && roll.diceNotation.set[j].dice[1].dieValue == roll.diceNotation.set[j].dice[0].dieValue) {
 										critFail[i] = true;
 									}
 									else if (roll.rollKind != 'advantage') {
@@ -722,7 +721,7 @@ class MessageBroker {
 
 					setTimeout(function () {
 						let target;
-						let listItems = $(`ol>li[class*='GameLogEntry']`);
+						let listItems = $(`ol>li[class*='GameLogEntry']:not(:has([class*='Pending'], .damageButtonsContainer))`);
 						for (let i = 0; i < listItems.length; i++) {
 							if ($(listItems[i]).find('[class*="Pending"]').length > 0)
 								continue;
@@ -851,10 +850,10 @@ class MessageBroker {
 											let newHp = Math.max(0, parseInt(token.hp) - parseInt(damage));
 
 											if (window.all_token_objects[id] != undefined) {
-												window.all_token_objects[id].hp = newHp;
+												window.all_token_objects[id].totalHp = newHp;
 											}
 											if (token != undefined) {
-												token.hp = newHp;
+												token.totalHp = newHp;
 												token.place_sync_persist()
 												addFloatingCombatText(id, damage, damage < 0);
 											}
@@ -905,7 +904,7 @@ class MessageBroker {
 
 				// CHECK FOR INIT ROLLS (auto add to combat tracker)
 				if (msg.data.action.toLowerCase() == "initiative") {
-					console.log(msg.data);
+					noisy_log(msg.data);
 					let total = parseFloat(msg.data.rolls[0].result.total);
 					let entityid = msg.data.context.entityId;
 
@@ -968,6 +967,28 @@ class MessageBroker {
 
 				}
 				return;
+			} else if (msg.eventType == "dice/roll/deferred") {
+				const isPlayer = is_characters_page();
+				if(isPlayer || document.hidden)
+					return;
+				const ddb3dDiceShareToggle = get_avtt_setting_value("streamDiceRolls");
+				const showSelfRoll = !is_spectator_page() && msg.messageTarget == `${window.myUser}`;
+				const showDMRoll = window.DM && (msg.messageTarget == 'dm' || msg.messageTarget == 'dungeonmaster');
+				if(ddb3dDiceShareToggle == true && (msg.messageTarget == window.gameId || showSelfRoll || showDMRoll)){
+					get_active_worker_keys().forEach(key => {
+						if(key.includes('physics')){
+							requestAnimationFrame(() => {
+								window.ActiveWorkers[key].postMessage({
+									type: "dice/roll/deferred",
+									payload: {
+										...msg,
+										eventType: "dice/roll/deferred"
+									}
+								});
+							});
+						} 
+					});
+				}
 			}
 			// WE NEED TO IGNORE CERTAIN MESSAGE IF THEY'RE NOT FROM THE CURRENT SCENE
 			if(window.CURRENT_SCENE_DATA == undefined || (msg.sceneId && window.CURRENT_SCENE_DATA && msg.sceneId !== window.CURRENT_SCENE_DATA.id && [
@@ -980,7 +1001,7 @@ class MessageBroker {
 				"custom/myVTT/pointer",
 				"custom/myVTT/place-extras-token"
 			].includes(msg.eventType))) {
-				console.log("skipping msg from a different scene");
+				noisy_log("skipping msg from a different scene");
 				return;
 			}
 			if(msg.eventType == "character-sheet/item-shared/fulfilled"){
@@ -1011,6 +1032,19 @@ class MessageBroker {
 			} else if (msg.eventType == "custom/myVTT/campaignData"){
 				window.AVTT_CAMPAIGN_INFO = msg.data;
 				window.MB.checkHideSceneFromPlayers();
+			} else if(msg.eventType == "custom/myVTT/aoeStyles"){
+				if(!window.DM){
+					window.AOE_STYLE_TOKENS = msg.data?.aoeStyleTokens || {};
+					window.AOE_STYLE_TOKEN_TILING = msg.data?.aoeStyleTokenTiling || {};
+					window.AOE_STYLE_TOKEN_OPACITY = msg.data?.aoeStyleTokenOpacity || {};
+					window.AOE_STYLE_TOKEN_ANIMATION = msg.data?.aoeStyleTokenAnimation || {};
+					window.AOE_STYLE_TOKEN_BORDER = msg.data?.aoeStyleTokenBorder || {};
+					window.AOE_STYLE_TOKEN_VIDEO = msg.data?.aoeStyleTokenVideo || {};
+					window.AOE_STYLE_ORDER = msg.data?.aoeStyleOrder || [];
+					if(typeof refresh_aoe_style_menu === "function"){
+						refresh_aoe_style_menu();
+					}
+				}
 			} else if(msg.eventType == "custom/myVTT/place-extras-token"){
 				if(window.DM){
 					let left = parseInt(msg.data.centerView.x);
@@ -1110,7 +1144,7 @@ class MessageBroker {
 			} else if(msg.eventType == ('custom/myVTT/character-update')){
 				update_pc_with_data(msg.data.characterId, msg.data.pcData);
 			} else if(msg.eventType == ('character-sheet/character-update/fulfilled')) {
-				console.log('update_pc character-sheet/character-update/fulfilled', msg);
+				noisy_log('update_pc character-sheet/character-update/fulfilled', msg);
 				update_pc_with_api_call(msg.data?.characterId);
 			} else if (msg.eventType == "custom/myVTT/reveal") {
 				window.REVEALED.push(msg.data);
@@ -1204,6 +1238,8 @@ class MessageBroker {
 				}
 			} else if(msg.eventType=="custom/myVTT/JournalChapters"){
 				if(!window.DM){
+					if(msg.data.override == true) 
+						window.JOURNAL.notes = {};
 					window.JOURNAL.chapters=msg.data.chapters;
 					window.JOURNAL.build_journal();
 					window.JOURNAL.persist(true);
@@ -1232,7 +1268,32 @@ class MessageBroker {
 					}
 				}
 			} else if(msg.eventType=="custom/myVTT/note"){
-				if(!window.DM || (msg.data.from && msg.data.from != window.PLAYER_ID)){
+				let all_collected = true;
+				if(msg.data.lastIndex != 0){
+					if(!window.temp_note_save){
+						window.temp_note_save = {};
+					}
+					const {uuid, order} = msg.data
+					
+					if(!window.temp_note_save[uuid]){
+						window.temp_note_save[uuid] = [];
+					}
+					let temp_note = window.temp_note_save[uuid];
+					temp_note[order] = msg.data.text;
+					all_collected = true;
+					for(let i = 0; i < msg.data.lastIndex; i++){
+						if(temp_note[i] == undefined){
+							all_collected = false;
+							break;
+						}
+					}
+					if(all_collected){
+						msg.data.text = temp_note.join('');
+						delete window.temp_note_save[uuid];
+					}
+				}	
+				msg.data.plain = $(msg.data.text).text();
+				if(all_collected && (!window.DM || (msg.data.from && msg.data.from != window.PLAYER_ID))){
 					if(msg.data.delete == true){
 						delete window.JOURNAL.notes[msg.data.id]
 						window.JOURNAL.build_journal();
@@ -1251,11 +1312,20 @@ class MessageBroker {
 					const openNote = $(`.note[data-id='${msg.data.id}']`);
 					// If the 'Open' button is clicked OR the note is already opened by a player and it is saved 
 					// by the DM, the note gets refreshed.
+					let currScroll = 0;
+					if(openNote.length>0){
+						const targetRescan = openNote.find('.avtt-stat-block-container, .note-text').first();
+						currScroll = targetRescan[0].scrollTop;
+					}
+
 					if (msg.data.popup == true || (msg.data.popup == undefined && openNote.length != 0)){
-						window.JOURNAL.display_note(msg.data.id);
+						const minimized = openNote.siblings('.minimized').length > 0 && !msg.data.popup;
+						window.JOURNAL.display_note(msg.data.id, undefined, currScroll);
+						if(minimized) $(`.note[data-id='${msg.data.id}']`).siblings('.title_bar').dblclick();
 					} else if (msg.data.popup == false) {
 						openNote.remove();
 					}
+					
 					
 
 					if(window.JOURNAL.notes[msg.data.id].abilityTracker && openNote.length>0){
@@ -1273,6 +1343,14 @@ class MessageBroker {
 						}
 					}
 
+					const openStatBlock = $(`.custom-stat-block[data-stat-id="${msg.data.id}"]`).closest('.moveableWindow:not(.hideMon)');
+					if(openStatBlock.length > 0 && window.JOURNAL.notes[msg.data.id] != undefined){
+						currScroll = openStatBlock[0].scrollTop;
+						const minimized = openStatBlock.closest('.minimized').length > 0;			
+						const container = await load_monster_stat(msg.data.id, msg.data.tokenId, window.JOURNAL.notes[msg.data.id].text);
+						if(minimized) container.dblclick();					
+						container.find('.avtt-stat-block-container, .note-text').first()[0].scrollTop = currScroll;
+					}
 					window.JOURNAL.persist(true);
 
 				}
@@ -1333,13 +1411,14 @@ class MessageBroker {
 							}
 						}
 					}
-					if($("[name='streamDiceRolls'].rc-switch-checked").length > 0) {
-						window.MB.sendMessage("custom/myVTT/enabledicestreamingfeature")
-					}
+
 					window.JOURNAL.sync();
 					window.MB.sendMessage("custom/myVTT/DMAvatar", {
 						avatar: dmAvatarUrl
 					})
+					if(typeof send_aoe_style_tokens_to_players === "function"){
+						send_aoe_style_tokens_to_players();
+					}
 				}
 
 				if (msg.data && msg.data.player_id && msg.data.pc) {
@@ -1382,235 +1461,6 @@ class MessageBroker {
 					$('video#scene_map').attr('data-volume', msg.data.volume/100)
 				}
 
-			} else if(msg.eventType == "custom/myVTT/whatsyourdicerolldefault"){
-				if( !window.JOINTHEDICESTREAM)
-					return;
-				if( (!diceplayer_id)  || (msg.data.to!= diceplayer_id) )
-					return;
-				let sendToText = gamelog_send_to_text()	
-				if(sendToText == "Everyone") {
-					window.MB.sendMessage("custom/myVTT/revealmydicestream",{
-						streamid: diceplayer_id
-					});		
-				}
-				else if (sendToText == "Dungeon Master" || sendToText == "DM"){
-					window.MB.sendMessage("custom/myVTT/showonlytodmdicestream",{
-						streamid: diceplayer_id
-					});
-				}
-				else{
-					window.MB.sendMessage("custom/myVTT/hidemydicestream",{
-						streamid: diceplayer_id
-					});
-				}
-			} else if(msg.eventType == "custom/myVTT/turnoffsingledicestream"){
-				let dicePeer = window.diceCurrentPeers.filter(d=> d.peer==msg.data.from)[0]
-				if(dicePeer === undefined || (msg.data.to != "everyone" && msg.data.to != diceplayer_id)){
-				 return;
-				}	
-				$("[id^='streamer-"+msg.data.from+"']").remove();
-				dicePeer.close();
-				if(msg.data.to != "everyone"){
-					window.MB.inject_chat({
-						player: window.PLAYER_NAME,
-						img: window.PLAYER_IMG,
-						text: `<span class="flex-wrap-center-chat-message">One of your dice stream connections has failed/disconnected. Try reconnecting to the dice stream if this was not intentional.<br/><br/></div>`,
-						whisper: window.PLAYER_NAME
-					});
-				}
-			} else if(msg.eventType == "custom/myVTT/disabledicestream"){
-				enable_dice_streaming_feature(false);
-			} else if(msg.eventType == "custom/myVTT/showonlytodmdicestream"){
-				if(!window.DM){		
-					hideDiceVideo(msg.data.streamid);
-				}		
-				else{
-					revealDiceVideo(msg.data.streamid);
-				}
-			} else if(msg.eventType == "custom/myVTT/hidemydicestream"){
-					hideDiceVideo(msg.data.streamid);
-			} else if(msg.eventType == "custom/myVTT/revealmydicestream"){
-					revealDiceVideo(msg.data.streamid);
-			} else if(msg.eventType == "custom/myVTT/enabledicestreamingfeature"){
-					enable_dice_streaming_feature(true);				
-			} else if(msg.eventType == "custom/myVTT/wannaseemydicecollection"){
-				if( !window.JOINTHEDICESTREAM)
-					return;
-				if( (!window.MYSTREAMID))
-					return;
-				const configuration = {
-    				iceServers:  [{urls: "stun:stun.l.google.com:19302"}]
-  				};
-				let peer= new RTCPeerConnection(configuration);
-
-				if(window.MYMEDIASTREAM){
-					let stream = window.MYMEDIASTREAM;
-					stream.getTracks().forEach(track => peer.addTrack(track, stream));
-				}
-
-				peer.addEventListener('track', (event) => {
-					console.log("aggiungo video!!!!");
-				     addVideo(event.streams[0],msg.data.from);
-				});
-				window.makingOffer = [];
-				window.makingOffer[msg.data.from] = false;
-				peer.onconnectionstatechange=() => {
-					if(peer.connectionState=="connected"){
-						window.MB.inject_chat({
-							player: window.PLAYER_NAME,
-							img: window.PLAYER_IMG,
-							text: `<span class="flex-wrap-center-chat-message"><p>A dice stream peer has ${peer.connectionState}. <br/><br/></div>`,
-							whisper: window.PLAYER_NAME,
-						});
-					}
-					
-					if(peer.connectionState=="closed" || peer.connectionState=="failed" || peer.connectionState == "disconnected"){
-						peer.restartIce();
-						window.MB.inject_chat({
-							player: window.PLAYER_NAME,
-							img: window.PLAYER_IMG,
-							text: `<span class="flex-wrap-center-chat-message"><p>A dice stream connection has ${peer.connectionState}.</p><p> An automatic reconnect is being attempted. </p><p>If you are still unable to see one or more of your groups dice you may have to manually disable then reenable your dice stream in the chat above.</p><br/><br/></div>`,
-							whisper: window.PLAYER_NAME,
-						});	          
-					}
-				};
-				peer.onnegotiationneeded = () => {
-					try {
-						window.makingOffer[msg.data.from] = true;
-						peer.createOffer({offerToReceiveVideo: 1}).then( (desc) => {
-							console.log("fatto setLocalDescription");
-							peer.setLocalDescription(desc);
-							self.sendMessage("custom/myVTT/okletmeseeyourdice",{
-								to: msg.data.from,
-								from: window.MYSTREAMID,
-								offer: desc,
-								dm: window.DM
-							})
-						});
-					} catch(err) {
-						console.error(err);
-					} finally {
-						setTimeout(function(){
-							window.makingOffer[msg.data.from] = false;
-						}, 500)		    
-					}	
-				};
-			 		
-				peer.onicecandidate = e => {
-					window.MB.sendMessage("custom/myVTT/iceforyourgintonic",{
-						to: msg.data.from,
-						from: window.MYSTREAMID,
-						ice: e.candidate
-					})
-				};				
-				window.STREAMPEERS[msg.data.from]=peer;				
-			} else if(msg.eventType == "custom/myVTT/okletmeseeyourdice"){
-				if( !window.JOINTHEDICESTREAM)
-					return;
-				if( (!window.MYSTREAMID)  || (msg.data.to!= window.MYSTREAMID) )
-					return;
-				const configuration = {
-    				iceServers:  [{urls: "stun:stun.l.google.com:19302"}]
-  				};
-				let peer= new RTCPeerConnection(configuration);
-
-				if(window.MYMEDIASTREAM){
-					let stream=  window.MYMEDIASTREAM;
-					stream.getTracks().forEach(track => peer.addTrack(track, stream));
-				}
-
-				peer.addEventListener('track', (event) => {
-					console.log("aggiungo video!!!!");
-				  addVideo(event.streams[0],msg.data.from);
-				});
-				window.makingOffer = [];
-				window.makingOffer[msg.data.from] = false;
-				peer.onnegotiationneeded = () => {
-					try {
-						window.makingOffer[msg.data.from] = true;
-						peer.createOffer({offerToReceiveVideo: 1}).then( (desc) => {
-							console.log("fatto setLocalDescription");
-							peer.setLocalDescription(desc);
-							self.sendMessage("custom/myVTT/okletmeseeyourdice",{
-								to: msg.data.from,
-								from: window.MYSTREAMID,
-								offer: desc,
-								dm: window.DM
-							})
-						});
-					} catch(err) {
-						console.error(err);
-					} finally {
-						setTimeout(function(){
-							window.makingOffer[msg.data.from] = false;
-						}, 500)		    
-					}	
-				};
-				peer.onconnectionstatechange=() => {
-					if(peer.connectionState=="connected"){
-						window.MB.inject_chat({
-							player: window.PLAYER_NAME,
-							img: window.PLAYER_IMG,
-							text: `<span class="flex-wrap-center-chat-message"><p>A dice stream peer has ${peer.connectionState}. <br/><br/></div>`,
-							whisper: window.PLAYER_NAME,
-						});
-					}
-					if((peer.connectionState=="closed") || (peer.connectionState=="failed" || peer.connectionState == "disconnected")){
-						peer.restartIce();
-						window.MB.inject_chat({
-							player: window.PLAYER_NAME,
-							img: window.PLAYER_IMG,
-							text: `<span class="flex-wrap-center-chat-message"><p>A dice stream connection has ${peer.connectionState}.</p><p> An automatic reconnect is being attempted. </p><p>If you are still unable to see one or more of your groups dice you may have to manually disable then reenable your dice stream in the chat above.</p><br/><br/></div>`,
-							whisper: window.PLAYER_NAME,
-						});
-					}
-				};
-		
-				peer.onicecandidate = e => {
-					window.MB.sendMessage("custom/myVTT/iceforyourgintonic",{
-						to: msg.data.from,
-						from: window.MYSTREAMID,
-						ice: e.candidate
-					})
-				};				
-				window.STREAMPEERS[msg.data.from]=peer;	
-				let ignoreOffer = false;
-				if(msg.data.offer){
-					const offerCollision = (msg.data.offer.type == "offer") && (window.makingOffer[msg.data.from] || window.STREAMPEERS[msg.data.from].signalingState != "stable")
-				  let myStreamParse = parseInt(window.MYSTREAMID) || 0;
-				  let fromStreamParse = parseInt(msg.data.from) || 0;
-				  ignoreOffer = (((myStreamParse > fromStreamParse) && !msg.data.dm) || window.DM) && offerCollision
-				  if (ignoreOffer) {
-				    return;
-				  }
-				}		
-				peer = window.STREAMPEERS[msg.data.from];
-				peer.setRemoteDescription(msg.data.offer);
-				console.log("fatto setRemoteDescription");
-				window.STREAMPEERS[msg.data.from] = peer;	
-	
-		
-				peer.createAnswer().then( (desc) => {
-				peer.setLocalDescription(desc);
-				console.log("fatto setLocalDescription");
-					
-				window.MB.sendMessage("custom/myVTT/okseethem",{
-						from: window.MYSTREAMID,
-						to: msg.data.from,
-						answer: desc
-					});
-			});
-				
-				window.STREAMPEERS[msg.data.from] = peer;					
-			} else if(msg.eventType == "custom/myVTT/okseethem"){
-				if( !window.JOINTHEDICESTREAM)
-					return;
-				if( (!window.MYSTREAMID)  || (msg.data.to!= window.MYSTREAMID) )
-					return;
-
-				let peer=window.STREAMPEERS[msg.data.from];
-				peer.setRemoteDescription(msg.data.answer);
-				console.log("fatto setRemoteDescription");
 			} else if (msg.eventType === "custom/myVTT/peerReady") {
 				window.PeerManager.receivedPeerReady(msg);
 			} else if (msg.eventType === "custom/myVTT/peerConnect") {
@@ -1630,21 +1480,7 @@ class MessageBroker {
 				}
 			} else if (msg.eventType === "custom/myVTT/videoPeerDisconnect") {
 					$(`.video-meet-area video#${msg.data.id}`).remove();
-			} else if (msg.eventType === "custom/myVTT/diceVideoPeerConnect") {
-				if(msg.data.id != diceplayer_id){
-					let call = window.diceVideoPeer.call(msg.data.id, window.MYMEDIASTREAM)
-					call.on('stream', (stream) => {
-						window.diceVideoConnectedPeers.push(msg.data.id);
-						setDiceRemoteStream(stream, call.peer);   
-						call.on('close', () => {
-							$(`video.remote-dice-video#${call.peer}, #streamer-canvas-${call.peer}`).remove();
-						})   
-					})
-					window.diceCurrentPeers = window.diceCurrentPeers.filter(d=> d.peer != call.peer)
-					window.diceCurrentPeers.push(call);
-				}
-				return;
-			}
+			} 
 
 
 		};
@@ -1680,8 +1516,7 @@ class MessageBroker {
 		}
 	}
 	async handleScene (msg, forceRefresh=false) {
-		
-		console.debug("handlescene", msg);
+		console.log("handleScene", msg);
 		window.LOADING = true;
 		window.MB.checkHideSceneFromPlayers();
 		if(window.WIZARDING){
@@ -1772,14 +1607,14 @@ class MessageBroker {
 				window.videoTokenOld = {};
 				let data = msg.data;
 				let self=this;
-
+				let loadMap = "";
 				if(data.dm_map_usable=="1"){ // IN THE CLOUD WE DON'T RECEIVE WIDTH AND HEIGT. ALWAYS LOAD THE DM_MAP FIRST, AS TO GET THE PROPER WIDTH
-					data.map=data.dm_map;
+					loadMap=data.dm_map;
 					if(data.dm_map_is_video=="1" || data.dm_map?.includes('youtube.com') || data.dm_map?.includes("youtu.be"))
 						data.is_video=true;
 				}
 				else{
-					data.map=data.player_map;
+					loadMap=data.player_map;
 					if(data.player_map_is_video=="1")
 						data.is_video=true;
 				}
@@ -1807,7 +1642,7 @@ class MessageBroker {
 				window.CURRENT_SCENE_DATA.offsety=parseFloat(window.CURRENT_SCENE_DATA.offsety*window.CURRENT_SCENE_DATA.scale_factor);
 				$('#vision_menu #draw_line_width').val(window.CURRENT_SCENE_DATA.hpps);
 				$('#fog_menu #draw_line_width').val(window.CURRENT_SCENE_DATA.hpps);
-				console.log("SETTO BACKGROUND A " + msg.data);
+
 				$("#tokens").children().remove();
 				$(".aura-element[id^='aura_'").remove();
 				$(".aura-clip-container").remove();
@@ -1820,28 +1655,28 @@ class MessageBroker {
 					build_import_loading_indicator("Loading UVTT Map");
 					try{
 						if (window.DM && data.dm_map && data.dm_map_usable == '1'){
-							data.map = await get_map_from_uvtt_file(data.map)
+							loadMap = await get_map_from_uvtt_file(loadMap)
 						}
 						else{
-							data.map = await get_map_from_uvtt_file(data.player_map);
+							loadMap = await get_map_from_uvtt_file(data.player_map);
 						}			
 					}
 					catch{
 						console.log('non-UVTT file found for map')
 						if (window.DM && data.dm_map && data.dm_map_usable == '1'){
-							data.map = data.dm_map;
+							loadMap = data.dm_map;
 						}
 						else{
-							data.map = data.player_map;
+							loadMap = data.player_map;
 						}
 					}
 				}
 				else{
 					if (window.DM && data.dm_map && data.dm_map_usable == '1') {
-						data.map = data.dm_map;
+						loadMap = data.dm_map;
 					}
 					else {
-						data.map = data.player_map;
+						loadMap = data.player_map;
 					}
 					await build_import_loading_indicator(`Loading ${window.DM ? data.title : 'Scene'}`);		
 				}
@@ -1868,20 +1703,77 @@ class MessageBroker {
 					if (!window.CURRENT_SCENE_DATA.fpsq || window.CURRENT_SCENE_DATA.fpsq == "" ){
 						window.CURRENT_SCENE_DATA.fpsq = 5;
 					}
-					load_scenemap(data.map, data.is_video, data.width, data.height, data.UVTTFile, async function() {
+					load_scenemap(loadMap, data.is_video, data.width, data.height, data.UVTTFile, async function() {
 						
 						console.group("load_scenemap callback")
 						if(!window.CURRENT_SCENE_DATA.scale_factor)
 							window.CURRENT_SCENE_DATA.scale_factor = 1;
 						let scaleFactor = window.CURRENT_SCENE_DATA.scale_factor;
 						// Store current scene width and height
-						let mapHeight = await $("#scene_map").height();
-						let mapWidth = await $("#scene_map").width();
+						const sceneMap = $('#scene_map');
+						let mapHeight = await sceneMap.height();
+						let mapWidth = await sceneMap.width();
+						if (window.DM && data.dm_map && data.dm_map_usable == '1' && data.player_map && !data.UVTTFile && !data.is_video) {
+							function showMapWarning() {
+								$("#above-vtt-error-message").remove();
+								const container = $(`
+								<div id="above-vtt-error-message">
+									<h2>Warning: Player and DM maps do not align</h2>
+									<div id="error-message-details">
+										<p>Player Map and DM map are not the same size. This mostly occurs with old adventures where VTTs were not taken into consideration.This will cause most things to be out of alignment between player and DM view.</p>	
+										<p>Option 1: Disable the DM map. Use hidden number tokens or text tool to label areas.</p>
+										<p>Option 2: Resize / Align the maps in something like Photoshop/gimp</p>
+										<p>If needed walls can be rescaled by using the 'Edit Points' tool -> ${getModKeyName()}+A to select all points -> ${getShiftKeyName()}+DRAG up/down to rescale the walls to fit.
+										<p>You may want to join as a player/spectator to confirm alignment after adjusting.</p>
+									</div>
+									<div class="error-message-buttons">
+									<button id="close-error-button">Close</button>
+									</div>
+								</div>
+								`);
+								$(document.body).append(container);
+								$("#close-error-button").on("click", () => {
+									removeError();
+								});
+							}
+							let playerMap = new Image();
 
+							function removeEvents(){
+								playerMap.removeEventListener('load', onLoad);
+								playerMap.removeEventListener('error', onError);
+								playerMap = null;
+							}
+
+							function onLoad() {
+								const width = playerMap.naturalWidth;
+								const height = playerMap.naturalHeight;
+								if(width != sceneMap[0].naturalWidth || height != sceneMap[0].naturalHeight)
+									showMapWarning();
+								removeEvents();
+							}
+
+							function onError() {
+								console.warn('Failed to load player comparison map.')
+								removeEvents();
+							}
+
+							playerMap.addEventListener('load', onLoad, { once: true });
+							playerMap.addEventListener('error', onError, { once: true });
+
+							let playerUrl = data.player_map;
+
+							if(playerUrl.startsWith('above-bucket-not-a-url')){
+								playerUrl = await getAvttStorageUrl(playerUrl, true);
+							} else{
+								playerUrl = await getGoogleDriveAPILink(playerUrl)
+							}
+
+							playerMap.src = await parse_img(playerUrl);
+						}
 	
 						window.CURRENT_SCENE_DATA.conversion = 1;
 						
-						if (!data.map?.includes('youtube.com') && (mapHeight > 2500 || mapWidth > 2500)){
+						if (!loadMap?.includes('youtube.com') && (mapHeight > 2500 || mapWidth > 2500)){
 							let conversion = 2;
 							if(mapWidth >= mapHeight){
 								conversion = 1980 / mapWidth;
@@ -2077,13 +1969,13 @@ class MessageBroker {
 
 		if(nextAfterCurrent.length > 0){
 			let nextCombatantId = nextAfterCurrent.attr('data-target');
-			console.log(nextCombatantId);
+			noisy_log(nextCombatantId);
 			if(nextCombatantId && window.TOKEN_OBJECTS[nextCombatantId]){
 				let token = window.TOKEN_OBJECTS[nextCombatantId];
-				console.log(token);
+				noisy_log(token);
 				if(token.isPlayer()){
 					let playerId = getPlayerIDFromSheet(token.options.id);
-					console.log(playerId)
+					noisy_log(playerId)
 					if(playerId && playerId != -1 && playerId != 'DM'){
 						nextPlayerId = playerId;
 					}
@@ -2132,9 +2024,12 @@ class MessageBroker {
 
 
 		const isChatEnabled = is_encounters_page() || is_characters_page() || is_campaign_page();
+		const imageUrl = new URL(data.img);
+		const decodedPath = decodeURIComponent(imageUrl.pathname);
+		imageUrl.pathname = encodeURI(decodedPath);
 
 		//Security logic to prevent content being sent which can execute JavaScript.
-		let image = `<img class="${isChatEnabled ? 'tss-1e4a2a1-AvatarPortrait' : 'Avatar_AvatarPortrait__3cq6B'}" src="${encodeURI(data.img)}" alt="">`;
+		let image = `<img class="${isChatEnabled ? 'tss-1e4a2a1-AvatarPortrait' : 'Avatar_AvatarPortrait__3cq6B'}" src="${imageUrl.toString()}" alt="">`;
 		let player = `<span class="tss-1tj70tb-Sender" title="${data.player}">${data.player}</span>`;
 
 		player = DOMPurify.sanitize( player,{ALLOWED_TAGS: ['span']});
@@ -2365,6 +2260,8 @@ class MessageBroker {
 			
 	
 		}
+
+		
 	}
 
 	
@@ -2387,17 +2284,17 @@ class MessageBroker {
 				window.MB.sendMessage("custom/myVTT/soundpad", data); // refresh soundpad
 			}
 			else if(window.MIXER){
-	        const state = window.MIXER.remoteState();
-          console.log('pushing mixer state to players', state);
-          window.MB.sendMessage('custom/myVTT/mixer', state);
-          if (window.YTPLAYER) {
-          		window.YTPLAYER.volume = $("#youtube_volume").val();
-              window.YTPLAYER.setVolume(window.YTPLAYER.volume*$("#master-volume input").val());
-              data={
-                  volume: window.YTPLAYER.volume
-              };
-              window.MB.sendMessage("custom/myVTT/changeyoutube",data);
-          }
+				const state = window.MIXER.remoteState();
+				noisy_log('pushing mixer state to players', state);
+				window.MB.sendMessage('custom/myVTT/mixer', state);
+				if (window.YTPLAYER) {
+						window.YTPLAYER.volume = $("#youtube_volume").val();
+					window.YTPLAYER.setVolume(window.YTPLAYER.volume*$("#master-volume input").val());
+					data={
+						volume: window.YTPLAYER.volume
+					};
+					window.MB.sendMessage("custom/myVTT/changeyoutube",data);
+				}
 			}
 			window.MB.sendMessage("custom/myVTT/DMAvatar", {
 				avatar: dmAvatarUrl
@@ -2411,14 +2308,14 @@ class MessageBroker {
 	handleAudioPlayingSync(msg){
 		if(window.DM){
 			for(let i = 0; i<$("audio").length; i++){
-		    if($("audio")[i].paused == false){
-		    	let data={
-						channel: i,
-						time: $("audio")[i].currentTime,
-						volume: $("audio")[i].volume,
-					}
-					window.MB.sendMessage("custom/myVTT/playchannel",data);
-		    }
+				if($("audio")[i].paused == false){
+					let data={
+							channel: i,
+							time: $("audio")[i].currentTime,
+							volume: $("audio")[i].volume,
+						}
+						window.MB.sendMessage("custom/myVTT/playchannel",data);
+				}
 			}
 		}
 	}
@@ -2483,7 +2380,31 @@ class MessageBroker {
 		//this.sendDDBMB(eventType,data); 
 
 		if(eventType.startsWith("custom")){
-			this.sendAboveMB(eventType,data,skipSceneId,forceSceneId);
+			if(eventType == "custom/myVTT/note"){
+				const copyData = $.extend(true, {}, data);
+				if(!copyData.delete){
+					const msgId = uuid();
+					copyData.note.plain = "";
+					let text = `${copyData.note.text}`;
+					let order = 0;
+					const textLength = JSON.stringify(text).length;
+					const lastIndex = Math.floor(textLength/120000);
+					copyData.lastIndex = lastIndex;
+					copyData.uuid = msgId;
+					while(order<lastIndex){
+						copyData.order = order;
+						let sendNote = text.slice(0, 120000)
+						copyData.note.text = sendNote;
+						this.sendAboveMB(eventType, copyData, skipSceneId, forceSceneId)
+						order+=1;
+						text = text.slice(120000, text.length)
+					}
+					copyData.note.text = text;
+				}
+				this.sendAboveMB(eventType, copyData, skipSceneId, forceSceneId)
+			}else{
+				this.sendAboveMB(eventType,data,skipSceneId,forceSceneId);
+			}		
 		}
 		else{
 			this.sendDDBMB(eventType,data);

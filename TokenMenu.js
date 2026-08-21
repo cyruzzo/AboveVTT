@@ -517,7 +517,7 @@ function token_context_menu_expanded(tokenIds, e, crossScenePortalData) {
 						const copyLink = `${tokenIds};${window.CURRENT_SCENE_DATA.id}`
 						navigator.clipboard.writeText(copyLink);
 						showTempMessage('Portal ID copied to clipboard');
-					});0
+					});
 					body.append(copyPortalId);
 				}
 				
@@ -1583,6 +1583,9 @@ function token_context_menu_expanded(tokenIds, e, crossScenePortalData) {
 	$(".maxHpMenuInput").on('focus', function(event){
 		event.target.select();
 	});
+	$(".tempHpMenuInput").on('focus', function(event){
+		event.target.select();
+	});
 	$(".acMenuInput").on('focus', function(event){
 		event.target.select();
 	});
@@ -1597,16 +1600,18 @@ function token_context_menu_expanded(tokenIds, e, crossScenePortalData) {
 		$(".maxHpMenuInput").prop('readonly', false);
 		$(".acMenuInput").prop('readonly', false);
 		$(".hpMenuInput").prop('readonly', false);
+		$(".tempHpMenuInput").prop('readonly', false);
 	}
 	else { 
 		if(tokens[0].isPlayer()){
-			$(".maxHpMenuInput, .acMenuInput, .hpMenuInput").off('click.message').on('click.message', function(){
+			$(".maxHpMenuInput, .acMenuInput, .hpMenuInput, .tempHpMenuInput").off('click.message').on('click.message', function(){
 				showTempMessage('Player HP/AC must be adjusted on the character sheet.')
 			})
 		}
 		$(".maxHpMenuInput").prop('readonly', true);
 		$(".acMenuInput").prop('readonly', true);
 		$(".hpMenuInput").prop('readonly', true);
+		$(".tempHpMenuInput").prop('readonly', true);
 	}	
 	if(window.DM || (tokens.length == 1 && (tokens[0].options.player_owned == true || tokens[0].isPlayer()))){
 		let tokenNames = tokens.map(t => t.options.name);
@@ -1678,21 +1683,22 @@ function token_context_menu_expanded(tokenIds, e, crossScenePortalData) {
 		`);
 		nameWrapper.append(nameInput); // input below label
 		nameWrapper.append(nameGeneratorButton);
-
-
-		
 		body.append(nameWrapper);
-		let changeImageMenuButton = $("<button id='changeTokenImage' class='material-icons'>Change Token Image</button>")
-		body.append(changeImageMenuButton)
-		changeImageMenuButton.off().on("click", function() {
-			close_token_context_menu();
-			id = tokens[0].options.id;
-			if (!(id in window.TOKEN_OBJECTS)) {
-				return;
-			}
-			let tok = window.TOKEN_OBJECTS[id];
-			display_change_image_modal(tok);
-		});
+
+		if(!(tokens.length == 1 && tokens[0].isAoe())){
+			
+			let changeImageMenuButton = $("<button id='changeTokenImage' class='material-icons'>Change Token Image</button>")
+			body.append(changeImageMenuButton)
+			changeImageMenuButton.off().on("click", function() {
+				close_token_context_menu();
+				id = tokens[0].options.id;
+				if (!(id in window.TOKEN_OBJECTS)) {
+					return;
+				}
+				let tok = window.TOKEN_OBJECTS[id];
+				display_change_image_modal(tok);
+			});
+		}
 	}
 
 
@@ -2084,7 +2090,7 @@ function build_token_auras_inputs(tokenIds) {
 		defaultValue: false
 	};
 	let enabledAurasInput = build_toggle_input(auraOption, auraIsEnabled, function(name, newValue) {
-		console.log(`${name} setting is now ${newValue}`);
+		noisy_log(`${name} setting is now ${newValue}`);
 		tokens.forEach(token => {
 			token.options[name] = newValue;
 			token.place_sync_persist();
@@ -2103,6 +2109,33 @@ function build_token_auras_inputs(tokenIds) {
 	} else {
 		wrapper.find(".token-config-aura-wrapper").hide();
 	}
+	
+	let tokensSquareAura = tokens.map(t => t.options.squareAura);
+	let uniqueSquareAura = [...new Set(tokensSquareAura)];
+	let squareAuraIsEnabled = null;
+	if (uniqueSquareAura.length === 1) {
+		squareAuraIsEnabled = uniqueSquareAura[0];
+	}
+	const squareAura = {
+		name: "squareAura",
+		label: "Square Aura",
+		type: "toggle",
+		options: [
+			{ value: true, label: "Square", description: "The token's aura is a square when enabled and a circle otherwise." },
+			{ value: false, label: "Circle", description: "The token's aura is a square when enabled and a circle otherwise." }
+		],
+		defaultValue: false
+	};
+	const squareAuraInput = build_toggle_input(squareAura, squareAuraIsEnabled, function(name, newValue) {
+		noisy_log(`${name} setting is now ${newValue}`);
+		tokens.forEach(token => {
+			token.options[name] = newValue;
+			token.place_sync_persist();
+		});
+	});
+	wrapper.find(".token-config-aura-wrapper").prepend(squareAuraInput);
+	
+
 	const hideAuraLabel = (allTokensArePlayer) ? 'Hide Aura from other Players' : 'Hide Aura from Players';
 	const hideAura = {
 		name: "hideaura",
@@ -2115,7 +2148,7 @@ function build_token_auras_inputs(tokenIds) {
 		defaultValue: false
 	};
 	const hideAuraInput = build_toggle_input(hideAura, hideAuraIsEnabled, function(name, newValue) {
-		console.log(`${name} setting is now ${newValue}`);
+		noisy_log(`${name} setting is now ${newValue}`);
 		tokens.forEach(token => {
 			token.options[name] = newValue;
 			token.place_sync_persist();
@@ -2124,6 +2157,8 @@ function build_token_auras_inputs(tokenIds) {
 	if(window.DM || (tokens.length == 1 && (window.TOKEN_OBJECTS[tokens[0].options.id].options.player_owned || allTokensArePlayer))){
 		wrapper.find(".token-config-aura-wrapper").prepend(hideAuraInput);
 	}
+
+
 	let radiusInputs = wrapper.find('input.aura-radius');
 	radiusInputs.on('keyup', function(event) {
 		let newRadius = event.target.value;
@@ -2162,7 +2197,7 @@ function build_token_auras_inputs(tokenIds) {
 	const colorPickerChange = function(e, tinycolor) {
 		let auraName = e.target.name.replace("Color", "");
 		let color = `rgba(${tinycolor._r}, ${tinycolor._g}, ${tinycolor._b}, ${tinycolor._a})`;
-		console.log(auraName, e, tinycolor);
+		noisy_log(auraName, e, tinycolor);
 		if (e.type === 'change') {
 			tokens.forEach(token => {
 				token.options[auraName]['color'] = color;
@@ -2215,7 +2250,7 @@ function build_token_auras_inputs(tokenIds) {
 
 
 	$("#VTTWRAPPER .sidebar-modal").on("remove", function () {
-		console.log("removing sidebar modal!!!");
+		noisy_log("removing sidebar modal!!!");
 		colorPickers.spectrum("destroy");
 	});
 	body.append(wrapper);
@@ -2518,7 +2553,7 @@ function build_token_light_inputs(tokenIds, door=false) {
 		$(this).toggleClass('active-daylight');
 		let newValue = $(this).hasClass('active-daylight');	
 		let name = $(this).attr('name');
-		console.log(`${name} setting is now ${newValue}`);
+		noisy_log(`${name} setting is now ${newValue}`);
 		tokens.forEach(token => {
 			token.options[name].daylight = newValue;
 			token.place_sync_persist();
@@ -2558,7 +2593,7 @@ function build_token_light_inputs(tokenIds, door=false) {
 
 	}
 	let revealVisionInput = build_dropdown_input(revealvisionOption, auraRevealVisionEnabled, function(name, newValue) {
-		console.log(`${name} setting is now ${newValue}`);
+		noisy_log(`${name} setting is now ${newValue}`);
 		tokens.forEach(token => {
 			if(newValue == 'true')
                 newValue = true;
@@ -2570,7 +2605,7 @@ function build_token_light_inputs(tokenIds, door=false) {
 	});
 
 	let enabledLightInput = build_toggle_input( lightOption, auraIsLightEnabled, function(name, newValue) {
-		console.log(`${name} setting is now ${newValue}`);
+		noisy_log(`${name} setting is now ${newValue}`);
 		tokens.forEach(token => {
 			token.options[name] = newValue;
 			token.place_sync_persist();
@@ -2585,8 +2620,32 @@ function build_token_light_inputs(tokenIds, door=false) {
 	if(!window.DM){
 		enabledLightInput.hide();
 	}
+	let tokensSquareLight = tokens.map(t => t.options.squareLight);
+	let uniqueSquareLight = [...new Set(tokensSquareLight)];
+	let squareLightIsEnabled = null;
+	if (uniqueSquareLight.length === 1) {
+		squareLightIsEnabled = uniqueSquareLight[0];
+	}
+	const squareLight = {
+		name: "squareLight",
+		label: "Square Vision/Light",
+		type: "toggle",
+		options: [
+			{ value: true, label: "Square", description: "The token's vision/light is a square when enabled and a circle otherwise." },
+			{ value: false, label: "Circle", description: "The token's vision/light is a square when enabled and a circle otherwise." }
+		],
+		defaultValue: false
+	};
+	const squareLightInput = build_toggle_input(squareLight, squareLightIsEnabled, function(name, newValue) {
+		noisy_log(`${name} setting is now ${newValue}`);
+		tokens.forEach(token => {
+			token.options[name] = newValue;
+			token.place_sync_persist();
+		});
+	});
 
-	wrapper.find(".token-config-aura-wrapper").prepend(revealVisionInput);
+	
+	wrapper.find(".token-config-aura-wrapper").prepend(squareLightInput, revealVisionInput);
 	
 
 	wrapper.find("h3.token-image-modal-footer-title").after(enabledLightInput);
@@ -2595,6 +2654,8 @@ function build_token_light_inputs(tokenIds, door=false) {
 	} else {
 		wrapper.find(".token-config-aura-wrapper").hide();
 	}
+
+	
 
 	let radiusInputs = wrapper.find('input.light-radius, input.vision-radius');
 	radiusInputs.on('keyup', function(event) {
@@ -2636,7 +2697,7 @@ function build_token_light_inputs(tokenIds, door=false) {
 	const colorPickerChange = function(e, tinycolor) {
 		let auraName = e.target.name.replace("Color", "");
 		let color = `rgba(${tinycolor._r}, ${tinycolor._g}, ${tinycolor._b}, ${tinycolor._a})`;
-		console.log(auraName, e, tinycolor);
+		noisy_log(auraName, e, tinycolor);
 		if (e.type === 'change') {
 			tokens.forEach(token => {
 				token.options[auraName]['color'] = color;
@@ -2808,7 +2869,7 @@ function build_token_light_inputs(tokenIds, door=false) {
 	});
 
 	$("#VTTWRAPPER .sidebar-modal").on("remove", function () {
-		console.log("removing sidebar modal!!!");
+		noisy_log("removing sidebar modal!!!");
 		colorPickers.spectrum("destroy");
 	});
 	body.append(wrapper);
@@ -2931,7 +2992,7 @@ function create_aura_presets_edit(animationPresets){
 		const colorPickerChange = function(e, tinycolor) {
 			let auraName = e.target.name.replace("Color", "");
 			window.AURA_PRESETS[i][auraName].color = `rgba(${tinycolor._r}, ${tinycolor._g}, ${tinycolor._b}, ${tinycolor._a})`;
-			console.log(auraName, e, tinycolor);
+			noisy_log(auraName, e, tinycolor);
 			localStorage.setItem('AURA_PRESETS', JSON.stringify(window.AURA_PRESETS));
 		};
 		colorPickers.on('move.spectrum', colorPickerChange);   // update the token as the player messes around with colors
@@ -3113,7 +3174,7 @@ function create_light_presets_edit(animationPresets){
 		const colorPickerChange = function(e, tinycolor) {
 			let auraName = e.target.name.replace("Color", "");
 			window.LIGHT_PRESETS[i][auraName].color = `rgba(${tinycolor._r}, ${tinycolor._g}, ${tinycolor._b}, ${tinycolor._a})`;
-			console.log(auraName, e, tinycolor);
+			noisy_log(auraName, e, tinycolor);
 			localStorage.setItem('LIGHT_PRESETS', JSON.stringify(window.LIGHT_PRESETS));
 		};
 		colorPickers.on('move.spectrum', colorPickerChange);   // update the token as the player messes around with colors
@@ -3241,6 +3302,79 @@ function create_animation_presets_edit(isVision = false){
 
 	adjust_create_import_edit_container(dialog, undefined, undefined, 975);
 }
+function calculate_hp(inputValue, currentValue) {
+	const sanitizedString = inputValue.replaceAll(/[^\d+-/*().]/gi, '');
+	const evalResult = round_down_divisions(sanitizedString);
+	if (evalResult === undefined) {
+		return undefined;
+	}
+	const calc = inputValue.startsWith('+') || inputValue.startsWith('-')
+		? parseInt(currentValue) + parseInt(evalResult)
+		: evalResult;
+	const newValue = Math.max(0, calc);
+	if(isNaN(newValue) || !Number.isFinite(newValue)) {
+		console.warn(`Invalid HP calculation: ${inputValue} resulted in ${newValue}`);
+		return undefined;
+	}
+	return newValue;
+}
+function round_down_divisions(expression) {
+	let position = 0;
+	let invalid = false;
+
+	function parseExpression() {
+		let value = parseTerm();
+		while (position < expression.length && (expression[position] === '+' || expression[position] === '-')) {
+			const operator = expression[position++];
+			const nextValue = parseTerm();
+			value = operator === '+' ? value + nextValue : value - nextValue;
+		}
+		return value;
+	}
+
+	function parseTerm() {
+		let value = parseFactor();
+		while (position < expression.length && (expression[position] === '*' || expression[position] === '/')) {
+			const operator = expression[position++];
+			const nextValue = parseFactor();
+			value = operator === '*' ? value * nextValue : Math.trunc(value / nextValue);
+		}
+		return value;
+	}
+
+	function parseFactor() {
+		if (expression[position] === '(') {
+			position++;
+			const value = parseExpression();
+			if (expression[position] !== ')') {
+				invalid = true;
+			} else {
+				position++;
+			}
+			return value;
+		}
+		if (expression[position] === '-' || expression[position] === '+') {
+			const operator = expression[position++];
+			const value = parseFactor();
+			return operator === '-' ? -value : value;
+		}
+		const start = position;
+		while (position < expression.length && /\d/.test(expression[position])) {
+			position++;
+		}
+		if (start === position) {
+			invalid = true;
+			return 0;
+		}
+		return Number(expression.slice(start, position));
+	}
+
+	const result = parseExpression();
+	return invalid || position !== expression.length || !Number.isFinite(result) ? undefined : result;
+}
+
+
+
 function build_menu_stat_inputs(tokenIds) {
 	let tokens = tokenIds.map(id => window.TOKEN_OBJECTS[id]).filter(t => t !== undefined);
 	let body = $("<div id='menuStatDiv'></div>");
@@ -3250,26 +3384,31 @@ function build_menu_stat_inputs(tokenIds) {
 	let elev = '';
 
 	if(tokens.length == 1 && ((tokens[0].options.player_owned && !tokens[0].options.disablestat) || (!tokens[0].options.hidestat && tokens[0].isPlayer() && !tokens[0].options.disablestat) || tokens[0].options.id.includes(window.PLAYER_ID) || window.window.DM)){
-		hp = tokens[0].hp;
+		hp = tokens[0].baseHp;
 		max_hp = tokens[0].maxHp;
+		temp_hp = tokens[0].tempHp;
 		ac = tokens[0].ac;
 		elev = (typeof tokens[0].options.elev !== 'undefined') ? tokens[0].options.elev : '';
 	}
 	else if(window.DM && tokens.length>1){
 		hp = '';
 		max_hp = '';
+		temp_hp = '';
 		ac = '';
 		elev = '';
 	}
 	else{
 		hp = "????";
 		max_hp = "????";
+		temp_hp = '????';
 		ac = "????";
 		elev = (typeof tokens[0].options.elev !== 'undefined') ? tokens[0].options.elev : '';
 	}
 
-	let hpMenuInput = $(`<label class='menu-input-label'>HP<input value='${hp}' class='menu-input hpMenuInput' type="text"></label>`);
+	let hpMenuInput = $(`<label class='menu-input-label'>HP<input value='${hp}' class='menu-input hpMenuInput' type="text"></label>`);	
 	let maxHpMenuInput = $(`<label class='menu-input-label'>Max HP<input value='${max_hp}' class='menu-input maxHpMenuInput' type="text"></label>`);
+	let tempHpMenuInput = $(`<label class='menu-input-label'>Temp HP<input value='${temp_hp}' class='menu-input tempHpMenuInput' type="text"></label>`);
+
 	let acMenuInput = $(`<label class='menu-input-label'>AC<input value='${ac}' class='menu-input acMenuInput' type="text"></label>`);
 	let elevMenuInput = $(`<label class='menu-input-label'>Elevation<input value='${elev}' class='menu-input elevMenuInput' type="number"></label>`);
 
@@ -3277,10 +3416,53 @@ function build_menu_stat_inputs(tokenIds) {
 	body.append(acMenuInput);
 	body.append(hpMenuInput);
 	body.append(maxHpMenuInput);
+	body.append(tempHpMenuInput);
 
+	const debounceTriggerKeyboard = mydebounce((input, keyboardEvent)=>{
+		input.trigger(keyboardEvent);
+	}, 1500)
+	if(!isNaN(hp) && !isNaN(max_hp)){
+		hpMenuInput.find('input').on('wheel', function(e) {
+			const input = $(this);
+			if(!input.is(':focus'))
+				return;
+			e.preventDefault();
+			const delta = e.originalEvent.deltaY < 0 ? 1 : -1;
+			const current = parseInt(input.val());
+			if(isNaN(current)) return;
+			input.val(Math.max(0, current + delta));
+			const keyboardEvent = $.Event('keyup');
+			keyboardEvent.key = 'Enter'; 
+			debounceTriggerKeyboard(input, keyboardEvent);
+		});
+		maxHpMenuInput.find('input').on('wheel', function(e) {
+			const input = $(this);
+			if(!input.is(':focus'))
+				return;
+			e.preventDefault();
+			const delta = e.originalEvent.deltaY < 0 ? 1 : -1;
+			const current = parseInt(input.val());
+			if(isNaN(current)) return;
+			input.val(Math.max(1, current + delta));
+			const keyboardEvent = $.Event('keyup');
+			keyboardEvent.key = 'Enter'; 
+			debounceTriggerKeyboard(input, keyboardEvent);
+		});
+		tempHpMenuInput.find('input').on('wheel', function(e) {
+			const input = $(this);
+			if(!input.is(':focus'))
+				return;
+			e.preventDefault();
+			const delta = e.originalEvent.deltaY < 0 ? 1 : -1;
+			const current = parseInt(input.val());
+			if(isNaN(current)) return;
+			input.val(Math.max(0, current + delta));
+			const keyboardEvent = $.Event('keyup');
+			keyboardEvent.key = 'Enter'; 
+			debounceTriggerKeyboard(input, keyboardEvent);
+		});
+	}
 
-
-	
 	hpMenuInput.find('input').on('keyup', function(event) {
 		let newValue = event.target.value;
 		if($(event.target).prop('readonly') || newValue == '')
@@ -3290,13 +3472,22 @@ function build_menu_stat_inputs(tokenIds) {
 				if(token.isPlayer())
 					return;
 				let newHP = newValue;
-				if(newValue.indexOf("+") == 0 || newValue.indexOf("-") == 0){
-					newHP = token.hp + parseInt(newValue);
+				
+				newHP = calculate_hp(newHP, token.baseHp);
+				if (newHP === undefined)
+					return;
+
+				if(newHP > token.maxHp){
+					token.hp = token.maxHp;
+					token.tempHp = newHP - token.maxHp;
+					newHP = token.maxHp;
+				} else {
+					token.hp = newHP;
 				}
-				token.hp = newHP - token.tempHp;
 				token.place_sync_persist();
 				if(tokens.length == 1){
 					$(".hpMenuInput").val(newHP);
+					$(".tempHpMenuInput").val(token.tempHp);
 				}
 				else{
 					$(".hpMenuInput").val('');
@@ -3312,13 +3503,22 @@ function build_menu_stat_inputs(tokenIds) {
 			if(token.isPlayer())
 				return;
 			let newHP = newValue;
-			if(newValue.indexOf("+") == 0 || newValue.indexOf("-") == 0){
-				newHP = token.hp + parseInt(newValue);
+
+			newHP = calculate_hp(newHP, token.baseHp);
+			if (newHP === undefined)
+				return;
+
+			if(newHP > token.maxHp){
+				token.hp = token.maxHp;
+				token.tempHp = newHP - token.maxHp;
+				newHP = token.maxHp;
+			} else {
+				token.hp = newHP;
 			}
-			token.hp = newHP - token.tempHp;
 			token.place_sync_persist();
 			if(tokens.length == 1){
 				$(".hpMenuInput").val(newHP);
+				$(".tempHpMenuInput").val(token.tempHp);
 			}
 			else{
 				$(".hpMenuInput").val('');
@@ -3336,9 +3536,11 @@ function build_menu_stat_inputs(tokenIds) {
 				if(token.isPlayer())
 					return;
 				let newMaxHP = newValue;
-				if(newValue.indexOf("+") == 0 || newValue.indexOf("-") == 0){
-					newMaxHP = token.maxHp + parseInt(newValue);
-				}
+
+				newMaxHP = calculate_hp(newMaxHP, token.maxHp);
+				if (newMaxHP === undefined)
+					return;
+				
 				token.maxHp = newMaxHP;
 				token.place_sync_persist();
 				if(tokens.length == 1){
@@ -3359,9 +3561,11 @@ function build_menu_stat_inputs(tokenIds) {
 			if(token.isPlayer())
 				return;
 			let newMaxHP = newValue;
-			if(newValue.indexOf("+") == 0 || newValue.indexOf("-") == 0){
-				newMaxHP = token.maxHp + parseInt(newValue);
-			}
+
+			newMaxHP = calculate_hp(newMaxHP, token.maxHp);
+			if (newMaxHP === undefined)
+				return;
+
 			token.maxHp = newMaxHP;
 			token.place_sync_persist();
 			if(tokens.length == 1){
@@ -3369,6 +3573,56 @@ function build_menu_stat_inputs(tokenIds) {
 			}
 			else{
 				$(".maxHpMenuInput").val('');
+			}
+		});
+	});
+
+	tempHpMenuInput.find('input').on('keyup', function(event) {
+		let newValue = event.target.value;
+		if($(event.target).prop('readonly') || newValue == '')
+			return;		
+		if (event.key == "Enter" && newValue !== undefined && newValue.length > 0) {
+			tokens.forEach(token => {
+				if(token.isPlayer())
+					return;
+				let newTempHP = newValue;
+
+				newTempHP = calculate_hp(newTempHP, token.tempHp);
+				if (newTempHP === undefined)
+					return;
+
+				token.tempHp = newTempHP;
+				token.place_sync_persist();
+				if(tokens.length == 1){
+					$(".tempHpMenuInput").val(newTempHP);
+				}
+				else{
+					$(".tempHpMenuInput").val('');
+				}
+				
+			});
+		}
+	});
+	tempHpMenuInput.find('input').on('focusout', function(event) {
+		let newValue = event.target.value;
+		if($(event.target).prop('readonly') || newValue == '')
+			return;
+		tokens.forEach(token => {
+			if(token.isPlayer())
+				return;
+			let newTempHP = newValue;
+
+			newTempHP = calculate_hp(newTempHP, token.tempHp);
+			if (newTempHP === undefined)
+				return;
+
+			token.tempHp = newTempHP;
+			token.place_sync_persist();
+			if(tokens.length == 1){
+				$(".tempHpMenuInput").val(newTempHP);
+			}
+			else{
+				$(".tempHpMenuInput").val('');
 			}
 		});
 	});
@@ -3383,7 +3637,7 @@ function build_menu_stat_inputs(tokenIds) {
 					return;
 				let newAC = newValue;
 				if(newValue.indexOf("+") == 0 || newValue.indexOf("-") == 0){
-					newAC = parseInt(token.options.ac) + parseInt(newValue);
+					newAC = parseInt(token.ac) + parseInt(newValue);
 				}
 				token.ac = newAC;
 				token.place_sync_persist();
@@ -3406,7 +3660,7 @@ function build_menu_stat_inputs(tokenIds) {
 				return;
 			let newAC = newValue;
 			if(newValue.indexOf("+") == 0 || newValue.indexOf("-") == 0){
-				newAC = parseInt(token.options.ac) + parseInt(newValue);
+				newAC = parseInt(token.ac) + parseInt(newValue);
 			}
 			token.ac = newAC;
 			token.place_sync_persist();
@@ -3740,8 +3994,7 @@ function build_conditions_and_markers_flyout_menu(tokenIds) {
 
 	let removeAllItem = $(`<li class="icon-condition icon-close-red"><span>Remove All</span></li>`);
 	removeAllItem.on("click", function () {
-		$(".active-condition").click(); // anything that is active should be deactivated.
-
+		body.find(".active-condition").click(); // anything that is active should be deactivated.
 	});
 	conditionsList.prepend(removeAllItem);
 
@@ -3769,7 +4022,7 @@ function build_adjustments_flyout_menu(tokenIds) {
 	
 	let uniqueSizes = [...new Set(tokenSizes)];
 
-	console.log("uniqueSizes", uniqueSizes);
+	noisy_log("uniqueSizes", uniqueSizes);
 	let lineaoe = tokens.length == 1 && tokens[0].isLineAoe();
 	let linewidthsize = tokens[0].numberOfGridSpaces().width;
 	let sizeInputs = build_token_size_input(uniqueSizes, function (newSize, linewidth=false) {
@@ -3779,7 +4032,7 @@ function build_adjustments_flyout_menu(tokenIds) {
 		if (!isNaN(newSize)) {
 			newSize = hpps * newSize;
 		} else {
-			console.log(`not updating tokens with size ${newSize}`); // probably undefined because we inject the "multiple" options below
+			noisy_log(`not updating tokens with size ${newSize}`); // probably undefined because we inject the "multiple" options below
 			return;
 		}
 		tokens.forEach(token => {			
@@ -3837,7 +4090,7 @@ function build_adjustments_flyout_menu(tokenIds) {
 				if(persist)
 					token.place_sync_persist();
 			});
-		});
+		}, "Adjust the X position of the image. Larger values moves the image right, smaller left.");
 		body.append(offsetXWrapper);
 
 		let tokenOffsetY = tokens.map(t => t.options.offset?.y);
@@ -3857,7 +4110,7 @@ function build_adjustments_flyout_menu(tokenIds) {
 				if(persist)
 					token.place_sync_persist();
 			});
-		});
+		}, "Adjust the Y position of the image. Larger values moves the image up, smaller down.");
 		body.append(offsetYWrapper);
 
 
@@ -3875,7 +4128,7 @@ function build_adjustments_flyout_menu(tokenIds) {
 				if(persist)
 					token.place_sync_persist();
 			});
-		});
+		}, "This will adjust the zoom of the image. Different clipping will happen based on token style.");
 		body.append(imageZoomWrapper);
 
 
@@ -3889,7 +4142,7 @@ function build_adjustments_flyout_menu(tokenIds) {
 				if(persist)
 					token.place_sync_persist();
 			});
-		});
+		}, "This will adjust the image opacity. Accepted values between 0 and 1, 0 being fully transparent.");
 		body.append(opacityWrapper);
 
 		let tokenHeading = tokens.map(t => t.options.imageHeading);
@@ -3902,7 +4155,7 @@ function build_adjustments_flyout_menu(tokenIds) {
 				if(persist)
 					token.place_sync_persist();
 			});
-		});
+		}, "This will adjust the default image direction/rotation. This affects where the 'look here' rotation and arrow key rotation uses as the token facing direction. Default token facing is down.");
 		body.append(headingWrapper);
 
 		let tokFlip = tokens.map(t => t.options?.tokenFlip);
@@ -3967,11 +4220,12 @@ function build_adjustments_flyout_menu(tokenIds) {
 			return e.player == true;
 		});
 	}
+	const skipSettings = ['maxAge', 'defaultmaxhptype', 'placeType', 'lockRestrictDrop', 'hidden', 'squareAura', 'squareLight']
 	for(let i = 0; i < token_settings.length; i++) {
 		let setting = token_settings[i];
 		if (allTokensAreAoe && !availableToAoe.includes(setting.name)) {
 			continue;
-		} else if(setting.hiddenSetting || setting.name == 'maxAge' || setting.name == 'defaultmaxhptype' || setting.name == 'placeType' || setting.globalSettingOnly || setting.name == 'lockRestrictDrop' || setting.name == 'hidden' ) {
+		} else if(setting.hiddenSetting || setting.globalSettingOnly || skipSettings.includes(setting.name)) {
 			continue;
 		}
 
@@ -4309,8 +4563,8 @@ function build_token_scale_input(startingScale, tokens, name, min=0.1, max=10, s
 	return imageWrapper;
 }
 
-function build_token_num_input(startingScale=1, tokens, name, min=0.1, max=10, step=0.1, didUpdate) {
-	let imageInput = $(`<input class="image-input-number" type="number" max="${max}" min="${min}" step="${step}" title="Token Image Scale" placeholder="${startingScale}" name="Image Scale">`);
+function build_token_num_input(startingScale=1, tokens, name, min=0.1, max=10, step=0.1, didUpdate, title="Token Image Scale") {
+	let imageInput = $(`<input class="image-input-number" type="number" max="${max}" min="${min}" step="${step}" title="${title}" placeholder="${startingScale}" name="Image Scale">`);
 
 	imageInput.val(startingScale);
 
@@ -4523,7 +4777,7 @@ function build_token_size_input(tokenSizes, changeHandler, forceCustom = false, 
 	}
 
 	const isSizeCustom = (forceCustom || ![0.5, 1, 2, 3, 4].includes(numGridSquares));
-	console.log("isSizeCustom: ", isSizeCustom, ", forceCustom: ", forceCustom, ", numGridSquares: ", numGridSquares, ", [0.5, 1, 2, 3, 4].includes(numGridSquares):", [0.5, 1, 2, 3, 4].includes(numGridSquares))
+	noisy_log("isSizeCustom: ", isSizeCustom, ", forceCustom: ", forceCustom, ", numGridSquares: ", numGridSquares, ", [0.5, 1, 2, 3, 4].includes(numGridSquares):", [0.5, 1, 2, 3, 4].includes(numGridSquares))
 
 	// Limit custom token scale to grid size 
 	const maxScale = Math.max(window.CURRENT_SCENE_DATA.width * window.CURRENT_SCENE_DATA.scale_factor / window.CURRENT_SCENE_DATA.hpps);
@@ -4564,7 +4818,7 @@ function build_token_size_input(tokenSizes, changeHandler, forceCustom = false, 
 
 	tokenSizeInput.off('change focusout').on('change focusout', function(event) {
 		let customInputWrapper = $(event.target).parent().next();
-		console.log("tokenSizeInput changed");
+		noisy_log("tokenSizeInput changed");
 		if ($(event.target).val() === "custom") {
 			customInputWrapper.show();
 		} else {
@@ -4575,7 +4829,7 @@ function build_token_size_input(tokenSizes, changeHandler, forceCustom = false, 
 	});
 
 	customSizeInput.off('change focusout').on('change focusout', function(event) {
-		console.log("customSizeInput changed");
+		noisy_log("customSizeInput changed");
 		// convert custom footage into squares
 		let newValue = 
 			parseFloat($(event.target).val() / window.CURRENT_SCENE_DATA.fpsq);
@@ -4592,7 +4846,7 @@ function build_token_size_input(tokenSizes, changeHandler, forceCustom = false, 
 	if(lineaoe == true){
 		let customLineWidthInput = output.find("input[name='data-token-line-width-custom']");
 		customLineWidthInput.change(function(event) {
-		console.log("customSizeInput changed");
+		noisy_log("customSizeInput changed");
 		// convert custom footage into squares
 		let newValue = 
 			parseFloat($(event.target).val() / window.CURRENT_SCENE_DATA.fpsq);
@@ -4664,7 +4918,7 @@ function updateScaleInputs(newScale, maxScale) {
 
 function open_quick_roll_menu(e, options = {left: e.clientX + "px", top: e.clientY + "px"}) {
 	//opens a roll menu for group rolls 
-	console.log("Opening Roll menu")
+	noisy_log("Opening Roll menu")
 	$("#qrm_dialog").remove();
 
 	let qrm = $("<div id='qrm_dialog'></div>");
@@ -4796,7 +5050,7 @@ function open_quick_roll_menu(e, options = {left: e.clientX + "px", top: e.clien
 		if (_dmg.includes('d')) {
 			let expression = _dmg
 			let roll = new rpgDiceRoller.DiceRoll(expression);
-			console.log(expression + "->" + roll.total);
+			noisy_log(expression + "->" + roll.total);
 			//reassign to the input 
 			_dmg = roll.total
 			$('#hp_adjustment_failed_save').val(_dmg);
@@ -4812,8 +5066,6 @@ function open_quick_roll_menu(e, options = {left: e.clientX + "px", top: e.clien
 	let qrm_roll=$("<button id='qrm_roll_button' >ROLL</button>");
 	qrm_roll.css('width', '13%');
 	qrm_roll.click(function() {
-		$('#qrm_apply_damage').show()
-		$('#qrm_apply_healing').show()
 		$("#quick_roll_area").children('tr').children('td').find('#roll_bonus').each(function (){
 			let modifier = $(this).val().toLowerCase();
 			// Add a + if the user doesn't add anything. 
@@ -4831,7 +5083,7 @@ function open_quick_roll_menu(e, options = {left: e.clientX + "px", top: e.clien
 			}
 			let expression = dice + modifier;
 			let roll = new rpgDiceRoller.DiceRoll(expression);
-			console.log(expression + "->" + roll.total);
+			noisy_log(expression + "->" + roll.total);
 			//reassign to the input 
 			result = $(this).parent().children('#qrm_roll_result')
 		
@@ -4920,9 +5172,6 @@ function open_quick_roll_menu(e, options = {left: e.clientX + "px", top: e.clien
 
 	let damage_hp = $('<button title="Apply Roll as Damage" id="qrm_damage" value="ON" class="damage_heal_button active_roll_mod" >DAMAGE</button>')
 	damage_hp.click(function() {
-	
-		console.log($(this).val())
-		console.log($(this))
 		//toggle off the other button
 		$(heal_hp).val("OFF")
 		$(heal_hp).removeClass('active_roll_mod')
@@ -4939,9 +5188,6 @@ function open_quick_roll_menu(e, options = {left: e.clientX + "px", top: e.clien
 	let heal_hp = $('<button title="Apply Roll as Healing" id="qrm_healing" value="OFF" class="damage_heal_button">HEAL</button>')
 	heal_hp.click(function(){
 		
-		console.log('EHRE')
-		console.log($(this).val())
-		console.log($(this))
 		//toggle off the other button
 		$(damage_hp).val("OFF")
 		$(damage_hp).removeClass('active_roll_mod')
@@ -5243,24 +5489,48 @@ function add_to_quick_roll_menu(token, autoRollAfterAoe = false) {
 	maxhp_input.val(token.maxHp);
 
 	if (!token.isPlayer()) {
+		const debounceTriggerEvent = mydebounce((input) => {
+			input.trigger('change');
+		}, 1500)
+		hp_input.on('wheel', function(e) {
+			const input = $(this);
+			if(!input.is(':focus'))
+				return;
+			e.preventDefault();
+			const delta = e.originalEvent.deltaY < 0 ? 1 : -1;
+			const current = parseInt(input.val()) || 0;
+			input.val(Math.max(0, current + delta));
+			debounceTriggerEvent(input);
+		});
+		maxhp_input.on('wheel', function(e) {
+			const input = $(this);
+			if(!input.is(':focus'))
+				return;
+			e.preventDefault();
+			const delta = e.originalEvent.deltaY < 0 ? 1 : -1;
+			const current = parseInt(input.val()) || 0;
+			input.val(Math.max(1, current + delta));
+			debounceTriggerEvent(input);
+		});
 		hp_input.change(function(e) {
 			let selector = "div[data-id='" + token.options.id + "']";
 			let old = $("#tokens").find(selector);
-		
-			if (hp_input.val().trim().startsWith("+") || hp_input.val().trim().startsWith("-")) {
-				hp_input.val(Math.max(0, parseInt(token.hp) + parseInt(hp_input.val())));
-			}
+			let value = hp_input.val().trim();
 
-			old.find(".hp").val(hp_input.val().trim());	
+			value = calculate_hp(value, token.hp);
+			if (value === undefined)
+				return;
+
+			hp_input.val(value);
+			token.totalHp = value;
 
 			if(window.all_token_objects[token.options.id] != undefined){
-				window.all_token_objects[token.options.id].hp = hp_input.val();
-			}			
-			if(window.TOKEN_OBJECTS[token.options.id] != undefined){		
-				window.TOKEN_OBJECTS[token.options.id].hp = hp_input.val();	
-				window.TOKEN_OBJECTS[token.options.id].update_and_sync();
-			}			
-			qrm_update_popout();
+				window.all_token_objects[token.options.id].totalHp = value;
+			}
+			token.place_sync_persist();		
+
+			token.update_combat_tracker()
+			token.update_quick_roll();
 		});
 		hp_input.click(function(e) {
 			$(e.target).select();
@@ -5268,28 +5538,31 @@ function add_to_quick_roll_menu(token, autoRollAfterAoe = false) {
 		maxhp_input.change(function(e) {
 			let selector = "div[data-id='" + token.options.id + "']";
 			let old = $("#tokens").find(selector);
+			let value = maxhp_input.val().trim();
 
-			if (maxhp_input.val().trim().startsWith("+") || maxhp_input.val().trim().startsWith("-")) {
-				maxhp_input.val(Math.max(0, parseInt(token.hp) + parseInt(maxhp_input.val())));
-			}
+			value = calculate_hp(value, token.maxHp);
+			if (value === undefined)
+				return;
 
-			old.find(".max_hp").val(maxhp_input.val().trim());
+			old.find(".max_hp").val(value);
 			if(window.all_token_objects[token.options.id] != undefined){
-				window.all_token_objects[token.options.id].maxHp = maxhp_input.val();
+				window.all_token_objects[token.options.id].maxHp = value;
 			}
 			if(window.TOKEN_OBJECTS[token.options.id] != undefined){		
-				window.TOKEN_OBJECTS[token.options.id].maxHp = maxhp_input.val();	
-				window.TOKEN_OBJECTS[token.options.id].update_and_sync();
+				token.maxHp = value;	
+				token.place();
 			}			
-			qrm_update_popout();
+			token.update_combat_tracker()
+			token.update_quick_roll();
+			token.sync();
 		});
 		maxhp_input.click(function(e) {
 			$(e.target).select();
 		});
 	}
 	else {
-		hp_input.keydown(function(e) { if (e.keyCode == '13') token.update_from_page(); e.preventDefault(); }); // DISABLE WITHOUT MAKING IT LOOK UGLY
-		maxhp_input.keydown(function(e) { if (e.keyCode == '13') token.update_from_page(); e.preventDefault(); });
+		hp_input.keydown(function(e) { if (e.keyCode == '13') e.preventDefault(); }); // DISABLE WITHOUT MAKING IT LOOK UGLY
+		maxhp_input.keydown(function(e) { if (e.keyCode == '13') e.preventDefault(); });
 	}
 
 	const qrm_resistance_button = $(`<button title="resistance" class='resistanceButton qrm_buttons_bar' style="display:inline-flex;"><span class="material-symbols-outlined">person_shield</span></button>`);
@@ -5323,7 +5596,7 @@ function add_to_quick_roll_menu(token, autoRollAfterAoe = false) {
 	//remove_from_list.tooltip({show: { duration: 1000 }})
 	remove_from_list.click(
 		function() {
-			console.log('Removing from list')
+			noisy_log('Removing from list')
 			let target=$(this).parent().parent().parent().parent().attr('data-target');
 			if(target in window.TOKEN_OBJECTS){
 				remove_from_quick_roll_menu(window.TOKEN_OBJECTS[target]);	     
@@ -5393,7 +5666,7 @@ function add_to_quick_roll_menu(token, autoRollAfterAoe = false) {
 }
 
 function save_type_change(dropdown){
-	console.log("Save type is: "+ dropdown.value );
+	noisy_log("Save type is: "+ dropdown.value );
 	$('#quick_roll_area').children('tr').each(function () {
 		let x = window.TOKEN_OBJECTS[$(this).attr('data-target')]
 		roll_bonus = qrm_fetch_stat(x)
@@ -5404,7 +5677,7 @@ function save_type_change(dropdown){
 function qrm_fetch_stat(token) {
 	let roll_bonus
 	//if its a monster it needs to be calulated.
-	if(token.options.monster > 0 || token.options.monster == 'open5e'){
+	if(!(token.options.customStat) && (token.options.monster > 0 || token.options.monster == 'open5e')){
 		let stat = (cached_monster_items[token.options.monster]?.monsterData) ? cached_monster_items[token.options.monster]?.monsterData : cached_open5e_items[token.options.itemId]?.monsterData;
 
 		if(typeof(stat) != 'undefined'){
@@ -5431,7 +5704,7 @@ function qrm_fetch_stat(token) {
 				roll_bonus = "+"+roll_bonus;
 			}
 		}
-		console.log(roll_bonus);
+		noisy_log(roll_bonus);
 	}
 	else if (token.isPlayer() == true) {
 		save_dropdown_value = parseInt($('#qrm_save_dropdown').val());
@@ -5523,7 +5796,7 @@ function qrm_update_popout(){
 			'width': '100%',
 			'height': '100%'
 		});
-		console.log('Update QRM popout');
+		noisy_log('Update QRM popout');
 		$(childWindows['Quick Roll Menu'].document).find('#qrm_dialog #quick_roll_area input#qrm_hp').change(function(e) {
 			let id = $(this).parent().parent().parent().attr("data-target");			
 			$(`tr[data-target='${id}'] #qrm_hp`).val($(this).val());
@@ -5538,7 +5811,7 @@ function qrm_update_popout(){
 		});	
 		$(childWindows['Quick Roll Menu'].document).find('#qrm_dialog #quick_roll_area input#roll_bonus').change(function(e) {
 			let id = $(this).parent().parent().parent().attr("data-target");
-			console.log($(`tr[data-target='${id}'] #roll_bonus`))
+			noisy_log($(`tr[data-target='${id}'] #roll_bonus`))
 			$(`tr[data-target='${id}'] #roll_bonus`).val($(this).val());
 			$(`tr[data-target='${id}'] #roll_bonus`).trigger("change");
 			qrm_update_popout();
@@ -5633,7 +5906,7 @@ function qrm_apply_hp_adjustment(healing=false){
 		let result = $(this).find('#qrm_roll_result').val();
 		if (result == ''){
 			//could swap this to an alert if people really think its needed...
-			console.log('No roll was performed on this token, but Apply was selected. Rerolling for ALL tokens.')
+			noisy_log('No roll was performed on this token, but Apply was selected. Rerolling for ALL tokens.')
 			$('#qrm_roll_button').click()
 		}
 		
@@ -5678,18 +5951,7 @@ function qrm_apply_hp_adjustment(healing=false){
 		
 		if(token.options?.hitPointInfo?.maximum>0 && token.options?.itemType != 'pc'){
 			let _hp = $(this).find('#qrm_hp');
-			let _max_hp = $(this).find('#qrm_maxhp');
-
-			let _hp_val = parseInt($(this).find('#qrm_hp').val());//make string an int before comparing otherwise '11' is less than '6'
-			let _max_hp_val = parseInt($(this).find('#qrm_maxhp').val())
-			//Lets not allow healing over maxhp
-			//Unless we are at max_hp then assume they want the temp hp? IDK about this.
-			if (_hp_val < _max_hp_val && _hp_val - damage > _max_hp_val){
-				_hp.val(_max_hp_val);
-			}
-			else{
-				_hp.val(Math.max(0, token.hp - damage));
-			}
+			_hp.val(Math.max(0, token.hp - damage));
 			_hp.trigger('change');
 		}
 		else {
@@ -5709,10 +5971,6 @@ function qrm_apply_hp_adjustment(healing=false){
 				window.MB.inject_chat(msgdata);
 			}
 		}
-		//token.place_sync_persist();	
-		// bit of overlap with place_sync_persist nad update_and_sync, so probably break it up, just to only sync once.
-		token.place()
-		token.update_and_sync();
 		qrm_update_popout();
 	});
 }

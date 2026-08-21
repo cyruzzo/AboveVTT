@@ -378,7 +378,7 @@ function build_token_option_select_input(option, currentValue, changeHandler) {
     }
   }
   inputElement.change(function (event) {
-    console.log("update", event.target.name, "to", event.target.value);
+    noisy_log("update", event.target.name, "to", event.target.value);
     if (event.target.value === "enabled") {
       changeHandler(option.name, true);
       update_hover_text(wrapper, option.enabledDescription);
@@ -477,6 +477,7 @@ function build_flyout_input(settingOption, currentValue, changeHandler){
     if (typeof changeHandler !== 'function') {
     changeHandler = function(){};
   }
+
   let wrapper = $(`
    <div class="token-image-modal-footer-select-wrapper" data-option-name="${settingOption.name}">
      <div class="token-image-modal-footer-title">${settingOption.label}</div>
@@ -485,10 +486,11 @@ function build_flyout_input(settingOption, currentValue, changeHandler){
   let flyoutButton = $(`<button class='sidebar-panel-footer-button avtt-small-settings-edit'>Edit</button>`);
     flyoutButton.on("click", function (clickEvent) {
         build_and_display_sidebar_flyout(clickEvent.clientY, function (flyout) {
-          let currentValue = get_avtt_setting_value(settingOption.name);
+            let currentValue = get_avtt_setting_value(settingOption.name);
+
             let optionsContainer = build_sidebar_token_options_flyout(settingOption.options, currentValue, function(name, value) {
                 currentValue[name] = value;
-            }, function(){changeHandler(settingOption.name, currentValue)}, false, true);
+            }, function(){changeHandler(settingOption.name, currentValue)}, false, true, false, settingOption);
             flyout.append(optionsContainer);
             position_flyout_left_of($('#settings-panel .sidebar-panel-body'), flyout);
         });
@@ -795,7 +797,7 @@ class SidebarListItem {
     if (typeof name !== "string" || name.length === 0) {
       name = `${shape} AoE`;
     }
-    const image = `class=aoe-token-tileable aoe-style-${style} aoe-shape-${shape} ${name ? set_spell_override_style(name) : ""}`
+    const image = `class='aoe-token-tileable aoe-style-${style} aoe-shape-${shape} ${name ? set_spell_override_style(name) : ""}'`
     let item = new SidebarListItem(path_to_html_id(RootFolder.Aoe.path, name), name, image, ItemType.Aoe, RootFolder.Aoe.path, RootFolder.Aoe.id);
     item.shape = shape;
     let parsedSize = parseInt(size);
@@ -957,6 +959,7 @@ class SidebarListItem {
   nameOrContainingFolderMatches(searchTerm) {
     if (typeof this.name !== "string") return false;
     let fullPath = this.fullPath().replace(/^(\/Scenes)/i, '')
+    searchTerm = searchTerm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); 
     return fullPath.match(new RegExp(searchTerm, 'i')) != null;
   }
 }
@@ -1316,7 +1319,7 @@ function find_sidebar_list_item(html) {
   if (encounterId !== undefined && encounterId !== null && encounterId !== "") {
     foundItem = window.tokenListItems.find(item => item.isTypeEncounter() && item.encounterId === encounterId);
     if (foundItem !== undefined) {
-      console.log('find_sidebar_list_item', foundItem);
+      noisy_log('find_sidebar_list_item', foundItem);
       return foundItem;
     }
   }
@@ -1325,7 +1328,7 @@ function find_sidebar_list_item(html) {
   if (typeof sceneId === "string" && sceneId.length > 0) {
     foundItem = window.sceneListItems.find(item => item.id === sceneId);
     if (foundItem !== undefined) {
-      console.log('find_sidebar_list_item', foundItem);
+      noisy_log('find_sidebar_list_item', foundItem);
       return foundItem;
     }
   }
@@ -1334,7 +1337,7 @@ function find_sidebar_list_item(html) {
     // explicitly using '==' instead of '===' to allow (33253 == '33253') to return true
     foundItem = window.monsterListItems.find(item => item.monsterData.id == html.attr("data-monster"));
     if (foundItem !== undefined) {
-      console.log('find_sidebar_list_item', foundItem);
+      noisy_log('find_sidebar_list_item', foundItem);
       return foundItem;
     }
   }
@@ -1343,28 +1346,28 @@ function find_sidebar_list_item(html) {
   if (typeof htmlId === "string" && htmlId.length > 0) {
     foundItem = window.tokenListItems.find(li => li.id === htmlId);
     if (foundItem !== undefined) {
-      console.log('find_sidebar_list_item', foundItem);
+      noisy_log('find_sidebar_list_item', foundItem);
       return foundItem;
     }
     foundItem = window.sceneListItems.find(li => li.id === htmlId);
     if (foundItem !== undefined) {
-      console.log('find_sidebar_list_item', foundItem);
+      noisy_log('find_sidebar_list_item', foundItem);
       return foundItem;
     }
     foundItem = window.sceneListFolders.find(li => li.id === htmlId);
     if (foundItem !== undefined) {
-      console.log('find_sidebar_list_item', foundItem);
+      noisy_log('find_sidebar_list_item', foundItem);
       return foundItem;
     }
     // explicitly using '==' instead of '===' to allow (33253 == '33253') to return true
     foundItem = window.monsterListItems.find(item => item.monsterData.id == html.attr("data-monster"));
     if (foundItem !== undefined) {
-      console.log('find_sidebar_list_item', foundItem);
+      noisy_log('find_sidebar_list_item', foundItem);
       return foundItem;
     }
     foundItem = window.open5eListItems.find(item => item.id == htmlId);
     if (foundItem !== undefined) {
-      console.log('find_sidebar_list_item', foundItem);
+      noisy_log('find_sidebar_list_item', foundItem);
       return foundItem;
     }
   }
@@ -1385,13 +1388,13 @@ function find_sidebar_list_item_from_path(fullPath) {
   let foundItem;
   if (fullPath.startsWith(RootFolder.Scenes.path)) {
     foundItem = window.sceneListItems?.find(matchingPath);
-    console.log('find_sidebar_list_item_from_path sceneListItems', foundItem);
+    noisy_log('find_sidebar_list_item_from_path sceneListItems', foundItem);
     if (foundItem === undefined) {
       foundItem = window.sceneListFolders?.find(matchingPath);
-      console.log('find_sidebar_list_item_from_path sceneListFolders', foundItem);
+      noisy_log('find_sidebar_list_item_from_path sceneListFolders', foundItem);
     }
     if (foundItem !== undefined) {
-      console.log('find_sidebar_list_item_from_path', foundItem);
+      noisy_log('find_sidebar_list_item_from_path', foundItem);
       return foundItem;
     }
   }
@@ -1410,7 +1413,7 @@ function find_sidebar_list_item_from_path(fullPath) {
   if (foundItem === undefined) {
     console.warn(`find_sidebar_list_item found nothing at path: ${fullPath}`);
   }
-  console.log('find_sidebar_list_item_from_path', foundItem);
+  noisy_log('find_sidebar_list_item_from_path', foundItem);
   return foundItem;
 }
 
@@ -1615,10 +1618,10 @@ function build_sidebar_list_row(listItem) {
     </svg>`)
     }
     else if (!isAvttBucketFile && (tokenCustomizations?.tokenOptions?.videoToken == true || ['.mp4', '.webm','.mkv'].some(d => listingImage?.includes(d)))){
-        img = $(`<video disableRemotePlayback muted src="" loading="lazy" alt="${listItem.name} image" class="token-image video-listing" />`);   
+        img = $(`<video disableRemotePlayback muted src="" alt="${listItem.name} image" class="token-image video-listing" />`);   
         video = true;
     } else{
-        img = $(`<img src="" loading="lazy" alt="${listItem.name} image" class="token-image" />`);
+        img = $(`<img src="" alt="${listItem.name} image" class="token-image" />`);
     }
     updateImgSrc(listingImage, img, video, false);
     imgHolder.append(img);
@@ -1740,7 +1743,14 @@ function build_sidebar_list_row(listItem) {
           create_folder_inside(clickedItem);
         });     
       }
-      
+      if(listItem.isRootFolder() && listItem.id == RootFolder.Aoe.id){
+        let addFolder = $(`<button class="token-row-button" title="Assign tokens to AoE Templates"><span class="material-icons">image</span></button>`);
+        rowItem.append(addFolder);
+        addFolder.on("click", function (clickEvent) {
+          clickEvent.stopPropagation();
+          edit_aoe_style_tokens();
+        }); 
+      }
       if(listItem.folderType === ItemType.PC && listItem.id !== RootFolder.Players.id){
         let popoutButton = $(`<div class="players-popout-button subfolder-popout"><svg xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 0 24 24" width="18px" fill="#000000"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M18 19H6c-.55 0-1-.45-1-1V6c0-.55.45-1 1-1h5c.55 0 1-.45 1-1s-.45-1-1-1H5c-1.11 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-6c0-.55-.45-1-1-1s-1 .45-1 1v5c0 .55-.45 1-1 1zM14 4c0 .55.45 1 1 1h2.59l-9.13 9.13c-.39.39-.39 1.02 0 1.41.39.39 1.02.39 1.41 0L19 6.41V9c0 .55.45 1 1 1s1-.45 1-1V4c0-.55-.45-1-1-1h-5c-.55 0-1 .45-1 1z"/></svg></div>`);
         row.append(popoutButton);
@@ -1945,7 +1955,7 @@ function build_sidebar_list_row(listItem) {
       expandButton.on("click", function (clickEvent) {
         clickEvent.stopPropagation();
         let r = $(clickEvent.target).closest(".sidebar-list-item-row");
-        console.log(r);
+        noisy_log(r);
         if (r.hasClass("expanded")) {
           r.removeClass("expanded");
           r.find(".player-expansion-button .material-icons").text("expand_more");
@@ -2126,10 +2136,10 @@ function build_sidebar_list_row(listItem) {
 function did_click_row(clickEvent) {
   clickEvent.stopPropagation();
 
-  console.log("did_click_row", clickEvent);
+  noisy_log("did_click_row", clickEvent);
   let clickedRow = $(clickEvent.target).closest(".list-item-identifier");
   let clickedItem = find_sidebar_list_item(clickedRow);
-  console.log("did_click_row", clickedItem);
+  noisy_log("did_click_row", clickedItem);
 
   let rowId = clickedRow.attr('data-id');
 
@@ -2213,10 +2223,10 @@ function did_click_row(clickEvent) {
         }
       }
       else if (clickedItem.monsterData.isReleased === true || clickedItem.monsterData.isHomebrew === true) {
-        console.log(`Opening monster with id ${clickedItem.monsterData.id}, url ${clickedItem.monsterData.url}`);
+        noisy_log(`Opening monster with id ${clickedItem.monsterData.id}, url ${clickedItem.monsterData.url}`);
         open_monster_item(clickedItem);
       } else {
-        console.log(`User does not have access to monster with id ${clickedItem.monsterData.id}. Opening ${clickedItem.monsterData.url}`);
+        noisy_log(`User does not have access to monster with id ${clickedItem.monsterData.id}. Opening ${clickedItem.monsterData.url}`);
         window.open(clickedItem.monsterData.url, '_blank');
       }
       break;
@@ -2236,7 +2246,7 @@ function did_click_row(clickEvent) {
         }
       }
       else {
-        console.log(`Opening open5e monster with id ${clickedItem.monsterData.key}`);
+        noisy_log(`Opening open5e monster with id ${clickedItem.monsterData.key}`);
         open_monster_item(clickedItem, true);
       }
       break;
@@ -2270,10 +2280,10 @@ function did_click_row(clickEvent) {
  */
 function did_click_row_gear(clickEvent) {
   clickEvent.stopPropagation();
-  console.log("did_click_row_gear", clickEvent);
+  noisy_log("did_click_row_gear", clickEvent);
   let clickedRow = $(clickEvent.target).closest(".list-item-identifier");
   let clickedItem = find_sidebar_list_item(clickedRow);
-  console.log("did_click_row_gear", clickedItem);
+  noisy_log("did_click_row_gear", clickedItem);
   display_sidebar_list_item_configuration_modal(clickedItem);
 }
 
@@ -2551,7 +2561,7 @@ function edit_encounter(clickEvent) {
   clickEvent.stopPropagation();
   const clickedRow = $(clickEvent.target).closest(".list-item-identifier");
   const clickedItem = find_sidebar_list_item(clickedRow);
-  console.log('edit encounter clicked');
+  noisy_log('edit encounter clicked');
 
   const customization = find_or_create_token_customization(ItemType.Folder, clickedItem.id);
 
@@ -2811,16 +2821,490 @@ function edit_encounter(clickEvent) {
 
 }
 /**
+ * Returns the map of AoE style name (lowercase) to token image url that the DM has assigned.
+ * @returns {object} a map of styleName -> imageUrl
+ */
+function get_aoe_style_tokens() {
+  if (!window.DM && window.AOE_STYLE_TOKENS) {
+    return window.AOE_STYLE_TOKENS;
+  }
+  const customization = find_token_customization(ItemType.Folder, RootFolder.Aoe.id);
+  const assigned = customization?.tokenOptions?.aoeStyleTokens;
+  return (typeof assigned === "object" && assigned !== null) ? assigned : {};
+}
+
+function get_aoe_style_sync_data() {
+  const customization = find_token_customization(ItemType.Folder, RootFolder.Aoe.id);
+  return {
+    aoeStyleTokens: customization?.tokenOptions?.aoeStyleTokens || {},
+    aoeStyleTokenTiling: customization?.tokenOptions?.aoeStyleTokenTiling || {},
+    aoeStyleTokenOpacity: customization?.tokenOptions?.aoeStyleTokenOpacity || {},
+    aoeStyleTokenAnimation: customization?.tokenOptions?.aoeStyleTokenAnimation || {},
+    aoeStyleTokenBorder: customization?.tokenOptions?.aoeStyleTokenBorder || {},
+    aoeStyleTokenVideo: customization?.tokenOptions?.aoeStyleTokenVideo || {},
+    aoeStyleOrder: customization?.tokenOptions?.aoeStyleOrder || []
+  };
+}
+
+const send_aoe_style_tokens_to_players = mydebounce(function(){
+  if (window.DM && window.MB) {
+    window.MB.sendMessage("custom/myVTT/aoeStyles", get_aoe_style_sync_data());
+  }
+}, 2000); 
+
+function normalize_aoe_style_key(style) {
+  return String(style || "")
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9_-]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
+/**
+ * Returns the image url assigned to the given AoE style, or undefined if the default style should be used.
+ * @param style {string} the AoE style name
+ * @returns {string|undefined} the assigned image url
+ */
+function get_aoe_style_token_image(style) {
+  if (typeof style !== "string") return undefined;
+  const image = get_aoe_style_tokens()[normalize_aoe_style_key(style)];
+  return (typeof image === "string" && image.length > 0) ? image : undefined;
+}
+
+/**
+ * Returns whether the assigned image for the given AoE style should repeat.
+ * Existing assignments default to tiled for compatibility with the built-in styles.
+ * @param style {string} the AoE style name
+ * @returns {boolean}
+ */
+function get_aoe_style_token_tiling(style) {
+  if (typeof style !== "string") return true;
+  if (!window.DM && window.AOE_STYLE_TOKEN_TILING) {
+    return window.AOE_STYLE_TOKEN_TILING[normalize_aoe_style_key(style)] !== false;
+  }
+  const customization = find_token_customization(ItemType.Folder, RootFolder.Aoe.id);
+  const tiling = customization?.tokenOptions?.aoeStyleTokenTiling?.[normalize_aoe_style_key(style)];
+  return tiling !== false;
+}
+
+function get_aoe_style_token_opacity(style) {
+  if (typeof style !== "string") return undefined;
+  const styleKey = normalize_aoe_style_key(style);
+  if (!window.DM && window.AOE_STYLE_TOKEN_OPACITY) {
+    const opacity = window.AOE_STYLE_TOKEN_OPACITY[styleKey];
+    return typeof opacity === "number" ? opacity : undefined;
+  }
+  const customization = find_token_customization(ItemType.Folder, RootFolder.Aoe.id);
+  const opacity = customization?.tokenOptions?.aoeStyleTokenOpacity?.[styleKey];
+  if (typeof opacity === "number") return opacity;
+  return customization?.tokenOptions?.aoeStyleTokenEffects?.[styleKey] === false ? 1 : undefined;
+}
+
+function get_aoe_style_token_animation(style) {
+  if (typeof style !== "string") return true;
+  const styleKey = normalize_aoe_style_key(style);
+  const animated = (!window.DM && window.AOE_STYLE_TOKEN_ANIMATION)
+    ? window.AOE_STYLE_TOKEN_ANIMATION[styleKey]
+    : find_token_customization(ItemType.Folder, RootFolder.Aoe.id)?.tokenOptions?.aoeStyleTokenAnimation?.[styleKey];
+  if (typeof animated === "boolean") return animated;
+
+  return get_aoe_style_token_opacity(style) === undefined;
+}
+
+function get_aoe_style_token_border(style) {
+  if (typeof style !== "string") return true;
+  const styleKey = normalize_aoe_style_key(style);
+  if (!window.DM && window.AOE_STYLE_TOKEN_BORDER) {
+    return window.AOE_STYLE_TOKEN_BORDER[styleKey] !== false;
+  }
+  return find_token_customization(ItemType.Folder, RootFolder.Aoe.id)?.tokenOptions?.aoeStyleTokenBorder?.[styleKey] !== false;
+}
+
+/** True when the assigned image should render as video, either by file extension or because the DM flagged the link. */
+function get_aoe_style_token_video(style) {
+  if (typeof style !== "string") return false;
+  const styleKey = normalize_aoe_style_key(style);
+  const flagged = (!window.DM && window.AOE_STYLE_TOKEN_VIDEO)
+    ? window.AOE_STYLE_TOKEN_VIDEO[styleKey]
+    : find_token_customization(ItemType.Folder, RootFolder.Aoe.id)?.tokenOptions?.aoeStyleTokenVideo?.[styleKey];
+  return flagged === true || is_aoe_video_image(get_aoe_style_token_image(style));
+}
+
+function get_aoe_style_order() {
+  if (!window.DM && Array.isArray(window.AOE_STYLE_ORDER)) {
+    return window.AOE_STYLE_ORDER;
+  }
+  const order = find_token_customization(ItemType.Folder, RootFolder.Aoe.id)?.tokenOptions?.aoeStyleOrder;
+  return Array.isArray(order) ? order : [];
+}
+
+
+function sort_styles_by_saved_aoe_order(styles) {
+  const order = get_aoe_style_order();
+  if (order.length === 0) return styles;
+  return [...styles].sort(function(lhs, rhs) {
+    const lhsIndex = order.indexOf(normalize_aoe_style_key(lhs));
+    const rhsIndex = order.indexOf(normalize_aoe_style_key(rhs));
+    if (lhsIndex === -1 && rhsIndex === -1) return 0;
+    if (lhsIndex === -1) return 1;
+    if (rhsIndex === -1) return -1;
+    return lhsIndex - rhsIndex;
+  });
+}
+
+function clamp_aoe_style_opacity(value) {
+  const parsed = parseFloat(value);
+  return Number.isFinite(parsed) ? Math.min(1, Math.max(0.1, parsed)) : 0.5;
+}
+
+/**
+ * Builds the grid of display toggles shown for an AoE style.
+ * @returns {object} the wrapper element and each input so callers can read/persist them
+ */
+function build_aoe_style_toggles(settings) {
+  const { tiled, animated, border, opacity, video, videoLocked = false } = settings;
+  const wrapper = $(`<div class="aoe-style-token-toggles"></div>`);
+  const tilingLabel = $(`<label><input type="checkbox" ${tiled ? "checked" : ""} />Tile</label>`);
+  const animationLabel = $(`<label><input type="checkbox" ${animated ? "checked" : ""} />Opacity animation</label>`);
+  const borderLabel = $(`<label><input type="checkbox" ${border ? "checked" : ""} />Border</label>`);
+  const videoLabel = $(`<label title="Enable for video links that have no file extension"><input type="checkbox" ${video ? "checked" : ""} />Video</label>`);
+  const opacityLabel = $(`<label>Opacity<input class="aoe-style-token-opacity" type="number" min="0.1" max="1" step="0.05" value="${opacity ?? 0.5}" title="Opacity from 0.1 to 1" /></label>`);
+  wrapper.append(tilingLabel, animationLabel, borderLabel, videoLabel, opacityLabel);
+  wrapper.on("mousedown click", function(mouseEvent) {
+    mouseEvent.stopPropagation();
+  });
+
+  const controls = {
+    wrapper,
+    tiling: tilingLabel.find("input"),
+    animation: animationLabel.find("input"),
+    border: borderLabel.find("input"),
+    video: videoLabel.find("input"),
+    opacity: opacityLabel.find("input")
+  };
+  if (videoLocked) {
+    controls.video.prop({ checked: true, disabled: true });
+    videoLabel.addClass("disabled");
+  }
+  const syncDependentInputs = function() {
+    const animating = controls.animation.prop("checked");
+    controls.opacity.prop("disabled", animating);
+    opacityLabel.toggleClass("disabled", animating);
+    const isVideo = controls.video.prop("checked");
+    controls.tiling.prop("disabled", isVideo);
+    tilingLabel.toggleClass("disabled", isVideo);
+  };
+  controls.animation.on("change", syncDependentInputs);
+  controls.video.on("change", syncDependentInputs);
+  syncDependentInputs();
+  return controls;
+}
+
+/**
+ * Displays a draggable window that allows the DM to assign a token image to be used
+ * in place of the default AoE style for each available style.
+ */
+function edit_aoe_style_tokens(restoreState = {}) {
+  const { scrollTop = 0, width = '350px', height, top, left = 'calc(100% - 700px)' } = restoreState;
+  $('#aoeStyleTokenWindow .title_bar_close_button').click();
+
+  const customization = find_or_create_token_customization(ItemType.Folder, RootFolder.Aoe.id, RootFolder.Aoe.id, RootFolder.Aoe.id);
+  if (typeof customization.tokenOptions.aoeStyleTokens !== "object" || customization.tokenOptions.aoeStyleTokens === null) {
+    customization.tokenOptions.aoeStyleTokens = {};
+  }
+  if (typeof customization.tokenOptions.aoeStyleTokenTiling !== "object" || customization.tokenOptions.aoeStyleTokenTiling === null) {
+    customization.tokenOptions.aoeStyleTokenTiling = {};
+  }
+  if (typeof customization.tokenOptions.aoeStyleTokenOpacity !== "object" || customization.tokenOptions.aoeStyleTokenOpacity === null) {
+    customization.tokenOptions.aoeStyleTokenOpacity = {};
+  }
+  if (typeof customization.tokenOptions.aoeStyleTokenAnimation !== "object" || customization.tokenOptions.aoeStyleTokenAnimation === null) {
+    customization.tokenOptions.aoeStyleTokenAnimation = {};
+  }
+  if (typeof customization.tokenOptions.aoeStyleTokenBorder !== "object" || customization.tokenOptions.aoeStyleTokenBorder === null) {
+    customization.tokenOptions.aoeStyleTokenBorder = {};
+  }
+  if (typeof customization.tokenOptions.aoeStyleTokenVideo !== "object" || customization.tokenOptions.aoeStyleTokenVideo === null) {
+    customization.tokenOptions.aoeStyleTokenVideo = {};
+  }
+
+  const container = find_or_create_generic_draggable_window(`aoeStyleTokenWindow`, "Adjust AoE Styles", false, false, undefined, width, height, top, left, false, 'input, button, select, option, textarea, .aoe-style-token-listing', false, true);
+
+  const body = $(`<div class="encounter-body aoe-style-token-body"></div>`);
+  const listing = $(`<div class="encounter-listing aoe-style-token-listing"></div>`);
+  body.append(`<div id='aoeStyleTokenExplanation' style='padding:5px;font-size:12px;'>Assign an image to be used instead of the default AoE style. Leave blank to use the default.</div>`);
+  body.append(listing);
+
+  const saveStyleImage = function(style, imageUrl) {
+    const styleKey = normalize_aoe_style_key(style);
+    if (typeof imageUrl === "string" && imageUrl.length > 0) {
+      customization.tokenOptions.aoeStyleTokens[styleKey] = imageUrl;
+    } else {
+      delete customization.tokenOptions.aoeStyleTokens[styleKey];
+    }
+    customization.setTokenOption("aoeStyleTokens", customization.tokenOptions.aoeStyleTokens);
+    persist_token_customization(customization);
+    send_aoe_style_tokens_to_players();
+  };
+
+  const saveStyleTiling = function(style, tiled) {
+    customization.tokenOptions.aoeStyleTokenTiling[normalize_aoe_style_key(style)] = tiled;
+    customization.setTokenOption("aoeStyleTokenTiling", customization.tokenOptions.aoeStyleTokenTiling);
+    persist_token_customization(customization);
+    send_aoe_style_tokens_to_players();
+  };
+
+  const saveStyleOpacity = function(style, opacity) {
+    customization.tokenOptions.aoeStyleTokenOpacity[normalize_aoe_style_key(style)] = opacity;
+    customization.setTokenOption("aoeStyleTokenOpacity", customization.tokenOptions.aoeStyleTokenOpacity);
+    persist_token_customization(customization);
+    send_aoe_style_tokens_to_players();
+  };
+
+  const saveStyleAnimation = function(style, animated) {
+    customization.tokenOptions.aoeStyleTokenAnimation[normalize_aoe_style_key(style)] = animated;
+    customization.setTokenOption("aoeStyleTokenAnimation", customization.tokenOptions.aoeStyleTokenAnimation);
+    persist_token_customization(customization);
+    send_aoe_style_tokens_to_players();
+  };
+
+  const saveStyleBorder = function(style, border) {
+    customization.tokenOptions.aoeStyleTokenBorder[normalize_aoe_style_key(style)] = border;
+    customization.setTokenOption("aoeStyleTokenBorder", customization.tokenOptions.aoeStyleTokenBorder);
+    persist_token_customization(customization);
+    send_aoe_style_tokens_to_players();
+  };
+
+  const saveStyleVideo = function(style, video) {
+    customization.tokenOptions.aoeStyleTokenVideo[normalize_aoe_style_key(style)] = video;
+    customization.setTokenOption("aoeStyleTokenVideo", customization.tokenOptions.aoeStyleTokenVideo);
+    persist_token_customization(customization);
+    send_aoe_style_tokens_to_players();
+  };
+
+  const saveStyleOrder = function(order) {
+    customization.setTokenOption("aoeStyleOrder", order);
+    persist_token_customization(customization);
+    send_aoe_style_tokens_to_players();
+    if (typeof refresh_aoe_style_menu === "function") {
+      refresh_aoe_style_menu();
+    }
+  };
+
+  get_available_styles().forEach(function(style) {
+    const styleKey = normalize_aoe_style_key(style);
+    const currentImage = customization.tokenOptions.aoeStyleTokens[styleKey] || "";
+    const currentTiling = customization.tokenOptions.aoeStyleTokenTiling[styleKey] !== false;
+    const currentOpacity = get_aoe_style_token_opacity(style);
+    const currentAnimated = get_aoe_style_token_animation(style);
+    const currentBorder = get_aoe_style_token_border(style);
+
+    const row = $(`<div class="sidebar-list-item-row aoe-style-token-row"></div>`);
+    row.attr("data-style-key", styleKey);
+    const rowItem = $(`<div class="sidebar-list-item-row-item"></div>`);
+    const imgHolder = $(`<div class="sidebar-list-item-row-img"></div>`);
+    const isVideo = get_aoe_style_token_video(style);
+    const preview = currentImage.length === 0
+      ? $(`<div data-img="true" class="aoe-token-tileable aoe-style-${styleKey} aoe-shape-circle"></div>`)
+      : isVideo
+        ? $(`<video disableRemotePlayback autoplay loop muted data-img="true" aria-label="${style} token image" class="aoe-token-tileable aoe-shape-circle div-token-image"></video>`)
+        : $(`<div data-img="true" aria-label="${style} token image" class="aoe-token-tileable aoe-shape-circle div-token-image"></div>`);
+    if (currentImage.length > 0) {
+      updateTokenSrc(currentImage, preview, isVideo).then(function() {
+        apply_aoe_style_display(preview, { tiled: isVideo ? undefined : currentTiling, opacity: currentOpacity, animated: currentAnimated }, "100px");
+      });
+    } else {
+      apply_aoe_style_display(preview, { opacity: currentOpacity, animated: currentAnimated });
+    }
+    imgHolder.append(preview);
+
+    const details = $(`<div class="sidebar-list-item-row-details"></div>`);
+    details.append(`<div class="sidebar-list-item-row-details-title">${style}</div>`);
+    const input = $(`<input class="aoe-style-token-input" type="text" placeholder="https://..." value="${currentImage}" />`);
+    const toggles = build_aoe_style_toggles({
+      tiled: currentTiling,
+      animated: currentAnimated,
+      border: currentBorder,
+      opacity: currentOpacity,
+      video: isVideo,
+      videoLocked: is_aoe_video_image(currentImage)
+    });
+    details.append(input, toggles.wrapper);
+
+    const clearButton = $(`<button class="removeItem" title="Use default style" style="font-size:24px;"><svg class="delSVG" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M0 0h24v24H0V0z" fill="none"></path><path d="M16 9v10H8V9h8m-1.5-6h-5l-1 1H5v2h14V4h-3.5l-1-1zM18 7H6v12c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7z"></path></svg></button>`);
+
+    const commitValue = async function() {
+      const value = input.val().trim();
+      const parsed = value.length > 0 ? await parse_img(value) : "";
+      input.val(parsed);
+      saveStyleImage(style, parsed);
+      container.trigger('redrawListing');
+    };
+
+    input.on("keyup", function(keyupEvent) {
+      if (keyupEvent.key === "Enter") {
+        commitValue();
+      } else if (keyupEvent.key === "Escape") {
+        input.val(currentImage);
+        input.blur();
+      }
+    });
+    input.on("focusout", function() {
+      if (input.val().trim() !== currentImage) {
+        commitValue();
+      }
+    });
+
+    input.on("mousedown click", function(mouseEvent) {
+      mouseEvent.stopPropagation();
+    });
+    toggles.tiling.on("change", function() {
+      saveStyleTiling(style, toggles.tiling.prop("checked"));
+    });
+    toggles.animation.on("change", function() {
+      saveStyleAnimation(style, toggles.animation.prop("checked"));
+    });
+    toggles.border.on("change", function() {
+      saveStyleBorder(style, toggles.border.prop("checked"));
+    });
+    toggles.video.on("change", function() {
+      saveStyleVideo(style, toggles.video.prop("checked"));
+      container.trigger('redrawListing');
+    });
+    toggles.opacity.on("change", function() {
+      const opacity = clamp_aoe_style_opacity(toggles.opacity.val());
+      toggles.opacity.val(opacity);
+      saveStyleOpacity(style, opacity);
+    });
+
+    clearButton.on("click", function(clickEvent) {
+      clickEvent.stopPropagation();
+      saveStyleImage(style, "");
+      container.trigger('redrawListing');
+    });
+
+    rowItem.append(imgHolder, details, clearButton);
+    row.append(rowItem);
+    listing.append(row);
+  });
+
+  const newStyleRow = $(`<div class="sidebar-list-item-row aoe-style-token-row aoe-style-token-new-row"></div>`);
+  const newStyleRowItem = $(`<div class="sidebar-list-item-row-item"></div>`);
+  const addStyleButton = $(`
+    <button class="token-row-button token-row-add aoe-style-token-add-button" type="button" title="Add custom AoE style" aria-label="Add custom AoE style">
+      <svg viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M7.2 10.8V18h3.6v-7.2H18V7.2h-7.2V0H7.2v7.2H0v3.6h7.2z"></path></svg>
+    </button>
+  `);
+  newStyleRowItem.append(addStyleButton);
+  newStyleRow.append(newStyleRowItem);
+  listing.append(newStyleRow);
+
+  const buildCustomStyleInputRow = function() {
+    if (listing.find(".aoe-style-token-input-row").length > 0) {
+      listing.find(".aoe-style-token-name-input").trigger("focus");
+      return;
+    }
+
+    const inputRow = $(`<div class="sidebar-list-item-row aoe-style-token-row aoe-style-token-input-row"></div>`);
+    const inputRowItem = $(`<div class="sidebar-list-item-row-item"></div>`);
+    const inputDetails = $(`<div class="sidebar-list-item-row-details aoe-style-token-input-details"></div>`);
+    const styleNameInput = $(`<input class="aoe-style-token-input aoe-style-token-name-input" type="text" placeholder="Custom style name" />`);
+    const imageInput = $(`<input class="aoe-style-token-input aoe-style-token-image-input" type="text" placeholder="https://..." />`);
+    const toggles = build_aoe_style_toggles({ tiled: true, animated: true, border: true, opacity: 0.5, video: false });
+    const saveButton = $(`<button class="sidebar-panel-footer-button aoe-style-token-save-button" type="button" title="Save custom AoE style" aria-label="Save custom AoE style">Save</button>`);
+    inputDetails.append(styleNameInput, imageInput, toggles.wrapper);
+    inputRowItem.append(inputDetails, saveButton);
+    inputRow.append(inputRowItem);
+    inputRow.insertBefore(newStyleRow);
+
+    const addCustomStyle = async function() {
+      const styleName = styleNameInput.val().trim();
+      const styleKey = normalize_aoe_style_key(styleName);
+      const imageValue = imageInput.val().trim();
+      if (!styleKey || !imageValue) {
+        showErrorMessage("Enter a custom style name and image URL before saving the style", 'messageOnly');
+        return;
+      }
+      const existingStyleKeys = get_available_styles().map(normalize_aoe_style_key);
+      if (existingStyleKeys.includes(styleKey)) {
+        showErrorMessage("An AoE style with this name already exists", 'messageOnly', styleName);
+        return;
+      }
+      const parsedImage = await parse_img(imageValue);
+      saveStyleImage(styleKey, parsedImage);
+      saveStyleTiling(styleKey, toggles.tiling.prop("checked"));
+      saveStyleAnimation(styleKey, toggles.animation.prop("checked"));
+      saveStyleBorder(styleKey, toggles.border.prop("checked"));
+      saveStyleVideo(styleKey, toggles.video.prop("checked"));
+      saveStyleOpacity(styleKey, clamp_aoe_style_opacity(toggles.opacity.val()));
+      if (typeof refresh_aoe_style_menu === "function") {
+        refresh_aoe_style_menu();
+      }
+      container.trigger('redrawListing');
+    };
+
+    inputRow.find("input").on("mousedown click", function(mouseEvent) {
+      mouseEvent.stopPropagation();
+    });
+    saveButton.on("click", function(clickEvent) {
+      clickEvent.preventDefault();
+      clickEvent.stopPropagation();
+      addCustomStyle();
+    });
+    styleNameInput.add(imageInput).on("keyup", function(keyupEvent) {
+      if (keyupEvent.key === "Enter") {
+        addCustomStyle();
+      }
+    });
+    styleNameInput.trigger("focus");
+  };
+
+  addStyleButton.on("click", function(clickEvent) {
+    clickEvent.preventDefault();
+    clickEvent.stopPropagation();
+    buildCustomStyleInputRow();
+  });
+
+  container.off('redrawListing').on('redrawListing', function() {
+    const windowStyle = container[0].style;
+    const restoreState = {
+      scrollTop: listing.scrollTop(),
+      width: windowStyle.width || undefined,
+      height: windowStyle.height || undefined,
+      top: windowStyle.top || undefined,
+      left: windowStyle.left || undefined
+    };
+    close_and_cleanup_generic_draggable_window('aoeStyleTokenWindow');
+    edit_aoe_style_tokens(restoreState);
+  });
+
+  container.append(body);
+  listing.scrollTop(scrollTop);
+  listing.sortable({
+    distance: 5,
+    items: "> .aoe-style-token-row[data-style-key]",
+    tolerance: "pointer",
+    handle: "> *",
+    forcePlaceholderSize: true,
+    update: function() {
+      saveStyleOrder(listing.find("> .aoe-style-token-row[data-style-key]").map(function() {
+        return $(this).attr("data-style-key");
+      }).get());
+    }
+  });
+}
+
+/**
  * When an AddToken (plus) button on a row in the sidebar is clicked, this handles that click based on the item represented by the row, and adds a token to the scene for that item.
  * This should only be called with someElement.on("click", did_click_add_button);
  * @param clickEvent {Event} the click event
  */
 function did_click_add_button(clickEvent) {
   clickEvent.stopPropagation();
-  console.log("did_click_add_button", clickEvent);
+  noisy_log("did_click_add_button", clickEvent);
   let clickedRow = $(clickEvent.target).closest(".list-item-identifier");
   let clickedItem = find_sidebar_list_item(clickedRow);
-  console.log("did_click_add_button", clickedItem);
+  noisy_log("did_click_add_button", clickedItem);
   let hidden = clickEvent.shiftKey ? true : undefined; // we only want to force hidden if the shift key is help. otherwise let the global and override settings handle it
   create_and_place_token(clickedItem, hidden, undefined, undefined, undefined);
   update_pc_token_rows();
@@ -2902,7 +3386,7 @@ function display_folder_configure_modal(listItem) {
     console.warn("display_folder_configure_modal was called with an incorrect type", listItem);
     return;
   }
-  console.log('display_folder_configure_modal', listItem);
+  noisy_log('display_folder_configure_modal', listItem);
 
   let sidebarId = "folder-configuration-modal";
   let sidebarModal = new SidebarPanel(sidebarId, true);
@@ -2914,24 +3398,24 @@ function display_folder_configure_modal(listItem) {
 
   const renameFolder = function(newFolderName, input, event) {
     let oldPath = harvest_full_path(input);
-    console.log(`renameFolder oldPath: ${oldPath}, newFolderName: ${newFolderName}`);
+    noisy_log(`renameFolder oldPath: ${oldPath}, newFolderName: ${newFolderName}`);
     if (oldPath.endsWith(`/${newFolderName}`)) {
       // It did not change. Nothing to do here.
       return undefined;
     }
     let foundItem = find_sidebar_list_item(input);
-    console.log(`before renameFolder foundItem id: ${foundItem.id}, name: ${foundItem.name}, folderPath: ${foundItem.folderPath}`);
+    noisy_log(`before renameFolder foundItem id: ${foundItem.id}, name: ${foundItem.name}, folderPath: ${foundItem.folderPath}`);
     let updatedFullPath = rename_folder(foundItem, newFolderName, true);
-    console.log(`after  renameFolder foundItem id: ${foundItem.id}, name: ${foundItem.name}, folderPath: ${foundItem.folderPath}, updatedFullPath: ${updatedFullPath}`);
+    noisy_log(`after  renameFolder foundItem id: ${foundItem.id}, name: ${foundItem.name}, folderPath: ${foundItem.folderPath}, updatedFullPath: ${updatedFullPath}`);
     if (updatedFullPath) {
       // the name has been changed. Update the input so we know it has been changed later
       set_full_path(input, updatedFullPath);
-      console.log('inside updatedFullPath');      
+      noisy_log('inside updatedFullPath');      
       sidebarModal.updateHeader(newFolderName, updatedFullPath, "Edit or delete this folder.");
-      console.log('returning updatedFullPath');
+      noisy_log('returning updatedFullPath');
       return updatedFullPath;
     } else {
-      console.log('else updatedFullPath');
+      noisy_log('else updatedFullPath');
       // there was a naming conflict, and the user has been alerted. select the entire text so they can easily change it
       input.select();
       return false;
@@ -3011,7 +3495,7 @@ function display_folder_configure_modal(listItem) {
   saveButton.on("click", function (clickEvent) {
     if (itemType === ItemType.MyToken || itemType === ItemType.Scene || (itemType === ItemType.PC && listItem.id !== RootFolder.Players.id) || (itemType === ItemType.Encounter && listItem.id !== RootFolder.Encounters.id)){
       let nameInput = $(clickEvent.currentTarget).closest(".sidebar-panel-body").find("input[name='folderName']");
-      console.log(`saveButton nameInput`, nameInput);
+      noisy_log(`saveButton nameInput`, nameInput);
       let renameResult = renameFolder(nameInput.val(), nameInput, clickEvent);
     }
     close_sidebar_modal();
@@ -3267,6 +3751,7 @@ async function setup_tooltip_flyout(flyout, tooltipHtmlString, classes = [], eve
   flyout.attr("data-id", flyoutId);
   flyout.attr("data-parents-id", JSON.stringify(containerParentIdArray));
   const tooltipHtml = $(tooltipHtmlString);
+  tooltipHtml.find('style:not(#embededStyles)').remove();
   await window.JOURNAL.translateHtmlAndBlocks(tooltipHtml, options.id)
   add_journal_roll_buttons(tooltipHtml, options.id);
   add_aoe_statblock_click(tooltipHtml, options.id);
@@ -3281,7 +3766,16 @@ async function setup_tooltip_flyout(flyout, tooltipHtmlString, classes = [], eve
     event.preventDefault();
     render_source_chapter_in_iframe(event.target.href);
   });
+  if(options.isRitual){
+    const ritualIcon = $(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12.17 14.83" class="ritual-icon-svg"><path fill="var(--font-color, #111)" d="M3,0H1.22A1.23,1.23,0,0,0,0,1.24V13.6a1.23,1.23,0,0,0,1.22,1.24H11.41a.77.77,0,0,0,.76-.77c0-.43-.34-1-.76-1H2.13c-.33,0-.61,0-.61-.34s.27-1,.61-1H11a1.23,1.23,0,0,0,1.22-1.24V1.24A1.23,1.23,0,0,0,11,0H3.08"></path><path fill="var(--background-color, #FFF)" d="M4.35,2.23A11.66,11.66,0,0,1,6.2,2.09a3.12,3.12,0,0,1,2.08.54A1.7,1.7,0,0,1,8.86,4,1.8,1.8,0,0,1,7.64,5.67v0A1.72,1.72,0,0,1,8.58,7a13.32,13.32,0,0,0,.53,1.88H7.84a9.62,9.62,0,0,1-.45-1.59c-.19-.88-.51-1.16-1.21-1.18H5.57V8.88H4.35Zm1.22,3H6.3c.83,0,1.35-.44,1.35-1.11S7.12,3,6.33,3a3.53,3.53,0,0,0-.76.06Z"></path></svg>`);         
+    tooltipHtml.find('[class*="-castingtime"]>[class*="-value"]').append(ritualIcon);
+  }
+  if(options.componentText != ''){
+    tooltipHtml.find('[class*="body-statblock-item-components"]').append(`<p style="margin:0; font-size:11px; opacity:0.8">${options.componentText}</p>`)
+  }
+
   flyout.append(tooltipHtml);
+  tooltipHtmlString = tooltipHtml[0].outerHTML;
   let sendToGamelogButton = $(`<a class="ddbeb-button" href="#">Send To Gamelog</a>`);
   sendToGamelogButton.css({ "float": "right" });
   sendToGamelogButton.on("click", function(ce) {
@@ -3385,7 +3879,7 @@ function position_flyout_right_of(container, flyout) {
 }
 
 function remove_sidebar_flyout(removeHoverNote) {
-  console.log("remove_sidebar_flyout");
+  noisy_log("remove_sidebar_flyout");
   let flyouts = $(`.sidebar-flyout`)
   
   if(removeHoverNote == false){
@@ -3405,7 +3899,7 @@ function remove_sidebar_flyout(removeHoverNote) {
 }
 
 async function list_item_image_flyout(hoverEvent) {
-  console.log("list_item_image_flyout", hoverEvent);
+  noisy_log("list_item_image_flyout", hoverEvent);
   $(`#list-item-image-flyout`).remove(); // never duplicate
   if (hoverEvent.type === "mouseenter") {
     const imgsrc = $(hoverEvent.currentTarget).find("img").attr("src");
@@ -3580,7 +4074,7 @@ async function enable_draggable_change_folder(listItemType) {
         }
       } else {
         let folderItem = find_sidebar_list_item(droppedFolder);
-        console.log("enable_draggable_change_folder dropped", draggedItem, folderItem);
+        noisy_log("enable_draggable_change_folder dropped", draggedItem, folderItem);
         
         for(let i=0; i<selectedItems.length; i++){
           draggedRow = $(selectedItems[i]);

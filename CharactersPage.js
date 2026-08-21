@@ -75,7 +75,7 @@ const debounce_add_extras = mydebounce(() => {
 
 const sendCharacterUpdateEvent = mydebounce(() => {
   if (window.DM) return;
-  console.log("sendCharacterUpdateEvent")
+  noisy_log("sendCharacterUpdateEvent")
   const pcData = {...recentCharacterUpdates};
   recentCharacterUpdates = {};
   if (is_abovevtt_page()) {
@@ -325,7 +325,7 @@ const buffsDebuffs = {
     "type": "feat",
     "replace": /(.)$/gi,//last character
     "replaceType": {
-      "damage": '[class*="styles_attack"]:has(.ddbc-note-components__component:contains("Heavy"))' //looks for Heavy trait in item note
+      "dmg": '[class*="styles_attack"]:has(.ddbc-note-components__component:contains("Heavy"))' //looks for Heavy trait in item note
     },
     "newRoll": '$1+PB', //add proficiency
   },
@@ -336,7 +336,7 @@ const buffsDebuffs = {
     "check": "0",
     "replace": /(\d+d\d+)/gi,
     "replaceType": {
-      "damage": 'button' 
+      "dmg": 'button' 
     },
     "newRoll": '$1ro<2',//reroll 1
     "type": "feat",
@@ -352,6 +352,22 @@ const buffsDebuffs = {
     },
     "newRoll": '$1ro<2',//reroll 1
     "type": "feat",
+  },
+  "Triage Expert": {
+    "tohit": "0",
+    "dmg": "0",
+    "save": "0",
+    "check": "0",
+    "replace": /(\d+)(d\d+)/i,
+    "replaceType": {
+      "heal": 'button'
+    },
+    "newRoll": function(m){
+      const match = m.match(/(\d+)(d\d+)/i)
+      return `${1+parseInt(match[1])}${match[2]}kh${parseInt(match[1])}`
+    },
+    "type": "feat",
+ 
   },
   "Call the Hunt": {
     "tohit": "0",
@@ -1046,7 +1062,7 @@ const buffsDebuffs = {
         "check": "0",
         "replace": /^(\d+d\d+)/gi,//find first roll
         "replaceType": {
-          "damage": 'button:has(.ddbc-damage--versatile), .ddbc-combat-item-attack--melee:has(.ddbc-note-components__component:contains("Two-Handed"))' //looks for versatile 2 hand button or two-handed trait in item note
+          "dmg": 'button:has(.ddbc-damage--versatile), .ddbc-combat-item-attack--melee:has(.ddbc-note-components__component:contains("Two-Handed"))' //looks for versatile 2 hand button or two-handed trait in item note
         },
         "newRoll": '$1min3',//replace with original roll with minimum roll of 3
       },
@@ -1057,7 +1073,7 @@ const buffsDebuffs = {
         "check": "0",
         "replace": /^(\d+d\d+)/gi,//find first roll
         "replaceType": {
-            "damage": 'button:has(.ddbc-damage--versatile), .ddbc-combat-item-attack--melee:has(.ddbc-note-components__component:contains("Two-Handed"))' //looks for versatile 2 hand button or two-handed trait in item note
+            "dmg": 'button:has(.ddbc-damage--versatile), .ddbc-combat-item-attack--melee:has(.ddbc-note-components__component:contains("Two-Handed"))' //looks for versatile 2 hand button or two-handed trait in item note
         },
         "newRoll": '$1ro<3',//reroll 1 & 2
       },
@@ -1071,7 +1087,7 @@ var rollBuffPins = [];
 
 /** @param changes {object} the changes that were observed. EX: {hp: 20} */
 function character_sheet_changed(changes) {
-    console.log("character_sheet_changed", changes);
+    noisy_log("character_sheet_changed", changes);
     recentCharacterUpdates = {...recentCharacterUpdates, ...changes};
     sendCharacterUpdateEvent();
 }
@@ -1427,7 +1443,7 @@ function convertToRPGRoller(){
           e.stopPropagation();
           e.preventDefault();
 
-          if (rollData.rollType === "damage") {
+          if (rollData.rollType === "damage" || (rollData.expression !== "1d20" && !/^1d20/gi.test(rollData.expression))) {
             damage_dice_context_menu(rollData.expression, rollData.modifier, rollData.rollTitle, rollData.rollType, window.PLAYER_NAME, window.PLAYER_IMG, undefined, undefined, rollData.damageType, rollData.spellSave)
               .present(e.clientY, e.clientX) // TODO: convert from iframe to main window
           } else {
@@ -1482,7 +1498,11 @@ async function init_character_sheet_page() {
       }
     });
   });
-
+  $('.ct-character-sheet__inner').off('click.stopPropagation').on('click.stopPropagation', '.integrated-dice__container, .avtt-roll-button, .ddbc-combat-attack__icon.above-vtt-visited, .ct-spells-spell__action.above-vtt-visited .ct-spells-spell__at-will, .ddb-note-roll', function(e){
+    e.preventDefault();
+    e.stopPropagation();
+    e.stopImmediatePropagation();
+  });
   // observe window resizing and injeect our join/exit button if necessary
   window.addEventListener('resize', function(event) {
     inject_join_exit_abovevtt_button();
@@ -1582,7 +1602,7 @@ function init_character_list_page_without_avtt() {
       
       }
       else if (!is_characters_list_page() && !is_characters_builder_page()) {
-        console.log("Detected location change from", oldHref, "to", document.location.href);
+        noisy_log("Detected location change from", oldHref, "to", document.location.href);
         window.oldHref = document.location.href;
         init_characters_pages();
       }
@@ -1608,8 +1628,8 @@ function inject_dice_roll(element, clear=true) {
   else{
     const slashCommands = [...element.text().matchAll(multiDiceRollCommandRegex)];
     if (slashCommands.length === 0) return;
+    noisy_log("inject_dice_roll slashCommands", slashCommands);
 
-    console.debug("inject_dice_roll slashCommands", slashCommands);
     let updatedInnerHtml = element.text().replace(/\/</gi, '<');
     for (const command of slashCommands) {
       let originalCommand = command[0];
@@ -1621,7 +1641,7 @@ function inject_dice_roll(element, clear=true) {
           command[1] = 'r';
         }
         const diceRoll = DiceRoll.fromSlashCommand(command[0], window.PLAYER_NAME, window.PLAYER_IMG, "character", window.PLAYER_ID); // TODO: add gamelog_send_to_text() once that's available on the characters page without avtt running
-        updatedInnerHtml = updatedInnerHtml.replace(originalCommand, `<button class='avtt-roll-formula-button integrated-dice__container ${iconRoll ? 'abovevtt-icon-roll' : ''}' title="${diceRoll.action?.toUpperCase() ?? "CUSTOM"}: ${diceRoll.rollType?.toUpperCase() ?? "ROLL"}" data-slash-command="${command[0]}">${diceRoll.expression}</button>`);
+        updatedInnerHtml = updatedInnerHtml.replace(originalCommand, `<button class='avtt-roll-formula-button integrated-dice__container ${iconRoll ? 'abovevtt-icon-roll' : ''}' title="${diceRoll.action?.toUpperCase() ?? "CUSTOM"}: ${diceRoll.rollType?.toUpperCase() ?? "ROLL"}" data-slash-command="${command[0]?.replace(/[><\s]+$|^[<>\s]+/gi, '')}">${diceRoll.expression}</button>`);
       } catch (error) {
         console.warn("inject_dice_roll failed to parse slash command. Removing the command to avoid infinite loop", command, command[0]);
         updatedInnerHtml = updatedInnerHtml.replace(originalCommand, '');
@@ -1630,14 +1650,16 @@ function inject_dice_roll(element, clear=true) {
     if(clear == true){
       element.empty();
     }
-    console.debug("inject_dice_roll updatedInnerHtml", updatedInnerHtml);
+    noisy_log("inject_dice_roll updatedInnerHtml", updatedInnerHtml);
     element.append(updatedInnerHtml);
   }
 
 
-  element.find(".integrated-dice__container, .ddb-note-roll").off('click.avttRoll').on('click.avttRoll', function(clickEvent) {
+  element.find(".integrated-dice__container, .ddb-note-roll").off('pointerdown.avttRoll touchstart.avttRoll').on('pointerdown.avttRoll touchstart.avttRoll', function(clickEvent) {
+    if (clickEvent.button === 2) return;
+    clickEvent.preventDefault();
     clickEvent.stopPropagation();
-    
+    clickEvent.stopImmediatePropagation();
     if($(this).hasClass('avtt-roll-formula-button')){
       const slashCommand = $(clickEvent.currentTarget).attr("data-slash-command");
       const diceRoll = DiceRoll.fromSlashCommand(slashCommand, window.PLAYER_NAME, window.PLAYER_IMG, "character", window.PLAYER_ID); // TODO: add gamelog_send_to_text() once that's available on the characters page without avtt running
@@ -1664,7 +1686,7 @@ function inject_dice_roll(element, clear=true) {
       }
       
       
-      if (rollData.rollType === "damage") {
+      if (rollData.rollType === "damage" || (rollData.expression !== "1d20" && !/^1d20/gi.test(rollData.expression))) {
         damage_dice_context_menu(rollData.expression, rollData.modifier, rollData.rollTitle, rollData.rollType, window.PLAYER_NAME, window.PLAYER_IMG, undefined, undefined, rollData.damageType, rollData.spellSave)
           .present(e.clientY, e.clientX) // TODO: convert from iframe to main window
       } else {
@@ -2071,41 +2093,6 @@ function observe_character_sheet_changes(documentToObserve) {
     localStorage.setItem(`${window.gameId != undefined ? window.gameId : window.myUser}-sendToDefault`, gamelog_send_to_text());
   })
 
- if(window.charWatchForNewDicePanel)
-    window.charWatchForNewDicePanel.disconnect();
-  window.charWatchForNewDicePanel = new MutationObserver((mutations) => {
-    mutations.every(async (mutation) => {
-      if (!mutation.addedNodes) return
-
-      for (let i = 0; i < mutation.addedNodes.length; i++) {
-        if (window.charWatchForNewDicePanel.done)
-          continue;
-        let node = mutation.addedNodes[i]
-        if ((node.className == 'dice-rolling-panel' || $('.dice-rolling-panel').length > 0)) {
-          if ($('[data-floating-ui-portal]').length>0){
-            window.charWatchForNewDicePanel.done = 1;
-            window.charWatchForNewDicePanel.disconnect();
-            $('[data-floating-ui-portal], .roll-mod-container').addClass('hidden');
-            await $("[class*='DiceContainer_button']").click(); // initialize dice panel so first roll doesn't fail
-            setTimeout(async () => {
-              $("[class*='DiceContainer_button']").click();//close dice panel
-              setTimeout(() => {
-                $('[data-floating-ui-portal], .roll-mod-container').removeClass('hidden');
-                $('[data-floating-ui-portal]').off('click.waiting').on('click.waiting', `[data-dd-action-name="Roll Dice Popup > Roll Dice"]`, function () {
-                  window.diceRoller.setWaitingForRoll();
-                })
-              }, 200)
-            }, 200);
-            window.charWatchForNewDicePanel.disconnect();
-            return false;
-          }
-        }
-      }
-      return true // must return true if doesn't break
-    })
-  });
-  window.charWatchForNewDicePanel.observe(document.body, { childList: true, subtree: true, attributes: false, characterData: false });
-  
   if(window.charGamelogObserver)
     window.charGamelogObserver.disconnect();
   window.charGamelogObserver = new MutationObserver((mutations) => {
@@ -2133,8 +2120,10 @@ function observe_character_sheet_changes(documentToObserve) {
     if(window.DRAGGING || (typeof arrowKeysHeld !== 'undefined' && (arrowKeysHeld[0] || arrowKeysHeld[1] || arrowKeysHeld[2] || arrowKeysHeld[3])))
       return;
 
-      //support DDB character sheet overhaul
+    noisy_log(2, "character_sheet_observer", mutationList);
 
+
+    //support DDB character sheet overhaul
     const overhaul_iframe = $("#ddbfix-vtt-iframe[src*='abovevtt=true']:not(.abovevtt-visited)")
     overhaul_iframe.each(function(){
       const iframe = $(this);
@@ -2164,20 +2153,6 @@ function observe_character_sheet_changes(documentToObserve) {
      
      
     })
-    // console.log("character_sheet_observer", mutationList);
-
-    // initial injection of our buttons
-    const notes = documentToObserve.find(".ddbc-note-components__component:not('.above-vtt-dice-visited')");
-    notes.each(function() {
-      // console.log("character_sheet_observer iterating", mutationList);
-      try {
-        inject_dice_roll($(this));
-        $(this).addClass("above-vtt-dice-visited"); // make sure we only parse this element once
-      } catch (error) {
-        console.log("inject_dice_roll failed to process element", error);
-      }
-    });
-
 
     if(is_abovevtt_page()){
       if($('.dice-rolling-panel, [data-floating-ui-portal]').length == 0 && window.diceWarning == undefined){
@@ -2207,6 +2182,7 @@ function observe_character_sheet_changes(documentToObserve) {
             </span>`
       button.html(newHtml);
       const checkbox = rollMenu.find('[d="M9.00016 16.17L4.83016 12L3.41016 13.41L9.00016 19L21.0002 7.00003L19.5902 5.59003L9.00016 16.17Z"]').closest('svg:not(.avtt-checkbox-fix)')
+      checkbox.css('visibility', 'hidden');
       const newCheckbox = $('.avtt-checkbox-fix').length > 0 ? $('.avtt-checkbox-fix') : checkbox.clone().addClass('avtt-checkbox-fix');
       self.find('div:last-of-type').append(newCheckbox);
       setTimeout(() => { self.closest('[role="presentation"]').find('[class*="MuiBackdrop-invisible"]').click() }, 250);
@@ -2217,6 +2193,7 @@ function observe_character_sheet_changes(documentToObserve) {
       const row = rollMenu.find(`li:contains(${sendTo})`);
       const checkbox = rollMenu.find('[d="M9.00016 16.17L4.83016 12L3.41016 13.41L9.00016 19L21.0002 7.00003L19.5902 5.59003L9.00016 16.17Z"]').closest('svg:not(.avtt-checkbox-fix)')
       const newCheckbox = $('.avtt-checkbox-fix').length > 0 ? $('.avtt-checkbox-fix') : checkbox.clone().addClass('avtt-checkbox-fix');
+      checkbox.css('visibility', 'hidden');
       row.find('div:last-of-type').append(newCheckbox);
     }
     rollMenu = $("ul[role='menu']:has(div:contains('DM')):not(:has([value='trueSelf']))");
@@ -2262,19 +2239,21 @@ function observe_character_sheet_changes(documentToObserve) {
           const spellContainer = $(this).closest('.ct-spells-spell')
           const name = spellContainer.find(".ddbc-spell-name, [class*='styles_spellName']").first().text()
           let color = "default"
-          const feet = $(this).prev().find("[class*='styles_numberDisplay'] span:first-of-type").text();
+          let feet = $(this).prev().find("[class*='styles_numberDisplay'] span:first-of-type").text();
           const dmgIcon = $(this).closest('.ct-spells-spell').find('.ddbc-damage-type-icon');
           if (dmgIcon.length == 1){
             color = dmgIcon.attr('class').split(' ').filter(d => d.startsWith('ddbc-damage-type-icon--'))[0].split('--')[1];
           }
           let shape = $(this).find('svg').first().attr('class').split(' ').filter(c => c.startsWith('ddbc-aoe-type-icon--'))[0].split('--')[1];
           shape = window.top.sanitize_aoe_shape(shape)
+
           button.attr("title", "Place area of effect token")
           button.attr("data-shape", shape);
           button.attr("data-style", color);
           button.attr("data-size", feet);
           button.attr("data-name", name);
 
+              
           // Players need the token side panel for this to work for them.
           // adjustments will be needed in enable_Draggable_token_creation when they do to make sure it works correctly
           // set_full_path(button, `${RootFolder.Aoe.path}/${shape} AoE`)
@@ -2282,13 +2261,21 @@ function observe_character_sheet_changes(documentToObserve) {
           button.css("border-width","1px");
           button.click(function(e) {
             e.stopPropagation();
+
             // hide the sheet, and drop the token. Don't reopen the sheet because they probably  want to position the token right away
             if(is_abovevtt_page() || window.self != window.top){
+              const circleIsSquare = window.top.get_avtt_setting_value('circleIsSquare');
+              let newShape = shape;
+              let newFeet = feet;
+              if(circleIsSquare && shape == 'circle'){
+                newShape = 'square';
+                newFeet *= 2;
+              }
               window.top.hide_player_sheet();
               window.top.minimize_player_sheet();
 
-
-              let options = window.top.build_aoe_token_options(color, shape, feet / window.top.CURRENT_SCENE_DATA.fpsq, name)
+      
+              let options = window.top.build_aoe_token_options(color, newShape, newFeet / window.top.CURRENT_SCENE_DATA.fpsq, name)
               if(name == 'Darkness' || name == 'Maddening Darkness' ){
                 options = {
                   ...options,
@@ -2319,7 +2306,7 @@ function observe_character_sheet_changes(documentToObserve) {
           
           return button;
         });
-        console.log(`${icons.length} aoe spells discovered`);
+        noisy_log(`${icons.length} aoe spells discovered`);
       }    
     }
     
@@ -2327,15 +2314,15 @@ function observe_character_sheet_changes(documentToObserve) {
     const snippets = documentToObserve.find(`
       .ddbc-snippet__content p:not('.above-vtt-visited'), 
       .ct-sidebar__inner [class*='styles_content']>div:first-of-type>div:not([class*='styles_gameLogPane']):last-of-type>div>div:not(.ct-item-detail__customize):not([class*='__intro']) p:not(.above-vtt-visited),
-      .ct-sidebar__inner [class*='styles_content']>div:first-of-type>div:not([class*='styles_gameLogPane']):last-of-type>div>div[class*='ct-item-detail__customize']:nth-child(4) p:not(.above-vtt-visited),
       .ct-sidebar__inner [class*='styles_content']>div:first-of-type>div:not([class*='styles_gameLogPane']):last-of-type>div>div:not(.ct-item-detail__customize):not([class*='__intro']) tr:not(.above-vtt-visited),
       .ct-sidebar__inner [class*='styles_content']>div:first-of-type>div:not([class*='styles_gameLogPane']):last-of-type>div>div:not(.ct-item-detail__customize):not([class*='__intro']) div[class*='--damage']:not([class*='__modifier']):not(.ct-customize-data-editor__property--damagetypeid):not(.above-vtt-visited),
       .ct-sidebar__inner [class*='styles_content']>div:first-of-type>div:not([class*='styles_gameLogPane']):not([class*='ct-preferences-pane']):last-of-type>div>div:not(.ct-item-detail__customize):not([class*='__intro']) span:not([class*='button']):not([class*='casting']):not([class*='__modifier']):not([class*='Checkbox_inputContainer']):not(.above-vtt-visited),
-      [class*='spell-damage-group'] span[class*='__value']:not(.above-vtt-visited)
+      [class*='spell-damage-group'] span[class*='__value']:not(.above-vtt-visited), 
+      .ct-sidebar__inner .ct-item-detail__description:not(.above-vtt-visited), 
+      .ct-item-detail [class*='styles_value__']:not('.above-vtt-visited')
     `);
   
     if(add_journal_roll_buttons && snippets.length > 0){
-
       snippets.addClass("above-vtt-visited");
       snippets.find('.ddbc-snippet__tag, .ddbc-tooltip[data-origintal-tile]').each(function(){   
         const curr = $(this);
@@ -2351,14 +2338,23 @@ function observe_character_sheet_changes(documentToObserve) {
         const curr = $(this);
         if (curr.has('>button').length > 0 
           || curr.closest(`[class*='styles_sidebar'] [class*='styles_pane']>[class*='styles_content']>div:not(.sidebar-panel-content), [class*='styles_content']>div>div:not(.sidebar-panel-content)`).has('input[type="search"], .ct-preferences-pane').length > 0 
-          || curr.closest('.ct-spell-manage-pane').length>0
-          || curr.closest('.ct-custom-action-pane').length>0)
+          || curr.closest('.ct-spell-manage-pane').length > 0 
+          || curr.closest('[class*="styles_mark__"]').length>0)
           return; // do not adjust side bar when it includes a search such as adding extras as it causes crashing
-        add_journal_roll_buttons(curr);
-        add_aoe_statblock_click(curr, `/profile/${window.myUser}/characters/${window.PLAYER_ID}`);
+        add_journal_roll_buttons(curr, `/profile/${window.myUser}/characters/${window.PLAYER_ID}`);
       })
     } 
- 
+     // initial injection of our buttons
+    const notes = documentToObserve.find(".ddbc-note-components__component:not('.above-vtt-dice-visited')");
+    notes.each(function() {
+      try {
+        inject_dice_roll($(this));
+        $(this).addClass("above-vtt-dice-visited"); // make sure we only parse this element once
+      } catch (error) {
+        console.log("inject_dice_roll failed to process element", error);
+      }
+    });
+
     // for buttons text that changes based on input, such as damage change from adjusting spell level in the sidebar
     const manualSetRollbuttons = documentToObserve.find(`.ct-spell-caster__modifier-amount:not(.above-vtt-visited)`) 
     if(manualSetRollbuttons.length > 0){
@@ -2367,7 +2363,10 @@ function observe_character_sheet_changes(documentToObserve) {
       const rollName = window.PLAYER_NAME
 
       const clickHandler = function(e) {
-
+        if (e.button === 2) return;
+        e.preventDefault();
+        e.stopPropagation();
+        e.stopImmediatePropagation();
         let rollData = {} 
         rollData = getRollData(this);
 
@@ -2392,7 +2391,7 @@ function observe_character_sheet_changes(documentToObserve) {
 
         
         
-        if (rollData.rollType === "damage") {
+        if (rollData.rollType === "damage" || (rollData.expression !== "1d20" && !/^1d20/gi.test(rollData.expression))) {
           damage_dice_context_menu(rollData.expression, rollData.modifier, rollData.rollTitle, rollData.rollType, window.PLAYER_NAME, window.PLAYER_IMG, undefined, undefined, rollData.damageType, rollData.spellSave)
             .present(e.clientY, e.clientX) 
         } else {
@@ -2402,7 +2401,7 @@ function observe_character_sheet_changes(documentToObserve) {
       }
       manualSetRollbuttons.each(function(){
         const button = $(`<button class='avtt-roll-button'></button>`)
-        button.click(clickHandler);
+        button.off('pointerdown.click touchstart.click').on('pointerdown.click touchstart.click', clickHandler);
         button.on("contextmenu", rightClickHandler);
         $(this).wrap(button);
       })
@@ -2438,8 +2437,11 @@ function observe_character_sheet_changes(documentToObserve) {
         $(this).toggleClass('advantageHover', false)
         $(this).toggleClass('disadvantageHover', false)
       })
-      spells.off('click.multiroll').on('click.multiroll', function(e) {
-
+      
+      spells.off('pointerdown.multiroll touchstart.multiroll').on('pointerdown.multiroll touchstart.multiroll', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        e.stopImmediatePropagation();
         if($(this).children('button').length == 0){
           e.stopPropagation();
         }
@@ -2711,8 +2713,9 @@ function observe_character_sheet_changes(documentToObserve) {
         $(this).toggleClass('advantageHover', false)
         $(this).toggleClass('disadvantageHover', false)
       })
-      attackIcons.off('click.multiroll contextmenu.multiroll').on('click.multiroll contextmenu.multiroll', function(e) {
+      attackIcons.off('pointerdown.multiroll touchstart.multiroll').on('pointerdown.multiroll touchstart.multiroll', function(e) {
         e.preventDefault();
+        e.stopPropagation();
         e.stopImmediatePropagation();
         let versatileRoll = window.CHARACTER_AVTT_SETTINGS.versatile;
                      
@@ -3285,7 +3288,6 @@ function observe_character_sheet_changes(documentToObserve) {
 
         if(is_abovevtt_page()){
            
-            // console.log(`sidebar inserted: ${event.target.classList}`);
           if (mutationTarget.is('.ct-sidebar__pane-content, .ct-sidebar__inner [class*="styles_content"]>div')){
              // The user clicked on something that shows details. Open the sidebar and show it
             show_sidebar(false); 
@@ -3624,7 +3626,25 @@ function inject_join_button_on_character_list_page() {
   const characterCards = list.find(".ddb-campaigns-character-card-campaign-links");
   characterCards.each((_, campaignLink) => {
     const cardFooter = $(campaignLink).siblings(".ddb-campaigns-character-card-footer").find(".ddb-campaigns-character-card-footer-links");
-    const joinButton = $(`<a href='#' class='button ddb-campaigns-character-card-footer-links-item' style='color:white;background: #1b9af0;text-align: center;border-radius: 2px;box-shadow: inset 0 1px 0 rgb(255 255 255 / 10%), 0 1px 2px rgb(0 0 0 / 5%);background-repeat: repeat-x;border: 1px solid #070707;border-color: rgba(0,0,0,0.1) rgba(0,0,0,0.1) rgba(0,0,0,0.25);margin-top: 5px;padding-left: 4px;padding-right: 4px;'>JOIN AboveVTT</a>`);
+    cardFooter.parent().css("padding", "5px");
+    const joinButton = $(`<a href='#' class='button ddb-campaigns-character-card-footer-links-item' style='background: #600606 !important;
+                              padding: 3px;
+                              filter: drop-shadow(1px 1px 1px black);
+                              border-radius: 5px;
+                              box-shadow: inset 0px 0px 20px -10px #F00;
+                              top: -2px;
+                              position: relative;
+                              text-wrap: nowrap;
+                              text-shadow: 1px 1px 1px #000;
+                              color: #FFF !important;
+                              display: flex;
+                              align-items: center;
+                              justify-content: center;
+                              flex-direction: row;
+                              line-height: normal;'> 
+                            <img style="height:17px;filter: drop-shadow(1px 1px 0px black) drop-shadow(1px 0px 0px black);" src="${window.EXTENSION_PATH}assets/avtt-logo.png" title="AboveVTT Logo">
+                            JOIN AboveVTT
+                          </a>`);
     cardFooter.prepend(joinButton);
     joinButton.click(function(e) {
       e.preventDefault();
@@ -3648,14 +3668,14 @@ function inject_join_button_on_character_list_page() {
 function observe_character_theme_change() {
   if (window.theme_observer) window.theme_observer.disconnect();
   window.theme_observer = new MutationObserver(function(mutationList, observer) {
-    // console.log("theme_observer mutationList", mutationList);
+    noisy_log("theme_observer mutationList", mutationList);
     mutationList.every(mutation => {
-      // console.log("theme_observer mutation", mutation, mutation.addedNodes, mutation.addedNodes.length);
+      noisy_log("theme_observer mutation", mutation, mutation.addedNodes, mutation.addedNodes.length);
       if (mutation.addedNodes && mutation.addedNodes.length > 0) {
         const shouldContinue = Array.from(mutation.addedNodes).every(node => {
-          // console.log("theme_observer node", node);
+          noisy_log("theme_observer node", node);
           if (node.textContent && node.textContent.includes("--theme-color")) {
-            // console.log("theme_observer is calling find_and_set_player_color", mutation, node);
+            noisy_log("theme_observer is calling find_and_set_player_color", mutation, node);
             const newColor = node.textContent.match(/#(?:[0-9a-fA-F]{3}){1,2}/)?.[0];
             if (newColor) {
               update_window_color(newColor);

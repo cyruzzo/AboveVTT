@@ -8,7 +8,7 @@
  */
 function scan_monster(target, stats, tokenId) {
 	console.group("scan_monster")
-	console.log("adding in avtt dice buttons")
+	noisy_log("adding in avtt dice buttons")
 	// remove homebrew panels
 	target.find(".homebrew-creation-actions").remove();
 	target.find(".homebrew-previous-versions").remove();
@@ -21,6 +21,10 @@ function scan_monster(target, stats, tokenId) {
 	const creatureAvatar = window.TOKEN_OBJECTS[tokenId]?.options.imgsrc || stats.data.avatarUrl;
 
 	function clickHandler(clickEvent) {
+		if(clickEvent.button === 2) return;
+		clickEvent.preventDefault();
+		clickEvent.stopPropagation();
+		clickEvent.stopImmediatePropagation();
 		roll_button_clicked(clickEvent, displayName, creatureAvatar, "monster", tokenId)
 	};
 
@@ -85,7 +89,7 @@ function scan_monster(target, stats, tokenId) {
 	)
 
 
-	$(target).find(".avtt-roll-button").click(clickHandler);
+	$(target).find(".avtt-roll-button").off('pointerdown.click touchstart.click').on('pointerdown.click touchstart.click', clickHandler);
 	$(target).find(".avtt-roll-button").on("contextmenu", rightClickHandler);
 	add_ability_tracker_inputs(target, tokenId)
 	
@@ -145,14 +149,17 @@ function add_ability_tracker_inputs_on_each(target, tokenId){
 				if (matchForEachSlot){
 					let numberFound = parseInt(matchForEachSlot[1]);
 					$(this).children().each(function (indexInArray, valueOfElement) { 
-						let spellName = $(valueOfElement).clone().text().replace(/\s/g, "")
+						const $element = $(valueOfElement);
+						if($element.is('button'))
+							return;
+						let spellName =  $element.clone().text().replace(/\s/g, "")
 						// token already has this ability tracked
 						if (token.options.abilityTracker?.[spellName] >= 0){
 							numberFound = token.options.abilityTracker[spellName]
 						}else{
 							token.track_ability(spellName, numberFound)
 						}
-						$(valueOfElement).after(
+						 $element.after(
 							createCountTracker(
 								token,
 								spellName, 
@@ -186,17 +193,17 @@ function rebuild_ability_trackers(target, tokenId){
  * @param {string} descriptionPostfix 
  * @returns 
  */
-function createCountTracker(token, key, remaining, foundDescription, descriptionPostfix, callback) {
-	const input = $(`<input class="injected-input" data-token-id="${token.id}" data-tracker-key="${key}" type="number" value="${remaining}"> ${foundDescription} ${descriptionPostfix}</input>`);
+function createCountTracker(token, key, remaining, foundDescription, descriptionPostfix, callback, noteId) {
+	const input = $(`<input class="injected-input" data-token-id="${token?.options?.id}" data-tracker-key="${key}" type="number" value="${remaining}"></input><span class='added-input-desc'> ${foundDescription} ${descriptionPostfix}</span>`);
 	input.off('input').on('input', function(){
 		resizeInput(input[0]);
 	})
 	input.off("change").on("change", function(changeEvent) {
 		resizeInput(input[0]);
 		const updatedValue = changeEvent.target.value;
-		console.log(`add_ability_tracker_inputs ${key} changed to ${updatedValue}`);
-		if(callback)
-			callback(key, updatedValue);
+		noisy_log(`add_ability_tracker_inputs ${key} changed to ${updatedValue}`);
+		if(callback && noteId)
+			callback(key, updatedValue, noteId);
 		else
 			token.track_ability(key, updatedValue);
 	});
@@ -247,7 +254,7 @@ function add_ability_tracker_inputs(target, tokenId) {
 	// //Spell Slots, or technically anything with 'slot'... might be able to refine the regex a bit better...
 	target.find("p").each(function() {
 		let element = $(this);
-		if(element.find('strong').text().match(/at will|day each/gi) || element.find('.add-input').length)
+		if(element.find('strong').text().match(/at will|day each/gi) || element.find('.add-input').length || element.text().match(/^\d+\/day each/gi))
 			return;
 
 		if ($(this).find(".injected-input").length === 0) {
@@ -402,8 +409,12 @@ function scan_player_creature_pane(target) {
     
   })
 
-  container.find("p>em>strong, p>strong>em, div>strong>em, div>em>strong, p>span>em>strong, p>span>strong>em").off("click.roll").on("click.roll", function (e) {
-    e.preventDefault();
+  container.find("p>em>strong, p>strong>em, div>strong>em, div>em>strong, p>span>em>strong, p>span>strong>em").off("pointerdown.roll touchstart.roll").on("pointerdown.roll touchstart.roll", function (e) {
+	if (e.button === 2) return;
+	e.preventDefault();
+	e.stopPropagation();
+	e.stopImmediatePropagation();
+
     if($(e.target).text().includes('Recharge'))
       return;
     let rollButtons = $(e.currentTarget).closest('em:has(strong), strong:has(em)').nextUntil(':has(.avtt-ability-roll-button)').closest('.avtt-roll-button:not([data-rolltype="recharge"])');
@@ -475,11 +486,12 @@ function roll_button_contextmenu_handler(contextmenuEvent, displayName, imgUrl, 
 	const rollType = pressedButton.attr('data-rolltype');
 	const actionType = pressedButton.attr('data-actiontype');
 	const damageType = pressedButton.attr('data-damagetype');
+	const save = pressedButton.attr('data-save');
 
 
 
 	if (rollType === "damage" || (expression !== "1d20" && !/^1d20/gi.test(expression))) {
-		damage_dice_context_menu(`${expression}${modifier}`, modifier, actionType, rollType, displayName, imgUrl, entityType, entityId, damageType)
+		damage_dice_context_menu(`${expression}${modifier}`, modifier, actionType, rollType, displayName, imgUrl, entityType, entityId, damageType, save)
 			.present(contextmenuEvent.clientY, contextmenuEvent.clientX) // TODO: convert from iframe to main window
 	} else {
 		standard_dice_context_menu(`${expression}${modifier}`, modifier, actionType, rollType, displayName, imgUrl, entityType, entityId)
@@ -501,6 +513,7 @@ function roll_button_clicked(clickEvent, displayName, imgUrl, entityType = undef
 	let modifier = pressedButton.attr('data-mod')?.replaceAll("(", "")?.replaceAll(")", "");
 	let rollType = pressedButton.attr('data-rolltype');
 	const action = pressedButton.attr('data-actiontype');
+	const save = pressedButton.attr('data-save');
 	const damageType = pressedButton.attr('data-damagetype');
 	modifier = modifier == 0 ? '+0' : modifier;
 
@@ -532,7 +545,7 @@ function roll_button_clicked(clickEvent, displayName, imgUrl, entityType = undef
 		imgUrl,
 		entityType,
 		entityId
-	), undefined, undefined, undefined, undefined, damageType);
+	), undefined, undefined, undefined, save, damageType);
 	
 	pressedButton = null
 }
@@ -560,7 +573,11 @@ function scan_creature_pane(target, displayName, creatureAvatar) {
 		replace_stat_block_description($(this));
 	});
 
-	target.find(".avtt-roll-button").on("click", function(clickEvent) {
+	target.find(".avtt-roll-button").off('pointerdown.click touchstart.click').on("pointerdown.click touchstart.click", function(clickEvent) {
+		if (e.button === 2) return;
+		e.preventDefault();
+		e.stopPropagation();
+		e.stopImmediatePropagation();
 		roll_button_clicked(clickEvent, displayName, creatureAvatar, "monster")
 	});
 

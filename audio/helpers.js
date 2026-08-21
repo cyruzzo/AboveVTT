@@ -36,7 +36,7 @@ function playerID() {
  * @param  {...any} msg
  */
 function log(...msg) {
-    console.log('[audio]', ...msg);
+    noisy_log('[audio]', ...msg);
 }
 
 export { log, gameID, playerID }

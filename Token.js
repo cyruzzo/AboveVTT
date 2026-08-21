@@ -61,7 +61,7 @@ const throttleTokenCheck = throttle(()=>{
 			tokenCheckQueued = false;
 		}
 	})
-}, 1000/30);
+}, 1000/8);
 
 const debounceStoreExplored = mydebounce((exploredCanvas, sceneId) => {		
 	let dataURI = exploredCanvas.toDataURL('image/jpg')
@@ -140,6 +140,16 @@ class Token {
 		if (typeof options.conditions == "undefined") {
 			this.options.conditions = [];
 		}
+		if(!this.options.hitPointInfo){
+			this.options.hitPointInfo = {
+				"maximum": this.options.max_hp ?? 0,
+				"current": this.options.hp ?? 0,
+				"temp": this.options.temp_hp ?? 0
+			}
+		}
+		delete this.options.max_hp;
+		delete this.options.hp;
+		delete this.options.temp_hp;
 	}
 
 	/** @return {number} the total of this token's HP and temp HP */
@@ -148,6 +158,32 @@ class Token {
 	}
 	set hp(newValue) {
 		this.baseHp = newValue;
+	}
+	set totalHp(newValue) {
+		if(newValue > this.maxHp){
+			if(this.tempHp > 0){
+				if(newValue < this.hp){
+					this.tempHp = Math.max(0, this.tempHp - (this.hp - newValue));
+					this.baseHp = (newValue - this.tempHp);
+				} else if(this.baseHp < this.maxHp){
+					this.baseHp = newValue - this.tempHp < this.maxHp ? newValue - this.tempHp : this.maxHp;
+				} else{
+					this.tempHp = newValue - this.maxHp; // assume if full health they are adding temp hp.
+				}
+			} else {
+				if(newValue > this.hp && this.baseHp < this.maxHp){
+					this.baseHp = this.maxHp;
+				}
+				else{
+					this.tempHp = newValue - this.maxHp;
+				}
+			}
+		} else if(this.tempHp > 0 && newValue < this.hp){
+			this.tempHp = Math.max(0, this.tempHp - (this.hp - newValue));
+			this.baseHp = (newValue - this.tempHp);
+		} else{
+			this.baseHp = newValue - this.tempHp;
+		}
 	}
 
 	/** @return {number} the percentage of this token's base HP divided by it's max hp */
@@ -160,19 +196,17 @@ class Token {
 	get baseHp() {
 		if (!isNaN(this.options.hitPointInfo?.current)) {
 			return parseInt(this.options.hitPointInfo.current);
-		} else if (!isNaN((this.options.hp))) {
-			return parseInt(this.options.hp);
-		}
+		} 
 		return 0;
 	}
 	set baseHp(newValue) {
-		let currentHP = this.hp
+		let currentHP = this.baseHp;
 		if (this.options.hitPointInfo) {
-			this.options.hitPointInfo.current = newValue;
+			this.options.hitPointInfo.current = Math.min(this.maxHp, newValue);
 		} else {
 			this.options.hitPointInfo = {
 				maximum: this.maxHp,
-				current: newValue,
+				current: Math.min(this.maxHp, newValue),
 				temp: this.tempHp
 			};
 		}
@@ -185,7 +219,6 @@ class Token {
 			};
 			window.MB.inject_chat(msgdata);
 		}
-		this.options.hp = newValue; // backwards compatibility
 	}
 
 
@@ -193,8 +226,6 @@ class Token {
 	get tempHp() {
 		if (!isNaN(this.options.hitPointInfo?.temp)) {
 			return parseInt(this.options.hitPointInfo.temp);
-		} else if (!isNaN(this.options.temp_hp)) {
-			return parseInt(this.options.temp_hp);
 		}
 		return 0;
 	}
@@ -208,7 +239,7 @@ class Token {
 				temp: newValue
 			};
 		}
-		this.options.temp_hp = newValue; // backwards compatibility
+
 	}
 
 	/** @return {number} the percentage of this token's temp HP divided by it's max hp */
@@ -220,8 +251,6 @@ class Token {
 	get maxHp() {
 		if (!isNaN(this.options.hitPointInfo?.maximum)) {
 			return parseInt(this.options.hitPointInfo.maximum);
-		} else if (!isNaN((this.options.max_hp))) {
-			return parseInt(this.options.max_hp);
 		}
 		return 0;
 	}
@@ -235,21 +264,17 @@ class Token {
 				temp: this.tempHp
 			};
 		}
-		this.options.max_hp = newValue; // backwards compatibility
 	}
 
 	/** @return {number} the value of this token's AC */
 	get ac() {
 		if (!isNaN(this.options.armorClass)) {
 			return parseInt(this.options.armorClass);
-		} else if (!isNaN(this.options.ac)) {
-			return parseInt(this.options.ac);
-		}
+		} 
 		return 0;
 	}
 	set ac(newValue) {
 		this.options.armorClass = newValue;
-		this.options.ac = newValue; // backwards compatibility
 	}
 
 	/** @return {string[]} the names of the conditions currently active on the token */
@@ -665,7 +690,7 @@ class Token {
 			console.warn('Token not found on scene', this)
 			return false;
 		}
-		return tokenDiv.style.pointerEvents != "none" && tokenDiv.style.display != "none" && !tokenDiv.classList.contains("ui-draggable-disabled");
+		return tokenDiv.style.pointerEvents != "none" && tokenDiv.style.display != "none" && !tokenDiv.classList.contains("ui-draggable-disabled") && !tokenDiv.classList.contains('notVisible');
 	}
 	rotate(newRotation) {
 		if (this.isPlayerLocked()) return; // don't allow rotating if the token is locked
@@ -887,15 +912,15 @@ class Token {
 				window.ON_SCREEN_TOKENS[this.options.id].onScreenDarknessToken = tokenClone;
 
                 const copyImage = tokenClone.find('.token-image');
-
-				if(this.options.imgsrc.startsWith('above-bucket-not-a-url')){
-					const fileSrc = this.options.imgsrc.replace('above-bucket-not-a-url', '');
+				const imageSrc = this.options.aoeImage ?? this.options.imgsrc;
+				if(imageSrc.startsWith('above-bucket-not-a-url')){
+					const fileSrc = imageSrc.replace('above-bucket-not-a-url', '');
 					if (!copyImage.attr('src')?.includes(encodeURI(fileSrc))){
-						updateTokenSrc(this.options.imgsrc, copyImage, this.options.videoToken)
+						updateTokenSrc(imageSrc, copyImage, this.options.videoToken)
 					}
 				}
-				else if (copyImage.attr('src') != parse_img(this.options.imgsrc)){
-					updateTokenSrc(parse_img(this.options.imgsrc), copyImage, this.options.videoToken)
+				else if (copyImage.attr('src') != parse_img(imageSrc)){
+					updateTokenSrc(parse_img(imageSrc), copyImage, this.options.videoToken)
 				}
 			}
 
@@ -1070,15 +1095,17 @@ class Token {
 		let paddingX = 0;
 		let paddingY = 0;
 		
-
-
+		if(this.options.tokenStyleSelect == "undefined")// I believe this only happens in the sidepanel
+			delete this.options.tokenStyleSelect;
+			
+		const tokenStyle = this.options.tokenStyleSelect ?? "circle";
 
 		if(this.options.disableaura || !this.hp || !this.maxHp) {
 			token.css('--token-hp-aura-color', 'transparent');
 			token.css('--token-temp-hp', "transparent");
 		} 
 		else {
-			if(this.options.tokenStyleSelect === "circle" || this.options.tokenStyleSelect === "square"){
+			if(tokenStyle === "circle" || tokenStyle === "square"){
 				paddingX += window.CURRENT_SCENE_DATA.hpps/10;
 				paddingY += window.CURRENT_SCENE_DATA.vpps/10;
 			}
@@ -1094,7 +1121,7 @@ class Token {
 			token.css('--token-border-color', 'transparent');
 		} 
 		else {
-			if(this.options.tokenStyleSelect === "circle" || this.options.tokenStyleSelect === "square"){
+			if(tokenStyle === "circle" || tokenStyle === "square"){
 				paddingX += Math.min(1, window.CURRENT_SCENE_DATA.hpps/40);
 				paddingY += Math.min(1, window.CURRENT_SCENE_DATA.vpps/40);
 			}
@@ -1105,7 +1132,7 @@ class Token {
 			token.css('--token-hpbar-display', 'none');
 		}
 		else {
-			if(this.options.tokenStyleSelect === "circle" || this.options.tokenStyleSelect === "square"){
+			if(tokenStyle === "circle" || tokenStyle === "square"){
 				paddingX += window.CURRENT_SCENE_DATA.hpps/10;
 				paddingY += window.CURRENT_SCENE_DATA.vpps/10;
 			}
@@ -1225,37 +1252,21 @@ class Token {
 		let selector = "div[data-id='" + this.options.id + "']";
 		let old = $("#tokens").find(selector);
 
-		if(old.is(':animated')){	
-			this.stopAnimation(); // stop the animation and jump to the end.	
-		}
-
 		this.options.left = old.css("left");
 		this.options.top = old.css("top");
 		this.options.scaleCreated = window.CURRENT_SCENE_DATA.scale_factor;
 
-		
-		// one of either
-		// is a monster?
-		// is the DM
-		// not the DM and player controlled
-		// AND stats aren't disabled and has hp bar
-		if ( ( (!(this.options.monster > 0)) || window.DM || (!window.DM && this.options.player_owned)) && old.has(".hp").length > 0) {
-			if (old.find(".hp").val().trim().startsWith("+") || old.find(".hp").val().trim().startsWith("-")) {
-				old.find(".hp").val(Math.max(0, this.hp + parseInt(old.find(".hp").val())));
-			}
-			if (old.find(".max_hp").val().trim().startsWith("+") || old.find(".max_hp").val().trim().startsWith("-")) {
-				old.find(".max_hp").val(Math.max(0, this.maxHp + parseInt(old.find(".max_hp").val())));
-			}
-			this.hp = parseInt(old.find(".hp").val()) - this.tempHp;
-			this.maxHp = parseInt(old.find(".max_hp").val());
-			
-			this.update_dead_cross(old)
-			this.update_health_aura(old)
-		}
+		this.update_dead_cross(old);
+		this.update_health_aura(old);
+
+		const hpbar = old.find(".hpbar");
+		hpbar.css({
+			"--base-hp": this.baseHp ?? 0,
+			"--temp-hp": this.tempHp ?? 0
+		});
 
 		this.update_condition_timers();
 		this.update_age();
-
 		toggle_player_selectable(this, old)
 	}
 
@@ -1263,12 +1274,13 @@ class Token {
 	update_and_sync(e) {
 		self = this;
 		self.update_from_page();
+		
 		self.sync();//create deep copy so we don't send data when tokens are updated too quickly
 
 		/* UPDATE COMBAT TRACKER */
-		this.update_combat_tracker()
+		self.update_combat_tracker()
 		/* UPDATE QUICK ROLL MENU */
-		this.update_quick_roll()
+		self.update_quick_roll()
 	}
 	update_combat_tracker(){
 		/* UPDATE COMBAT TRACKER */
@@ -1294,11 +1306,9 @@ class Token {
 		}
 		
 		if (this.options.hidden == false || typeof this.options.hidden == 'undefined'){
-			console.log("Setting combat tracker opacity to 1.0")
 			$("#combat_tracker_inside tr[data-target='" + this.options.id + "']").find('.Avatar_AvatarPortrait__2dP8u').css('opacity','1.0');
 		}
 		else {
-			console.log("Setting combat tracker opacity to 0.5")
 			$("#combat_tracker_inside tr[data-target='" + this.options.id + "']").find('.Avatar_AvatarPortrait__2dP8u').css('opacity','0.5');
 		}
 		//this.options.ct_show = $("#combat_tracker_inside tr[data-target='" + this.options.id + "']").find('input').checked;
@@ -1369,15 +1379,18 @@ class Token {
 		hpbar.append(divider);
 		hpbar.append(maxhp_input);
 		if (!this.isPlayer()) {
+			const debounceTriggerEvent = mydebounce((input) => {
+				input.trigger('change');
+			}, 1500)
 			hp_input.on('wheel', function(e) {
 				const input = $(this);
 				if(!input.is(':focus'))
 					return;
 				e.preventDefault();
 				const delta = e.originalEvent.deltaY < 0 ? 1 : -1;
-				const current = parseInt(self.hp) || 0;
+				const current = parseInt(input.val()) || 0;
 				input.val(Math.max(0, current + delta));
-				input.trigger('change');
+				debounceTriggerEvent(input);
 			});
 			maxhp_input.on('wheel', function(e) {
 				const input = $(this);
@@ -1385,21 +1398,31 @@ class Token {
 					return;
 				e.preventDefault();
 				const delta = e.originalEvent.deltaY < 0 ? 1 : -1;
-				const current = parseInt(self.maxHp) || 0;
+				const current = parseInt(input.val()) || 0;
 				input.val(Math.max(1, current + delta));
-				input.trigger('change');
+				debounceTriggerEvent(input);
 			});
 			hp_input.change(function(e) {
-				$(this).val($(this).val().trim());
-				self.update_and_sync(e);
-				let tokenID = $(this).parent().parent().attr("data-id");
+				let tokenID = self.options.id;
+				let value = $(this).val().trim();	
+
+				value = calculate_hp(value, self.hp);
+				if (value === undefined)
+					return;
+				
+				
 				if(window.all_token_objects[tokenID] != undefined){
-					window.all_token_objects[tokenID].hp = $(this).val();
+					window.all_token_objects[tokenID].totalHp = value;
 				}			
 				if(window.TOKEN_OBJECTS[tokenID] != undefined){		
-					window.TOKEN_OBJECTS[tokenID].hp = $(this).val();
-					window.TOKEN_OBJECTS[tokenID].update_and_sync()
+					self.totalHp = value;
+					$(this).val(self.hp);
+					self.place();
 				}
+				
+				self.update_combat_tracker()
+				self.update_quick_roll();
+				self.sync();
 			});
 			hp_input.on('mouseup', function(e) {
 				e.preventDefault();
@@ -1407,15 +1430,24 @@ class Token {
 				$(e.target).select();
 			});
 			maxhp_input.change(function(e) {
-				$(this).val($(this).val().trim());
-				self.update_and_sync(e);
+				let tokenID = self.options.id;
+				let value = $(this).val().trim();
+		
+				value = calculate_hp(value, self.maxHp);
+				if (value === undefined)
+					return;
+				$(this).val(value);
+
 				if(window.all_token_objects[tokenID] != undefined){
-					window.all_token_objects[tokenID].maxHp = $(this).val();
+					window.all_token_objects[tokenID].maxHp = value;
 				}
 				if(window.TOKEN_OBJECTS[tokenID] != undefined){		
-					window.TOKEN_OBJECTS[tokenID].maxHp = $(this).val();
-					window.TOKEN_OBJECTS[tokenID].update_and_sync()
+					self.maxHp = value;
+					self.place();
 				}
+				self.update_combat_tracker()
+				self.update_quick_roll();
+				self.sync();
 			});
 			maxhp_input.on('mouseup', function(e) {
 				e.preventDefault();
@@ -1427,8 +1459,8 @@ class Token {
 			hpbar.off('click.message').on('click.message', 'input' ,function(){
 				showTempMessage('Player HP must be adjusted on the character sheet.')
 			})
-			hp_input.keydown(function(e) { if (e.keyCode == '13') self.update_from_page(); e.preventDefault(); }); // DISABLE WITHOUT MAKING IT LOOK UGLY
-			maxhp_input.keydown(function(e) { if (e.keyCode == '13') self.update_from_page(); e.preventDefault(); });
+			hp_input.keydown(function(e) { if (e.keyCode == '13') e.preventDefault(); }); // DISABLE WITHOUT MAKING IT LOOK UGLY
+			maxhp_input.keydown(function(e) { if (e.keyCode == '13') e.preventDefault(); });
 		}
 
 		if(this.options.hidehpbar) {
@@ -1444,7 +1476,7 @@ class Token {
 	build_ac() {
 		let bar_height = this.sizeHeight() * 0.2;
 		bar_height = Math.ceil(bar_height);
-		let acValue = (this.options.armorClass != undefined) ? this.options.armorClass : this.options.ac
+		let acValue = this.ac;
 		let ac = $("<div class='ac'/>");
 		ac.css("position", "absolute");
 		ac.css('right', "-1px");
@@ -1555,12 +1587,12 @@ class Token {
 				token.find(".hpbar").css("visibility", "hidden");
 			} else {
 				token.find(".hpbar").css("visibility", "visible");
+				token.find(".hpbar").css("--base-hp", this.baseHp);
 				if(this.tempHp >= 0){
-					token.find(".hpbar").css("--base-hp", this.baseHp);
 					token.find(".hpbar").css("--temp-hp", this.tempHp);
 				}
 			}
-			if (!this.options.ac && !this.options.armorClass) { // even if we are supposed to show it, only show them if they have something to show.
+			if (!this.ac) { // even if we are supposed to show it, only show them if they have something to show.
 				token.find(".ac").hide();
 			} else {
 				token.find(".ac").show();
@@ -1647,7 +1679,7 @@ class Token {
 		}
 	}
 
-
+	
 	build_conditions(parent, singleRow = false) {
 		if(this.options.combatGroupToken)
 			return [];
@@ -2116,7 +2148,9 @@ class Token {
 		
 
 	}
-
+	deboucePlaceSync = mydebounce(()=>{
+		this.place_sync_persist();
+	})
 	throttlePlace = throttle((animationDuration, sceneId = window.CURRENT_SCENE_DATA.id, callback=()=>{}) => {
 		if(window.all_token_objects?.[this.options.id] != undefined)
 			window.all_token_objects[this.options.id].options = $.extend(true, {}, this.options);
@@ -2262,7 +2296,7 @@ class Token {
 				let tokenBorderWidth = (this.options.underDarkness == true) ? (this.sizeWidth() / window.CURRENT_SCENE_DATA.hpps * 2 / window.CURRENT_SCENE_DATA.scale_factor)+"px" : (this.sizeWidth() / window.CURRENT_SCENE_DATA.hpps * 2)+"px";
 				old.find(".token-image").css("--token-border-width", tokenBorderWidth);
 
-				if (old.width() !== this.sizeWidth() || old.height() !== this.sizeHeight()) {
+				if (Math.round(old.width()) !== Math.round(this.sizeWidth()) || Math.round(old.height()) !== Math.round(this.sizeHeight())) {
 					// NEED RESIZING			
 					old.find(".token-image").css({
 						"max-width": this.sizeWidth(),
@@ -2274,16 +2308,7 @@ class Token {
 						old.animate({
 							width: this.sizeWidth(),
 							height: this.sizeHeight()
-						}, { duration: animationDuration, queue: false, complete: async function() {
-							const darknessMoved = (self.options.darkness || self.options.tokenWall) ? true : false;
-							if(darknessMoved)
-								redraw_drawn_light(darknessMoved);
-							
-							if(window.EXPERIMENTAL_SETTINGS.dragLight == true)
-								throttleLight(darknessMoved);
-							else
-								debounceLightChecks(darknessMoved)
-						}});
+						}, { duration: animationDuration, queue: false });
 					}
 					
 					$(`.isAoe[data-id='${this.options.id}']:not(.token)`).css({
@@ -2300,11 +2325,6 @@ class Token {
 						height: this.sizeHeight()/window.CURRENT_SCENE_DATA.scale_factor
 					}, { duration: animationDuration, queue: false });
 
-					let zindexdiff=(typeof this.options.zindexdiff == 'number') ? this.options.zindexdiff : Math.round(17/(this.sizeWidth()/window.CURRENT_SCENE_DATA.hpps));
-					this.options.zindexdiff = Math.max(zindexdiff, -5000);
-					let zConstant = this.options.underDarkness || this.options.tokenStyleSelect == 'definitelyNotAToken' ? 5000 : 10000;
-					old.css("z-index", `calc(${zConstant} + var(--z-index-diff))`);
-					old.css("--z-index-diff", zindexdiff);
 
 					let bar_height = Math.floor(this.sizeHeight() * 0.2);
 
@@ -2314,7 +2334,12 @@ class Token {
 					let fs = Math.floor(bar_height / 1.3) + "px";
 					old.css("font-size",fs);
 				}
-
+				
+				let zindexdiff=(typeof this.options.zindexdiff == 'number') ? this.options.zindexdiff : Math.round(17/(this.sizeWidth()/window.CURRENT_SCENE_DATA.hpps));
+				this.options.zindexdiff = Math.max(zindexdiff, -5000);
+				let zConstant = this.options.underDarkness || this.options.tokenStyleSelect == 'definitelyNotAToken' ? 5000 : 10000;
+				old.css("z-index", `calc(${zConstant} + var(--z-index-diff))`);
+				old.css("--z-index-diff", zindexdiff);
 
 				this.update_opacity(old);
 				this.build_conditions(old);
@@ -2341,22 +2366,23 @@ class Token {
 				}
 				let oldImage =  old.find(".token-image,[data-img]")
 				// token uses an image for it's image
-				if (!this.options.imgsrc.startsWith("class")){
-					if(this.options.imgsrc.startsWith('above-bucket-not-a-url')){
+				const imageSrc = this.options.aoeImage ?? this.options.imgsrc;
+				if (!imageSrc.startsWith("class")){
+					if(imageSrc.startsWith('above-bucket-not-a-url')){
 						
-						const fileSrc = this.options.imgsrc.replace('above-bucket-not-a-url', '');
+						const fileSrc = imageSrc.replace('above-bucket-not-a-url', '');
 						if (!oldImage.attr('src')?.includes(encodeURI(fileSrc))) {
-							getAvttStorageUrl(this.options.imgsrc, true).then((url) => {
+							getAvttStorageUrl(imageSrc, true).then((url) => {
 								let oldFileExtension = oldImage.attr("src").split('.')[oldImage.attr("src").length - 1]
-								let newFileExtention = parse_img(this.options.imgsrc.split('.')[this.options.imgsrc.split('.').length - 1]);
+								let newFileExtention = parse_img(imageSrc.split('.')[imageSrc.split('.').length - 1]);
 								let imgClass = oldImage.attr('class')?.replaceAll('div-token-image', '');
 								let video = false;
 								if (oldFileExtension !== newFileExtention || window.videoTokenOld[this.options.id] != this.options.videoToken) {
 									oldImage.remove();
 									
 									let tokenImage;
-									if (this.options.videoToken == true || ['.mp4', '.webm', '.m4v'].some(d => this.options.imgsrc.includes(d))) {
-										tokenImage = $("<video disableRemotePlayback autoplay loop muted style='transform:" + imageTransform + "' class='" + imgClass + "'/>");
+									if (this.options.videoToken == true || ['.mp4', '.webm', '.m4v'].some(d => imageSrc.includes(d))) {
+										tokenImage = $("<video disableRemotePlayback autoplay loop muted style='transform:" + imageTransform + "' class='" + imgClass + " div-token-image'/>");
 										video = true;
 									}
 									else {
@@ -2424,17 +2450,17 @@ class Token {
 						}
 						
 					}
-					else if(oldImage.attr("src")!=parse_img(this.options.imgsrc) || window.videoTokenOld[this.options.id] != this.options.videoToken){
+					else if(oldImage.attr("src")!=parse_img(imageSrc) || window.videoTokenOld[this.options.id] != this.options.videoToken){
 						let oldFileExtension = oldImage.attr("src")?.split('.')[oldImage.attr("src").length-1]
-						let newFileExtention = parse_img(this.options.imgsrc.split('.')[this.options.imgsrc.split('.').length-1]);
+						let newFileExtention = parse_img(imageSrc.split('.')[imageSrc.split('.').length-1]);
 						let imgClass = oldImage.attr('class')?.replaceAll('div-token-image', '');
 						let video = false;
 						if(oldFileExtension !== newFileExtention || window.videoTokenOld[this.options.id] != this.options.videoToken){
 							oldImage.remove();
 							
 							let tokenImage;
-							if(this.options.videoToken == true || ['.mp4', '.webm','.m4v'].some(d => this.options.imgsrc.includes(d))){
-								tokenImage = $("<video disableRemotePlayback autoplay loop muted style='transform:"+imageTransform+"' class='"+imgClass+"'/>");			
+							if(this.options.videoToken == true || ['.mp4', '.webm','.m4v'].some(d => imageSrc.includes(d))){
+								tokenImage = $("<video disableRemotePlayback autoplay loop muted style='transform:"+imageTransform+"' class='"+imgClass+" div-token-image'/>");			
 								video = true;
 							} 
 							else{
@@ -2449,12 +2475,12 @@ class Token {
 								const underDarkImage = tokenImage.clone();
 								underDarkImage.find('.token-image ~ .token-image').remove();
 								underDarkToken.append(underDarkImage);
-								updateTokenSrc(this.options.imgsrc, underDarkImage, video)
+								updateTokenSrc(imageSrc, underDarkImage, video)
 							}
 						}
 						window.videoTokenOld[this.options.id] = this.options.videoToken;
 						
-						updateTokenSrc(this.options.imgsrc, oldImage, video)
+						updateTokenSrc(imageSrc, oldImage, video)
 						$(`#combat_area tr[data-target='${this.options.id}'] img[class*='Avatar']`).attr("src", parse_img(this.options.imgsrc));
 						oldImage.off('dblclick.highlightToken').on('dblclick.highlightToken', function(e) {
 							self.highlight(true); // dont scroll
@@ -2708,15 +2734,15 @@ class Token {
 						let oldImage = $(`#tokens div[data-id='${this.options.id}'] .token-image`);
 						const copyImage = oldImage.clone();
 						underDarkToken.append(copyImage);
-						
-						if (this.options.imgsrc.startsWith('above-bucket-not-a-url')) {
-							const fileSrc = this.options.imgsrc.replace('above-bucket-not-a-url', '');
+						const imageSrc = this.options.aoeImage ?? this.options.imgsrc;
+						if (imageSrc.startsWith('above-bucket-not-a-url')) {
+							const fileSrc = imageSrc.replace('above-bucket-not-a-url', '');
 							if (!copyImage.attr('src')?.includes(encodeURI(fileSrc))) {
-								updateTokenSrc(this.options.imgsrc, copyImage, this.options.videoToken);
+								updateTokenSrc(imageSrc, copyImage, this.options.videoToken);
 							}
 						}
-						else if(copyImage.attr('src') != parse_img(this.options.imgsrc)){
-							updateTokenSrc(parse_img(this.options.imgsrc), copyImage, this.options.videoToken);
+						else if(copyImage.attr('src') != parse_img(imageSrc)){
+							updateTokenSrc(parse_img(imageSrc), copyImage, this.options.videoToken);
 						}
 				}  	
 				else{
@@ -2791,7 +2817,7 @@ class Token {
 					this.options.imgsrc = update_old_discord_link(this.options.imgsrc) // this might be able to be removed in the future - it's to update maps with tokens already on them
 					let video = false;
 					if(this.options.videoToken == true || ['.mp4', '.webm','.m4v'].some(d => this.options.imgsrc.includes(d))){
-						tokenImage = $("<video disableRemotePlayback autoplay loop muted style='transform:"+imageTransform+"' class='"+imgClass+"'/>");
+						tokenImage = $("<video disableRemotePlayback autoplay loop muted style='transform:"+imageTransform+"' class='"+imgClass+" div-token-image'/>");
 						video = true;
 					} 
 					else{
@@ -3236,7 +3262,6 @@ class Token {
 							};
 							if (!dragFrameRequest) {
 								dragFrameRequest = requestAnimationFrame(() => {
-									dragFrameRequest = null;
 									const currState = pendingDragState;
 									pendingDragState = null;
 									if (!currState) return;
@@ -3294,6 +3319,7 @@ class Token {
 									if (window.EXPERIMENTAL_SETTINGS.dragLight == true) {
 										throttleLight();
 									}
+									dragFrameRequest = null;
 								});
 							}
 						} catch (e) {
@@ -3446,15 +3472,15 @@ class Token {
 						window.ON_SCREEN_TOKENS[this.options.id].onScreenDarknessToken = tokenClone;
 
 						let copyImage = tokenClone.find('.token-image')
-
-						if (this.options.imgsrc.startsWith('above-bucket-not-a-url')) {
-							const fileSrc = this.options.imgsrc.replace('above-bucket-not-a-url', '');
+						const imageSrc = this.options.aoeImage ?? this.options.imgsrc;
+						if (imageSrc.startsWith('above-bucket-not-a-url')) {
+							const fileSrc = imageSrc.replace('above-bucket-not-a-url', '');
 							if (!copyImage.attr('src')?.includes(encodeURI(fileSrc))) {
-								updateTokenSrc(this.options.imgsrc, copyImage, this.options.videoToken);
+								updateTokenSrc(imageSrc, copyImage, this.options.videoToken);
 							}
 						}
-						else if (copyImage.attr('src') != parse_img(this.options.imgsrc)) {
-							updateTokenSrc(parse_img(this.options.imgsrc), copyImage, this.options.videoToken);
+						else if (copyImage.attr('src') != parse_img(imageSrc)) {
+							updateTokenSrc(parse_img(imageSrc), copyImage, this.options.videoToken);
 						}
 					}	
 			    }
@@ -3489,6 +3515,7 @@ class Token {
 						draw_selected_token_bounding_box();
 					}, animationDuration)
 				}),
+				new Promise(() => {sync_pc_template(this)})
 			]).catch((error) => {
 		        showError(error, `Failed to start AboveVTT on ${window.location.href}`);
 		    });  
@@ -3520,6 +3547,7 @@ class Token {
 			return;
 		}
 		this.options.abilityTracker[key] = asNumber;
+		this.sync();
 	}
 	// returns the stored value as a number or returns defaultValue
 	get_tracked_ability(key, defaultValue) {
@@ -3710,7 +3738,7 @@ function place_token_at_view_point(tokenObject, pageX, pageY) {
 
 function place_token_at_map_point(tokenObject, x, y, forcePlaceAndSize = false, animationDuration) {
 
-	console.log(`attempting to place token at ${x}, ${y}; options: ${JSON.stringify(tokenObject)}`);
+	noisy_log(`attempting to place token at ${x}, ${y}; options: ${JSON.stringify(tokenObject)}`);
 
 	if (tokenObject.id == undefined) {
 		tokenObject.id = uuid();
@@ -3738,11 +3766,11 @@ function place_token_at_map_point(tokenObject, x, y, forcePlaceAndSize = false, 
 			window.all_token_objects[options.id].options.imgsrc = options.imgsrc;
 		}
 		let alternativeImages = [...options.alternativeImages];
-		options = {
-			...options,
-			...window.all_token_objects[options.id].options,
-			alternativeImages: alternativeImages
-		};
+		options = $.extend(true, {}, 
+			options, 
+			window.all_token_objects[options.id].options,
+			{alternativeImages: alternativeImages}
+		);
 	}
 
 	// aoe tokens have classes instead of images
@@ -3751,7 +3779,7 @@ function place_token_at_map_point(tokenObject, x, y, forcePlaceAndSize = false, 
 	}
 
 	if (options.alternativeImagesCustomizations?.[options.imgsrc] != undefined){
-		options = { ...options, ...options.alternativeImagesCustomizations[options.imgsrc]};
+		options = $.extend(true, {}, options, options.alternativeImagesCustomizations[options.imgsrc]);
 	}
 
 	if (options.size == undefined || forcePlaceAndSize) {
@@ -3917,7 +3945,7 @@ function token_menu() {
 			initialY = event.touches[0].pageY;
 			clearTimeout(contextMenuLongPressTimer);
 			contextMenuLongPressTimer = setTimeout(function() {
-			    console.log("context_menu_flyout contextmenu event", event);
+			    noisy_log("context_menu_flyout contextmenu event", event);
 				if (window.DRAGGING || $(".pause_click").length > 0) {
 					return;
 				}
@@ -3944,7 +3972,7 @@ function token_menu() {
 		    
 		  });
 		$("#tokens").on("contextmenu", ".VTTToken, .door-button", function(event) {
-			console.log("context_menu_flyout contextmenu event", event);
+			noisy_log("context_menu_flyout contextmenu event", event);
 			event.preventDefault();
 			event.stopPropagation();
 			if (window.DRAGGING || $(".pause_click").length > 0) {
@@ -3997,20 +4025,19 @@ function deselect_all_tokens(ignoreVisionUpdate = false) {
 	$(`:is(#combat_area, #combat_area_carousel) tr`).toggleClass('selected-token', false);
 	remove_selected_token_bounding_box();
 	window.CURRENTLY_SELECTED_TOKENS = [];
-
+	if(window.SelectedTokenVision == true && $('#selected_token_vision .ddbc-tab-options__header-heading--is-active').length==0){
+        window.SelectedTokenVision = false;
+        if(window.DM)
+            do_check_token_visibility();       
+    }
 	if(ignoreVisionUpdate == false){
 		check_darkness_value();
-	   	if($('#selected_token_vision .ddbc-tab-options__header-heading--is-active').length==0){
-	   		if(window.SelectedTokenVision == true){
-	   			window.SelectedTokenVision = false;
-	   			if(window.DM)
-            		do_check_token_visibility(); 
-	   		}
-	   		
-	   	}	   	
-  		
-  	
+	   	if(window.SelectedTokenVision == true && $('#selected_token_vision .ddbc-tab-options__header-heading--is-active').length==0){
+	   		window.SelectedTokenVision = false;
+	   	}	  
+		throttleLight();
   	}
+
 }
 
 function token_health_aura(hpPercentage, auraType) {
@@ -4154,7 +4181,8 @@ function setAudioAura (token, options){
 
 function setTokenAuras (token, options) {
 	if (!options.aura1 || options.id.includes('exampleToken')) return;
-
+	const tokenId = options.id.replaceAll("/", "").replaceAll('.', '');
+	let existingAura = token.parent().parent().find("#aura_" + tokenId);
 	const innerAuraSize = options.aura1.feet.length > 0 ? (options.aura1.feet / parseFloat(window.CURRENT_SCENE_DATA.fpsq)) * window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.scale_factor  : 0;
 	const outerAuraSize = options.aura2.feet.length > 0 ? (options.aura2.feet / parseFloat(window.CURRENT_SCENE_DATA.fpsq)) * window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.scale_factor  : 0;
 	if ((innerAuraSize > 0 || outerAuraSize > 0) && options.auraVisible) {
@@ -4165,15 +4193,15 @@ function setTokenAuras (token, options) {
 		const auraBg = `radial-gradient(${options.aura1.color} ${auraRadius}px, ${options.aura2.color} ${auraRadius}px ${totalAura}px);`;
 		const totalSize = (2 * totalAura);
 		const absPosOffset = (options.size/window.CURRENT_SCENE_DATA.scale_factor - totalSize) / 2;
-		const tokenId = options.id.replaceAll("/", "").replaceAll('.', '');
-		const showAura = (token.parent().parent().find("#aura_" + tokenId).length > 0) ? token.parent().parent().find("#aura_" + tokenId).css('display') : '';
+		
+		const showAura = (existingAura.length > 0) ? existingAura.css('display') : '';
 		
 		const color1Values = options.aura1.color.replace(/[a-zA-Z\(\)\s]/g, '').split(',').splice(0, 3).join();
 		const color2Values = options.aura2.color.replace(/[a-zA-Z\(\)\s]/g, '').split(',').splice(0, 3).join();
 		const opacity1Value = options.aura1.color.replace(/[a-zA-Z\(\)\s]/g, '').split(',').splice(3, 1);
 		const opacity2Value = options.aura2.color.replace(/[a-zA-Z\(\)\s]/g, '').split(',').splice(3, 1);
 		
-
+		
 
 		const auraStyles = `width:${totalSize}px;
 							height:${totalSize}px;
@@ -4193,57 +4221,57 @@ function setTokenAuras (token, options) {
 							--radius2: ${totalAura}px;
 							--rotation: ${options.rotation}deg;
 							`;
-		if (token.parent().parent().find("#aura_" + tokenId).length > 0) {
-			token.parent().parent().find("#aura_" + tokenId).attr("style", auraStyles);	
+		if (existingAura.length > 0) {
+			existingAura.attr("style", auraStyles);	
 		} else {
-			const auraElement = $(`<div class='aura-element' id="aura_${tokenId}" data-id='${token.attr("data-id")}' style='${auraStyles}' />`);
-			auraElement.contextmenu(function(){return false;});
-			$("#scene_map_container").prepend(auraElement);
+			existingAura = $(`<div class='aura-element' id="aura_${tokenId}" data-id='${token.attr("data-id")}' style='${auraStyles}' />`);
+			existingAura.contextmenu(function(){return false;});
+			$("#scene_map_container").prepend(existingAura);
 		}
 		if(window.DM){
-			options.hidden ? token.parent().parent().find("#aura_" + tokenId).css("opacity", 0.5)
-			: token.parent().parent().find("#aura_" + tokenId).css("opacity", 1)
+			options.hidden ? existingAura.css("opacity", 0.5)
+			: existingAura.css("opacity", 1)
 		}
 		else{
-			(options.hidden || (options.hideaura && !token.attr("data-id").includes(window.PLAYER_ID)) || showAura == 'none') ? token.parent().parent().find("#aura_" + tokenId).toggleClass('notVisible', true)
-				: token.parent().parent().find("#aura_" + tokenId).toggleClass('notVisible', false);
+			(options.hidden || (options.hideaura && !token.attr("data-id").includes(window.PLAYER_ID)) || showAura == 'none' || token.hasClass('notVisible')) ? existingAura.toggleClass('notVisible', true)
+				: existingAura.toggleClass('notVisible', false);
 		}
-		const currAura = token.parent().parent().find("#aura_" + tokenId);
+	
 		if (window.ON_SCREEN_TOKENS[options.id] == undefined)
 			window.ON_SCREEN_TOKENS[options.id] = {};
-		window.ON_SCREEN_TOKENS[options.id].onScreenAura = currAura; 
+		window.ON_SCREEN_TOKENS[options.id].onScreenAura = existingAura; 
 		if(options.animation?.aura && options.animation?.aura != 'none'){
 			if(options.animation.customAuraMask != undefined){
 				if(options.animation.customAuraRotate == true){
-					currAura.attr('data-animation', 'aurafx-rotate')
+					existingAura.attr('data-animation', 'aurafx-rotate')
 					if (options.animation.customAuraRpm) {
-						currAura.css('--custom-rotate-rpm', `${60/options.animation.customAuraRpm}s`)
+						existingAura.css('--custom-rotate-rpm', `${60/options.animation.customAuraRpm}s`)
 					}
 				}
 				else{
-					currAura.attr('data-animation', '')
+					existingAura.attr('data-animation', '')
 				}
-				currAura.attr('data-custom-animation', 'true')
+				existingAura.attr('data-custom-animation', 'true')
 
-				currAura.css('--custom-mask-image', `url('${parse_img(options.animation.customAuraMask)}')`)
+				existingAura.css('--custom-mask-image', `url('${parse_img(options.animation.customAuraMask)}')`)
 				if (options.animation.customAuraMask?.includes('above-bucket-not-a-url')){
 					setAvttFilePickerCssVar({
 						var: '--custom-mask-image', 
-						target: currAura,
+						target: existingAura,
 						url: options.animation.customAuraMask
 					})
 				}
 			}
 			else{
-				currAura.attr('data-animation', options.animation.aura)
+				existingAura.attr('data-animation', options.animation.aura)
 			}				
 		}
 		else{
-			currAura.removeAttr('data-animation')
+			existingAura.removeAttr('data-animation')
 		}
+		existingAura.toggleClass('square-aura-element', options.squareAura == true);
 	} else {
-		const tokenId = token.attr("data-id").replaceAll("/", "");
-		token.parent().parent().find("#aura_" + tokenId).remove();
+		existingAura.remove();
 	}
 }
 
@@ -4330,7 +4358,7 @@ function setTokenLight (token, options) {
 							--rotation: ${options.rotation}deg;
 							`;
 
-
+		
 
 		const visionRadius = visionSize ? (visionSize + (optionsSize / 2)) : 0;
 		const visionBg = `radial-gradient(${options.vision?.color ?? `rgba(142, 142, 142, 1)`} ${visionRadius}px, #00000000 ${visionRadius}px)`;
@@ -4389,26 +4417,26 @@ function setTokenLight (token, options) {
 		const lightElement = $(`
 			<div class='aura-clip-container'>
 				<div class='aura-element-container-clip light' style='clip-path: ${clippath};' id='${options.id}'>
-					<div class='aura-element' id="light_${tokenId}" data-id='${options.id}' style='${lightStyles}'></div>
+					<div class='aura-element ${options.squareLight ? 'square-aura-element' : ''}' id="light_${tokenId}" data-id='${options.id}' style='${lightStyles}'></div>
 				</div>
 				
 
 			</div>
 			<div class='aura-clip-container vision'>
 				<div class='aura-element-container-clip vision darkvision' style='clip-path: ${clippath};' id='${options.id}'>
-					<div class='aura-element darkvision' id="vision_${tokenId}" data-id='${options.id}' style='${visionStyles}'></div>
+					<div class='aura-element darkvision ${options.squareLight ? 'square-aura-element' : ''}' id="vision_${tokenId}" data-id='${options.id}' style='${visionStyles}'></div>
 				</div>
 			</div>
 			${parseInt(options.devilsight.feet) > 0 ? `
 				<div class='aura-clip-container devilsight vision'>
 					<div class='aura-element-container-clip vision devilsight' style='clip-path: ${devilsightClip};' id='${options.id}'>
-						<div class='aura-element devilsight' id="vision_devilsight_${tokenId}" data-id='${options.id}' style='${devilsightStyles}'></div>
+						<div class='aura-element devilsight ${options.squareLight ? 'square-aura-element' : ''}' id="vision_devilsight_${tokenId}" data-id='${options.id}' style='${devilsightStyles}'></div>
 					</div>
 				</div>` : ""
 			}
 			${parseInt(options.truesight.feet) > 0 ? `<div class='aura-clip-container truesight vision'>
 				<div class='aura-element-container-clip vision truesight' style='clip-path: ${devilsightClip};' id='${options.id}'>
-					<div class='aura-element truesight' id="vision_truesight_${tokenId}" data-id='${options.id}' style='${truesightStyles}'></div>
+					<div class='aura-element truesight ${options.squareLight ? 'square-aura-element' : ''}' id="vision_truesight_${tokenId}" data-id='${options.id}' style='${truesightStyles}'></div>
 					</div>
 				</div>` : ""
 			}
@@ -4557,6 +4585,8 @@ function setTokenBase(token, options) {
 			}
 			else{
 				token.toggleClass('labelToken', true);
+				options.revealname = true;
+				options.alwaysshowname = true;
 			}
 		}
 
@@ -4590,8 +4620,7 @@ function setTokenBase(token, options) {
 		token.toggleClass("inPersonMini", true);
 	}
 
-	
-	token.toggleClass('labelToken', (options.tokenStyleSelect == 'f' || options.alwaysshowname == true ));
+	token.toggleClass('labelToken', (options.tokenStyleSelect == 'labelToken' || options.alwaysshowname == true ));
 
 
 	if(options.tokenStyleSelect != 'definitelyNotAToken'){

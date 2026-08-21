@@ -80,7 +80,9 @@ function standard_dice_context_menu(expression, modifierString = "", action = un
         diceRoll.sendToOverride = dcm.checkedRow(0)?.title?.replace(/\s+/g, "");
      
         window.diceRoller.roll(diceRoll);
-        
+        $(".roll-mod-container").removeClass("show");
+        $(".dice-roller > div img[data-count]").removeAttr("data-count");
+        $(".dice-roller > div span").remove();
     });
 
     return menu;
@@ -154,7 +156,9 @@ function damage_dice_context_menu(diceExpression, modifierString = "", action = 
             const doubleDamage = rollAsIndex === 2 ? 3 : undefined;
 
             window.diceRoller.roll(diceRoll, undefined, rollAsIndex == 2 ? 3 : undefined, undefined, spellSave, damageType, doubleDamage);
-            
+            $(".roll-mod-container").removeClass("show");
+            $(".dice-roller > div img[data-count]").removeAttr("data-count");
+            $(".dice-roller > div span").remove();
         });
 
     return menu;
@@ -197,7 +201,7 @@ class DiceContextMenu {
                 </div>
 	        </div>
         `);
-        html.off('click').on("click", function (clickEvent) {
+        html.off('pointerdown').on("pointerdown", function (clickEvent) {
             $(".dcm-backdrop").remove();
         });
         html.off('contextmenu').on('contextmenu', function(e) {
@@ -212,7 +216,8 @@ class DiceContextMenu {
         });
 
         let rollButton = $(`<button class="dcm-roll-button" tabIndex="0" type="button">Roll</button>`);
-        rollButton.on("click", function(rollButtonClick) {
+        rollButton.off("pointerdown.click touchstart.click").on("pointerdown.click touchstart.click", function(rollButtonClick) {
+            rollButtonClick.preventDefault();
             window.dcm.rollDice();
         });
         sectionList.after(rollButton)
@@ -277,14 +282,13 @@ class DiceContextMenuSection {
         const row = {
             build: function(){
                 let rowInput = $(`<input type='text' class='dcmExpressionRow' value='${expression}'></input>`);
-                rowInput.on('click', function(e){
-                    e.preventDefault();
+                rowInput.on('pointerdown touchstart', function(e){
                     e.stopPropagation();
                 })
-                rowInput.on("keypress change blur", function(e) {
+                rowInput.on("change blur input keydown", function(e) {
                     inputCallback($(this).val());
                     if (e.key === "Enter") {      
-                        $('.dcm-roll-button').click();
+                        $('.dcm-roll-button').trigger('pointerdown');
                     }
                 });
                 let rowHtml = $(`
@@ -332,9 +336,10 @@ class DiceContextMenuSection {
                     </div>
                 `) 
 
-                diceRoller.off('click.extraDice').on('click.extraDice', '>div>div[alt]', function(e){
+                diceRoller.off('pointerdown.extraDice').on('pointerdown.extraDice', '>div>div[alt]', function(e){
                     e.preventDefault();
                     e.stopPropagation();
+                    if(e.button == 2) return;
                     const targetDie = e.currentTarget;
                     let dataCount = $(targetDie).attr("data-count");
                     $(targetDie).parent().find("span").remove();
@@ -400,8 +405,6 @@ class DiceContextMenuSection {
 
     }
 
-       
-
     build() {
         let sectionHtml = $(`
             <ul class="dcm-section" data-index="${this.index}">
@@ -441,18 +444,21 @@ class DiceContextMenuRow {
                 <div class="dcm-row-title">
                     <span>${this.title}</span>
                 </div>
+                ${svg_checkmark()}
             </div>
         `);
-        if (this.isChecked) {
-            rowHtml.append(svg_checkmark());
+        if (!this.isChecked) {
+            rowHtml.find(".dcm-checkmark").css("visibility", "hidden");
         }
-        rowHtml.on("click", function(rowClickEvent) {
+     
+        rowHtml.on("pointerdown touchstart", function(rowClickEvent) {
+            rowClickEvent.preventDefault();
             rowClickEvent.stopPropagation();
             let clickedRow = $(rowClickEvent.currentTarget);
             let clickedRowIndex = clickedRow.attr("data-index");
             let clickedSectionIndex = clickedRow.attr("data-section-index");
-            clickedRow.parent().find(".dcm-checkmark").remove();
-            clickedRow.append(svg_checkmark());
+            clickedRow.parent().find(".dcm-checkmark").css("visibility", "hidden");
+            clickedRow.find(".dcm-checkmark").css("visibility", "visible");   
             window.dcm.didClickRow(clickedSectionIndex, clickedRowIndex);
         });
         return rowHtml;

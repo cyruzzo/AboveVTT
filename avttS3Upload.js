@@ -7306,7 +7306,7 @@ function refreshFiles(
                     } else if (fileType === avttFilePickerTypes.AUDIO) {
                       tinymce.activeEditor.insertContent(`<audio controls src="${link}"></audio>`);
                     } else {
-                      tinymce.activeEditor.insertContent(`<iframe width='100%' height='400' src='${window.EXTENSION_PATH}iframe.html?src=${link}'
+                      tinymce.activeEditor.insertContent(`<iframe width='100%' height='400' src='${window.EXTENSION_PATH}iframe.html?src=${link.replace(/'/g, '%27')}'
                         allowfullscreen
                         webkitallowfullscreen
                         mozallowfullscreen></iframe>`);

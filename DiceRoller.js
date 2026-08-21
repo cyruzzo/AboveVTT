@@ -1,8 +1,8 @@
 /** DiceRoller.js - DDB dice rolling functions */
 
-const allDiceRegex = /\d+d(?:100|20|12|10|8|6|4)((?:kh|kl|ro(<|<=|>|>=|=)|min)\d+)*|^\d+|^[-+]?\d+[+-]\d+$/gi; // ([numbers]d[diceTypes]kh[numbers] or [numbers]d[diceTypes]kl[numbers]) or [numbers]d[diceTypes]
-const rpgDiceRegex = /\d+d(?:\d+)((?:kh|kl|ro(<|<=|>|>=|=)|min)\d+)*|^\d+|^[-+]?\d+[+-]\d+$/gi; 
-const validExpressionRegex = /^[dkhlromin<=>\s\d+\-\(\)]*$/gi; // any of these [d, kh, kl, spaces, numbers, +, -] // Should we support [*, /] ?
+const allDiceRegex = /\d+d(?:100|20|12|10|8|6|4)((?:kh|kl|ro(<|<=|>|>=|=)|min)\d+)*|^\d+|^([-+]?\d+)+$/gi; // ([numbers]d[diceTypes]kh[numbers] or [numbers]d[diceTypes]kl[numbers]) or [numbers]d[diceTypes]
+const rpgDiceRegex = /\d+d(?:\d+)((?:kh|kl|ro(<|<=|>|>=|=)|min)\d+)*|^\d+|^([-+]?\d+)+$/gi; 
+const validExpressionRegex = /^[dkhlromin<=>\s\d+\-\(\)]+$/gi; // any of these [d, kh, kl, spaces, numbers, +, -] // Should we support [*, /] ?
 const validModifierSubstitutions = /(?<!\w)(str|dex|con|int|wis|cha|pb)(?!\w)/gi // case-insensitive shorthand for stat modifiers as long as there are no letters before or after the match. For example `int` and `STR` would match, but `mint` or `strong` would not match.
 const diceRollCommandRegex = /^\/(r|roll|save|hit|dmg|skill|heal)\s/gi; // matches only the slash command. EG: `/r 1d20` would only match `/r`
 const multiDiceRollCommandRegex = /\/(ir|r|roll|save|hit|dmg|skill|heal) [^\/]*/gi; // globally matches the full command. EG: `note: /r 1d20 /r2d4` would find ['/r 1d20', '/r2d4']
@@ -21,8 +21,7 @@ class DiceRoll {
     #calculatedExpressionConstant = 0;
     get calculatedConstant() { return this.#calculatedExpressionConstant; }
 
-    #separatedDiceToRoll = {};
-    get diceToRoll() { return this.#separatedDiceToRoll; }
+
 
     // these can be changed after the object is constructed.
 
@@ -48,7 +47,7 @@ class DiceRoll {
             if (validRollTypes.includes(alteredRollType)) {
                 this.#diceRollType = alteredRollType;
             } else {
-                console.warn(`not setting rollType. Expected one of ${JSON.stringify(validRollTypes)}, but received "${newRollType}"`);
+                noisy_log(2, `not setting rollType. Expected one of ${JSON.stringify(validRollTypes)}, but received "${newRollType}"`);
             }
         } catch (error) {
             console.warn("DiceRoll set rollType failed", error);
@@ -129,10 +128,22 @@ class DiceRoll {
      * @param entityId {string|undefined} the id of the entity associated with this roll. If {entityType} is "character" this should be the id for that character. If {entityType} is "monster" this should be the id for that monster. If {entityType} is "user" this should be the id for that user.
      * @param sendToOverride {string|undefined} if undefined, the roll will go to whatever the gamelog is set to.
      */
-    constructor(expression, action = undefined, rollType = undefined, name = undefined, avatarUrl = undefined, entityType = undefined, entityId = undefined, sendToOverride = undefined, damageType = undefined) {
+    constructor(expression, action = undefined, rollType = undefined, name = window.PLAYER_NAME || "THE DM", avatarUrl = window.PLAYER_IMG, entityType = undefined, entityId = undefined, sendToOverride = undefined, damageType = undefined, spellSave = undefined) {
 
-        let parsedExpression = expression.toLowerCase().replaceAll(/\s+/g, "").replaceAll(/^(d\d+)|([+-])(d\d+)/g, '$21$1$3');; // remove all spaces and 1's to d6 -> 1d6, d8 -> 1d8 etc.
-
+        let parsedExpression = expression.toLowerCase().replaceAll(/\s+/g, "").replaceAll(/^(d\d+)|([+-])(d\d+)/g, '$21$1$3'); // remove all spaces and 1's to d6 -> 1d6, d8 -> 1d8 etc.
+        $(document).off('change.dicevisibility').on('change.dicevisibility', 'input[id|="dice-visibility-option"]', (e)=>{
+           // This is a workaround resolve an issue with DDB bug. They write the new data to local storage then override it immediately with initally loaded data.
+            const userData = JSON.parse(localStorage.getItem('userDiceData'))
+            if(userData){
+                const target = $(e.currentTarget);
+                const targetId = target.attr('id').split('-');
+                const newVisibility = targetId[targetId.length-1];
+                userData.state[window.MB.userid].settings.visibility = newVisibility;
+                setTimeout(() => {
+                    localStorage.setItem('userDiceData', JSON.stringify(userData));
+                }, 250)
+            }
+        })
         if (!parsedExpression.match(validExpressionRegex)) {
             console.warn("Not parsing expression because it contains an invalid character", expression);          
             chat_command_error();
@@ -158,6 +169,7 @@ class DiceRoll {
         this.rollType = rollType;
         this.sendToOverride = sendToOverride || gamelog_send_to_text();
         this.damageType = damageType;
+        this.spellSave = spellSave;
         if (name) this.name = name;
         if (avatarUrl) this.avatarUrl = avatarUrl;
         if (entityType) this.entityType = entityType;
@@ -179,21 +191,7 @@ class DiceRoll {
             }
         }
 
-        // figure out how many of each DiceType we need to roll
-        this.#individualDiceExpressions.forEach(diceExpression => {
-            let diceType = diceExpression.match(/d\d+/g);
-            let numberOfDice = parseInt(diceExpression.split("d")[0]);
-            if (diceExpression.includes("ro")) {
-                console.debug("diceExpression: ", diceExpression, ", includes reroll so we're doubling the number of dice for", diceType, ", numberOfDice before doubling: ", numberOfDice);
-                numberOfDice = numberOfDice * 2;
-            }
-            console.debug("diceExpression: ", diceExpression, ", diceType: ", diceType, ", numberOfDice: ", numberOfDice);
-            if (this.#separatedDiceToRoll[diceType] === undefined) {
-                this.#separatedDiceToRoll[diceType] = numberOfDice;
-            } else {
-                this.#separatedDiceToRoll[diceType] += numberOfDice;
-            }
-        });
+
     }
 
     /**
@@ -209,12 +207,12 @@ class DiceRoll {
         let slashCommand = modifiedSlashCommand.match(diceRollCommandRegex)?.[0];
         let expression = modifiedSlashCommand.replace(diceRollCommandRegex, "").match(allowedExpressionCharactersRegex)?.[0];
         let action = modifiedSlashCommand.replace(diceRollCommandRegex, "").replace(allowedExpressionCharactersRegex, "");
-        console.debug("DiceRoll.fromSlashCommand text: ", slashCommandText, ", slashCommand:", slashCommand, ", expression: ", expression, ", action: ", action);
-        let rollType = undefined;
-        let damageType = undefined;
+        noisy_log("DiceRoll.fromSlashCommand text: ", slashCommandText, ", slashCommand:", slashCommand, ", expression: ", expression, ", action: ", action);
+        let rollType = undefined, damageType = undefined, spellSave = undefined;
+        
         if (slashCommand.startsWith("/r")) {
             // /r and /roll allow users to set both the action and the rollType by separating them with `:` so try to parse that out
-            [action, rollType] = action.split(":") || [undefined, undefined];
+            [action, rollType, spellSave] = action.split(":") || [undefined, undefined, undefined];
             const damageRegex = /([\s]+)?damage/gi;
             if(rollType?.match(damageRegex)){
                 [damageType, rollType] = [rollType.replaceAll(damageRegex, ''), 'damage'];
@@ -222,7 +220,7 @@ class DiceRoll {
         } else if (slashCommand.startsWith("/hit")) {
             rollType = "to hit";
         } else if (slashCommand.startsWith("/dmg")) {
-            [action, damageType] = action.split(":") || [action, undefined];
+            [action, damageType, spellSave] = action.split(":") || [action, undefined, undefined];
             rollType = "damage";
         } else if (slashCommand.startsWith("/skill")) {
             rollType = "check";
@@ -231,7 +229,7 @@ class DiceRoll {
         } else if (slashCommand.startsWith("/heal")) {
             rollType = "heal";
         }
-        return new DiceRoll(expression, action, rollType, name, avatarUrl, entityType, entityId, sendToOverride, damageType);
+        return new DiceRoll(expression, action, rollType, name, avatarUrl, entityType, entityId, sendToOverride, damageType, spellSave);
     }
 }
 function getRollData(rollButton){
@@ -268,6 +266,7 @@ function getRollData(rollButton){
       rollTitle = $rollButton.attr('data-actiontype');
       rollType = $rollButton.attr('data-rolltype');
     }
+
     if($rollButton.hasClass('avtt-roll-formula-button')){
       let slashCommand = DiceRoll.fromSlashCommand($rollButton.attr('data-slash-command'))
       expression = slashCommand.expression;
@@ -337,6 +336,7 @@ function getRollData(rollButton){
     const followingText = $rollButton[0].nextSibling?.textContent?.trim()?.split(' ')[0]
     damageType = followingText && window.ddbConfigJson.damageTypes.some(d => d.name.toLowerCase() == followingText.toLowerCase()) ? followingText : damageType;     
 
+    if(followingText && followingText.toLowerCase().match(/^\s*heal(ing)?/i)) rollType = 'Heal';
 
     const spellSave = window.diceRoller.getSpellSave(rollButton);
 
@@ -373,9 +373,9 @@ function adjustRollWithRollBuffs(expression, rollType, $rollButton){
     const rollBuffKey = rollTypeKeys[rollType]?.buff || rollType;
     if(charRollKey != undefined ){
         const addToRoll = window.CHARACTER_AVTT_SETTINGS?.[charRollKey]?.replace('PB', getPB());// used to check for custom entered numbers in character roll settings
-        const addToRollValid = (addToRoll?.match(allDiceRegex));
+        const addToRollValid = (addToRoll?.match(validExpressionRegex));
         if(addToRollValid)
-            expression = `${expression}${addToRoll.match(/[+-]/g) ? '' : '+'}${addToRoll}`;
+            expression = `${expression}${addToRoll.match(/^[+-]/g) ? '' : '+'}${addToRoll}`;
     }
 
     if (typeof rollBuffs == 'undefined') 
@@ -398,17 +398,19 @@ function adjustRollWithRollBuffs(expression, rollType, $rollButton){
 
         const multiReplaceRegex = targetMultiOptions?.replace;
         const multiReplaceSelector = targetMultiOptions?.replaceType
-        const validMultiButton = (multiReplaceSelector == undefined || multiReplaceSelector?.[rollType] != undefined && $rollButton.closest(multiReplaceSelector[rollType]).length > 0);
+        const validMultiButton = (multiReplaceSelector == undefined || multiReplaceSelector?.[rollBuffKey] != undefined && $rollButton.closest(multiReplaceSelector[rollBuffKey]).length > 0);
         
         const singleReplaceRegex = singleTarget?.replace;
         const singleReplaceSelector = singleTarget?.replaceType;
-        const validSingleButton = singleReplaceSelector == undefined || (singleReplaceSelector?.[rollType] != undefined && $rollButton.closest(singleReplaceSelector[rollType]).length > 0);
+        const validSingleButton = singleReplaceSelector == undefined || (singleReplaceSelector?.[rollBuffKey] != undefined && $rollButton.closest(singleReplaceSelector[rollBuffKey]).length > 0);
        
         if (multiReplaceRegex != undefined && validMultiButton) {
-            expression = `${expression.replace(multiReplaceRegex, targetMultiOptions.newRoll)}`   
+            const newRoll = typeof targetMultiOptions?.newRoll === 'function' ? targetMultiOptions.newRoll(expression) : targetMultiOptions?.newRoll;
+            expression = `${expression.replace(multiReplaceRegex, newRoll)}`   
         }
         else if (!isMultiOption && singleReplaceRegex != undefined && validSingleButton){
-            expression = `${expression.replace(singleReplaceRegex, singleTarget.newRoll)}` 
+            const newRoll = typeof singleTarget?.newRoll === 'function' ? singleTarget.newRoll(expression) : singleTarget?.newRoll;
+            expression = `${expression.replace(singleReplaceRegex, newRoll)}` 
         }
     }
     const PB = getPB();
@@ -495,9 +497,7 @@ class DiceRoller {
         self.#timeoutId = setTimeout(function () {
             clearTimeout(self.#timeoutId);
             self.#timeoutId = undefined;
-            const newDice = $("[class*='DiceContainer_button']").length > 0
-            if(newDice)
-                self.sendNewFulfilled()
+            self.sendNewFulfilled()
             console.warn("DiceRoller timed out after 5 seconds! Sending message");
         }, self.timeoutDuration);
     }
@@ -526,7 +526,7 @@ class DiceRoller {
             }
             
             let self = this;
-
+            
             let msgdata = {}
             diceRoll.expression = diceRoll.expression.replaceAll(/$\+0|\+0(\D)/gi, '$1')
             let roll = new rpgDiceRoller.DiceRoll(diceRoll.expression); 
@@ -539,7 +539,7 @@ class DiceRoller {
             let critSuccess = false;
             let critFail = false;
 
-            let results = roll.output.split(/[\:=]/g)[1].split(/[+-]/g);
+            let results = roll.output.split(/(?<!d\d+ro[<>]?)[\:=]/g)[1].split(/[+-]/g);
             let diceNotations = roll.notation.split(/[+-]/g);
 
             if(!diceNotations[diceNotations.length-1].includes('d')){
@@ -570,18 +570,17 @@ class DiceRoller {
             }
             let critClass = `${critSuccess && critFail ? 'crit-mixed' : critSuccess ? 'crit-success' : critFail ? 'crit-fail' : ''}`
 
-            const ddb3dDiceShareToggle = getDdb3dDiceShareToggle();
+            const ddb3dDiceShareToggle = getDdb3dDiceShareToggle() != 'disabled';
+
+            if(spellSave == undefined){
+                spellSave = this.#pendingSpellSave ?? diceRoll.spellSave;
+            }
+            if(damageType == undefined){
+                damageType = this.#pendingDamageType ?? diceRoll.damageType; 
+            }
 
             if (window.EXPERIMENTAL_SETTINGS['rpgRoller'] == true || ((is_abovevtt_page() || window.sendToTab != undefined) && !ddb3dDiceShareToggle)){
-                if(spellSave == undefined && this.#pendingSpellSave != undefined){
-                    spellSave = this.#pendingSpellSave;
-                }
-                if(damageType == undefined && this.#pendingDamageType != undefined){
-                    damageType = this.#pendingDamageType;
-                }
-                else if(damageType == undefined && diceRoll.damageType != undefined){
-                    damageType = diceRoll.damageType;
-                }
+                           
                 let doubleCrit = false;
                 let output = roll.output.replace(regExpression, '');
                 let total = roll.total;
@@ -637,15 +636,7 @@ class DiceRoller {
                
             }                         
             else{
-                if(spellSave == undefined && this.#pendingSpellSave != undefined){
-                    spellSave = this.#pendingSpellSave;
-                }
-                if(damageType == undefined && this.#pendingDamageType != undefined){
-                    damageType = this.#pendingDamageType;
-                }
-                else if(damageType == undefined && diceRoll.damageType != undefined){
-                    damageType = diceRoll.damageType;
-                }
+
                 let rollData = {
                     roll: roll,
                     expression: diceRoll.expression,
@@ -681,7 +672,7 @@ class DiceRoller {
             this.#pendingDamageType = damageType;
             this.#pendingCrit = forceCritType;
             this.#pendingSendTo = diceRoll.sendToOverride;
-                if (ddb3dDiceShareToggle && !window.EXPERIMENTAL_SETTINGS['rpgRoller'] && !msgdata?.rollData?.expression?.includes('d')) {
+            if (ddb3dDiceShareToggle && !window.EXPERIMENTAL_SETTINGS['rpgRoller'] && !msgdata?.rollData?.expression?.includes('d')) {
                     setTimeout(() => {
                         const message = self.send_ddb_dice_message(msgdata.rollData.expression, msgdata.player, msgdata.img, msgdata.rollData.rollType, msgdata.rollData.damageType, msgdata.rollData.rollTitle, diceRoll.sendToOverride)
                         self.#resetVariables();
@@ -700,7 +691,7 @@ class DiceRoller {
                 }, 200)
                 return true;
             }
-            else if ((!is_abovevtt_page() && window.sendToTab != undefined) || is_gamelog_popout() ){
+            if ((!is_abovevtt_page() && window.sendToTab != undefined) || is_gamelog_popout() ){
                 if(window.sendToTab == undefined)
                     window.sendToTab = isNaN(Number(window.PLAYER_ID)) ? false : Number(window.PLAYER_ID);
                     setTimeout(function(){
@@ -716,23 +707,15 @@ class DiceRoller {
                     self.nextRoll(undefined, critRange, critType)
                 }, 200)
                 return true;
-            } else if (!is_abovevtt_page() && !ddb3dDiceShareToggle && window.MB?.ws != undefined){
-              setTimeout(()=>{
-                  const message = self.send_ddb_dice_message(msgdata.rollData.expression, msgdata.player, msgdata.img, msgdata.rollData.rollType, msgdata.rollData.damageType, msgdata.rollData.rollTitle, diceRoll.sendToOverride)
-                  self.#resetVariables();
-                  self.nextRoll(message, critRange, critType)
-              }, 200)
-              return true;
-            }             
-
-            console.group("DiceRoller.parseAndRoll");
-            console.log("attempting to parse diceRoll", diceRoll);
-
-
-
-            this.clickDiceButtons(diceRoll);
-            console.groupEnd();
+            } 
+            
+            const message = self.send_ddb_dice_message(msgdata.rollData.expression, msgdata.player, msgdata.img, msgdata.rollData.rollType, msgdata.rollData.damageType, msgdata.rollData.rollTitle, diceRoll.sendToOverride)
+            self.#resetVariables();
+            self.nextRoll(message, critRange, critType)
+            
             return true;
+                       
+
         } catch (error) {
             console.warn("failed to parse and send expression as DDB roll; expression: ", diceRoll.expression, error);
             this.#resetVariables();
@@ -834,77 +817,17 @@ class DiceRoller {
         }
 
     }
-    /**
-     * clicks the DDB dice and then clicks the roll button
-     * @param diceRoll {DiceRoll} the DiceRoll object to roll
-     */
-    async clickDiceButtons(diceRoll, retries=1) {
-        if (retries > 5){
-            console.warn(`clickDiceButtons retried dice roll 5 times and failed`, diceRoll);
-            this.#resetVariables();
-            return;
-        }
-        if (diceRoll === undefined) {
-            console.warn("clickDiceButtons was called without a diceRoll object")
-            return;
-        }
-        if(!is_abovevtt_page() && !window.unlockSidebar){
-            const lockSidebarButton = $(".ct-sidebar__control--unlock, [class*='styles_controls'] [aria-label='Unlocked']");
-            window.unlockSidebar = lockSidebarButton.length > 0;
-            await lockSidebarButton.click();
-        }
-        $('[data-floating-ui-portal], .roll-mod-container').addClass('hidden');
-        if ($(".dice-toolbar").hasClass("rollable") || $(`[class*='DiceContainer_customDiceRollOpen']`).length>0) {
-            // clear any that are already selected so we don't roll too many dice
-            await $(".dice-toolbar__dropdown-die, [data-dd-action-name='Roll Dice Popup > Clear Dice']").click();
-        }
-        
-        if (($(".dice-toolbar__dropdown").length > 0 && !$(".dice-toolbar__dropdown").hasClass("dice-toolbar__dropdown-selected")) || ($("[class*='DiceContainer_button']").length > 0 && $(`[class*='DiceContainer_customDiceRollOpen']`).length == 0)) {
-            // make sure it's open
-            await $(".dice-toolbar__dropdown-die, [class*='DiceContainer_button']").click();
-        }
-        if ($(`.dice-die-button, [class*='AnchoredPopover_wrapper'] [class*='_diceContainer']`).length == 0){
-            const self = this;
-            setTimeout(function(){
-                self.clickDiceButtons(diceRoll, retries + 1)
-            }, 60)
-            return;
-        }
-        for (let diceType in diceRoll.diceToRoll) {
-            let numberOfDice = diceRoll.diceToRoll[diceType];
-            for (let i = 0; i < numberOfDice; i++) {
-                await $(`.dice-die-button[data-dice='${diceType}'], [class*='AnchoredPopover_wrapper'] #${diceType}`).click();
-            }
-        }
 
-
-        if ($(".dice-toolbar").hasClass("rollable")) {
-            console.log("diceRoll.sendToOverride", diceRoll.sendToOverride)
-            await $(".dice-toolbar__target").children().first().click();
-        }
-        if ($(`[class*='DiceContainer_button']`).length>0) {    
-            await $(`[data-dd-action-name="Roll Dice Popup > Roll Dice"]`).click();
-        }  
-        clearTimeout(this.diceRollButtonHide);
-        this.diceRollButtonHide = setTimeout(()=>{
-            $('[data-floating-ui-portal], .roll-mod-container').removeClass('hidden');
-            if(!is_abovevtt_page() && window.unlockSidebar == true){
-                delete window.unlockSidebar;
-                $(".ct-sidebar__control--unlock, [class*='styles_controls'] [aria-label='Locked']").click();
-            }
-        }, 500)
-
-    }
-    send_ddb_dice_message(expression, displayName, imgUrl, rollType = "roll", damageType, actionType = "custom", sendTo = "") {
+    send_ddb_dice_message(expression, displayName = window.PLAYER_NAME, imgUrl, rollType = "roll", damageType, actionType = "custom", sendTo = "") {
         let diceRoll = new DiceRoll(expression);
         diceRoll.action = actionType;
         diceRoll.rollType = rollType;
-        diceRoll.name = displayName == true ? 'THE DM' : displayName;
+        diceRoll.name = displayName == true ? 'THE DM' : /^spectator-[\d\w]+-[\d\w]+/gi.test(displayName) ?  'Spectator' : displayName;
         diceRoll.avatarUrl = imgUrl;
         // diceRoll.entityId = monster.id;
         // diceRoll.entityType = monsterData.id;
-
-        console.log("with values", expression, displayName, imgUrl, rollType, damageType, actionType, sendTo)
+        
+        noisy_log("with values", expression, displayName, imgUrl, rollType, damageType, actionType, sendTo)
 
 
         try {
@@ -927,7 +850,7 @@ class DiceRoller {
                     choppedExpression = choppedExpression.slice(idx + currentRoll.length);
                 }
             }
-            console.log("chopped expression", choppedExpression)
+            noisy_log("chopped expression", choppedExpression)
             notationList.push(choppedExpression); // our last notation will still be here so add it to the list
 
             if (roll.rolls.length != notationList.length) {
@@ -944,7 +867,11 @@ class DiceRoller {
                 let currentRoll = roll.rolls[i];
                 if (typeof currentRoll === "object") {
                     let currentNotation = notationList[i];
-                    let currentDieType = supportedDieTypes.find(dt => currentNotation.includes(dt)); // we do it this way instead of splitting the string so we can easily clean up things like d20kh1, etc. It's less clever, but it avoids any parsing errors
+                    
+                    let currentDieType = supportedDieTypes.find(dt => {
+                        const regex = new RegExp(`${dt}(\\D|$)`, "i");
+                        return currentNotation.match(regex);
+                    }); // we do it this way instead of splitting the string so we can easily clean up things like d20kh1, etc. It's less clever, but it avoids any parsing errors
                     if (!supportedDieTypes.includes(currentDieType)) {
                         console.warn(`found an unsupported dieType ${currentNotation}`);
                         console.groupEnd()
@@ -960,7 +887,12 @@ class DiceRoller {
                     } else {
                         convertedExpression.push(currentRoll.value);
                     }
+
+
                     let dice = currentRoll.rolls.map(d => {
+                        if(d.modifiers.has('re-roll-once')){
+                            allValues.push(`${d.initialValue}ro`);
+                        }
                         allValues.push(d.value);
                         console.groupEnd()
                         return { dieType: currentDieType, dieValue: d.value };
@@ -1006,17 +938,17 @@ class DiceRoller {
                 messageScope: sendTo === "everyone" ? "gameId" : "userId",
                 messageTarget: sendTo === "everyone" ? `${window.gameId}` : sendTo === "dungeonmaster" || sendTo === "dm" ? `${window.CAMPAIGN_INFO.dmId}` : `${window.myUser}`,
                 entityId: `${window.myUser}`,
-                entityType: "user",
+                entityType: "character",
                 eventType: "dice/roll/fulfilled",
                 data: {
                     action: actionType,
                     setId: window.mydice.data.setId,
                     context: {
                         entityId: `${window.myUser}`,
-                        entityType: "user",
+                        entityType: "character",
                         messageScope: sendTo === "everyone" ? "gameId" : "userId",
                         messageTarget: sendTo === "everyone" ? `${window.gameId}` : sendTo === "dungeonmaster" || sendTo === "dm" ? `${window.CAMPAIGN_INFO.dmId}` : `${window.myUser}`,
-                        name: displayName,
+                        name: displayName == false ? "THE DM" : /^spectator-[\d\w]+-[\d\w]+/gi.test(displayName) ?  'Spectator' : displayName,
                         avatarUrl: imgUrl
                     },
                     rollId: rollId,
@@ -1051,9 +983,41 @@ class DiceRoller {
                 pendingCritRange: this.#pendingCritRange,
                 pendingCritType: this.#pendingCritType
             };
+            
+
             ddbMessage = this.#swapRollData(ddbMessage);
             this.#orderedPendingIds.push(rollId);
-            this.sendNewFulfilled();
+            if(!window.EXPERIMENTAL_SETTINGS?.['rpgRoller'] && (window.DM || !(typeof getDdb3dDiceShareToggle == 'function' && !window.DM && getDdb3dDiceShareToggle() == 'disabled'))){
+                if(window.ActiveWorkers){
+                    requestAnimationFrame(() => {
+                        get_active_worker_keys().forEach(key => {
+                            if(key.includes('physics')){
+                                window.ActiveWorkers[key].postMessage({
+                                    type: "dice/roll/deferred",
+                                    payload: {
+                                        ...ddbMessage,
+                                        eventType: "dice/roll/deferred"
+                                    }
+                                })
+                            } 
+                        }); 
+                    }) 
+                };
+                if(sendTo.toLowerCase() != 'self'){
+                    this.ddbDispatch({
+                        ...ddbMessage,
+                        eventType: "dice/roll/deferred"
+                    });
+                }
+                clearTimeout(this.backupSendTimeout)
+                this.backupSendTimeout = setTimeout(() => { // if dice are slow to roll display result early
+                    this.sendNewFulfilled();
+                }, 1000)
+                return ddbMessage;
+            }
+                         
+            this.sendNewFulfilled();       
+        
             return ddbMessage;
         } catch (error) {
             console.warn(`failed to send expression as DDB roll; expression = ${expression}`, error);
@@ -1065,7 +1029,7 @@ class DiceRoller {
 
     /** reset all variables back to their default values */
     #resetVariables(resetTimer = true) {
-        console.log("resetting local variables");
+        noisy_log("resetting local variables");
         if (resetTimer){
             clearTimeout(this.#timeoutId);
             this.#timeoutId = undefined;
@@ -1077,12 +1041,12 @@ class DiceRoller {
         this.#pendingSendTo = undefined;
     }
     async handleOldFulfilled(message) {
-        console.log("capturing fulfilled message: ", message)
+        noisy_log("capturing fulfilled message: ", message)
         let alteredMessage = await this.#swapRollData(message);
         if (alteredMessage.data?.context?.avatarUrl?.startsWith("above-bucket-not-a-url")) {
             alteredMessage.data.context.avatarUrl = await getAvttStorageUrl(alteredMessage.data.context.avatarUrl, true)
         }
-        console.log("altered fulfilled message: ", alteredMessage);
+        noisy_log("altered fulfilled message: ", alteredMessage);
         this.ddbDispatch(alteredMessage);
         await this.#resetVariables();
         this.nextRoll(this.#pendingMessages[message.data.rollId].ddbMessage, this.#pendingMessages[message.data.rollId].pendingCritRange, this.#pendingMessages[message.data.rollId].pendingCritType, this.#pendingMessages[message.data.rollId].pendingDamageType);
@@ -1099,22 +1063,22 @@ class DiceRoller {
         const newId = uuid();
         
         const message = { ...this.#pendingMessages[firstPending].ddbMessage, eventType: "dice/roll/fulfilled", id: newId, persist: true };
-        console.log("capturing fulfilled message: ", message)
+        noisy_log("capturing fulfilled message: ", message)
         let alteredMessage = message;
         if (alteredMessage.data?.context?.avatarUrl?.startsWith("above-bucket-not-a-url")) {
             alteredMessage.data.context.avatarUrl = await getAvttStorageUrl(alteredMessage.data.context.avatarUrl, true)
         }
-        console.log("altered fulfilled message: ", alteredMessage);
+        noisy_log("altered fulfilled message: ", alteredMessage);
         alteredMessage.dateTime = this.#pendingMessages[firstPending]?.ddbMessage?.dateTime || Date.now();
-        this.ddbDispatch(alteredMessage);
+
+        this.ddbDispatch(alteredMessage);  
+
         if(this.#multiRollArray.length>0){
             const self = this;
             const nextCritRange = self.#pendingMessages[firstPending]?.pendingCritRange;
             const nextCritType = self.#pendingMessages[firstPending]?.pendingCritType;
             const nextDamageType = self.#pendingMessages[firstPending]?.pendingDamageType;
-            setTimeout(function () {
-                self.nextRoll(alteredMessage, nextCritRange, nextCritType, nextDamageType);
-            }, 60)
+            self.nextRoll(alteredMessage, nextCritRange, nextCritType, nextDamageType); 
         }
         this.#pendingMessages[firstPending] = null;
         delete this.#pendingMessages[firstPending];
@@ -1124,14 +1088,13 @@ class DiceRoller {
     }
     /** wraps all messages that are sent by DDB, and processes any that we need to process, else passes it along as-is */
     async #wrappedDispatch(message) {
-        const newDice = $("[class*='DiceContainer_button']").length > 0
         
         if(this.#waitingForRoll && message.source == 'Beyond20'){
             return;
         }
-        const ddb3dDiceShareToggle = getDdb3dDiceShareToggle();
+        const ddb3dDiceShareToggle = getDdb3dDiceShareToggle() != 'disabled';
 
-        if (message.eventType === "dice/roll/fulfilled" && newDice && ddb3dDiceShareToggle && this.#pendingMessages[message.data.rollId] == undefined && !['death', 'hitdice'].includes(message.data?.action?.toLowerCase().replaceAll(/\s/gi, '')))
+        if (message.eventType === "dice/roll/fulfilled" && ddb3dDiceShareToggle && this.#pendingMessages[message.data.rollId] == undefined && !['death', 'hitdice'].includes(message.data?.action?.toLowerCase().replaceAll(/\s/gi, '')))
             return;
         
         if (!this.#waitingForRoll || (message.eventType === "dice/roll/fulfilled" && !ddb3dDiceShareToggle)) {
@@ -1144,14 +1107,10 @@ class DiceRoller {
                     this.ddbDispatch(message);
                     return;
                 }
-                if(!newDice){
-                    this.handleOldFulfilled(message);
-                    return;
-                }   
+ 
                 clearTimeout(this.backupSendTimeout)
                 this.sendNewFulfilled();           
             } else{
-               console.debug("swap image only, not capturing: ", message);
                let ddbMessage = { ...message };
                if (window.CAMPAIGN_INFO?.dmId == ddbMessage.entityId) {
                    ddbMessage.data.context.avatarUrl = dmAvatarUrl
@@ -1192,8 +1151,7 @@ class DiceRoller {
                 await this.#resetVariables();
                 return;
             }
-            
-            console.log("capturing pending message: ", message);
+            noisy_log("capturing pending message: ", message);
             let ddbMessage = { ...message };
             this.#pendingMessages[ddbMessage.data.rollId] = {
                 ddbMessage,
@@ -1206,38 +1164,29 @@ class DiceRoller {
                 pendingCritRange: this.#pendingCritRange,
                 pendingCritType: this.#pendingCritType
             };
-            if(newDice)
-                this.#orderedPendingIds.push(ddbMessage.data.rollId);
+            
+            this.#orderedPendingIds.push(ddbMessage.data.rollId);
             
             if (ddbMessage.data?.context?.avatarUrl?.startsWith("above-bucket-not-a-url")) {
                 ddbMessage.data.context.avatarUrl = await getAvttStorageUrl(ddbMessage.data.context.avatarUrl, true)
             }
-            if(!newDice){
-                await this.#swapDiceRollMetadata(ddbMessage);
-            }
+
             else{
                 ddbMessage = await this.#swapRollData(ddbMessage)
             }
                 
             this.ddbDispatch(ddbMessage);
-            this.#resetVariables(newDice);
+            this.#resetVariables();
             const self = this; 
-            setTimeout(function() {
-                if (newDice){
-                    self.nextRoll(self.#pendingMessages[ddbMessage.data.rollId].ddbMessage, self.#pendingMessages[ddbMessage.data.rollId].pendingCritRange, self.#pendingMessages[ddbMessage.data.rollId].pendingCritType, self.#pendingMessages[ddbMessage.data.rollId].pendingDamageType);
-                }
-            }, 60)
-            if(newDice){
-                clearTimeout(this.backupSendTimeout)
-                this.backupSendTimeout = setTimeout(() => { // if dice are slow to roll display result early
-                    this.sendNewFulfilled();
-                }, 1000)
-            }
+            self.nextRoll(self.#pendingMessages[ddbMessage.data.rollId].ddbMessage, self.#pendingMessages[ddbMessage.data.rollId].pendingCritRange, self.#pendingMessages[ddbMessage.data.rollId].pendingCritType, self.#pendingMessages[ddbMessage.data.rollId].pendingDamageType);
+           
+            clearTimeout(this.backupSendTimeout)
+            this.backupSendTimeout = setTimeout(() => { // if dice are slow to roll display result early
+                this.sendNewFulfilled();
+            }, 1000)
+            
         } else if (message.eventType === "dice/roll/fulfilled" && this.#pendingMessages[message.data.rollId] !== undefined) {
-            if (!newDice)
-                this.handleOldFulfilled(message);
-            else
-                this.sendNewFulfilled()
+            this.sendNewFulfilled()
         } else if (message.eventType === "dice/roll/fulfilled"){
             this.ddbDispatch(message);
         }
@@ -1265,10 +1214,10 @@ class DiceRoller {
                 // all the values are in the same order as the DDB expression so iterate over the expression, and pull out the values that correspond
                 let matchedValues = {}; // { d20: [1, 18], ... }
                 let rolledExpressions = pendingDiceRoll.expression.match(allDiceRegex);
-                console.debug("rolledExpressions: ", rolledExpressions);
+                noisy_log("rolledExpressions: ", rolledExpressions);
                 let valuesToMatch = r.result.values;
                 rolledExpressions.forEach(diceExpression => {
-                    console.debug("diceExpression: ", diceExpression);
+                    noisy_log("diceExpression: ", diceExpression);
                     let diceType = diceExpression.match(/d\d+/g);
                     let numberOfDice = parseInt(diceExpression.split("d")[0]);
                     if (matchedValues[diceType] === undefined) {
@@ -1281,7 +1230,6 @@ class DiceRoller {
                     matchedValues[diceType] = matchedValues[diceType].concat(valuesToMatch.slice(0, numberOfDice));
                     valuesToMatch = valuesToMatch.slice(numberOfDice);
                 });
-                console.debug("matchedValues: ", JSON.stringify(matchedValues));
 
                 // 2. replace each dice expression in #pendingDiceRoll.expression with the corresponding dice roll results
                 // For example: "2d20kh1+1d4-3" with rolled results of [9, 18, 2] will turn into "18+2-3"
@@ -1289,6 +1237,8 @@ class DiceRoller {
                 let replacedExpression = pendingDiceRoll.expression.toString().replaceAll(/(\D)0+(\d)/gi, '$1$2'); // make sure we have a new string that we alter so we don't accidentally mess up the original
                 let replacedValues = []; // will go into the roll object and DDB also parses these.
                 pendingDiceRoll.diceExpressions.forEach(diceExpression => {
+                    if(diceExpression.match(/^\d+$/gi))
+                        return;
                     let diceType = diceExpression.match(/d\d+/g);
                     let numberOfDice = parseInt(diceExpression.split("d")[0]);
                     const includesReroll = diceExpression.includes("ro");
@@ -1299,28 +1249,8 @@ class DiceRoller {
                     }
                     let calculationValues = matchedValues[diceType].slice(0, numberOfDice);
                     matchedValues[diceType] = matchedValues[diceType].slice(numberOfDice);
-                    console.debug(diceExpression, "calculationValues: ", calculationValues);
 
-                    if (includesReroll) {
-                        // we have twice as many dice values as we need, so we need to figure out which dice values to drop.
-                        // the values are in-order, so we will only keep the front half of the array.
-                        // evaluate each of the calculationValues against the reroll rule.
-                        // any value that evaluates to false, gets dropped. This allows the reroll dice to "shift" into the front half of the array.
-                        // cut the matchedValues down to the expected size. This will drop any reroll dice that we didn't use
-                        const half = Math.ceil(calculationValues.length / 2);
-                        let rolledValues = calculationValues.slice(0, half)
-                        let rerolledValues = calculationValues.slice(half)
-                        const rerollModifier = diceExpression.match(/ro(<|<=|>|>=|=)\d+/);
-                        calculationValues = rolledValues.map(value => {
-                            const rerollExpression = rerollModifier[0].replace('ro', value).replace(/(?<!(<|>))=(?!(<|>))/, "==").replaceAll(/(\D)0+(\d)/gi, '$1$2');
-                            console.debug("rerollExpression", rerollExpression)
-                            if (eval(rerollExpression)) {
-                                return rerolledValues.shift();
-                            } else {
-                                return value;
-                            }
-                        });
-                    }
+
                     const includesMin = diceExpression.includes("min");
                     if (includesMin) {                
                         // evaluate each of the calculationValues against the min roll rule.
@@ -1328,7 +1258,6 @@ class DiceRoller {
                         const minRoll = /min(\d+)/.exec(diceExpression);
                         calculationValues = calculationValues.map(value => {
                             const minExpression = minRoll[0].replace('min', `${value}<`).replaceAll(/(\D)0+(\d)/gi, '$1$2');
-                            console.debug("minExpression", minExpression)
                             if (eval(minExpression)) {
                                 return minRoll[1];
                             } else {
@@ -1342,27 +1271,25 @@ class DiceRoller {
                         let numberToKeep = parseInt(diceExpression.split("kh")[1]);
                         // then sort and only take the highest values
                         calculationValues = calculationValues.sort((a, b) => b - a).slice(0, numberToKeep);
-                        console.debug(diceExpression, "kh calculationValues: ", calculationValues);
                     } else if (diceExpression.includes("kl")) {
                         // "keep lowest" was used so figure out how many to keep
                         let numberToKeep = parseInt(diceExpression.split("kl")[1]);
                         // then sort and only take the lowest values
                         calculationValues = calculationValues.sort((a, b) => a - b).slice(0, numberToKeep);
-                        console.debug(diceExpression, "kl calculationValues: ", calculationValues);
+                        
                     }
-
                     // finally, replace the diceExpression with the results that we have. For example 2d20 with results [2, 9] will result in "(2+9)", 1d20 with results of [3] will result in "3"
                     let replacementString = calculationValues.length > 1 ? "(" + calculationValues.join("+") + ")" : calculationValues.join("+"); // if there are more than one make sure they get totalled together
-                    replacedExpression = replacedExpression.replace(diceExpression, replacementString);
+                    replacedExpression = replacedExpression.replace(diceExpression, replacementString).replace(/(\d+)ro\+(\d+)/gi, '$2');
                     replacedValues = replacedValues.concat(calculationValues);
                 });
 
                 // now that we've replaced all the dice expressions with their results, we need to execute the expression to get the final result
-                let calculatedTotal = eval(replacedExpression);
+                let calculatedTotal = eval(replacedExpression.replace(/ro/gi,''));
                 if((critAttackAction != undefined && pendingCritType == 3) || pendingCrit == 3){
                     calculatedTotal = calculatedTotal * 2; 
                 }
-                console.log("pendingExpression: ", pendingDiceRoll.expression, ", replacedExpression: ", replacedExpression, ", calculatedTotal:", calculatedTotal, ", replacedValues: ", replacedValues);
+                noisy_log("pendingExpression: ", pendingDiceRoll.expression, ", replacedExpression: ", replacedExpression, ", calculatedTotal:", calculatedTotal, ", replacedValues: ", replacedValues);
 
                 // we successfully processed the expression, now let's update the message object
                 r.diceNotationStr = pendingDiceRoll.expression; 
@@ -1409,12 +1336,19 @@ class DiceRoller {
             // We'll look for this later to know that we should swap some HTML after this render
             ddbMessage.avttExpression = pendingDiceRoll.expression;
             ddbMessage.avttExpressionResult = pendingDiceRoll.expressionResult;
-            console.log("DiceRoll ddbMessage.avttExpression: ", ddbMessage.avttExpression);
+            noisy_log("DiceRoll ddbMessage.avttExpression: ", ddbMessage.avttExpression);
         }
         if((critAttackAction != undefined && pendingCritType == 3) || pendingCrit == 3){
             ddbMessage.avttExpression = `2(${pendingDiceRoll.expression})`;
             ddbMessage.avttExpressionResult = `2(${pendingDiceRoll.expressionResult})`;
         }
+
+        if(ddbMessage.avttExpression != undefined){
+            const removeLeadTrailZero = /^0+(\+|(\-))|[+-]0+$/gi;
+            ddbMessage.avttExpression = ddbMessage.avttExpression.replaceAll(removeLeadTrailZero, '$2');
+            ddbMessage.avttExpressionResult = ddbMessage.avttExpressionResult.replaceAll(removeLeadTrailZero, '$2');
+        }
+
         ddbMessage.avttSpellSave = pendingSpellSave;
         if(ddbMessage.data.rolls.some(d=> d.rollType.includes('damage')))
             ddbMessage.avttDamageType = pendingDamageType;
@@ -1456,9 +1390,8 @@ class DiceRoller {
     }
 }
 function getDdb3dDiceShareToggle(){
-    const newDice = $("[class*='DiceContainer_button']").length > 0
     const userDiceData = localStorage.getItem('userDiceData')
-    return newDice && userDiceData !== null && window.MB?.userid != undefined ? JSON.parse(localStorage.getItem('userDiceData')).state?.[window.MB.userid]?.settings?.visibility != 'disabled' : true;
+    return userDiceData !== null && window.MB?.userid != undefined ? JSON.parse(localStorage.getItem('userDiceData')).state?.[window.MB.userid]?.settings?.visibility : true;
 }
 function replace_gamelog_message_expressions(listItem) {
 
@@ -1468,7 +1401,7 @@ function replace_gamelog_message_expressions(listItem) {
         if (avttExpression !== undefined && avttExpression.length > 0) {
             expressionSpan.text(avttExpression);
             expressionSpan.attr("title", avttExpression);
-            console.log("injected avttExpression", avttExpression);
+            noisy_log("injected avttExpression", avttExpression);
         }
     }
 
@@ -1477,13 +1410,14 @@ function replace_gamelog_message_expressions(listItem) {
         let avttExpressionResult = listItem.attr("data-avtt-expression-result");
         if (avttExpressionResult !== undefined && avttExpressionResult.length > 0) {
             expressionResultSpan.text(avttExpressionResult);
-            console.log("injected avttExpressionResult", avttExpressionResult);
+            expressionResultSpan.attr("title", avttExpressionResult);
+            noisy_log("injected avttExpressionResult", avttExpressionResult);
         }
     }
 }
 
 function getCharacterStatModifiers(entityType, entityId) {
-    console.debug("getCharacterStatModifiers", entityType, entityId);
+    noisy_log("getCharacterStatModifiers", entityType, entityId);
     if (entityType === "character" && typeof window.pcs === "object") {
         try {
             const pc = window.pcs.find(pc => pc.sheet.includes(entityId));
@@ -1497,7 +1431,7 @@ function getCharacterStatModifiers(entityType, entityId) {
                     "cha": pc.abilities.find(a => a.name === "cha").modifier,
                     "pb": pc.proficiencyBonus
                 };
-                console.debug("getCharacterStatModifiers built statMods from window.pcs", statMods);
+                noisy_log("getCharacterStatModifiers built statMods from window.pcs", statMods);
                 return statMods;
             }
         } catch (error) {
@@ -1516,13 +1450,13 @@ function getCharacterStatModifiers(entityType, entityId) {
                 "cha": stats[5].textContent.match(/[+-]/gi) ? parseInt(stats[5].textContent) : Math.floor((parseInt(stats[5].textContent) - 10) / 2),
                 "pb": parseInt($(".ct-proficiency-bonus-box__value, .ct-combat-mobile__extra--proficiency [class*='styles_numberDisplay']").text())
             };
-            console.debug("getCharacterStatModifiers built statMods from character sheet html", statMods);
+            noisy_log("getCharacterStatModifiers built statMods from character sheet html", statMods);
             return statMods
         } catch (error) {
             console.warn("getCharacterStatModifiers failed to collect abilities from character sheet", error);
         }
     }
-    console.log("getCharacterStatModifiers found nothing");
+    noisy_log("getCharacterStatModifiers found nothing");
     return undefined;
 }
 
@@ -1546,7 +1480,7 @@ function replaceModifiersInSlashCommand(slashCommandText, entityType, entityId) 
     }
 
     const modifiers = getCharacterStatModifiers(entityType, entityId);
-    if (modifiers === undefined) {
+    if (modifiers === undefined && validModifierSubstitutions.test(expression)) {
         // This will happen if the DM opens a character sheet before the character stats have loaded
         console.warn("getCharacterStatModifiers returned undefined. This command may not parse properly", slashCommandText);
         return slashCommandText; // missing required info
@@ -1568,6 +1502,6 @@ function replaceModifiersInSlashCommand(slashCommandText, entityType, entityId) 
 
     const modifiedCommand = slashCommandText.replaceAll(expression, modifiedExpression);
 
-    console.log("replaceModifiersInSlashCommand changed", slashCommandText, "to", modifiedCommand);
+    noisy_log("replaceModifiersInSlashCommand changed", slashCommandText, "to", modifiedCommand);
     return modifiedCommand;
 }
