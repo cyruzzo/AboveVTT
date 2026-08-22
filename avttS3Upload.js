@@ -4210,7 +4210,7 @@ async function avttCreateThumbnailForExisting(relativeKey, sourceUrl, entryType)
   }
   avttPendingThumbnailGenerations.add(normalized);
   try {
-    const response = await fetch(sourceUrl, { mode: "cors" });
+    const response = await fetch(sourceUrl, { mode: "cors", cache: "reload" });
     if (!response.ok) {
       throw new Error(`Failed to fetch source for thumbnail (${response.status})`);
     }

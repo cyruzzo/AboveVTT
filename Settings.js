@@ -338,7 +338,7 @@ function token_setting_options() {
 
 function avtt_settings(campaignSettings = false) {
 	let settings = [
-
+		
 		{
 			name: "iconUi",
 			label: "Mobile/Icon UI",
@@ -399,17 +399,6 @@ function avtt_settings(campaignSettings = false) {
 			class: 'debug',
 		},
 		{
-			name: "peerStreaming",
-			label: "Allow Streaming Cursor/Ruler",
-			type: "toggle",
-			options: [
-				{ value: true, label: "Allow", description: `If you are experiencing performance issues or if you have slow internet, you may want to disable this.` },
-				{ value: false, label: "Never", description: `If you are experiencing performance issues or if you have slow internet, you may want to disable this.` }
-			],
-			defaultValue: false,
-			class: 'stream'
-		},
-		{
 			name: 'alwaysShowSplash',
 			label: 'Always show splash screen',
 			type: 'toggle',
@@ -434,6 +423,31 @@ function avtt_settings(campaignSettings = false) {
 			global: 1
 		}
 	];
+
+	if((window.DM && !campaignSettings) || is_spectator_page()){
+		settings.push({
+			name: 'streamDiceRolls',
+			label: 'Stream Dice Rolls',
+			type: 'toggle',
+			options: [
+				{ value: true, label: "Streaming", description: `You will see DDB dice rolls from all players with this enabled. Note players can see your rolls if not rolling to self regardless.` },
+				{ value: false, label: "Not Streaming", description: `You will not see DDB dice rolls from other players. Note players can still see your rolls if not rolling to self.` }
+			],
+			defaultValue: false,
+			class: 'stream'
+		});
+	}
+	settings.push({
+			name: "peerStreaming",
+			label: "Allow Streaming Cursor/Ruler",
+			type: "toggle",
+			options: [
+				{ value: true, label: "Allow", description: `If you are experiencing performance issues or if you have slow internet, you may want to disable this.` },
+				{ value: false, label: "Never", description: `If you are experiencing performance issues or if you have slow internet, you may want to disable this.` }
+			],
+			defaultValue: false,
+			class: 'stream'
+	})
 	if(!campaignSettings){
 		settings.push({	
 			name: "gridZoomConversion",
@@ -455,19 +469,7 @@ function avtt_settings(campaignSettings = false) {
 			class: 'ui'
 		})
 	}
-	if((window.DM && !campaignSettings) || is_spectator_page()){
-		settings.push({
-				name: 'streamDiceRolls',
-				label: 'Stream Dice Rolls',
-				type: 'toggle',
-				options: [
-					{ value: true, label: "Streaming", description: `You will see DDB dice rolls from all players with this enabled. Note players can see your rolls if not rolling to self regardless.` },
-					{ value: false, label: "Not Streaming", description: `You will not see DDB dice rolls from other players. Note players can still see your rolls if not rolling to self.` }
-				],
-				defaultValue: false,
-				class: 'stream'
-			});
-	}
+
 	if (window.DM && !campaignSettings) {
 		// DM only settings - does not show up in suggsted settings for players
 			settings.push(
