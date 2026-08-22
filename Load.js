@@ -81,6 +81,16 @@
             e.stopPropagation();
             rollDiceButton(e, rollButton[0]);
         }
+        function blockRollClickEvent(e){
+            // there are other click events on DDB end that cause issues/lag
+            const target = $(e.target);
+            const rollButton = target.closest(`.integrated-dice__container, .above-combo-roll, .above-aoe, .avtt-roll-formula-button`);
+            if (!rollButton.length) return;
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            e.stopPropagation();
+        }
+        window.addEventListener('click', blockRollClickEvent, true);
         window.addEventListener('pointerdown', interceptRollEvent, true);
     }
 
