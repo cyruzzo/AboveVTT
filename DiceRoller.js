@@ -672,11 +672,13 @@ class DiceRoller {
             this.#pendingCrit = forceCritType;
             this.#pendingSendTo = diceRoll.sendToOverride;
             if (ddb3dDiceShareToggle && !window.EXPERIMENTAL_SETTINGS['rpgRoller'] && !msgdata?.rollData?.expression?.includes('d')) {
-                    setTimeout(() => {
-                        const message = self.send_ddb_dice_message(msgdata.rollData.expression, msgdata.player, msgdata.img, msgdata.rollData.rollType, msgdata.rollData.damageType, msgdata.rollData.rollTitle, diceRoll.sendToOverride)
+                    const message = new Promise((resolve, reject) => {
+                        resolve(self.send_ddb_dice_message(msgdata.rollData.expression, msgdata.player, msgdata.img, msgdata.rollData.rollType, msgdata.rollData.damageType, msgdata.rollData.rollTitle, diceRoll.sendToOverride));
+                    });
+                    message.then(function (msg){
                         self.#resetVariables();
-                        self.nextRoll(message, critRange, critType)
-                    }, 50)
+                        self.nextRoll(msg, critRange, critType)
+                    })    
                 return true;
             }
             if (is_abovevtt_page() && (window.EXPERIMENTAL_SETTINGS['rpgRoller'] == true || !ddb3dDiceShareToggle)){
@@ -708,13 +710,14 @@ class DiceRoller {
                 return true;
             } 
             
-            const message = self.send_ddb_dice_message(msgdata.rollData.expression, msgdata.player, msgdata.img, msgdata.rollData.rollType, msgdata.rollData.damageType, msgdata.rollData.rollTitle, diceRoll.sendToOverride)
-            setTimeout(()=>{
+            const message = new Promise((resolve, reject) => {
+                resolve(self.send_ddb_dice_message(msgdata.rollData.expression, msgdata.player, msgdata.img, msgdata.rollData.rollType, msgdata.rollData.damageType, msgdata.rollData.rollTitle, diceRoll.sendToOverride));
+            });
+            message.then(function (msg){
                 self.#resetVariables();
-                self.nextRoll(message, critRange, critType)
-            }, 50);
-         
-            
+                self.nextRoll(msg, critRange, critType)
+            })
+
             return true;
                        
 
