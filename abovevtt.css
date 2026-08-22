@@ -9371,6 +9371,7 @@ body.color-blind-avtt {
     paint-order: stroke;
     text-shadow: 1px 1px 2px #000;
     pointer-events:none;
+    stroke-width: 15%;
 }
 .custom-condition.text{
     pointer-events:auto;

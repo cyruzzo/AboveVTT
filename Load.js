@@ -84,7 +84,7 @@
         function blockRollClickEvent(e){
             // there are other click events on DDB end that cause issues/lag
             const target = $(e.target);
-            const rollButton = target.closest(`.integrated-dice__container, .above-combo-roll, .above-aoe, .avtt-roll-formula-button, .avtt-ability-roll-button`);
+            const rollButton = target.closest(`.integrated-dice__container, .above-combo-roll, .above-aoe, .avtt-roll-formula-button, .avtt-ability-roll-button, .ct-spells-spell__action, .ddbc-combat-attack__icon`);
             if (!rollButton.length) return;
             e.preventDefault();
             e.stopImmediatePropagation();
