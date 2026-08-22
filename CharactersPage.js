@@ -3013,6 +3013,7 @@ function observe_character_sheet_changes(documentToObserve) {
               .dropdown-check-list ul.avttBuffItems>ul>ul.collapsed {
                 height: 22px;
                 overflow: hidden;
+                background: none;
               }
               .dropdown-check-list ul.avttBuffItems>ul>li,
               .dropdown-check-list ul.avttBuffItems>ul>ul>li {  
