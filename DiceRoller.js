@@ -524,7 +524,7 @@ class DiceRoller {
                 this.#multiRollArray.push(diceRoll);
                 return true; // return true so chat rolls recognize it's sent instead of shake error
             }
-            
+            this.setWaitingForRoll();
             let self = this;
             
             let msgdata = {}
@@ -663,8 +663,7 @@ class DiceRoller {
             // we're about to roll dice so we need to know if we should capture DDB messages.
             // This also blocks other attempts to roll until we've finished processing
             // don't hold a reference to the object we were given in case it gets altered while we're waiting.
-            this.#resetVariables();
-            this.setWaitingForRoll();
+            this.#resetVariables(false);
             this.#pendingDiceRoll = new DiceRoll(diceRoll.expression, diceRoll.action, diceRoll.rollType, diceRoll.name, diceRoll.avatarUrl, diceRoll.entityType, diceRoll.entityId, diceRoll.sendToOverride);
             this.#pendingCritRange = critRange;
             this.#pendingCritType = critType;
@@ -677,7 +676,7 @@ class DiceRoller {
                         const message = self.send_ddb_dice_message(msgdata.rollData.expression, msgdata.player, msgdata.img, msgdata.rollData.rollType, msgdata.rollData.damageType, msgdata.rollData.rollTitle, diceRoll.sendToOverride)
                         self.#resetVariables();
                         self.nextRoll(message, critRange, critType)
-                    }, 200)
+                    }, 50)
                 return true;
             }
             if (is_abovevtt_page() && (window.EXPERIMENTAL_SETTINGS['rpgRoller'] == true || !ddb3dDiceShareToggle)){
@@ -688,7 +687,7 @@ class DiceRoller {
                     window.MB.inject_chat(msgdata);
                     self.#resetVariables();
                     self.nextRoll(undefined, critRange, critType)      
-                }, 200)
+                }, 50)
                 return true;
             }
             if ((!is_abovevtt_page() && window.sendToTab != undefined) || is_gamelog_popout() ){
@@ -705,13 +704,16 @@ class DiceRoller {
                         });
                     self.#resetVariables();
                     self.nextRoll(undefined, critRange, critType)
-                }, 200)
+                }, 50)
                 return true;
             } 
             
             const message = self.send_ddb_dice_message(msgdata.rollData.expression, msgdata.player, msgdata.img, msgdata.rollData.rollType, msgdata.rollData.damageType, msgdata.rollData.rollTitle, diceRoll.sendToOverride)
-            self.#resetVariables();
-            self.nextRoll(message, critRange, critType)
+            setTimeout(()=>{
+                self.#resetVariables();
+                self.nextRoll(message, critRange, critType)
+            }, 50);
+         
             
             return true;
                        
@@ -790,9 +792,6 @@ class DiceRoller {
         let diceRoll = this.#multiRollArray.shift();
         let damageType = diceRoll.damageType;
         if(this.#critAttackAction != undefined && diceRoll.rollType == 'damage'){
-            let diceType = diceRoll.expression.match(/d[0-9]+/i)[0];
-            let critDice = diceRoll.diceToRoll[diceType] * 2;    
-            let maxRoll = diceRoll.diceToRoll[diceType] * parseInt(diceType.replace('d', ''));
             if(critType == 0){
                 const newExpression = diceRoll.expression.replaceAll(/([+-]|^)([\d]+)?d([\d]+)/gi, function(m, m1, m2, m3){
                     m2 = m2 != undefined ? m2 : 1;
@@ -804,7 +803,7 @@ class DiceRoller {
                 // perfect crit damage
                 const newExpression = diceRoll.expression.replaceAll(/(([+-]|^)([\d]+)?d([\d]+).*?)([+-]|$)/gi, function (m, m1, m2, m3, m4, m5) {
                     m3 = m3 != undefined ? m3 : 1;
-                    return `${m1}${m2 == '-' ? '' : `+${parseInt(m3) * parseInt(m4)}${m5}`}`
+                    return `${m1}${m2 == '-' ? '' : `+${m3}d${m4}min${m4}${m5}`}`
                 })
                 this.roll(new DiceRoll(newExpression, diceRoll.action, diceRoll.rollType, diceRoll.name, diceRoll.avatarUrl, diceRoll.entityType, diceRoll.entityId), true, critRange, critType, undefined, damageType);
             }
@@ -1092,7 +1091,7 @@ class DiceRoller {
         if(this.#waitingForRoll && message.source == 'Beyond20'){
             return;
         }
-        
+
         if (message.eventType === "dice/roll/pending" || message.eventType == 'dice/roll/deferred') {
             noisy_log("capturing pending message: ", message);
             let ddbMessage = { ...message };
@@ -1130,7 +1129,7 @@ class DiceRoller {
         } else if (message.eventType === "dice/roll/fulfilled" && this.#pendingMessages[message.data.rollId] !== undefined) {
             clearTimeout(this.backupSendTimeout)
             this.sendNewFulfilled()
-        } else{
+        } else if(message.eventType !== "dice/roll/fulfilled" && message.eventType !== "dice/roll/pending" && message.eventType !== "dice/roll/deferred"){
             this.ddbDispatch(message);
         }
         
