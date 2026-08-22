@@ -1134,10 +1134,10 @@ function add_journal_roll_buttons(target, tokenId=undefined, specificImage=undef
       }
     } else if(targetButton.closest('.dnd-sheet .combat-metric').length>0){
       rollAction = targetButton.closest('.dnd-sheet .combat-metric').find('.label').text();
-      rollType = 'Roll'
+      rollType = 'roll'
     } else if(targetButton.closest('.dnd-sheet .hp-box').length>0){
       rollAction = targetButton.closest('.box-field').parent().find('.label').text();
-      rollType = 'Roll'
+      rollType = 'roll'
     } else if(targetButton.closest('.dnd-sheet .attacks-field').length>0){
       if(targetButton.closest('td').length>0){
         const columnIndex = targetButton.closest('td')[0].cellIndex; 
@@ -1157,7 +1157,7 @@ function add_journal_roll_buttons(target, tokenId=undefined, specificImage=undef
     }
 
     if (rollAction == '' || rollAction == undefined){
-      rollAction = 'Roll';
+      rollAction = 'custom';
     } 
     else if(rollAction.replace(' ', '').toLowerCase() == 'savingthrows'){ 
       rollAction = targetButton[0].previousSibling?.nodeValue?.replace(/[\W]+/gi, '');
@@ -1171,14 +1171,14 @@ function add_journal_roll_buttons(target, tokenId=undefined, specificImage=undef
     }
     else if(rollAction.replace(' ', '').toLowerCase() == 'proficiencybonus'){
       rollAction = 'Proficiency Bonus';
-      rollType = 'Roll';  
+      rollType = 'roll';  
     }
     else if(rollAction.replace(' ', '').toLowerCase() == 'hp' || rollAction.replace(' ', '').toLowerCase() == 'hitpoints'){
       rollAction = 'Hit Points';
-      rollType = 'Roll';  
+      rollType = 'roll';  
     }
     else if(rollAction.replace(' ', '').toLowerCase() == 'initiative'){
-      rollType = 'Roll';
+      rollType = 'roll';
     }
     
     const followingText = targetButton[0].nextSibling?.textContent?.trim()?.split(' ')[0]

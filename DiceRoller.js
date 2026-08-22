@@ -234,8 +234,8 @@ class DiceRoll {
 }
 function getRollData(rollButton){
     let expression = '';
-    let rollType = 'custom';
-    let rollTitle = 'AboveVTT';
+    let rollType = 'roll';
+    let rollTitle = 'custom';
     const $rollButton = $(rollButton);
     let damageType = window.diceRoller.getDamageType(rollButton);
     if($rollButton.find('.ddbc-damage__value, .ct-spell-caster__modifier-amount').length>0){
@@ -531,8 +531,8 @@ class DiceRoller {
             diceRoll.expression = diceRoll.expression.replaceAll(/$\+0|\+0(\D)/gi, '$1')
             let roll = new rpgDiceRoller.DiceRoll(diceRoll.expression); 
             let regExpression = new RegExp(`${diceRoll.expression.replace(/[+-]/g, '\\$&')}:\\s`);
-            let rollType = (diceRoll.rollType) ? diceRoll.rollType : 'Custom';
-            let rollTitle = (diceRoll.action) ? diceRoll.action : 'AboveVTT';
+            let rollType = (diceRoll.rollType) ? diceRoll.rollType : 'roll';
+            let rollTitle = (diceRoll.action) ? diceRoll.action : 'custom';
             let modifier = (roll.rolls.length > 1 && diceRoll.expression.match(/[+-]\d*$/g, '')) ? `${roll.rolls[roll.rolls.length-2]}${roll.rolls[roll.rolls.length-1]}` : '';
             
 
@@ -1092,65 +1092,8 @@ class DiceRoller {
         if(this.#waitingForRoll && message.source == 'Beyond20'){
             return;
         }
-        const ddb3dDiceShareToggle = getDdb3dDiceShareToggle() != 'disabled';
-
-        if (message.eventType === "dice/roll/fulfilled" && ddb3dDiceShareToggle && this.#pendingMessages[message.data.rollId] == undefined && !['death', 'hitdice'].includes(message.data?.action?.toLowerCase().replaceAll(/\s/gi, '')))
-            return;
         
-        if (!this.#waitingForRoll || (message.eventType === "dice/roll/fulfilled" && !ddb3dDiceShareToggle)) {
-            if(message.source == 'Beyond20'){
-                this.ddbDispatch(message);
-                return;
-            }
-            if (message.eventType === "dice/roll/fulfilled" && this.#pendingMessages[message.data.rollId] !== undefined) {
-                if (message.source == 'Beyond20') {
-                    this.ddbDispatch(message);
-                    return;
-                }
- 
-                clearTimeout(this.backupSendTimeout)
-                this.sendNewFulfilled();           
-            } else{
-               let ddbMessage = { ...message };
-               if (window.CAMPAIGN_INFO?.dmId == ddbMessage.entityId) {
-                   ddbMessage.data.context.avatarUrl = dmAvatarUrl
-               }
-               else if (window.pcs?.filter(d => d.characterId == ddbMessage.entityId)?.length > 0 && ddbMessage?.data?.context != undefined) {
-                   ddbMessage.data.context.avatarUrl = window.pcs?.filter(d => d.characterId == ddbMessage.entityId)[0].image
-               }
-
-               if (ddbMessage.data?.context?.avatarUrl?.startsWith("above-bucket-not-a-url")) {
-                   ddbMessage.data.context.avatarUrl = await getAvttStorageUrl(ddbMessage.data.context.avatarUrl, true)
-               }
-
-               if ((this.#pendingSpellSave != undefined || this.#pendingDamageType != undefined) && message.eventType === "dice/roll/fulfilled") {
-                   if (this.#pendingSpellSave != undefined)
-                       ddbMessage.avttSpellSave = this.#pendingSpellSave;
-                   if (this.#pendingDamageType != undefined && ddbMessage.data.rolls.some(d => d.rollType.includes('damage')))
-                       ddbMessage.avttDamageType = this.#pendingDamageType;
-                   this.ddbDispatch(ddbMessage);
-                   await this.#resetVariables();
-               }
-               else {
-                   if (window.DM && window.modifiySendToDDBDiceClicked == true) {
-                       if (gamelog_send_to_text() == 'Self') {
-                           ddbMessage.messageScope = "userId";
-                           ddbMessage.messageTarget = `${window.CAMPAIGN_INFO.dmId}`;
-                           ddbMessage.data.context.messageScope = "userId";
-                           ddbMessage.data.context.messageTarget = `${window.CAMPAIGN_INFO.dmId}`;
-                       }
-                       delete window.modifiySendToDDBDiceClicked;
-                   }
-                   this.ddbDispatch(ddbMessage);
-                   await this.#resetVariables();
-               }
-            }
-        } else if (message.eventType === "dice/roll/pending" || message.eventType == 'dice/roll/deferred') {
-            if(message.source == 'Beyond20'){
-                this.ddbDispatch(message);
-                await this.#resetVariables();
-                return;
-            }
+        if (message.eventType === "dice/roll/pending" || message.eventType == 'dice/roll/deferred') {
             noisy_log("capturing pending message: ", message);
             let ddbMessage = { ...message };
             this.#pendingMessages[ddbMessage.data.rollId] = {
@@ -1179,15 +1122,15 @@ class DiceRoller {
             this.#resetVariables();
             const self = this; 
             self.nextRoll(self.#pendingMessages[ddbMessage.data.rollId].ddbMessage, self.#pendingMessages[ddbMessage.data.rollId].pendingCritRange, self.#pendingMessages[ddbMessage.data.rollId].pendingCritType, self.#pendingMessages[ddbMessage.data.rollId].pendingDamageType);
-           
+        
             clearTimeout(this.backupSendTimeout)
             this.backupSendTimeout = setTimeout(() => { // if dice are slow to roll display result early
                 this.sendNewFulfilled();
             }, 1000)
-            
         } else if (message.eventType === "dice/roll/fulfilled" && this.#pendingMessages[message.data.rollId] !== undefined) {
+            clearTimeout(this.backupSendTimeout)
             this.sendNewFulfilled()
-        } else if (message.eventType === "dice/roll/fulfilled"){
+        } else{
             this.ddbDispatch(message);
         }
         

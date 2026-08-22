@@ -759,9 +759,7 @@ function inject_dm_roll_default_menu(){
   })
 
 
-  $('.dice-rolling-panel').off('click.sendTo').on('click.sendTo', '.dice-toolbar__target>button:first-of-type', function(e){
-    window.modifiySendToDDBDiceClicked = true;
-  })
+
   //dm only css for campaign page use
   $('body').append(`
     <style>
