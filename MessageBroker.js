@@ -535,7 +535,7 @@ class MessageBroker {
 			}
 			if (window.location.search.includes("popoutgamelog=true") && msg.eventType != "dice/roll/pending" && msg.eventType != "dice/roll/fulfilled")
 				return;
-			
+
 			if(msg.eventType == "dice/roll/pending") {
 				// check for injected_data!
 				if (msg.data.injected_data) {
@@ -875,8 +875,13 @@ class MessageBroker {
 					});
 				}
 				return;
-			}
-
+			} else if(msg.eventType == "character-sheet/item-shared/fulfilled"){
+				DDBApi.debounceGetPartyInventory();
+				return;
+			} else if(msg.eventType == "character-sheet/character-update/fulfilled") {
+				noisy_log('update_pc character-sheet/character-update/fulfilled', msg);
+				update_pc_with_api_call(msg.data?.characterId);
+			} 
 		};
 
 		this.onmessage = async function(event,tries=0) {
@@ -963,10 +968,8 @@ class MessageBroker {
 				noisy_log("skipping msg from a different scene");
 				return;
 			}
-			if(msg.eventType == "character-sheet/item-shared/fulfilled"){
-				DDBApi.debounceGetPartyInventory();
-				return;
-			} else if (msg.eventType == "custom/myVTT/token" && (msg.sceneId == window.CURRENT_SCENE_DATA.id || msg.data.id in window.TOKEN_OBJECTS)) {
+
+			if (msg.eventType == "custom/myVTT/token" && (msg.sceneId == window.CURRENT_SCENE_DATA.id || msg.data.id in window.TOKEN_OBJECTS)) {
 				self.handleToken(msg);
 			} else if(msg.eventType=="custom/myVTT/delete_token"){
 				let tokenid=msg.data.id;
@@ -1102,9 +1105,6 @@ class MessageBroker {
 				self.handleAudioPlayingSync(msg);
 			} else if(msg.eventType == ('custom/myVTT/character-update')){
 				update_pc_with_data(msg.data.characterId, msg.data.pcData);
-			} else if(msg.eventType == ('character-sheet/character-update/fulfilled')) {
-				noisy_log('update_pc character-sheet/character-update/fulfilled', msg);
-				update_pc_with_api_call(msg.data?.characterId);
 			} else if (msg.eventType == "custom/myVTT/reveal") {
 				window.REVEALED.push(msg.data);
 				redraw_fog();
@@ -1440,8 +1440,6 @@ class MessageBroker {
 			} else if (msg.eventType === "custom/myVTT/videoPeerDisconnect") {
 					$(`.video-meet-area video#${msg.data.id}`).remove();
 			} 
-
-
 		};
 
 		if(is_campaign_page()){
