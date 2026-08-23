@@ -943,14 +943,14 @@ class DiceRoller {
                 persist: true,
                 messageScope: sendTo === "everyone" ? "gameId" : "userId",
                 messageTarget: sendTo === "everyone" ? `${window.gameId}` : sendTo === "dungeonmaster" || sendTo === "dm" ? `${window.CAMPAIGN_INFO.dmId}` : `${window.myUser}`,
-                entityId: `${window.myUser}`,
+                entityId: window.PLAYER_ID != false ? `${window.PLAYER_ID}` : `${window.myUser}`,
                 entityType: "character",
                 eventType: "dice/roll/fulfilled",
                 data: {
                     action: actionType,
                     setId: window.mydice.data.setId,
                     context: {
-                        entityId: `${window.myUser}`,
+                        entityId: window.PLAYER_ID != false ? `${window.PLAYER_ID}` : `${window.myUser}`,
                         entityType: "character",
                         messageScope: sendTo === "everyone" ? "gameId" : "userId",
                         messageTarget: sendTo === "everyone" ? `${window.gameId}` : sendTo === "dungeonmaster" || sendTo === "dm" ? `${window.CAMPAIGN_INFO.dmId}` : `${window.myUser}`,
@@ -1067,7 +1067,7 @@ class DiceRoller {
         alteredMessage.dateTime = this.#pendingMessages[firstPending]?.ddbMessage?.dateTime || Date.now();
 
         this.ddbDispatch(alteredMessage);  
-        window.MB.onmessage({data: JSON.stringify(alteredMessage)});
+        window.MB.ddbonmessage({data: JSON.stringify(alteredMessage)});
         if(this.#multiRollArray.length>0){
             const self = this;
             const nextCritRange = self.#pendingMessages[firstPending]?.pendingCritRange;

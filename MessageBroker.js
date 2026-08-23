@@ -252,7 +252,6 @@ function setupMBIntervals(){
 	if(window.pingInterval!=undefined)
 		clearInterval(window.pingInterval);
 	window.pingInterval = setInterval(function() {
-		window.MB.sendPing();
 		window.MB.sendAbovePing();
 		checkForExportRemind();
 	}, 480000);
@@ -364,65 +363,6 @@ class MessageBroker {
 				}, Math.min(10000,2**window.onCloseNumberPerPopup*window.reconnectDelay));
 			}
 		};
-	}
-
-	loadWS(token, callback = null) {
-
-		if (callback)
-			this.callbackQueue.push(callback);
-
-		console.log("LOADING WS: There Are " + this.callbackQueue.length + " elements in the queue");
-		if (this.loadingWS || this.ws?.readyState == 1) {
-			console.log("ALREADY LOADING A WS");
-			return;
-		}
-		let self = this;
-		let url = this.url;
-		let userid = this.userid;
-		let gameid = this.gameid;
-		if (!gameid) 
-			return;
-		
-		this.loadingWS = true;
-
-		console.log("STARTING MB WITH TOKEN");
-
-		this.ws = new WebSocket(url + "?gameId=" + gameid + "&userId=" + userid + "&stt=" + token);
-
-		this.ws.onmessage=this.onmessage;
-
-
-		this.ws.onerror = function() {
-			self.loadingWS = false;
-			self.ws.close();
-		};
-
-		this.ws.onopen = function() {
-			self.loadingWS = false;
-			let cb;
-			console.log('Empting callback queue list');
-			while (cb = self.callbackQueue.shift()) {
-				cb();
-			};
-		};
-		this.ws.onclose = function() {
-			if(is_gamelog_popout())
-				return;
-			if(self.ddbReconnectTimeout != undefined){
-				clearTimeout(self.ddbReconnectTimeout);
-			}	
-			console.log('Attempting reconnect to DDB Websocket');
-			if(window.reconnectAttemptDDBWs == undefined){
-				window.reconnectAttemptDDBWs = 0;
-			}
-			window.reconnectAttemptDDBWs++;
-			self.ddbReconnectTimeout = setTimeout(function() {
-				get_cobalt_token(function(token) {
-					self.loadWS(token, null);
-				});
-			}, Math.min(10000,2**window.reconnectAttemptDDBWs*window.reconnectDelay));
-		};
-		
 	}
 
 	/// this will find all pending messages and reprocess them if needed. This is necessary on the characters page because DDB removes/injects the gamelog frequently. Any time they inject it, this gets called
@@ -580,9 +520,7 @@ class MessageBroker {
 			document.addEventListener('keydown', initNextTurnAudio, { once: true });
 		}
 
-		
-
-		this.onmessage = async function(event,tries=0) {
+		this.ddbonmessage = function(event) {
 			if (event.data == "pong")
 				return;
 			if (event.data == "ping")
@@ -597,60 +535,7 @@ class MessageBroker {
 			}
 			if (window.location.search.includes("popoutgamelog=true") && msg.eventType != "dice/roll/pending" && msg.eventType != "dice/roll/fulfilled")
 				return;
-			console.log(msg.eventType);
 			
-			if(msg.sender){ // THIS MESSAGE CONTAINS DATA FOR TELEMEMTRY (from AboveWS)
-				if(msg.sender==self.mysenderid){
-					self.stats.reflected++;
-					console.warn("WARNING. WE RECEIVED BACK OUR OWN MESSAGE - IGNORING");
-					return;
-				}
-
-				if(self.stats.peers[msg.sender]){
-					let shouldbethis=self.stats.peers[msg.sender].sequence+1;
-					if(msg.sequence==shouldbethis){
-						self.stats.peers[msg.sender].sequence=msg.sequence;
-						if(tries>0){
-							console.log("FIXED");
-							self.stats.peers[msg.sender].future_fixed++;
-						}
-					}
-					if(msg.sequence > shouldbethis){
-						if(tries==0)
-							self.stats.peers[msg.sender].future++;
-						
-						noisy_log("MSG in the future. (was expecting "+shouldbethis+" but we got "+msg.sequence+ " retries :" + tries);
-						if(tries<20){
-							setTimeout(self.onmessage,300,event,tries+1);
-							noisy_log("trying to fix");
-							return;
-						}
-						else{
-							console.error("lost a message");
-							self.stats.peers[msg.sender].sequence=msg.sequence;
-						}
-					}
-					if(msg.sequence < shouldbethis){
-							if((msg.sequence - self.stats.peers[msg.sender].first_sequence) > 10){
-								self.stats.peers[msg.sender].past++;
-								noisy_log(0, "Sequence message is in the past. We should try to recover");
-							}
-							else{
-								noisy_log("message in the past, but the che connection is new.. so.. I guess it's ok");
-							}
-							
-					}
-				}
-				else{
-					self.stats.peers[msg.sender]={
-							future:0,
-							future_fixed:0,
-							past:0,
-							sequence: msg.sequence,
-							first_sequence: msg.sequence,
-					}
-				}
-			}
 			if(msg.eventType == "dice/roll/pending") {
 				// check for injected_data!
 				if (msg.data.injected_data) {
@@ -991,6 +876,79 @@ class MessageBroker {
 				}
 				return;
 			}
+
+		};
+
+		this.onmessage = async function(event,tries=0) {
+			if (event.data == "pong")
+				return;
+			if (event.data == "ping")
+				return;
+
+			let msg = {};
+			try {
+				msg = JSON.parse(event.data);
+			} catch (parsingError) {
+				console.error("MB.onmessage failed to handle", event, parsingError);
+				return;
+			}
+			if (window.location.search.includes("popoutgamelog=true") && msg.eventType != "dice/roll/pending" && msg.eventType != "dice/roll/fulfilled")
+				return;
+			console.log(msg.eventType);
+			
+			if(msg.sender){ // THIS MESSAGE CONTAINS DATA FOR TELEMEMTRY (from AboveWS)
+				if(msg.sender==self.mysenderid){
+					self.stats.reflected++;
+					console.warn("WARNING. WE RECEIVED BACK OUR OWN MESSAGE - IGNORING");
+					return;
+				}
+
+				if(self.stats.peers[msg.sender]){
+					let shouldbethis=self.stats.peers[msg.sender].sequence+1;
+					if(msg.sequence==shouldbethis){
+						self.stats.peers[msg.sender].sequence=msg.sequence;
+						if(tries>0){
+							console.log("FIXED");
+							self.stats.peers[msg.sender].future_fixed++;
+						}
+					}
+					if(msg.sequence > shouldbethis){
+						if(tries==0)
+							self.stats.peers[msg.sender].future++;
+						
+						noisy_log("MSG in the future. (was expecting "+shouldbethis+" but we got "+msg.sequence+ " retries :" + tries);
+						if(tries<20){
+							setTimeout(self.onmessage,300,event,tries+1);
+							noisy_log("trying to fix");
+							return;
+						}
+						else{
+							console.error("lost a message");
+							self.stats.peers[msg.sender].sequence=msg.sequence;
+						}
+					}
+					if(msg.sequence < shouldbethis){
+							if((msg.sequence - self.stats.peers[msg.sender].first_sequence) > 10){
+								self.stats.peers[msg.sender].past++;
+								noisy_log(0, "Sequence message is in the past. We should try to recover");
+							}
+							else{
+								noisy_log("message in the past, but the che connection is new.. so.. I guess it's ok");
+							}
+							
+					}
+				}
+				else{
+					self.stats.peers[msg.sender]={
+							future:0,
+							future_fixed:0,
+							past:0,
+							sequence: msg.sequence,
+							first_sequence: msg.sequence,
+					}
+				}
+			}
+
 			// WE NEED TO IGNORE CERTAIN MESSAGE IF THEY'RE NOT FROM THE CURRENT SCENE
 			if(window.CURRENT_SCENE_DATA == undefined || (msg.sceneId && window.CURRENT_SCENE_DATA && msg.sceneId !== window.CURRENT_SCENE_DATA.id && [
 				"custom/myVTT/delete_token",
@@ -1487,17 +1445,9 @@ class MessageBroker {
 		};
 
 		if(is_campaign_page()){
-			/*get_cobalt_token(function (token) {
-				self.loadWS(token);
-			});*/
-
 			self.loadAboveWS();
 			return;
 		}
-
-		/*get_cobalt_token(function (token) {
-			self.loadWS(token, report_connection);
-		});*/
 
 		self.loadAboveWS(notify_player_join);
 
@@ -2377,8 +2327,6 @@ class MessageBroker {
 	sendMessage(eventType, data,skipSceneId=false, forceSceneId = undefined) {
 		let self = this;
 
-		//this.sendDDBMB(eventType,data); 
-
 		if(eventType.startsWith("custom")){
 			if(eventType == "custom/myVTT/note"){
 				const copyData = $.extend(true, {}, data);
@@ -2487,19 +2435,6 @@ class MessageBroker {
 			// entityType:"character", // MOLTO INTERESSANTE. PENSO VENGA USATO PER CAPIRE CHE IMMAGINE METTERCI.
 		};
 		window.diceRoller.ddbDispatch(message);
-	}
-
-	sendPing() {
-		/*let self = this;
-		if (this.ws.readyState == this.ws.OPEN) {
-			this.ws.send("{\"data\": \"ping\"}");
-		}
-		else {
-			get_cobalt_token(function(token) {
-				self.loadWS(token, null);
-			});
-		}*/
-		window.diceRoller.ddbDispatch("{\"data\": \"ping\"}");
 	}
 
 	sendAbovePing(){
