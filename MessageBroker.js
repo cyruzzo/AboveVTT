@@ -989,6 +989,7 @@ class MessageBroker {
 						} 
 					});
 				}
+				return;
 			}
 			// WE NEED TO IGNORE CERTAIN MESSAGE IF THEY'RE NOT FROM THE CURRENT SCENE
 			if(window.CURRENT_SCENE_DATA == undefined || (msg.sceneId && window.CURRENT_SCENE_DATA && msg.sceneId !== window.CURRENT_SCENE_DATA.id && [
@@ -1484,18 +1485,19 @@ class MessageBroker {
 
 
 		};
+
 		if(is_campaign_page()){
-			get_cobalt_token(function (token) {
+			/*get_cobalt_token(function (token) {
 				self.loadWS(token);
-			});
+			});*/
 
 			self.loadAboveWS();
 			return;
 		}
 
-		get_cobalt_token(function (token) {
+		/*get_cobalt_token(function (token) {
 			self.loadWS(token, report_connection);
-		});
+		});*/
 
 		self.loadAboveWS(notify_player_join);
 
@@ -2365,9 +2367,7 @@ class MessageBroker {
 		if (message.data.injected_data?.img?.startsWith('above-bucket-not-a-url')) {
 			message.data.injected_data.img = await getAvttStorageUrl(message.data.injected_data.img);
 		}
-		if (this.ws?.readyState != undefined && this.ws.readyState == this.ws.OPEN) {
-			this.ws.send(JSON.stringify(message));
-		}
+		window.diceRoller.ddbDispatch(message);
 
 		this.handle_injected_data(message);
 
@@ -2460,7 +2460,7 @@ class MessageBroker {
 			return;
 		}
 
-		if (this.abovews.readyState == this.ws.OPEN) {
+		if (this.abovews.readyState == this.abovews.OPEN) {
 			this.abovews.send(JSON.stringify(message));
 		}
 		else {
@@ -2486,22 +2486,11 @@ class MessageBroker {
 			// entityId :"43263440", proviamo a non metterla
 			// entityType:"character", // MOLTO INTERESSANTE. PENSO VENGA USATO PER CAPIRE CHE IMMAGINE METTERCI.
 		};
-
-		if (this.ws.readyState == this.ws.OPEN) {
-			this.ws.send(JSON.stringify(message));
-		}
-		else { // TRY TO RECOVER
-			get_cobalt_token(function(token) {
-				self.loadWS(token, function() {
-					// TODO, CONSIDER ADDING A SYNCMEUP / SCENE PAIR HERE
-					self.ws.send(JSON.stringify(message));
-				});
-			});
-		}
+		window.diceRoller.ddbDispatch(message);
 	}
 
 	sendPing() {
-		let self = this;
+		/*let self = this;
 		if (this.ws.readyState == this.ws.OPEN) {
 			this.ws.send("{\"data\": \"ping\"}");
 		}
@@ -2509,7 +2498,8 @@ class MessageBroker {
 			get_cobalt_token(function(token) {
 				self.loadWS(token, null);
 			});
-		}
+		}*/
+		window.diceRoller.ddbDispatch("{\"data\": \"ping\"}");
 	}
 
 	sendAbovePing(){

@@ -2121,8 +2121,6 @@ function observe_character_sheet_changes(documentToObserve) {
       return;
 
     noisy_log(2, "character_sheet_observer", mutationList);
-
-
     //support DDB character sheet overhaul
     const overhaul_iframe = $("#ddbfix-vtt-iframe[src*='abovevtt=true']:not(.abovevtt-visited)")
     overhaul_iframe.each(function(){
@@ -3420,7 +3418,7 @@ function observe_character_sheet_changes(documentToObserve) {
                 } catch (error) {
                   console.log("inject_dice_roll failed to process element", error);
                 }
-              } else if (mutationParent.is("[class*='styles_characterName']") || mutation.target.parentElement.classList.contains("ddb-character-app-sn0l9p") || (mutationParent.attr('class').includes('ddb-character-app') && mutationParent.parent().hasClass('ddbc-character-tidbits__heading'))) {
+              } else if (mutationParent.is("[class*='styles_characterName']") || mutation.target.parentElement.classList.contains("ddb-character-app-sn0l9p") || (mutationParent.attr('class')?.includes('ddb-character-app') && mutationParent.parent().hasClass('ddbc-character-tidbits__heading'))) {
                 window.PLAYER_NAME = mutation.target.data;
                 character_sheet_changed({name: mutation.target.data});
               }

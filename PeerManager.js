@@ -153,8 +153,7 @@ class PeerManager {
   }
 
   /** Returns true if we already have a non-stale connection for the same remote peer/player. */
-  hasActiveConnection(remotePeerId, remotePlayerId) {
-    const playerId = `${remotePlayerId ?? ""}`;
+  hasActiveConnection(remotePeerId) {
     return this.connections.some(pc => {
       if (remotePeerId && pc.peerId === remotePeerId) {
         return !pc.isStale;
@@ -191,12 +190,16 @@ class PeerManager {
       console.log("PeerManager.receivedPeerReady is returning early because enabled =", this.enabled);
       return;
     }
+    if(!window.PeerManager?.peer?.id) {
+      rebuild_peerManager();
+      return;
+    }
     try {
       noisy_log("PeerManager.receivedPeerReady", msg);
       if (!this.shouldProcessHandshake(msg, "peerReady")) {
         return;
       }
-      if (this.hasActiveConnection(msg?.data?.peerId, msg?.data?.playerId)) {
+      if (this.hasActiveConnection(msg?.data?.peerId)) {
         noisy_log("PeerManager.receivedPeerReady skipping existing active connection", msg?.data);
         window.MB.sendMessage("custom/myVTT/peerConnect", {
           initiator: msg.data.peerId,
@@ -230,7 +233,7 @@ class PeerManager {
         return;
       }
       if (msg.data.initiator === window.PeerManager.peer.id) { // make sure they're sending it to us
-        if (this.hasActiveConnection(msg?.data?.peerId, msg?.data?.playerId)) {
+        if (this.hasActiveConnection(msg?.data?.peerId)) {
           noisy_log("PeerManager.receivedPeerConnect skipping existing active connection", msg?.data);
           return;
         }

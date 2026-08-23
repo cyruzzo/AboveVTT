@@ -14,8 +14,20 @@
 			],
 			"js": [
 				"Load.js"
+			]
+		},
+		{
+			"matches": [
+				"https://www.dndbeyond.com/campaigns/*",
+				"https://www.dndbeyond.com/characters*"
 			],
-			"run_at": "document_end"
+			"exclude_matches": [
+				"https://www.dndbeyond.com/campaigns/join/*"
+			],
+			"js": [
+				"LoadStart.js"
+			],
+			"run_at": "document_start"
 		}
 	],
 	"host_permissions": [
@@ -104,7 +116,9 @@
 			"iframe.html",
 			"avttS3Upload.js",
 			"loadFrame.js",
-			"Load.js"	
+			"Load.js",
+			"LoadStart.js",
+			"DDBMb.js"
 			],
 			"matches": [ "*://*.dndbeyond.com/*" ]	
 		}
