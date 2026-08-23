@@ -454,7 +454,7 @@ class PeerManager {
               noisy_log("PeerManager.checkForStaleConnections failed to close an already closed connection", error);
             }
             try{
-              delete this.peer.connections[peerId];
+              this.peer._connections.delete(peerId);
             }
             catch(error){
               noisy_log("PeerManager.checkForStaleConnections failed to delete an already closed connection", error);
@@ -469,7 +469,7 @@ class PeerManager {
               noisy_log("PeerManager.checkForStaleConnections failed to close an abandoned connection", error);
             }
             try{
-              delete this.peer.connections[peerId];
+              this.peer._connections.delete(peerId);
             }
             catch(error){
               noisy_log("PeerManager.checkForStaleConnections failed to delete an already closed connection", error);
