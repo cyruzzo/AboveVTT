@@ -43,8 +43,8 @@
             const interceptor = (event) => {
                 if (event.data && event.data !== 'pong') {
                     try {
-                        if (window.MB && typeof window.MB.onmessage === 'function') {
-                        window.MB.onmessage(event);
+                        if (window.MB && typeof window.MB.ddbonmessage === 'function') {
+                        window.MB.ddbonmessage(event);
                         }
                     } catch (err) {
                         console.error('Error in WS interceptor:', err);
