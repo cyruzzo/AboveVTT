@@ -664,6 +664,10 @@ class DiceRoller {
             // This also blocks other attempts to roll until we've finished processing
             // don't hold a reference to the object we were given in case it gets altered while we're waiting.
             this.#resetVariables(false);
+
+            diceRoll.name = diceRoll.name == false ? "THE DM" : /^spectator-[\d\w]+-[\d\w]+/gi.test(diceRoll.name) ?  'Spectator' : diceRoll.name;
+            diceRoll.entityType = ["character", "monster"].includes(diceRoll.entityType) ? diceRoll.entityType : "character";
+
             this.#pendingDiceRoll = new DiceRoll(diceRoll.expression, diceRoll.action, diceRoll.rollType, diceRoll.name, diceRoll.avatarUrl, diceRoll.entityType, diceRoll.entityId, diceRoll.sendToOverride);
             this.#pendingCritRange = critRange;
             this.#pendingCritType = critType;
@@ -1042,19 +1046,7 @@ class DiceRoller {
         this.#pendingCrit = undefined;
         this.#pendingSendTo = undefined;
     }
-    async handleOldFulfilled(message) {
-        noisy_log("capturing fulfilled message: ", message)
-        let alteredMessage = await this.#swapRollData(message);
-        if (alteredMessage.data?.context?.avatarUrl?.startsWith("above-bucket-not-a-url")) {
-            alteredMessage.data.context.avatarUrl = await getAvttStorageUrl(alteredMessage.data.context.avatarUrl, true)
-        }
-        noisy_log("altered fulfilled message: ", alteredMessage);
-        this.ddbDispatch(alteredMessage);
-        await this.#resetVariables();
-        this.nextRoll(this.#pendingMessages[message.data.rollId].ddbMessage, this.#pendingMessages[message.data.rollId].pendingCritRange, this.#pendingMessages[message.data.rollId].pendingCritType, this.#pendingMessages[message.data.rollId].pendingDamageType);
-        this.#pendingMessages[message.data.rollId] = null;
-        delete this.#pendingMessages[message.data.rollId];  
-    }
+
     async sendNewFulfilled() {
         if (this.#orderedPendingIds.length == 0)
             return;
@@ -1062,6 +1054,7 @@ class DiceRoller {
         if (this.#pendingMessages[firstPending] == undefined){
             return;
         }
+        clearTimeout(this.backupSendTimeout);
         const newId = uuid();
         
         const message = { ...this.#pendingMessages[firstPending].ddbMessage, eventType: "dice/roll/fulfilled", id: newId, persist: true };
@@ -1092,6 +1085,7 @@ class DiceRoller {
     async #wrappedDispatch(message) {
         
         if(this.#waitingForRoll && message.source == 'Beyond20'){
+            this.ddbDispatch(message);
             return;
         }
 
@@ -1130,12 +1124,10 @@ class DiceRoller {
                 this.sendNewFulfilled();
             }, 1000)
         } else if (message.eventType === "dice/roll/fulfilled" && this.#pendingMessages[message.data.rollId] !== undefined) {
-            clearTimeout(this.backupSendTimeout)
             this.sendNewFulfilled()
         } else if(message.eventType !== "dice/roll/fulfilled" && message.eventType !== "dice/roll/pending" && message.eventType !== "dice/roll/deferred"){
             this.ddbDispatch(message);
-        }
-        
+        } 
     }
 
     /** iterates over the rolls of a DDB message, calculates #pendingDiceRoll.expression, and swaps any data necessary to make the message match the expression result */
