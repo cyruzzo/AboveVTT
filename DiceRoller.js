@@ -1067,7 +1067,7 @@ class DiceRoller {
         alteredMessage.dateTime = this.#pendingMessages[firstPending]?.ddbMessage?.dateTime || Date.now();
 
         this.ddbDispatch(alteredMessage);  
-
+        window.MB.onmessage({data: JSON.stringify(alteredMessage)});
         if(this.#multiRollArray.length>0){
             const self = this;
             const nextCritRange = self.#pendingMessages[firstPending]?.pendingCritRange;
@@ -1124,7 +1124,7 @@ class DiceRoller {
                 this.sendNewFulfilled();
             }, 1000)
         } else if (message.eventType === "dice/roll/fulfilled" && this.#pendingMessages[message.data.rollId] !== undefined) {
-            this.sendNewFulfilled()
+            this.sendNewFulfilled();
         } else if(message.eventType !== "dice/roll/fulfilled" && message.eventType !== "dice/roll/pending" && message.eventType !== "dice/roll/deferred"){
             this.ddbDispatch(message);
         } 

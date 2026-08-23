@@ -33,20 +33,28 @@
         window.ActiveWorkers[scriptURL] = worker;
         return worker;
     };
-    const NativeWebSocket = window.WebSocket;
-    window.WebSocket = function (url, protocols) {
-        const ws = new NativeWebSocket(url, protocols);
 
-        if (url.includes('game-log-api-live.dndbeyond.com')) {          
-            ws.addEventListener('message', (event) => {
-                try {
-                    window.MB.onmessage(event);
-                } catch (e) {
-                    console.log('Raw message:', event.data);
+
+    const originalAddEventListener = WebSocket.prototype.addEventListener;
+
+    WebSocket.prototype.addEventListener = function (type, listener, options) {
+        const isGameLog = this.url && this.url.toLowerCase().includes('game-log-api-live');
+        if (type === 'message' && isGameLog) {
+            const interceptor = (event) => {
+                if (event.data && event.data !== 'pong') {
+                    try {
+                        if (window.MB && typeof window.MB.onmessage === 'function') {
+                        window.MB.onmessage(event);
+                        }
+                    } catch (err) {
+                        console.error('Error in WS interceptor:', err);
+                    }
                 }
-            });
+            };
+
+            originalAddEventListener.call(this, 'message', interceptor, options);
         }
-        return ws;
+
+        return originalAddEventListener.call(this, type, listener, options);
     };
-    Object.assign(window.WebSocket, NativeWebSocket);
 })()
