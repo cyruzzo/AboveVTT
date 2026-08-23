@@ -388,7 +388,7 @@ function init_combat_tracker(){
 	});
 	let rollplayerinit=$('<button id="rollplayerinit" class="roll-init-button">Roll Initiative</button>');
 	rollplayerinit.click(function(){
-		$(`.ct-combat__summary-group--initiative button.integrated-dice__container`).click();
+		$(`.ct-combat__summary-group--initiative button.integrated-dice__container`)[0].dispatchEvent(new MouseEvent('pointerdown', { bubbles: true }));
 	});
 	
 	
