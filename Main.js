@@ -1446,59 +1446,6 @@ function close_splash() {
 
 
 
-var DDB_WS_OBJ = null;
-var DDB_WS_FORCE_RECONNECT_LOCK = false; // Best effort (not atomic) - ensure function is called only once at a time
-/**
- * Attempts to force DDBs WebSocket to re-connect.
- * @returns Bool false - wasn't able to force / no need
- * @returns Bool true - was able to attempt force reconnec
- */
-function forceDdbWsReconnect() {
-	try {
-		if (DDB_WS_FORCE_RECONNECT_LOCK) {
-			console.log("forceDdbWsReconnect is already locked!");
-			return false;
-		}
-
-		if (window.navigator && !window.navigator.onLine) {
-			console.log("No internet connection, cannot re-connect to DDBs WebSocket.");
-			return false;
-		}
-
-		DDB_WS_FORCE_RECONNECT_LOCK = true;
-
-		const key = Symbol.for('@dndbeyond/message-broker-lib');
-		if (key) {
-			DDB_WS_OBJ = window[key];
-		}
-
-		if ((DDB_WS_OBJ && DDB_WS_OBJ.status == 'disconnected') || (window.MB.ws.readyState != window.MB.ws.OPEN)) {
-			console.log("Detected that DDBs WebSocket is disconnected - attempting to force reconnect.");
-			DDB_WS_OBJ.reset();
-			DDB_WS_OBJ.connect();
-			get_cobalt_token(function(token) {
-				window.MB.loadWS(token, null);
-
-				// Wait 8 seconds before checking again if the websocket is connected
-				setTimeout(function() {
-					if (DDB_WS_OBJ.status == 'open') {
-						console.log("Managed to reconnect DDBs WebSocket successfully!");
-					}
-					DDB_WS_FORCE_RECONNECT_LOCK = false;
-				}, 8000);
-			});
-
-			return true;
-		}
-
-		DDB_WS_FORCE_RECONNECT_LOCK = false;
-
-		return false;
-	} catch(e) {
-		console.log("forceDdbWsReconnect error: " + e);
-		DDB_WS_FORCE_RECONNECT_LOCK = false;
-	}
-}
 
 /**
  * Register event to minimize/restore a player window when double clicking the DOMObject.
@@ -3170,6 +3117,26 @@ function init_help_menu() {
 							<dd>Prev creature in combat</dd>
 						</dl>
 						<dl>
+							<dt>Drag select box up</dt>
+							<dd>Select tokens fully in the select box.</dd>
+						</dl>
+						<dl>
+							<dt>Drag select box down</dt>
+							<dd>Select tokens partially in the select box.</dd>
+						</dl>
+						<dl>
+							<dt>Drag eye icon to rotate (above token)</dt>
+							<dd>Rotate selected tokens to face the eye. Hold ${getShiftKeyName()} to snap to half grid increments.</dd>
+						</dl>
+						<dl>
+							<dt>Drag aoe origin icon (top right of token)</dt>
+							<dd>Rotate selected AoE around it\'s origin point. Hold ${getShiftKeyName()} to snap to half grid increments.</dd>
+						</dl>
+						<dl>
+							<dt>Drag center point icon to rotate (top right of token)</dt>
+							<dd>Rotate selected tokens as a group around the center point. Hold ${getShiftKeyName()} to snap to half grid increments.</dd>
+						</dl>
+						<dl>
 							<dt>Double Click on Scene/Token</dt>
 							<dd>Ping/highlight location or token to all players. The DM has a quick toggle (right side) for centering player views on scene ping.</dd>
 						</dl>
@@ -3186,7 +3153,7 @@ function init_help_menu() {
 							<dd>Move selected tokens in direction of arrow key</dd>
 						</dl>
 						<dl>
-							<dt>Shift+Arrow Keys</dt> 
+							<dt>${getShiftKeyName()}+Arrow Keys</dt> 
 							<dd>Rotate selected tokens to face in direction of arrow key</dd>
 						</dl>
 						<dl>
