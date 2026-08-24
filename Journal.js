@@ -2077,8 +2077,11 @@ class JournalManager{
 		self.bindDndSheetTemplateEvents(id, note_text, note_container);
 	}
 	getDndSheetCellSuggestionItems(suggestionType, searchText){
-		const normalize = (value) => `${value ?? ''}`.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+		const normalize = (value) => `${value ?? ''}`.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
+		const removeSpecial = (value) => normalize(value).replace(/[^a-z0-9\s]/g, ' ').replace(/\s+/g, ' ').trim();
 		const normalizedSearch = normalize(searchText);
+		const normalizedSearchAlphanumeric = removeSpecial(searchText);
+		const searchHasSpecialChars = normalizedSearch !== normalizedSearchAlphanumeric;
 		if(normalizedSearch.length < 2)
 			return [];
 		const isLegacy = !get_avtt_setting_value('2024Tooltips');
@@ -2090,7 +2093,8 @@ class JournalManager{
 					name: item.name,
 					type: item.magic ? 'Magic Item' : item.filterType || 'Item',
 					color: item.magic ? 'var(--compendium-magic-item-tooltip,#0f5cbc)' : 'var(--compendium-item-tooltip,#774521)',
-					match: normalize(item.name)
+					match: normalize(item.name),
+					matchAlphanumeric: removeSpecial(item.name)
 				})));
 		}
 		if(suggestionType == 'attack' && window.SPELLS_CACHE != undefined){
@@ -2100,17 +2104,58 @@ class JournalManager{
 					name: spell.definition.name,
 					type: 'Spell',
 					color: 'var(--compendium-spell-tooltip,#704cd9)',
-					match: normalize(spell.definition.name)
+					match: normalize(spell.definition.name),
+					matchAlphanumeric: removeSpecial(spell.definition.name)
 				})));
 		}
 		const seen = new Set();
+		const searchWords = normalizedSearchAlphanumeric.split(/\s+/).filter(w => w.length > 0);
+		
 		return suggestions
-			.filter(suggestion => suggestion.name && suggestion.match.includes(normalizedSearch))
+			.filter(suggestion => {
+				if(!suggestion.name) return false;
+				
+				const allWordsMatch = searchWords.every(word => 
+					suggestion.matchAlphanumeric.includes(word)
+				);
+				
+				if(allWordsMatch) return true;
+				
+				return suggestion.matchAlphanumeric.includes(normalizedSearchAlphanumeric) ||
+					   (searchHasSpecialChars && suggestion.match.includes(normalizedSearch));
+			})
 			.sort((a, b) => {
-				const aStarts = a.match.startsWith(normalizedSearch);
-				const bStarts = b.match.startsWith(normalizedSearch);
-				if(aStarts != bStarts)
-					return aStarts ? -1 : 1;
+				const aConsecutiveStart = a.matchAlphanumeric.startsWith(normalizedSearchAlphanumeric);
+				const bConsecutiveStart = b.matchAlphanumeric.startsWith(normalizedSearchAlphanumeric);
+				
+				if(aConsecutiveStart != bConsecutiveStart)
+					return aConsecutiveStart ? -1 : 1;
+				
+				if(!aConsecutiveStart) {
+					const aWordsInOrder = searchWords.filter((word, idx) => {
+						const prevWord = idx === 0 ? '' : searchWords[idx - 1];
+						const prevIdx = a.matchAlphanumeric.indexOf(prevWord);
+						const currentIdx = a.matchAlphanumeric.indexOf(word, prevIdx + prevWord.length);
+						return currentIdx !== -1;
+					}).length;
+					const bWordsInOrder = searchWords.filter((word, idx) => {
+						const prevWord = idx === 0 ? '' : searchWords[idx - 1];
+						const prevIdx = b.matchAlphanumeric.indexOf(prevWord);
+						const currentIdx = b.matchAlphanumeric.indexOf(word, prevIdx + prevWord.length);
+						return currentIdx !== -1;
+					}).length;
+					
+					if(aWordsInOrder != bWordsInOrder)
+						return bWordsInOrder - aWordsInOrder;
+				}
+				
+				if(aConsecutiveStart && bConsecutiveStart) {
+					const aMatchQuality = normalizedSearchAlphanumeric.length / a.matchAlphanumeric.length;
+					const bMatchQuality = normalizedSearchAlphanumeric.length / b.matchAlphanumeric.length;
+					if(Math.abs(aMatchQuality - bMatchQuality) > 0.01)
+						return bMatchQuality - aMatchQuality;
+				}
+				
 				return a.name.localeCompare(b.name);
 			})
 			.filter(suggestion => {
@@ -2125,34 +2170,7 @@ class JournalManager{
 	removeDndSheetCellSuggestions(ownerDocument = document){
 		$('.dnd-sheet-cell-suggestions', ownerDocument).remove();
 	}
-	loadScriptInDocument(ownerDocument, src){
-		return new Promise((resolve, reject) => {
-			const script = ownerDocument.createElement('script');
-			script.src = src;
-			script.onload = resolve;
-			script.onerror = reject;
-			ownerDocument.head.appendChild(script);
-		});
-	}
-	async getSortableJquery(ownerDocument){
-		const ownerWindow = ownerDocument.defaultView || window;
-		if(ownerDocument === document){
-			return $;
-		}
-		if(ownerWindow.jQuery && ownerWindow.jQuery !== window.jQuery && ownerWindow.jQuery.fn?.sortable){
-			return ownerWindow.jQuery;
-		}
-		if(!ownerWindow.avttJqueryUiPromise){
-			ownerWindow.avttJqueryUiPromise = (async () => {
-				const scriptNames = ['jquery-3.6.0.min.js', 'jquery-ui.min.js', 'jquery.ui.touch-punch.js'];
-				for(const scriptName of scriptNames){
-					await this.loadScriptInDocument(ownerDocument, `${window.EXTENSION_PATH}${scriptName}`);
-				}
-			})();
-		}
-		await ownerWindow.avttJqueryUiPromise;
-		return ownerWindow.jQuery;
-	}
+
 	getDndSheetSuggestionCellFromEvent(event){
 		const directTarget = $(event.target).closest('[data-avtt-suggestion-type]');
 		if(directTarget.length > 0)
@@ -2219,6 +2237,35 @@ class JournalManager{
 		suggestionBox.css({
 			top: `${rect.top + ownerWindow.scrollY - suggestionBoxHeight}px`,
 			visibility: 'visible'
+		});
+	}
+
+	async getSortableJquery(ownerDocument){
+		const ownerWindow = ownerDocument.defaultView || window;
+		if(ownerDocument === document){
+			return $;
+		}
+		if(ownerWindow.jQuery && ownerWindow.jQuery !== window.jQuery && ownerWindow.jQuery.fn?.sortable){
+			return ownerWindow.jQuery;
+		}
+		if(!ownerWindow.avttJqueryUiPromise){
+			ownerWindow.avttJqueryUiPromise = (async () => {
+				const scriptNames = ['jquery-3.6.0.min.js', 'jquery-ui.min.js', 'jquery.ui.touch-punch.js'];
+				for(const scriptName of scriptNames){
+					await this.loadScriptInDocument(ownerDocument, `${window.EXTENSION_PATH}${scriptName}`);
+				}
+			})();
+		}
+		await ownerWindow.avttJqueryUiPromise;
+		return ownerWindow.jQuery;
+	}
+	loadScriptInDocument(ownerDocument, src){
+		return new Promise((resolve, reject) => {
+			const script = ownerDocument.createElement('script');
+			script.src = src;
+			script.onload = resolve;
+			script.onerror = reject;
+			ownerDocument.head.appendChild(script);
 		});
 	}
 	setupDndSheetTableSortable(table, ownerDocument, persistCurrentNoteText){
