@@ -2159,6 +2159,12 @@ class Token {
 			return;
 		}
 		try{
+			if(window.DRAGGING && $(`#tokens .token.tokenselected[data-id='${this.options.id}']:not(.ui-draggable-disabled), #tokens .token[data-group-id='${this.options.groupId}'][data-id='${this.options.id}']`).length > 0) {
+				setTimeout(() => {
+					this.throttlePlace(animationDuration, sceneId, callback);
+				}, 1000);
+				return;
+			}
 			if(!this.options.id.includes('exampleToken') && (isNaN(parseFloat(this.options.left)) || isNaN(parseInt(this.options.top)))){// prevent errors with NaN positioned tokens - delete them as catch all. 
 				this.options.deleteableByPlayers = true;
 				this.delete();

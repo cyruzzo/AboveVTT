@@ -464,7 +464,7 @@ Mousetrap.bind('right', function (e) {
 }, 'keyup');
 
 Mousetrap.bind('alt', function () {
-    if (altHeld) 
+    if (altHeld || window.DRAGGING) 
         return;
     
     altHeld = true;
