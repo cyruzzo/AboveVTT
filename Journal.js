@@ -2057,308 +2057,323 @@ class JournalManager{
 			$(".import-loading-indicator").remove();        
 		})
 	}
-		getNotePopoutName(id){
-			return this.notes[id].title.replace(/(\r\n|\n|\r)/gm, "").trim();
+	getNotePopoutName(id){
+		return this.notes[id].title.replace(/(\r\n|\n|\r)/gm, "").trim();
+	}
+	getDisplayedNoteText(noteContainer, noteText){
+		const currentNoteText = $(noteContainer).find('.avtt-stat-block-container, .note-text').first();
+		return currentNoteText.length > 0 ? currentNoteText : $(noteText);
+	}
+	bindDisplayedNoteEvents(id, note, note_text, note_container){
+		const self = this;
+		note.off('click').on('click', '.tooltip-hover[href*="https://www.dndbeyond.com/sources/dnd/"], .int_source_link ', function (event) {
+			event.preventDefault();
+			event.stopPropagation();
+			event.stopImmediatePropagation();
+			render_source_chapter_in_iframe(event.target.href);
+		});
+		self.bindDndSheetTemplateEvents(id, note_text, note_container);
+	}
+	bindDndSheetTemplateEvents(id, note_text, note_container, options = {}){
+		const self = this;
+		const container = $(note_container);
+		const initialNoteText = $(note_text);
+		if(container.find('.dnd-sheet').length === 0 && initialNoteText.find('.dnd-sheet').length === 0){
+			return;
 		}
-		getDisplayedNoteText(noteContainer, noteText){
-			const currentNoteText = $(noteContainer).find('.avtt-stat-block-container, .note-text').first();
-			return currentNoteText.length > 0 ? currentNoteText : $(noteText);
-		}
-		bindDisplayedNoteEvents(id, note, note_text, note_container){
-			const self = this;
-			note.off('click').on('click', '.tooltip-hover[href*="https://www.dndbeyond.com/sources/dnd/"], .int_source_link ', function (event) {
-				event.preventDefault();
-				render_source_chapter_in_iframe(event.target.href);
-			});
-			self.bindDndSheetTemplateEvents(id, note_text, note_container);
-		}
-		bindDndSheetTemplateEvents(id, note_text, note_container, options = {}){
-			const self = this;
-			const container = $(note_container);
-			const initialNoteText = $(note_text);
-			if(container.find('.dnd-sheet').length === 0 && initialNoteText.find('.dnd-sheet').length === 0){
-				return;
+		const tokenId = options.tokenId;
+		const downloadToken = options.downloadToken;
+		const uploadId = options.uploadId ?? (tokenId ?? id);
+		const getCurrentNoteText = () => self.getDisplayedNoteText(container, initialNoteText);
+		const persistCurrentNoteText = (persistOptions) => {
+			self.persistStatBlockContent(id, getCurrentNoteText(), container, {tokenId, ...persistOptions});
+		};
+		const setLockState = () => {
+			const currentNoteText = getCurrentNoteText();
+			if(!window.unlockTemplateStatBlocks){
+				currentNoteText.find('.dnd-sheet button').attr("contenteditable", "false");
+			} else{
+				currentNoteText.find('.dnd-sheet [contenteditable]:not(a):not(.table-row-drag-handle):not(.add-table-row)').attr("contenteditable", "true");
 			}
-			const tokenId = options.tokenId;
-			const downloadToken = options.downloadToken;
-			const uploadId = options.uploadId ?? (tokenId ?? id);
-			const getCurrentNoteText = () => self.getDisplayedNoteText(container, initialNoteText);
-			const persistCurrentNoteText = (persistOptions) => {
-				self.persistStatBlockContent(id, getCurrentNoteText(), container, {tokenId, ...persistOptions});
-			};
-			const setLockState = () => {
-				const currentNoteText = getCurrentNoteText();
-				if(!window.unlockTemplateStatBlocks){
-					currentNoteText.find('.dnd-sheet button').attr("contenteditable", "false");
-				} else{
-					currentNoteText.find('.dnd-sheet [contenteditable]:not(a):not(.table-row-drag-handle):not(.add-table-row)').attr("contenteditable", "true");
-				}
-			};
+		};
 
-			getCurrentNoteText().find('a').attr('contenteditable', 'false');
-			container.off('focusout.editable').on('focusout.editable', '.dnd-sheet [contenteditable="true"]', (e)=>{
-				setTimeout(()=>{
-					if(container.find('.dnd-sheet [contenteditable="true"]:is(:focus, :focus-within)').length>0) return;
-					if($(e.target).is('.injected-input')) return;  
-					persistCurrentNoteText({forceSave: true, rescanStatBlock: true});
-				}, 10);
-			});
-			container.off('change.checkbox').on('change.checkbox', '.dnd-sheet input', (e)=>{
-				if (e.target && e.target.nodeName === 'INPUT' && e.target.type === 'checkbox') {				
-					if (e.target.checked) {
-						e.target.setAttribute('checked', 'checked');
-					} else {
-						e.target.removeAttribute('checked');
-					}
+		getCurrentNoteText().find('a').attr('contenteditable', 'false');
+		container.off('focusout.editable').on('focusout.editable', '.dnd-sheet [contenteditable="true"]', (e)=>{
+			e.preventDefault();
+			e.stopPropagation();
+			e.stopImmediatePropagation();
+			setTimeout(()=>{
+				if(container.find('.dnd-sheet [contenteditable="true"]:is(:focus, :focus-within)').length>0) return;
+				if($(e.target).is('.injected-input')) return;  
+				persistCurrentNoteText({forceSave: true, rescanStatBlock: true});
+			}, 10);
+		});
+		container.off('change.checkbox').on('change.checkbox', '.dnd-sheet input', (e)=>{
+			e.preventDefault();
+			e.stopPropagation();
+			e.stopImmediatePropagation();
+			if (e.target && e.target.nodeName === 'INPUT' && e.target.type === 'checkbox') {				
+				if (e.target.checked) {
+					e.target.setAttribute('checked', 'checked');
+				} else {
+					e.target.removeAttribute('checked');
 				}
-				persistCurrentNoteText({forceSave: true, rescanStatBlock: false});
-			})
-			container.off('pointerdown.profChange, touchstart.profChange').on('pointerdown.profChange, touchstart.profChange', '.dnd-sheet .prof-checkbox', (e)=>{
-				e.preventDefault();
-				const target = $(e.currentTarget);
-				const currentState = parseInt(target.attr('data-state'));
-				const newState = (currentState + 1) % 4;
-				target.attr('data-state', newState);
-				persistCurrentNoteText({forceSave: true, rescanStatBlock: false});
-			})
-			container.off('paste.dndSheet').on('paste.dndSheet', '.dnd-sheet [contentEditable="true"]', function (e) {
-				e.preventDefault();
-				const text = (e.originalEvent?.clipboardData || e.clipboardData || window.clipboardData).getData('text/plain');
-				const ownerDocument = e.target?.ownerDocument || document;
-				ownerDocument.execCommand('insertText', false, text);
-			});
+			}
+			persistCurrentNoteText({forceSave: true, rescanStatBlock: false});
+		})
+		container.off('pointerdown.profChange, touchstart.profChange').on('pointerdown.profChange, touchstart.profChange', '.dnd-sheet .prof-checkbox', (e)=>{
+			e.preventDefault();
+			e.stopPropagation();
+			e.stopImmediatePropagation();
+			const target = $(e.currentTarget);
+			const currentState = parseInt(target.attr('data-state'));
+			const newState = (currentState + 1) % 4;
+			target.attr('data-state', newState);
+			persistCurrentNoteText({forceSave: true, rescanStatBlock: false});
+		})
+		container.off('paste.dndSheet').on('paste.dndSheet', '.dnd-sheet [contentEditable="true"]', function (e) {
+			e.preventDefault();
+			e.stopPropagation();
+			e.stopImmediatePropagation();
+			const text = (e.originalEvent?.clipboardData || e.clipboardData || window.clipboardData).getData('text/plain');
+			const ownerDocument = e.target?.ownerDocument || document;
+			ownerDocument.execCommand('insertText', false, text);
+		});
 
-			getCurrentNoteText().find('.dnd-sheet table').each(function() {
-				const $table = $(this);
-				const rowsContainer = $table.find('tbody').length > 0 ? $table.find('tbody') : $table;
-				if (rowsContainer.find('> tr').length > 1) {
-					rowsContainer.find('> tr').each(function() {
-						const $row = $(this);
-						if ($row.find('> .table-row-drag-handle').length === 0) {
-							const $handleCell = $('<td class="table-row-drag-handle" contenteditable="false" aria-hidden="true">⋮⋮</td>');
-							$row.prepend($handleCell);
-						}
-					});
-					if ($table.data('ui-sortable')) {
-						$table.sortable('destroy');
-					}
-					$table.sortable({
-						items: '> tbody > tr, > tr',
-						handle: '.table-row-drag-handle',
-						placeholder: 'ui-sortable-placeholder',
-						update: function() {
-							persistCurrentNoteText({forceSave: true, rescanStatBlock: false});
-						}
-					});
-				}
-				const header = $table.find('th').first().parent().parent();
-				header.find('> tr').each(function() {
+		getCurrentNoteText().find('.dnd-sheet table').each(function() {
+			const $table = $(this);
+			const rowsContainer = $table.find('tbody').length > 0 ? $table.find('tbody') : $table;
+			if (rowsContainer.find('> tr').length > 1) {
+				rowsContainer.find('> tr').each(function() {
 					const $row = $(this);
-					if ($row.find('> .header-spacer').length === 0) {
-						const $handleCell = $('<th class="header-spacer" aria-hidden="true"></td>');
+					if ($row.find('> .table-row-drag-handle').length === 0) {
+						const $handleCell = $('<td class="table-row-drag-handle" contenteditable="false" aria-hidden="true">⋮⋮</td>');
 						$row.prepend($handleCell);
 					}
 				});
-			
-				if($table.next('.add-table-row').length>0)
-					return;
-				const add_table_row = $(`<button class="add-table-row" contenteditable="false">+</button>`);
-				$table.after(add_table_row);
+				if ($table.data('ui-sortable')) {
+					$table.sortable('destroy');
+				}
+				$table.sortable({
+					items: '> tbody > tr, > tr',
+					handle: '.table-row-drag-handle',
+					placeholder: 'ui-sortable-placeholder',
+					update: function() {
+						persistCurrentNoteText({forceSave: true, rescanStatBlock: false});
+					}
+				});
+			}
+			const header = $table.find('th').first().parent().parent();
+			header.find('> tr').each(function() {
+				const $row = $(this);
+				if ($row.find('> .header-spacer').length === 0) {
+					const $handleCell = $('<th class="header-spacer" aria-hidden="true"></td>');
+					$row.prepend($handleCell);
+				}
 			});
-			container.off('pointerdown.addRow, touchstart.addRow').on('pointerdown.addRow, touchstart.addRow', '.dnd-sheet .add-table-row', function (e) {
-				e.preventDefault();
-				const table = $(e.target).prev('table');
-				const tableBody = $(table).find('tbody');
-				const targetContainer = tableBody.length>0 ? tableBody : table;
-				const newRow = targetContainer.find('>tr:last').clone();
-				newRow.find('td:not(.table-row-drag-handle), th').html('');
-				targetContainer.append(newRow);
-				persistCurrentNoteText({forceSave: true, rescanStatBlock: false});
-			});
-			setLockState();
-
-			if(options.showControls !== true)
+		
+			if($table.next('.add-table-row').length>0)
 				return;
-			const titleBar = container.find('.title_bar').first();
-			const controlContainer = options.controlContainer ? $(options.controlContainer) : (titleBar.length > 0 ? titleBar : container);
-			controlContainer.find('.lockStatButton, .download_button, .upload_button').remove();
-			const absoluteControls = titleBar.length === 0;
-			const controlStyle = absoluteControls ? "cursor: pointer; position: absolute; top: 3px; width: 20px; height: 20px; color: #ddd;" : "cursor: pointer; position: relative; display:inline-block; color: #ddd;";
-			const spanStyle = absoluteControls ? "font-size:20px;" : "font-size: 20px; position: relative; top: 4px;";
-			const lockStatButton = $(`<div class='lockStatButton' style="${controlStyle}${absoluteControls ? 'left: 2px;' : ''}">
-												<span title="Lock roll buttons so the text cursor isn't placed inside them on click" class="material-symbols-outlined" style="${spanStyle}">
-												${window.unlockTemplateStatBlocks ? "lock_open_right" : "lock"}
-												</span>
-											</div>`)
-			lockStatButton.off('click.lockStatBlock').on('click.lockStatBlock', ()=>{
-				window.unlockTemplateStatBlocks = !window.unlockTemplateStatBlocks;
-				const span = lockStatButton.find('>span');
-				setLockState();
-				span.text(window.unlockTemplateStatBlocks ? 'lock_open_right' : 'lock');
-			})
-			const downloadStat = $(`<div class='download_button' style="${controlStyle}${absoluteControls ? 'left: 25px;' : ''}">
-												<span title="Download Statblock as HTML" class="material-symbols-outlined" style="${absoluteControls ? 'font-size:20px;' : 'font-size: 24px; position: relative; top: 4px;'}">
-												download
-												</span>
-											</div>`)
-			downloadStat.off('click.exportStatBlock').on('click.exportStatBlock', function () { 
-				self.downloadStatBlock(id, downloadToken);
-			});
-			const uploadStat = $(`<div class='upload_button' style="${controlStyle}${absoluteControls ? 'left: 45px;' : ''}">
-				<span title="Upload HTML Statblock" class="material-symbols-outlined" style="${absoluteControls ? 'font-size:20px;' : 'font-size: 24px; position: relative; top: 4px;'}">
-					upload
-				</span>
-				<input accept='.html' class='import_pc_template' data-id='${uploadId}' type='file' single style='display: none' />
-				</div>
-			`);
-			uploadStat.find('>span').off('click.importStatBlock').on('click.importStatBlock', function(){
-				uploadStat.find('input[type="file"]').trigger('click');
-			});
-			uploadStat.find('input[type="file"]').change(function(e) {
-				import_pc_template_html(e.target.files, getCurrentNoteText(), id, tokenId);
-			});
-			if(titleBar.length > 0){
-				container.find('.title_bar_text').css('display', 'inline-block');
-				titleBar.prepend(lockStatButton, downloadStat, uploadStat);
-				titleBar.css({
-					'display': 'flex',
-					'align-items': 'center'
-				});
-			} else{
-				controlContainer.prepend(lockStatButton, downloadStat, uploadStat);
-			}
-		}
-		bindNotePopoutButton(id, note_container, statBlock = false){
-			const self = this;
-			note_container.find('.popout-button').off('click.popout').on('click.popout', function(event){
-				const windowName = self.getNotePopoutName(id);
-				popoutWindow(windowName, note_container.find(`div.note[data-id='${id}']`), note_container.width(), note_container.height());
-				const popoutBody = $(childWindows[windowName].document).find('body');
-				const popoutNote = popoutBody.find(`div.note[data-id='${id}']`);
-				const popoutNoteText = popoutNote.find('.note-text').first();
-				self.bindDisplayedNoteEvents(id, popoutNote, popoutNoteText, popoutBody);
-				popoutBody.css('overflow', 'auto');
-				$(event.currentTarget).closest('.resize_drag_window').hide();
-			})
-		}
-		findNotePopoutWindow(id){
-			for(const name in childWindows){
-				const childWindow = childWindows[name];
-				if(!childWindow || childWindow.closed)
-					continue;
-				try{
-					if($(childWindow.document).find(`div.note[data-id='${id}']`).length > 0)
-						return {name, childWindow};
-				}
-				catch(error){
-					console.warn('Unable to check note popout window', name, error);
-				}
-			}
-			return undefined;
-		}
-		findStatBlockPopoutWindow(id){
-			for(const name in childWindows){
-				const childWindow = childWindows[name];
-				if(!childWindow || childWindow.closed)
-					continue;
-				try{
-					if($(childWindow.document).find(`.custom-stat-block[data-stat-id="${id}"]`).length > 0)
-						return {name, childWindow};
-				}
-				catch(error){
-					console.warn('Unable to check stat block popout window', name, error);
-				}
-			}
-			return undefined;
-		}
-		async renderDisplayedNote(id, note, note_text, note_container, scrollTop = 0){
-			const self = this;
-			note_text.empty();
-			note_text.append(self.notes[id].text);
-			$(note_text).find('.injected-input, .added-input-desc').remove();
-			$(note_text).find('.add-input:not(.avtt-custom-tracker)').replaceWith((i, innerHtml) => {
-				return innerHtml;
-			});
-			await this.translateHtmlAndBlocks(note_text, id);
-			add_journal_roll_buttons(note_text);
-			this.add_journal_tooltip_targets(note_text);
-			this.block_send_to_buttons(note_text);
-			add_stat_block_hover(note_text);
-			add_aoe_statblock_click(note_text);
-			$(note_text).find('.add-input').each(function(){window.JOURNAL.addTrackedInputs($(this), {noteId: id})})
+			const add_table_row = $(`<button class="add-table-row" contenteditable="false">+</button>`);
+			$table.after(add_table_row);
+		});
+		container.off('pointerdown.addRow, touchstart.addRow').on('pointerdown.addRow, touchstart.addRow', '.dnd-sheet .add-table-row', function (e) {
+			e.preventDefault();
+			e.stopPropagation();
+			e.stopImmediatePropagation();
+			const table = $(e.target).prev('table');
+			const tableBody = $(table).find('tbody');
+			const targetContainer = tableBody.length>0 ? tableBody : table;
+			const newRow = targetContainer.find('>tr:last').clone();
+			newRow.find('td:not(.table-row-drag-handle), th').html('');
+			targetContainer.append(newRow);
+			persistCurrentNoteText({forceSave: true, rescanStatBlock: false});
+		});
+		setLockState();
 
-			if(note.find('.note-text').length === 0){
-				note.append(note_text);
+		if(options.showControls !== true)
+			return;
+		const titleBar = container.find('.title_bar').first();
+		const controlContainer = options.controlContainer ? $(options.controlContainer) : (titleBar.length > 0 ? titleBar : container);
+		controlContainer.find('.lockStatButton, .download_button, .upload_button').remove();
+		const absoluteControls = titleBar.length === 0;
+		const controlStyle = absoluteControls ? "cursor: pointer; position: absolute; top: 3px; width: 20px; height: 20px; color: #ddd;" : "cursor: pointer; position: relative; display:inline-block; color: #ddd;";
+		const spanStyle = absoluteControls ? "font-size:20px;" : "font-size: 20px; position: relative; top: 4px;";
+		const lockStatButton = $(`<div class='lockStatButton' style="${controlStyle}${absoluteControls ? 'left: 2px;' : ''}">
+											<span title="Lock roll buttons so the text cursor isn't placed inside them on click" class="material-symbols-outlined" style="${spanStyle}">
+											${window.unlockTemplateStatBlocks ? "lock_open_right" : "lock"}
+											</span>
+										</div>`)
+		lockStatButton.off('click.lockStatBlock').on('click.lockStatBlock', ()=>{
+			window.unlockTemplateStatBlocks = !window.unlockTemplateStatBlocks;
+			const span = lockStatButton.find('>span');
+			setLockState();
+			span.text(window.unlockTemplateStatBlocks ? 'lock_open_right' : 'lock');
+		})
+		const downloadStat = $(`<div class='download_button' style="${controlStyle}${absoluteControls ? 'left: 25px;' : ''}">
+											<span title="Download Statblock as HTML" class="material-symbols-outlined" style="${absoluteControls ? 'font-size:20px;' : 'font-size: 24px; position: relative; top: 4px;'}">
+											download
+											</span>
+										</div>`)
+		downloadStat.off('click.exportStatBlock').on('click.exportStatBlock', function () { 
+			self.downloadStatBlock(id, downloadToken);
+		});
+		const uploadStat = $(`<div class='upload_button' style="${controlStyle}${absoluteControls ? 'left: 45px;' : ''}">
+			<span title="Upload HTML Statblock" class="material-symbols-outlined" style="${absoluteControls ? 'font-size:20px;' : 'font-size: 24px; position: relative; top: 4px;'}">
+				upload
+			</span>
+			<input accept='.html' class='import_pc_template' data-id='${uploadId}' type='file' single style='display: none' />
+			</div>
+		`);
+		uploadStat.find('>span').off('click.importStatBlock').on('click.importStatBlock', function(){
+			uploadStat.find('input[type="file"]').trigger('click');
+		});
+		uploadStat.find('input[type="file"]').change(function(e) {
+			import_pc_template_html(e.target.files, getCurrentNoteText(), id, tokenId);
+		});
+		if(titleBar.length > 0){
+			container.find('.title_bar_text').css('display', 'inline-block');
+			titleBar.prepend(lockStatButton, downloadStat, uploadStat);
+			titleBar.css({
+				'display': 'flex',
+				'align-items': 'center'
+			});
+		} else{
+			controlContainer.prepend(lockStatButton, downloadStat, uploadStat);
+		}
+	}
+	bindNotePopoutButton(id, note_container, statBlock = false){
+		const self = this;
+		note_container.find('.popout-button').off('click.popout').on('click.popout', function(event){
+			const windowName = self.getNotePopoutName(id);
+			popoutWindow(windowName, note_container.find(`div.note[data-id='${id}']`), note_container.width(), note_container.height());
+			const popoutBody = $(childWindows[windowName].document).find('body');
+			const popoutNote = popoutBody.find(`div.note[data-id='${id}']`);
+			const popoutNoteText = popoutNote.find('.note-text').first();
+			self.bindDisplayedNoteEvents(id, popoutNote, popoutNoteText, popoutBody);
+			popoutBody.css('overflow', 'auto');
+			$(event.currentTarget).closest('.resize_drag_window').hide();
+		})
+	}
+	findNotePopoutWindow(id){
+		for(const name in childWindows){
+			const childWindow = childWindows[name];
+			if(!childWindow || childWindow.closed)
+				continue;
+			try{
+				if($(childWindow.document).find(`div.note[data-id='${id}']`).length > 0)
+					return {name, childWindow};
 			}
-			note.find("a").attr("target", "_blank");
-			if($(note).parent().length === 0){
-				note_container.append(note);
-			}
-			self.bindDisplayedNoteEvents(id, note, note_text, note_container);
-			this.positionNotePins(id, note_text);
-			note_text[0].scrollTop = scrollTop;
-			if(note_text.find('.dnd-sheet').length>0){
-				self.bindDndSheetTemplateEvents(id, note_text, note_container, {showControls: $(note_container).find('.title_bar').length > 0});
+			catch(error){
+				console.warn('Unable to check note popout window', name, error);
 			}
 		}
-		async updateNotePopout(id, scrollTop = 0){
-			const popout = this.findNotePopoutWindow(id);
-			if(!popout)
-				return false;
-			const popoutBody = $(popout.childWindow.document).find('body');
-			let popoutNote = popoutBody.find(`div.note[data-id='${id}']`);
-			if(popoutNote.length === 0){
-				popoutNote = $(`<div class='note' data-id='${id}'></div>`);
-				popoutBody.append(popoutNote);
+		return undefined;
+	}
+	findStatBlockPopoutWindow(id){
+		for(const name in childWindows){
+			const childWindow = childWindows[name];
+			if(!childWindow || childWindow.closed)
+				continue;
+			try{
+				if($(childWindow.document).find(`.custom-stat-block[data-stat-id="${id}"]`).length > 0)
+					return {name, childWindow};
 			}
-			let popoutNoteText = popoutNote.find('.note-text').first();
-			if(popoutNoteText.length === 0){
-				popoutNoteText = $(`<div class='note-text'/>`);
+			catch(error){
+				console.warn('Unable to check stat block popout window', name, error);
 			}
-			await this.renderDisplayedNote(id, popoutNote, popoutNoteText, popoutBody, scrollTop);
-			return true;
 		}
-		async updateStatBlockPopout(id, tokenId, scrollTop = 0){
-			const popout = this.findStatBlockPopoutWindow(id);
-			if(!popout || this.notes[id] == undefined)
-				return false;
-			const popoutBody = $(popout.childWindow.document).find('body');
-			let targetRescan = popoutBody.find('.avtt-stat-block-container, .note-text').first();
-			if(targetRescan.length === 0)
-				return false;
-			const token = window.TOKEN_OBJECTS[tokenId] || window.all_token_objects[tokenId];
-			targetRescan.html(this.notes[id].text);
-			popoutBody.find('.injected-input, .added-input-desc').remove();
-			popoutBody.find('.add-input:not(.avtt-custom-tracker)').replaceWith((i, innerHtml) => {
-				return innerHtml;
-			})
-			await this.translateHtmlAndBlocks(targetRescan);
-			add_journal_roll_buttons(targetRescan, tokenId);
-			this.add_journal_tooltip_targets(targetRescan);
-			add_ability_tracker_inputs(targetRescan, tokenId);
-			popoutBody.find('.add-input').each(function(){window.JOURNAL.addTrackedInputs($(this), {token, noteId: id})});
-			add_stat_block_hover(targetRescan, tokenId);
-			add_aoe_statblock_click(targetRescan, tokenId);
-			targetRescan.find('a').attr('contenteditable', 'false');
-			if(token){
-				sync_pc_template(token, popoutBody);
-				let imageUrl = parse_img(token.options.imgsrc);
-				if(token.options.imgsrc.startsWith('above-bucket-not-a-url')){
-					imageUrl = await getAvttStorageUrl(imageUrl);
-				}
-				targetRescan.append(`<div class="image" style="display: inline-block; position: relative;"><${(token.options.videoToken == true || ['.mp4', '.webm', '.m4v'].some(d => token.options.imgsrc.includes(d))) ? 'video disableremoteplayback muted' : 'img'}
-					src="${imageUrl}"    
-					class="monster-image"
-					style="max-width: 100%;">
-					</div>`);
-				popoutBody.find("img.monster-image, .monster-image").each((i,block) => {
-					createSendPlayerButton(block, "login", true).insertAfter(block);
-				});
-			}
-			this.bindDndSheetTemplateEvents(id, targetRescan, popoutBody, {tokenId, showControls: false});
-			targetRescan[0].scrollTop = scrollTop;
-			return true;
+		return undefined;
+	}
+	async renderDisplayedNote(id, note, note_text, note_container, scrollTop = 0){
+		const self = this;
+		note_text.empty();
+		note_text.append(self.notes[id].text);
+		$(note_text).find('.injected-input, .added-input-desc').remove();
+		$(note_text).find('.add-input:not(.avtt-custom-tracker)').replaceWith((i, innerHtml) => {
+			return innerHtml;
+		});
+		await this.translateHtmlAndBlocks(note_text, id);
+		add_journal_roll_buttons(note_text);
+		this.add_journal_tooltip_targets(note_text);
+		this.block_send_to_buttons(note_text);
+		add_stat_block_hover(note_text);
+		add_aoe_statblock_click(note_text);
+		$(note_text).find('.add-input').each(function(){window.JOURNAL.addTrackedInputs($(this), {noteId: id})})
+
+		if(note.find('.note-text').length === 0){
+			note.append(note_text);
 		}
+		note.find("a").attr("target", "_blank");
+		if($(note).parent().length === 0){
+			note_container.append(note);
+		}
+		self.bindDisplayedNoteEvents(id, note, note_text, note_container);
+		this.positionNotePins(id, note_text);
+		note_text[0].scrollTop = scrollTop;
+		if(note_text.find('.dnd-sheet').length>0){
+			self.bindDndSheetTemplateEvents(id, note_text, note_container, {showControls: $(note_container).find('.title_bar').length > 0});
+		}
+	}
+	async updateNotePopout(id, scrollTop = 0){
+		const popout = this.findNotePopoutWindow(id);
+		if(!popout)
+			return false;
+		const popoutBody = $(popout.childWindow.document).find('body');
+		let popoutNote = popoutBody.find(`div.note[data-id='${id}']`);
+		if(popoutNote.length === 0){
+			popoutNote = $(`<div class='note' data-id='${id}'></div>`);
+			popoutBody.append(popoutNote);
+		}
+		let popoutNoteText = popoutNote.find('.note-text').first();
+		if(popoutNoteText.length === 0){
+			popoutNoteText = $(`<div class='note-text'/>`);
+		}
+		await this.renderDisplayedNote(id, popoutNote, popoutNoteText, popoutBody, scrollTop);
+		return true;
+	}
+	async updateStatBlockPopout(id, tokenId, scrollTop = 0){
+		const popout = this.findStatBlockPopoutWindow(id);
+		if(!popout || this.notes[id] == undefined)
+			return false;
+		const popoutBody = $(popout.childWindow.document).find('body');
+		let targetRescan = popoutBody.find('.avtt-stat-block-container, .note-text').first();
+		if(targetRescan.length === 0)
+			return false;
+		const token = window.TOKEN_OBJECTS[tokenId] || window.all_token_objects[tokenId];
+		targetRescan.html(this.notes[id].text);
+		popoutBody.find('.injected-input, .added-input-desc').remove();
+		popoutBody.find('.add-input:not(.avtt-custom-tracker)').replaceWith((i, innerHtml) => {
+			return innerHtml;
+		})
+		await this.translateHtmlAndBlocks(targetRescan);
+		add_journal_roll_buttons(targetRescan, tokenId);
+		this.add_journal_tooltip_targets(targetRescan);
+		add_ability_tracker_inputs(targetRescan, tokenId);
+		popoutBody.find('.add-input').each(function(){window.JOURNAL.addTrackedInputs($(this), {token, noteId: id})});
+		add_stat_block_hover(targetRescan, tokenId);
+		add_aoe_statblock_click(targetRescan, tokenId);
+		targetRescan.find('a').attr('contenteditable', 'false');
+		if(token){
+			sync_pc_template(token, popoutBody);
+			let imageUrl = parse_img(token.options.imgsrc);
+			if(token.options.imgsrc.startsWith('above-bucket-not-a-url')){
+				imageUrl = await getAvttStorageUrl(imageUrl);
+			}
+			targetRescan.append(`<div class="image" style="display: inline-block; position: relative;"><${(token.options.videoToken == true || ['.mp4', '.webm', '.m4v'].some(d => token.options.imgsrc.includes(d))) ? 'video disableremoteplayback muted' : 'img'}
+				src="${imageUrl}"    
+				class="monster-image"
+				style="max-width: 100%;">
+				</div>`);
+			popoutBody.find("img.monster-image, .monster-image").each((i,block) => {
+				createSendPlayerButton(block, "login", true).insertAfter(block);
+			});
+		}
+		this.bindDndSheetTemplateEvents(id, targetRescan, popoutBody, {tokenId, showControls: false});
+		targetRescan[0].scrollTop = scrollTop;
+		return true;
+	}
+
 	display_note(id, statBlock = false, scrollTop=0){
 		let self=this;
 		let noteAlreadyOpen = $(`div.note[data-id='${id}']`).length>0;
@@ -4723,8 +4738,21 @@ class JournalManager{
 				box-sizing: border-box;
 				font-size: 11px;
 				line-height: 1.2;
-
-				
+				@media screen and (max-width: 1023px) {
+					i {
+						box-sizing: initial;
+						cursor: initial;
+						display: initial;
+						float: initial;
+						padding: initial;
+						position: initial;
+						width: initial;
+						height: initial;
+					}
+				}
+				b{
+				 font-weight: 600;
+				}
 
 				.table-row-drag-handle {
 					width: 15px;

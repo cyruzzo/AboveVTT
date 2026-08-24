@@ -2353,8 +2353,8 @@ function observe_character_sheet_changes(documentToObserve) {
       }
     });
 
-    // for buttons text that changes based on input, such as damage change from adjusting spell level in the sidebar
-    const manualSetRollbuttons = documentToObserve.find(`.ct-spell-caster__modifier-amount:not(.above-vtt-visited)`) 
+    // for buttons text that changes based on input, such as damage change from adjusting spell level in the sidebar. Also includes special targets not otherwise scanned
+    const manualSetRollbuttons = documentToObserve.find(`.ct-spell-caster__modifier-amount:not(.above-vtt-visited), .ct-spells-level-casting__info-item [class*='styles_signed']:not(.above-vtt-visited)`); 
     if(manualSetRollbuttons.length > 0){
       manualSetRollbuttons.addClass("above-vtt-visited");
       const rollImage = window.PLAYER_IMG
@@ -3110,7 +3110,8 @@ function observe_character_sheet_changes(documentToObserve) {
                   /* lifted from DDB encounter stat blocks  */
                   color: var(--theme-contrast, #b43c35) !important;
                   background: transparent !important;
-                  border: 1px solid var(--theme-color, #b43c35) !important;
+                  border:none !important;
+                  outline: 1px solid var(--theme-color, #b43c35) !important;
                   border-radius: 4px !important;
                   white-space: nowrap;
                   font-family: Roboto Condensed,Open Sans,Helvetica,sans-serif;

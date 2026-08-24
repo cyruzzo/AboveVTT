@@ -533,7 +533,7 @@ class MessageBroker {
 				console.error("MB.onmessage failed to handle", event, parsingError);
 				return;
 			}
-			if (window.location.search.includes("popoutgamelog=true") && msg.eventType != "dice/roll/pending" && msg.eventType != "dice/roll/fulfilled")
+			if ((!is_abovevtt_page() || window.location.search.includes("popoutgamelog=true")) && msg.eventType != "dice/roll/pending" && msg.eventType != "dice/roll/fulfilled")
 				return;
 
 			if(msg.eventType == "dice/roll/pending") {
@@ -2002,7 +2002,7 @@ class MessageBroker {
 
 		player = DOMPurify.sanitize( player,{ALLOWED_TAGS: ['span']});
 		image = DOMPurify.sanitize( image,{ALLOWED_TAGS: ['img']});
-		data.text = DOMPurify.sanitize( data.text,{ALLOWED_TAGS: ['video','img','div','p', 'b', 'button', 'span', 'style', 'path', 'rect', 'svg', 'a', 'hr', 'ul', 'li', 'ol', 'h3', 'h2', 'h4', 'h1', 'table', 'tr', 'td', 'th', 'br', 'input', 'strong', 'em'], ADD_ATTR: ['target']}); //This array needs to include all HTML elements the extension sends via chat.
+		data.text = DOMPurify.sanitize( data.text,{ALLOWED_TAGS: ['video','img','div','p', 'b', 'i', 'button', 'span', 'style', 'path', 'rect', 'svg', 'a', 'hr', 'ul', 'li', 'ol', 'h3', 'h2', 'h4', 'h1', 'table', 'tr', 'td', 'th', 'br', 'input', 'strong', 'em'], ADD_ATTR: ['target']}); //This array needs to include all HTML elements the extension sends via chat.
 
 
 		if(data.dmonly && !(window.DM) && !local) // /dmroll only for DM of or the user who initiated it
