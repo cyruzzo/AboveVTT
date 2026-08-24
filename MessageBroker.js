@@ -1269,31 +1269,43 @@ class MessageBroker {
 						window.TOKEN_OBJECTS[msg.data.id].place();			
 					}			
 					const openNote = $(`.note[data-id='${msg.data.id}']`);
+					const openMainNote = openNote.filter(function(){
+						const noteWindow = $(this).closest('.resize_drag_window');
+						return noteWindow.length === 0 || noteWindow.css('display') != 'none';
+					});
+					const notePopout = window.JOURNAL.findNotePopoutWindow(msg.data.id);
 					// If the 'Open' button is clicked OR the note is already opened by a player and it is saved 
 					// by the DM, the note gets refreshed.
 					let currScroll = 0;
-					if(openNote.length>0){
-						const targetRescan = openNote.find('.avtt-stat-block-container, .note-text').first();
+					if(openMainNote.length>0){
+						const targetRescan = openMainNote.find('.avtt-stat-block-container, .note-text').first();
 						currScroll = targetRescan[0].scrollTop;
 					}
+					if(notePopout){
+						const popoutNoteText = $(notePopout.childWindow.document).find(`div.note[data-id='${msg.data.id}'] .avtt-stat-block-container, div.note[data-id='${msg.data.id}'] .note-text`).first();
+						const popoutScroll = popoutNoteText.length > 0 ? popoutNoteText[0].scrollTop : 0;
+						await window.JOURNAL.updateNotePopout(msg.data.id, popoutScroll);
+					}
 
-					if (msg.data.popup == true || (msg.data.popup == undefined && openNote.length != 0)){
-						const minimized = openNote.siblings('.minimized').length > 0 && !msg.data.popup;
+					if (openMainNote.length != 0 || (msg.data.popup == true && !notePopout)){
+						const minimized = openMainNote.siblings('.minimized').length > 0 && !msg.data.popup;
 						window.JOURNAL.display_note(msg.data.id, undefined, currScroll);
 						if(minimized) $(`.note[data-id='${msg.data.id}']`).siblings('.title_bar').dblclick();
 					} else if (msg.data.popup == false) {
 						openNote.remove();
+						if(notePopout)
+							closePopout(notePopout.name);
 					}
 					
 					
 
-					if(window.JOURNAL.notes[msg.data.id].abilityTracker && openNote.length>0){
+					if(window.JOURNAL.notes[msg.data.id].abilityTracker && openMainNote.length>0){
 						for(let i in window.JOURNAL.notes[msg.data.id].abilityTracker){
-							openNote.find(`input[data-tracker-key='${i}']`).val(window.JOURNAL.notes[msg.data.id].abilityTracker[i])
+							openMainNote.find(`input[data-tracker-key='${i}']`).val(window.JOURNAL.notes[msg.data.id].abilityTracker[i])
 						}
 					}
 
-					if(window.JOURNAL.notes[msg.data.id].pins && openNote.length>0){
+					if(window.JOURNAL.notes[msg.data.id].pins && openMainNote.length>0){
 						for(let i in window.JOURNAL.notes[msg.data.id].pins){
 							$(`div.note[data-id='${msg.data.id}'] .note-pin[data-id='${i}']`).css({
 								'top': `${parseFloat(window.JOURNAL.notes[msg.data.id].pins[i].y) - 43}px`,
@@ -1301,7 +1313,13 @@ class MessageBroker {
 							})	
 						}
 					}
-
+					
+					const statBlockPopout = window.JOURNAL.findStatBlockPopoutWindow(msg.data.id);
+					if(statBlockPopout){
+						const popoutStatBlock = $(statBlockPopout.childWindow.document).find(`.custom-stat-block[data-stat-id="${msg.data.id}"]`).first();
+						const popoutScroll = popoutStatBlock.length > 0 ? popoutStatBlock[0].scrollTop : 0;
+						await window.JOURNAL.updateStatBlockPopout(msg.data.id, msg.data.tokenId, popoutScroll);
+					}
 					const openStatBlock = $(`.custom-stat-block[data-stat-id="${msg.data.id}"]`).closest('.moveableWindow:not(.hideMon)');
 					if(openStatBlock.length > 0 && window.JOURNAL.notes[msg.data.id] != undefined){
 						currScroll = openStatBlock[0].scrollTop;
