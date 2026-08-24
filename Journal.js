@@ -2163,7 +2163,9 @@ class JournalManager{
 				onSelect?.();
 				cell.focus();
 			});
-			option.find('.dnd-sheet-cell-suggestion-name').css('color', suggestion.color);
+			const suggestionName = option.find('.dnd-sheet-cell-suggestion-name')[0];
+			suggestionName.style.setProperty('--dnd-sheet-suggestion-color', suggestion.color);
+			suggestionName.style.setProperty('color', 'var(--dnd-sheet-suggestion-color)');
 			suggestionBox.append(option);
 		});
 		$(ownerDocument.body).append(suggestionBox);
