@@ -2057,6 +2057,190 @@ class JournalManager{
 			$(".import-loading-indicator").remove();        
 		})
 	}
+		getNotePopoutName(id){
+			return this.notes[id].title.replace(/(\r\n|\n|\r)/gm, "").trim();
+		}
+		getDisplayedNoteText(noteContainer, noteText){
+			const currentNoteText = $(noteContainer).find('.avtt-stat-block-container, .note-text').first();
+			return currentNoteText.length > 0 ? currentNoteText : $(noteText);
+		}
+		bindDisplayedNoteEvents(id, note, note_text, note_container){
+			const self = this;
+			note.off('click').on('click', '.tooltip-hover[href*="https://www.dndbeyond.com/sources/dnd/"], .int_source_link ', function (event) {
+				event.preventDefault();
+				render_source_chapter_in_iframe(event.target.href);
+			});
+			self.bindDndSheetTemplateEvents(id, note_text, note_container);
+		}
+		bindDndSheetTemplateEvents(id, note_text, note_container, options = {}){
+			const self = this;
+			const container = $(note_container);
+			const initialNoteText = $(note_text);
+			if(container.find('.dnd-sheet').length === 0 && initialNoteText.find('.dnd-sheet').length === 0){
+				return;
+			}
+			const tokenId = options.tokenId;
+			const downloadToken = options.downloadToken;
+			const uploadId = options.uploadId ?? (tokenId ?? id);
+			const getCurrentNoteText = () => self.getDisplayedNoteText(container, initialNoteText);
+			const persistCurrentNoteText = (persistOptions) => {
+				self.persistStatBlockContent(id, getCurrentNoteText(), container, {tokenId, ...persistOptions});
+			};
+			const setLockState = () => {
+				const currentNoteText = getCurrentNoteText();
+				if(!window.unlockTemplateStatBlocks){
+					currentNoteText.find('.dnd-sheet button').attr("contenteditable", "false");
+				} else{
+					currentNoteText.find('.dnd-sheet [contenteditable]:not(a):not(.table-row-drag-handle):not(.add-table-row)').attr("contenteditable", "true");
+				}
+			};
+
+			getCurrentNoteText().find('a').attr('contenteditable', 'false');
+			container.off('focusout.editable').on('focusout.editable', '.dnd-sheet [contenteditable="true"]', (e)=>{
+				setTimeout(()=>{
+					if(container.find('.dnd-sheet [contenteditable="true"]:is(:focus, :focus-within)').length>0) return;
+					if($(e.target).is('.injected-input')) return;  
+					persistCurrentNoteText({forceSave: true, rescanStatBlock: true});
+				}, 10);
+			});
+			container.off('change.checkbox').on('change.checkbox', '.dnd-sheet input', (e)=>{
+				if (e.target && e.target.nodeName === 'INPUT' && e.target.type === 'checkbox') {				
+					if (e.target.checked) {
+						e.target.setAttribute('checked', 'checked');
+					} else {
+						e.target.removeAttribute('checked');
+					}
+				}
+				persistCurrentNoteText({forceSave: true, rescanStatBlock: false});
+			})
+			container.off('pointerdown.profChange, touchstart.profChange').on('pointerdown.profChange, touchstart.profChange', '.dnd-sheet .prof-checkbox', (e)=>{
+				e.preventDefault();
+				const target = $(e.currentTarget);
+				const currentState = parseInt(target.attr('data-state'));
+				const newState = (currentState + 1) % 4;
+				target.attr('data-state', newState);
+				persistCurrentNoteText({forceSave: true, rescanStatBlock: false});
+			})
+			container.off('paste.dndSheet').on('paste.dndSheet', '.dnd-sheet [contentEditable="true"]', function (e) {
+				e.preventDefault();
+				const text = (e.originalEvent?.clipboardData || e.clipboardData || window.clipboardData).getData('text/plain');
+				const ownerDocument = e.target?.ownerDocument || document;
+				ownerDocument.execCommand('insertText', false, text);
+			});
+
+			getCurrentNoteText().find('.dnd-sheet table').each(function() {
+				const $table = $(this);
+				const rowsContainer = $table.find('tbody').length > 0 ? $table.find('tbody') : $table;
+				if (rowsContainer.find('> tr').length > 1) {
+					rowsContainer.find('> tr').each(function() {
+						const $row = $(this);
+						if ($row.find('> .table-row-drag-handle').length === 0) {
+							const $handleCell = $('<td class="table-row-drag-handle" contenteditable="false" aria-hidden="true">⋮⋮</td>');
+							$row.prepend($handleCell);
+						}
+					});
+					if ($table.data('ui-sortable')) {
+						$table.sortable('destroy');
+					}
+					$table.sortable({
+						items: '> tbody > tr, > tr',
+						handle: '.table-row-drag-handle',
+						placeholder: 'ui-sortable-placeholder',
+						update: function() {
+							persistCurrentNoteText({forceSave: true, rescanStatBlock: false});
+						}
+					});
+				}
+				const header = $table.find('th').first().parent().parent();
+				header.find('> tr').each(function() {
+					const $row = $(this);
+					if ($row.find('> .header-spacer').length === 0) {
+						const $handleCell = $('<th class="header-spacer" aria-hidden="true"></td>');
+						$row.prepend($handleCell);
+					}
+				});
+			
+				if($table.next('.add-table-row').length>0)
+					return;
+				const add_table_row = $(`<button class="add-table-row" contenteditable="false">+</button>`);
+				$table.after(add_table_row);
+			});
+			container.off('pointerdown.addRow, touchstart.addRow').on('pointerdown.addRow, touchstart.addRow', '.dnd-sheet .add-table-row', function (e) {
+				e.preventDefault();
+				const table = $(e.target).prev('table');
+				const tableBody = $(table).find('tbody');
+				const targetContainer = tableBody.length>0 ? tableBody : table;
+				const newRow = targetContainer.find('>tr:last').clone();
+				newRow.find('td:not(.table-row-drag-handle), th').html('');
+				targetContainer.append(newRow);
+				persistCurrentNoteText({forceSave: true, rescanStatBlock: false});
+			});
+			setLockState();
+
+			if(options.showControls !== true)
+				return;
+			const titleBar = container.find('.title_bar').first();
+			const controlContainer = options.controlContainer ? $(options.controlContainer) : (titleBar.length > 0 ? titleBar : container);
+			controlContainer.find('.lockStatButton, .download_button, .upload_button').remove();
+			const absoluteControls = titleBar.length === 0;
+			const controlStyle = absoluteControls ? "cursor: pointer; position: absolute; top: 3px; width: 20px; height: 20px; color: #ddd;" : "cursor: pointer; position: relative; display:inline-block; color: #ddd;";
+			const spanStyle = absoluteControls ? "font-size:20px;" : "font-size: 20px; position: relative; top: 4px;";
+			const lockStatButton = $(`<div class='lockStatButton' style="${controlStyle}${absoluteControls ? 'left: 2px;' : ''}">
+												<span title="Lock roll buttons so the text cursor isn't placed inside them on click" class="material-symbols-outlined" style="${spanStyle}">
+												${window.unlockTemplateStatBlocks ? "lock_open_right" : "lock"}
+												</span>
+											</div>`)
+			lockStatButton.off('click.lockStatBlock').on('click.lockStatBlock', ()=>{
+				window.unlockTemplateStatBlocks = !window.unlockTemplateStatBlocks;
+				const span = lockStatButton.find('>span');
+				setLockState();
+				span.text(window.unlockTemplateStatBlocks ? 'lock_open_right' : 'lock');
+			})
+			const downloadStat = $(`<div class='download_button' style="${controlStyle}${absoluteControls ? 'left: 25px;' : ''}">
+												<span title="Download Statblock as HTML" class="material-symbols-outlined" style="${absoluteControls ? 'font-size:20px;' : 'font-size: 24px; position: relative; top: 4px;'}">
+												download
+												</span>
+											</div>`)
+			downloadStat.off('click.exportStatBlock').on('click.exportStatBlock', function () { 
+				self.downloadStatBlock(id, downloadToken);
+			});
+			const uploadStat = $(`<div class='upload_button' style="${controlStyle}${absoluteControls ? 'left: 45px;' : ''}">
+				<span title="Upload HTML Statblock" class="material-symbols-outlined" style="${absoluteControls ? 'font-size:20px;' : 'font-size: 24px; position: relative; top: 4px;'}">
+					upload
+				</span>
+				<input accept='.html' class='import_pc_template' data-id='${uploadId}' type='file' single style='display: none' />
+				</div>
+			`);
+			uploadStat.find('>span').off('click.importStatBlock').on('click.importStatBlock', function(){
+				uploadStat.find('input[type="file"]').trigger('click');
+			});
+			uploadStat.find('input[type="file"]').change(function(e) {
+				import_pc_template_html(e.target.files, getCurrentNoteText(), id, tokenId);
+			});
+			if(titleBar.length > 0){
+				container.find('.title_bar_text').css('display', 'inline-block');
+				titleBar.prepend(lockStatButton, downloadStat, uploadStat);
+				titleBar.css({
+					'display': 'flex',
+					'align-items': 'center'
+				});
+			} else{
+				controlContainer.prepend(lockStatButton, downloadStat, uploadStat);
+			}
+		}
+		bindNotePopoutButton(id, note_container, statBlock = false){
+			const self = this;
+			note_container.find('.popout-button').off('click.popout').on('click.popout', function(event){
+				const windowName = self.getNotePopoutName(id);
+				popoutWindow(windowName, note_container.find(`div.note[data-id='${id}']`), note_container.width(), note_container.height());
+				const popoutBody = $(childWindows[windowName].document).find('body');
+				const popoutNote = popoutBody.find(`div.note[data-id='${id}']`);
+				const popoutNoteText = popoutNote.find('.note-text').first();
+				self.bindDisplayedNoteEvents(id, popoutNote, popoutNoteText, popoutBody);
+				popoutBody.css('overflow', 'auto');
+				$(event.currentTarget).closest('.resize_drag_window').hide();
+			})
+		}
 	display_note(id, statBlock = false, scrollTop=0){
 		let self=this;
 		let noteAlreadyOpen = $(`div.note[data-id='${id}']`).length>0;
@@ -2195,143 +2379,13 @@ class JournalManager{
 			note.find("a").attr("target", "_blank");
 			note_container.append(note);
 
-			note.off('click').on('click', '.tooltip-hover[href*="https://www.dndbeyond.com/sources/dnd/"], .int_source_link ', function (event) {
-				event.preventDefault();
-				render_source_chapter_in_iframe(event.target.href);
-			});
-			note.off('focusout.editable').on('focusout.editable', '[contenteditable="true"]', (e)=>{
-				setTimeout(()=>{
-					if(note.find('[contenteditable="true"]:is(:focus, :focus-within)').length>0) return;
-					if($(e.target).is('.injected-input')) return;  
-					self.persistStatBlockContent(id, note_text, note_container, {rescanStatBlock: true});
-				}, 10);
-			});
-			note.off('change.checkbox').on('change.checkbox', 'input', (e)=>{
-				if (e.target && e.target.nodeName === 'INPUT' && e.target.type === 'checkbox') {				
-					if (e.target.checked) {
-						e.target.setAttribute('checked', 'checked');
-					} else {
-						e.target.removeAttribute('checked');
-					}
-				}
-				self.persistStatBlockContent(id, note_text, note_container, {forceSave: true, rescanStatBlock: false});
-			})
-			note_container.off('pointerdown.profChange, touchstart.profChange').on('pointerdown.profChange, touchstart.profChange', '.prof-checkbox', (e)=>{
-				e.preventDefault();
-				const target = $(e.currentTarget);
-				const currentState = parseInt(target.attr('data-state'));
-				const newState = (currentState + 1) % 4;
-				target.attr('data-state', newState);
-				self.persistStatBlockContent(id, note_text, note_container, {forceSave: true, rescanStatBlock: false});
-			})
+			self.bindDisplayedNoteEvents(id, note, note_text, note_container);
+			self.bindNotePopoutButton(id, note_container, statBlock);
 			this.positionNotePins(id, note_text);
 			note_text[0].scrollTop = scrollTop;
 			
 			if(note_text.find('.dnd-sheet').length>0){
-				note_text.find('a').attr('contenteditable', 'false');
-				note_container.find('.popout-button, .lockStatButton, .download_button, .upload_button').remove();
-				const lockStatButton = $(`<div class='lockStatButton' style="cursor: pointer; position: relative; display:inline-block; color: #ddd;">
-											<span title="Lock roll buttons so the text cursor isn't placed inside them on click" class="material-symbols-outlined" style="font-size: 20px; position: relative; top: 4px;">
-											${!window.lockTemplateStatBlocks ? "lock_open_right" : "lock"}
-											</span>
-										</div>`)
-				lockStatButton.off('click.lockStatBlock').on('click.lockStatBlock', ()=>{
-				window.lockTemplateStatBlocks = !window.lockTemplateStatBlocks;
-				const span = lockStatButton.find('>span');
-				if(window.lockTemplateStatBlocks){
-					note_text.find('.dnd-sheet button').attr("contenteditable", "false");
-					span.text('lock');
-				} else{
-					note_text.find('.dnd-sheet [contenteditable]:not(a):not(.table-row-drag-handle):not(.add-table-row)').attr("contenteditable", "true");
-					span.text('lock_open_right');
-				}
-				})
-				
-				if(window.lockTemplateStatBlocks){
-					note_text.find('.dnd-sheet button').attr("contenteditable", "false");
-				} else{
-					note_text.find('.dnd-sheet [contenteditable]:not(a):not(.table-row-drag-handle):not(.add-table-row)').attr("contenteditable", "true");
-				}
-
-				const downloadStat = $(`<div class='download_button' style="cursor: pointer; position: relative; display:inline-block; color: #ddd;">
-											<span title="Download Statblock as HTML" class="material-symbols-outlined" style="font-size: 24px; position: relative; top: 4px;">
-											download
-											</span>
-										</div>`)
-				downloadStat.off('click.exportStatBlock').on('click.exportStatBlock', function () { 
-					self.downloadStatBlock(id);
-				});
-				const uploadStat = $(`<div class='upload_button' style="cursor: pointer; position: relative; display:inline-block; color: #ddd;">
-					<span onclick='import_open_template("${id}");' title="Upload HTML Statblock" class="material-symbols-outlined" style="font-size: 24px; position: relative; top: 4px;">
-						upload
-					</span>
-					<input accept='.html' class='import_pc_template' data-id='${id}' type='file' single style='display: none' />
-					</div>
-				`);
-				uploadStat.find('input[type="file"]').change(function(e) {
-					import_pc_template_html(e.target.files, note_text, id);
-				});
-
-				note_container.find('.title_bar_text').css('display', 'inline-block');
-				note_container.find('.title_bar').prepend(lockStatButton, downloadStat, uploadStat);
-				note_container.find('.title_bar').css({
-					'display': 'flex',
-					'align-items': 'center'
-				});
-				note_container.off('paste').on('paste', '[contentEditable="true"]', function (e) {
-					e.preventDefault();
-					const text = (e.originalEvent?.clipboardData || e.clipboardData || window.clipboardData).getData('text/plain');
-					document.execCommand('insertText', false, text);
-				});
-
-				note_container.find('table').each(function() {
-					const $table = $(this);
-					const rowsContainer = $table.find('tbody').length > 0 ? $table.find('tbody') : $table;
-					if (rowsContainer.find('> tr').length > 1) {
-						rowsContainer.find('> tr').each(function() {
-							const $row = $(this);
-							if ($row.find('> .table-row-drag-handle').length === 0) {
-								const $handleCell = $('<td class="table-row-drag-handle" contenteditable="false" aria-hidden="true">⋮⋮</td>');
-								$row.prepend($handleCell);
-							}
-						});
-						if ($table.data('ui-sortable')) {
-							$table.sortable('destroy');
-						}
-						$table.sortable({
-							items: '> tbody > tr, > tr',
-							handle: '.table-row-drag-handle',
-							placeholder: 'ui-sortable-placeholder',
-							update: function() {
-								self.persistStatBlockContent(id, note_text, note_container, {forceSave: true, rescanStatBlock: false});
-							}
-						});
-					}
-					const header = $table.find('th').first().parent().parent();
-					header.find('> tr').each(function() {
-						const $row = $(this);
-						if ($row.find('> .header-spacer').length === 0) {
-							const $handleCell = $('<th class="header-spacer" aria-hidden="true"></td>');
-							$row.prepend($handleCell);
-						}
-					});
-					
-					if($table.next('.add-table-row').length>0)
-						return;
-					const add_table_row = $(`<button class="add-table-row" contenteditable="false">+</button>`);
-					$table.after(add_table_row);
-				});
-			
-
-				note_container.off('pointerdown.addRow, touchstart.addRow').on('pointerdown.addRow, touchstart.addRow', '.add-table-row', function (e) {
-					e.preventDefault();
-					const table = $(e.target).prev('table');
-					const tableBody = $(table).find('tbody');
-					const targetContainer = tableBody.length>0 ? tableBody : table;
-					const newRow = targetContainer.find('>tr:last').clone();
-					newRow.find('td:not(.table-row-drag-handle), th').html('');
-					targetContainer.append(newRow);
-				});
+				self.bindDndSheetTemplateEvents(id, note_text, note_container, {showControls: true});
 			}
 		});	
 		
@@ -2541,11 +2595,16 @@ class JournalManager{
 		if(window.spellIdCache == undefined){
 			window.spellIdCache = {};
 		}
-		const urlRegex = /^(https:\/\/)?(www\.dndbeyond\.com)?\/[a-zA-Z\-]+\/([0-9]+)/g;
-		const urlType = /^(https:\/\/)?(www\.dndbeyond\.com)?\/([a-zA-Z\-]+)/g;
-		let itemId = (url.matchAll(urlRegex).next().value) ? url.matchAll(urlRegex).next().value[3] : 0;
-		let itemType = url.matchAll(urlType).next().value[3];
+		const urlRegex = /^(https:\/\/)?((www\.)?dndbeyond\.com)?\/[a-zA-Z\-]+\/([0-9]+)/g;
+		const urlType = /^(https:\/\/)?((www\.)?dndbeyond\.com)?\/([a-zA-Z\-]+)/g;
+		let itemId = (url.matchAll(urlRegex).next().value) ? url.matchAll(urlRegex).next().value[4] : 0;
+		let itemType = url.matchAll(urlType)?.next()?.value?.[4] ?? false;
 		url = url.toLowerCase();
+		if(itemType == false){
+			noisy_log('invalid url for tooltip', url);
+			return;
+		}
+	
 		if(itemType == 'sources' || itemType == 'compendium')
 			return 
 		itemType = itemType == 'equipment' ? 'adventuring-gear' : itemType

@@ -754,17 +754,22 @@ async function popout_all_selected_token_stat(){
 	const tokens = [];
 	forSelTokens((token) => {
 		if (token.options.statBlock) {
-			const {customStatBlock, pcURL} = token.getCustomPcUrl();
-			if (pcURL || customStatBlock) return;
+			const {pcURL} = token.getCustomPcUrl();
+			if (pcURL) return;
 		}
-		if(token.options.monster){
+		if(token.isMonster()){
 			fetchMonsters.push(token.options.monster)
 		}
 		tokens.push(token);
 
 	})
-	fetch_and_cache_monsters(fetchMonsters, function () {
-		tokens.every(async (token) => {
+	const promiseMonsters = new Promise((resolve) => {
+		fetch_and_cache_monsters(fetchMonsters, function () {
+			resolve();
+		});
+	});
+	promiseMonsters.then(() => {
+			tokens.every(async (token) => {
 			let container = $(`<div class='popout-prep'></div>`);
 			if(token.isPlayer()) return;
 
@@ -785,6 +790,12 @@ async function popout_all_selected_token_stat(){
 			await async_sleep(1);
 			const windowName = `${token.options.name}_${token.options.id}`.replaceAll(/(\r\n|\n|\r)/gi, "").trim();
 			popoutWindow(windowName, container.find(".avtt-stat-block-container"));
+			const popoutBody = $(window.childWindows[windowName].document).find("body");
+			const popoutStatBlock = popoutBody.find(".avtt-stat-block-container").first();
+			if(popoutStatBlock.find('.dnd-sheet').length > 0){
+				const noteId = popoutStatBlock.attr('data-stat-id') || token.options.statBlock;
+				window.JOURNAL.bindDndSheetTemplateEvents(noteId, popoutStatBlock, popoutBody, {tokenId: token.options.id, showControls: false});
+			}
 			$(window.childWindows[windowName].document).find(".avtt-roll-button").on("contextmenu", function (contextmenuEvent) {
 				$(window.childWindows[windowName].document).find("body").append($("div[role='presentation']").clone(true, true));
 				let popoutContext = $(window.childWindows[windowName].document).find(".dcm-container");
@@ -804,7 +815,7 @@ async function popout_all_selected_token_stat(){
 			close_player_monster_stat_block();
 		});
 	});
-	
+
 }
 function open_selected_token_stat() {
 	const selectedTokens = window.CURRENTLY_SELECTED_TOKENS;
@@ -1033,6 +1044,12 @@ function build_draggable_monster_window(tokenId) {
 		let name = $("#resizeDragMon .avtt-stat-block-container .mon-stat-block__name-link").text();
 		const windowName = `${token?.options?.name ? token.options.name : name}_${tokenId ? tokenId : ''}`.replaceAll(/(\r\n|\n|\r)/gi, "").trim();
 		popoutWindow(windowName, $("#resizeDragMon .avtt-stat-block-container"));
+		const popoutBody = $(window.childWindows[windowName].document).find("body");
+		const popoutStatBlock = popoutBody.find(".avtt-stat-block-container").first();
+		if(popoutStatBlock.find('.dnd-sheet').length > 0){
+			const noteId = popoutStatBlock.attr('data-stat-id') || token?.options?.statBlock;
+			window.JOURNAL.bindDndSheetTemplateEvents(noteId, popoutStatBlock, popoutBody, {tokenId, showControls: false});
+		}
 		$(window.childWindows[windowName].document).find(".avtt-roll-button").on("contextmenu", function (contextmenuEvent) {
 			$(window.childWindows[windowName].document).find("body").append($("div[role='presentation']").clone(true, true));
 			let popoutContext = $(window.childWindows[windowName].document).find(".dcm-container");
