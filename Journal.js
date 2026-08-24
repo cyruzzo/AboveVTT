@@ -2123,6 +2123,34 @@ class JournalManager{
 	removeDndSheetCellSuggestions(ownerDocument = document){
 		$('.dnd-sheet-cell-suggestions', ownerDocument).remove();
 	}
+	loadScriptInDocument(ownerDocument, src){
+		return new Promise((resolve, reject) => {
+			const script = ownerDocument.createElement('script');
+			script.src = src;
+			script.onload = resolve;
+			script.onerror = reject;
+			ownerDocument.head.appendChild(script);
+		});
+	}
+	async getSortableJquery(ownerDocument){
+		const ownerWindow = ownerDocument.defaultView || window;
+		if(ownerDocument === document){
+			return $;
+		}
+		if(ownerWindow.jQuery && ownerWindow.jQuery !== window.jQuery && ownerWindow.jQuery.fn?.sortable){
+			return ownerWindow.jQuery;
+		}
+		if(!ownerWindow.avttJqueryUiPromise){
+			ownerWindow.avttJqueryUiPromise = (async () => {
+				const scriptNames = ['jquery-3.6.0.min.js', 'jquery-ui.min.js', 'jquery.ui.touch-punch.js'];
+				for(const scriptName of scriptNames){
+					await this.loadScriptInDocument(ownerDocument, `${window.EXTENSION_PATH}${scriptName}`);
+				}
+			})();
+		}
+		await ownerWindow.avttJqueryUiPromise;
+		return ownerWindow.jQuery;
+	}
 	getDndSheetSuggestionCellFromEvent(event){
 		const directTarget = $(event.target).closest('[data-avtt-suggestion-type]');
 		if(directTarget.length > 0)
@@ -2191,6 +2219,71 @@ class JournalManager{
 			visibility: 'visible'
 		});
 	}
+	setupDndSheetTableSortable(table, ownerDocument, persistCurrentNoteText){
+		const initializeSortable = (sortableJquery) => {
+			const $table = sortableJquery(table);
+			const rowsContainer = $table.find('tbody').length > 0 ? $table.find('tbody') : $table;
+			if (rowsContainer.find('> tr').length <= 1) {
+				return;
+			}
+			rowsContainer.find('> tr').each(function() {
+				const $row = sortableJquery(this);
+				if ($row.find('> .table-row-drag-handle').length === 0) {
+					const $handleCell = sortableJquery('<td class="table-row-drag-handle" contenteditable="false" aria-hidden="true">⋮⋮</td>');
+					$row.prepend($handleCell);
+				}
+				this.setAttribute('draggable', 'false');
+				$row.off('dragstart.dndSheetRowSort dragover.dndSheetRowSort dragend.dndSheetRowSort drop.dndSheetRowSort');
+				$row.find('> .table-row-drag-handle').off('pointerdown.dndSheetRowSort mousedown.dndSheetRowSort pointerup.dndSheetRowSort mouseup.dndSheetRowSort');
+			});
+			if ($table.data('ui-sortable')) {
+				$table.sortable('destroy');
+			}
+			$table.sortable({
+				items: '> tbody > tr, > tr',
+				handle: '.table-row-drag-handle',
+				placeholder: 'ui-sortable-placeholder',
+				scroll: false,
+				helper: function(e, ui) {
+					ui.children().each(function() {
+						$(this).width($(this).width());
+					});
+					return ui;
+				},
+				start: function(e, ui) {
+					const $cells = ui.item.children('td, th');
+					let placeholderHtml = '';
+
+					$cells.each(function() {
+						const width = $(this).outerWidth();
+						placeholderHtml += '<td style="width:' + width + 'px; box-sizing: border-box;">&nbsp;</td>';
+					});
+
+					ui.placeholder.html(placeholderHtml);
+					ui.placeholder.height(ui.item.height());
+				},
+				stop: function(e, ui) {
+					const $cells = ui.item.children('td, th');
+					$cells.css('width', '');
+					$cells.each(function() {
+						if (!$.trim($(this).attr('style'))) {
+							$(this).removeAttr('style');
+						}
+					});
+				},
+				update: function() {
+					persistCurrentNoteText({forceSave: true, rescanStatBlock: false});
+				}
+			});
+		};
+		if(ownerDocument === document){
+			initializeSortable($);
+			return;
+		}
+		this.getSortableJquery(ownerDocument).then(initializeSortable).catch((error) => {
+			console.warn('Failed to initialize sortable in popout document', error);
+		});
+	}
 	bindDndSheetTemplateEvents(id, note_text, note_container, options = {}){
 		const self = this;
 		const container = $(note_container);
@@ -2199,6 +2292,7 @@ class JournalManager{
 			return;
 		}
 		const ownerDocument = container[0]?.ownerDocument || initialNoteText[0]?.ownerDocument || document;
+		const ownerWindow = ownerDocument.defaultView || window;
 		if(ownerDocument !== document && typeof pcTemplateTabKey === 'function'){
 			$(ownerDocument).off('keydown.pcTemplateTabKey').on('keydown.pcTemplateTabKey', pcTemplateTabKey);
 		}
@@ -2296,28 +2390,8 @@ class JournalManager{
 		});
 
 		getCurrentNoteText().find('.dnd-sheet table').each(function() {
+			self.setupDndSheetTableSortable(this, ownerDocument, persistCurrentNoteText);
 			const $table = $(this);
-			const rowsContainer = $table.find('tbody').length > 0 ? $table.find('tbody') : $table;
-			if (rowsContainer.find('> tr').length > 1) {
-				rowsContainer.find('> tr').each(function() {
-					const $row = $(this);
-					if ($row.find('> .table-row-drag-handle').length === 0) {
-						const $handleCell = $('<td class="table-row-drag-handle" contenteditable="false" aria-hidden="true">⋮⋮</td>');
-						$row.prepend($handleCell);
-					}
-				});
-				if ($table.data('ui-sortable')) {
-					$table.sortable('destroy');
-				}
-				$table.sortable({
-					items: '> tbody > tr, > tr',
-					handle: '.table-row-drag-handle',
-					placeholder: 'ui-sortable-placeholder',
-					update: function() {
-						persistCurrentNoteText({forceSave: true, rescanStatBlock: false});
-					}
-				});
-			}
 			const header = $table.find('th').first().parent().parent();
 			header.find('> tr').each(function() {
 				const $row = $(this);
