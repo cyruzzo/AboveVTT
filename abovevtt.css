@@ -13186,6 +13186,10 @@ p.monster-header+p {
     cursor: pointer;
     text-align: left;
 }
+.dnd-sheet-cell-suggestion:hover,
+.dnd-sheet-cell-suggestion.is-active{
+    background: color-mix(in srgb, var(--text-color, #111) 12%, transparent 88%);
+}
 	
 .dnd-sheet {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;

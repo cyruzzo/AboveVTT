@@ -1762,7 +1762,6 @@ class JournalManager{
 	* @param {Boolean|undefined} options.forceSave forces saving of the note even if no changes found in text
 	* @param {Boolean|undefined} options.rescanStatBlock reruns any autoformatting we do to statblocks */
 	persistStatBlockContent = (id, note_text, note_container, options = { tokenId: undefined, forceSave: false, rescanStatBlock: true }) => {
-		const currScroll = note_container.find('.avtt-stat-block-container, .note-text').first()[0].scrollTop;
 		const { tokenId, forceSave, rescanStatBlock } = options;
 		const closestNote = note_text.clone(true, true);
 		const avttImages = closestNote.find('img[data-src*="above-bucket-not-a-url"]');
@@ -1814,7 +1813,7 @@ class JournalManager{
 			window.JOURNAL.setPersistTimeout();
 			debounceSendNote(id, this.notes[id], tokenId);
 			if(rescanStatBlock){
-				debounceRescanStatBlock(note_container, id, tokenId, currScroll);
+				debounceRescanStatBlock(note_container, id, tokenId);
 			}
 		}
 	};
@@ -2170,6 +2169,40 @@ class JournalManager{
 	removeDndSheetCellSuggestions(ownerDocument = document){
 		$('.dnd-sheet-cell-suggestions', ownerDocument).remove();
 	}
+	getDndSheetCellSuggestionOptions(ownerDocument = document){
+		return $('.dnd-sheet-cell-suggestions .dnd-sheet-cell-suggestion', ownerDocument);
+	}
+	setActiveDndSheetCellSuggestion(ownerDocument = document, activeIndex = 0){
+		const options = this.getDndSheetCellSuggestionOptions(ownerDocument);
+		if(options.length === 0)
+			return undefined;
+		const normalizedIndex = ((activeIndex % options.length) + options.length) % options.length;
+		options.removeClass('is-active').attr('aria-selected', 'false');
+		const activeOption = options.eq(normalizedIndex);
+		activeOption.addClass('is-active').attr('aria-selected', 'true');
+		const suggestionBox = activeOption.closest('.dnd-sheet-cell-suggestions')[0];
+		if(suggestionBox){
+			const optionElement = activeOption[0];
+			const optionTop = optionElement.offsetTop;
+			const optionBottom = optionTop + optionElement.offsetHeight;
+			const boxTop = suggestionBox.scrollTop;
+			const boxBottom = boxTop + suggestionBox.clientHeight;
+			if(optionTop < boxTop){
+				suggestionBox.scrollTop = optionTop;
+			} else if(optionBottom > boxBottom){
+				suggestionBox.scrollTop = optionBottom - suggestionBox.clientHeight;
+			}
+		}
+		return activeOption;
+	}
+	moveActiveDndSheetCellSuggestion(ownerDocument = document, delta = 1){
+		const options = this.getDndSheetCellSuggestionOptions(ownerDocument);
+		if(options.length === 0)
+			return undefined;
+		const activeIndex = options.index(options.filter('.is-active').first());
+		const baseIndex = activeIndex >= 0 ? activeIndex : (delta < 0 ? 0 : -1);
+		return this.setActiveDndSheetCellSuggestion(ownerDocument, baseIndex + delta);
+	}
 
 	getDndSheetSuggestionCellFromEvent(event){
 		const directTarget = $(event.target).closest('[data-avtt-suggestion-type]');
@@ -2195,14 +2228,17 @@ class JournalManager{
 		const suggestions = this.getDndSheetCellSuggestionItems(suggestionType, searchText);
 		if(suggestions.length === 0)
 			return;
-		const suggestionBox = $(`<div class="dnd-sheet-cell-suggestions"></div>`);
+		const suggestionBox = $(`<div class="dnd-sheet-cell-suggestions" role="listbox"></div>`);
 		suggestions.forEach((suggestion, index) => {
-			const option = $(`<button type="button" class="dnd-sheet-cell-suggestion" data-index="${index}">
+			const option = $(`<button type="button" class="dnd-sheet-cell-suggestion" data-index="${index}" role="option" aria-selected="false">
 				<span class="dnd-sheet-cell-suggestion-name"></span>
 				<span class="dnd-sheet-cell-suggestion-type"></span>
 			</button>`);
 			option.find('.dnd-sheet-cell-suggestion-name').text(suggestion.name);
 			option.find('.dnd-sheet-cell-suggestion-type').text(suggestion.type);
+			option.on('mouseenter', () => {
+				this.setActiveDndSheetCellSuggestion(ownerDocument, index);
+			});
 			option.on('mousedown', (event) => {
 				event.preventDefault();
 				event.stopPropagation();
@@ -2238,6 +2274,7 @@ class JournalManager{
 			top: `${rect.top + ownerWindow.scrollY - suggestionBoxHeight}px`,
 			visibility: 'visible'
 		});
+		this.setActiveDndSheetCellSuggestion(ownerDocument, 0);
 	}
 
 	async getSortableJquery(ownerDocument){
@@ -2352,6 +2389,7 @@ class JournalManager{
 		const persistCurrentNoteText = (persistOptions) => {
 			self.persistStatBlockContent(id, getCurrentNoteText(), container, {tokenId, ...persistOptions});
 		};
+		let suppressNextSuggestionFocusin = false;
 		const setLockState = () => {
 			const currentNoteText = getCurrentNoteText();
 			if(!window.unlockTemplateStatBlocks){
@@ -2408,13 +2446,35 @@ class JournalManager{
 			ownerDocument.execCommand('insertText', false, text);
 		});
 		container.off('input.dndSheetSuggestion keydown.dndSheetSuggestion keyup.dndSheetSuggestion focusin.dndSheetSuggestion').on('input.dndSheetSuggestion keydown.dndSheetSuggestion keyup.dndSheetSuggestion focusin.dndSheetSuggestion', '.dnd-sheet', function(e){
+			if(e.type == 'focusin' && suppressNextSuggestionFocusin){
+				suppressNextSuggestionFocusin = false;
+				return;
+			}
 			const suggestionCell = self.getDndSheetSuggestionCellFromEvent(e);
 			if(!suggestionCell)
 				return;
-			if(e.type == 'keydown' && !['Enter', 'Escape'].includes(e.key))
+			if(e.type == 'keydown' && !['ArrowDown', 'ArrowUp', 'Enter', 'Escape', 'Tab'].includes(e.key))
 				return;
-			if(e.type == 'keyup' && ['Enter', 'Escape'].includes(e.key))
+			if(e.type == 'keyup' && ['ArrowDown', 'ArrowUp', 'Enter', 'Escape'].includes(e.key))
 				return;
+			if(e.type == 'keydown' && e.key == 'Tab'){
+				suppressNextSuggestionFocusin = true;
+				self.removeDndSheetCellSuggestions(suggestionCell.ownerDocument);
+				return;
+			}
+			if(e.type == 'keydown' && ['ArrowDown', 'ArrowUp'].includes(e.key)){
+				e.preventDefault();
+				e.stopPropagation();
+				e.stopImmediatePropagation();
+				const cellSuggestionType = $(suggestionCell).attr('data-avtt-suggestion-type');
+				if(self.getDndSheetCellSuggestionOptions(suggestionCell.ownerDocument).length === 0){
+					self.showDndSheetCellSuggestions(suggestionCell, cellSuggestionType, () => {
+						persistCurrentNoteText({forceSave: true, rescanStatBlock: true});
+					});
+				}
+				self.moveActiveDndSheetCellSuggestion(suggestionCell.ownerDocument, e.key == 'ArrowDown' ? 1 : -1);
+				return;
+			}
 			if(e.type == 'keyup' && !['ArrowDown', 'ArrowUp', 'Enter', 'Escape'].includes(e.key))
 				return;
 			if(e.key == 'Escape'){
@@ -2424,18 +2484,30 @@ class JournalManager{
 			}
 			if(e.key == 'Enter'){
 				const ownerDocument = suggestionCell.ownerDocument || document;
-				const firstSuggestion = $('.dnd-sheet-cell-suggestions .dnd-sheet-cell-suggestion', ownerDocument).first();
-				if(firstSuggestion.length > 0){
+				const activeSuggestion = $('.dnd-sheet-cell-suggestions .dnd-sheet-cell-suggestion.is-active', ownerDocument).first();
+				const selectedSuggestion = activeSuggestion.length > 0 ? activeSuggestion : $('.dnd-sheet-cell-suggestions .dnd-sheet-cell-suggestion', ownerDocument).first();
+				if(selectedSuggestion.length > 0){
 					e.preventDefault();
 					e.stopPropagation();
 					e.stopImmediatePropagation();
-					firstSuggestion.trigger('mousedown');
+					selectedSuggestion.trigger('mousedown');
 				}
 				return;
 			}
 			self.showDndSheetCellSuggestions(suggestionCell, $(suggestionCell).attr('data-avtt-suggestion-type'), () => {
 				persistCurrentNoteText({forceSave: true, rescanStatBlock: true});
 			});
+		});
+		$(ownerDocument).off('pointerdown.dndSheetSuggestionDismiss mousedown.dndSheetSuggestionDismiss focusin.dndSheetSuggestionDismiss').on('pointerdown.dndSheetSuggestionDismiss mousedown.dndSheetSuggestionDismiss focusin.dndSheetSuggestionDismiss', function(e){
+			if($('.dnd-sheet-cell-suggestions', ownerDocument).length === 0)
+				return;
+			if($(e.target).closest('.dnd-sheet-cell-suggestions').length > 0)
+				return;
+			const activeSuggestionCell = container.find('.dnd-sheet [data-avtt-suggestion-type][contenteditable="true"]:is(:focus, :focus-within)').first()[0];
+			const targetSuggestionCell = $(e.target).closest('.dnd-sheet [data-avtt-suggestion-type][contenteditable="true"]').first()[0];
+			if(activeSuggestionCell && targetSuggestionCell === activeSuggestionCell)
+				return;
+			self.removeDndSheetCellSuggestions(ownerDocument);
 		});
 
 		getCurrentNoteText().find('.dnd-sheet table').each(function() {
