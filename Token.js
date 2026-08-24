@@ -4714,7 +4714,11 @@ function rotation_towards_cursor(token, mousex, mousey, largerSnapAngle) {
 function rotation_towards_cursor_from_point(pointX, pointY, mousex, mousey, largerSnapAngle) {
 	const target = Math.atan2(mousey - pointY, mousex - pointX) + Math.PI * 3 / 2; // down = 0
 	const degrees = target * radToDeg;
-	const snap = (largerSnapAngle == true) ? 45 : 1; // if we ever allow hex, use 45 for square and 60 for hex
+	const snap = (largerSnapAngle == true) ? 
+					['3', '2'].includes(window.CURRENT_SCENE_DATA.gridType) ? 
+						30 : 
+						45 : 
+					1;
 	return (Math.round(degrees / snap) * snap + 360.0) % 360.0;
 }
 /// rotates all selected tokens to the specified newRotation
@@ -5029,12 +5033,19 @@ function install_grabbers() {
 			remove_selected_token_bounding_box(false, true);
 		},
 		drag: function(d,e) {
-			const mouseAngle = Math.atan2(d.y - d.centerPointRotateOrigin.y, d.x - d.centerPointRotateOrigin.x) * (180 / Math.PI);
+			let mouseAngle = Math.atan2(d.y - d.centerPointRotateOrigin.y, d.x - d.centerPointRotateOrigin.x) * (180 / Math.PI);
+			const snap = (shiftHeld == true) ? 
+				['3', '2'].includes(window.CURRENT_SCENE_DATA.gridType) ? 
+					30 : 
+					45 : 
+				1;
+		
 			d.angle = (360 + mouseAngle - d.startAngle) % 360;
+			d.angle = (Math.round(d.angle / snap) * snap + 360.0) % 360.0;
 			if(window.CURRENTLY_SELECTED_TOKENS.length == 1 &&
 			   window.TOKEN_OBJECTS[window.CURRENTLY_SELECTED_TOKENS[0]].isAoe()){
 				d.angle = rotation_towards_cursor_from_point(d.centerPointRotateOrigin.x, d.centerPointRotateOrigin.y,
-									     d.x, d.y);
+									     d.x, d.y, e.shiftKey);
 				// account for group rotation grabber being at corner
 				d.angle -= parseFloat($(`.token[data-id='${window.CURRENTLY_SELECTED_TOKENS[0]}']`).css('--token-rotation')); 
 			}

@@ -3061,12 +3061,6 @@ function edit_aoe_style_tokens(restoreState = {}) {
     send_aoe_style_tokens_to_players();
   };
 
-  const saveStyleAnimation = function(style, animated) {
-    customization.tokenOptions.aoeStyleTokenAnimation[normalize_aoe_style_key(style)] = animated;
-    customization.setTokenOption("aoeStyleTokenAnimation", customization.tokenOptions.aoeStyleTokenAnimation);
-    persist_token_customization(customization);
-    send_aoe_style_tokens_to_players();
-  };
 
   const saveStyleBorder = function(style, border) {
     customization.tokenOptions.aoeStyleTokenBorder[normalize_aoe_style_key(style)] = border;
@@ -3123,7 +3117,6 @@ function edit_aoe_style_tokens(restoreState = {}) {
     const input = $(`<input class="aoe-style-token-input" type="text" placeholder="https://..." value="${currentImage}" />`);
     const toggles = build_aoe_style_toggles({
       tiled: currentTiling,
-      animated: currentAnimated,
       border: currentBorder,
       opacity: currentOpacity,
       video: isVideo,
@@ -3161,9 +3154,7 @@ function edit_aoe_style_tokens(restoreState = {}) {
     toggles.tiling.on("change", function() {
       saveStyleTiling(style, toggles.tiling.prop("checked"));
     });
-    toggles.animation.on("change", function() {
-      saveStyleAnimation(style, toggles.animation.prop("checked"));
-    });
+
     toggles.border.on("change", function() {
       saveStyleBorder(style, toggles.border.prop("checked"));
     });
@@ -3233,7 +3224,6 @@ function edit_aoe_style_tokens(restoreState = {}) {
       const parsedImage = await parse_img(imageValue);
       saveStyleImage(styleKey, parsedImage);
       saveStyleTiling(styleKey, toggles.tiling.prop("checked"));
-      saveStyleAnimation(styleKey, toggles.animation.prop("checked"));
       saveStyleBorder(styleKey, toggles.border.prop("checked"));
       saveStyleVideo(styleKey, toggles.video.prop("checked"));
       saveStyleOpacity(styleKey, clamp_aoe_style_opacity(toggles.opacity.val()));
