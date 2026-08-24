@@ -1794,6 +1794,8 @@ class JournalManager{
 			return innerHTML;
 		});
 		closestNote.find('.image').remove();
+		closestNote.find('[style=""]').removeAttr('style');
+  		closestNote.find('[class=""]').removeAttr('class');
 		let sanitizedHTML = basic_sanitize_html(closestNote[0].innerHTML).replaceAll(/\[(\/)?spell\]/gi, `[$1spell]`).replaceAll(/\[(\/)?magicitem\]/gi, `[$1magicItem]`).replaceAll(/\[(\/)?item\]/gi, `[$1item]`);
 		const changes = forceSave || $(sanitizedHTML).text().replace(/[\s\n\r]/gi, '') != this.notes[id].plain.replace(/[\s\n\r]/gi, '');
 		if(changes){
@@ -6177,6 +6179,264 @@ class JournalManager{
 										<div class="bio-allies" contenteditable="true">&nbsp;</div>
 									</div>
 								</div>
+								<div class="col">
+									<div class="bio-block">
+										<div class="section-title">Treasure &amp; Currency</div>
+										<div class="currency-container">
+											<div class="coin-slot">CP:
+												<div class="coin-input" contenteditable="true">&nbsp;</div>
+											</div>
+											<div class="coin-slot">SP:
+												<div class="coin-input" contenteditable="true">&nbsp;</div>
+											</div>
+											<div class="coin-slot">EP:
+												<div class="coin-input" contenteditable="true">&nbsp;</div>
+											</div>
+											<div class="coin-slot">GP:
+												<div class="coin-input" contenteditable="true">&nbsp;</div>
+											</div>
+											<div class="coin-slot">PP:
+												<div class="coin-input" contenteditable="true">&nbsp;</div>
+											</div>
+										</div>
+										<div class="treasure-field" contenteditable="true">&nbsp;</div>
+									</div>
+									<div class="container-block equipment-block">
+										<div class="section-title">Equipment</div>
+										<div class="equipment-field" contenteditable="true">
+											<table>
+												<thead>
+													<tr>
+														<th>Name</th>
+														<th>Weight</th>
+														<th>Qty</th>
+														<th>Cost (gp)</th>
+														<th>Notes</th>
+													</tr>
+												</thead>
+												<tbody>
+													<tr>
+														<td>Cloak of Protection</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+													</tr>
+													<tr>
+														<td>Dagger of Venom</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+													</tr>
+													<tr>
+														<td>Rope</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+													</tr>
+													<tr>
+														<td>Arrows</td>
+														<td>&nbsp;</td>
+														<td>20</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+													</tr>
+													<tr>
+														<td>Rations</td>
+														<td>&nbsp;</td>
+														<td>10</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+													</tr>
+													<tr>
+														<td>Healer's Kit</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>[track id=healersKit]10[/track] uses remaining</td>
+													</tr>
+													<tr>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+													</tr>
+													<tr>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+													</tr>
+													<tr>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+													</tr>
+													<tr>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+													</tr>
+													<tr>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+													</tr>
+													<tr>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+													</tr>
+													<tr>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+													</tr>
+													<tr>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+													</tr>
+													<tr>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+													</tr>
+													<tr>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+													</tr>
+													<tr>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+													</tr>
+													<tr>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+													</tr>
+													<tr>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+													</tr>
+													<tr>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+													</tr>
+													<tr>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+													</tr>
+													<tr>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+													</tr>
+													<tr>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+													</tr>
+													<tr>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+													</tr>
+													<tr>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+													</tr>
+													<tr>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+													</tr>
+													<tr>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+													</tr>
+													<tr>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+													</tr>
+												</tbody>
+											</table>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="dnd-page">
+							<div class="col">
+								<div class="notes-block">
+									<div class="section-title">Notes</div>
+									<div class="notes-field" contenteditable="true">&nbsp;</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					`
+				},
+				{
+					"title": "Fillable Inventory Sheet",
+					"description": "Adds a fillable inventory sheet to the note. Has limited edit capabilites for Players.",
+					"content": `
+					<style id='contentStyles'>${contentStyles}</style>
+					<div class="dnd-sheet">
+						<div class="dnd-page">
+							<div class="page2-grid">
 								<div class="col">
 									<div class="bio-block">
 										<div class="section-title">Treasure &amp; Currency</div>

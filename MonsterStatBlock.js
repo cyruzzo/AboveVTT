@@ -270,7 +270,8 @@ function import_pc_template_html(files, parentEle, customStatId, tokenId) {
 const debounceRescanStatBlock = mydebounce(async (container, noteId, tokenId, currScroll) => {
   const token = window.TOKEN_OBJECTS[tokenId];
   let targetRescan = $(container).find('.avtt-stat-block-container, .note-text').first();
-  
+  targetRescan.find('[style=""]').removeAttr('style');
+  targetRescan.find('[class=""]').removeAttr('class');
   if(!targetRescan.length){
     container = $(container).closest('.avtt-stat-block-container, .note-text').parent();
     targetRescan = $(container).find('.avtt-stat-block-container, .note-text').first();
