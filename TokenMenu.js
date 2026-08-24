@@ -1749,16 +1749,7 @@ function token_context_menu_expanded(tokenIds, e, crossScenePortalData) {
 		}
 	}
 
-/*	if(window.DM) {
-		let optionsRow = $(`<div class="token-image-modal-footer-select-wrapper flyout-from-menu-item"><div class="token-image-modal-footer-title">Token Options</div></div>`);
-		optionsRow.hover(function (hoverEvent) {
-			context_menu_flyout("options-flyout", hoverEvent, function(flyout) {
-				flyout.append(build_options_flyout_menu(tokenIds));
-				update_token_base_visibility(flyout);
-			});
-		});
-		body.append(optionsRow);
-	}*/
+
 	let adjustmentsRow = $(`<div class="token-image-modal-footer-select-wrapper flyout-from-menu-item token-settings"><div class="token-image-modal-footer-title">Token Settings</div></div>`);
 	adjustmentsRow.hover(function (hoverEvent) {
 		context_menu_flyout("adjustments-flyout", hoverEvent, function(flyout) {

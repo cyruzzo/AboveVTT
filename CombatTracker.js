@@ -125,6 +125,29 @@ function init_combat_tracker(){
 			});
 		}
 	});
+
+	ct_inside.off('contextmenu').on('contextmenu', 'tr[data-target]', function(e){	
+		noisy_log("context_menu_flyout contextmenu event", e);
+		e.preventDefault();
+		e.stopPropagation();
+		if (window.DRAGGING || $(".pause_click").length > 0) {
+			clearTimeout(contextMenuLongPressTimer);
+			return;
+		}
+		const target = $(e.currentTarget);
+		const ctContainer = target.closest('#combat_tracker_inside');
+		const position = ctContainer.position();
+		let newLeft = position.left + ctContainer.width() + 230;
+		if(newLeft + 230 > window.innerWidth) {
+			newLeft = position.left;
+		}
+		e.clientX = newLeft;
+		if(e.touches && e.touches.length > 0) {
+			e.touches[0].clientX = newLeft;
+		}
+		token_context_menu_expanded([target.attr("data-target")], e);
+	});
+
 	ct_title_bar_settings.click(function(){openCombatTrackerSettings()});
 	ct_title_bar.append(ct_title_bar_settings);
 	ct_title_bar.append(ct_title_bar_exit);
