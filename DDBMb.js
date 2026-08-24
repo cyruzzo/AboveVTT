@@ -57,4 +57,18 @@
 
         return originalAddEventListener.call(this, type, listener, options);
     };
+
+    // this prevents peformance issues due to facebook scripts taking several hundred ms to execute every click event cloging up main thread
+    window.fbq = function () {
+     window.fbq.callMethod ? window.fbq.callMethod.apply(window.fbq, arguments) : window.fbq.queue.push(arguments);
+    };
+    window.fbq.queue = window.fbq.queue || [];
+    window.fbq.loaded = true;
+    window.fbq.push = window.fbq;
+
+    Object.defineProperty(window, 'fbq', {
+        configurable: false,
+        writable: false,
+        value: window.fbq
+    });
 })()
