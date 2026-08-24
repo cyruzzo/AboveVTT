@@ -2198,6 +2198,10 @@ class JournalManager{
 		if(container.find('.dnd-sheet').length === 0 && initialNoteText.find('.dnd-sheet').length === 0){
 			return;
 		}
+		const ownerDocument = container[0]?.ownerDocument || initialNoteText[0]?.ownerDocument || document;
+		if(ownerDocument !== document && typeof pcTemplateTabKey === 'function'){
+			$(ownerDocument).off('keydown.pcTemplateTabKey').on('keydown.pcTemplateTabKey', pcTemplateTabKey);
+		}
 		const tokenId = options.tokenId;
 		const downloadToken = options.downloadToken;
 		const uploadId = options.uploadId ?? (tokenId ?? id);
