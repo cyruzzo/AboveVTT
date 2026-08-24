@@ -2074,6 +2074,121 @@ class JournalManager{
 		});
 		self.bindDndSheetTemplateEvents(id, note_text, note_container);
 	}
+	getDndSheetCellSuggestionItems(suggestionType, searchText){
+		const normalize = (value) => `${value ?? ''}`.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+		const normalizedSearch = normalize(searchText);
+		if(normalizedSearch.length < 2)
+			return [];
+		const isLegacy = !get_avtt_setting_value('2024Tooltips');
+		let suggestions = [];
+		if(window.ITEMS_CACHE != undefined){
+			suggestions = suggestions.concat(window.ITEMS_CACHE
+				.filter(item => item.isLegacy == isLegacy || item.isHomebrew)
+				.map(item => ({
+					name: item.name,
+					type: item.magic ? 'Magic Item' : item.filterType || 'Item',
+					color: item.magic ? 'var(--compendium-magic-item-tooltip,#0f5cbc)' : 'var(--compendium-item-tooltip,#774521)',
+					match: normalize(item.name)
+				})));
+		}
+		if(suggestionType == 'attack' && window.SPELLS_CACHE != undefined){
+			suggestions = suggestions.concat(window.SPELLS_CACHE
+				.filter(spell => spell.definition?.isLegacy == isLegacy)
+				.map(spell => ({
+					name: spell.definition.name,
+					type: 'Spell',
+					color: 'var(--compendium-spell-tooltip,#704cd9)',
+					match: normalize(spell.definition.name)
+				})));
+		}
+		const seen = new Set();
+		return suggestions
+			.filter(suggestion => suggestion.name && suggestion.match.includes(normalizedSearch))
+			.sort((a, b) => {
+				const aStarts = a.match.startsWith(normalizedSearch);
+				const bStarts = b.match.startsWith(normalizedSearch);
+				if(aStarts != bStarts)
+					return aStarts ? -1 : 1;
+				return a.name.localeCompare(b.name);
+			})
+			.filter(suggestion => {
+				const key = `${suggestion.type}:${suggestion.name}`.toLowerCase();
+				if(seen.has(key))
+					return false;
+				seen.add(key);
+				return true;
+			})
+			.slice(0, 8);
+	}
+	removeDndSheetCellSuggestions(ownerDocument = document){
+		$('.dnd-sheet-cell-suggestions', ownerDocument).remove();
+	}
+	getDndSheetSuggestionCellFromEvent(event){
+		const directTarget = $(event.target).closest('[data-avtt-suggestion-type]');
+		if(directTarget.length > 0)
+			return directTarget[0];
+		const ownerDocument = event.target?.ownerDocument || document;
+		const selection = ownerDocument.getSelection?.();
+		if(!selection || selection.rangeCount === 0)
+			return undefined;
+		let anchor = selection.anchorNode;
+		if(anchor && anchor.nodeType === Node.TEXT_NODE){
+			anchor = anchor.parentElement;
+		}
+		const selectionTarget = $(anchor).closest('[data-avtt-suggestion-type]');
+		return selectionTarget.length > 0 ? selectionTarget[0] : undefined;
+	}
+	showDndSheetCellSuggestions(cell, suggestionType, onSelect){
+		const target = $(cell);
+		const ownerDocument = cell.ownerDocument || document;
+		const ownerWindow = ownerDocument.defaultView || window;
+		this.removeDndSheetCellSuggestions(ownerDocument);
+		const searchText = target.text().trim();
+		const suggestions = this.getDndSheetCellSuggestionItems(suggestionType, searchText);
+		if(suggestions.length === 0)
+			return;
+		const suggestionBox = $(`<div class="dnd-sheet-cell-suggestions"></div>`);
+		suggestions.forEach((suggestion, index) => {
+			const option = $(`<button type="button" class="dnd-sheet-cell-suggestion" data-index="${index}">
+				<span class="dnd-sheet-cell-suggestion-name"></span>
+				<span class="dnd-sheet-cell-suggestion-type"></span>
+			</button>`);
+			option.find('.dnd-sheet-cell-suggestion-name').text(suggestion.name);
+			option.find('.dnd-sheet-cell-suggestion-type').text(suggestion.type);
+			option.on('mousedown', (event) => {
+				event.preventDefault();
+				event.stopPropagation();
+				target.text(suggestion.name);
+				this.removeDndSheetCellSuggestions(ownerDocument);
+				onSelect?.();
+				cell.focus();
+			});
+			option.find('.dnd-sheet-cell-suggestion-name').css('color', suggestion.color);
+			suggestionBox.append(option);
+		});
+		$(ownerDocument.body).append(suggestionBox);
+		const rect = cell.getBoundingClientRect();
+		suggestionBox.css({
+			position: 'absolute',
+			left: `${rect.left + ownerWindow.scrollX}px`,
+			top: '0px',
+			width: `${Math.max(rect.width, 240)}px`,
+			'z-index': 100000000,
+			background: 'var(--background-color, #fff)',
+			color: 'var(--text-color, #111)',
+			border: '1px solid var(--border-color, #999)',
+			'box-shadow': '0 2px 8px rgba(0, 0, 0, 0.25)',
+			'border-radius': '4px',
+			padding: '3px',
+			visibility: 'hidden'
+		});
+
+		const suggestionBoxHeight = suggestionBox.outerHeight();
+		suggestionBox.css({
+			top: `${rect.top + ownerWindow.scrollY - suggestionBoxHeight}px`,
+			visibility: 'visible'
+		});
+	}
 	bindDndSheetTemplateEvents(id, note_text, note_container, options = {}){
 		const self = this;
 		const container = $(note_container);
@@ -2102,6 +2217,10 @@ class JournalManager{
 			e.preventDefault();
 			e.stopPropagation();
 			e.stopImmediatePropagation();
+			if($(e.target).is('[data-avtt-suggestion-type]')){
+				const ownerDocument = e.target?.ownerDocument || document;
+				setTimeout(() => self.removeDndSheetCellSuggestions(ownerDocument), 150);
+			}
 			setTimeout(()=>{
 				if(container.find('.dnd-sheet [contenteditable="true"]:is(:focus, :focus-within)').length>0) return;
 				if($(e.target).is('.injected-input')) return;  
@@ -2138,6 +2257,36 @@ class JournalManager{
 			const text = (e.originalEvent?.clipboardData || e.clipboardData || window.clipboardData).getData('text/plain');
 			const ownerDocument = e.target?.ownerDocument || document;
 			ownerDocument.execCommand('insertText', false, text);
+		});
+		container.off('input.dndSheetSuggestion keydown.dndSheetSuggestion keyup.dndSheetSuggestion focusin.dndSheetSuggestion').on('input.dndSheetSuggestion keydown.dndSheetSuggestion keyup.dndSheetSuggestion focusin.dndSheetSuggestion', '.dnd-sheet', function(e){
+			const suggestionCell = self.getDndSheetSuggestionCellFromEvent(e);
+			if(!suggestionCell)
+				return;
+			if(e.type == 'keydown' && !['Enter', 'Escape'].includes(e.key))
+				return;
+			if(e.type == 'keyup' && ['Enter', 'Escape'].includes(e.key))
+				return;
+			if(e.type == 'keyup' && !['ArrowDown', 'ArrowUp', 'Enter', 'Escape'].includes(e.key))
+				return;
+			if(e.key == 'Escape'){
+				e.preventDefault();
+				self.removeDndSheetCellSuggestions(suggestionCell.ownerDocument);
+				return;
+			}
+			if(e.key == 'Enter'){
+				const ownerDocument = suggestionCell.ownerDocument || document;
+				const firstSuggestion = $('.dnd-sheet-cell-suggestions .dnd-sheet-cell-suggestion', ownerDocument).first();
+				if(firstSuggestion.length > 0){
+					e.preventDefault();
+					e.stopPropagation();
+					e.stopImmediatePropagation();
+					firstSuggestion.trigger('mousedown');
+				}
+				return;
+			}
+			self.showDndSheetCellSuggestions(suggestionCell, $(suggestionCell).attr('data-avtt-suggestion-type'), () => {
+				persistCurrentNoteText({forceSave: true, rescanStatBlock: true});
+			});
 		});
 
 		getCurrentNoteText().find('.dnd-sheet table').each(function() {
@@ -3048,6 +3197,7 @@ class JournalManager{
 				for(let i=0; i<firstCells.length; i++){
 
 					const cell = $(firstCells[i]);
+					cell.attr('data-avtt-suggestion-type', 'equipment');
 					if(cell.find('a').length > 0) continue;
 					const text = cell.text();
 					if(text.match(/(\[(magicitem|item)\])/gi) || text.trim() === '') continue;
@@ -3106,6 +3256,7 @@ class JournalManager{
 				for(let i=0; i<firstCells.length; i++){
 
 					const cell = $(firstCells[i]);
+					cell.attr('data-avtt-suggestion-type', 'attack');
 					if(cell.find('a').length > 0) continue;
 					const text = cell.text();
 					if(text.match(/(\[(magicitem|item)\])/gi) || text.trim() === '') continue;
