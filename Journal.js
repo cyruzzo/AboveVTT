@@ -2241,6 +2241,124 @@ class JournalManager{
 				$(event.currentTarget).closest('.resize_drag_window').hide();
 			})
 		}
+		findNotePopoutWindow(id){
+			for(const name in childWindows){
+				const childWindow = childWindows[name];
+				if(!childWindow || childWindow.closed)
+					continue;
+				try{
+					if($(childWindow.document).find(`div.note[data-id='${id}']`).length > 0)
+						return {name, childWindow};
+				}
+				catch(error){
+					console.warn('Unable to check note popout window', name, error);
+				}
+			}
+			return undefined;
+		}
+		findStatBlockPopoutWindow(id){
+			for(const name in childWindows){
+				const childWindow = childWindows[name];
+				if(!childWindow || childWindow.closed)
+					continue;
+				try{
+					if($(childWindow.document).find(`.custom-stat-block[data-stat-id="${id}"]`).length > 0)
+						return {name, childWindow};
+				}
+				catch(error){
+					console.warn('Unable to check stat block popout window', name, error);
+				}
+			}
+			return undefined;
+		}
+		async renderDisplayedNote(id, note, note_text, note_container, scrollTop = 0){
+			const self = this;
+			note_text.empty();
+			note_text.append(self.notes[id].text);
+			$(note_text).find('.injected-input, .added-input-desc').remove();
+			$(note_text).find('.add-input:not(.avtt-custom-tracker)').replaceWith((i, innerHtml) => {
+				return innerHtml;
+			});
+			await this.translateHtmlAndBlocks(note_text, id);
+			add_journal_roll_buttons(note_text);
+			this.add_journal_tooltip_targets(note_text);
+			this.block_send_to_buttons(note_text);
+			add_stat_block_hover(note_text);
+			add_aoe_statblock_click(note_text);
+			$(note_text).find('.add-input').each(function(){window.JOURNAL.addTrackedInputs($(this), {noteId: id})})
+
+			if(note.find('.note-text').length === 0){
+				note.append(note_text);
+			}
+			note.find("a").attr("target", "_blank");
+			if($(note).parent().length === 0){
+				note_container.append(note);
+			}
+			self.bindDisplayedNoteEvents(id, note, note_text, note_container);
+			this.positionNotePins(id, note_text);
+			note_text[0].scrollTop = scrollTop;
+			if(note_text.find('.dnd-sheet').length>0){
+				self.bindDndSheetTemplateEvents(id, note_text, note_container, {showControls: $(note_container).find('.title_bar').length > 0});
+			}
+		}
+		async updateNotePopout(id, scrollTop = 0){
+			const popout = this.findNotePopoutWindow(id);
+			if(!popout)
+				return false;
+			const popoutBody = $(popout.childWindow.document).find('body');
+			let popoutNote = popoutBody.find(`div.note[data-id='${id}']`);
+			if(popoutNote.length === 0){
+				popoutNote = $(`<div class='note' data-id='${id}'></div>`);
+				popoutBody.append(popoutNote);
+			}
+			let popoutNoteText = popoutNote.find('.note-text').first();
+			if(popoutNoteText.length === 0){
+				popoutNoteText = $(`<div class='note-text'/>`);
+			}
+			await this.renderDisplayedNote(id, popoutNote, popoutNoteText, popoutBody, scrollTop);
+			return true;
+		}
+		async updateStatBlockPopout(id, tokenId, scrollTop = 0){
+			const popout = this.findStatBlockPopoutWindow(id);
+			if(!popout || this.notes[id] == undefined)
+				return false;
+			const popoutBody = $(popout.childWindow.document).find('body');
+			let targetRescan = popoutBody.find('.avtt-stat-block-container, .note-text').first();
+			if(targetRescan.length === 0)
+				return false;
+			const token = window.TOKEN_OBJECTS[tokenId] || window.all_token_objects[tokenId];
+			targetRescan.html(this.notes[id].text);
+			popoutBody.find('.injected-input, .added-input-desc').remove();
+			popoutBody.find('.add-input:not(.avtt-custom-tracker)').replaceWith((i, innerHtml) => {
+				return innerHtml;
+			})
+			await this.translateHtmlAndBlocks(targetRescan);
+			add_journal_roll_buttons(targetRescan, tokenId);
+			this.add_journal_tooltip_targets(targetRescan);
+			add_ability_tracker_inputs(targetRescan, tokenId);
+			popoutBody.find('.add-input').each(function(){window.JOURNAL.addTrackedInputs($(this), {token, noteId: id})});
+			add_stat_block_hover(targetRescan, tokenId);
+			add_aoe_statblock_click(targetRescan, tokenId);
+			targetRescan.find('a').attr('contenteditable', 'false');
+			if(token){
+				sync_pc_template(token, popoutBody);
+				let imageUrl = parse_img(token.options.imgsrc);
+				if(token.options.imgsrc.startsWith('above-bucket-not-a-url')){
+					imageUrl = await getAvttStorageUrl(imageUrl);
+				}
+				targetRescan.append(`<div class="image" style="display: inline-block; position: relative;"><${(token.options.videoToken == true || ['.mp4', '.webm', '.m4v'].some(d => token.options.imgsrc.includes(d))) ? 'video disableremoteplayback muted' : 'img'}
+					src="${imageUrl}"    
+					class="monster-image"
+					style="max-width: 100%;">
+					</div>`);
+				popoutBody.find("img.monster-image, .monster-image").each((i,block) => {
+					createSendPlayerButton(block, "login", true).insertAfter(block);
+				});
+			}
+			this.bindDndSheetTemplateEvents(id, targetRescan, popoutBody, {tokenId, showControls: false});
+			targetRescan[0].scrollTop = scrollTop;
+			return true;
+		}
 	display_note(id, statBlock = false, scrollTop=0){
 		let self=this;
 		let noteAlreadyOpen = $(`div.note[data-id='${id}']`).length>0;
