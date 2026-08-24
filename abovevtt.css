@@ -204,17 +204,21 @@ body > div {
   -ms-user-select: none; 
   user-select: none; 
 }
-.ct-sidebar__inner,
-.ct-character-sheet{
-    user-select: text;
-}
 
+.ct-sidebar__inner,
+.ct-character-sheet,
+.sidebar__pane-content,
 #monster-stat-block,
 .note,
 .note-flyout{
   -webkit-user-select: text; 
   -ms-user-select: text; 
   user-select: text; 
+}
+.damageButtonsContainer{
+  -webkit-user-select: none; 
+  -ms-user-select: none; 
+  user-select: none; 
 }
 .above_delete {
     width: 400px;
