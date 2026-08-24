@@ -1036,10 +1036,12 @@ function placeCaretAtStart(el) {
     if (typeof el.focus === 'function') {
         el.focus();
     }
-    const range = document.createRange();
+    const ownerDocument = el.ownerDocument || document;
+    const ownerWindow = ownerDocument.defaultView || window;
+    const range = ownerDocument.createRange();
     range.setStart(el, 0);
     range.collapse(true);
-    const selection = window.getSelection();
+    const selection = ownerWindow.getSelection();
     selection.removeAllRanges();
     selection.addRange(range);
 }
@@ -1048,7 +1050,9 @@ function pcTemplateTabKey(e) {
     if (e.key !== 'Tab') {
         return;
     }
-    const selection = window.getSelection();
+    const ownerDocument = e.target?.ownerDocument || document;
+    const ownerWindow = ownerDocument.defaultView || window;
+    const selection = ownerWindow.getSelection();
     if (!selection || selection.rangeCount === 0) {
         return;
     }

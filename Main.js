@@ -1079,6 +1079,8 @@ function build_draggable_monster_window(tokenId) {
 		addClasses: false,
 		handles: "all",
 		containment: "#windowContainment",
+		distance: 5,
+		cancel: 'input, [contenteditable]',
 		start: function() {
 			$("#resizeDragMon, .note:has(iframe) form .mce-container-body, #sheet").append($('<div class="iframeResizeCover"></div>'));
 		},
@@ -1093,13 +1095,14 @@ function build_draggable_monster_window(tokenId) {
 		addClasses: false,
 		scroll: false,
 		containment: "#windowContainment",
+		distance: 5,
 		start: function() {
 			$("#resizeDragMon, .note:has(iframe) form .mce-container-body, #sheet").append($('<div class="iframeResizeCover"></div>'));
 		},
 		stop: function() {
 			$('.iframeResizeCover').remove();
 		},
-		cancel: '[contenteditable]'
+		cancel: 'input, [contenteditable]'
 	});
 	minimize_player_monster_window_double_click(container);
 

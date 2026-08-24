@@ -5045,7 +5045,7 @@ body {
             height: initial;
         }
     }
-    
+
   .help-tabs {
       background-color: #f1f1f1;
       flex: 0 0 auto;
@@ -13170,7 +13170,23 @@ p.monster-header+p {
     stroke: #333;
     stroke-width: 1;
 }
-
+.dnd-sheet-cell-suggestion-type{
+    white-space: nowrap;
+    color: color-mix(in srgb, var(--text-color, #111) 70%, transparent 0%);
+}
+.dnd-sheet-cell-suggestion{
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    width: 100%;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    padding: 4px 6px;
+    cursor: pointer;
+    text-align: left;
+}
+	
 .dnd-sheet {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
     color: #111;
