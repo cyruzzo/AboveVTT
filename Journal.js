@@ -5654,8 +5654,8 @@ class JournalManager{
 			width: 900,
 			height: 600,
 			position: {
-			   my: "center",
-			   at: "center-200",
+			   my: "center center",
+			   at: "center center",
 			   of: window
 			},
 			open: function(event, ui){
@@ -5708,7 +5708,7 @@ class JournalManager{
 		}, 800)
 
 		const contentStyles = this.content_styles()
-
+		
 		tinyMCE.init({
 			selector: '#' + tmp,
 			menubar: false,
@@ -6924,6 +6924,18 @@ class JournalManager{
 			valid_children : '+body[style]',
 			extended_valid_elements: 'svg[name|xmlns|viewBox|width|height|class|fill|stroke],path[d|fill|stroke|stroke-width|class],g[class|fill|stroke|class],circle[cx|cy|r|fill|stroke|class],rect[x|y|width|height|fill|stroke|class],polygon[points|fill|stroke|class]',
 			setup: function (editor) { 
+				editor.on('PreInit', function() {
+					const iframeWin = editor.getWin();
+					if (iframeWin && iframeWin.addEventListener) {
+						const origAdd = iframeWin.addEventListener;
+						iframeWin.addEventListener = function(type, listener, options) {
+							if (type === 'unload') {
+								return origAdd.call(this, 'pagehide', listener, options);
+							}
+							return origAdd.call(this, type, listener, options);
+						};
+					}
+				});
 				editor.on('keydown', function (e) {
 					if (e.key === 'PageUp' || e.key === 'PageDown') {
 						e.preventDefault();
@@ -7331,6 +7343,7 @@ class JournalManager{
 			}
 		});
 		note.parent().css('height', '600px');		
+		note.dialog("option", "position", { my: "center center", at: "center center", of: window });
 	}
 }
 
