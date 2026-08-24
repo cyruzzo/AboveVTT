@@ -101,37 +101,7 @@ async function display_stat_block_in_container(statBlock, container, tokenId, cu
 
 
       const customStatId = token.options.statBlock;
-
-
-      container.off('focusout.editable').on('focusout.editable', '.dnd-sheet [contenteditable="true"]', (e)=>{
-          setTimeout(()=>{
-            if(container.find('[contenteditable="true"]:is(:focus, :focus-within)').length>0) return;
-            if($(e.target).is('.injected-input')) return;  
-            const note_text = container.find('.avtt-stat-block-container').first();
-            window.JOURNAL.persistStatBlockContent(customStatId, note_text, container, {tokenId, forceSave: true, rescanStatBlock: true});
-          }, 10);
-        });
-			container.off('change.checkbox').on('change.checkbox', 'input[type="checkbox"], .dnd-sheet input', (e)=>{
-				if (e.target && e.target.nodeName === 'INPUT' && e.target.type === 'checkbox') {				
-					if (e.target.checked) {
-						e.target.setAttribute('checked', 'checked');
-					} else {
-						e.target.removeAttribute('checked');
-					}
-				}
-        const note_text = container.find('.avtt-stat-block-container').first();
-				window.JOURNAL.persistStatBlockContent(customStatId, note_text, container, {tokenId, forceSave: true, rescanStatBlock: false});
-			})
-      container.off('pointerdown.profChange, touchstart.profChange').on('pointerdown.profChange, touchstart.profChange', '.prof-checkbox', (e)=>{
-        e.preventDefault();
-        const target = $(e.currentTarget);
-        const currentState = parseInt(target.attr('data-state'));
-        const newState = (currentState + 1) % 4;
-        target.attr('data-state', newState);
-
-        const note_text = container.find('.avtt-stat-block-container').first();
-        window.JOURNAL.persistStatBlockContent(customStatId, note_text, container, {tokenId, forceSave: true, rescanStatBlock: false});
-      })
+      window.JOURNAL.bindDndSheetTemplateEvents(customStatId, container.find('.avtt-stat-block-container').first(), container, {tokenId, showControls: false});
     }
     if($html.find('.dnd-sheet').length>0){
       container.css('min-width', '615px');
@@ -247,119 +217,8 @@ async function display_stat_block_in_container(statBlock, container, tokenId, cu
     $("span.hideme").parent().parent().hide();
     container.find('.lockStatButton, .download_button, .upload_button, .add-table-row, .table-row-drag-handle, .header-spacer').remove();
     if(customStatBlock && container.find('.dnd-sheet').length>0){
-      container.find('a').attr('contenteditable', 'false');
-      container.find('.popout-button').remove();
-      const lockStatButton = $(`<div class='lockStatButton' style="cursor: pointer; position: absolute;
-                                              left: 2px;
-                                              top: 3px;
-                                              width: 20px;
-                                              height: 20px;
-                                              color: #ddd;">
-                                  <span title="Lock roll buttons so the text cursor isn't placed inside them on click" class="material-symbols-outlined" style="font-size:20px;">
-                                    ${window.unlockTemplateStatBlocks ? "lock_open_right" : "lock"}
-                                  </span>
-                                </div>`)
-      lockStatButton.off('click.lockStatBlock').on('click.lockStatBlock', ()=>{
-        window.unlockTemplateStatBlocks = !window.unlockTemplateStatBlocks;
-        const span = lockStatButton.find('>span');
-        if(!window.unlockTemplateStatBlocks){
-          container.find('.dnd-sheet button').attr("contenteditable", "false");
-          span.text('lock');
-        } else{
-          container.find('.dnd-sheet [contenteditable]:not(a):not(.table-row-drag-handle):not(.add-table-row)').attr("contenteditable", "true");
-          span.text('lock_open_right');
-        }
-      })
-      
-      if(!window.unlockTemplateStatBlocks){
-        container.find('.dnd-sheet button').attr("contenteditable", "false");
-      } else{
-        container.find('.dnd-sheet [contenteditable]:not(a):not(.table-row-drag-handle):not(.add-table-row)').attr("contenteditable", "true");
-      }
-
-      const downloadStat = $(`<div class='download_button' style="cursor: pointer; position: absolute;
-                                              left: 25px;
-                                              top: 3px;
-                                              width: 20px;
-                                              height: 20px;
-                                              color: #ddd;">
-                                  <span title="Download Statblock as HTML" class="material-symbols-outlined" style="font-size:20px;">
-                                    download
-                                  </span>
-                                </div>`)
-      downloadStat.off('click.exportStatBlock').on('click.exportStatBlock', function () { 
-        window.JOURNAL.downloadStatBlock(window.TOKEN_OBJECTS[tokenId].options.statBlock, token);
-      });
-      const uploadStat = $(`<div class='upload_button' style="cursor: pointer; position: absolute;
-                                              left: 45px;
-                                              top: 3px;
-                                              width: 20px;
-                                              height: 20px;
-                                              color: #ddd;">
-                    <span onclick='import_open_template("${tokenId}");' title="Upload HTML Statblock" class="material-symbols-outlined" style="font-size:20px;">
-                      upload
-                    </span>
-                    <input accept='.html' class='import_pc_template' data-id='${tokenId}' type='file' single style='display: none' />
-                  </div>
-                  `);
-      uploadStat.find('input[type="file"]').change(function(e) {
-        import_pc_template_html(e.target.files, $html, window.TOKEN_OBJECTS[tokenId]?.options?.statBlock, tokenId);
-      });
-      container.prepend(lockStatButton, downloadStat, uploadStat);
-      container.off('paste').on('paste', '[contentEditable="true"]', function (e) {
-        e.preventDefault();
-        const text = (e.originalEvent?.clipboardData || e.clipboardData || window.clipboardData).getData('text/plain');
-        document.execCommand('insertText', false, text);
-      });
-			container.find('table').each(function() {
-        const $table = $(this);
-        const rowsContainer = $table.find('tbody').length > 0 ? $table.find('tbody') : $table;
-        if (rowsContainer.find('> tr').length > 1) {
-          rowsContainer.find('> tr').each(function() {
-            const $row = $(this);
-            if ($row.find('> .table-row-drag-handle').length === 0) {
-              const $handleCell = $('<td class="table-row-drag-handle" contenteditable="false" aria-hidden="true">⋮⋮</td>');
-              $row.prepend($handleCell);
-            }
-          });
-
-          $table.sortable({
-            items: '> tbody > tr, > tr',
-            handle: '.table-row-drag-handle',
-            placeholder: 'ui-sortable-placeholder',
-            update: function() {
-              const closestNote = container.find('.avtt-stat-block-container').first();
-              const noteText = closestNote.length > 0 ? closestNote : container;
-              const noteId = window.TOKEN_OBJECTS[tokenId]?.options?.statBlock;
-              window.JOURNAL.persistStatBlockContent(noteId, noteText, container, {tokenId, forceSave: true, rescanStatBlock: false});
-            }
-          })
-          const header = $table.find('th').first().parent().parent();
-          header.find('> tr').each(function() {
-            const $row = $(this);
-            if ($row.find('> .header-spacer').length === 0) {
-              const $handleCell = $('<th class="header-spacer" aria-hidden="true"></td>');
-              $row.prepend($handleCell);
-            }
-          });
-        }
-        if($table.next('.add-table-row').length>0)
-          return;
-        const add_table_row = $(`<button class="add-table-row" contenteditable="false">+</button>`); 	
-				$table.after(add_table_row);
-
-
-			});
-  
-      container.off('pointerdown.addRow, touchstart.addRow').on('pointerdown.addRow, touchstart.addRow', '.add-table-row', function (e) {
-				e.preventDefault();
-			  const table = $(e.target).prev('table');
-				const tableBody = $(table).find('tbody');
-				const targetContainer = tableBody.length>0 ? tableBody : table;
-				const newRow = targetContainer.find('>tr:last').clone();
-				newRow.find('td:not(.table-row-drag-handle), th').html('');
-				targetContainer.append(newRow);
-			});
+			const customStatId = window.TOKEN_OBJECTS[tokenId]?.options?.statBlock;
+			window.JOURNAL.bindDndSheetTemplateEvents(customStatId, $html, container, {tokenId, showControls: true, uploadId: tokenId, downloadToken: token});
 		}
 	}
 
@@ -535,73 +394,7 @@ const debounceRescanStatBlock = mydebounce(async (container, noteId, tokenId, cu
       createSendPlayerButton(block, "login", true).insertAfter(block);
     });
   }
-  container.off('paste').on('paste', '[contentEditable="true"]', function (e) {
-    e.preventDefault();
-    const text = (e.originalEvent?.clipboardData || e.clipboardData || window.clipboardData).getData('text/plain');
-    document.execCommand('insertText', false, text);
-  });
-  container.find('table').each(function() {
-    const $table = $(this);
-    const rowsContainer = $table.find('tbody').length > 0 ? $table.find('tbody') : $table;
-    if (rowsContainer.find('> tr').length > 1) {
-      rowsContainer.find('> tr').each(function() {
-        const $row = $(this);
-        if ($row.find('> .table-row-drag-handle').length === 0) {
-          const $handleCell = $('<td class="table-row-drag-handle" contenteditable="false" aria-hidden="true">⋮⋮</td>');
-          $row.prepend($handleCell);
-        }
-      });
-
-      $table.sortable({
-        items: '> tbody > tr, > tr',
-        handle: '.table-row-drag-handle',
-        placeholder: 'ui-sortable-placeholder',
-        update: function() {
-          const closestNote = container.find('.avtt-stat-block-container').first();
-          const noteText = closestNote.length > 0 ? closestNote : container;
-          window.JOURNAL.persistStatBlockContent(noteId, noteText, container, {tokenId, forceSave: true, rescanStatBlock: false});
-        }
-      })
-      const header = $table.find('th').first().parent().parent();
-      header.find('> tr').each(function() {
-        const $row = $(this);
-        if ($row.find('> .header-spacer').length === 0) {
-          const $handleCell = $('<th class="header-spacer" aria-hidden="true"></td>');
-          $row.prepend($handleCell);
-        }
-      });
-    }
-    if($table.next('.add-table-row').length>0)
-      return;
-    const add_table_row = $(`<button class="add-table-row" contenteditable="false">+</button>`);
-    $table.after(add_table_row);
-  });
-  container.off('pointerdown.profChange, touchstart.profChange').on('pointerdown.profChange, touchstart.profChange', '.prof-checkbox', (e)=>{
-    e.preventDefault();
-    const target = $(e.currentTarget);
-    const currentState = parseInt(target.attr('data-state'));
-    const newState = (currentState + 1) % 4;
-    target.attr('data-state', newState);
-    const note_text = container.find('.avtt-stat-block-container').first();
-    window.JOURNAL.persistStatBlockContent(noteId, note_text, container, {tokenId, forceSave: true, rescanStatBlock: false});
-  })
-  container.off('pointerdown.addRow, touchstart.addRow').on('pointerdown.addRow, touchstart.addRow', '.add-table-row', function (e) {
-    e.preventDefault();
-			const table = $(e.target).prev('table');
-      const tableBody = $(table).find('tbody');
-      const targetContainer = tableBody.length>0 ? tableBody : table;
-      const newRow = targetContainer.find('>tr:last').clone();
-      newRow.find('td:not(.table-row-drag-handle), th').html('');
-      targetContainer.append(newRow);
-  });
-
-
-
-  if(!window.unlockTemplateStatBlocks){
-    container.find('.dnd-sheet button').attr("contenteditable", "false");
-  } else{
-    container.find('.dnd-sheet [contenteditable]:not(a):not(.table-row-drag-handle):not(.add-table-row)').attr("contenteditable", "true");
-  }
+  window.JOURNAL.bindDndSheetTemplateEvents(noteId, targetRescan, container, {tokenId, showControls: false});
   
   $(container).find('.avtt-stat-block-container, .note-text')[0].scrollTop = currScroll;
 }, 1000);

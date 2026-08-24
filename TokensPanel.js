@@ -5240,6 +5240,11 @@ const fetch_and_cache_scene_monster_items = mydebounce( () => {
 });
 
 const fetch_and_cache_monsters = mydebounce( (monsterIds, callback=()=>{}, open5e) => {
+    if(monsterIds.length === 0) {
+        noisy_log("fetch_and_cache_monsters no monsters to fetch");
+        callback();
+        return;
+    }
     if(open5e){
         const cachedIds = Object.keys(cached_open5e_items);
         const monstersToFetch = monsterIds.filter(id => !cachedIds.includes(id) && id != 'customStat');
