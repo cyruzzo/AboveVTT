@@ -4313,12 +4313,9 @@ body.color-blind-avtt {
 .aoe-border-cone {
     clip-path: polygon(0% 100%, 5% 100%, 50% 10%, 92% 95%, 5% 95%, 0% 100%, 100% 100%, 50% 0%);
     background-color: white;
-    animation: mymove 5s infinite alternate ease-in-out ;
-    opacity: var(--opacity);
+    opacity: 0.4;
 }
-.reduceMovement .aoe-border-cone{
-    opacity: 0.5;
-}
+
 .aoe-border-basic{
     border: white 10px solid;
 }
