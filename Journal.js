@@ -2232,22 +2232,22 @@ class JournalManager{
 				note_container.find('.popout-button, .lockStatButton, .download_button, .upload_button').remove();
 				const lockStatButton = $(`<div class='lockStatButton' style="cursor: pointer; position: relative; display:inline-block; color: #ddd;">
 											<span title="Lock roll buttons so the text cursor isn't placed inside them on click" class="material-symbols-outlined" style="font-size: 20px; position: relative; top: 4px;">
-											${!window.lockTemplateStatBlocks ? "lock_open_right" : "lock"}
+											${window.unlockTemplateStatBlocks ? "lock_open_right" : "lock"}
 											</span>
 										</div>`)
 				lockStatButton.off('click.lockStatBlock').on('click.lockStatBlock', ()=>{
-				window.lockTemplateStatBlocks = !window.lockTemplateStatBlocks;
-				const span = lockStatButton.find('>span');
-				if(window.lockTemplateStatBlocks){
-					note_text.find('.dnd-sheet button').attr("contenteditable", "false");
-					span.text('lock');
-				} else{
-					note_text.find('.dnd-sheet [contenteditable]:not(a):not(.table-row-drag-handle):not(.add-table-row)').attr("contenteditable", "true");
-					span.text('lock_open_right');
-				}
+					window.unlockTemplateStatBlocks = !window.unlockTemplateStatBlocks;
+					const span = lockStatButton.find('>span');
+					if(!window.unlockTemplateStatBlocks){
+						note_text.find('.dnd-sheet button').attr("contenteditable", "false");
+						span.text('lock');
+					} else{
+						note_text.find('.dnd-sheet [contenteditable]:not(a):not(.table-row-drag-handle):not(.add-table-row)').attr("contenteditable", "true");
+						span.text('lock_open_right');
+					}
 				})
 				
-				if(window.lockTemplateStatBlocks){
+				if(!window.unlockTemplateStatBlocks){
 					note_text.find('.dnd-sheet button').attr("contenteditable", "false");
 				} else{
 					note_text.find('.dnd-sheet [contenteditable]:not(a):not(.table-row-drag-handle):not(.add-table-row)').attr("contenteditable", "true");

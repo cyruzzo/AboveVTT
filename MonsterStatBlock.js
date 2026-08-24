@@ -256,13 +256,13 @@ async function display_stat_block_in_container(statBlock, container, tokenId, cu
                                               height: 20px;
                                               color: #ddd;">
                                   <span title="Lock roll buttons so the text cursor isn't placed inside them on click" class="material-symbols-outlined" style="font-size:20px;">
-                                    ${!window.lockTemplateStatBlocks ? "lock_open_right" : "lock"}
+                                    ${window.unlockTemplateStatBlocks ? "lock_open_right" : "lock"}
                                   </span>
                                 </div>`)
       lockStatButton.off('click.lockStatBlock').on('click.lockStatBlock', ()=>{
-        window.lockTemplateStatBlocks = !window.lockTemplateStatBlocks;
+        window.unlockTemplateStatBlocks = !window.unlockTemplateStatBlocks;
         const span = lockStatButton.find('>span');
-        if(window.lockTemplateStatBlocks){
+        if(!window.unlockTemplateStatBlocks){
           container.find('.dnd-sheet button').attr("contenteditable", "false");
           span.text('lock');
         } else{
@@ -271,8 +271,8 @@ async function display_stat_block_in_container(statBlock, container, tokenId, cu
         }
       })
       
-      if(window.lockTemplateStatBlocks){
-         container.find('.dnd-sheet button').attr("contenteditable", "false");
+      if(!window.unlockTemplateStatBlocks){
+        container.find('.dnd-sheet button').attr("contenteditable", "false");
       } else{
         container.find('.dnd-sheet [contenteditable]:not(a):not(.table-row-drag-handle):not(.add-table-row)').attr("contenteditable", "true");
       }
@@ -597,7 +597,7 @@ const debounceRescanStatBlock = mydebounce(async (container, noteId, tokenId, cu
 
 
 
-  if(window.lockTemplateStatBlocks){
+  if(!window.unlockTemplateStatBlocks){
     container.find('.dnd-sheet button').attr("contenteditable", "false");
   } else{
     container.find('.dnd-sheet [contenteditable]:not(a):not(.table-row-drag-handle):not(.add-table-row)').attr("contenteditable", "true");
