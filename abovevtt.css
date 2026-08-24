@@ -5029,10 +5029,23 @@ body {
 
 
 
-  a {
+    a {
     text-decoration: none;
-  }
+    }
 
+    @media screen and (max-width: 1023px) {
+        i {
+            box-sizing: initial;
+            cursor: initial;
+            display: initial;
+            float: initial;
+            padding: initial;
+            position: initial;
+            width: initial;
+            height: initial;
+        }
+    }
+    
   .help-tabs {
       background-color: #f1f1f1;
       flex: 0 0 auto;
@@ -13168,6 +13181,9 @@ p.monster-header+p {
     font-size: 11px;
     line-height: 1.2;
 
+    b{
+        font-weight: 600;
+    }
     .dnd-page {
         border: 2px solid #222;
         padding: 15px;
