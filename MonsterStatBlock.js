@@ -248,14 +248,13 @@ function import_pc_template_html(files, parentEle, customStatId, tokenId) {
         }
       })
       const containerInside = parentEle.find('.avtt-stat-block-container, .note-text').first();      
-      const currScroll = containerInside.length ? containerInside[0].scrollTop : parentEle[0].scrollTop;
       if(token){
         setPcTemplateStats(parentEle, token.options);
         token.place();
       }
       window.JOURNAL.notes[customStatId].text = sanitizedHTML.replaceAll(/\[(\/)?spell\]/gi, `[$1spell]`).replaceAll(/\[(\/)?magicitem\]/gi, `[$1magicItem]`).replaceAll(/\[(\/)?item\]/gi, `[$1item]`); 
       window.JOURNAL.notes[customStatId].plain = $(window.JOURNAL.notes[customStatId].text).text();
-      debounceRescanStatBlock(parentEle.closest('.resize_drag_window, .moveableWindow'), customStatId, tokenId, currScroll);
+      debounceRescanStatBlock(parentEle.closest('.resize_drag_window, .moveableWindow'), customStatId, tokenId);
       debounceSendNote(customStatId, window.JOURNAL.notes[customStatId], tokenId);
       window.JOURNAL.setPersistTimeout();
       $('.import-loading-indicator').remove();
@@ -276,12 +275,14 @@ const debounceRescanStatBlock = mydebounce(async (container, noteId, tokenId, cu
     container = $(container).closest('.avtt-stat-block-container, .note-text').parent();
     targetRescan = $(container).find('.avtt-stat-block-container, .note-text').first();
   }
+ 
+  const liveScroll = targetRescan[0]?.scrollTop;
   $(targetRescan).html(window.JOURNAL.notes[noteId].text);
   $(container).find('.injected-input, .added-input-desc').remove();
   $(container).find('.add-input:not(.avtt-custom-tracker)').replaceWith((i, innerHtml) => {
     return innerHtml;
   })
-  currScroll = currScroll ?? targetRescan[0].scrollTop;
+  currScroll = liveScroll || 0;
   await window.JOURNAL.translateHtmlAndBlocks(targetRescan);
   add_journal_roll_buttons(targetRescan, tokenId);
   window.JOURNAL.add_journal_tooltip_targets(targetRescan);
