@@ -789,7 +789,9 @@ async function popout_all_selected_token_stat(){
 			}
 			await async_sleep(1);
 			const windowName = `${token.options.name}_${token.options.id}`.replaceAll(/(\r\n|\n|\r)/gi, "").trim();
-			popoutWindow(windowName, container.find(".avtt-stat-block-container"));
+			const isPcTempalate = container.find('.dnd-sheet');
+			const width = isPcTempalate.length > 0 ? 800 : undefined;
+			popoutWindow(windowName, container.find(".avtt-stat-block-container"), width);
 			const popoutBody = $(window.childWindows[windowName].document).find("body");
 			const popoutStatBlock = popoutBody.find(".avtt-stat-block-container").first();
 			if(popoutStatBlock.find('.dnd-sheet').length > 0){
@@ -1042,8 +1044,8 @@ function build_draggable_monster_window(tokenId) {
 	}
 	popoutButton.off('click.popout').on('click.popout', function() {
 		let name = $("#resizeDragMon .avtt-stat-block-container .mon-stat-block__name-link").text();
-		const windowName = `${token?.options?.name ? token.options.name : name}_${tokenId ? tokenId : ''}`.replaceAll(/(\r\n|\n|\r)/gi, "").trim();
-		popoutWindow(windowName, $("#resizeDragMon .avtt-stat-block-container"));
+		const windowName = `${token?.options?.name ? token.options.name : name}_${tokenId ? tokenId : ''}`.replaceAll(/(\r\n|\n|\r)/gi, "").trim();	
+		popoutWindow(windowName, $("#resizeDragMon .avtt-stat-block-container"), $("#resizeDragMon").width(), $("#resizeDragMon").height());
 		const popoutBody = $(window.childWindows[windowName].document).find("body");
 		const popoutStatBlock = popoutBody.find(".avtt-stat-block-container").first();
 		if(popoutStatBlock.find('.dnd-sheet').length > 0){
