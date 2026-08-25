@@ -4,6 +4,7 @@
             console.debug(...message);
         }
     }
+    //Load this as soon as possible for new dice, gets the workers for the dice 
     const OriginalWorker = window.Worker;
     window.Worker = function(scriptURL, options) {
         const worker = new OriginalWorker(scriptURL, options);
@@ -34,9 +35,24 @@
         return worker;
     };
 
+    function interceptRollEvent(e) {
+        if(e.button == 2) return;
+        const target = $(e.target);
+        // allow hit dice and death saves roll to go through ddb for auto heals - maybe setup our own message by put to https://character-service.dndbeyond.com/character/v5/life/hp/damage-taken later
+        if (target.closest('.ct-reset-pane__hitdie-manager-dice').length>0 || target.closest('[class*="styles_heading__"]').find('>h2').text().trim().match(/^death saves$/gi))
+            return;
+        const rollButton = target.closest(`.integrated-dice__container:not('.above-combo-roll'):not('.above-aoe'):not(.avtt-roll-formula-button)`);
+        if (!rollButton.length) return;
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        e.stopPropagation();
+        rollDiceButton(e, rollButton[0]);
+    }
 
+    window.addEventListener('pointerdown', interceptRollEvent, true);
+
+    //for listening to the game log websocket and intercepting messages for the DDB onmessage function
     const originalAddEventListener = WebSocket.prototype.addEventListener;
-
     WebSocket.prototype.addEventListener = function (type, listener, options) {
         const isGameLog = this.url && this.url.toLowerCase().includes('game-log-api-live');
         if (type === 'message' && isGameLog) {
