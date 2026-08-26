@@ -12108,26 +12108,7 @@ float: right;
   initial-value: 1;
   inherits: false;
 }
-@property --hp-percentage{
-  syntax: '<percentage>'; /* <- defined as type percentage for the transition to work */
-  initial-value: 0%;
-  inherits: false;
-}
-@property --temp-hp-percentage{
-  syntax: '<percentage>'; /* <- defined as type percentage for the transition to work */
-  initial-value: 0%;
-  inherits: false;
-}
-@property --temp-hp2-percentage{
-  syntax: '<percentage>'; /* <- defined as type percentage for the transition to work */
-  initial-value: 0%;
-  inherits: false;
-}
-@property --total-hp-percentage{
-  syntax: '<percentage>'; /* <- defined as type percentage for the transition to work */
-  initial-value: 0%;
-  inherits: false;
-}
+
 @property --animation-scale{
   syntax: '<number>'; /* <- defined as type number for the transition to work */
   initial-value: 1;

@@ -1084,7 +1084,7 @@ class Token {
 				this.options.enablepercenthpbar = false;
 			} else if(bossHealthBar){
 				this.options.disableaura = true;
-				this.options.enablepercenthpbar = true;
+				this.options.enablepercenthpbar = false;
 			}
 		}
 		
