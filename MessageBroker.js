@@ -1448,8 +1448,8 @@ class MessageBroker {
 						window.videoConnectedPeers.push(msg.data.id);
 						setRemoteStream(stream, call.peer);   
 						call.on('close', () => {
-							$(`.video-meet-area video#${call.peer}`).remove();
-							})   
+							removePeer(call.peer);
+						})   
 					})
 					window.currentPeers = window.currentPeers.filter(d=> d.peer != call.peer)
 					window.currentPeers.push(call);
@@ -1572,6 +1572,7 @@ class MessageBroker {
 				window.TOKEN_OBJECTS = {};
 				window.ON_SCREEN_TOKENS = {};
 				window.videoTokenOld = {};
+				$(`.boss-hp-bar`).remove();
 				let data = msg.data;
 				let self=this;
 				let loadMap = "";

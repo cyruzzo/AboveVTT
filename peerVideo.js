@@ -86,7 +86,7 @@ function init_peerVideo_box() {
             create_peerVideo_button();
         }
     );
-
+    setVideoHeightCssVar();
 }
 
 function create_peerVideo_button() {
@@ -105,6 +105,7 @@ function create_peerVideo_button() {
         init_peerVideo_box();
         reposition_player_sheet();
     });
+    setVideoHeightCssVar();
 }
 function setLocalStream(stream) {
 
@@ -130,6 +131,9 @@ function setLocalStream(stream) {
     video.muted = true;
     video.play();
 }
+function setVideoHeightCssVar(){
+    $('body').css('--video-height', ($('.video-meet-area').height() ?? 0) + 'px');
+}
 function setRemoteStream(stream, peerId) {
 
     let video = $(`.remote-video#${peerId}`);
@@ -154,7 +158,7 @@ function setRemoteStream(stream, peerId) {
     video = $(`<video controls class='remote-video' id='${peerId}'></video>`)
     $(video).css('--token-image', tokenImage);
     $(`.video-meet-area`).append(video)
-    
+    setVideoHeightCssVar();
     video[0].srcObject = stream;
     video[0].play();
 }
@@ -228,7 +232,7 @@ function joinRoom(room = window.gameId) {
             window.videoConnectedPeers.push(room_id);
             setRemoteStream(stream, call.peer)
             call.on('close', () => {
-                $(`.video-meet-area video#${call.peer}`).remove();
+                removePeer(call.peer);
             })
         })
         window.currentPeers = window.currentPeers.filter(d=> d.peer != call.peer)
@@ -300,7 +304,7 @@ function getMediaDevice(){
               call.on('stream', (stream) => {
                 setRemoteStream(stream, call.peer);   
                 call.on('close', () => {
-                    $(`.video-meet-area video#${call.peer}`).remove();
+                    removePeer(call.peer);
                 })   
               })
             }
@@ -309,6 +313,10 @@ function getMediaDevice(){
     }).catch((err) => {
         console.log(err)
     })
+}
+function removePeer(peerId){
+    $(`.video-meet-area video#${peerId}`).remove();
+    setVideoHeightCssVar();
 }
 function startScreenShare() {
     if (screenSharing) {
@@ -342,7 +350,7 @@ function startScreenShare() {
           call.on('stream', (stream) => {
             setRemoteStream(stream, call.peer);   
             call.on('close', () => {
-                $(`.video-meet-area video#${call.peer}`).remove();
+                removePeer(call.peer);
             })   
           })
         }

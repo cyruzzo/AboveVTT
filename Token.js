@@ -626,8 +626,8 @@ class Token {
 		$("#aura_" + id.replaceAll("/", "")).remove();
 		$(`.aura-element-container-clip[id='${id}']`).parent().remove()
 		$(`[data-darkness='darkness_${id}']`).remove();
-		$(`[data-notatoken='notatoken_${id}']`).remove()
-
+		$(`[data-notatoken='notatoken_${id}']`).remove();
+		$(`.boss-hp-bar[data-id='${id}']`).remove();
 		if(this.options?.audioChannel?.audioId != undefined){
 			window.MIXER.deleteChannel(this.options.audioChannel.audioId)
 		}
@@ -1060,7 +1060,7 @@ class Token {
 			$(`.token[data-id='${this.options.id}']`).append(hpvisualbar);
 		}
 
-
+		const bossHealthBar = this.options.healthauratype == "boss";
 		if(this.options.healthauratype == undefined){
 			if(this.options.disableaura){
 				this.options.healthauratype = "none"
@@ -1082,15 +1082,196 @@ class Token {
 			} else if(this.options.healthauratype == "aura-bloodied-50"){
 				this.options.disableaura = false;
 				this.options.enablepercenthpbar = false;
+			} else if(bossHealthBar){
+				this.options.disableaura = true;
+				this.options.enablepercenthpbar = true;
 			}
 		}
-
+		
+		token.toggleClass("boss", bossHealthBar);
+		
 		if (this.maxHp > 0) {
 			token.css('--hp-percentage', `${this.hpPercentage}%`);
 			token.css('--temp-hp-percentage', `${this.tempHpPercentage}%`);
 			token.css('--total-percentage', `${this.tempHpPercentage + this.hpPercentage}%`)
 		}
+		if(bossHealthBar){
+			const body = $(`body`);
 
+			let hpBar = $(`.boss-hp-bar[data-id='${this.options.id}']`);
+			if (hpBar.length < 1) {
+				hpBar = $(`
+					<div class='boss-hp-bar' data-id='${this.options.id}'>
+						<div class="hp-bar-track">
+							<div class="hp-base">
+								<!-- First Temp HP layer (fills remaining space up to 100%) -->
+								<div class="hp-temp-layer1"></div>
+							</div>
+							<!-- Second Temp HP layer (overflow when Total > 100%) -->
+							<div class="hp-temp-layer2"></div>
+						</div>
+						<span class="token-name"></span>
+						<span class="token-hp"></span>
+					</div>
+				`);
+				
+				const positionAdjust = body.find('.boss-hp-bar').length * 60;
+				hpBar.css('--bottom-adjust', `${positionAdjust}px`);
+				body.append(hpBar);
+			}
+			const tokenName = `${this.options.revealname || window.DM ? this.options.name : ""}`;
+			const tokenHpText = `${window.DM || this.options.player_owned ? `${this.baseHp}${this.tempHp > 0 ? ` (+${this.tempHp})` : ""} / ${this.maxHp}` : ""}`;
+			hpBar.find('.token-name').text(tokenName);
+			hpBar.find('.token-hp').text(tokenHpText);
+						
+						
+
+
+			const hpBase = hpBar.find('.hp-base');
+			const hpTemp1 = hpBar.find('.hp-temp-layer1');
+			const hpTemp2 = hpBar.find('.hp-temp-layer2');
+
+
+			const newHpPct = Math.min(100, Math.max(0, Math.round(this.hpPercentage)));
+			const rawTotal = Math.round(this.hpPercentage + this.tempHpPercentage);
+			const temp1RawPct = Math.min(100 - newHpPct, Math.round(this.tempHpPercentage));
+			const newTemp1Pct = newHpPct > 0 ? Math.round((temp1RawPct / newHpPct) * 100) : 0;
+			const newTemp2Pct = Math.max(0, rawTotal - 100);
+
+
+			const oldHpPct = Math.round(parseFloat(hpBase.css('--hp-percentage'))) || 0;
+			const oldTemp1Pct = Math.round(parseFloat(hpTemp1.css('--temp-hp1-percentage'))) || 0;
+			const oldTemp2Pct = Math.round(parseFloat(hpTemp2.css('--temp-hp2-percentage'))) || 0;
+
+
+			const oldTemp1Raw = Math.round((oldTemp1Pct / 100) * oldHpPct);
+
+
+			const startHp = oldHpPct;
+			const startTemp1Raw = oldTemp1Raw;
+			const startTemp2 = oldTemp2Pct;
+
+			const targetHp = newHpPct;
+			const targetTemp1Raw = temp1RawPct;
+			const targetTemp2 = newTemp2Pct;
+
+
+			const distHp = Math.abs(targetHp - startHp);
+			const distTemp1 = Math.abs(targetTemp1Raw - startTemp1Raw);
+			const distTemp2 = Math.abs(targetTemp2 - startTemp2);
+			const totalDist = distHp + distTemp1 + distTemp2;
+
+			if (totalDist === 0) return;
+
+
+			const MAX_BUDGET = 5.5; 
+			const MIN_BUDGET = 3.0; 
+
+			let duration = 0;
+			if (totalDist < 5) {
+				duration = Math.max(0.8, (totalDist / 100) * MAX_BUDGET * 2.5);
+			} else {
+				duration = Math.max(MIN_BUDGET, (totalDist / 100) * MAX_BUDGET);
+			}
+
+
+			function easeBossCinematic(x) {
+				return 1 - Math.pow(1 - x, 4); 
+			}
+
+
+			if (hpBar.data('raf-id')) cancelAnimationFrame(hpBar.data('raf-id'));
+
+			function setBorderTip(currentHp, currentTemp1, currentTemp2) {
+				hpBase.css('border-right-color', 'transparent');
+				hpTemp1.css('border-right-color', 'transparent');
+				hpTemp2.css('border-right-color', 'transparent');
+
+				if (currentTemp2 > 0) {
+					hpTemp2.css('border-right-color', '#ffffff');
+				} else if (currentTemp1 > 0) {
+					hpTemp1.css('border-right-color', '#ffffff');
+				} else if (currentHp > 0) {
+					hpBase.css('border-right-color', '#ffffff');
+				}
+			}
+
+			const startTime = performance.now();
+			const durationMs = duration * 1000;
+			const isDamage = (startHp + startTemp1Raw + startTemp2) > (targetHp + targetTemp1Raw + targetTemp2);
+
+			function animateStep(currentTime) {
+				const elapsed = currentTime - startTime;
+				const progress = Math.min(1, elapsed / durationMs);
+				
+				const easedProgress = easeBossCinematic(progress);		
+				const currentDistanceTraveled = totalDist * easedProgress;
+
+				let currentHp = startHp;
+				let currentTemp1Raw = startTemp1Raw;
+				let currentTemp2 = startTemp2;
+
+				if (isDamage) {
+					let remainingDist = currentDistanceTraveled;
+
+					const drainTemp2 = Math.min(remainingDist, distTemp2);
+					currentTemp2 = startTemp2 - drainTemp2;
+					remainingDist -= drainTemp2;
+
+					if (remainingDist > 0) {
+						const drainTemp1 = Math.min(remainingDist, distTemp1);
+						currentTemp1Raw = startTemp1Raw - drainTemp1;
+						remainingDist -= drainTemp1;
+					}
+					if (remainingDist > 0) {
+						const drainHp = Math.min(remainingDist, distHp);
+						currentHp = startHp - drainHp;
+					}
+				} else {
+					let remainingDist = currentDistanceTraveled;
+
+					const fillHp = Math.min(remainingDist, distHp);
+					currentHp = startHp + fillHp;
+					remainingDist -= fillHp;
+
+					if (remainingDist > 0) {
+						const fillTemp1 = Math.min(remainingDist, distTemp1);
+						currentTemp1Raw = startTemp1Raw + fillTemp1;
+						remainingDist -= fillTemp1;
+					}
+					if (remainingDist > 0) {
+						const fillTemp2 = Math.min(remainingDist, distTemp2);
+						currentTemp2 = startTemp2 + fillTemp2;
+					}
+				}
+
+				const currentTemp1Pct = currentHp > 0 ? (currentTemp1Raw / currentHp) * 100 : 0;
+
+				hpBase.css({
+					'transition': 'none',
+					'--hp-percentage': `${currentHp.toFixed(2)}%`
+				});
+				hpTemp1.css({
+					'transition': 'none',
+					'--temp-hp1-percentage': `${currentTemp1Pct.toFixed(2)}%`
+				});
+				hpTemp2.css({
+					'transition': 'none',
+					'--temp-hp2-percentage': `${currentTemp2.toFixed(2)}%`
+				});
+
+				setBorderTip(currentHp, currentTemp1Pct, currentTemp2);
+				if (progress < 1) {
+					const rafId = requestAnimationFrame(animateStep);
+					hpBar.data('raf-id', rafId);
+				}
+			}
+
+			const rafId = requestAnimationFrame(animateStep);
+			hpBar.data('raf-id', rafId);
+		}else{
+			$(`.boss-hp-bar[data-id='${this.options.id}']`).remove();
+		}
 		const tokenHpAuraColor = token_health_aura(this.hpPercentage, this.options.healthauratype);
 		let paddingX = 0;
 		let paddingY = 0;

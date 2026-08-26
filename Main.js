@@ -3777,7 +3777,7 @@ function show_sidebar(dispatchResize = true) {
 	} else {
 		let sidebar = is_characters_page() ? $(".ct-sidebar__portal") : $(".sidebar--right");
 		sidebar.css("transform", "translateX(0px)");
-		$('#combat_carousel_container.tracker-list').toggleClass('sidebarClosed', false)
+		$('#combat_carousel_container.tracker-list, .boss-hp-bar').toggleClass('sidebarClosed', false)
 	}
 
 	if (is_characters_page()) {
@@ -3952,7 +3952,7 @@ function hide_sidebar(triggerResize = true) {
 	} else {
 		let sidebar = is_characters_page() ? $(".ct-sidebar__portal") : $(".sidebar--right");
 		sidebar.css("transform", `translateX(${get_sidebar_width()}px)`);
-		$('#combat_carousel_container.tracker-list').toggleClass('sidebarClosed', true)
+		$('#combat_carousel_container.tracker-list, .boss-hp-bar').toggleClass('sidebarClosed', true)
 	}
 
 	if (is_characters_page()) {
