@@ -993,7 +993,7 @@ class DiceRoller {
 
             ddbMessage = this.#swapRollData(ddbMessage);
             this.#orderedPendingIds.push(rollId);
-            if(!window.EXPERIMENTAL_SETTINGS?.['rpgRoller'] && (window.DM || !(typeof getDdb3dDiceShareToggle == 'function' && !window.DM && getDdb3dDiceShareToggle() == 'disabled'))){
+            if(!document.hidden && (!window.EXPERIMENTAL_SETTINGS?.['rpgRoller'] && (window.DM || !(typeof getDdb3dDiceShareToggle == 'function' && !window.DM && getDdb3dDiceShareToggle() == 'disabled')))){
                 if(window.ActiveWorkers){
                     requestAnimationFrame(() => {
                         get_active_worker_keys().forEach(key => {
@@ -1118,7 +1118,7 @@ class DiceRoller {
             this.#resetVariables();
             const self = this; 
             self.nextRoll(self.#pendingMessages[ddbMessage.data.rollId].ddbMessage, self.#pendingMessages[ddbMessage.data.rollId].pendingCritRange, self.#pendingMessages[ddbMessage.data.rollId].pendingCritType, self.#pendingMessages[ddbMessage.data.rollId].pendingDamageType);
-        
+            
             clearTimeout(this.backupSendTimeout)
             this.backupSendTimeout = setTimeout(() => { // if dice are slow to roll display result early
                 this.sendNewFulfilled();
