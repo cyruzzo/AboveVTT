@@ -1051,7 +1051,7 @@ function add_journal_roll_buttons(target, tokenId=undefined, specificImage=undef
     try {
       slashCommands[0][0] = slashCommands[0][0].replace(/\(|\)/ig, '');
       const diceRoll = DiceRoll.fromSlashCommand(slashCommands[0][0], window.PLAYER_NAME, window.PLAYER_IMG, "character", window.PLAYER_ID); // TODO: add gamelog_send_to_text() once that's available on the characters page without avtt running
-      updatedInnerHtml = updatedInnerHtml.replace(updatedInnerHtml, `<button class='avtt-roll-formula-button integrated-dice__container' title="${diceRoll.action?.toUpperCase() ?? "CUSTOM"}: ${diceRoll.rollType?.toUpperCase() ?? "ROLL"}" data-slash-command="${slashCommands[0][0]?.replace(/[><\s]+$|^[<>\s]+/gi, '')}">${diceRoll.expression}</button>`);
+      updatedInnerHtml = updatedInnerHtml.replace(updatedInnerHtml, `<button class='avtt-roll-formula-button integrated-dice__container' title="${diceRoll.action?.toUpperCase() ?? "CUSTOM"} : ${diceRoll.rollType?.toUpperCase() ?? "ROLL"}${diceRoll.spellSave != undefined ? ` : ${diceRoll.spellSave.toUpperCase()}`: ""}" data-slash-command="${slashCommands[0][0]?.replace(/[><\s]+$|^[<>\s]+/gi, '')}">${diceRoll.expression}</button>`);
     } catch (error) {
       console.warn("inject_dice_roll failed to parse slash command. Removing the command to avoid infinite loop", slashCommands, slashCommands[0][0]);
       updatedInnerHtml = updatedInnerHtml.replace(updatedInnerHtml, '');

@@ -2339,7 +2339,8 @@ function observe_character_sheet_changes(documentToObserve) {
           || curr.closest('.ct-spell-manage-pane').length > 0 
           || curr.closest('[class*="styles_mark__"]').length>0)
           return; // do not adjust side bar when it includes a search such as adding extras as it causes crashing
-        add_journal_roll_buttons(curr, `/profile/${window.myUser}/characters/${window.PLAYER_ID}`);
+          add_journal_roll_buttons(curr, `/profile/${window.myUser}/characters/${window.PLAYER_ID}`);
+          add_aoe_statblock_click(curr);
       })
     } 
      // initial injection of our buttons
