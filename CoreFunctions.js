@@ -1012,21 +1012,24 @@ function add_journal_roll_buttons(target, tokenId=undefined, specificImage=undef
   // to account for all the nuances of DNDB dice notation.
   // numbers can be swapped for any number in the following comment
   // matches "1d10", " 1d10 ", "1d10+1", " 1d10+1 ", "1d10 + 1" " 1d10 + 1 "
-  const strongRoll = /\s*(<strong>)(([0-9]+d[0-9]+)\s?([+-]\s?[0-9]+)?)(<\/strong>)/gi
-  const damageRollRegexBracket = /\s*(\()(([0-9]+d[0-9]+)\s?([+-]\s?[0-9]+)?)(\))/gi
-  const damageRollRegex = /\s*([:\s>]|^)(([0-9]+d[0-9]+)\s?([+-]\s?[0-9]+)?)([\.\):\s<,]|$)/gi
-  // matches " +1 " or " + 1 "
+
+
+  const strongRoll = /\s*(<strong>)(([+-]?\s?\d+d\d+(min\d+|ro[><=]?|kh\d+|kl\d+)?\s?)+\s?([+-]\s?[0-9]+)?)(<\/strong>)/gi
+  const damageRollRegexBracket = /\s*\((([+-]?\s?(\d+d\d+(min\d+|ro([<>]=?|=)\d+|kh\d+|kl\d+)*\s?))+\s?([+-]\s?[0-9]+)?)\)/gi
+  const damageRollRegex = /\s*([:\s>]|^)(([+-]?\s?(\d+d\d+(min\d+|ro([<>]=?|=)\d+|kh\d+|kl\d+)*\s?))+\s?([+-]\s?[0-9]+)?)([\.\):\s<,]|$)/gi
   const hitRollRegexBracket = /\s*(?<![0-9]+d[0-9]+)(\()([+-]\s?[0-9]+)(\))/gi
   const hitRollRegex = /\s*(?<![0-9]+d[0-9]+)([:\s>]|^)([+-]\s?[0-9]+)([:\s<,]|$)/gi
   const dRollRegex = /\s*([\s>]|^)(\s?d[0-9]+)([^+-])/gi
   const rechargeRegEx = /\s*(Recharge [0-6]?\s?[—–-]?\s?[0-6])/gi
   const actionType = "roll"
   const rollType = "AboveVTT"
-  let updated = currentElement.html()
+  let updated = currentElement.html() 
+    .replaceAll(/(\d+d\d+(min\d+|k[hl]\d+)*ro)&lt;/gi, '$1<')
+    .replaceAll(/(\d+d\d+(min\d+|k[hl]\d+)*ro)&gt;/gi, '$1>')
     .replaceAll(strongRoll, `$2`)
     .replaceAll(dashToMinus, `$1-$2`)
-    .replaceAll(damageRollRegexBracket, ` <button data-exp='$3' data-mod='$4' data-rolltype='damage' data-actiontype='${actionType}' class='avtt-roll-button' title='${actionType}'>$1$2$5</button>`)
-    .replaceAll(damageRollRegex, ` $1<button data-exp='$3' data-mod='$4' data-rolltype='damage' data-actiontype='${actionType}' class='avtt-roll-button' title='${actionType}'>$2</button>$5`)
+    .replaceAll(damageRollRegexBracket, ` <button data-exp='$1' data-mod='$6' data-rolltype='damage' data-actiontype='${actionType}' class='avtt-roll-button' title='${actionType}'>($1)</button>`)
+    .replaceAll(damageRollRegex, ` $1<button data-exp='$2' data-mod='$7' data-rolltype='damage' data-actiontype='${actionType}' class='avtt-roll-button' title='${actionType}'>$2</button>$8`)
     .replaceAll(hitRollRegexBracket, ` <button data-exp='1d20' data-mod='$2' data-rolltype='to hit' data-actiontype=${actionType} class='avtt-roll-button' title='${actionType}'>$1$2$3</button>`)
     .replaceAll(hitRollRegex, ` $1<button data-exp='1d20' data-mod='$2' data-rolltype='to hit' data-actiontype=${actionType} class='avtt-roll-button' title='${actionType}'>$2</button>$3`)
     .replaceAll(dRollRegex, `$1<button data-exp='1$2' data-mod='' data-rolltype='to hit' data-actiontype=${actionType} class='avtt-roll-button' title='${actionType}'>$2</button>$3`)
