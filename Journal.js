@@ -2468,9 +2468,7 @@ class JournalManager{
 				e.stopImmediatePropagation();
 				const cellSuggestionType = $(suggestionCell).attr('data-avtt-suggestion-type');
 				if(self.getDndSheetCellSuggestionOptions(suggestionCell.ownerDocument).length === 0){
-					self.showDndSheetCellSuggestions(suggestionCell, cellSuggestionType, () => {
-						persistCurrentNoteText({forceSave: true, rescanStatBlock: true});
-					});
+					self.showDndSheetCellSuggestions(suggestionCell, cellSuggestionType);
 				}
 				self.moveActiveDndSheetCellSuggestion(suggestionCell.ownerDocument, e.key == 'ArrowDown' ? 1 : -1);
 				return;
@@ -2494,9 +2492,7 @@ class JournalManager{
 				}
 				return;
 			}
-			self.showDndSheetCellSuggestions(suggestionCell, $(suggestionCell).attr('data-avtt-suggestion-type'), () => {
-				persistCurrentNoteText({forceSave: true, rescanStatBlock: true});
-			});
+			self.showDndSheetCellSuggestions(suggestionCell, $(suggestionCell).attr('data-avtt-suggestion-type'));
 		});
 		$(ownerDocument).off('pointerdown.dndSheetSuggestionDismiss mousedown.dndSheetSuggestionDismiss focusin.dndSheetSuggestionDismiss').on('pointerdown.dndSheetSuggestionDismiss mousedown.dndSheetSuggestionDismiss focusin.dndSheetSuggestionDismiss', function(e){
 			if($('.dnd-sheet-cell-suggestions', ownerDocument).length === 0)

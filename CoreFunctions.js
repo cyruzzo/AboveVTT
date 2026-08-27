@@ -3378,7 +3378,7 @@ function createDialogMenu(rootId, options) {
 }
 function basic_sanitize_html(html){
   let sanitized = DOMPurify.sanitize(html,{ALLOWED_TAGS: ['video','img','div','p', 'b', 'i', 'button', 'span', 'path', 'polygon', 'rect', 'svg', 'circle', 'a', 'hr', 'ul', 'li', 'ol', 'h3', 'h2', 'h4', 'h1', 'table', 'thead', 'tbody', 'tr', 'td', 'th', 'br', 'input', 'strong', 'em'], ADD_ATTR: ['target', 'contenteditable']}); //This array needs to include all HTML elements the extension sends via chat.
-  sanitized = sanitized.replace(/(?:[^\S\n]*\n[^\S\n]*){2,}(<)|(>)(?:[^\S\n]*\n[^\S\n]*){2,}/gi, '$1$2');
+  sanitized = sanitized.replace(/(?=([^\S\n]*(?:\n[^\S\n]*){2,}))\1(<)|(>)(?=([^\S\n]*(?:\n[^\S\n]*){2,}))\4/gi, '$2$3');
   return sanitized;
 }
 
