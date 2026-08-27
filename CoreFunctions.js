@@ -836,6 +836,7 @@ function get_available_styles(){
 function add_aoe_to_statblock(html){
 
   html = html.replaceAll(/&shy;|­/gi, '')
+    .replace(/(?:[^\S\r\n]*\r?\n){2,}[^\S\r\n]*/g, ' ') // heals the blank line runs left behind by previously injected buttons
 
   const aoeRegEx = /(([\d]+)-foot(-long ([\d]+)-foot-wide|-long, ([\d]+)-foot-wide|-radius, [\d]+-foot-high|-radius)? ([a-zA-z]+))(.*?[\>\s]([a-zA-Z]+) damage)?/gi
 
@@ -849,16 +850,7 @@ function add_aoe_to_statblock(html){
     if(shape == 'emanation')
       return `${m}` // potentially set a button for aura being set on these if an aura doesn't already exist
     else
-      return `<button class='avtt-aoe-button' border-width='1px' title='Place area of effect token' 
-          data-shape='${shape}' 
-          data-style='${m8 != undefined && get_available_styles().some(shape => shape.toLowerCase().includes(m8.toLowerCase())) ? m8.toLowerCase() : 'default'}' 
-          data-size='${m2}' 
-          data-name='${m6} AoE' 
-          ${shape == 'line' ? `data-line-width=${m4 != undefined ? `'${m4}'` : m5 != undefined ? `'${m5}'` : '5'}` : ''}>
-          ${m1}
-        </button>
-        ${m7 != undefined? m7 : ''}
-      `
+      return `<button class='avtt-aoe-button' border-width='1px' title='Place area of effect token' data-shape='${shape}' data-style='${m8 != undefined && get_available_styles().some(shape => shape.toLowerCase().includes(m8.toLowerCase())) ? m8.toLowerCase() : 'default'}' data-size='${m2}' data-name='${m6} AoE'${shape == 'line' ? ` data-line-width=${m4 != undefined ? `'${m4}'` : m5 != undefined ? `'${m5}'` : '5'}` : ''}>${m1}</button>${m7 != undefined ? m7 : ''}`
        
   })
 }
@@ -978,6 +970,96 @@ function noisy_log(...message) {
   console.debug(...message); 
 }
 
+
+
+/** Runs the dice notation/aoe replacements over an html string. */
+function apply_avtt_roll_button_markup(html){
+  const dashToMinus = /([\s>])−(\d)/gi
+
+  // apply most specific regex first matching all possible ways to write a dice notation
+  // to account for all the nuances of DNDB dice notation.
+  // numbers can be swapped for any number in the following comment
+  // matches "1d10", " 1d10 ", "1d10+1", " 1d10+1 ", "1d10 + 1" " 1d10 + 1 "
+  const strongRoll = /\s*(<strong>)(([+-]?\s?\d+d\d+(min\d+|ro[><=]?|kh\d+|kl\d+)?\s?)+\s?([+-]\s?[0-9]+)?)(<\/strong>)/gi
+  const damageRollRegexBracket = /\s*\((([+-]?\s?(\d+d\d+(min\d+|ro([<>]=?|=)\d+|kh\d+|kl\d+)*\s?))+\s?([+-]\s?[0-9]+)?)\)/gi
+  const damageRollRegex = /\s*([:\s>]|^)(([+-]?\s?(\d+d\d+(min\d+|ro([<>]=?|=)\d+|kh\d+|kl\d+)*\s?))+\s?([+-]\s?[0-9]+)?)([\.\):\s<,]|$)/gi
+  const hitRollRegexBracket = /\s*(?<![0-9]+d[0-9]+)(\()([+-]\s?[0-9]+)(\))/gi
+  const hitRollRegex = /\s*(?<![0-9]+d[0-9]+)([:\s>]|^)([+-]\s?[0-9]+)([:\s<,]|$)/gi
+  const dRollRegex = /\s*([\s>]|^)(\s?d[0-9]+)([^+-])/gi
+  const rechargeRegEx = /\s*(Recharge [0-6]?\s?[—–-]?\s?[0-6])/gi
+  const actionType = "roll"
+
+  const updated = html
+    .replaceAll(/(\d+d\d+(min\d+|k[hl]\d+)*ro)&lt;/gi, '$1<')
+    .replaceAll(/(\d+d\d+(min\d+|k[hl]\d+)*ro)&gt;/gi, '$1>')
+    .replaceAll(strongRoll, `$2`)
+    .replaceAll(dashToMinus, `$1-$2`)
+    .replaceAll(damageRollRegexBracket, ` <button data-exp='$1' data-mod='$6' data-rolltype='damage' data-actiontype='${actionType}' class='avtt-roll-button' title='${actionType}'>($1)</button>`)
+    .replaceAll(damageRollRegex, ` $1<button data-exp='$2' data-mod='$7' data-rolltype='damage' data-actiontype='${actionType}' class='avtt-roll-button' title='${actionType}'>$2</button>$8`)
+    .replaceAll(hitRollRegexBracket, ` <button data-exp='1d20' data-mod='$2' data-rolltype='to hit' data-actiontype=${actionType} class='avtt-roll-button' title='${actionType}'>$1$2$3</button>`)
+    .replaceAll(hitRollRegex, ` $1<button data-exp='1d20' data-mod='$2' data-rolltype='to hit' data-actiontype=${actionType} class='avtt-roll-button' title='${actionType}'>$2</button>$3`)
+    .replaceAll(dRollRegex, `$1<button data-exp='1$2' data-mod='' data-rolltype='to hit' data-actiontype=${actionType} class='avtt-roll-button' title='${actionType}'>$2</button>$3`)
+    .replaceAll(rechargeRegEx, `<button data-exp='1d6' data-mod='' data-rolltype='recharge' data-actiontype='Recharge' class='avtt-roll-button' title='${actionType}'>$1</button>`)
+
+  return add_aoe_to_statblock(updated);
+}
+
+/** True when the text node lives in a region of a sheet the user is allowed to edit. */
+function is_editable_roll_scan_text(textNode){
+  const parent = textNode.parentElement;
+  if(parent == undefined) return false;
+  if(parent.closest('a, button, input, textarea, select, script, style, svg, .ignore-abovevtt-formating, .abovevtt-slash-command-journal, .injected-input, .added-input-desc, .table-row-drag-handle, .add-table-row') != null) return false;
+  const editable = parent.closest('[contenteditable]');
+  return editable != null && editable.getAttribute('contenteditable') !== 'false';
+}
+
+/** Replaces a slash command element's content with its rolled formula button. */
+function apply_avtt_slash_command_button(sourceElement, targetElement){
+  const slashCommands = [...sourceElement.innerHTML.matchAll(multiDiceRollCommandRegex)];
+  if (slashCommands.length === 0) return;
+  noisy_log("inject_dice_roll slashCommands", slashCommands);
+  let updatedInnerHtml = sourceElement.innerHTML;
+  try {
+    slashCommands[0][0] = slashCommands[0][0].replace(/\(|\)/ig, '');
+    const diceRoll = DiceRoll.fromSlashCommand(slashCommands[0][0], window.PLAYER_NAME, window.PLAYER_IMG, "character", window.PLAYER_ID); // TODO: add gamelog_send_to_text() once that's available on the characters page without avtt running
+    updatedInnerHtml = updatedInnerHtml.replace(updatedInnerHtml, `<button class='avtt-roll-formula-button integrated-dice__container' title="${diceRoll.action?.toUpperCase() ?? "CUSTOM"} : ${diceRoll.rollType?.toUpperCase() ?? "ROLL"}${diceRoll.spellSave != undefined ? ` : ${diceRoll.spellSave.toUpperCase()}`: ""}" data-slash-command="${slashCommands[0][0]?.replace(/[><\s]+$|^[<>\s]+/gi, '')}">${diceRoll.expression}</button>`);
+  } catch (error) {
+    console.warn("inject_dice_roll failed to parse slash command. Removing the command to avoid infinite loop", slashCommands, slashCommands[0][0]);
+    updatedInnerHtml = updatedInnerHtml.replace(updatedInnerHtml, '');
+  }
+  $(targetElement).empty().append(updatedInnerHtml);
+}
+
+/** Injects roll/aoe buttons into a dnd sheet one editable text node at a time so the replacements can't rewrite the sheet's own markup. */
+function add_roll_buttons_to_editable_text(sheetElement){
+  const ownerDocument = sheetElement.ownerDocument;
+  sheetElement.normalize(); // stripping the previous buttons leaves split text nodes that would break the matches below
+  const walker = ownerDocument.createTreeWalker(sheetElement, NodeFilter.SHOW_TEXT);
+  const textNodes = [];
+  while (walker.nextNode()) {
+    textNodes.push(walker.currentNode);
+  }
+
+  for (const textNode of textNodes) {
+    if (textNode.nodeValue.trim() === '') continue;
+    if (!is_editable_roll_scan_text(textNode)) continue;
+
+    const escaped = textNode.nodeValue.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;');
+    const updated = apply_avtt_roll_button_markup(escaped);
+    if (updated === escaped) continue;
+
+    const parsed = ownerDocument.createElement('template');
+    parsed.innerHTML = updated;
+    if (parsed.content.querySelector('.avtt-roll-button, .avtt-aoe-button') == null) continue;
+
+    textNode.parentNode.replaceChild(parsed.content, textNode);
+  }
+
+  $(sheetElement).find('.abovevtt-slash-command-journal').each(function(){
+    apply_avtt_slash_command_button(this, this);
+  });
+}
+
 function add_journal_roll_buttons(target, tokenId=undefined, specificImage=undefined, specificName=undefined){
   
   let pastedButtons = target.find('.avtt-roll-button, .integrated-dice__container, .avtt-aoe-button');
@@ -1005,38 +1087,22 @@ function add_journal_roll_buttons(target, tokenId=undefined, specificImage=undef
   // replace all "to hit" and "damage" rolls
 
   let currentElement = $(target).clone()
-  const dashToMinus = /([\s>])−(\d)/gi
-  
 
-  // apply most specific regex first matching all possible ways to write a dice notation
-  // to account for all the nuances of DNDB dice notation.
-  // numbers can be swapped for any number in the following comment
-  // matches "1d10", " 1d10 ", "1d10+1", " 1d10+1 ", "1d10 + 1" " 1d10 + 1 "
+  // dnd sheets are a structured document where only the contenteditable regions hold user content,
+  // so those are scanned node by node instead of being run through the string replacements below
+  const targetIsSheet = currentElement.is('.dnd-sheet');
+  currentElement.filter('.dnd-sheet').each(function(){
+    add_roll_buttons_to_editable_text(this);
+  });
+  const extractedSheets = [];
+  currentElement.find('.dnd-sheet').each(function(){
+    add_roll_buttons_to_editable_text(this);
+    const placeholderIndex = extractedSheets.push(this) - 1;
+    $(this).replaceWith($(`<div data-avtt-sheet-placeholder="${placeholderIndex}"></div>`));
+  });
 
+  let updated = targetIsSheet ? currentElement.html() : apply_avtt_roll_button_markup(currentElement.html());
 
-  const strongRoll = /\s*(<strong>)(([+-]?\s?\d+d\d+(min\d+|ro[><=]?|kh\d+|kl\d+)?\s?)+\s?([+-]\s?[0-9]+)?)(<\/strong>)/gi
-  const damageRollRegexBracket = /\s*\((([+-]?\s?(\d+d\d+(min\d+|ro([<>]=?|=)\d+|kh\d+|kl\d+)*\s?))+\s?([+-]\s?[0-9]+)?)\)/gi
-  const damageRollRegex = /\s*([:\s>]|^)(([+-]?\s?(\d+d\d+(min\d+|ro([<>]=?|=)\d+|kh\d+|kl\d+)*\s?))+\s?([+-]\s?[0-9]+)?)([\.\):\s<,]|$)/gi
-  const hitRollRegexBracket = /\s*(?<![0-9]+d[0-9]+)(\()([+-]\s?[0-9]+)(\))/gi
-  const hitRollRegex = /\s*(?<![0-9]+d[0-9]+)([:\s>]|^)([+-]\s?[0-9]+)([:\s<,]|$)/gi
-  const dRollRegex = /\s*([\s>]|^)(\s?d[0-9]+)([^+-])/gi
-  const rechargeRegEx = /\s*(Recharge [0-6]?\s?[—–-]?\s?[0-6])/gi
-  const actionType = "roll"
-  const rollType = "AboveVTT"
-  let updated = currentElement.html() 
-    .replaceAll(/(\d+d\d+(min\d+|k[hl]\d+)*ro)&lt;/gi, '$1<')
-    .replaceAll(/(\d+d\d+(min\d+|k[hl]\d+)*ro)&gt;/gi, '$1>')
-    .replaceAll(strongRoll, `$2`)
-    .replaceAll(dashToMinus, `$1-$2`)
-    .replaceAll(damageRollRegexBracket, ` <button data-exp='$1' data-mod='$6' data-rolltype='damage' data-actiontype='${actionType}' class='avtt-roll-button' title='${actionType}'>($1)</button>`)
-    .replaceAll(damageRollRegex, ` $1<button data-exp='$2' data-mod='$7' data-rolltype='damage' data-actiontype='${actionType}' class='avtt-roll-button' title='${actionType}'>$2</button>$8`)
-    .replaceAll(hitRollRegexBracket, ` <button data-exp='1d20' data-mod='$2' data-rolltype='to hit' data-actiontype=${actionType} class='avtt-roll-button' title='${actionType}'>$1$2$3</button>`)
-    .replaceAll(hitRollRegex, ` $1<button data-exp='1d20' data-mod='$2' data-rolltype='to hit' data-actiontype=${actionType} class='avtt-roll-button' title='${actionType}'>$2</button>$3`)
-    .replaceAll(dRollRegex, `$1<button data-exp='1$2' data-mod='' data-rolltype='to hit' data-actiontype=${actionType} class='avtt-roll-button' title='${actionType}'>$2</button>$3`)
-    .replaceAll(rechargeRegEx, `<button data-exp='1d6' data-mod='' data-rolltype='recharge' data-actiontype='Recharge' class='avtt-roll-button' title='${actionType}'>$1</button>`)
-
-  updated = add_aoe_to_statblock(updated);
-      
   let ignoreFormatting = $(currentElement).find('.ignore-abovevtt-formating');
 
   let slashCommandElements = $(currentElement).find('.abovevtt-slash-command-journal')
@@ -1046,20 +1112,12 @@ function add_journal_roll_buttons(target, tokenId=undefined, specificImage=undef
     $(this).empty().append(ignoreFormatting[index].innerHTML);
   })
 
-  $newHTML.find('.abovevtt-slash-command-journal').each(function(index){      
-    const slashCommands = [...slashCommandElements[index].innerHTML.matchAll(multiDiceRollCommandRegex)];
-    if (slashCommands.length === 0) return;
-    noisy_log("inject_dice_roll slashCommands", slashCommands);
-    let updatedInnerHtml = slashCommandElements[index].innerHTML;
-    try {
-      slashCommands[0][0] = slashCommands[0][0].replace(/\(|\)/ig, '');
-      const diceRoll = DiceRoll.fromSlashCommand(slashCommands[0][0], window.PLAYER_NAME, window.PLAYER_IMG, "character", window.PLAYER_ID); // TODO: add gamelog_send_to_text() once that's available on the characters page without avtt running
-      updatedInnerHtml = updatedInnerHtml.replace(updatedInnerHtml, `<button class='avtt-roll-formula-button integrated-dice__container' title="${diceRoll.action?.toUpperCase() ?? "CUSTOM"} : ${diceRoll.rollType?.toUpperCase() ?? "ROLL"}${diceRoll.spellSave != undefined ? ` : ${diceRoll.spellSave.toUpperCase()}`: ""}" data-slash-command="${slashCommands[0][0]?.replace(/[><\s]+$|^[<>\s]+/gi, '')}">${diceRoll.expression}</button>`);
-    } catch (error) {
-      console.warn("inject_dice_roll failed to parse slash command. Removing the command to avoid infinite loop", slashCommands, slashCommands[0][0]);
-      updatedInnerHtml = updatedInnerHtml.replace(updatedInnerHtml, '');
-    }
-    $(this).empty().append(updatedInnerHtml);
+  $newHTML.find('.abovevtt-slash-command-journal').each(function(index){
+    apply_avtt_slash_command_button(slashCommandElements[index], this);
+  })
+
+  $newHTML.find('[data-avtt-sheet-placeholder]').each(function(){
+    $(this).replaceWith(extractedSheets[parseInt(this.getAttribute('data-avtt-sheet-placeholder'))]);
   })
 
   

@@ -1768,6 +1768,7 @@ class JournalManager{
 		avttImages.attr('src', '');
 		avttImages.attr('href', '');
 		closestNote.find('a:empty, button:empty, .add-table-row, .table-row-drag-handle, .header-spacer, .injected-input, .added-input-desc, .spell-tooltip>svg.ritual-icon-svg').remove();
+		closestNote.find('.dnd-sheet [contenteditable] div:not([class]):not([id]):empty').remove();
 		const noteButtons = closestNote.find('button');
 		noteButtons.replaceWith((i, innerHTML)=>{
 			const command = noteButtons[i].getAttribute('data-slash-command');
@@ -2395,7 +2396,7 @@ class JournalManager{
 			if(!window.unlockTemplateStatBlocks){
 				currentNoteText.find('.dnd-sheet button').attr("contenteditable", "false");
 			} else{
-				currentNoteText.find('.dnd-sheet [contenteditable]:not(a):not(.table-row-drag-handle):not(.add-table-row)').attr("contenteditable", "true");
+				currentNoteText.find('.dnd-sheet [contenteditable]:not(a):not(.table-row-drag-handle):not(.add-table-row):not(.injected-input):not(.added-input-desc)').attr("contenteditable", "true");
 			}
 		};
 
@@ -2444,6 +2445,27 @@ class JournalManager{
 			const text = (e.originalEvent?.clipboardData || e.clipboardData || window.clipboardData).getData('text/plain');
 			const ownerDocument = e.target?.ownerDocument || document;
 			ownerDocument.execCommand('insertText', false, text);
+		});
+		container.off('keydown.dndSheetEnter').on('keydown.dndSheetEnter', '.dnd-sheet [contenteditable="true"]', function (e) {
+			if(e.key !== 'Enter' || e.isDefaultPrevented()) return;
+			const ownerDocument = e.target?.ownerDocument || document;
+			if(self.getDndSheetCellSuggestionOptions(ownerDocument).length > 0) return;
+			const selection = (ownerDocument.defaultView || window).getSelection();
+			if(!selection || selection.rangeCount === 0 || !$(selection.anchorNode).closest('.dnd-sheet [contenteditable="true"]').length) return;
+			// left to the browser this wraps the rest of the field in new divs, which rewrites the sheet's structure
+			e.preventDefault();
+			e.stopPropagation();
+			const range = selection.getRangeAt(0);
+			range.deleteContents();
+			const lineBreak = ownerDocument.createElement('br');
+			range.insertNode(lineBreak);
+			if(lineBreak.nextSibling == null){
+				lineBreak.parentNode.appendChild(ownerDocument.createElement('br')); // the caret needs a following break to land on the new line
+			}
+			range.setStartAfter(lineBreak);
+			range.collapse(true);
+			selection.removeAllRanges();
+			selection.addRange(range);
 		});
 		container.off('input.dndSheetSuggestion keydown.dndSheetSuggestion keyup.dndSheetSuggestion focusin.dndSheetSuggestion').on('input.dndSheetSuggestion keydown.dndSheetSuggestion keyup.dndSheetSuggestion focusin.dndSheetSuggestion', '.dnd-sheet', function(e){
 			if(e.type == 'focusin' && suppressNextSuggestionFocusin){
