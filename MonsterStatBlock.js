@@ -266,7 +266,7 @@ function import_pc_template_html(files, parentEle, customStatId, tokenId) {
   };
 	reader.readAsText(file);
 }
-const debounceRescanStatBlock = mydebounce(async (container, noteId, tokenId, currScroll) => {
+const debounceRescanStatBlock = mydebounce(async (container, noteId, tokenId, currScroll, force = false) => {
   const token = window.TOKEN_OBJECTS[tokenId];
   let targetRescan = $(container).find('.avtt-stat-block-container, .note-text').first();
   targetRescan.find('[style=""]').removeAttr('style');
@@ -275,7 +275,7 @@ const debounceRescanStatBlock = mydebounce(async (container, noteId, tokenId, cu
     container = $(container).closest('.avtt-stat-block-container, .note-text').parent();
     targetRescan = $(container).find('.avtt-stat-block-container, .note-text').first();
   }
-  if(targetRescan.find('[contenteditable="true"]:focus').length>0){
+  if(!force && targetRescan.find('[contenteditable="true"]').is(':focus, :focus-within')){
     return;
   }
   const liveScroll = targetRescan[0]?.scrollTop;
