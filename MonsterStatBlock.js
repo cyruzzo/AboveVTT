@@ -275,7 +275,7 @@ const debounceRescanStatBlock = mydebounce(async (container, noteId, tokenId, cu
     container = $(container).closest('.avtt-stat-block-container, .note-text').parent();
     targetRescan = $(container).find('.avtt-stat-block-container, .note-text').first();
   }
-  if(!force && targetRescan.find('[contenteditable="true"]').is(':focus, :focus-within')){
+  if(!force && targetRescan.find('[contenteditable="true"]:is(:focus, :focus-within)').length>0){
     return;
   }
   const liveScroll = targetRescan[0]?.scrollTop;
