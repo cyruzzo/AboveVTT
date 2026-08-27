@@ -85,12 +85,15 @@ $(function() {
         startup_step("Fetching PCs")
         await rebuild_window_pcs();
         startup_step("Fetching Party Inventory/Items/Spells")
-        await Promise.all([
-          DDBApi.debounceGetPartyInventory(),
-          DDBApi.fetchSpellsJsonWithToken(),
-          DDBApi.fetchItemsJsonWithToken()
-        ]);
-
+        try{
+          await Promise.all([
+            DDBApi.debounceGetPartyInventory(),
+            DDBApi.fetchSpellsJsonWithToken(),
+            DDBApi.fetchItemsJsonWithToken()
+          ]);
+        } catch (error) {
+          console.warn(`Failed to fetch party inventory/items/spells`, error)
+        }
         const isDmPage = is_encounters_page();
         const isSpectator = is_spectator_page();
         const userId = $(`#message-broker-client[data-userid]`)?.attr('data-userid') || Cobalt?.User?.ID;

@@ -275,7 +275,9 @@ const debounceRescanStatBlock = mydebounce(async (container, noteId, tokenId, cu
     container = $(container).closest('.avtt-stat-block-container, .note-text').parent();
     targetRescan = $(container).find('.avtt-stat-block-container, .note-text').first();
   }
- 
+  if(targetRescan.find('[contenteditable="true"]:focus').length>0){
+    return;
+  }
   const liveScroll = targetRescan[0]?.scrollTop;
   $(targetRescan).html(window.JOURNAL.notes[noteId].text);
   $(container).find('.injected-input, .added-input-desc').remove();
