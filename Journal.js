@@ -7513,6 +7513,12 @@ function render_source_chapter_in_iframe(url) {
 			background-size: contain;
 			content: '';
 		}
+		svg.ritual-icon-svg {
+			width: 10px;
+			height: auto;
+			margin-left:3px;
+			vertical-align:middle;
+		}
 		button.avtt-roll-button,
 		.avtt-ability-roll-button{
 			/* lifted from DDB encounter stat blocks  */
