@@ -1951,6 +1951,25 @@ class JournalManager{
 						document.execCommand('insertText', false, text);
 					})
 				});
+				document.addEventListener('keydown', (e) => {
+					if (e.key !== 'Enter' || e.defaultPrevented) return;
+					if (!e.target?.closest?.('[contenteditable="true"]')) return;
+					const selection = window.getSelection();
+					if (!selection || selection.rangeCount === 0) return;
+					// left to the browser this wraps the rest of the field in new divs, which rewrites the sheet's structure
+					e.preventDefault();
+					const range = selection.getRangeAt(0);
+					range.deleteContents();
+					const lineBreak = document.createElement('br');
+					range.insertNode(lineBreak);
+					if (lineBreak.nextSibling == null) {
+						lineBreak.parentNode.appendChild(document.createElement('br'));
+					}
+					range.setStartAfter(lineBreak);
+					range.collapse(true);
+					selection.removeAllRanges();
+					selection.addRange(range);
+				});
 				document.querySelectorAll('table').forEach((table) => {
 					
 					if (table.nextElementSibling?.classList.contains('add-table-row')) return;
