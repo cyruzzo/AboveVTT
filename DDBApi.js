@@ -42,6 +42,23 @@ class DDBApi {
     });
   }
 
+  // retries the same url up to maxRetries times with exponential backoff, so callers don't need to duplicate retry logic per-request
+  static async #retryFetch(fn, url, maxRetries = 3, baseDelay = 500) {
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+      try {
+        return await fn();
+      } catch (error) {
+        if (attempt < maxRetries) {
+          const delay = Math.min(baseDelay * Math.pow(2, attempt - 1), 10000);
+          console.warn(`DDBApi request failed (attempt ${attempt}/${maxRetries}) for url: ${url}, retrying in ${delay}ms`, error);
+          await new Promise(resolve => setTimeout(resolve, delay));
+        } else {
+          console.warn(`DDBApi request failed after ${maxRetries} attempts for url: ${url}. This is likely temporary — please refresh the page. If the issue persists, D&D Beyond may be experiencing outages.`, error);
+        }
+      }
+    }
+  }
+
   static async #refreshToken() {
     if (Date.now() < MYCOBALT_TOKEN_EXPIRATION) {
       return MYCOBALT_TOKEN;
@@ -80,25 +97,29 @@ class DDBApi {
 
 
   static async fetchJsonWithToken(url, extraConfig = {}) {
-    const token = await DDBApi.#refreshToken();
-    const config = {...extraConfig,
-      headers: {
-        'Authorization': `Bearer ${token}`,
+    return await DDBApi.#retryFetch(async () => {
+      const token = await DDBApi.#refreshToken();
+      const config = {...extraConfig,
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        }
       }
-    }
-    const request = await fetch(url, config).then(DDBApi.lookForErrors)
-    return await request.json();
+      const request = await fetch(url, config).then(DDBApi.lookForErrors)
+      return await request.json();
+    }, url);
   }
   static async #fetchLimitedJsonWithToken(url, extraConfig = {}) {
-    const token = await DDBApi.#refreshToken();
-    const config = {...extraConfig,
-      headers: {
-        'Authorization': `Bearer ${token}`,
-      }
-    }
     return await DDBApi.#scheduleRequest(async () => {
-      const request = await fetch(url, config).then(DDBApi.lookForErrors);
-      return request.json();
+      return await DDBApi.#retryFetch(async () => {
+        const token = await DDBApi.#refreshToken();
+        const config = {...extraConfig,
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          }
+        }
+        const request = await fetch(url, config).then(DDBApi.lookForErrors);
+        return request.json();
+      }, url);
     });
   }
   static async fetchItemsJsonWithToken(itemsArray = [], page = 0, pageSize = 1000) {
