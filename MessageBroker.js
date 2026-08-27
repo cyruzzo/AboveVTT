@@ -1328,7 +1328,6 @@ class MessageBroker {
 						container.find('.avtt-stat-block-container, .note-text').first()[0].scrollTop = currScroll;
 					}
 					if(window.JOURNAL.notes[msg.data.id]?.text?.includes('dnd-sheet')){
-						// forced because the editor on this side may still hold focus in a cell
 						if(openStatBlock.length > 0){
 							debounceRescanStatBlock(openStatBlock, msg.data.id, msg.data.tokenId, currScroll, true);
 						} else if(openMainNote.length > 0){
