@@ -5914,7 +5914,7 @@ class JournalManager{
 			      { title: 'Read Aloud Text', block: 'div', wrapper: true, classes: 'read-aloud-text' },
 			      { title: 'Stat Block Paper (1 Column)', block: 'div', wrapper: true, classes: 'Basic-Text-Frame stat-block-background one-column-stat' },
 			      { title: 'Stat Block Paper (2 Column)', block: 'div', wrapper: true, classes: 'Basic-Text-Frame stat-block-background' },
-			      { title: 'For DM Eyes Online', block: 'div', wrapper: true, classes: 'dm-eyes-only' },
+			      { title: 'For DM Eyes Only', block: 'div', wrapper: true, classes: 'dm-eyes-only' },
 				  { title: 'DM Screen Chunk - won\'t be auto split into columns when used with the DM Screen', block: 'div', wrapper: true, classes: 'dmScreenChunk' },
 				  { title: 'Add Ability Tracker; Format: "Wild Shape 2"', inline: 'span', wrapper:true, classes: 'note-tracker'},
 			      { title: 'Ignore AboveVTT auto formating', inline: 'span', wrapper: true, classes: 'ignore-abovevtt-formating' },
