@@ -73,7 +73,7 @@ function setup_aoe_button(buttons) {
                 Cone 
             </button>
         </div>`);
-    aoeMenu.find("button, select, .aoe-style-dropdown").css("width", "69px")
+    aoeMenu.find("button, select, .aoe-style-dropdown-toggle").css("width", "69px")
     aoeMenu.css("position", "fixed");
     aoeMenu.css("top", "25px");
     aoeMenu.css("width", "75px");
