@@ -1193,7 +1193,7 @@ class Token {
 				const startTime = performance.now();
 				const durationMs = duration * 1000;
 				const isDamage = (startHp + startTemp1Raw + startTemp2) > (targetHp + targetTemp1Raw + targetTemp2);
-
+				const self = this;
 				function animateStep(currentTime) {
 					const elapsed = currentTime - startTime;
 					const progress = Math.min(1, elapsed / durationMs);
@@ -1256,11 +1256,11 @@ class Token {
 
 					setBorderTip(currentHp, currentTemp1Pct, currentTemp2);
 					if (progress < 1) {
-						this.bossAnimation = requestAnimationFrame(animateStep);
+						self.bossAnimation = requestAnimationFrame(animateStep);
 					}
 				}
 
-				this.bossAnimation = requestAnimationFrame(animateStep);
+				self.bossAnimation = requestAnimationFrame(animateStep);
 			}
 			animateBossHealthBar();
 		}else{
