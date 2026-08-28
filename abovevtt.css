@@ -13398,13 +13398,14 @@ p.monster-header+p {
     }
     .main-container {
         display: flex;
-        gap: 10px;
+        gap: 2px;
         box-sizing: border-box;
     }
-    .left-column {
+    .left-column,
+    .small-col {
         display: flex;
         flex-direction: column;
-        gap: 10px;
+        gap: 2px;
         box-sizing: border-box;
         width: fit-content;
         max-width:230px;
@@ -13534,11 +13535,12 @@ p.monster-header+p {
         color: #777;
         font-size: 8px;
     }
-    .mid-column {
+    .mid-column,
+    .col {
         flex: 1;
         display: flex;
         flex-direction: column;
-        gap: 10px;
+        gap: 2px;
         box-sizing: border-box;
     }
     .combat-stats-grid {
@@ -13547,10 +13549,12 @@ p.monster-header+p {
         text-align: center;
         box-sizing: border-box;
     }
+ 
     .combat-metric {
         border: 2px solid #333;
         padding: 6px;
         flex: 1;
+        text-align: center;
         background: #fdfdfd;
         border-radius: 4px;
         box-sizing: border-box;
@@ -13649,21 +13653,23 @@ p.monster-header+p {
         box-sizing: border-box;
         overflow-wrap: break-word;
     }
+    .col-container,
     .page2-grid {
         display: flex;
-        gap: 10px;
+        gap: 2px;
         box-sizing: border-box;
     }
-    .page2-grid > .col {
+    :is(.col-container, .page2-grid) > .col {
         flex: 1;
         box-sizing: border-box;
     }
     .bio-block,
+    .container-block,
     .notes-block {
         border: 1px solid #333;
         padding: 6px;
         border-radius: 4px;
-        margin-bottom: 8px;
+        margin-bottom: 2px;
         background: #fff;
         box-sizing: border-box;
         display: flex;
@@ -13679,8 +13685,8 @@ p.monster-header+p {
         gap: 8px;
         box-sizing: border-box;
     }
-    .trait-box-field {
-        min-height: 60px;
+    .trait-box-field,
+    .box-field {
         height: auto;
         border: 1px solid #444;
         padding: 4px;

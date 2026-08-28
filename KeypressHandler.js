@@ -1013,10 +1013,8 @@ function pcTemplateFocusTarget(sheetEl) {
             return;
         }
         if (el.offsetParent === null) {
-            return; // hidden
+            return; 
         }
-        // use isContentEditable (not just the element's/table's own attribute) since editability can be
-        // inherited from a wrapping field div (e.g. .features-field, .equipment-field) rather than the <table>
         if (!el.isContentEditable) {
             return;
         }
@@ -1024,7 +1022,7 @@ function pcTemplateFocusTarget(sheetEl) {
             targets.push(el);
         } else {
             if (el.closest('td, th')) {
-                return; // already represented by its containing cell
+                return; 
             }
             targets.push(el);
         }
