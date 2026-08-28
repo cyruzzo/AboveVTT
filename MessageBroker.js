@@ -2351,6 +2351,15 @@ class MessageBroker {
 		let self = this;
 
 		if(eventType.startsWith("custom")){
+			if(eventType == "custom/myVTT/notesSync"){
+				if(data.notes.length == 1 && data.notes[0].text.length > 120000){
+					window.MB.sendMessage('custom/myVTT/note',{
+						id: data.notes[0].id,
+						note: data.notes[0]
+					});
+					return;
+				}
+			}
 			if(eventType == "custom/myVTT/note"){
 				const copyData = $.extend(true, {}, data);
 				if(!copyData.delete){
