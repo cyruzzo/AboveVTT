@@ -384,8 +384,7 @@ function avtt_settings(campaignSettings = false) {
 				{ value: false, label: "Disable", description: `While enabled 2014 spell tooltips will be updated to 2024` }
 			],
 			defaultValue: false,
-			class: 'ui',
-			global: 1
+			class: 'ui'
 		},
 		{
 			name: 'iframeStatBlocks',

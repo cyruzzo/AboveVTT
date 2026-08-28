@@ -1796,6 +1796,7 @@ class JournalManager{
 		closestNote.find('.image').remove();
 		closestNote.find('[style=""]').removeAttr('style');
   		closestNote.find('[class=""]').removeAttr('class');
+		closestNote.find('[data-avtt-suggestion-type]').removeAttr('data-avtt-suggestion-type');
 		let sanitizedHTML = basic_sanitize_html(closestNote[0].innerHTML).replaceAll(/\[(\/)?spell\]/gi, `[$1spell]`).replaceAll(/\[(\/)?magicitem\]/gi, `[$1magicItem]`).replaceAll(/\[(\/)?item\]/gi, `[$1item]`);
 		const changes = forceSave || $(sanitizedHTML).text().replace(/[\s\n\r]/gi, '') != this.notes[id].plain.replace(/[\s\n\r]/gi, '');
 		if(changes){
@@ -2101,11 +2102,12 @@ class JournalManager{
 		const normalizedSearch = normalize(searchText);
 		const normalizedSearchAlphanumeric = removeSpecial(searchText);
 		const searchHasSpecialChars = normalizedSearch !== normalizedSearchAlphanumeric;
+		const normalizedSearchCondensed = normalizedSearchAlphanumeric.replace(/\s+/g, '');
 		if(normalizedSearch.length < 2)
 			return [];
 		const isLegacy = !get_avtt_setting_value('2024Tooltips');
 		let suggestions = [];
-		if(window.ITEMS_CACHE != undefined){
+		if(window.ITEMS_CACHE != undefined && suggestionType != 'spellcasting'){
 			suggestions = suggestions.concat(window.ITEMS_CACHE
 				.filter(item => item.isLegacy == isLegacy || item.isHomebrew)
 				.map(item => ({
@@ -2113,10 +2115,11 @@ class JournalManager{
 					type: item.magic ? 'Magic Item' : item.filterType || 'Item',
 					color: item.magic ? 'var(--compendium-magic-item-tooltip,#0f5cbc)' : 'var(--compendium-item-tooltip,#774521)',
 					match: normalize(item.name),
-					matchAlphanumeric: removeSpecial(item.name)
+					matchAlphanumeric: removeSpecial(item.name),
+					matchCondensed: removeSpecial(item.name).replace(/\s+/g, '')
 				})));
 		}
-		if(suggestionType == 'attack' && window.SPELLS_CACHE != undefined){
+		if((suggestionType == 'attack' || suggestionType == 'spellcasting') && window.SPELLS_CACHE != undefined){
 			suggestions = suggestions.concat(window.SPELLS_CACHE
 				.filter(spell => spell.definition?.isLegacy == isLegacy)
 				.map(spell => ({
@@ -2124,7 +2127,8 @@ class JournalManager{
 					type: 'Spell',
 					color: 'var(--compendium-spell-tooltip,#704cd9)',
 					match: normalize(spell.definition.name),
-					matchAlphanumeric: removeSpecial(spell.definition.name)
+					matchAlphanumeric: removeSpecial(spell.definition.name),
+					matchCondensed: removeSpecial(spell.definition.name).replace(/\s+/g, '')
 				})));
 		}
 		const seen = new Set();
@@ -2141,7 +2145,8 @@ class JournalManager{
 				if(allWordsMatch) return true;
 				
 				return suggestion.matchAlphanumeric.includes(normalizedSearchAlphanumeric) ||
-					   (searchHasSpecialChars && suggestion.match.includes(normalizedSearch));
+					   (searchHasSpecialChars && suggestion.match.includes(normalizedSearch)) ||
+					   (normalizedSearchCondensed.length >= 2 && suggestion.matchCondensed.includes(normalizedSearchCondensed));
 			})
 			.sort((a, b) => {
 				const aConsecutiveStart = a.matchAlphanumeric.startsWith(normalizedSearchAlphanumeric);
@@ -2225,27 +2230,160 @@ class JournalManager{
 	}
 
 	getDndSheetSuggestionCellFromEvent(event){
-		const directTarget = $(event.target).closest('[data-avtt-suggestion-type]');
-		if(directTarget.length > 0)
-			return directTarget[0];
 		const ownerDocument = event.target?.ownerDocument || document;
 		const selection = ownerDocument.getSelection?.();
-		if(!selection || selection.rangeCount === 0)
-			return undefined;
-		let anchor = selection.anchorNode;
+		let anchor = selection && selection.rangeCount > 0 ? selection.anchorNode : event.target;
 		if(anchor && anchor.nodeType === Node.TEXT_NODE){
 			anchor = anchor.parentElement;
 		}
+		const editableCell = $(anchor || event.target).closest('[contenteditable="true"]')[0];
+		if(editableCell && this.getDndSheetSuggestionCommaSegment(editableCell).isSpellListLine)
+			return editableCell;
+		const directTarget = $(event.target).closest('[data-avtt-suggestion-type]');
+		if(directTarget.length > 0)
+			return directTarget[0];
 		const selectionTarget = $(anchor).closest('[data-avtt-suggestion-type]');
 		return selectionTarget.length > 0 ? selectionTarget[0] : undefined;
+	}
+	getDndSheetCellTextModel(cell){
+		const ownerDocument = cell.ownerDocument || document;
+		const selection = (ownerDocument.defaultView || window).getSelection?.();
+		const focusNode = selection && selection.rangeCount > 0 ? selection.focusNode : undefined;
+		const focusOffset = selection && selection.rangeCount > 0 ? selection.focusOffset : undefined;
+		let text = '';
+		let caretOffset = undefined;
+		const runs = [];
+		const visit = (node) => {
+			if(node.nodeType === Node.TEXT_NODE){
+				if(node === focusNode && caretOffset === undefined)
+					caretOffset = text.length + focusOffset;
+				runs.push({ node, start: text.length, end: text.length + node.nodeValue.length });
+				text += node.nodeValue;
+				return;
+			}
+			if(node.nodeName === 'BR'){
+				if(node === focusNode && caretOffset === undefined)
+					caretOffset = text.length;
+				text += '\n';
+				return;
+			}
+			const children = node.childNodes ? Array.from(node.childNodes) : [];
+			children.forEach((child, index) => {
+				if(node === focusNode && index === focusOffset && caretOffset === undefined)
+					caretOffset = text.length;
+				visit(child);
+			});
+			if(node === focusNode && focusOffset === children.length && caretOffset === undefined)
+				caretOffset = text.length;
+		};
+		visit(cell);
+		if(caretOffset === undefined || !focusNode || !cell.contains(focusNode))
+			caretOffset = text.length;
+		return { text, runs, caretOffset };
+	}
+	getDndSheetSuggestionCommaSegment(cell){
+		const ownerDocument = cell.ownerDocument || document;
+		const selection = (ownerDocument.defaultView || window).getSelection?.();
+		let focusNode = selection && selection.rangeCount > 0 ? selection.focusNode : undefined;
+		if(focusNode && focusNode.nodeType === Node.TEXT_NODE)
+			focusNode = focusNode.parentElement;
+		const wrappedLevel = focusNode ? $(focusNode).closest('.add-input', cell)[0] : undefined;
+		const model = this.getDndSheetCellTextModel(wrappedLevel || cell);
+		const { text, caretOffset } = model;
+		let lineStart, lineEnd;
+		if(wrappedLevel){
+			lineStart = 0;
+			lineEnd = text.length;
+		} else {
+			lineStart = text.lastIndexOf('\n', Math.max(caretOffset - 1, 0)) + 1;
+			lineEnd = text.indexOf('\n', caretOffset);
+			if(lineEnd === -1)
+				lineEnd = text.length;
+		}
+		const lineText = text.slice(lineStart, lineEnd);
+		const labelMatch = /At will:|Cantrips \(at will\):|(\d+\/day( each)?|\d+\w+ level \(\d+ slots?\)):/gi.exec(lineText);
+		const isSpellListLine = wrappedLevel != undefined || labelMatch != null;
+		if(!isSpellListLine)
+			return { model, segments: [], index: -1, isSpellListLine: false };
+		const labelEnd = labelMatch ? labelMatch.index + labelMatch[0].length : 0;
+		const segments = [];
+		let cursor = 0;
+		lineText.split(',').forEach((part, partIndex) => {
+			const start = lineStart + cursor;
+			const end = start + part.length;
+			if(partIndex === 0 && labelEnd > 0){
+				const trimLength = Math.min(labelEnd, part.length);
+				segments.push({ text: part.slice(trimLength), start: start + trimLength, end });
+			} else {
+				segments.push({ text: part, start, end });
+			}
+			cursor += part.length + 1; // +1 accounts for the comma removed by split
+		});
+		let index = segments.length - 1;
+		for(let i=0; i<segments.length; i++){
+			if(caretOffset <= segments[i].end || i === segments.length - 1){
+				index = i;
+				break;
+			}
+		}
+		return { model, segments, index, isSpellListLine: true };
+	}
+	replaceDndSheetCellRange(cell, model, start, end, replacementText){
+		const ownerDocument = cell.ownerDocument || document;
+		const ownerWindow = ownerDocument.defaultView || window;
+		const pointAt = (offset) => {
+			for(const run of model.runs){
+				if(offset <= run.end)
+					return { node: run.node, offset: Math.max(0, offset - run.start) };
+			}
+			const lastRun = model.runs[model.runs.length - 1];
+			return lastRun ? { node: lastRun.node, offset: lastRun.node.nodeValue.length } : { node: cell, offset: cell.childNodes.length };
+		};
+		const range = ownerDocument.createRange();
+		const startPoint = pointAt(start);
+		const endPoint = pointAt(end);
+		range.setStart(startPoint.node, startPoint.offset);
+		range.setEnd(endPoint.node, endPoint.offset);
+		range.deleteContents();
+		const textNode = ownerDocument.createTextNode(replacementText);
+		range.insertNode(textNode);
+		const caretRange = ownerDocument.createRange();
+		caretRange.setStart(textNode, textNode.nodeValue.length);
+		caretRange.collapse(true);
+		const selection = ownerWindow.getSelection?.();
+		if(selection){
+			selection.removeAllRanges();
+			selection.addRange(caretRange);
+		}
+	}
+	getDndSheetSuggestionAnchorRect(cell){
+		const ownerDocument = cell.ownerDocument || document;
+		const selection = (ownerDocument.defaultView || window).getSelection?.();
+		if(selection && selection.rangeCount > 0 && cell.contains(selection.focusNode)){
+			const range = selection.getRangeAt(0).cloneRange();
+			range.collapse(true);
+			let rect = range.getClientRects()[0];
+			if(!rect || (!rect.width && !rect.height)){
+				rect = range.getBoundingClientRect();
+			}
+			if(rect && (rect.width || rect.height || rect.top)){
+				return rect;
+			}
+		}
+		return cell.getBoundingClientRect();
 	}
 	showDndSheetCellSuggestions(cell, suggestionType, onSelect){
 		const target = $(cell);
 		const ownerDocument = cell.ownerDocument || document;
 		const ownerWindow = ownerDocument.defaultView || window;
+
+		const segmentInfo = this.getDndSheetSuggestionCommaSegment(cell);
+		const useSegmentedMatch = segmentInfo.isSpellListLine;
+		// a spell list line always searches spells only, regardless of the cell's assigned suggestion type
+		const effectiveSuggestionType = useSegmentedMatch ? 'spellcasting' : suggestionType;
+		const searchText = useSegmentedMatch ? segmentInfo.segments[segmentInfo.index].text.trim() : target.text().trim();
+		const suggestions = this.getDndSheetCellSuggestionItems(effectiveSuggestionType, searchText);
 		this.removeDndSheetCellSuggestions(ownerDocument);
-		const searchText = target.text().trim();
-		const suggestions = this.getDndSheetCellSuggestionItems(suggestionType, searchText);
 		if(suggestions.length === 0)
 			return;
 		const suggestionBox = $(`<div class="dnd-sheet-cell-suggestions" role="listbox"></div>`);
@@ -2262,7 +2400,15 @@ class JournalManager{
 			option.on('mousedown', (event) => {
 				event.preventDefault();
 				event.stopPropagation();
-				target.text(suggestion.name);
+				if(useSegmentedMatch){
+					const segment = segmentInfo.segments[segmentInfo.index];
+					const leadingWhitespace = segment.text.match(/^\s*/)[0];
+					const trailingSuffix = segment.text.slice(leadingWhitespace.length).match(/[^a-zA-Z0-9)']*$/)[0];
+					const replacementText = `${leadingWhitespace}${suggestion.name}${trailingSuffix}`;
+					this.replaceDndSheetCellRange(cell, segmentInfo.model, segment.start, segment.end, replacementText);
+				} else {
+					target.text(suggestion.name);
+				}
 				this.removeDndSheetCellSuggestions(ownerDocument);
 				onSelect?.();
 				cell.focus();
@@ -2274,6 +2420,7 @@ class JournalManager{
 		});
 		$(ownerDocument.body).append(suggestionBox);
 		const rect = cell.getBoundingClientRect();
+		const anchorRect = this.getDndSheetSuggestionAnchorRect(cell);
 		suggestionBox.css({
 			position: 'absolute',
 			left: `${rect.left + ownerWindow.scrollX}px`,
@@ -2291,7 +2438,7 @@ class JournalManager{
 
 		const suggestionBoxHeight = suggestionBox.outerHeight();
 		suggestionBox.css({
-			top: `${rect.top + ownerWindow.scrollY - suggestionBoxHeight}px`,
+			top: `${anchorRect.top + ownerWindow.scrollY - suggestionBoxHeight}px`,
 			visibility: 'visible'
 		});
 		this.setActiveDndSheetCellSuggestion(ownerDocument, 0);
@@ -2507,7 +2654,7 @@ class JournalManager{
 				e.preventDefault();
 				e.stopPropagation();
 				e.stopImmediatePropagation();
-				const cellSuggestionType = $(suggestionCell).attr('data-avtt-suggestion-type');
+				const cellSuggestionType = $(suggestionCell).attr('data-avtt-suggestion-type') || 'spellcasting';
 				if(self.getDndSheetCellSuggestionOptions(suggestionCell.ownerDocument).length === 0){
 					self.showDndSheetCellSuggestions(suggestionCell, cellSuggestionType);
 				}
@@ -2533,7 +2680,7 @@ class JournalManager{
 				}
 				return;
 			}
-			self.showDndSheetCellSuggestions(suggestionCell, $(suggestionCell).attr('data-avtt-suggestion-type'));
+			self.showDndSheetCellSuggestions(suggestionCell, $(suggestionCell).attr('data-avtt-suggestion-type') || 'spellcasting');
 		});
 		$(ownerDocument).off('pointerdown.dndSheetSuggestionDismiss mousedown.dndSheetSuggestionDismiss focusin.dndSheetSuggestionDismiss').on('pointerdown.dndSheetSuggestionDismiss mousedown.dndSheetSuggestionDismiss focusin.dndSheetSuggestionDismiss', function(e){
 			if($('.dnd-sheet-cell-suggestions', ownerDocument).length === 0)
@@ -3545,7 +3692,7 @@ class JournalManager{
 				}
 			}
 		}
-		
+
 
 		let pastedButtons = target.find('.avtt-roll-button, [data-rolltype="recharge"], .integrated-dice__container, span[data-dicenotation]');
     	target.find('>style:first-of-type, >style#contentStyles').remove();
