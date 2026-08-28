@@ -1952,6 +1952,11 @@ class JournalManager{
 						document.execCommand('insertText', false, text);
 					})
 				});
+				document.querySelectorAll('input').forEach((el) => {
+					el.addEventListener('input change', (e) => {
+						e.target.style.width = (e.target.value.length + 4) + 'ch';
+					});
+				});
 				document.addEventListener('keydown', (e) => {
 					if (e.key !== 'Enter' || e.defaultPrevented) return;
 					if (!e.target?.closest?.('[contenteditable="true"]')) return;
@@ -2582,15 +2587,17 @@ class JournalManager{
 			}, 10);
 		});
 		container.off('change.checkbox').on('change.checkbox', '.dnd-sheet input', (e)=>{
-			e.preventDefault();
-			e.stopPropagation();
-			e.stopImmediatePropagation();
 			if (e.target && e.target.nodeName === 'INPUT' && e.target.type === 'checkbox') {				
+				e.preventDefault();
+				e.stopPropagation();
+				e.stopImmediatePropagation();
 				if (e.target.checked) {
 					e.target.setAttribute('checked', 'checked');
 				} else {
 					e.target.removeAttribute('checked');
 				}
+			} else if (e.target && e.target.nodeName === 'INPUT' && e.target.type === 'number') {
+				this.style.width = `${this.value.length+4}ch`;
 			}
 			persistCurrentNoteText({forceSave: true, rescanStatBlock: false});
 		})
@@ -5360,13 +5367,14 @@ class JournalManager{
 				}
 				.main-container {
 					display: flex;
-					gap: 10px;
+					gap: 2px;
 					box-sizing: border-box;
 				}
-				.left-column {
+				.left-column,
+				.small-col {
 					display: flex;
 					flex-direction: column;
-					gap: 10px;
+					gap: 2px;
 					box-sizing: border-box;
 					width: fit-content;
 					max-width:230px;
@@ -5503,11 +5511,12 @@ class JournalManager{
 					color: var(--pc-template-text-muted, #777);
 					font-size: 8px;
 				}
-				.mid-column {
+				.mid-column,
+				.col {
 					flex: 1;
 					display: flex;
 					flex-direction: column;
-					gap: 10px;
+					gap: 2px;
 					box-sizing: border-box;
 				}
 				.combat-stats-grid {
@@ -5520,6 +5529,7 @@ class JournalManager{
 					border: 2px solid var(--pc-template-border-light, #333);
 					padding: 6px;
 					flex: 1;
+					text-align: center;
 					background: var(--pc-template-box-bg, #fdfdfd);
 					border-radius: 4px;
 					box-sizing: border-box;
@@ -5622,21 +5632,23 @@ class JournalManager{
 					overflow-wrap: break-word;
 					color: var(--pc-template-text-color, #111);
 				}
+				.col-container,
 				.page2-grid {
 					display: flex;
-					gap: 10px;
+					gap: 2px;
 					box-sizing: border-box;
 				}
-				.page2-grid > .col {
+				:is(.col-container, .page2-grid) > .col {
 					flex: 1;
 					box-sizing: border-box;
 				}
 				.bio-block,
+				.container-block,
 				.notes-block {
 					border: 1px solid var(--pc-template-border-light, #333);
 					padding: 6px;
 					border-radius: 4px;
-					margin-bottom: 8px;
+					margin-bottom: 2px;
 					background: var(--pc-template-sheet-bg, #fff);
 					box-sizing: border-box;
 					display: flex;
@@ -5652,8 +5664,8 @@ class JournalManager{
 					gap: 8px;
 					box-sizing: border-box;
 				}
-				.trait-box-field {
-					min-height: 60px;
+				.trait-box-field,
+				.box-field {
 					height: auto;
 					border: 1px solid var(--pc-template-border-color, var(--pc-template-border-color, #444));
 					padding: 4px;
@@ -5682,7 +5694,7 @@ class JournalManager{
 					justify-content: flex-start;
 					gap: 5px;
 					box-sizing: border-box;
-					margin-bottom: 4px;
+					margin-bottom: 2px;
 				}
 				.coin-slot {
 					display: flex;
@@ -6113,8 +6125,8 @@ class JournalManager{
 									<span class="label">XP</span>
 								</div>
 							</div>
-							<div class="main-container">
-								<div class="left-column">
+							<div class="col-container">
+								<div class="small-col">
 									<div class="abilities-table-container">
 										<div class="section-title">Abilities</div>
 										<div class="box-field">
@@ -6286,8 +6298,8 @@ class JournalManager{
 										</div>
 									</div>
 								</div>
-								<div class="mid-column">
-									<div class="combat-stats-grid">
+								<div class="col">
+									<div class="col-container">
 										<div class="combat-metric"><span class="label">Armor Class</span>
 											<div class="metric-val" contenteditable="true">16
 											</div>
@@ -6390,9 +6402,9 @@ class JournalManager{
 											</table>
 										</div>
 									</div>
-									<div class="bio-block">
+									<div class="container-block">
 										<div class="section-title">Spellcasting Notes / Summary</div>
-										<div class="spellcasting-field" contenteditable="true">Spellcasting. Spell save DC 10, +0 to hit
+										<div class="box-field" contenteditable="true">Spellcasting. Spell save DC 10, +0 to hit
 											with spell attacks<br /> <br />Cantrips (at will): acid splash, light, mage hand,
 											prestidigitation<br /><br />1st level (2 slots): detect magic, mage armor<br />
 											<p>&nbsp;</p>
@@ -6400,7 +6412,7 @@ class JournalManager{
 									</div>
 									<div class="container-block">
 										<div class="section-title">Features &amp; Traits</div>
-										<div class="features-field" contenteditable="true">
+										<div class="box-field" contenteditable="true">
 											<table>
 												<tbody class="ui-sortable">
 													<tr>
@@ -6428,20 +6440,20 @@ class JournalManager{
 							</div>
 						</div>
 						<div class="dnd-page">
-							<div class="page2-grid">
+							<div class="col-container">
 								<div class="col">
-									<div class="bio-block">
+									<div class="container-block">
 										<div class="section-title">Magic Item Attunement (3 Slots Available)</div>
-										<div class="attunement-content" contenteditable="true">
+										<div class="box-field" contenteditable="true">
 											<div style="margin-bottom: 2px;"><input checked="checked"
 													type="checkbox" />&nbsp;[magicItem]Cloak of Protection[/magicItem]</div>
 											<div style="margin-bottom: 2px;"><input type="checkbox" /> Empty Slot</div>
 											<div><input type="checkbox" /> Empty Slot</div>
 										</div>
 									</div>
-									<div class="bio-block">
+									<div class="container-block">
 										<div class="section-title">Additional Features &amp; Traits</div>
-										<div class="bio-traits-add" contenteditable="true"><strong>Armor</strong>
+										<div class="box-field" contenteditable="true"><strong>Armor</strong>
 											<div>&bull; Light Armor</div>
 											<div><strong>Weapons</strong></div>
 											<div>&bull; Simple Weapons</div>
@@ -6451,39 +6463,43 @@ class JournalManager{
 											<div>&bull; Common</div>
 										</div>
 									</div>
-									<div class="bio-block">
+									<div class="container-block">
 										<div class="section-title">Character Appearance</div>
-										<div class="bio-appearance" contenteditable="true">&nbsp;</div>
+										<div class="box-field" contenteditable="true">&nbsp;</div>
 									</div>
-									<div class="bio-block">
+									<div class="container-block">
 										<div class="section-title">Character Backstory</div>
-										<div class="bio-backstory" contenteditable="true">&nbsp;</div>
+										<div class="box-field" contenteditable="true">&nbsp;</div>
 									</div>
-									<div class="traits-grid">
-										<div class="bio-block">
-											<div class="section-title">Personality Traits</div>
-											<div class="trait-box-field" contenteditable="true">&nbsp;</div>
+									<div class="col-container">
+										<div class="col">
+											<div class="container-block">
+												<div class="section-title">Personality Traits</div>
+												<div class="box-field" contenteditable="true">&nbsp;</div>
+											</div>
+											<div class="container-block">
+												<div class="section-title">Bonds</div>
+												<div class="box-field" contenteditable="true">&nbsp;</div>
+											</div>
 										</div>
-										<div class="bio-block">
-											<div class="section-title">Ideals</div>
-											<div class="trait-box-field" contenteditable="true">&nbsp;</div>
-										</div>
-										<div class="bio-block">
-											<div class="section-title">Bonds</div>
-											<div class="trait-box-field" contenteditable="true">&nbsp;</div>
-										</div>
-										<div class="bio-block">
-											<div class="section-title">Flaws</div>
-											<div class="trait-box-field" contenteditable="true">&nbsp;</div>
+										<div class="col">
+											<div class="container-block">
+												<div class="section-title">Ideals</div>
+												<div class="box-field" contenteditable="true">&nbsp;</div>
+											</div>
+											<div class="container-block">
+												<div class="section-title">Flaws</div>
+												<div class="box-field" contenteditable="true">&nbsp;</div>
+											</div>
 										</div>
 									</div>
-									<div class="bio-block">
+									<div class="container-block">
 										<div class="section-title">Organization &amp; Allies</div>
-										<div class="bio-allies" contenteditable="true">&nbsp;</div>
+										<div class="box-field" contenteditable="true">&nbsp;</div>
 									</div>
 								</div>
 								<div class="col">
-									<div class="bio-block">
+									<div class="container-block">
 										<div class="section-title">Treasure &amp; Currency</div>
 										<div class="currency-container">
 											<div class="coin-slot">CP:
@@ -6502,7 +6518,7 @@ class JournalManager{
 												<div class="coin-input" contenteditable="true">&nbsp;</div>
 											</div>
 										</div>
-										<div class="treasure-field" contenteditable="true">&nbsp;</div>
+										<div class="box-field" contenteditable="true">&nbsp;</div>
 									</div>
 									<div class="container-block equipment-block">
 										<div class="section-title">Equipment</div>
@@ -6723,9 +6739,9 @@ class JournalManager{
 						</div>
 						<div class="dnd-page">
 							<div class="col">
-								<div class="notes-block">
+								<div class="container-block">
 									<div class="section-title">Notes</div>
-									<div class="notes-field" contenteditable="true">&nbsp;</div>
+									<div class="box-field" contenteditable="true">&nbsp;</div>
 								</div>
 							</div>
 						</div>
@@ -6739,9 +6755,9 @@ class JournalManager{
 					<style id='contentStyles'>${contentStyles}</style>
 					<div class="dnd-sheet">
 						<div class="dnd-page">
-							<div class="page2-grid">
+							<div class="col-container">
 								<div class="col">
-									<div class="bio-block">
+									<div class="container-block">
 										<div class="section-title">Treasure &amp; Currency</div>
 										<div class="currency-container">
 											<div class="coin-slot">CP:
@@ -6760,7 +6776,7 @@ class JournalManager{
 												<div class="coin-input" contenteditable="true">&nbsp;</div>
 											</div>
 										</div>
-										<div class="treasure-field" contenteditable="true">&nbsp;</div>
+										<div class="box-field" contenteditable="true">&nbsp;</div>
 									</div>
 									<div class="container-block equipment-block">
 										<div class="section-title">Equipment</div>
@@ -6981,9 +6997,9 @@ class JournalManager{
 						</div>
 						<div class="dnd-page">
 							<div class="col">
-								<div class="notes-block">
+								<div class="container-block">
 									<div class="section-title">Notes</div>
-									<div class="notes-field" contenteditable="true">&nbsp;</div>
+									<div class="box-field" contenteditable="true">&nbsp;</div>
 								</div>
 							</div>
 						</div>
