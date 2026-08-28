@@ -932,10 +932,10 @@ function do_check_token_visibility() {
 	const offScreenCanvas = window.offScreenCombine;
 	const offScreenCtx = window.offScreenCombineContext;
 	offScreenCtx.globalCompositeOperation = 'source-over';
-	if ((window.DM || playerTokenHasVision) && window.CURRENT_SCENE_DATA.disableSceneVision != 1){
+	if ((window.DM || playerTokenHasVision || sharedVisionToken == true) && window.CURRENT_SCENE_DATA.disableSceneVision != 1){
 		offScreenCtx.clearRect(0, 0, offScreenCanvas.width, offScreenCanvas.height);
 		offScreenCtx.drawImage(lightCanvas, 0, 0);	
-	} else if (aPlayerToken == true || window.CURRENT_SCENE_DATA.disableSceneVision == 1){
+	} else if (aPlayerToken == true || sharedVisionToken == true || window.CURRENT_SCENE_DATA.disableSceneVision == 1){
 		offScreenCtx.fillStyle = 'rgba(255, 255, 255 , 1)';
 		offScreenCtx.fillRect(0, 0, offScreenCanvas.width, offScreenCanvas.height)
 	} else{
