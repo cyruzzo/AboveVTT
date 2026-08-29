@@ -253,10 +253,11 @@ function import_pc_template_html(files, parentEle, customStatId, tokenId) {
         token.place();
       }
       window.JOURNAL.notes[customStatId].text = sanitizedHTML.replaceAll(/\[(\/)?spell\]/gi, `[$1spell]`).replaceAll(/\[(\/)?magicitem\]/gi, `[$1magicItem]`).replaceAll(/\[(\/)?item\]/gi, `[$1item]`); 
-      window.JOURNAL.notes[customStatId].plain = $(window.JOURNAL.notes[customStatId].text).text();
-      debounceRescanStatBlock(parentEle.closest('.resize_drag_window, .moveableWindow'), customStatId, tokenId);
-      debounceSendNote(customStatId, window.JOURNAL.notes[customStatId], tokenId);
+      window.JOURNAL.notes[customStatId].plain = '';
+      const currContainer = parentEle.closest('.resize_drag_window, .moveableWindow');
+      debounceRescanStatBlock(currContainer, customStatId, tokenId);
       window.JOURNAL.setPersistTimeout();
+      debounceSendNote(customStatId, window.JOURNAL.notes[customStatId], tokenId, currContainer);
       $('.import-loading-indicator').remove();
     } catch (e) {
       console.error('Failed to import file', file.name, e);
