@@ -838,11 +838,12 @@ function add_aoe_to_statblock(html){
   html = html.replaceAll(/&shy;|­/gi, '')
     .replace(/(?:[^\S\r\n]*\r?\n){2,}[^\S\r\n]*/g, ' ') // heals the blank line runs left behind by previously injected buttons
 
-  const aoeRegEx = /(([\d]+)-foot(?:(?:-long(?:,)? ([\d]+)-foot-wide)|(?:-radius(?:, ([\d]+)-foot-high)?))?\s+([a-zA-Z]+))((?:(?!\d+-foot)[\s\S])*)/gi;
+  const aoeRegEx = /(([\d]+)-foot(?:(?:-long(?:,)? ([\d]+)-foot-wide)|(?:-radius(?:, ([\d]+)-foot-high)?))?\s+([a-zA-Z]+))((?:(?!\d+-foot)(?![^<]*>)[^<])*)/gi;
 
   return html.replaceAll(aoeRegEx, function(m, m1, m2, m3, m4, m5, m6, m7) {
     const shape = m5.toLowerCase();
 
+    // Guard clause for unsupported shapes
     if (shape !== 'cone' && shape !== 'sphere' && shape !== 'cube' && shape !== 'cylinder' && shape !== 'line') {
       return `${m}`;
     }
@@ -859,19 +860,18 @@ function add_aoe_to_statblock(html){
       const availableStyles = get_available_styles().map(s => s.toLowerCase().trim());
 
       for (let i = 0; i < words.length; i++) {
-        const candidate = words.slice(0,  words.length-i).join('-');
+        const candidate = words.slice(0, words.length -i).join('-');
         if (availableStyles.includes(candidate)) {
           sentencePart = candidate;
           break;
         }
       }
     }
-
     const lineWidthAttr = shape === 'line' 
-      ? ` data-line-width=${m3 !== undefined ? `'${m3}'` : '5'}` 
+      ? ` data-line-width=${m3 !== undefined ? `'${m3}'`: '5'}` 
       : '';
 
-    return `<button class='avtt-aoe-button' border-width='1px' title='Place area of effect token' data-shape='${shape}' data-style='${sentencePart}' data-size='${m2}' data-name='${m6} AoE'${lineWidthAttr}>${m1}</button>${m6 !== undefined ? m6 : ''}`;
+    return `<button class='avtt-aoe-button' border-width='1px' title='Place area of effect token' data-shape='${shape}' data-style='${sentencePart}' data-size='${m2}' data-name='${m5} AoE'${lineWidthAttr}>${m1}</button>${m6 !== undefined ? m6 : ''}`;
   });
 }
 async function embedDDBSection(target){
