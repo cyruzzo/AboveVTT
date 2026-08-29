@@ -875,21 +875,24 @@ class MessageBroker {
 						window.temp_note_save[uuid] = [];
 					}
 					let temp_note = window.temp_note_save[uuid];
-					temp_note[order] = msg.data.text;
+					temp_note[order] = msg.data.note.text;
 					all_collected = true;
-					for(let i = 0; i < msg.data.lastIndex; i++){
+					for(let i = 0; i <= msg.data.lastIndex; i++){
 						if(temp_note[i] == undefined){
 							all_collected = false;
 							break;
 						}
 					}
 					if(all_collected){
-						msg.data.text = temp_note.join('');
+						msg.data.note.text = temp_note.join('');
 						delete window.temp_note_save[uuid];
 					}
 				}	
-				msg.data.plain = $(msg.data.text).text();
 				if(all_collected && (!window.DM || (msg.data.from && msg.data.from != window.PLAYER_ID))){
+					const noteText = msg.data.note.text;
+					if(!noteText.includes('dnd-sheet')){
+						msg.data.note.plain = $(noteText).text();
+					}
 					if(msg.data.delete == true){
 						delete window.JOURNAL.notes[msg.data.id]
 						window.JOURNAL.build_journal();
@@ -902,8 +905,8 @@ class MessageBroker {
 					
 					window.JOURNAL.build_journal();
 					
-					if(msg.data.id in window.TOKEN_OBJECTS){
-						window.TOKEN_OBJECTS[msg.data.id].place();			
+					if(msg.data.tokenId in window.TOKEN_OBJECTS){
+						window.TOKEN_OBJECTS[msg.data.tokenId].place();
 					}			
 					const openNote = $(`.note[data-id='${msg.data.id}']`);
 					const openMainNote = openNote.filter(function(){
@@ -925,7 +928,7 @@ class MessageBroker {
 
 					if (openMainNote.length != 0 || (msg.data.popup == true && !notePopout)){
 						const minimized = openMainNote.siblings('.minimized').length > 0 && !msg.data.popup;
-						window.JOURNAL.display_note(msg.data.id, undefined, currScroll);
+						window.JOURNAL.display_note(msg.data.id, undefined, currScroll, msg.data.popup == true);
 						if(minimized) $(`.note[data-id='${msg.data.id}']`).siblings('.title_bar').dblclick();
 					} else if (msg.data.popup == false) {
 						openNote.remove();
@@ -960,7 +963,7 @@ class MessageBroker {
 					if(openStatBlock.length > 0 && window.JOURNAL.notes[msg.data.id] != undefined){
 						currScroll = openStatBlock.find('.avtt-stat-block-container, .note-text').first()[0].scrollTop;
 						const minimized = openStatBlock.closest('.minimized').length > 0;			
-						const container = await load_monster_stat(msg.data.id, msg.data.tokenId, window.JOURNAL.notes[msg.data.id].text);
+						const container = await load_monster_stat(msg.data.id, msg.data.tokenId, window.JOURNAL.notes[msg.data.id].text, undefined, false);
 						if(minimized) container.dblclick();					
 						container.find('.avtt-stat-block-container, .note-text').first()[0].scrollTop = currScroll;
 					}
@@ -1988,38 +1991,38 @@ class MessageBroker {
 		let self = this;
 
 		if(eventType.startsWith("custom")){
-			if(eventType == "custom/myVTT/notesSync"){
-				if(data.notes.length == 1 && data.notes[0].text.length > 120000){
-					window.MB.sendMessage('custom/myVTT/note',{
-						id: data.notes[0].id,
-						note: data.notes[0]
-					});
-					return;
-				}
+			if(eventType == "custom/myVTT/notesSync" && data.notes.length == 1){
+				window.MB.sendMessage('custom/myVTT/note',{
+					id: data.notes[0].id,
+					note: data.notes[0]
+				});
+				return;
 			}
 			if(eventType == "custom/myVTT/note"){
 				const copyData = $.extend(true, {}, data);
-				if(!copyData.delete){
-					const msgId = uuid();
-					copyData.note.plain = "";
-					let text = `${copyData.note.text}`;
-					let order = 0;
-					const textLength = JSON.stringify(text).length;
-					const lastIndex = Math.floor(textLength/120000);
-					copyData.lastIndex = lastIndex;
-					copyData.uuid = msgId;
-					while(order<lastIndex){
-						copyData.order = order;
-						let sendNote = text.slice(0, 120000)
-						copyData.note.text = sendNote;
-						this.sendAboveMB(eventType, copyData, skipSceneId, forceSceneId)
-						order+=1;
-						text = text.slice(120000, text.length)
-					}
-					copyData.note.text = text;
+				if(copyData.delete){
+					this.sendAboveMB(eventType, copyData, skipSceneId, forceSceneId)
+					return;
 				}
-				this.sendAboveMB(eventType, copyData, skipSceneId, forceSceneId)
-			}else{
+				const msgId = uuid();
+				copyData.note.plain = "";
+				let text = `${copyData.note.text}`;
+				let order = 0;
+				const textLength = JSON.stringify(text).length;
+				const lastIndex = Math.floor(textLength/120000);
+				copyData.lastIndex = lastIndex;
+				copyData.uuid = msgId;
+				while(order<=lastIndex){
+					copyData.order = order;
+					let sendNote = text.slice(0, 120000)
+					copyData.note.text = sendNote;
+					this.sendAboveMB(eventType, copyData, skipSceneId, forceSceneId)
+					order+=1;
+					text = text.slice(120000, text.length)
+				}
+				copyData.note.text = text;
+			}
+			else{
 				this.sendAboveMB(eventType,data,skipSceneId,forceSceneId);
 			}		
 		}
