@@ -1,3 +1,52 @@
+var DDB_WS_OBJ = null;
+var DDB_WS_FORCE_RECONNECT_LOCK = false; // Best effort (not atomic) - ensure function is called only once at a time
+/**
+ * Attempts to force DDBs WebSocket to re-connect.
+ * @returns Bool false - wasn't able to force / no need
+ * @returns Bool true - was able to attempt force reconnec
+ */
+function forceDdbWsReconnect() {
+    try {
+        if (DDB_WS_FORCE_RECONNECT_LOCK) {
+            console.log("forceDdbWsReconnect is already locked!");
+            return false;
+        }
+
+        if (window.navigator && !window.navigator.onLine) {
+            console.log("No internet connection, cannot re-connect to DDBs WebSocket.");
+            return false;
+        }
+
+        DDB_WS_FORCE_RECONNECT_LOCK = true;
+
+        const key = Symbol.for('@dndbeyond/message-broker-lib');
+        if (key) {
+            DDB_WS_OBJ = window[key];
+        }
+
+        if ((DDB_WS_OBJ && DDB_WS_OBJ.status == 'disconnected')) {
+            console.log("Detected that DDBs WebSocket is disconnected - attempting to force reconnect.");
+            DDB_WS_OBJ.reset();
+            DDB_WS_OBJ.connect();
+
+            setTimeout(function() {
+                if (DDB_WS_OBJ.status == 'open') {
+                    console.log("Managed to reconnect DDBs WebSocket successfully!");
+                }
+                DDB_WS_FORCE_RECONNECT_LOCK = false;
+            }, 8000);
+            return true;
+        }
+
+        DDB_WS_FORCE_RECONNECT_LOCK = false;
+
+        return false;
+    } catch(e) {
+        console.log("forceDdbWsReconnect error: " + e);
+        DDB_WS_FORCE_RECONNECT_LOCK = false;
+    }
+}
+
 (function() {
     function noisy_log(...message) {
         if (window.enableNoisyLogs != undefined) {
@@ -39,21 +88,31 @@
     const originalAddEventListener = WebSocket.prototype.addEventListener;
     WebSocket.prototype.addEventListener = function (type, listener, options) {
         const isGameLog = this.url && this.url.toLowerCase().includes('game-log-api-live');
-        if (type === 'message' && isGameLog) {
+        if(isGameLog){
+            if (type === 'message') {
             const interceptor = (event) => {
                 if (event.data && event.data !== 'pong') {
-                    try {
-                        if (window.diceRoller && typeof window.diceRoller.ddbonmessage === 'function') {
-                            window.diceRoller.ddbonmessage(event);
+                        try {
+                            if (window.diceRoller && typeof window.diceRoller.ddbonmessage === 'function') {
+                                window.diceRoller.ddbonmessage(event);
+                            }
+                        } catch (err) {
+                            console.error('Error in WS interceptor:', err);
                         }
-                    } catch (err) {
-                        console.error('Error in WS interceptor:', err);
                     }
-                }
-            };
+                };
 
-            originalAddEventListener.call(this, 'message', interceptor, options);
+                originalAddEventListener.call(this, type, interceptor, options);
+            }
+            else if((type === 'close' || type === 'error')) {
+                const interceptor = (event) => {
+                    forceDdbWsReconnect();
+                };
+                
+                originalAddEventListener.call(this, type, interceptor, options);
+            }
         }
+        
 
         return originalAddEventListener.call(this, type, listener, options);
     };
