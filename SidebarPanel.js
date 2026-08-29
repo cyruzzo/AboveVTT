@@ -2901,17 +2901,6 @@ function get_aoe_style_token_opacity(style) {
   return customization?.tokenOptions?.aoeStyleTokenEffects?.[styleKey] === false ? 1 : undefined;
 }
 
-function get_aoe_style_token_animation(style) {
-  if (typeof style !== "string") return true;
-  const styleKey = normalize_aoe_style_key(style);
-  const animated = (!window.DM && window.AOE_STYLE?.TOKEN_ANIMATION)
-    ? window.AOE_STYLE.TOKEN_ANIMATION[styleKey]
-    : find_token_customization(ItemType.Folder, RootFolder.Aoe.id)?.tokenOptions?.aoeStyleTokenAnimation?.[styleKey];
-  if (typeof animated === "boolean") return animated;
-
-  return get_aoe_style_token_opacity(style) === undefined;
-}
-
 function get_aoe_style_token_border(style) {
   if (typeof style !== "string") return true;
   const styleKey = normalize_aoe_style_key(style);
