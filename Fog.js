@@ -8633,7 +8633,10 @@ function redraw_light(darknessMoved = false, limitActiveRays = 0) {
 			}
 			clipped_light(auraId, window.lightPolygon, playerTokenId, canvasWidth, canvasHeight, darknessBoundarys, selectedIds.length);
 		}
-
+		if (window.lightPolygon.length < 3 || window.movePolygon.length < 3) {
+			noisy_log("Vision polygon has less than 3 points. Token may just be really far outside the map and no ray ever touches a wall.");
+			continue;
+		}
 		lightInLosContext.globalCompositeOperation='lighten';
 		if (window.lightAuraClipPolygon[auraId]?.light !== undefined) {
 			clip_circle_with_polygon(lightInLosContext, window.lightAuraClipPolygon[auraId].middle.x, window.lightAuraClipPolygon[auraId].middle.y, window.lightAuraClipPolygon[auraId].light2.range, window.lightAuraClipPolygon[auraId].light2.color, window.lightPolygon, tokenObject.options);

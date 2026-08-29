@@ -25,7 +25,7 @@
             console.log("⛔  AVTT: no extension loading here.")
             return; //don't load anything
         }
-    } 
+    }
         
 
     //setup to work in both contexts
@@ -174,7 +174,7 @@
         
         injectStyles(pgType === "char" ? simpleAvttStyles : avttStyles, where);
         const scripts = pgType === "char" ?
-              avttCharacterScripts
+                isIframe ? ["DDBMb.js", ...avttCharacterScripts] : avttCharacterScripts               
               : pgType === "gamelog" ? [
                   "jquery.magnific-popup.min.js",
                   "purify.min.js",

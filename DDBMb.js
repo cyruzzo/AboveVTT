@@ -35,6 +35,28 @@
         return worker;
     };
 
+    //for listening to the game log websocket and intercepting messages for the DDB onmessage function
+    const originalAddEventListener = WebSocket.prototype.addEventListener;
+    WebSocket.prototype.addEventListener = function (type, listener, options) {
+        const isGameLog = this.url && this.url.toLowerCase().includes('game-log-api-live');
+        if (type === 'message' && isGameLog) {
+            const interceptor = (event) => {
+                if (event.data && event.data !== 'pong') {
+                    try {
+                        if (window.diceRoller && typeof window.diceRoller.ddbonmessage === 'function') {
+                            window.diceRoller.ddbonmessage(event);
+                        }
+                    } catch (err) {
+                        console.error('Error in WS interceptor:', err);
+                    }
+                }
+            };
+
+            originalAddEventListener.call(this, 'message', interceptor, options);
+        }
+
+        return originalAddEventListener.call(this, type, listener, options);
+    };
     function interceptRollEvent(e) {
         if(e.button == 2) return;
         const target = $(e.target);
@@ -50,30 +72,6 @@
     }
 
     window.addEventListener('pointerdown', interceptRollEvent, true);
-
-    //for listening to the game log websocket and intercepting messages for the DDB onmessage function
-    const originalAddEventListener = WebSocket.prototype.addEventListener;
-    WebSocket.prototype.addEventListener = function (type, listener, options) {
-        const isGameLog = this.url && this.url.toLowerCase().includes('game-log-api-live');
-        if (type === 'message' && isGameLog) {
-            const interceptor = (event) => {
-                if (event.data && event.data !== 'pong') {
-                    try {
-                        if (window.MB && typeof window.MB.ddbonmessage === 'function') {
-                        window.MB.ddbonmessage(event);
-                        }
-                    } catch (err) {
-                        console.error('Error in WS interceptor:', err);
-                    }
-                }
-            };
-
-            originalAddEventListener.call(this, 'message', interceptor, options);
-        }
-
-        return originalAddEventListener.call(this, type, listener, options);
-    };
-
     // this prevents peformance issues due to facebook scripts taking several hundred ms to execute every click event cloging up main thread
     window.fbq = function () {
      window.fbq.callMethod ? window.fbq.callMethod.apply(window.fbq, arguments) : window.fbq.queue.push(arguments);
