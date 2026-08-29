@@ -411,10 +411,7 @@ function apply_aoe_style_display(element, settings, tileSize = "300px") {
         node.style.setProperty("background-size", settings.tiled === false ? "cover" : tileSize, "important");
     }
 
-    if (settings.animated === false) {
-        node.style.setProperty("animation", "none", "important");
-        node.style.setProperty("opacity", settings.opacity ?? 0.5, "important");
-    }
+    node.style.setProperty("opacity", settings.opacity ?? 0.5, "important");
 }
 
 function is_aoe_video_image(url) {
@@ -447,7 +444,11 @@ function build_aoe_token_image(token, scale, rotation){
 
     if (token.options.aoeImageBorder !== false) {
         if (token.options.imgsrc.includes("cone")){
-            tokenImageContainer.append(`<div class='aoe-border aoe-border-cone'></div>`)
+            const border = $(`<div class='aoe-border aoe-border-cone'></div>`);
+            tokenImageContainer.append(border);
+            apply_aoe_style_display(border, {
+                opacity: token.options.aoeImageOpacity,
+            });
         }
         else {
             tokenImage.addClass("aoe-border-basic")
