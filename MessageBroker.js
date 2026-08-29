@@ -658,13 +658,15 @@ class MessageBroker {
 				window.MB.checkHideSceneFromPlayers();
 			} else if(msg.eventType == "custom/myVTT/aoeStyles"){
 				if(!window.DM){
-					window.AOE_STYLE_TOKENS = msg.data?.aoeStyleTokens || {};
-					window.AOE_STYLE_TOKEN_TILING = msg.data?.aoeStyleTokenTiling || {};
-					window.AOE_STYLE_TOKEN_OPACITY = msg.data?.aoeStyleTokenOpacity || {};
-					window.AOE_STYLE_TOKEN_ANIMATION = msg.data?.aoeStyleTokenAnimation || {};
-					window.AOE_STYLE_TOKEN_BORDER = msg.data?.aoeStyleTokenBorder || {};
-					window.AOE_STYLE_TOKEN_VIDEO = msg.data?.aoeStyleTokenVideo || {};
-					window.AOE_STYLE_ORDER = msg.data?.aoeStyleOrder || [];
+					window.AOE_STYLE = {};
+					window.AOE_STYLE.TOKENS = msg.data?.aoeStyleTokens || {};
+					window.AOE_STYLE.TOKEN_TILING = msg.data?.aoeStyleTokenTiling || {};
+					window.AOE_STYLE.TOKEN_OPACITY = msg.data?.aoeStyleTokenOpacity || {};
+					window.AOE_STYLE.TOKEN_ANIMATION = msg.data?.aoeStyleTokenAnimation || {};
+					window.AOE_STYLE.TOKEN_BORDER = msg.data?.aoeStyleTokenBorder || {};
+					window.AOE_STYLE.TOKEN_VIDEO = msg.data?.aoeStyleTokenVideo || {};
+					window.AOE_STYLE.ORDER = msg.data?.aoeStyleOrder || [];
+					window.AOE_STYLE.TOKEN_DARKNESS = msg.data?.aoeStyleTokenDarkness || {};
 					if(typeof refresh_aoe_style_menu === "function"){
 						refresh_aoe_style_menu();
 					}

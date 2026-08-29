@@ -396,16 +396,13 @@ function build_aoe_token_options(style, shape, countGridSquares, name = "", line
     options.aoeImage = get_aoe_style_token_image(style);
     options.aoeImageTiled = get_aoe_style_token_tiling(style);
     options.aoeImageOpacity = get_aoe_style_token_opacity(style);
-    options.aoeImageAnimated = get_aoe_style_token_animation(style);
     options.aoeImageBorder = get_aoe_style_token_border(style);
     options.aoeImageVideo = get_aoe_style_token_video(style);
+    options.darkness = get_aoe_style_token_darkness(style);
     return options
 }
 
-/**
- * Applies the DM configured AoE display settings to an AoE image element.
- * Tiling is only applied when the style uses a custom image, otherwise the built in style backgrounds would be overwritten.
- */
+
 function apply_aoe_style_display(element, settings, tileSize = "300px") {
     const node = element?.[0];
     if (!node) return;
@@ -413,7 +410,7 @@ function apply_aoe_style_display(element, settings, tileSize = "300px") {
         node.style.setProperty("background-repeat", settings.tiled === false ? "no-repeat" : "repeat", "important");
         node.style.setProperty("background-size", settings.tiled === false ? "cover" : tileSize, "important");
     }
-    // the opacity animation drives opacity itself, so a fixed value only applies once that animation is off
+
     if (settings.animated === false) {
         node.style.setProperty("animation", "none", "important");
         node.style.setProperty("opacity", settings.opacity ?? 0.5, "important");
@@ -446,7 +443,6 @@ function build_aoe_token_image(token, scale, rotation){
 
     apply_aoe_style_display(tokenImage, {
         opacity: token.options.aoeImageOpacity,
-        animated: token.options.aoeImageAnimated
     });
 
     if (token.options.aoeImageBorder !== false) {
