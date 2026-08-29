@@ -151,6 +151,7 @@
     }
     
     async function inject(pgType, where) {
+        const isIframe = where.defaultView && where.defaultView.self !== where.defaultView.top;
         console.log("⌛ AVTT Loading", pgType, (isIframe && window.parent) ? ("parent: " + pageType(window.parent.location)) : "");        
         if(pgType.startsWith("vtt-")) {
             const loadingOverlay = where.createElement('div');

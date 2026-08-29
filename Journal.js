@@ -3932,29 +3932,29 @@ class JournalManager{
             	let note = m.replace(/<\/?p>/g, '').replace(/\s?\[note\]\s?|\s?\[\/note\]\s?/g, '').replace('[/note]', '');   	
             	const noteId = note.replace(/\s/g, '-').split(';')[0];
             	note = (note.split(';')[1]) ? note.split(';')[1] : note;
-                return `<a class="tooltip-hover note-tooltip" data-id=${noteId}>${note}</a>`
+                return `\u200B<a class="tooltip-hover note-tooltip" data-id=${noteId}>${note}</a>\u200B`
             })
             input = input.replace(/\[spell\](.*?)\[\/spell\]/g, function(m){
             	let spell = m.replace(/<\/?p>/g, '').replace(/\s?\[spell\]\s?|\s?\[\/spell\]\s?/g, '').replace('[/spell]', '');   	
             	const spellUrl = spell.replace(/\s/g, '-').split(';')[0];
             	spell = (spell.split(';')[1]) ? spell.split(';')[1] : spell;
-                return `<a class="tooltip-hover spell-tooltip" href="https://www.dndbeyond.com/spells/${spellUrl}" aria-haspopup="true" target="_blank">${spell}</a>`
+                return `\u200B<a class="tooltip-hover spell-tooltip" href="https://www.dndbeyond.com/spells/${spellUrl}" aria-haspopup="true" target="_blank">${spell}</a>\u200B`
             })
              input = input.replace(/\[item\](.*?)\[\/item\]/g, function(m){
             	let item = m.replace(/<\/?p>/g, '').replace(/\s?\[item\]\s?|\s?\[\/item\]\s?/g, '').replace('[/item]', '');   	
             	const itemUrl = item.replace(/\s/g, '-').split(';')[0];;
             	item = (item.split(';')[1]) ? item.split(';')[1] : item;
-                return `<a class="tooltip-hover item-tooltip" href="https://www.dndbeyond.com/equipment/${itemUrl}" aria-haspopup="true" target="_blank">${item}</a>`
+                return `\u200B<a class="tooltip-hover item-tooltip" href="https://www.dndbeyond.com/equipment/${itemUrl}" aria-haspopup="true" target="_blank">${item}</a>\u200B`
             })
                input = input.replace(/\[wprop\](.*?)\[\/wprop\]/g, function(m){
             	let wprop = m.replace(/<\/?p>/g, '').replace(/\s?\[wprop\]\s?|\s?\[\/wprop\]\s?/g, '').replace('[/wprop]', '');   	
             	const wpropUrl = wprop.replace(/\s/g, '-').split(';')[0];;
             	wprop = (wprop.split(';')[1]) ? wprop.split(';')[1] : wprop;
-                return `<a class="tooltip-hover wprop-tooltip" href="https://www.dndbeyond.com/weapon-properties/${wpropUrl}" aria-haspopup="true" target="_blank">${wprop}</a>`
+                return `\u200B<a class="tooltip-hover wprop-tooltip" href="https://www.dndbeyond.com/weapon-properties/${wpropUrl}" aria-haspopup="true" target="_blank">${wprop}</a>\u200B`
             })
             input = input.replace(/\[roll\](.*?)\[\/roll\]/g, function(m){
             	let roll = m.replace(/<\/?p>/g, '').replace(/\s?\[roll\]\s?|\s?\[\/roll\]\s?/g, '').replace('[/roll]', '');   	
-                return `<span class="abovevtt-slash-command-journal">${roll}</span>`
+                return `\u200B<span class="abovevtt-slash-command-journal">${roll}</span>\u200B`
             })
 
             
@@ -3963,21 +3963,21 @@ class JournalManager{
             	let spell = m.replace(/<\/?p>/g, '').replace(/\s?\[monster\]\s?|\s?\[\/monster\]\s?/g, '').replace('[/monster]', '');   	
             	const spellUrl = spell.replace(/\s/g, '-').split(';')[0];
             	spell = (spell.split(';')[1]) ? spell.split(';')[1] : spell;
-                return `<a class="tooltip-hover monster-tooltip" href="https://www.dndbeyond.com/monsters/${spellUrl}" aria-haspopup="true" target="_blank">${spell}</a>`
+                return `\u200B<a class="tooltip-hover monster-tooltip" href="https://www.dndbeyond.com/monsters/${spellUrl}" aria-haspopup="true" target="_blank">${spell}</a>\u200B`
             })
 
             input = input.replace(/\[magicItem\](.*?)\[\/magicItem\]/g, function(m){
             	let spell = m.replace(/<\/?p>/g, '').replace(/\s?\[magicItem\]\s?|\s?\[\/magicItem\]\s?/g, '').replace('[/magicItem]', '');   	
             	const spellUrl = spell.replace(/\s/g, '-').split(';')[0];
             	spell = (spell.split(';')[1]) ? spell.split(';')[1] : spell;
-                return `<a class="tooltip-hover magic-item-tooltip" href="https://www.dndbeyond.com/magic-items/${spellUrl}" aria-haspopup="true" target="_blank">${spell}</a>`
+                return `\u200B<a class="tooltip-hover magic-item-tooltip" href="https://www.dndbeyond.com/magic-items/${spellUrl}" aria-haspopup="true" target="_blank">${spell}</a>\u200B`
             })
 
             input = input.replace(/\[source\](.*?)\[\/source\]/g, function(m){
             	let source = m.replace(/<\/?p>/g, '').replace(/\s?\[source\]\s?|\s?\[\/source\]\s?/g, '').replace('[/source]', '');   	
             	const sourceUrl = source.replace(/\s/g, '-').split(';')[0];
             	source = (source.split(';')[1]) ? source.split(';')[1] : source;
-                return `<a class="tooltip-hover source-tooltip" href="${sourceUrl}" aria-haspopup="true" target="_blank">${source}</a>`
+                return `\u200B<a class="tooltip-hover source-tooltip" href="${sourceUrl}" aria-haspopup="true" target="_blank">${source}</a>\u200B`
             })
 
             input = input.replace(/\[track\](.*?[a-zA-Z\s]+.*?[\d]+.*?)\[\/track\]/g, function(m, m1){
