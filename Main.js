@@ -852,12 +852,12 @@ function open_selected_token_stat() {
  * @param {Number} monsterId given monster ID
  * @param {UUID} tokenId selected token ID
  */
-async function load_monster_stat(monsterId, tokenId, customStatBlock=undefined, container) {
+async function load_monster_stat(monsterId, tokenId, customStatBlock=undefined, container, bringToFront=true) {
 	const token = window.TOKEN_OBJECTS[tokenId] || window.all_token_objects[tokenId];
 	if (!token) {
 		return null;
 	}
-	container = container ?? build_draggable_monster_window(tokenId)
+	container = container ?? build_draggable_monster_window(tokenId, bringToFront)
 	if(customStatBlock){
 		await display_stat_block_in_container(customStatBlock, container, tokenId, customStatBlock);
 		$(".sidebar-panel-loading-indicator").remove();
@@ -1011,7 +1011,7 @@ function load_monster_stat_iframe(monsterId, tokenId) {
 	return container;
 }
 
-function build_draggable_monster_window(tokenId) {
+function build_draggable_monster_window(tokenId, bringToFront=true) {
 
 	$("#resizeDragMon").append(build_combat_tracker_loading_indicator())
 	let container = $("<div id='resizeDragMon'/>");
@@ -1092,7 +1092,7 @@ function build_draggable_monster_window(tokenId) {
 		minWidth: 200,
 		minHeight: 200
 	});
-	frame_z_index_when_click(container, true);
+	frame_z_index_when_click(container, true, bringToFront);
 	container.draggable({
 		addClasses: false,
 		scroll: false,
@@ -1505,10 +1505,11 @@ function minimize_player_window_double_click(titleBar) {
  * Move frames behind each other in the order they were clicked
  * @param {DOMObject} moveableFrame
  */
-function frame_z_index_when_click(moveableFrame, install=false){
+function frame_z_index_when_click(moveableFrame, install=false, bringToFront=true){
 	if(install) {
 		moveableFrame.on('pointerdown', (e) => frame_z_index_when_click($(e.currentTarget)));;
 	}
+	if(!bringToFront) return;
 	const moveableWindows = $(".moveableWindow, [role='dialog']");
 	const someFrameNotSet = moveableWindows.not("[style*='z-index']").length > 0;
 	if (someFrameNotSet || moveableFrame.css('z-index') != 100000 || !moveableFrame.attr('style')?.includes('z-index')) {
