@@ -3204,10 +3204,10 @@ function edit_aoe_style_tokens(restoreState = {}) {
       }
       const parsedImage = await parse_img(imageValue);
       saveStyleImage(styleKey, parsedImage);
-      saveStyleTiling(styleKey, toggles.tiling.prop("checked"));
-      saveStyleBorder(styleKey, toggles.border.prop("checked"));
-      saveStyleVideo(styleKey, toggles.video.prop("checked"));
-      saveStyleOpacity(styleKey, clamp_aoe_style_opacity(toggles.opacity.val()));
+      basicSettingSave(styleKey, 'aoeStyleTokenTiling', toggles.tiling.prop("checked"));
+      basicSettingSave(styleKey, 'aoeStyleTokenBorder', toggles.border.prop("checked"));
+      basicSettingSave(styleKey, 'aoeStyleTokenVideo', toggles.video.prop("checked"));
+      basicSettingSave(styleKey, 'aoeStyleTokenOpacity', clamp_aoe_style_opacity(toggles.opacity.val()));
       if (typeof refresh_aoe_style_menu === "function") {
         refresh_aoe_style_menu();
       }
