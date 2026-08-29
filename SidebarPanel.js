@@ -74,6 +74,7 @@ function observe_hover_text(sidebarPanelContent) {
     if (typeof displayText === "string" && displayText.length > 0) {
       if (hoverEvent.type === "mouseenter") {
         build_and_display_sidebar_flyout(hoverEvent.clientY, function (flyout) {
+          flyout.css('pointer-events', 'none');
           flyout.append(`<div class="sidebar-hover-text-flyout">${displayText}</div>`);
           if(sidebarPanelContent.hasClass('context-menu-flyout'))
             position_flyout_right_of(sidebarPanelContent, flyout);
