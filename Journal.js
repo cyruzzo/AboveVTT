@@ -1798,7 +1798,7 @@ class JournalManager{
   		closestNote.find('[class=""]').removeAttr('class');
 		closestNote.find('[data-avtt-suggestion-type]').removeAttr('data-avtt-suggestion-type');
 		let sanitizedHTML = basic_sanitize_html(closestNote[0].innerHTML).replaceAll(/\[(\/)?spell\]/gi, `[$1spell]`).replaceAll(/\[(\/)?magicitem\]/gi, `[$1magicItem]`).replaceAll(/\[(\/)?item\]/gi, `[$1item]`);
-		const changes = forceSave || $(sanitizedHTML).text().replace(/[\s\n\r]/gi, '') != this.notes[id].plain.replace(/[\s\n\r]/gi, '');
+		const changes = forceSave || $(sanitizedHTML).text().replace(/[\s\n\r]/gi, '') != $(this.notes[id].text).text().replace(/[\s\n\r]/gi, '');
 		if(changes){
 			if(tokenId){		
 				if(window.TOKEN_OBJECTS[tokenId]){
@@ -1811,9 +1811,9 @@ class JournalManager{
 				}
 			}
 			this.notes[id].text = sanitizedHTML;
-			this.notes[id].plain = $(sanitizedHTML).text();
+			this.notes[id].plain = '';
 			window.JOURNAL.setPersistTimeout();
-			debounceSendNote(id, this.notes[id], tokenId);
+			debounceSendNote(id, this.notes[id], tokenId, note_container);
 			if(rescanStatBlock){
 				debounceRescanStatBlock(note_container, id, tokenId);
 			}
@@ -2530,7 +2530,7 @@ class JournalManager{
 					});
 				},
 				update: function() {
-					persistCurrentNoteText({forceSave: true, rescanStatBlock: false});
+					persistCurrentNoteText({forceSave: false, rescanStatBlock: false});
 				}
 			});
 		};
@@ -2583,7 +2583,7 @@ class JournalManager{
 			setTimeout(()=>{
 				if(container.find('.dnd-sheet [contenteditable="true"]:is(:focus, :focus-within)').length>0) return;
 				if($(e.target).is('.injected-input')) return;  
-				persistCurrentNoteText({forceSave: true, rescanStatBlock: true});
+				persistCurrentNoteText({forceSave: false, rescanStatBlock: true});
 			}, 10);
 		});
 		container.off('change.checkbox').on('change.checkbox', '.dnd-sheet input', (e)=>{
@@ -2728,7 +2728,7 @@ class JournalManager{
 			const newRow = targetContainer.find('>tr:last').clone();
 			newRow.find('td:not(.table-row-drag-handle), th').html('');
 			targetContainer.append(newRow);
-			persistCurrentNoteText({forceSave: true, rescanStatBlock: false});
+			persistCurrentNoteText({forceSave: false, rescanStatBlock: false});
 		});
 		setLockState();
 

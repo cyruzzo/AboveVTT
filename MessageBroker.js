@@ -241,9 +241,34 @@ const debounceHandleInjected = mydebounce(() => {
 		}
 	}
 }, 500)
-const debounceSendNote = mydebounce(function(id, note, tokenId){
-	window.MB.sendMessage('custom/myVTT/note',  {note, id, tokenId, from:window.PLAYER_ID})
-}, 2000);
+
+const debounceSendNote = function(id, note, tokenId, container){
+		
+	if(window.noteDebouncers == undefined){
+		window.noteDebouncers = {};
+	}
+	if(window.noteDebouncers[id] == undefined){
+		window.noteDebouncers[id] = {};
+	}
+
+	if(window.noteDebouncers[id][tokenId] == undefined){
+		window.noteDebouncers[id][tokenId] = {};
+		window.noteDebouncers[id][tokenId].debounce = mydebounce(function(id, note, tokenId, container){
+			if(container != undefined && container.length>0 && container.find('.dnd-sheet [contenteditable="true"]:is(:focus, :focus-within)').length>0){
+				return;
+			}
+			window.MB.sendMessage('custom/myVTT/note',  {note, id, tokenId, from:window.PLAYER_ID})
+			delete window.noteDebouncers[id][tokenId];
+			if(Object.keys(window.noteDebouncers[id]).length == 0){
+				delete window.noteDebouncers[id];
+			}
+		}, 5000);
+	}
+	window.noteDebouncers[id][tokenId].debounce(id, note, tokenId, container);
+}
+
+
+
 
 const delayedClear = mydebounce(() => clearFrame());
 
