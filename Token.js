@@ -2698,7 +2698,7 @@ class Token {
 						});
 					}
 
-					if(this.options.disableborder){
+					if(this.options.disableborder && !this.options.aoeImageBorder){
 						oldImage.css("border-width","0");
 					}
 					else{
