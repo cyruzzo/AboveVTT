@@ -1053,7 +1053,7 @@ class Token {
 	 * updates the color of the health aura if enabled
 	 * @param token jquery selected div with the class "token"
 	 */
-	update_health_aura(token){
+	update_health_aura(token, forceBossUpdate=false){
 		// set token data to the player if this token is a player token, otherwise just use this tokens data
 		if($(`.token[data-id='${this.options.id}']>.hpvisualbar`).length<1){
 			let hpvisualbar = $(`<div class='hpvisualbar'></div>`);
@@ -1105,10 +1105,8 @@ class Token {
 					<div class='boss-hp-bar' data-id='${this.options.id}'>
 						<div class="hp-bar-track">
 							<div class="hp-base">
-								<!-- First Temp HP layer (fills remaining space up to 100%) -->
 								<div class="hp-temp-layer1"></div>
 							</div>
-							<!-- Second Temp HP layer (overflow when Total > 100%) -->
 							<div class="hp-temp-layer2"></div>
 						</div>
 						<span class="token-name"></span>
@@ -1159,7 +1157,7 @@ class Token {
 				const distTemp2 = Math.abs(targetTemp2 - startTemp2);
 				const totalDist = distHp + distTemp1 + distTemp2;
 
-				if (totalDist === 0) return;
+				if (!forceBossUpdate && totalDist == 0) return;
 
 				const MAX_BUDGET = 5.5; 
 				const MIN_BUDGET = 3.0; 
@@ -3109,7 +3107,7 @@ class Token {
 
 				tok.addClass("VTTToken");
 
-				this.update_health_aura(tok);
+				this.update_health_aura(tok, true);
 				let currentSceneScale = parseFloat(window.CURRENT_SCENE_DATA.scale_factor) ? parseFloat(window.CURRENT_SCENE_DATA.scale_factor) : 1
 				
 				if(this.options.scaleCreated){
