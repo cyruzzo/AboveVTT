@@ -3792,7 +3792,7 @@ async function setup_tooltip_flyout(flyout, tooltipHtmlString, classes = [], eve
         width: '400px'
       })
   }else{
-    const didResize = position_flyout_on_best_side_of(container, flyout);
+    const didResize = position_flyout_on_best_side_of(container, flyout, false, event);
     if (didResize) {
         // only mess with the html that DDB gave us if we absolutely have to
         tooltipHtml.css({
@@ -3819,7 +3819,7 @@ async function setup_tooltip_flyout(flyout, tooltipHtmlString, classes = [], eve
   currentTarget.toggleClass('loading-tooltip', false);
 }
 
-function position_flyout_on_best_side_of(container, flyout, resizeFlyoutToFit = true) {
+function position_flyout_on_best_side_of(container, flyout, resizeFlyoutToFit = true, event) {
   let didResize = false;
   if (!container || container.length === 0 || !flyout || flyout.length === 0) {
     console.warn("position_flyout_on_best_side_of received an empty object", container, flyout);
@@ -3829,34 +3829,42 @@ function position_flyout_on_best_side_of(container, flyout, resizeFlyoutToFit = 
   const distanceFromRight = window.innerWidth - distanceFromLeft - container.width();
   if (distanceFromLeft > distanceFromRight) {
     if (resizeFlyoutToFit && (flyout.width() > distanceFromLeft)) {
-      flyout.css("width", distanceFromLeft);
+      flyout.css({
+        "width": distanceFromLeft,
+        "min-width": "300px"
+      });
       didResize = true;
     }
-    position_flyout_left_of(container, flyout);
+    position_flyout_left_of(container, flyout, event);
   } else {
     if (resizeFlyoutToFit && (flyout.width() > distanceFromRight)) {
-      flyout.css("width", distanceFromRight);
+      flyout.css({
+        "width": distanceFromRight,
+        "min-width": "300px"
+      });
       didResize = true;
     }
-    position_flyout_right_of(container, flyout);
+    position_flyout_right_of(container, flyout, event);
   }
   return didResize;
 }
 
-function position_flyout_left_of(container, flyout) {
+function position_flyout_left_of(container, flyout, event) {
   if (!container || container.length === 0 || !flyout || flyout.length === 0) {
     console.warn("position_flyout_left_of received an empty object", container, flyout);
     return;
   }
-  flyout.css("left", container[0].getBoundingClientRect().left - flyout.width());
+  const minLeft = event?.clientX != undefined ? Math.max(event.clientX - flyout.width(), 5) : 5;
+  flyout.css("left",  clamp(container[0].getBoundingClientRect().left - flyout.width(), minLeft, window.innerWidth - flyout.width()-5));
 }
 
-function position_flyout_right_of(container, flyout) {
+function position_flyout_right_of(container, flyout, event) {
   if (!container || container.length === 0 || !flyout || flyout.length === 0) {
     console.warn("position_flyout_right_of received an empty object", container, flyout);
     return;
   }
-  flyout.css("left", container[0].getBoundingClientRect().left + container.width());
+  const maxLeft = event?.clientX != undefined ? Math.min(event.clientX + 50, window.innerWidth - flyout.width() - 5) : window.innerWidth - flyout.width() - 5;
+  flyout.css("left", clamp(container[0].getBoundingClientRect().left + container.width(), 5, maxLeft));
 }
 
 function remove_sidebar_flyout(removeHoverNote) {
