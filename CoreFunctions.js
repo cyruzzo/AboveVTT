@@ -1000,7 +1000,7 @@ function apply_avtt_roll_button_markup(html){
   // to account for all the nuances of DNDB dice notation.
   // numbers can be swapped for any number in the following comment
   // matches "1d10", " 1d10 ", "1d10+1", " 1d10+1 ", "1d10 + 1" " 1d10 + 1 "
-  const strongRoll = /\s*(<strong>)(([+-]?\s?\d+d\d+(min\d+|ro[><=]?|kh\d+|kl\d+)?\s?)+\s?([+-]\s?[0-9]+)?)(<\/strong>)/gi
+  const strongRoll = /(\s*)(<strong>)(([+-]?\s?\d+d\d+(min\d+|ro[><=]?|kh\d+|kl\d+)?\s?)+\s?([+-]\s?[0-9]+)?)(<\/strong>)/gi
   const damageRollRegexBracket = /\s*\((([+-]?\s?(\d+d\d+(min\d+|ro([<>]=?|=)\d+|kh\d+|kl\d+)*\s?))+\s?([+-]\s?[0-9]+)?)\)/gi
   const damageRollRegex = /\s*([:\s>]|^)(([+-]?\s?(\d+d\d+(min\d+|ro([<>]=?|=)\d+|kh\d+|kl\d+)*\s?))+\s?([+-]\s?[0-9]+)?)([\.\):\s<,]|$)/gi
   const hitRollRegexBracket = /\s*(?<![0-9]+d[0-9]+)(\()([+-]\s?[0-9]+)(\))/gi
@@ -1012,7 +1012,7 @@ function apply_avtt_roll_button_markup(html){
   const updated = html
     .replaceAll(/(\d+d\d+(min\d+|k[hl]\d+)*ro)&lt;/gi, '$1<')
     .replaceAll(/(\d+d\d+(min\d+|k[hl]\d+)*ro)&gt;/gi, '$1>')
-    .replaceAll(strongRoll, `$2`)
+    .replaceAll(strongRoll, `$1$3`)
     .replaceAll(dashToMinus, `$1-$2`)
     .replaceAll(damageRollRegexBracket, ` <button data-exp='$1' data-mod='$6' data-rolltype='damage' data-actiontype='${actionType}' class='avtt-roll-button' title='${actionType}'>($1)</button>`)
     .replaceAll(damageRollRegex, ` $1<button data-exp='$2' data-mod='$7' data-rolltype='damage' data-actiontype='${actionType}' class='avtt-roll-button' title='${actionType}'>$2</button>$8`)
