@@ -5377,7 +5377,7 @@ class JournalManager{
 					gap: 2px;
 					box-sizing: border-box;
 					width: fit-content;
-					max-width:230px;
+					max-width:240px;
 				}
 				.abilities-table-container, .skills-box {
 					border: 1px solid var(--pc-template-border-color, #333);

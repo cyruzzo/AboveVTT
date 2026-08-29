@@ -13408,7 +13408,7 @@ p.monster-header+p {
         gap: 2px;
         box-sizing: border-box;
         width: fit-content;
-        max-width:230px;
+        max-width:240px;
     }
 
     .abilities-table-container .prof-checkbox{
