@@ -238,6 +238,7 @@ class DDBApi {
   }
 
   static async fetchMoreInfo(url){
+    url = url.replace(/https:\/\/dndbeyond.com/gi, "https:\/\/www.dndbeyond.com")
     const response = await DDBApi.fetchHtmlWithToken(url);
     return response;
   }

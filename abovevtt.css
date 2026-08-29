@@ -5722,7 +5722,7 @@ div#initialPosition_row input[type=number] {
 }
 .sidebar-flyout {
     position: fixed;
-    z-index: 100000;
+    z-index: 100000000;
     box-shadow: 1px 1px 10px black, -1px -1px 10px black;
     border-radius: 5px;
     overflow: hidden;
@@ -13408,7 +13408,7 @@ p.monster-header+p {
         gap: 2px;
         box-sizing: border-box;
         width: fit-content;
-        max-width:230px;
+        max-width:240px;
     }
 
     .abilities-table-container .prof-checkbox{
