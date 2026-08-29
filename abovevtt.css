@@ -1980,6 +1980,9 @@ div#scene_properties form > div{
 .tooltip::after{
     pointer-events:none;
 }
+.tooltip{
+    display: initial !important;
+}
 .drag-cancelled {
     display: none;
 }
@@ -5726,6 +5729,7 @@ div#initialPosition_row input[type=number] {
     box-shadow: 1px 1px 10px black, -1px -1px 10px black;
     border-radius: 5px;
     overflow: hidden;
+    max-width: 800px;
 }
 .sidebar-flyout .flyout-text-input {
     background: none rgb(255, 255, 255);
