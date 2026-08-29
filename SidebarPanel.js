@@ -2825,8 +2825,8 @@ function edit_encounter(clickEvent) {
  * @returns {object} a map of styleName -> imageUrl
  */
 function get_aoe_style_tokens() {
-  if (!window.DM && window.AOE_STYLE_TOKENS) {
-    return window.AOE_STYLE_TOKENS;
+  if (!window.DM && window.AOE_STYLE?.TOKENS) {
+    return window.AOE_STYLE.TOKENS;
   }
   const customization = find_token_customization(ItemType.Folder, RootFolder.Aoe.id);
   const assigned = customization?.tokenOptions?.aoeStyleTokens;
@@ -2842,7 +2842,8 @@ function get_aoe_style_sync_data() {
     aoeStyleTokenAnimation: customization?.tokenOptions?.aoeStyleTokenAnimation || {},
     aoeStyleTokenBorder: customization?.tokenOptions?.aoeStyleTokenBorder || {},
     aoeStyleTokenVideo: customization?.tokenOptions?.aoeStyleTokenVideo || {},
-    aoeStyleOrder: customization?.tokenOptions?.aoeStyleOrder || []
+    aoeStyleOrder: customization?.tokenOptions?.aoeStyleOrder || [],
+    aoeStyleTokenDarkness: customization?.tokenOptions?.aoeStyleTokenDarkness || {},
   };
 }
 
@@ -2879,8 +2880,8 @@ function get_aoe_style_token_image(style) {
  */
 function get_aoe_style_token_tiling(style) {
   if (typeof style !== "string") return true;
-  if (!window.DM && window.AOE_STYLE_TOKEN_TILING) {
-    return window.AOE_STYLE_TOKEN_TILING[normalize_aoe_style_key(style)] !== false;
+  if (!window.DM && window.AOE_STYLE?.TOKEN_TILING) {
+    return window.AOE_STYLE.TOKEN_TILING[normalize_aoe_style_key(style)] !== false;
   }
   const customization = find_token_customization(ItemType.Folder, RootFolder.Aoe.id);
   const tiling = customization?.tokenOptions?.aoeStyleTokenTiling?.[normalize_aoe_style_key(style)];
@@ -2890,8 +2891,8 @@ function get_aoe_style_token_tiling(style) {
 function get_aoe_style_token_opacity(style) {
   if (typeof style !== "string") return undefined;
   const styleKey = normalize_aoe_style_key(style);
-  if (!window.DM && window.AOE_STYLE_TOKEN_OPACITY) {
-    const opacity = window.AOE_STYLE_TOKEN_OPACITY[styleKey];
+  if (!window.DM && window.AOE_STYLE?.TOKEN_OPACITY) {
+    const opacity = window.AOE_STYLE.TOKEN_OPACITY[styleKey];
     return typeof opacity === "number" ? opacity : undefined;
   }
   const customization = find_token_customization(ItemType.Folder, RootFolder.Aoe.id);
@@ -2903,8 +2904,8 @@ function get_aoe_style_token_opacity(style) {
 function get_aoe_style_token_animation(style) {
   if (typeof style !== "string") return true;
   const styleKey = normalize_aoe_style_key(style);
-  const animated = (!window.DM && window.AOE_STYLE_TOKEN_ANIMATION)
-    ? window.AOE_STYLE_TOKEN_ANIMATION[styleKey]
+  const animated = (!window.DM && window.AOE_STYLE?.TOKEN_ANIMATION)
+    ? window.AOE_STYLE.TOKEN_ANIMATION[styleKey]
     : find_token_customization(ItemType.Folder, RootFolder.Aoe.id)?.tokenOptions?.aoeStyleTokenAnimation?.[styleKey];
   if (typeof animated === "boolean") return animated;
 
@@ -2914,25 +2915,34 @@ function get_aoe_style_token_animation(style) {
 function get_aoe_style_token_border(style) {
   if (typeof style !== "string") return true;
   const styleKey = normalize_aoe_style_key(style);
-  if (!window.DM && window.AOE_STYLE_TOKEN_BORDER) {
-    return window.AOE_STYLE_TOKEN_BORDER[styleKey] !== false;
+  if (!window.DM && window.AOE_STYLE?.TOKEN_BORDER) {
+    return window.AOE_STYLE.TOKEN_BORDER[styleKey] !== false;
   }
   return find_token_customization(ItemType.Folder, RootFolder.Aoe.id)?.tokenOptions?.aoeStyleTokenBorder?.[styleKey] !== false;
 }
 
-/** True when the assigned image should render as video, either by file extension or because the DM flagged the link. */
+
 function get_aoe_style_token_video(style) {
   if (typeof style !== "string") return false;
   const styleKey = normalize_aoe_style_key(style);
-  const flagged = (!window.DM && window.AOE_STYLE_TOKEN_VIDEO)
-    ? window.AOE_STYLE_TOKEN_VIDEO[styleKey]
+  const flagged = (!window.DM && window.AOE_STYLE?.TOKEN_VIDEO)
+    ? window.AOE_STYLE.TOKEN_VIDEO[styleKey]
     : find_token_customization(ItemType.Folder, RootFolder.Aoe.id)?.tokenOptions?.aoeStyleTokenVideo?.[styleKey];
   return flagged === true || is_aoe_video_image(get_aoe_style_token_image(style));
 }
 
+function get_aoe_style_token_darkness(style) {
+  if (typeof style !== "string") return true;
+  const styleKey = normalize_aoe_style_key(style);
+  if (!window.DM && window.AOE_STYLE?.TOKEN_DARKNESS) {
+    return window.AOE_STYLE.TOKEN_DARKNESS[styleKey] ?? styleKey == 'darkness';
+  }
+  const customization = find_token_customization(ItemType.Folder, RootFolder.Aoe.id);
+  return customization?.tokenOptions?.aoeStyleTokenDarkness?.[styleKey] ?? styleKey == 'darkness';
+}
 function get_aoe_style_order() {
-  if (!window.DM && Array.isArray(window.AOE_STYLE_ORDER)) {
-    return window.AOE_STYLE_ORDER;
+  if (!window.DM && Array.isArray(window.AOE_STYLE?.ORDER)) {
+    return window.AOE_STYLE.ORDER;
   }
   const order = find_token_customization(ItemType.Folder, RootFolder.Aoe.id)?.tokenOptions?.aoeStyleOrder;
   return Array.isArray(order) ? order : [];
@@ -2962,14 +2972,14 @@ function clamp_aoe_style_opacity(value) {
  * @returns {object} the wrapper element and each input so callers can read/persist them
  */
 function build_aoe_style_toggles(settings) {
-  const { tiled, animated, border, opacity, video, videoLocked = false } = settings;
+  const { tiled, border, opacity, video, videoLocked = false, darkness } = settings;
   const wrapper = $(`<div class="aoe-style-token-toggles"></div>`);
   const tilingLabel = $(`<label><input type="checkbox" ${tiled ? "checked" : ""} />Tile</label>`);
-  const animationLabel = $(`<label><input type="checkbox" ${animated ? "checked" : ""} />Opacity animation</label>`);
   const borderLabel = $(`<label><input type="checkbox" ${border ? "checked" : ""} />Border</label>`);
   const videoLabel = $(`<label title="Enable for video links that have no file extension"><input type="checkbox" ${video ? "checked" : ""} />Video</label>`);
   const opacityLabel = $(`<label>Opacity<input class="aoe-style-token-opacity" type="number" min="0.1" max="1" step="0.05" value="${opacity ?? 0.5}" title="Opacity from 0.1 to 1" /></label>`);
-  wrapper.append(tilingLabel, animationLabel, borderLabel, videoLabel, opacityLabel);
+  const darknessLabel = $(`<label><input type="checkbox" ${darkness ? "checked" : ""} />Darkness</label>`);
+  wrapper.append(tilingLabel, borderLabel, videoLabel, opacityLabel, darknessLabel);
   wrapper.on("mousedown click", function(mouseEvent) {
     mouseEvent.stopPropagation();
   });
@@ -2977,24 +2987,21 @@ function build_aoe_style_toggles(settings) {
   const controls = {
     wrapper,
     tiling: tilingLabel.find("input"),
-    animation: animationLabel.find("input"),
     border: borderLabel.find("input"),
     video: videoLabel.find("input"),
-    opacity: opacityLabel.find("input")
+    opacity: opacityLabel.find("input"),
+    darkness: darknessLabel.find("input")
   };
   if (videoLocked) {
     controls.video.prop({ checked: true, disabled: true });
     videoLabel.addClass("disabled");
   }
   const syncDependentInputs = function() {
-    const animating = controls.animation.prop("checked");
-    controls.opacity.prop("disabled", animating);
-    opacityLabel.toggleClass("disabled", animating);
     const isVideo = controls.video.prop("checked");
     controls.tiling.prop("disabled", isVideo);
     tilingLabel.toggleClass("disabled", isVideo);
   };
-  controls.animation.on("change", syncDependentInputs);
+
   controls.video.on("change", syncDependentInputs);
   syncDependentInputs();
   return controls;
@@ -3027,6 +3034,9 @@ function edit_aoe_style_tokens(restoreState = {}) {
   if (typeof customization.tokenOptions.aoeStyleTokenVideo !== "object" || customization.tokenOptions.aoeStyleTokenVideo === null) {
     customization.tokenOptions.aoeStyleTokenVideo = {};
   }
+  if (typeof customization.tokenOptions.aoeStyleTokenDarkness !== "object" || customization.tokenOptions.aoeStyleTokenDarkness === null) {
+    customization.tokenOptions.aoeStyleTokenDarkness = {};
+  }
 
   const container = find_or_create_generic_draggable_window(`aoeStyleTokenWindow`, "Adjust AoE Styles", false, false, undefined, width, height, top, left, false, 'input, button, select, option, textarea, .aoe-style-token-listing', false, true);
 
@@ -3046,35 +3056,12 @@ function edit_aoe_style_tokens(restoreState = {}) {
     persist_token_customization(customization);
     send_aoe_style_tokens_to_players();
   };
-
-  const saveStyleTiling = function(style, tiled) {
-    customization.tokenOptions.aoeStyleTokenTiling[normalize_aoe_style_key(style)] = tiled;
-    customization.setTokenOption("aoeStyleTokenTiling", customization.tokenOptions.aoeStyleTokenTiling);
+  const basicSettingSave = function(style, settingName, value) {
+    customization.tokenOptions[settingName][normalize_aoe_style_key(style)] = value;
+    customization.setTokenOption(settingName, customization.tokenOptions[settingName]);
     persist_token_customization(customization);
     send_aoe_style_tokens_to_players();
-  };
-
-  const saveStyleOpacity = function(style, opacity) {
-    customization.tokenOptions.aoeStyleTokenOpacity[normalize_aoe_style_key(style)] = opacity;
-    customization.setTokenOption("aoeStyleTokenOpacity", customization.tokenOptions.aoeStyleTokenOpacity);
-    persist_token_customization(customization);
-    send_aoe_style_tokens_to_players();
-  };
-
-
-  const saveStyleBorder = function(style, border) {
-    customization.tokenOptions.aoeStyleTokenBorder[normalize_aoe_style_key(style)] = border;
-    customization.setTokenOption("aoeStyleTokenBorder", customization.tokenOptions.aoeStyleTokenBorder);
-    persist_token_customization(customization);
-    send_aoe_style_tokens_to_players();
-  };
-
-  const saveStyleVideo = function(style, video) {
-    customization.tokenOptions.aoeStyleTokenVideo[normalize_aoe_style_key(style)] = video;
-    customization.setTokenOption("aoeStyleTokenVideo", customization.tokenOptions.aoeStyleTokenVideo);
-    persist_token_customization(customization);
-    send_aoe_style_tokens_to_players();
-  };
+  }
 
   const saveStyleOrder = function(order) {
     customization.setTokenOption("aoeStyleOrder", order);
@@ -3090,8 +3077,8 @@ function edit_aoe_style_tokens(restoreState = {}) {
     const currentImage = customization.tokenOptions.aoeStyleTokens[styleKey] || "";
     const currentTiling = customization.tokenOptions.aoeStyleTokenTiling[styleKey] !== false;
     const currentOpacity = get_aoe_style_token_opacity(style);
-    const currentAnimated = get_aoe_style_token_animation(style);
     const currentBorder = get_aoe_style_token_border(style);
+    const currentDarkness = get_aoe_style_token_darkness(style);
 
     const row = $(`<div class="sidebar-list-item-row aoe-style-token-row"></div>`);
     row.attr("data-style-key", styleKey);
@@ -3105,10 +3092,10 @@ function edit_aoe_style_tokens(restoreState = {}) {
         : $(`<div data-img="true" aria-label="${style} token image" class="aoe-token-tileable aoe-shape-circle div-token-image"></div>`);
     if (currentImage.length > 0) {
       updateTokenSrc(currentImage, preview, isVideo).then(function() {
-        apply_aoe_style_display(preview, { tiled: isVideo ? undefined : currentTiling, opacity: currentOpacity, animated: currentAnimated }, "100px");
+        apply_aoe_style_display(preview, { tiled: isVideo ? undefined : currentTiling, opacity: currentOpacity, darkness: currentDarkness }, "100px");
       });
     } else {
-      apply_aoe_style_display(preview, { opacity: currentOpacity, animated: currentAnimated });
+      apply_aoe_style_display(preview, { opacity: currentOpacity, darkness: currentDarkness });
     }
     imgHolder.append(preview);
 
@@ -3120,7 +3107,8 @@ function edit_aoe_style_tokens(restoreState = {}) {
       border: currentBorder,
       opacity: currentOpacity,
       video: isVideo,
-      videoLocked: is_aoe_video_image(currentImage)
+      videoLocked: is_aoe_video_image(currentImage),
+      darkness: currentDarkness
     });
     details.append(input, toggles.wrapper);
 
@@ -3152,20 +3140,23 @@ function edit_aoe_style_tokens(restoreState = {}) {
       mouseEvent.stopPropagation();
     });
     toggles.tiling.on("change", function() {
-      saveStyleTiling(style, toggles.tiling.prop("checked"));
+      basicSettingSave(style, "aoeStyleTokenTiling", toggles.tiling.prop("checked"));
     });
 
     toggles.border.on("change", function() {
-      saveStyleBorder(style, toggles.border.prop("checked"));
+      basicSettingSave(style, "aoeStyleTokenBorder", toggles.border.prop("checked"));
     });
     toggles.video.on("change", function() {
-      saveStyleVideo(style, toggles.video.prop("checked"));
+      basicSettingSave(style, "aoeStyleTokenVideo", toggles.video.prop("checked"));
       container.trigger('redrawListing');
+    });
+    toggles.darkness.on("change", function() {
+      basicSettingSave(style, "aoeStyleTokenDarkness", toggles.darkness.prop("checked"));
     });
     toggles.opacity.on("change", function() {
       const opacity = clamp_aoe_style_opacity(toggles.opacity.val());
       toggles.opacity.val(opacity);
-      saveStyleOpacity(style, opacity);
+      basicSettingSave(style, "aoeStyleTokenOpacity", opacity);
     });
 
     clearButton.on("click", function(clickEvent) {
