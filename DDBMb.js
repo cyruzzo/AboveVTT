@@ -129,8 +129,21 @@ function forceDdbWsReconnect() {
         e.stopPropagation();
         rollDiceButton(e, rollButton[0]);
     }
+    function stopRollPropagation(e) {
+        const target = $(e.target);
+        if(target.is('.integrated-dice__container').length>0) {
+            if(e.button == 2) return;
+            e.stopImmediatePropagation();
+            e.stopPropagation();
+        }
+        else if(target.is('.ddbc-combat-attack__icon, .ddb-note-roll,.ct-spells-spell__action').length>0) {
+            e.stopImmediatePropagation();
+            e.stopPropagation();
+        }
 
+    }
     window.addEventListener('pointerdown', interceptRollEvent, true);
+    window.addEventListener('click', stopRollPropagation, true);
     // this prevents peformance issues due to facebook scripts taking several hundred ms to execute every click event cloging up main thread
     window.fbq = function () {
      window.fbq.callMethod ? window.fbq.callMethod.apply(window.fbq, arguments) : window.fbq.queue.push(arguments);
