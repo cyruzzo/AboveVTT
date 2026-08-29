@@ -838,21 +838,41 @@ function add_aoe_to_statblock(html){
   html = html.replaceAll(/&shy;|­/gi, '')
     .replace(/(?:[^\S\r\n]*\r?\n){2,}[^\S\r\n]*/g, ' ') // heals the blank line runs left behind by previously injected buttons
 
-  const aoeRegEx = /(([\d]+)-foot(-long ([\d]+)-foot-wide|-long, ([\d]+)-foot-wide|-radius, [\d]+-foot-high|-radius)? ([a-zA-z]+))(.*?[\>\s]([a-zA-Z]+) damage)?/gi
+  const aoeRegEx = /(([\d]+)-foot(?:(?:-long(?:,)? ([\d]+)-foot-wide)|(?:-radius(?:, ([\d]+)-foot-high)?))?\s+([a-zA-Z]+))((?:(?!\d+-foot)[\s\S])*)/gi;
 
+  return html.replaceAll(aoeRegEx, function(m, m1, m2, m3, m4, m5, m6, m7) {
+    const shape = m5.toLowerCase();
 
-  return html.replaceAll(aoeRegEx, function(m, m1, m2,m3, m4, m5, m6, m7, m8){
-    const shape = m6.toLowerCase();
+    if (shape !== 'cone' && shape !== 'sphere' && shape !== 'cube' && shape !== 'cylinder' && shape !== 'line') {
+      return `${m}`;
+    }
 
-    if(shape != 'cone' && shape != 'sphere' && shape != 'cube' && shape != 'cylinder' && shape != 'line')
-      return `${m}`
+    if (shape === 'emanation') {
+      return `${m}`;
+    }
 
-    if(shape == 'emanation')
-      return `${m}` // potentially set a button for aura being set on these if an aura doesn't already exist
-    else
-      return `<button class='avtt-aoe-button' border-width='1px' title='Place area of effect token' data-shape='${shape}' data-style='${m8 != undefined && get_available_styles().some(shape => shape.toLowerCase().includes(m8.toLowerCase())) ? m8.toLowerCase() : 'default'}' data-size='${m2}' data-name='${m6} AoE'${shape == 'line' ? ` data-line-width=${m4 != undefined ? `'${m4}'` : m5 != undefined ? `'${m5}'` : '5'}` : ''}>${m1}</button>${m7 != undefined ? m7 : ''}`
-       
-  })
+    let sentencePart = 'default';
+
+    if (m6 !== undefined) {
+
+      const words = m6.toLowerCase().trim().split(/[^\d\w]+/gi).filter(Boolean);
+      const availableStyles = get_available_styles().map(s => s.toLowerCase().trim());
+
+      for (let i = 0; i < words.length; i++) {
+        const candidate = words.slice(0,  words.length-i).join('-');
+        if (availableStyles.includes(candidate)) {
+          sentencePart = candidate;
+          break;
+        }
+      }
+    }
+
+    const lineWidthAttr = shape === 'line' 
+      ? ` data-line-width=${m3 !== undefined ? `'${m3}'` : '5'}` 
+      : '';
+
+    return `<button class='avtt-aoe-button' border-width='1px' title='Place area of effect token' data-shape='${shape}' data-style='${sentencePart}' data-size='${m2}' data-name='${m6} AoE'${lineWidthAttr}>${m1}</button>${m6 !== undefined ? m6 : ''}`;
+  });
 }
 async function embedDDBSection(target){
   const ddbSections = target.find('.journal-ddb-section-embed')
