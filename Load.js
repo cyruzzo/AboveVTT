@@ -25,22 +25,6 @@
             console.log("⛔  AVTT: no extension loading here.")
             return; //don't load anything
         }
-    } else{
-        function interceptRollEvent(e) {
-            if(e.button == 2) return;
-            const target = $(e.target);
-            // allow hit dice and death saves roll to go through ddb for auto heals - maybe setup our own message by put to https://character-service.dndbeyond.com/character/v5/life/hp/damage-taken later
-            if (target.closest('.ct-reset-pane__hitdie-manager-dice').length>0 || target.closest('[class*="styles_heading__"]').find('>h2').text().trim().match(/^death saves$/gi))
-                return;
-            const rollButton = target.closest(`.integrated-dice__container:not('.above-combo-roll'):not('.above-aoe'):not(.avtt-roll-formula-button)`);
-            if (!rollButton.length) return;
-            e.preventDefault();
-            e.stopImmediatePropagation();
-            e.stopPropagation();
-            rollDiceButton(e, rollButton[0]);
-        }
-
-        window.addEventListener('pointerdown', interceptRollEvent, true);
     }
         
 
@@ -190,7 +174,7 @@
         
         injectStyles(pgType === "char" ? simpleAvttStyles : avttStyles, where);
         const scripts = pgType === "char" ?
-              avttCharacterScripts
+                isIframe ? ["DDBMb.js", ...avttCharacterScripts] : avttCharacterScripts               
               : pgType === "gamelog" ? [
                   "jquery.magnific-popup.min.js",
                   "purify.min.js",

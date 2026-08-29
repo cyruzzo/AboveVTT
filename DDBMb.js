@@ -57,7 +57,21 @@
 
         return originalAddEventListener.call(this, type, listener, options);
     };
+    function interceptRollEvent(e) {
+        if(e.button == 2) return;
+        const target = $(e.target);
+        // allow hit dice and death saves roll to go through ddb for auto heals - maybe setup our own message by put to https://character-service.dndbeyond.com/character/v5/life/hp/damage-taken later
+        if (target.closest('.ct-reset-pane__hitdie-manager-dice').length>0 || target.closest('[class*="styles_heading__"]').find('>h2').text().trim().match(/^death saves$/gi))
+            return;
+        const rollButton = target.closest(`.integrated-dice__container:not('.above-combo-roll'):not('.above-aoe'):not(.avtt-roll-formula-button)`);
+        if (!rollButton.length) return;
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        e.stopPropagation();
+        rollDiceButton(e, rollButton[0]);
+    }
 
+    window.addEventListener('pointerdown', interceptRollEvent, true);
     // this prevents peformance issues due to facebook scripts taking several hundred ms to execute every click event cloging up main thread
     window.fbq = function () {
      window.fbq.callMethod ? window.fbq.callMethod.apply(window.fbq, arguments) : window.fbq.queue.push(arguments);
