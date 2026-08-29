@@ -2543,8 +2543,8 @@ class Token {
 					old.removeClass("tokenselected");
 					$(`:is(#combat_area, #combat_area_carousel) tr[data-target='${this.options.id}']`).toggleClass('selected-token', false);
 				}
-				let oldImage =  old.find(".token-image,[data-img]")
-				// token uses an image for it's image
+				const dataImg = old.find(".token-image>[data-img]");
+				let oldImage =  dataImg.length > 0 ? dataImg : old.find(".token-image");
 				const imageSrc = this.options.aoeImage ?? this.options.imgsrc;
 				if (!imageSrc.startsWith("class")){
 					if(imageSrc.startsWith('above-bucket-not-a-url')){
