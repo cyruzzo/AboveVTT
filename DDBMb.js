@@ -35,22 +35,6 @@
         return worker;
     };
 
-    function interceptRollEvent(e) {
-        if(e.button == 2) return;
-        const target = $(e.target);
-        // allow hit dice and death saves roll to go through ddb for auto heals - maybe setup our own message by put to https://character-service.dndbeyond.com/character/v5/life/hp/damage-taken later
-        if (target.closest('.ct-reset-pane__hitdie-manager-dice').length>0 || target.closest('[class*="styles_heading__"]').find('>h2').text().trim().match(/^death saves$/gi))
-            return;
-        const rollButton = target.closest(`.integrated-dice__container:not('.above-combo-roll'):not('.above-aoe'):not(.avtt-roll-formula-button)`);
-        if (!rollButton.length) return;
-        e.preventDefault();
-        e.stopImmediatePropagation();
-        e.stopPropagation();
-        rollDiceButton(e, rollButton[0]);
-    }
-
-    window.addEventListener('pointerdown', interceptRollEvent, true);
-
     //for listening to the game log websocket and intercepting messages for the DDB onmessage function
     const originalAddEventListener = WebSocket.prototype.addEventListener;
     WebSocket.prototype.addEventListener = function (type, listener, options) {
@@ -59,8 +43,8 @@
             const interceptor = (event) => {
                 if (event.data && event.data !== 'pong') {
                     try {
-                        if (window.MB && typeof window.MB.ddbonmessage === 'function') {
-                        window.MB.ddbonmessage(event);
+                        if (window.diceRoller && typeof window.diceRoller.ddbonmessage === 'function') {
+                            window.diceRoller.ddbonmessage(event);
                         }
                     } catch (err) {
                         console.error('Error in WS interceptor:', err);
