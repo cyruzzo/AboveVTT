@@ -1014,8 +1014,8 @@ function apply_avtt_roll_button_markup(html){
     .replaceAll(/(\d+d\d+(min\d+|k[hl]\d+)*ro)&gt;/gi, '$1>')
     .replaceAll(strongRoll, `$1$3`)
     .replaceAll(dashToMinus, `$1-$2`)
-    .replaceAll(damageRollRegexBracket, ` <button data-exp='$1' data-mod='$6' data-rolltype='damage' data-actiontype='${actionType}' class='avtt-roll-button' title='${actionType}'>($1)</button>`)
-    .replaceAll(damageRollRegex, ` $1<button data-exp='$2' data-mod='$7' data-rolltype='damage' data-actiontype='${actionType}' class='avtt-roll-button' title='${actionType}'>$2</button>$8`)
+    .replaceAll(damageRollRegexBracket, ` <button data-exp='$1' data-mod='' data-rolltype='damage' data-actiontype='${actionType}' class='avtt-roll-button' title='${actionType}'>($1)</button>`)
+    .replaceAll(damageRollRegex, ` $1<button data-exp='$2' data-mod='' data-rolltype='damage' data-actiontype='${actionType}' class='avtt-roll-button' title='${actionType}'>$2</button>$8`)
     .replaceAll(hitRollRegexBracket, ` <button data-exp='1d20' data-mod='$2' data-rolltype='to hit' data-actiontype=${actionType} class='avtt-roll-button' title='${actionType}'>$1$2$3</button>`)
     .replaceAll(hitRollRegex, ` $1<button data-exp='1d20' data-mod='$2' data-rolltype='to hit' data-actiontype=${actionType} class='avtt-roll-button' title='${actionType}'>$2</button>$3`)
     .replaceAll(dRollRegex, `$1<button data-exp='1$2' data-mod='' data-rolltype='to hit' data-actiontype=${actionType} class='avtt-roll-button' title='${actionType}'>$2</button>$3`)
@@ -1616,19 +1616,23 @@ async function add_new_dice(){
   const canvas2 = document.createElement("canvas");
 
   canvas2.classList.add('dice-container');
-
-  const getDiceViewportSize = () => ({
-    width: Math.max(0, window.innerWidth - (is_sidebar_visible() ? get_sidebar_width() : 0)),
+ 
+  const getDiceViewportSize = (visibleSidebarWidth = is_sidebar_visible() ? get_sidebar_width() : 0) => ({
+    width: Math.max(0, window.innerWidth - (visibleSidebarWidth ?? 0)),
     height: window.innerHeight
   });
   const resizeDiceCanvases = mydebounce(() => {
-    const {width, height} = getDiceViewportSize();
+    const visibleSidebarWidth = is_sidebar_visible() ? get_sidebar_width() : 0;
+    const {width, height} = getDiceViewportSize(visibleSidebarWidth);
 
     canvas.style.width = `${width}px`;
     canvas.style.height = `${height}px`;
     canvas2.style.width = `${width}px`;
     canvas2.style.height = `${height}px`;
 
+    canvas.style.setProperty('--sidebar-width', `${visibleSidebarWidth}px`);
+    canvas2.style.setProperty('--sidebar-width', `${visibleSidebarWidth}px`);
+    
     physicsWorker.postMessage({
         "type": "resize",
         "payload": {
