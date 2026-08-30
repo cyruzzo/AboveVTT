@@ -2538,11 +2538,6 @@ class Token {
 						this.build_conditions($(`#combat_area tr[data-target='${this.options.id}']`), true);
 					}
 				}
-
-				
-
-				
-
 				if (this.selected) {
 					old.addClass("tokenselected");
 					toggle_player_selectable(this, old)
