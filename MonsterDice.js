@@ -231,27 +231,31 @@ function add_ability_tracker_inputs(target, tokenId) {
 
 	const processInput = function(element, regex, descriptionPostfix, includeMatchingDescription = true) {
 		
-		const foundMatches = element.clone().text().match(regex); // matches `(1 slot)`, `(4 slots)`, etc
-		if (foundMatches !== undefined && foundMatches != null && foundMatches.length > 1) {
-			let numberFound = parseInt(foundMatches[1]);
-			if (!isNaN(numberFound)) {
-				const foundDescription = includeMatchingDescription ? foundMatches.input.substring(0, foundMatches.index) : ''; // `1st level `, `2nd level `, etc.
-				const key = foundDescription != '' ? foundDescription.replace(/\s/g, "") : /day/i.test(foundMatches[0]) ? `spellPerDay${numberFound}` : ''; // `1stlevel`, `2ndlevel`, etc.
-				// token already has this ability tracked, update the input
-				if (token.options.abilityTracker?.[key] >= 0){
-					numberFound = token.options.abilityTracker[key]
-				} else{
-					token.track_ability(key, numberFound)
+		const splitHtml = element.clone().html().split(/<br[\s/]?>|<\/?p>|\n/g);
+		splitHtml.forEach((splitElement) => {
+			const foundMatches = splitElement.match(regex); // matches `(1 slot)`, `(4 slots)`, etc
+			if (foundMatches !== undefined && foundMatches != null && foundMatches.length > 1) {
+				let numberFound = parseInt(foundMatches[1]);
+				if (!isNaN(numberFound)) {
+					const foundDescription = includeMatchingDescription ? foundMatches.input.substring(0, foundMatches.index) : ''; // `1st level `, `2nd level `, etc.
+					const key = foundDescription != '' ? foundDescription.replace(/\s/g, "") : /day/i.test(foundMatches[0]) ? `spellPerDay${numberFound}` : ''; // `1stlevel`, `2ndlevel`, etc.
+					// token already has this ability tracked, update the input
+					if (token.options.abilityTracker?.[key] >= 0){
+						numberFound = token.options.abilityTracker[key]
+					} else{
+						token.track_ability(key, numberFound)
+					}
+					const input = createCountTracker(token, key, numberFound, foundDescription, descriptionPostfix)
+					element.append(`<br>`);
+					element.append(input);
 				}
-				const input = createCountTracker(token, key, numberFound, foundDescription, descriptionPostfix)
-				element.append(`<br>`);
-				element.append(input);
 			}
-		}
+		})
+		
 		
 	}
 
-	// //Spell Slots, or technically anything with 'slot'... might be able to refine the regex a bit better...
+
 	target.find("p").each(function() {
 		let element = $(this);
 		if(element.find('strong').text().match(/at will|day each/gi) || element.find('.add-input').length || element.text().match(/^\d+\/day each/gi))
