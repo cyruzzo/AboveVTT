@@ -5324,7 +5324,7 @@ function convert_open5e_monsterData(monsterData){
         {
             "statId": 6,
             "name": null,
-            "value": monsterData.charisma
+            "value": monsterData.ability_scores?.charisma
         }];
 
         monsterData.passivePerception = monsterData.passive_perception || monsterData.skill_bonuses_all?.perception + 10;
