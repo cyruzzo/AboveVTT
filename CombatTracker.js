@@ -468,7 +468,8 @@ function init_combat_tracker(){
 	}
 }
 const debounceNextSelect = mydebounce(async (token, domToken) => {
-	await $(`.tokenselected`).removeClass('tokenselected');
+	$(`.tokenselected`).removeClass('tokenselected');
+	$(`:is(#combat_area, #combat_area_carousel) tr.selected-token`).removeClass('selected-token');		
 	const promise = new Promise(async (resolve) => {
 		await forSelTokensAsync((t) => {
 			t.selected = false;
@@ -477,6 +478,7 @@ const debounceNextSelect = mydebounce(async (token, domToken) => {
 		resolve();
 	});
 	promise.then(() => {
+		$(`:is(#combat_area, #combat_area_carousel) tr[data-target='${token.options.id}']`).addClass('selected-token');		
 		token.selected = true;
 		domToken.addClass('tokenselected');
 		do_draw_selected_token_bounding_box();
