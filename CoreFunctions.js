@@ -1024,13 +1024,12 @@ function apply_avtt_roll_button_markup(html){
   return add_aoe_to_statblock(updated);
 }
 
-/** True when the text node lives in a region of a sheet the user is allowed to edit. */
-function is_editable_roll_scan_text(textNode){
+
+function should_roll_scan_text(textNode){
   const parent = textNode.parentElement;
   if(parent == undefined) return false;
   if(parent.closest('a, button, input, textarea, select, script, style, svg, .ignore-abovevtt-formating, .abovevtt-slash-command-journal, .injected-input, .added-input-desc, .table-row-drag-handle, .add-table-row') != null) return false;
-  const editable = parent.closest('[contenteditable]');
-  return editable != null && editable.getAttribute('contenteditable') !== 'false';
+  return true
 }
 
 /** Replaces a slash command element's content with its rolled formula button. */
@@ -1051,7 +1050,7 @@ function apply_avtt_slash_command_button(sourceElement, targetElement){
 }
 
 /** Injects roll/aoe buttons into a dnd sheet one editable text node at a time so the replacements can't rewrite the sheet's own markup. */
-function add_roll_buttons_to_editable_text(sheetElement){
+function add_roll_buttons_to_text(sheetElement){
   const ownerDocument = sheetElement.ownerDocument;
   sheetElement.normalize(); // stripping the previous buttons leaves split text nodes that would break the matches below
   const walker = ownerDocument.createTreeWalker(sheetElement, NodeFilter.SHOW_TEXT);
@@ -1062,7 +1061,7 @@ function add_roll_buttons_to_editable_text(sheetElement){
 
   for (const textNode of textNodes) {
     if (textNode.nodeValue.trim() === '') continue;
-    if (!is_editable_roll_scan_text(textNode)) continue;
+    if (!should_roll_scan_text(textNode)) continue;
 
     const escaped = textNode.nodeValue.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;');
     const updated = apply_avtt_roll_button_markup(escaped);
@@ -1104,24 +1103,9 @@ function add_journal_roll_buttons(target, tokenId=undefined, specificImage=undef
     roll_button_contextmenu_handler(contextmenuEvent, rollName, rollImage, tokenId ? "monster" : undefined, tokenId);
   }
 
-  // replace all "to hit" and "damage" rolls
-
   let currentElement = $(target).clone()
-
-  // dnd sheets are a structured document where only the contenteditable regions hold user content,
-  // so those are scanned node by node instead of being run through the string replacements below
-  const targetIsSheet = currentElement.is('.dnd-sheet');
-  currentElement.filter('.dnd-sheet').each(function(){
-    add_roll_buttons_to_editable_text(this);
-  });
-  const extractedSheets = [];
-  currentElement.find('.dnd-sheet').each(function(){
-    add_roll_buttons_to_editable_text(this);
-    const placeholderIndex = extractedSheets.push(this) - 1;
-    $(this).replaceWith($(`<div data-avtt-sheet-placeholder="${placeholderIndex}"></div>`));
-  });
-
-  let updated = targetIsSheet ? currentElement.html() : apply_avtt_roll_button_markup(currentElement.html());
+  add_roll_buttons_to_text(currentElement[0])
+  let updated = currentElement
 
   let ignoreFormatting = $(currentElement).find('.ignore-abovevtt-formating');
 
@@ -1134,10 +1118,6 @@ function add_journal_roll_buttons(target, tokenId=undefined, specificImage=undef
 
   $newHTML.find('.abovevtt-slash-command-journal').each(function(index){
     apply_avtt_slash_command_button(slashCommandElements[index], this);
-  })
-
-  $newHTML.find('[data-avtt-sheet-placeholder]').each(function(){
-    $(this).replaceWith(extractedSheets[parseInt(this.getAttribute('data-avtt-sheet-placeholder'))]);
   })
 
   
