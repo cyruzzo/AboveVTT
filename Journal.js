@@ -2567,7 +2567,7 @@ class JournalManager{
 			if(!window.unlockTemplateStatBlocks){
 				currentNoteText.find('.dnd-sheet button').attr("contenteditable", "false");
 			} else{
-				currentNoteText.find('.dnd-sheet [contenteditable]:not(a):not(.table-row-drag-handle):not(.add-table-row):not(.injected-input):not(.added-input-desc)').attr("contenteditable", "true");
+				currentNoteText.find('.dnd-sheet [contenteditable]:not(.table-row-drag-handle):not(.add-table-row):not(.injected-input):not(.added-input-desc)').attr("contenteditable", "true");
 			}
 		};
 
