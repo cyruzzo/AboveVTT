@@ -1104,21 +1104,11 @@ function add_journal_roll_buttons(target, tokenId=undefined, specificImage=undef
   }
 
   let currentElement = $(target).clone()
+  
   add_roll_buttons_to_text(currentElement[0])
-  let updated = currentElement
 
-  let ignoreFormatting = $(currentElement).find('.ignore-abovevtt-formating');
+  let $newHTML = $(`<div></div>`).html(currentElement.html());
 
-  let slashCommandElements = $(currentElement).find('.abovevtt-slash-command-journal')
-
-  let $newHTML = $(`<div></div>`).html(updated);
-  $newHTML.find('.ignore-abovevtt-formating').each(function(index){
-    $(this).empty().append(ignoreFormatting[index].innerHTML);
-  })
-
-  $newHTML.find('.abovevtt-slash-command-journal').each(function(index){
-    apply_avtt_slash_command_button(slashCommandElements[index], this);
-  })
 
   
   
