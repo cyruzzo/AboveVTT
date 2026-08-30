@@ -794,6 +794,7 @@ async function popout_all_selected_token_stat(){
 			popoutWindow(windowName, container.find(".avtt-stat-block-container"), width);
 			const popoutBody = $(window.childWindows[windowName].document).find("body");
 			const popoutStatBlock = popoutBody.find(".avtt-stat-block-container").first();
+			popoutStatBlock.find("span.hideme").parent().parent().hide();
 			if(popoutStatBlock.find('.dnd-sheet').length > 0){
 				const noteId = popoutStatBlock.attr('data-stat-id') || token.options.statBlock;
 				window.JOURNAL.bindDndSheetTemplateEvents(noteId, popoutStatBlock, popoutBody, {tokenId: token.options.id, showControls: false});
