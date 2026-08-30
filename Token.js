@@ -118,7 +118,17 @@ function random_token_color() {
 	const randomColorIndex = getRandomInt(0, TOKEN_COLORS.length);
 	return "#" + TOKEN_COLORS[randomColorIndex];
 }
-
+function update_boss_hp_bars(){
+	const bossHpBars = $(".boss-hp-bar");
+	for(let i = 0; i < bossHpBars.length; i++){
+		const bossHpBar = bossHpBars[i];
+		const tokenId = $(bossHpBar).attr("data-id");
+		const token = tokenId ? window.TOKEN_OBJECTS[tokenId] : null;
+		if(token){
+			token.update_health_aura();
+		}
+	}
+}
 class Token {
 
 	// Defines how many token-sizes a token is allowed to be moved outside of the scene.
