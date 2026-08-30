@@ -2852,7 +2852,7 @@ const send_aoe_style_tokens_to_players = mydebounce(function(){
   if (window.DM && window.MB) {
     window.MB.sendMessage("custom/myVTT/aoeStyles", get_aoe_style_sync_data());
   }
-}, 2000); 
+}, 5000); 
 
 function normalize_aoe_style_key(style) {
   return String(style || "")
