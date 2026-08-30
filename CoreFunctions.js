@@ -1229,7 +1229,7 @@ function add_journal_roll_buttons(target, tokenId=undefined, specificImage=undef
       rollType = 'roll';  
     }
     else if(rollAction.replace(' ', '').toLowerCase() == 'initiative'){
-      rollType = 'roll';
+      rollType = 'Check';
     }
     
     const followingText = targetButton[0].nextSibling?.textContent?.trim()?.split(' ')[0]

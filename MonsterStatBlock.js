@@ -1649,7 +1649,7 @@ class MonsterStatBlock {
     }
 
     initiativeButton(){
-      return this.rollButton(`1d20`, this.data.initiativeBonus != null ? this.initiativeModString : this.dexModString, 'Roll', 'Initiative', false)                   
+      return this.rollButton(`1d20`, this.data.initiativeBonus != null ? this.initiativeModString : this.dexModString, 'Check', 'Initiative', false)                   
     }
 
     statButton(value, stat, parenthesis = true) {
@@ -1687,8 +1687,8 @@ class MonsterStatBlock {
             return `${statDefinition.key} ${this.rollButton("1d20", statModString, "save", statDefinition.key)}`
         }).join(", ");
     }
-
     get skillsHtml() {
+
         if (typeof this.data.skillsHtml === "string" && this.data.skillsHtml.length > 0) {
             return this.data.skillsHtml; // data.skills isn't always correct. Or at least wasn't correct for Vecna
         }
