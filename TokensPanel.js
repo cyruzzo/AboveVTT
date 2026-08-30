@@ -5502,7 +5502,10 @@ function convert_open5e_monsterData(monsterData){
 
         monsterData.savingThrows = [];
         Object.entries(monsterData.saving_throws).forEach(([key, value]) => {
-            if(key == "strength"){
+            const abilityMod = monsterData.ability_scores?.[key] ? Math.floor((monsterData.ability_scores[key] - 10) / 2) : 0;
+            const proficiencyBonus = monsterData.proficiency_bonus ?? window.ddbConfigJson["challengeRatings"]?.find(obj => obj.id === monsterData.challengeRatingId)?.proficiencyBonus ?? 2;
+            value = value - abilityMod - proficiencyBonus;
+            if(key == "strength"){      
                 monsterData.savingThrows.push({statId: 1, bonusModifier: value})
             }
             else if(key == "dexterity"){
