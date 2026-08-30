@@ -475,7 +475,8 @@ class DiceRoller {
                     // check for injected_data!
                     if (msg.data.injected_data) {
                         notify_gamelog();
-                        self.handle_injected_data(msg);
+                        if(window.MB)
+                            window.MB.handle_injected_data(msg);
                     }
                     return;
                 } else if (msg.eventType == "dice/roll/fulfilled") {
