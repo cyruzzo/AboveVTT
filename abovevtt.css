@@ -5292,7 +5292,7 @@ div.ct-sidebar__pane-content > div.selected-tab,
 }
 
 
-span.add-input.slots {
+span.add-input:is(.slots, .perday) {
     display: block;
 }
 

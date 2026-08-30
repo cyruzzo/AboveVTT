@@ -105,11 +105,11 @@ function add_ability_tracker_inputs_on_each(target, tokenId){
 	const token = window.TOKEN_OBJECTS[tokenId];
 	if(target.find('.add-input').length)
 		return;
-	if(target.find('strong:first-of-type').text().match(/at will:|\/day each/gi)){
+	if(target.find('strong:first-of-type').text().match(/\/day each/gi)){
 		target.find('strong').each(function(){
 			let currentElement = $(this).nextUntil('strong').addBack();
 			if (currentElement.find(".injected-input").length == 0) {
-				const matchForEachSlot = currentElement.text().match(/([0-9]+)\/Day each:|([0-9]+)\/Day:/gi)
+				const matchForEachSlot = currentElement.text().match(/([0-9]+)\/Day each:/gi)
 
 				if (matchForEachSlot){
 					let numberFound = parseInt(matchForEachSlot[0]);
@@ -236,7 +236,7 @@ function add_ability_tracker_inputs(target, tokenId) {
 			let numberFound = parseInt(foundMatches[1]);
 			if (!isNaN(numberFound)) {
 				const foundDescription = includeMatchingDescription ? foundMatches.input.substring(0, foundMatches.index) : ''; // `1st level `, `2nd level `, etc.
-				const key = foundDescription.replace(/\s/g, ""); // `1stlevel`, `2ndlevel`, etc.
+				const key = foundDescription != '' ? foundDescription.replace(/\s/g, "") : /day/i.test(foundMatches[0]) ? `spellPerDay${numberFound}` : ''; // `1stlevel`, `2ndlevel`, etc.
 				// token already has this ability tracked, update the input
 				if (token.options.abilityTracker?.[key] >= 0){
 					numberFound = token.options.abilityTracker[key]
@@ -259,7 +259,7 @@ function add_ability_tracker_inputs(target, tokenId) {
 
 		if ($(this).find(".injected-input").length === 0) {
 			processInput(element, /\(?([0-9]+) slots?\)?/, "slots remaining")
-			processInput(element, /\(?([0-9]+)\/Day\)?/i, "remaining")
+			processInput(element, /\(?([0-9]+)\/Day\)?/i, " uses remaining")
 			processInput(element, /can take ([0-9]+) legendary actions/i, "Legendary Actions remaining", false)
 		}
 		element = null
