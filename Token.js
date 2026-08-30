@@ -2342,7 +2342,7 @@ class Token {
 			return;
 		}
 		try{
-			if(window.DRAGGING && $(`#tokens .token.tokenselected[data-id='${this.options.id}']:not(.ui-draggable-disabled), #tokens .token[data-group-id='${this.options.groupId}'][data-id='${this.options.id}']`).length > 0) {
+			if((window.DRAGGING || $(".pause_click").length>0) && $(`#tokens .token.tokenselected[data-id='${this.options.id}']:not(.ui-draggable-disabled), #tokens .token[data-group-id='${this.options.groupId}'][data-id='${this.options.id}']`).length > 0) {
 				setTimeout(() => {
 					this.throttlePlace(animationDuration, sceneId, callback);
 				}, 1000);
@@ -3207,9 +3207,9 @@ class Token {
 						dragFrameRequest = null;
 						pendingDragState = null;
 
-						delete window.tokenVisionQuery;
-						ctxImageData = null;
+						
 						if(window.TOKEN_OBJECTS[self.options.id] != undefined){
+							self.setTokenDragPos(parseFloat(self.options.left), parseFloat(self.options.top), tok[0], ctxImageData);
 							self.sync();
 						}
 						if (window.CURRENT_SCENE_DATA.disableSceneVision == 1 && !window.DM)
@@ -3223,6 +3223,7 @@ class Token {
 									continue;
 								let curr = window.TOKEN_OBJECTS[id];
 								if (curr != undefined){
+									curr.setTokenDragPos(parseFloat(curr.options.left), parseFloat(curr.options.top), tok, ctxImageData);
 									curr.sync();
 									if (curr.options?.darkness === true || curr.options.tokenWall)
 										darknessMoved = true;
@@ -3231,6 +3232,8 @@ class Token {
 								}									
 							}												
 						}
+						ctxImageData = null;
+						delete window.tokenVisionQuery;
 						if(darknessMoved){
 							redraw_drawn_light(darknessMoved);
 							redraw_light(darknessMoved);

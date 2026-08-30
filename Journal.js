@@ -1605,7 +1605,7 @@ class JournalManager{
 	addTrackedInputs(target, id = {noteId: undefined, token: undefined}){
 		let numberFound = target.attr('data-number');
 		let spellName = target.attr('data-spell').trim();
-		const remainingText = target.hasClass('each') ? '' : `${spellName} slots remaining`
+		const remainingText = target.hasClass('perday') ? 'uses remaining' : target.hasClass('each') ? '' : `${spellName} slots remaining`
 		const {noteId, token} = id;
 
 
@@ -3865,7 +3865,7 @@ class JournalManager{
             	let eachNumberFound = (input.match(/(?<!<[^>]+)\d+\/day( each)?/gi)) ? parseInt(input.match(/(?<!<[^>]+)[0-9]+(?![0-9]?px)/gi)[0]) : undefined;
             	let slotsNumberFound = (input.match(/(?<!<[^>]+)\d+\w+ level \(\d+ slots?\)\:/gi)) ? parseInt(input.match(/(?<!<[^>]+)[0-9]+/gi)[1]) : undefined;
             	let spellLevelFound = (slotsNumberFound) ? input.match(/\d+\w+ level/gi)[0] : undefined;
-				
+				let isEach = eachNumberFound ? input.match(/(?<!<[^>]+)\d+\/day( each)?/i)[1] != undefined : false;
 				let parts = input.replace(/<(?!\/?(?:span|a)\b)[^>]*>/gi, '').split(/((?<!<[^>]+):)/gi)
 				parts[0] = `<strong>${parts[0]}`;
 				parts[1] = `${parts[1]}</strong>`;
@@ -3874,7 +3874,7 @@ class JournalManager{
 					for(let part in splitParts){
 						let spellName = (splitParts[part].match(/^(\s+)?<[^>]+>/gi)) ? $(splitParts[part]).text() : splitParts[part].replace(/(\s+)?<[^>]+>/g, '').replace(/\s?\[spell\]\s?|\s?\[\/spell\]\s?/g, '').replace('[/spell]', '').replace(/\s|&nbsp;/g, '');
 						if(splitParts[part].match(/^((\s+?)?(<a|<span))|^$/gi) && $(splitParts[part])?.is('a, span[data-spell], span.ignore-abovevtt-formating:has(a.tooltip-hover)')){
-							if(eachNumberFound){
+							if(isEach){
 								splitParts[part] = `<span class="add-input each" data-number="${eachNumberFound}" data-spell="${spellName}">${splitParts[part]}</span>`
 							}
 							continue;
@@ -3887,7 +3887,7 @@ class JournalManager{
 								.replace(/( \(|(?<!\))$)/gm, `[/spell]$1`);
 						}
 
-						if(eachNumberFound){
+						if(isEach){
 							splitParts[part] = `<span class="add-input each" data-number="${eachNumberFound}" data-spell="${spellName}">${splitParts[part]}</span>`
 						}
 					}
@@ -3898,8 +3898,10 @@ class JournalManager{
                	input = parts.join('');
                 if(slotsNumberFound){
                 	input = `<span class="add-input slots" data-number="${slotsNumberFound}" data-spell="${spellLevelFound}">${input}</span>`
+                } else if(eachNumberFound && !isEach){
+                	input = `<span class="add-input each perday" data-number="${eachNumberFound}" data-spell="spellPerDay${eachNumberFound}">${input}</span>`
                 }
-            }
+			}
 
             input = input.replace(/\[language=(.*?)\](.*?)\[\/language\]/g, function(m, language, languageText){
             	languageText = languageText.replace(/<\/?p>/g, '');   	
