@@ -4411,7 +4411,8 @@ body.color-blind-avtt {
     background-repeat: no-repeat, repeat;
 }
 
-.aoe-style-darkness{
+.aoe-style-darkness,
+.aoe-style-darkness ~ .aoe-border{
     filter: grayscale(1) brightness(0.2) !important;
 }
 .aoe-style-fire{

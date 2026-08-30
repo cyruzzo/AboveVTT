@@ -454,6 +454,6 @@ function build_aoe_token_image(token, scale, rotation){
             tokenImage.addClass("aoe-border-basic")
         }
     }
-    tokenImageContainer.append(tokenImage)
+    tokenImageContainer.prepend(tokenImage)
     return tokenImageContainer;
 }
