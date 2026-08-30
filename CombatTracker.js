@@ -467,6 +467,21 @@ function init_combat_tracker(){
 		init_carousel_combat_tracker()
 	}
 }
+const debounceNextSelect = mydebounce(async (token, domToken) => {
+	await $(`.tokenselected`).removeClass('tokenselected');
+	const promise = new Promise(async (resolve) => {
+		await forSelTokensAsync((t) => {
+			t.selected = false;
+		});
+		window.CURRENTLY_SELECTED_TOKENS = []
+		resolve();
+	});
+	promise.then(() => {
+		token.selected = true;
+		domToken.addClass('tokenselected');
+		do_draw_selected_token_bounding_box();
+	});
+}, 100);
 function highlight_scroll_next(currentTarget){
 	let combatSettingData = getCombatTrackerSettings();
 	if(combatSettingData['scroll_to_next'] != '1' && combatSettingData['select_next'] != '1')
@@ -485,8 +500,8 @@ function highlight_scroll_next(currentTarget){
 	const tokenOwned = window.DM || isPlayerToken || targetToken.options.player_owned == true;
 	const tokenShared = tokenOwned || window.TOKEN_OBJECTS[tokenId].options.share_vision == true || window.TOKEN_OBJECTS[tokenId].options.share_vision == window.myUser || (window.TOKEN_OBJECTS[tokenId].options.share_vision && is_spectator_page()) 
 
-	if(combatSettingData['select_next'] == '1' && targetToken.selected == false && (tokenShared || tokenOwned)){
-		domToken.click();
+	if(combatSettingData['select_next'] == '1' && (tokenShared || tokenOwned)){
+		debounceNextSelect(targetToken, domToken);
 	}
 	if(combatSettingData['scroll_to_next'] == '1' && tokenVisible){	
 		targetToken.highlight();			
