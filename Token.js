@@ -2342,7 +2342,11 @@ class Token {
 			return;
 		}
 		try{
-			if((window.DRAGGING || $(".pause_click").length>0) && $(`#tokens .token.tokenselected[data-id='${this.options.id}']:not(.ui-draggable-disabled), #tokens .token[data-group-id='${this.options.groupId}'][data-id='${this.options.id}']`).length > 0) {
+			let selector = "div[data-id='" + this.options.id + "']";
+			let old = $("#tokens").find(selector);
+			let self = this;
+
+			if(old.hasClass('pause_click')) {
 				setTimeout(() => {
 					this.throttlePlace(animationDuration, sceneId, callback);
 				}, 1000);
@@ -2363,13 +2367,6 @@ class Token {
 			if (animationDuration == undefined || parseFloat(animationDuration) == NaN) {
 				animationDuration = 1000;
 			}
-
-			let selector = "div[data-id='" + this.options.id + "']";
-			let old = $("#tokens").find(selector);
-			let self = this;
-
-			if(old.hasClass('pause_click'))//we're currently or just dragged this token ignore this place
-				return;
 
 			/* UPDATE COMBAT TRACKER */
 			this.update_combat_tracker()
