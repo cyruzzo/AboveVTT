@@ -2824,8 +2824,8 @@ function edit_encounter(clickEvent) {
  * @returns {object} a map of styleName -> imageUrl
  */
 function get_aoe_style_tokens() {
-  if (!window.DM && window.AOE_STYLE?.TOKENS) {
-    return window.AOE_STYLE.TOKENS;
+  if (!window.DM) {
+    return window.AOE_STYLE?.TOKENS ?? {};
   }
   const customization = find_token_customization(ItemType.Folder, RootFolder.Aoe.id);
   const assigned = customization?.tokenOptions?.aoeStyleTokens;
@@ -2929,8 +2929,8 @@ function get_aoe_style_token_darkness(style) {
   return customization?.tokenOptions?.aoeStyleTokenDarkness?.[styleKey] ?? styleKey == 'darkness';
 }
 function get_aoe_style_order() {
-  if (!window.DM && Array.isArray(window.AOE_STYLE?.ORDER)) {
-    return window.AOE_STYLE.ORDER;
+  if (!window.DM) {
+    return window.AOE_STYLE?.ORDER ?? [];
   }
   const order = find_token_customization(ItemType.Folder, RootFolder.Aoe.id)?.tokenOptions?.aoeStyleOrder;
   return Array.isArray(order) ? order : [];
