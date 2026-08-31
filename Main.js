@@ -2205,7 +2205,12 @@ function init_ui() {
 	// canvas, based on the drawing function
 	const tempOverlay = $("<canvas id='temp_overlay' class='TLA'/>");
 	tempOverlay.css("z-index", "25");
-
+	const captureMouse = $("<div id='capture_mouse' class='TLA'/>");
+	captureMouse.css({
+		"z-index": "25",
+		"transform": "scale(var(--scene-scale))",
+		"transform-origin": "top left"
+	});
 	const darknessLayer = $("<div id='darkness_layer' class='TLA'/>");
 
 	tempOverlay.dblclick(function(e) {
@@ -2260,14 +2265,14 @@ function init_ui() {
 	VTT.append(peerOverlay);
 	VTT.append(drawOverlayUnderFogDarkness);
 	VTT.append(grid_svg_overlay_container);
-	VTT.append(textDiv);
+	VTT.append(textDiv, captureMouse, dragSelectBox, rotDragbox);
 	mapItems.append(tokenMapItems);
 	mapItems.append(grid_svg_underlay);
 	mapContainer.append(outer_light_container);
 	mapContainer.append(mapItems);
 	if (window.DM) grid_svg_overlay_container.append(wizbox);
 	mapContainer.append(darknessLayer);
-	mapContainer.append(tempOverlay, drawOverlay, fog, walls, elev, weather, dragSelectBox, rotDragbox);
+	mapContainer.append(tempOverlay, drawOverlay, fog, walls, elev, weather);
 	outer_light_container.append(rayCasting);
 	outer_light_container.append(lightContainer);
 	lightContainer.append(lightOverlay, weatherLight);
@@ -2433,7 +2438,7 @@ function init_ui() {
 
 	window.enable_window_mouse_handlers();
 
-	$("#temp_overlay").bind("contextmenu", function (e) {
+	$("#temp_overlay, #capture_mouse").bind("contextmenu", function (e) {
 		return false;
 	});
 
@@ -2516,12 +2521,10 @@ function init_zoom_buttons() {
 		const iconWrapper = $(event.currentTarget).find(".ddbc-tab-options__header-heading");
 		if (iconWrapper.hasClass('ddbc-tab-options__header-heading--is-active')) {
 			iconWrapper.removeClass('ddbc-tab-options__header-heading--is-active');
-			$(`#scene_map_container`).css('z-index', '');
-			$(`#fog_overlay`).css('z-index', '21');
+			$('#scene_map_container canvas, #capture_mouse').css('pointer-events', '');
 		} else {
 			iconWrapper.addClass('ddbc-tab-options__header-heading--is-active');
-			$(`#fog_overlay`).css('z-index', '101');
-			$(`#scene_map_container`).css('z-index', '100');
+			$('#scene_map_container canvas, #capture_mouse').css('pointer-events', 'none');
 		}
 	});	
 	youtube_controls_button.append(`<div class="ddbc-tab-options__header-heading"><span style="font-size: 20px;" class="material-symbols-outlined">video_settings</span></div>`);
