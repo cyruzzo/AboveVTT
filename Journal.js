@@ -6313,7 +6313,7 @@ class JournalManager{
 											</div>
 										</div>
 										<div class="combat-metric"><span class="label">Initiative</span>
-											<div class="metric-val">+1</div>
+											<div class="metric-val" contenteditable="true">+1</div>
 										</div>
 										<div class="combat-metric"><span class="label">Speed</span>
 											<div class="metric-val" contenteditable="true">30 ft.</div>
