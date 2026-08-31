@@ -2360,13 +2360,16 @@ function add_stat_block_hover(statBlockContainer, tokenId) {
                 if(container.find('.tooltip-header').length === 0){
                   container = currentTarget.closest("#resizeDragMon");
                 }
+                if(container.length === 0){
+                  container = currentTarget.closest(".moveableWindow");
+                }
                 if (container.length === 0) {
                     container = currentTarget.closest(".sidebar-modal");
                 }
                 if (container.length === 0) {
                     container = is_characters_page() ? $(".ct-sidebar__inner [class*='styles_content']") : $(".sidebar__pane-content");
                 }
-
+                hoverEvent.clientY += 20;
                 display_tooltip(tooltipJson, container, hoverEvent, tokenId);   
             };
             if(window.tooltipCache == undefined)

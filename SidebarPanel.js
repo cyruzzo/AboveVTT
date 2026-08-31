@@ -3701,14 +3701,17 @@ async function setup_tooltip_flyout(flyout, tooltipHtmlString, classes = [], eve
     if(container.find('.tooltip-header').length === 0){
       container = currentTarget.closest("#resizeDragMon");
     }
-    if (container.length === 0) {
-        container = currentTarget.closest(".token");
+    if(container.length === 0){
+      container = currentTarget.closest(".moveableWindow");
     }
     if (container.length === 0) {
-        container = currentTarget.closest(".sidebar-modal");
+      container = currentTarget.closest(".token");
     }
     if (container.length === 0) {
-        container = is_characters_page() ? $(".ct-sidebar__inner [class*='styles_content']") : $(".sidebar__pane-content");
+      container = currentTarget.closest(".sidebar-modal");
+    }
+    if (container.length === 0) {
+      container = is_characters_page() ? $(".ct-sidebar__inner [class*='styles_content']") : $(".sidebar__pane-content");
     }
   }
   const containerParentIdArray = container?.attr("data-parents-id") != undefined ? JSON.parse(container.attr("data-parents-id")) : [];

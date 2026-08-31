@@ -3603,11 +3603,11 @@ class JournalManager{
 					const isLegacy = !get_avtt_setting_value('2024Tooltips');
 					let item = window.ITEMS_CACHE.filter(d => d.name.toLowerCase() == text.toLowerCase() && d.isLegacy == isLegacy)
 					if(!item.length){
-						console.warn(`item not found`, text, `isLegacy`, isLegacy);
+						noisy_log(2, `item not found`, text, `isLegacy`, isLegacy);
 						item = window.ITEMS_CACHE.filter(d => d.name.toLowerCase() == text.toLowerCase())
 					}
 					if(!item.length){
-						console.warn(`item not found`, text);
+						noisy_log(2, `item not found`, text);
 						continue;
 					}
 					
