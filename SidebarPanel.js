@@ -70,6 +70,7 @@ function display_sidebar_modal(sidebarPanel) {
 
 function observe_hover_text(sidebarPanelContent) {
   sidebarPanelContent.off("mouseenter mouseleave").on("mouseenter mouseleave", ".sidebar-hover-text[data-hover]:not(.chat-text-wrapper)", function(hoverEvent) {
+    hoverEvent.stopPropagation();
     const displayText = $(hoverEvent.currentTarget).attr("data-hover");
     if (typeof displayText === "string" && displayText.length > 0) {
       $(".sidebar-hover-text-flyout").closest(".sidebar-flyout").remove();

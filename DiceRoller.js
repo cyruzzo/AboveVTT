@@ -471,12 +471,11 @@ class DiceRoller {
                 if ((!is_abovevtt_page() || window.location.search.includes("popoutgamelog=true")) && msg.eventType != "dice/roll/pending" && msg.eventType != "dice/roll/fulfilled")
                     return;
 
-                if(msg.eventType == "dice/roll/pending") {
+                if(msg.eventType == "dice/roll/pending" && typeof window.MB?.handle_injected_data == 'function') {
                     // check for injected_data!
                     if (msg.data.injected_data) {
                         notify_gamelog();
-                        if(window.MB)
-                            window.MB.handle_injected_data(msg);
+                        window.MB.handle_injected_data(msg);
                     }
                     return;
                 } else if (msg.eventType == "dice/roll/fulfilled") {
