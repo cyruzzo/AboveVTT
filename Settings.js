@@ -524,6 +524,7 @@ function avtt_settings(campaignSettings = false) {
 				label: "Token Settings Defaults",
 				buttonText: "Edit",
 				type: "customButton",
+				description: "Set settings used when tokens are placed on a scene. Will be overridden by folder/token specific defaults.",
 				customFunction: function (clickEvent, body) {
 					build_and_display_sidebar_flyout(clickEvent.clientY, function (flyout) {
 						let optionsContainer = build_sidebar_token_options_flyout(token_setting_options(), window.TOKEN_SETTINGS, function (name, value) {
@@ -572,6 +573,7 @@ function avtt_settings(campaignSettings = false) {
 				label: "Scene Settings Defaults",
 				buttonText: "Edit",
 				type: "customButton",
+				description: "Set new scene default settings.",
 				customFunction: function (clickEvent, body) {
 					const self=this;
 					build_and_display_sidebar_flyout(clickEvent.clientY, function (flyout) {
@@ -751,6 +753,7 @@ function avtt_settings(campaignSettings = false) {
 		name: 'quickToggleDefaults',
 		label: 'Quick Toggle Defaults on Load',
 		type: 'flyoutButton',
+		description: "Set initial states for right side quick toggle buttons.",
 		options: [
 			{ name: "selectedTokenVision", label: "Selected Token Vision", defaultValue: false, dmOnly: false, type: 'toggle',options: [
 				{ value: true, label: "Enabled", description: `` },
@@ -894,6 +897,7 @@ function avtt_settings(campaignSettings = false) {
 			name: 'campaignDefaults',
 			label: 'Campagn Suggested Defaults',
 			type: 'flyoutButton',
+			description: "Edit suggested defaults for player settings. You and players can then match these settings with 'Match DM Suggested Settings' below.",
 			sortCategory: true,
 			options: avtt_settings(true),
 			defaultValue: {},
@@ -905,7 +909,7 @@ function avtt_settings(campaignSettings = false) {
 		settings.push({	
 			name: "matchCampaignSettings",
 			label: "Match DM Suggested Settings",
-			description: "<p>If the DM has suggested settings for this campaign force your settings to match.</p>",
+			description: "If the DM has suggested settings for this campaign match those settings here.",
 			buttonText: ["Set"],
 			type: "customButton",
 			customFunction: [
