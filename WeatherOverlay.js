@@ -18,10 +18,6 @@ class WeatherOverlay {
             if(canvas.width != this.width || canvas.height != this.height) {
                 canvas.width = this.width;
                 canvas.height = this.height;
-            $(canvas).css({
-                'transform-origin': 'top left',
-                'transform': 'scale(var(--scene-scale))'
-            });
             } else {
                 current.clearRect(0, 0, this.width, this.height);
             }
@@ -394,7 +390,7 @@ class WeatherOverlay {
         if(typesWithLight.includes(this.type)){
             this.lightCtx.clearRect(0, 0, this.width, this.height);
         }
-
+        
         if (this.type === 'rain') {
             this._drawRain();
         } else if (this.type === 'snow') {
