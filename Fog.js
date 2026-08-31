@@ -1414,12 +1414,18 @@ function reset_canvas(apply_zoom=true) {
 		delete window.LOADING;
 		return false;
 	}
+	const iconWrapper = $("#youtube_controls_button .ddbc-tab-options__header-heading");
+	if (iconWrapper?.hasClass('ddbc-tab-options__header-heading--is-active') && iconWrapper?.css('visibility') !== 'hidden') {
+		$('#scene_map_container canvas, #capture_mouse').css('pointer-events', 'none');
+	} else {
+		$('#scene_map_container canvas, #capture_mouse').css('pointer-events', '');
+	}
 
 	$('#darkness_layer').css({"width": sceneMapWidth, "height": sceneMapHeight});
 	$("#scene_map_container").css({"width": sceneMapWidth, "height": sceneMapHeight});
 	// grid overlay css tiling needs a container to fill that matches map
 	$("#grid_svg_overlay_container").css({"width": sceneMapWidth, "height": sceneMapHeight});
-	$("#dragbox, #rotDragbox").css({"width": sceneMapWidth, "height": sceneMapHeight});	
+	$("#dragbox, #rotDragbox, #capture_mouse").css({"width": sceneMapWidth, "height": sceneMapHeight});
 	ctxScale('peer_overlay', sceneMapWidth, sceneMapHeight);
 	ctxScale('temp_overlay', sceneMapWidth, sceneMapHeight, true);
 	ctxScale('draw_overlay_under_fog_darkness', sceneMapWidth, sceneMapHeight, true);
@@ -1456,7 +1462,7 @@ function reset_canvas(apply_zoom=true) {
 	set_weather_size(sceneMapWidth, sceneMapHeight);
 
 
-	window.temp_canvas = document.getElementById("temp_overlay");;
+	window.temp_canvas = document.getElementById("temp_overlay");
 	window.temp_context = window.temp_canvas.getContext("2d");
 	if (window.CURRENT_SCENE_DATA && window.CURRENT_SCENE_DATA.hpps > 10 && window.CURRENT_SCENE_DATA.vpps > 10) {
 		//alert(window.CURRENT_SCENE_DATA.hpps + " "+ window.CURRENT_SCENE_DATA.vpps);
@@ -2243,8 +2249,8 @@ function open_portal_config(){
 	
 		$('#select-button').click();
 		$('#tokenOptionsClickCloseDiv').click();
-		let target = $("#temp_overlay, #fog_overlay, #VTT, #black_layer");	
-		$("#temp_overlay").css('z-index', '50');
+		let target = $("#temp_overlay, #fog_overlay, #VTT, #black_layer, #capture_mouse");
+		$("#capture_mouse").css('z-index', '50');
 		let canvas = document.getElementById("temp_overlay");
 		let context = canvas.getContext("2d");
 		target.css('cursor', 'crosshair');
@@ -2322,7 +2328,7 @@ function open_portal_config(){
 			clear_temp_canvas();
 			target.off('mouseup.setTele touchend.setTele');
 			target.off('mousemove.drawTele')
-			$("#temp_overlay").css('z-index', '25');
+			$("#capture_mouse").css('z-index', '25');
 		});
 	})
 	container.append(listing);
@@ -2458,7 +2464,7 @@ function open_portal_config(){
 		$('#select-button').click();
 		$('#tokenOptionsClickCloseDiv').click();
 		let target = $("#temp_overlay, #fog_overlay, #VTT, #black_layer");	
-		$("#temp_overlay").css('z-index', '50');
+		$("#capture_mouse").css('z-index', '50');
 		let canvas = document.getElementById("temp_overlay");
 		let context = canvas.getContext("2d");
 		target.css('cursor', 'crosshair');
@@ -2574,7 +2580,7 @@ function open_portal_config(){
 			clear_temp_canvas();
 			target.off('mouseup.setTele touchend.setTele');
 			target.off('mousemove.drawTele')
-			$("#temp_overlay").css('z-index', '25');
+			$("#capture_mouse").css('z-index', '25');
 		});
 
 	};
@@ -3392,7 +3398,7 @@ function open_close_door(x1, y1, x2, y2, type=0){
 function stop_drawing() {
 	$("#reveal").css("background-color", "");
 	window.MOUSEDOWN = false;
-	let target = $("#temp_overlay, #fog_overlay, #VTT, #black_layer");
+	let target = $("#temp_overlay, #fog_overlay, #VTT, #black_layer, #capture_mouse");
 	target.css('cursor', '');
 	target.off('mousedown touchstart', drawing_mousedown);
 	target.off('mouseup touchend', drawing_mouseup);
@@ -3648,8 +3654,8 @@ function drawing_mousedown(e) {
 		window.DRAWCOLOR = "rgba(255, 255, 255, 1)"
 		context.setLineDash([10, 5])
 		if (e.which == 1) {
-			$("#temp_overlay").css('cursor', 'crosshair');
-			$("#temp_overlay, #dragbox").css('z-index', '50');
+			$("#capture_mouse").css('cursor', 'crosshair');
+			$("#capture_mouse, #dragbox").css('z-index', '50');
 		}		
 	}
 	else if(window.DRAWFUNCTION === 'elev'){
@@ -3893,9 +3899,9 @@ function drawing_mousemove(e) {
 	const mouseMoveFps = Math.round((1000.0 / 24.0));
 	if (window.MOUSEDOWN && window.DRAWFUNCTION === "select" && e.which == 1){
 		//change cursor for "fullyInside" select mode
-		$("#temp_overlay").css('cursor', (window.BEGIN_MOUSEY < mouseY) ? 'crosshair' : 'cell');
+		$("#temp_overlay, #capture_mouse").css('cursor', (window.BEGIN_MOUSEY < mouseY) ? 'crosshair' : 'cell');
 	}else{
-		$("#temp_overlay").css('cursor', '');
+		$("#temp_overlay, #capture_mouse").css('cursor', '');
 	}
 
 
@@ -4032,7 +4038,7 @@ function drawing_mousemove(e) {
 			else{
 				if (window.DRAWFUNCTION === "select" && e.button == 0){
 					const selInside = (window.BEGIN_MOUSEY > mouseY)
-					$("#temp_overlay").css('cursor', selInside ? 'crosshair' : 'cell');
+					$("#capture_mouse").css('cursor', selInside ? 'crosshair' : 'cell');
 					draw_select_box(window.BEGIN_MOUSEX,
 							window.BEGIN_MOUSEY,
 							width,
@@ -4371,7 +4377,7 @@ function drawing_mouseup(e) {
 	}
 
 	if (window.DRAWFUNCTION === 'select') {
-		$("#temp_overlay").css('cursor', '');
+		$("#capture_mouse").css('cursor', '');
 	}
 	if(e.button !== 2 && window.DRAWFUNCTION != 'wall')
 		window.MOUSEDOWN = false;
@@ -5166,7 +5172,7 @@ function drawing_mouseup(e) {
 			curr.selected = (shiftHeld && curr.selected == true) || (fullyInside ? isRotatedSquareInsideRect : intersectsRotatedSquare) (
 				{x:x0, y:y0, width:x1-x0, height: y1-y0}, CX, CY, size, R);
 		}
-		$("#temp_overlay").css('z-index', '25');
+		$("#capture_mouse").css('z-index', '25');
 		$("#dragbox").css('z-index', '');
 		draw_selected_token_bounding_box();
 	}
@@ -5493,7 +5499,7 @@ function handle_drawing_button_click() {
 			}
 			
 		}
-		let target =  $("#temp_overlay, #black_layer")
+		let target =  $("#temp_overlay, #black_layer, #capture_mouse")
 
 		data = {
 			clicked:$(clicked),
@@ -5501,13 +5507,13 @@ function handle_drawing_button_click() {
 		}
 		// allow all drawing to be done above the tokens
 		if ($(clicked).is("#select-button")){
-			$("#temp_overlay").css({
+			$("#capture_mouse").css({
 				"z-index": "25",
 				'touch-action' : ''
 			})
 		}
 		else{
-			$("#temp_overlay").css({
+			$("#capture_mouse").css({
 				"z-index": "50",
 				'touch-action' : 'none'
 			})

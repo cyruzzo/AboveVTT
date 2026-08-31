@@ -996,6 +996,7 @@ select#doorTypeSelectUVTT{
   left: 0;
   transform-origin: top left;
   display: block;
+  transform: scale(var(--scene-scale));
   pointer-events: none;
   z-index: 20;
 }

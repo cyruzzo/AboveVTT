@@ -350,8 +350,8 @@ function token_context_menu_expanded(tokenIds, e, crossScenePortalData) {
 						let scale = window.CURRENT_SCENE_DATA.scale_factor != undefined ? window.CURRENT_SCENE_DATA.scale_factor/window.TOKEN_OBJECTS[tokenIds].options.scaleCreated : 1/window.TOKEN_OBJECTS[tokenIds].options.scaleCreated ;
 						
 						$('#tokenOptionsClickCloseDiv').click();
-						let target = $("#temp_overlay, #fog_overlay, #VTT, #black_layer");	
-						$("#temp_overlay").css('z-index', '50');
+						let target = $("#temp_overlay, #fog_overlay, #VTT, #black_layer, #capture_mouse");	
+						$("#capture_mouse").css('z-index', '50');
 						let canvas = document.getElementById("temp_overlay");
 						let context = canvas.getContext("2d");
 						target.css('cursor', 'crosshair');
@@ -396,7 +396,7 @@ function token_context_menu_expanded(tokenIds, e, crossScenePortalData) {
 							clear_temp_canvas();
 							target.off('mouseup.setTele touchend.setTele');
 							target.off('mousemove.drawTele')
-							$("#temp_overlay").css('z-index', '25');
+							$("#capture_mouse").css('z-index', '25');
 							if($(`#portal_config_window`).length>0){
 								open_portal_config();
 							}
@@ -412,8 +412,8 @@ function token_context_menu_expanded(tokenIds, e, crossScenePortalData) {
 						let scale = window.CURRENT_SCENE_DATA.scale_factor != undefined ? window.CURRENT_SCENE_DATA.scale_factor/window.TOKEN_OBJECTS[tokenIds].options.scaleCreated : 1/window.TOKEN_OBJECTS[tokenIds].options.scaleCreated ;
 						
 						$('#tokenOptionsClickCloseDiv').click();
-						let target = $("#temp_overlay, #fog_overlay, #VTT, #black_layer");	
-						$("#temp_overlay").css('z-index', '50');
+						let target = $("#temp_overlay, #fog_overlay, #VTT, #black_layer, #capture_mouse");	
+						$("#capture_mouse").css('z-index', '50');
 						let canvas = document.getElementById("temp_overlay");
 						let context = canvas.getContext("2d");
 						target.css('cursor', 'crosshair');
@@ -504,7 +504,7 @@ function token_context_menu_expanded(tokenIds, e, crossScenePortalData) {
 							clear_temp_canvas();
 							target.off('mouseup.setTele touchend.setTele');
 							target.off('mousemove.drawTele')
-							$("#temp_overlay").css('z-index', '25');
+							$("#capture_mouse").css('z-index', '25');
 							if($(`#portal_config_window`).length>0){
 								open_portal_config();
 							}
@@ -4283,7 +4283,7 @@ function build_adjustments_flyout_menu(tokenIds) {
 					if (window.TOKEN_OBJECTS[tokenId].options.tokenWallPoly == undefined) {
 						window.drawingTokenWallTokenId = tokenId;
 						window.drawTokenWallPolygon = true;
-						$("#temp_overlay").css("z-index", "50");
+						$("#capture_mouse").css("z-index", "50");
 						close_token_context_menu();
 					}
 					else {

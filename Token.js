@@ -3253,7 +3253,7 @@ class Token {
 				
 						// finish measuring
 						// drop the temp overlay back down so selection works correctly
-						$("#temp_overlay").css("z-index", "25")
+						$("#capture_mouse").css("z-index", "25")
 						if (get_avtt_setting_value("allowTokenMeasurement")){
 							WaypointManager.fadeoutMeasuring(window.PLAYER_ID)
 						}	
@@ -3277,7 +3277,7 @@ class Token {
 							window.disable_window_mouse_handlers();
 							pauseCursorEventListener = true; // we're going to send events from drag, so we don't need the eventListener sending events, too
 							if (get_avtt_setting_value("allowTokenMeasurement")) {
-								$("#temp_overlay").css("z-index", "50");
+								$("#capture_mouse").css("z-index", "50");
 							}
 							window.DRAWFUNCTION = "select"
 							window.DRAGGING = true;

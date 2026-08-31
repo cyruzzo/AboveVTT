@@ -566,7 +566,7 @@ Mousetrap.bind('mod+v', async function(e) {
     if (await avttHandleFilePickerPaste(e)) {
         return;
     }
-    if($('#temp_overlay:hover').length>0){
+    if($('#temp_overlay:hover, #capture_mouse:hover').length>0){
         if(window.TOKEN_PASTE_BUFFER?.[0]?.wall == undefined){
             paste_selected_tokens(window.cursor_x, window.cursor_y);
         }else{
