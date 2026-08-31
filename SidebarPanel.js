@@ -478,7 +478,7 @@ function build_flyout_input(settingOption, currentValue, changeHandler){
   }
 
   let wrapper = $(`
-   <div class="token-image-modal-footer-select-wrapper" data-option-name="${settingOption.name}">
+   <div class="token-image-modal-footer-select-wrapper sidebar-hover-text" data-option-name="${settingOption.name}" ${settingOption.description ? `data-hover="${settingOption.description}"` : ''}>
      <div class="token-image-modal-footer-title">${settingOption.label}</div>
    </div>
  `);

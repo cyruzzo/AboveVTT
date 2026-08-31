@@ -436,17 +436,11 @@ class WaypointManagerClass {
 
 		distance = (rulerType == 'euclidean') ? eucDistance : (distance+addedDistance) * window.CURRENT_SCENE_DATA.fpsq;
 		
-	
-		
-		
-
 		coord.distance = distance;
 
 		let textX = 0;
 		let textY = 0;
 		let margin = 2;
-		let heightOffset = 30;
-		let slopeModifier = 0;
 
 		// Setup text metrics
 		let fontSize = Math.max(75 * Math.max((1 - window.ZOOM), 0)/window.CURRENT_SCENE_DATA.scale_factor, 26)
@@ -456,73 +450,20 @@ class WaypointManagerClass {
 		let text = `${totalDistance}${unitSymbol}`
 		let textMetrics = this.ctx.measureText(text);
 
-		let contrastRect = { x: 0, y: 0, width: 0, height: 0 }
-		let textRect = { x: 0, y: 0, width: 0, height: 0 }
+		let textRect = { width: 0 }
 
 		if (labelX !== undefined && labelY !== undefined) {
-			// Calculate our coords and dimensions
-			contrastRect.x = labelX - margin + slopeModifier;
-			contrastRect.y = labelY - margin + slopeModifier;
-			contrastRect.width = textMetrics.width + (margin * 4);
-			contrastRect.height =  Math.max(150 * Math.max((1 - window.ZOOM), 0)/window.CURRENT_SCENE_DATA.scale_factor, 30) + (margin * 3);
-
-			textRect.x = labelX + slopeModifier;
-			textRect.y = labelY + slopeModifier;
 			textRect.width = textMetrics.width + (margin * 3);
-			textRect.height =  Math.max(150 * Math.max((1 - window.ZOOM), 0)/window.CURRENT_SCENE_DATA.scale_factor, 30) + margin;
 
-			textRect.x -= (textRect.width / 2);
-			textX = (labelX + margin + slopeModifier - (textRect.width / 2));
-			textY = (labelY + (margin * 2) + slopeModifier);
-		} else {
-			
-			slopeModifier = margin;
-		
-
-			// Calculate our coords and dimensions
-			contrastRect.x = snapPointXEnd - margin + slopeModifier;
-			contrastRect.y = snapPointYEnd - margin + slopeModifier;
-			contrastRect.width = textMetrics.width + (margin * 4);
-			contrastRect.height =  Math.max(150 * Math.max((1 - window.ZOOM), 0)/window.CURRENT_SCENE_DATA.scale_factor, 30) + (margin * 3);
-
-			textRect.x = snapPointXEnd + slopeModifier;
-			textRect.y = snapPointYEnd + slopeModifier;
+			textX = (labelX);
+			textY = (labelY);
+		} else {	
 			textRect.width = textMetrics.width + (margin * 3);
-			textRect.height =  Math.max(150 * Math.max((1 - window.ZOOM), 0)/window.CURRENT_SCENE_DATA.scale_factor, 30) + margin;
 
-			textX = snapPointXEnd + margin + slopeModifier;
-			textY = snapPointYEnd + (margin * 2) + slopeModifier;
+			textX = snapPointXEnd;
+			textY = snapPointYEnd;
 		}
 
-
-		/*
-		// Draw our 'contrast line'
-		this.ctx.strokeStyle = this.drawStyle.outlineColor
-		this.ctx.lineWidth = Math.floor(Math.max(25 * Math.max((1 - window.ZOOM), 0)/window.CURRENT_SCENE_DATA.scale_factor, 3));
-		this.ctx.lineTo(snapPointXEnd, snapPointYEnd);
-		this.ctx.stroke();
-
-		// Draw our centre line
-		this.ctx.strokeStyle = this.drawStyle.color
-		this.ctx.lineWidth = Math.floor(Math.max(15 * Math.max((1 - window.ZOOM), 0)/window.CURRENT_SCENE_DATA.scale_factor, 2));
-		this.ctx.lineTo(snapPointXEnd, snapPointYEnd);
-		this.ctx.stroke();
-	    
-		/*this.ctx.strokeStyle = this.drawStyle.outlineColor
-		this.ctx.fillStyle = this.drawStyle.backgroundColor
-		this.ctx.lineWidth = Math.floor(Math.max(15 * Math.max((1 - window.ZOOM), 0)/window.CURRENT_SCENE_DATA.scale_factor, 3));
-		roundRect(this.ctx, Math.floor(textRect.x), Math.floor(textRect.y), Math.floor(textRect.width), Math.floor(textRect.height), 10, true);
-		// draw the outline of the text box
-		roundRect(this.ctx, Math.floor(textRect.x), Math.floor(textRect.y), Math.floor(textRect.width), Math.floor(textRect.height), 10, false, true);
-
-		// Finally draw our text
-		this.ctx.fillStyle = this.drawStyle.textColor
-		this.ctx.textBaseline = 'top';
-		this.ctx.fillText(text, textX, textY);*/
-
-		const { sceneWidth, sceneHeight } = sceneMapSize;
-
-		// add ruler line and text
 
 		const rulerLineSVG = `
 			<line x1='${snapPointXStart}' y1='${snapPointYStart}' x2='${snapPointXEnd}' y2='${snapPointYEnd}' stroke="${this.drawStyle.outlineColor}"></line>

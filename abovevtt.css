@@ -3888,7 +3888,7 @@ body .tooltip-hover.vehicle-tooltip {
     border:1px solid #000;
     position:absolute;
     z-index:20;
-    transform: scale(calc(2 / var(--window-zoom)));
+    transform: scale(calc(2 / var(--window-zoom))) translate(20%, 15%);
     height: 16px;
     font-size: 10px;
     font-weight: bold;

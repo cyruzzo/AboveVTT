@@ -344,8 +344,8 @@ function avtt_settings(campaignSettings = false) {
 			label: "Mobile/Icon UI",
 			type: "toggle",
 			options: [
-				{ value: true, label: "Enable", description: `` },
-				{ value: false, label: "Disable", description: `` }
+				{ value: true, label: "Enable", description: `Adjusts the ui to be text based along the top, or icon based on the left side` },
+				{ value: false, label: "Disable", description: `Adjusts the ui to be text based along the top, or icon based on the left side` }
 			],
 			defaultValue: true,
 			class: 'ui',
@@ -796,6 +796,7 @@ function avtt_settings(campaignSettings = false) {
 	settings.push({
 		name: 'quickRoll',
 		label: 'Numkey Quick Roll options',
+		description: 'Edit the quick roll formulas for number keys',
 		type: 'flyoutButton',
 		options: [
 			{
