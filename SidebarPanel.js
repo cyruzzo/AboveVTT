@@ -2824,8 +2824,8 @@ function edit_encounter(clickEvent) {
  * @returns {object} a map of styleName -> imageUrl
  */
 function get_aoe_style_tokens() {
-  if (!window.DM && window.AOE_STYLE?.TOKENS) {
-    return window.AOE_STYLE.TOKENS;
+  if (!window.DM) {
+    return window.AOE_STYLE?.TOKENS ?? {};
   }
   const customization = find_token_customization(ItemType.Folder, RootFolder.Aoe.id);
   const assigned = customization?.tokenOptions?.aoeStyleTokens;
@@ -2929,8 +2929,8 @@ function get_aoe_style_token_darkness(style) {
   return customization?.tokenOptions?.aoeStyleTokenDarkness?.[styleKey] ?? styleKey == 'darkness';
 }
 function get_aoe_style_order() {
-  if (!window.DM && Array.isArray(window.AOE_STYLE?.ORDER)) {
-    return window.AOE_STYLE.ORDER;
+  if (!window.DM) {
+    return window.AOE_STYLE?.ORDER ?? [];
   }
   const order = find_token_customization(ItemType.Folder, RootFolder.Aoe.id)?.tokenOptions?.aoeStyleOrder;
   return Array.isArray(order) ? order : [];
@@ -3701,14 +3701,17 @@ async function setup_tooltip_flyout(flyout, tooltipHtmlString, classes = [], eve
     if(container.find('.tooltip-header').length === 0){
       container = currentTarget.closest("#resizeDragMon");
     }
-    if (container.length === 0) {
-        container = currentTarget.closest(".token");
+    if(container.length === 0){
+      container = currentTarget.closest(".moveableWindow");
     }
     if (container.length === 0) {
-        container = currentTarget.closest(".sidebar-modal");
+      container = currentTarget.closest(".token");
     }
     if (container.length === 0) {
-        container = is_characters_page() ? $(".ct-sidebar__inner [class*='styles_content']") : $(".sidebar__pane-content");
+      container = currentTarget.closest(".sidebar-modal");
+    }
+    if (container.length === 0) {
+      container = is_characters_page() ? $(".ct-sidebar__inner [class*='styles_content']") : $(".sidebar__pane-content");
     }
   }
   const containerParentIdArray = container?.attr("data-parents-id") != undefined ? JSON.parse(container.attr("data-parents-id")) : [];

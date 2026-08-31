@@ -3603,11 +3603,11 @@ class JournalManager{
 					const isLegacy = !get_avtt_setting_value('2024Tooltips');
 					let item = window.ITEMS_CACHE.filter(d => d.name.toLowerCase() == text.toLowerCase() && d.isLegacy == isLegacy)
 					if(!item.length){
-						console.warn(`item not found`, text, `isLegacy`, isLegacy);
+						noisy_log(2, `item not found`, text, `isLegacy`, isLegacy);
 						item = window.ITEMS_CACHE.filter(d => d.name.toLowerCase() == text.toLowerCase())
 					}
 					if(!item.length){
-						console.warn(`item not found`, text);
+						noisy_log(2, `item not found`, text);
 						continue;
 					}
 					
@@ -6313,7 +6313,7 @@ class JournalManager{
 											</div>
 										</div>
 										<div class="combat-metric"><span class="label">Initiative</span>
-											<div class="metric-val">+1</div>
+											<div class="metric-val" contenteditable="true">+1</div>
 										</div>
 										<div class="combat-metric"><span class="label">Speed</span>
 											<div class="metric-val" contenteditable="true">30 ft.</div>
