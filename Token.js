@@ -922,15 +922,20 @@ class Token {
 				window.ON_SCREEN_TOKENS[this.options.id].onScreenDarknessToken = tokenClone;
 
                 const copyImage = tokenClone.find('.token-image');
-				const imageSrc = this.options.aoeImage ?? this.options.imgsrc;
-				if(imageSrc.startsWith('above-bucket-not-a-url')){
-					const fileSrc = imageSrc.replace('above-bucket-not-a-url', '');
-					if (!copyImage.attr('src')?.includes(encodeURI(fileSrc))){
-						updateTokenSrc(imageSrc, copyImage, this.options.videoToken)
+
+				if(!this.isAoe()){
+						
+					if(imageSrc.startsWith('above-bucket-not-a-url')){
+						const fileSrc = imageSrc.replace('above-bucket-not-a-url', '');
+						if (!copyImage.attr('src')?.includes(encodeURI(fileSrc))){
+							updateTokenSrc(imageSrc, copyImage, this.options.videoToken)
+						}
 					}
-				}
-				else if (copyImage.attr('src') != parse_img(imageSrc)){
-					updateTokenSrc(parse_img(imageSrc), copyImage, this.options.videoToken)
+					else if (copyImage.attr('src') != parse_img(imageSrc)){
+						updateTokenSrc(parse_img(imageSrc), copyImage, this.options.videoToken)
+					}
+				}else{
+					copyImage.replaceWith(build_aoe_token_image(this));
 				}
 			}
 
@@ -2547,7 +2552,7 @@ class Token {
 				}
 				const dataImg = old.find(".token-image>[data-img]");
 				let oldImage =  dataImg.length > 0 ? dataImg : old.find(".token-image");
-				const imageSrc = this.options.aoeImage ?? this.options.imgsrc;
+				const imageSrc = this.options.imgsrc;
 				if (!imageSrc.startsWith("class")){
 					if(imageSrc.startsWith('above-bucket-not-a-url')){
 						
@@ -2915,16 +2920,19 @@ class Token {
 						let oldImage = $(`#tokens div[data-id='${this.options.id}'] .token-image`);
 						const copyImage = oldImage.clone();
 						underDarkToken.append(copyImage);
-						const imageSrc = this.options.aoeImage ?? this.options.imgsrc;
-						if (imageSrc.startsWith('above-bucket-not-a-url')) {
-							const fileSrc = imageSrc.replace('above-bucket-not-a-url', '');
-							if (!copyImage.attr('src')?.includes(encodeURI(fileSrc))) {
-								updateTokenSrc(imageSrc, copyImage, this.options.videoToken);
+						if(!this.isAoe()){
+							const imageSrc = this.options.imgsrc;
+							if (imageSrc.startsWith('above-bucket-not-a-url')) {
+								const fileSrc = imageSrc.replace('above-bucket-not-a-url', '');
+								if (!copyImage.attr('src')?.includes(encodeURI(fileSrc))) {
+									updateTokenSrc(imageSrc, copyImage, this.options.videoToken);
+								}
+							}
+							else if(copyImage.attr('src') != parse_img(imageSrc)){
+								updateTokenSrc(parse_img(imageSrc), copyImage, this.options.videoToken);
 							}
 						}
-						else if(copyImage.attr('src') != parse_img(imageSrc)){
-							updateTokenSrc(parse_img(imageSrc), copyImage, this.options.videoToken);
-						}
+						
 				}  	
 				else{
 		    		$(`[data-notatoken='notatoken_${this.options.id}']`).remove();
@@ -3036,7 +3044,7 @@ class Token {
 					tok.toggleClass('lineAoe', false);
 
 				} else {
-					tokenImage = build_aoe_token_image(this, imageScale, rotation)
+					tokenImage = build_aoe_token_image(this)
 
 					tok.css({
 						"--token-scale": imageScale,
@@ -3517,6 +3525,7 @@ class Token {
 		
 				if(this.options.darkness){
 					let tokenClone = tok.clone();
+					if(this.isAoe()) tokenClone.find('.token-image').replaceWith(build_aoe_token_image(this))
 					tokenClone.css({
 						left: parseFloat(this.options.left) / window.CURRENT_SCENE_DATA.scale_factor,
 						top: parseFloat(this.options.top) / window.CURRENT_SCENE_DATA.scale_factor,
@@ -3656,15 +3665,21 @@ class Token {
 						window.ON_SCREEN_TOKENS[this.options.id].onScreenDarknessToken = tokenClone;
 
 						let copyImage = tokenClone.find('.token-image')
-						const imageSrc = this.options.aoeImage ?? this.options.imgsrc;
-						if (imageSrc.startsWith('above-bucket-not-a-url')) {
-							const fileSrc = imageSrc.replace('above-bucket-not-a-url', '');
-							if (!copyImage.attr('src')?.includes(encodeURI(fileSrc))) {
-								updateTokenSrc(imageSrc, copyImage, this.options.videoToken);
+						
+						
+						if(!this.isAoe()){
+							const imageSrc = this.options.imgsrc;
+							if (imageSrc.startsWith('above-bucket-not-a-url')) {
+								const fileSrc = imageSrc.replace('above-bucket-not-a-url', '');
+								if (!copyImage.attr('src')?.includes(encodeURI(fileSrc))) {
+									updateTokenSrc(imageSrc, copyImage, this.options.videoToken);
+								}
 							}
-						}
-						else if (copyImage.attr('src') != parse_img(imageSrc)) {
-							updateTokenSrc(parse_img(imageSrc), copyImage, this.options.videoToken);
+							else if (copyImage.attr('src') != parse_img(imageSrc)) {
+								updateTokenSrc(parse_img(imageSrc), copyImage, this.options.videoToken);
+							}
+						} else{
+							copyImage.replaceWith(build_aoe_token_image(this))
 						}
 					}	
 			    }

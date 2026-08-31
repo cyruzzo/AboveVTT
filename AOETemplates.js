@@ -418,7 +418,7 @@ function is_aoe_video_image(url) {
     return typeof url === "string" && ['.mp4', '.webm', '.m4v'].some(d => url.includes(d));
 }
 
-function build_aoe_token_image(token, scale, rotation){
+function build_aoe_token_image(token){
     let tokenImageContainer = $(`<div class=token-image style='transform:scale(var(--token-scale)) rotate(var(--token-rotation))'>`);
     let aoeClassName = token.options.imgsrc.replace("class=","").trim();
     let tokenImage;
