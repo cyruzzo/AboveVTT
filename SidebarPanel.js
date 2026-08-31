@@ -69,9 +69,10 @@ function display_sidebar_modal(sidebarPanel) {
 }
 
 function observe_hover_text(sidebarPanelContent) {
-  sidebarPanelContent.off("mouseenter mouseleave").on("mouseenter mouseleave", ".sidebar-hover-text:not(.chat-text-wrapper)", function(hoverEvent) {
+  sidebarPanelContent.off("mouseenter mouseleave").on("mouseenter mouseleave", ".sidebar-hover-text[data-hover]:not(.chat-text-wrapper)", function(hoverEvent) {
     const displayText = $(hoverEvent.currentTarget).attr("data-hover");
     if (typeof displayText === "string" && displayText.length > 0) {
+      $(".sidebar-hover-text-flyout").closest(".sidebar-flyout").remove();
       if (hoverEvent.type === "mouseenter") {
         build_and_display_sidebar_flyout(hoverEvent.clientY, function (flyout) {
           flyout.css('pointer-events', 'none');
@@ -81,10 +82,7 @@ function observe_hover_text(sidebarPanelContent) {
           else
             position_flyout_left_of(sidebarPanelContent, flyout);
         });
-      } else {
-        // only remove hover text flyouts. Don't remove other types of flyouts that may or may not be up
-        $(".sidebar-hover-text-flyout").closest(".sidebar-flyout").remove();
-      }
+      } 
     }
   });
 }
