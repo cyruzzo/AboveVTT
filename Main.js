@@ -2259,23 +2259,15 @@ function init_ui() {
 	VTT.append(mapContainer);
 	VTT.append(peerOverlay);
 	VTT.append(drawOverlayUnderFogDarkness);
-	VTT.append(fog);
 	VTT.append(grid_svg_overlay_container);
-	VTT.append(drawOverlay);
 	VTT.append(textDiv);
-	VTT.append(tempOverlay);
-	VTT.append(dragSelectBox, rotDragbox);
-	VTT.append(walls);
-	VTT.append(elev);
-	VTT.append(weather);
 	mapItems.append(tokenMapItems);
 	mapItems.append(grid_svg_underlay);
-	
 	mapContainer.append(outer_light_container);
 	mapContainer.append(mapItems);
 	if (window.DM) grid_svg_overlay_container.append(wizbox);
-	
 	mapContainer.append(darknessLayer);
+	mapContainer.append(tempOverlay, drawOverlay, fog, walls, elev, weather, dragSelectBox, rotDragbox);
 	outer_light_container.append(rayCasting);
 	outer_light_container.append(lightContainer);
 	lightContainer.append(lightOverlay, weatherLight);

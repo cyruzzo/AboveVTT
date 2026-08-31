@@ -1480,12 +1480,12 @@ function reset_canvas(apply_zoom=true) {
 	$("#grid_svg_overlay_container").css({"width": sceneMapWidth, "height": sceneMapHeight});
 	$("#dragbox, #rotDragbox").css({"width": sceneMapWidth, "height": sceneMapHeight});	
 	ctxScale('peer_overlay', sceneMapWidth, sceneMapHeight);
-	ctxScale('temp_overlay', sceneMapWidth, sceneMapHeight);
+	ctxScale('temp_overlay', sceneMapWidth, sceneMapHeight, true);
 	ctxScale('draw_overlay_under_fog_darkness', sceneMapWidth, sceneMapHeight, true);
-	ctxScale('fog_overlay', sceneMapWidth, sceneMapHeight);
-	ctxScale('draw_overlay', sceneMapWidth, sceneMapHeight);
-	ctxScale('walls_layer', sceneMapWidth, sceneMapHeight);
-	ctxScale('elev_overlay', sceneMapWidth, sceneMapHeight);
+	ctxScale('fog_overlay', sceneMapWidth, sceneMapHeight, true);
+	ctxScale('draw_overlay', sceneMapWidth, sceneMapHeight, true);
+	ctxScale('walls_layer', sceneMapWidth, sceneMapHeight, true);
+	ctxScale('elev_overlay', sceneMapWidth, sceneMapHeight, true);
 
 	window.WeatherOverlay?.setSize(sceneMapWidth, sceneMapHeight);
 
