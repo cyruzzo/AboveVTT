@@ -150,6 +150,13 @@ function forceDdbWsReconnect() {
     }
     window.addEventListener('pointerdown', interceptRollEvent, true);
     window.addEventListener('click', stopRollPropagation, true);
+
+    //for suggesting the browser use dedicated gpu over integrated gpu
+    window.__gpuKeepAlive = (function() {
+        const glCanvas = document.createElement('canvas');
+        return glCanvas.getContext('webgl', { powerPreference: 'high-performance' }) || glCanvas.getContext('experimental-webgl', { powerPreference: 'high-performance' });
+    })();
+
     // this prevents peformance issues due to facebook scripts taking several hundred ms to execute every click event cloging up main thread
     window.fbq = function () {
      window.fbq.callMethod ? window.fbq.callMethod.apply(window.fbq, arguments) : window.fbq.queue.push(arguments);
