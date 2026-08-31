@@ -2586,6 +2586,12 @@ class JournalManager{
 				persistCurrentNoteText({forceSave: false, rescanStatBlock: true});
 			}, 10);
 		});
+		container.off('pointerdown.nonEditable, touchstart.nonEditable').on('pointerdown.nonEditable, touchstart.nonEditable', '.dnd-sheet :not([contenteditable=true])', (e)=>{
+			if($(e.target).closest('[contenteditable=true]').length > 0) return;
+			e.preventDefault();
+			e.stopPropagation();
+			container.find(':focus').blur();
+		});
 		container.off('change.checkbox').on('change.checkbox', '.dnd-sheet input', (e)=>{
 			if (e.target && e.target.nodeName === 'INPUT' && e.target.type === 'checkbox') {				
 				e.preventDefault();
