@@ -995,7 +995,6 @@ select#doorTypeSelectUVTT{
   top: 0;
   left: 0;
   transform-origin: top left;
-  transform: scale(var(--scene-scale));
   display: block;
   pointer-events: none;
   z-index: 20;
@@ -3916,19 +3915,16 @@ body .tooltip-hover.vehicle-tooltip {
      z-index:85;
 }
 .ruler-svg-line line:nth-child(odd){
-    stroke-width: max(2px, calc(2px / var(--window-zoom)));
+    stroke-width: calc(calc(2px / var(--window-zoom)) / var(--scene-scale));
 }
 
 .ruler-svg-line line:nth-child(even){
-    stroke-width: max(1px, calc(1px / var(--window-zoom)));
+    stroke-width: calc(calc(1px / var(--window-zoom)) / var(--scene-scale));
 }
 .ruler-svg-bobbles circle{
-    stroke-width: max(0.5px, calc(0.5px / var(--window-zoom)));
-    r: max(1px, calc(1px / var(--window-zoom)));
+    stroke-width: calc(calc(0.5px / var(--window-zoom)) / var(--scene-scale));
+    r: calc(calc(1px / var(--window-zoom)) / var(--scene-scale));
 }
-
-
-
 
 
 .remote-dice-video{

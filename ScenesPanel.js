@@ -1,7 +1,7 @@
 
 function consider_upscaling(target){
 	const targetScale = Math.max(Math.ceil(60 / target.hpps), Math.ceil(60 / target.vpps));
-	target.scale_factor = clamp(targetScale, 1, 6);	
+	target.scale_factor = clamp(targetScale, 1, 20);	
 }
 
 function handle_basic_form_toggle_click(event){
