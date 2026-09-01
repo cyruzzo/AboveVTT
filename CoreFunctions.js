@@ -1175,9 +1175,10 @@ function add_journal_roll_buttons(target, tokenId=undefined, specificImage=undef
       rollType = 'Check'
     } else if(targetButton.closest('.dnd-sheet .abilities-table-container').length>0){
       if(targetButton.closest('td').length>0){
-        const columnIndex = targetButton.closest('td')[0].cellIndex;
-        rollAction = targetButton.closest('tr').find('td').first().text();
-        rollType = columnIndex == 2 ? 'Save' : 'Check';
+        const $dataCells = targetButton.closest('tr').children('td:not(.table-row-drag-handle)');
+        const columnIndex = $dataCells.index(targetButton.closest('td'));
+        rollAction = $dataCells.first().text();
+        rollType = columnIndex === 1 ? 'Check' : 'Save';
       }
     } else if(targetButton.closest('.dnd-sheet .skills-box').length>0){
       if(targetButton.closest('td').length>0){
@@ -1192,11 +1193,12 @@ function add_journal_roll_buttons(target, tokenId=undefined, specificImage=undef
       rollType = 'roll'
     } else if(targetButton.closest('.dnd-sheet .attacks-field').length>0){
       if(targetButton.closest('td').length>0){
-        const columnIndex = targetButton.closest('td')[0].cellIndex; 
-        rollAction = targetButton.closest('tr').find('td').first().text();
-        if(columnIndex == 1){ 
+        const $dataCells = targetButton.closest('tr').children('td:not(.table-row-drag-handle)');
+        const columnIndex = $dataCells.index(targetButton.closest('td'));
+        rollAction = $dataCells.first().text();
+        if(columnIndex === 1){ 
           rollType = 'To Hit';
-        }else if(columnIndex == 2){
+        }else if(columnIndex === 2){
           rollType = 'Damage';
           let saveText = targetButton.closest('td').prev('td').text();
           const regex = /\D*(\d+)\s+(CON|INT|WIS|CHA|DEX|STR).*|.*(CON|INT|WIS|CHA|DEX|STR)\s+(\d+)\D*/i
