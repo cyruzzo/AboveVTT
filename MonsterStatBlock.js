@@ -219,7 +219,8 @@ async function display_stat_block_in_container(statBlock, container, tokenId, cu
     if(customStatBlock && container.find('.dnd-sheet').length>0){
 			const customStatId = window.TOKEN_OBJECTS[tokenId]?.options?.statBlock;
 			window.JOURNAL.bindDndSheetTemplateEvents(customStatId, $html, container, {tokenId, showControls: true, uploadId: tokenId, downloadToken: token});
-		}
+      window.JOURNAL.ensureEnclosingZWSP($html[0]);
+    }
 	}
 
 function import_open_template(id){
@@ -400,7 +401,7 @@ const debounceRescanStatBlock = mydebounce(async (container, noteId, tokenId, cu
     });
   }
   window.JOURNAL.bindDndSheetTemplateEvents(noteId, targetRescan, container, {tokenId, showControls: false});
-  
+  window.JOURNAL.ensureEnclosingZWSP(targetRescan[0]);
   $(container).find('.avtt-stat-block-container, .note-text')[0].scrollTop = currScroll;
 }, 1000);
 

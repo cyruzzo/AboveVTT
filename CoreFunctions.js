@@ -1010,6 +1010,7 @@ function apply_avtt_roll_button_markup(html){
   const actionType = "roll"
 
   const updated = html
+    .replaceAll(/[\u200B-\u200D\uFEFF]/gi, '')
     .replaceAll(/(\d+d\d+(min\d+|k[hl]\d+)*ro)&lt;/gi, '$1<')
     .replaceAll(/(\d+d\d+(min\d+|k[hl]\d+)*ro)&gt;/gi, '$1>')
     .replaceAll(strongRoll, `$1$3`)
@@ -1398,7 +1399,7 @@ function general_statblock_formating(input){
   input = input.replace(
       /^(<span.+?>)?(([a-z0-9]+[\s]?){1,7})(\([^\)]+\))?(\.)([\s]+)?((Melee|Ranged|Melee or Ranged) (Weapon Attack:|Spell Attack:|Attack Roll:))?/gi,
         '$1<em><strong>$2$5</strong></em><em>$4$6$7</em>'
-  ).replace(/[\s]+\./gi, '.');
+  ).replace(/[\s]+\./gi, '.').replace(/<em><\/em>/gi, '');
 
   // Find actions requiring saving throws
   input = input.replace(
