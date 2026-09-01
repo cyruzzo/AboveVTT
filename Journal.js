@@ -1797,7 +1797,7 @@ class JournalManager{
 		closestNote.find('[style=""]').removeAttr('style');
   		closestNote.find('[class=""]').removeAttr('class');
 		closestNote.find('[data-avtt-suggestion-type]').removeAttr('data-avtt-suggestion-type');
-		let sanitizedHTML = basic_sanitize_html(closestNote[0].innerHTML).replaceAll(/\[(\/)?spell\]/gi, `[$1spell]`).replaceAll(/\[(\/)?magicitem\]/gi, `[$1magicItem]`).replaceAll(/\[(\/)?item\]/gi, `[$1item]`);
+		let sanitizedHTML = basic_sanitize_html(closestNote[0].innerHTML).replaceAll(/\[(\/)?spell\]/gi, `[$1spell]`).replaceAll(/\[(\/)?magicitem\]/gi, `[$1magicItem]`).replaceAll(/\[(\/)?item\]/gi, `[$1item]`).replaceAll(/[\u200B-\u200D\uFEFF]|&(ZeroWidthSpace|#8203|#x200B);/gi, '');
 		const changes = forceSave || $(sanitizedHTML).text().replace(/[\s\n\r]/gi, '') != $(this.notes[id].text).text().replace(/[\s\n\r]/gi, '');
 		if(changes){
 			if(tokenId){		
