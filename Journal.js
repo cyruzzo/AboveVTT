@@ -2920,7 +2920,62 @@ class JournalManager{
 		targetRescan[0].scrollTop = scrollTop;
 		return true;
 	}
+	
+	/**
+	 * Wraps elements that prevent the caret from being placed beside them.
+	 * This is achieved by inserting zero-width space characters before and after such elements.
+	 * It also adds zero-width space characters to the start and end of contenteditable elements, table cells, and table headers 
+	 * To ensure the caret can be placed at the beginning or end of these elements.
+	 * @param {HTMLElement} container - The container element within which to ensure enclosing/wrapping zero-width space characters.
+	 */
+	ensureEnclosingZWSP(container) {
+		const zwspChar = '\u200B';
+		const stripRegex = /[\u200B-\u200D\uFEFF]|&(ZeroWidthSpace|#8203|#x200B);/gi;
 
+		const docWalker = document.createTreeWalker(container, NodeFilter.SHOW_TEXT, null);
+		let textNode = docWalker.nextNode();
+		while (textNode) {
+			if (stripRegex.test(textNode.nodeValue)) {
+				textNode.nodeValue = textNode.nodeValue.replace(stripRegex, '');
+			}
+			textNode = docWalker.nextNode();
+		}
+		container.normalize();
+
+
+		const wrapTargets = container.querySelectorAll(
+			'.prof-checkbox, input[type="checkbox"], input[type="number"]'
+		);
+
+		wrapTargets.forEach((target) => {
+			if (target.previousSibling?.nodeType !== Node.TEXT_NODE) {
+				target.parentNode.insertBefore(document.createTextNode(zwspChar), target);
+			}
+
+			if (target.nextSibling?.nodeType !== Node.TEXT_NODE) {
+				target.parentNode.insertBefore(document.createTextNode(zwspChar), target.nextSibling);
+			}
+		});
+
+		const targetContainers = container.querySelectorAll('[contenteditable="true"], td, th');
+
+		targetContainers.forEach((el) => {
+			if (el.firstChild?.nodeType === Node.TEXT_NODE) {
+				el.firstChild.nodeValue = el.firstChild.nodeValue.trimStart();
+			}
+			if (el.lastChild?.nodeType === Node.TEXT_NODE) {
+				el.lastChild.nodeValue = el.lastChild.nodeValue.trimEnd();
+			}
+			el.normalize();
+
+			if (el.firstChild?.nodeType !== Node.TEXT_NODE) {
+				el.insertBefore(document.createTextNode(zwspChar), el.firstChild);
+			}
+			if (el.lastChild?.nodeType !== Node.TEXT_NODE && !el.lastChild?.classList?.contains('add-table-row')) {
+				el.appendChild(document.createTextNode(zwspChar));
+			}
+		});
+	}
 	display_note(id, statBlock = false, scrollTop=0, bringToFront=true){
 		let self=this;
 		let noteAlreadyOpen = $(`div.note[data-id='${id}']`).length>0;
@@ -3065,6 +3120,7 @@ class JournalManager{
 			note_text[0].scrollTop = scrollTop;
 			
 			if(note_text.find('.dnd-sheet').length>0){
+				this.ensureEnclosingZWSP(note_text[0]);
 				self.bindDndSheetTemplateEvents(id, note_text, note_container, {showControls: true});
 			}
 		});	
@@ -3587,7 +3643,9 @@ class JournalManager{
 		return immediateChildren;
 	}
 	async translateHtmlAndBlocks(target, displayNoteId, isStatBlock=true) {
+
 		await embedDDBSection(target);
+
 		if(window.ITEMS_CACHE != undefined){
 			const equipmentBlock = target.find('.dnd-sheet .equipment-block');
 			if(equipmentBlock.length > 0){
@@ -3706,7 +3764,6 @@ class JournalManager{
 			}
 		}
 
-
 		let pastedButtons = target.find('.avtt-roll-button, [data-rolltype="recharge"], .integrated-dice__container, span[data-dicenotation]');
     	target.find('>style:first-of-type, >style#contentStyles').remove();
 		
@@ -3742,7 +3799,7 @@ class JournalManager{
 		//remove DDB tags if loading from DDB data eg. on the DM Screen
 		data = data.replace(/\[rule\]|\[\/rule\]/gi, '');
 		data = data.replace(/\[condition\]|\[\/condition\]/gi, '');
-
+		data = data.replaceAll(/[\u200B-\u200D\uFEFF]|&(ZeroWidthSpace|#8203|#x200B);/gi, '');
 
         data = data.replace(/\[pin(.*?)\]([\s\S]+?)\[\/pin\]/gi, function(m, m1, m2){
           let label = '';
@@ -3932,7 +3989,7 @@ class JournalManager{
             })
 			input = input.replace(/\[prof\s*(\d*)\]/gi, function(m, m1){
 				const state = isNaN(parseInt(m1)) ?  0 : parseInt(m1) % 4;
-				return `&#8203;<span data-state="${state}" class="prof-checkbox"><svg name="preventRemove" class="prof-icon"> <circle cx="9" cy="9" r="6" class="base-circle"></circle> <path d="M 9 3 A 3 3 0 0 0 9 15 Z" class="half-fill"></path> <circle cx="9" cy="9" r="6" class="full-fill"></circle> <circle cx="9" cy="9" r="8" class="ring-stroke"></circle> </svg></span>&#8203;`;
+				return `<span data-state="${state}" class="prof-checkbox"><svg name="preventRemove" class="prof-icon"> <circle cx="9" cy="9" r="6" class="base-circle"></circle> <path d="M 9 3 A 3 3 0 0 0 9 15 Z" class="half-fill"></path> <circle cx="9" cy="9" r="6" class="full-fill"></circle> <circle cx="9" cy="9" r="8" class="ring-stroke"></circle> </svg></span>`;
 			});
 			input = input.replace(/\[checkbox checked\]/gi, `<input type="checkbox" checked>`);
 			input = input.replace(/\[checkbox\]/gi, `<input type="checkbox">`);
@@ -3940,29 +3997,29 @@ class JournalManager{
             	let note = m.replace(/<\/?p>/g, '').replace(/\s?\[note\]\s?|\s?\[\/note\]\s?/g, '').replace('[/note]', '');   	
             	const noteId = note.replace(/\s/g, '-').split(';')[0];
             	note = (note.split(';')[1]) ? note.split(';')[1] : note;
-                return `\u200B<a class="tooltip-hover note-tooltip" data-id=${noteId}>${note}</a>\u200B`
+                return `<a class="tooltip-hover note-tooltip" data-id=${noteId}>${note}</a>`
             })
             input = input.replace(/\[spell\](.*?)\[\/spell\]/g, function(m){
             	let spell = m.replace(/<\/?p>/g, '').replace(/\s?\[spell\]\s?|\s?\[\/spell\]\s?/g, '').replace('[/spell]', '');   	
             	const spellUrl = spell.replace(/\s/g, '-').split(';')[0];
             	spell = (spell.split(';')[1]) ? spell.split(';')[1] : spell;
-                return `\u200B<a class="tooltip-hover spell-tooltip" href="https://www.dndbeyond.com/spells/${spellUrl}" aria-haspopup="true" target="_blank">${spell}</a>\u200B`
+                return `<a class="tooltip-hover spell-tooltip" href="https://www.dndbeyond.com/spells/${spellUrl}" aria-haspopup="true" target="_blank">${spell}</a>`
             })
              input = input.replace(/\[item\](.*?)\[\/item\]/g, function(m){
             	let item = m.replace(/<\/?p>/g, '').replace(/\s?\[item\]\s?|\s?\[\/item\]\s?/g, '').replace('[/item]', '');   	
             	const itemUrl = item.replace(/\s/g, '-').split(';')[0];;
             	item = (item.split(';')[1]) ? item.split(';')[1] : item;
-                return `\u200B<a class="tooltip-hover item-tooltip" href="https://www.dndbeyond.com/equipment/${itemUrl}" aria-haspopup="true" target="_blank">${item}</a>\u200B`
+                return `<a class="tooltip-hover item-tooltip" href="https://www.dndbeyond.com/equipment/${itemUrl}" aria-haspopup="true" target="_blank">${item}</a>`
             })
                input = input.replace(/\[wprop\](.*?)\[\/wprop\]/g, function(m){
             	let wprop = m.replace(/<\/?p>/g, '').replace(/\s?\[wprop\]\s?|\s?\[\/wprop\]\s?/g, '').replace('[/wprop]', '');   	
             	const wpropUrl = wprop.replace(/\s/g, '-').split(';')[0];;
             	wprop = (wprop.split(';')[1]) ? wprop.split(';')[1] : wprop;
-                return `\u200B<a class="tooltip-hover wprop-tooltip" href="https://www.dndbeyond.com/weapon-properties/${wpropUrl}" aria-haspopup="true" target="_blank">${wprop}</a>\u200B`
+                return `<a class="tooltip-hover wprop-tooltip" href="https://www.dndbeyond.com/weapon-properties/${wpropUrl}" aria-haspopup="true" target="_blank">${wprop}</a>`
             })
             input = input.replace(/\[roll\](.*?)\[\/roll\]/g, function(m){
             	let roll = m.replace(/<\/?p>/g, '').replace(/\s?\[roll\]\s?|\s?\[\/roll\]\s?/g, '').replace('[/roll]', '');   	
-                return `\u200B<span class="abovevtt-slash-command-journal">${roll}</span>\u200B`
+                return `<span class="abovevtt-slash-command-journal">${roll}</span>`
             })
 
             
@@ -3971,21 +4028,21 @@ class JournalManager{
             	let spell = m.replace(/<\/?p>/g, '').replace(/\s?\[monster\]\s?|\s?\[\/monster\]\s?/g, '').replace('[/monster]', '');   	
             	const spellUrl = spell.replace(/\s/g, '-').split(';')[0];
             	spell = (spell.split(';')[1]) ? spell.split(';')[1] : spell;
-                return `\u200B<a class="tooltip-hover monster-tooltip" href="https://www.dndbeyond.com/monsters/${spellUrl}" aria-haspopup="true" target="_blank">${spell}</a>\u200B`
+                return `<a class="tooltip-hover monster-tooltip" href="https://www.dndbeyond.com/monsters/${spellUrl}" aria-haspopup="true" target="_blank">${spell}</a>`
             })
 
             input = input.replace(/\[magicItem\](.*?)\[\/magicItem\]/g, function(m){
             	let spell = m.replace(/<\/?p>/g, '').replace(/\s?\[magicItem\]\s?|\s?\[\/magicItem\]\s?/g, '').replace('[/magicItem]', '');   	
             	const spellUrl = spell.replace(/\s/g, '-').split(';')[0];
             	spell = (spell.split(';')[1]) ? spell.split(';')[1] : spell;
-                return `\u200B<a class="tooltip-hover magic-item-tooltip" href="https://www.dndbeyond.com/magic-items/${spellUrl}" aria-haspopup="true" target="_blank">${spell}</a>\u200B`
+                return `<a class="tooltip-hover magic-item-tooltip" href="https://www.dndbeyond.com/magic-items/${spellUrl}" aria-haspopup="true" target="_blank">${spell}</a>`
             })
 
             input = input.replace(/\[source\](.*?)\[\/source\]/g, function(m){
             	let source = m.replace(/<\/?p>/g, '').replace(/\s?\[source\]\s?|\s?\[\/source\]\s?/g, '').replace('[/source]', '');   	
             	const sourceUrl = source.replace(/\s/g, '-').split(';')[0];
             	source = (source.split(';')[1]) ? source.split(';')[1] : source;
-                return `\u200B<a class="tooltip-hover source-tooltip" href="${sourceUrl}" aria-haspopup="true" target="_blank">${source}</a>\u200B`
+                return `<a class="tooltip-hover source-tooltip" href="${sourceUrl}" aria-haspopup="true" target="_blank">${source}</a>`
             })
 
             input = input.replace(/\[track\](.*?[a-zA-Z\s]+.*?[\d]+.*?)\[\/track\]/g, function(m, m1){
@@ -6151,37 +6208,37 @@ class JournalManager{
 													<tr>
 														<td>Str</td>
 														<td><span contenteditable="true">+0</span></td>
-														<td>&#8203;<span data-state="0" class="prof-checkbox"><svg name="preventRemove" class="prof-icon"> <circle cx="9" cy="9" r="6" class="base-circle"></circle> <path d="M 9 3 A 3 3 0 0 0 9 15 Z" class="half-fill"></path> <circle cx="9" cy="9" r="6" class="full-fill"></circle> <circle cx="9" cy="9" r="8" class="ring-stroke"></circle> </svg></span>&#8203;<span contenteditable="true">+0</span></td>
+														<td><span data-state="0" class="prof-checkbox"><svg name="preventRemove" class="prof-icon"> <circle cx="9" cy="9" r="6" class="base-circle"></circle> <path d="M 9 3 A 3 3 0 0 0 9 15 Z" class="half-fill"></path> <circle cx="9" cy="9" r="6" class="full-fill"></circle> <circle cx="9" cy="9" r="8" class="ring-stroke"></circle> </svg></span><span contenteditable="true">+0</span></td>
 														<td>10</td>
 													</tr>
 													<tr>
 														<td>Dex</td>
 														<td><span contenteditable="true">+0</span></td>
-														<td>&#8203;<span data-state="0" class="prof-checkbox"><svg name="preventRemove" class="prof-icon"> <circle cx="9" cy="9" r="6" class="base-circle"></circle> <path d="M 9 3 A 3 3 0 0 0 9 15 Z" class="half-fill"></path> <circle cx="9" cy="9" r="6" class="full-fill"></circle> <circle cx="9" cy="9" r="8" class="ring-stroke"></circle> </svg></span>&#8203;<span contenteditable="true">+0</span></td>
+														<td><span data-state="0" class="prof-checkbox"><svg name="preventRemove" class="prof-icon"> <circle cx="9" cy="9" r="6" class="base-circle"></circle> <path d="M 9 3 A 3 3 0 0 0 9 15 Z" class="half-fill"></path> <circle cx="9" cy="9" r="6" class="full-fill"></circle> <circle cx="9" cy="9" r="8" class="ring-stroke"></circle> </svg></span><span contenteditable="true">+0</span></td>
 														<td>10</td>
 													</tr>
 													<tr>
 														<td>Con</td>
 														<td><span contenteditable="true">+0</span></td>
-														<td>&#8203;<span data-state="0" class="prof-checkbox"><svg name="preventRemove" class="prof-icon"> <circle cx="9" cy="9" r="6" class="base-circle"></circle> <path d="M 9 3 A 3 3 0 0 0 9 15 Z" class="half-fill"></path> <circle cx="9" cy="9" r="6" class="full-fill"></circle> <circle cx="9" cy="9" r="8" class="ring-stroke"></circle> </svg></span>&#8203;<span contenteditable="true">+0</span></td>
+														<td><span data-state="0" class="prof-checkbox"><svg name="preventRemove" class="prof-icon"> <circle cx="9" cy="9" r="6" class="base-circle"></circle> <path d="M 9 3 A 3 3 0 0 0 9 15 Z" class="half-fill"></path> <circle cx="9" cy="9" r="6" class="full-fill"></circle> <circle cx="9" cy="9" r="8" class="ring-stroke"></circle> </svg></span><span contenteditable="true">+0</span></td>
 														<td>10</td>
 													</tr>
 													<tr>
 														<td>Int</td>
 														<td><span contenteditable="true">+0</span></td>
-														<td>&#8203;<span data-state="0" class="prof-checkbox"><svg name="preventRemove" class="prof-icon"> <circle cx="9" cy="9" r="6" class="base-circle"></circle> <path d="M 9 3 A 3 3 0 0 0 9 15 Z" class="half-fill"></path> <circle cx="9" cy="9" r="6" class="full-fill"></circle> <circle cx="9" cy="9" r="8" class="ring-stroke"></circle> </svg></span>&#8203;<span contenteditable="true">+0</span></td>
+														<td><span data-state="0" class="prof-checkbox"><svg name="preventRemove" class="prof-icon"> <circle cx="9" cy="9" r="6" class="base-circle"></circle> <path d="M 9 3 A 3 3 0 0 0 9 15 Z" class="half-fill"></path> <circle cx="9" cy="9" r="6" class="full-fill"></circle> <circle cx="9" cy="9" r="8" class="ring-stroke"></circle> </svg></span><span contenteditable="true">+0</span></td>
 														<td>10</td>
 													</tr>
 													<tr>
 														<td>Wis</td>
 														<td><span contenteditable="true">+0</span></td>
-														<td>&#8203;<span data-state="0" class="prof-checkbox"><svg name="preventRemove" class="prof-icon"> <circle cx="9" cy="9" r="6" class="base-circle"></circle> <path d="M 9 3 A 3 3 0 0 0 9 15 Z" class="half-fill"></path> <circle cx="9" cy="9" r="6" class="full-fill"></circle> <circle cx="9" cy="9" r="8" class="ring-stroke"></circle> </svg></span>&#8203;<span contenteditable="true">+0</span></td>
+														<td><span data-state="0" class="prof-checkbox"><svg name="preventRemove" class="prof-icon"> <circle cx="9" cy="9" r="6" class="base-circle"></circle> <path d="M 9 3 A 3 3 0 0 0 9 15 Z" class="half-fill"></path> <circle cx="9" cy="9" r="6" class="full-fill"></circle> <circle cx="9" cy="9" r="8" class="ring-stroke"></circle> </svg></span><span contenteditable="true">+0</span></td>
 														<td>10</td>
 													</tr>
 													<tr>
 														<td>Cha</td>
 														<td><span contenteditable="true">+0</span></td>
-														<td>&#8203;<span data-state="0" class="prof-checkbox"><svg name="preventRemove" class="prof-icon"> <circle cx="9" cy="9" r="6" class="base-circle"></circle> <path d="M 9 3 A 3 3 0 0 0 9 15 Z" class="half-fill"></path> <circle cx="9" cy="9" r="6" class="full-fill"></circle> <circle cx="9" cy="9" r="8" class="ring-stroke"></circle> </svg></span>&#8203;<span contenteditable="true">+0</span></td>
+														<td><span data-state="0" class="prof-checkbox"><svg name="preventRemove" class="prof-icon"> <circle cx="9" cy="9" r="6" class="base-circle"></circle> <path d="M 9 3 A 3 3 0 0 0 9 15 Z" class="half-fill"></path> <circle cx="9" cy="9" r="6" class="full-fill"></circle> <circle cx="9" cy="9" r="8" class="ring-stroke"></circle> </svg></span><span contenteditable="true">+0</span></td>
 														<td>10</td>
 													</tr>
 												</tbody>
@@ -6194,109 +6251,109 @@ class JournalManager{
 											<table contenteditable="true">
 												<tbody>
 													<tr>
-														<td>&#8203;<span data-state="0" class="prof-checkbox"><svg name="preventRemove" class="prof-icon"> <circle cx="9" cy="9" r="6" class="base-circle"></circle> <path d="M 9 3 A 3 3 0 0 0 9 15 Z" class="half-fill"></path> <circle cx="9" cy="9" r="6" class="full-fill"></circle> <circle cx="9" cy="9" r="8" class="ring-stroke"></circle> </svg></span>&#8203;</td>
+														<td><span data-state="0" class="prof-checkbox"><svg name="preventRemove" class="prof-icon"> <circle cx="9" cy="9" r="6" class="base-circle"></circle> <path d="M 9 3 A 3 3 0 0 0 9 15 Z" class="half-fill"></path> <circle cx="9" cy="9" r="6" class="full-fill"></circle> <circle cx="9" cy="9" r="8" class="ring-stroke"></circle> </svg></span></td>
 														<td>+0</td>
 														<td>Acrobatics</td>
 														<td>Dex</td>
 													</tr>
 													<tr>
-														<td>&#8203;<span data-state="1" class="prof-checkbox"><svg name="preventRemove" class="prof-icon"> <circle cx="9" cy="9" r="6" class="base-circle"></circle> <path d="M 9 3 A 3 3 0 0 0 9 15 Z" class="half-fill"></path> <circle cx="9" cy="9" r="6" class="full-fill"></circle> <circle cx="9" cy="9" r="8" class="ring-stroke"></circle> </svg></span>&#8203;</td>
+														<td><span data-state="1" class="prof-checkbox"><svg name="preventRemove" class="prof-icon"> <circle cx="9" cy="9" r="6" class="base-circle"></circle> <path d="M 9 3 A 3 3 0 0 0 9 15 Z" class="half-fill"></path> <circle cx="9" cy="9" r="6" class="full-fill"></circle> <circle cx="9" cy="9" r="8" class="ring-stroke"></circle> </svg></span></td>
 														<td>+0</td>
 														<td>Animal Handling</td>
 														<td>Wis</td>
 													</tr>
 													<tr>
-														<td>&#8203;<span data-state="2" class="prof-checkbox"><svg name="preventRemove" class="prof-icon"> <circle cx="9" cy="9" r="6" class="base-circle"></circle> <path d="M 9 3 A 3 3 0 0 0 9 15 Z" class="half-fill"></path> <circle cx="9" cy="9" r="6" class="full-fill"></circle> <circle cx="9" cy="9" r="8" class="ring-stroke"></circle> </svg></span>&#8203;</td>
+														<td><span data-state="2" class="prof-checkbox"><svg name="preventRemove" class="prof-icon"> <circle cx="9" cy="9" r="6" class="base-circle"></circle> <path d="M 9 3 A 3 3 0 0 0 9 15 Z" class="half-fill"></path> <circle cx="9" cy="9" r="6" class="full-fill"></circle> <circle cx="9" cy="9" r="8" class="ring-stroke"></circle> </svg></span></td>
 														<td>+0</td>
 														<td>Arcana</td>
 														<td>Int</td>
 													</tr>
 													<tr>
-														<td>&#8203;<span data-state="3" class="prof-checkbox"><svg name="preventRemove" class="prof-icon"> <circle cx="9" cy="9" r="6" class="base-circle"></circle> <path d="M 9 3 A 3 3 0 0 0 9 15 Z" class="half-fill"></path> <circle cx="9" cy="9" r="6" class="full-fill"></circle> <circle cx="9" cy="9" r="8" class="ring-stroke"></circle> </svg></span>&#8203;</td>
+														<td><span data-state="3" class="prof-checkbox"><svg name="preventRemove" class="prof-icon"> <circle cx="9" cy="9" r="6" class="base-circle"></circle> <path d="M 9 3 A 3 3 0 0 0 9 15 Z" class="half-fill"></path> <circle cx="9" cy="9" r="6" class="full-fill"></circle> <circle cx="9" cy="9" r="8" class="ring-stroke"></circle> </svg></span></td>
 														<td>+0</td>
 														<td>Athletics</td>
 														<td>Str</td>
 													</tr>
 													<tr>
-														<td>&#8203;<span data-state="0" class="prof-checkbox"><svg name="preventRemove" class="prof-icon"> <circle cx="9" cy="9" r="6" class="base-circle"></circle> <path d="M 9 3 A 3 3 0 0 0 9 15 Z" class="half-fill"></path> <circle cx="9" cy="9" r="6" class="full-fill"></circle> <circle cx="9" cy="9" r="8" class="ring-stroke"></circle> </svg></span>&#8203;</td>
+														<td><span data-state="0" class="prof-checkbox"><svg name="preventRemove" class="prof-icon"> <circle cx="9" cy="9" r="6" class="base-circle"></circle> <path d="M 9 3 A 3 3 0 0 0 9 15 Z" class="half-fill"></path> <circle cx="9" cy="9" r="6" class="full-fill"></circle> <circle cx="9" cy="9" r="8" class="ring-stroke"></circle> </svg></span></td>
 														<td>+0</td>
 														<td>Deception</td>
 														<td>Cha</td>
 													</tr>
 													<tr>
-														<td>&#8203;<span data-state="0" class="prof-checkbox"><svg name="preventRemove" class="prof-icon"> <circle cx="9" cy="9" r="6" class="base-circle"></circle> <path d="M 9 3 A 3 3 0 0 0 9 15 Z" class="half-fill"></path> <circle cx="9" cy="9" r="6" class="full-fill"></circle> <circle cx="9" cy="9" r="8" class="ring-stroke"></circle> </svg></span>&#8203;</td>
+														<td><span data-state="0" class="prof-checkbox"><svg name="preventRemove" class="prof-icon"> <circle cx="9" cy="9" r="6" class="base-circle"></circle> <path d="M 9 3 A 3 3 0 0 0 9 15 Z" class="half-fill"></path> <circle cx="9" cy="9" r="6" class="full-fill"></circle> <circle cx="9" cy="9" r="8" class="ring-stroke"></circle> </svg></span></td>
 														<td>+0</td>
 														<td>History</td>
 														<td>Int</td>
 													</tr>
 													<tr>
-														<td>&#8203;<span data-state="0" class="prof-checkbox"><svg name="preventRemove" class="prof-icon"> <circle cx="9" cy="9" r="6" class="base-circle"></circle> <path d="M 9 3 A 3 3 0 0 0 9 15 Z" class="half-fill"></path> <circle cx="9" cy="9" r="6" class="full-fill"></circle> <circle cx="9" cy="9" r="8" class="ring-stroke"></circle> </svg></span>&#8203;</td>
+														<td><span data-state="0" class="prof-checkbox"><svg name="preventRemove" class="prof-icon"> <circle cx="9" cy="9" r="6" class="base-circle"></circle> <path d="M 9 3 A 3 3 0 0 0 9 15 Z" class="half-fill"></path> <circle cx="9" cy="9" r="6" class="full-fill"></circle> <circle cx="9" cy="9" r="8" class="ring-stroke"></circle> </svg></span></td>
 														<td>+0</td>
 														<td>Insight</td>
 														<td>Wis</td>
 													</tr>
 													<tr>
-														<td>&#8203;<span data-state="0" class="prof-checkbox"><svg name="preventRemove" class="prof-icon"> <circle cx="9" cy="9" r="6" class="base-circle"></circle> <path d="M 9 3 A 3 3 0 0 0 9 15 Z" class="half-fill"></path> <circle cx="9" cy="9" r="6" class="full-fill"></circle> <circle cx="9" cy="9" r="8" class="ring-stroke"></circle> </svg></span>&#8203;</td>
+														<td><span data-state="0" class="prof-checkbox"><svg name="preventRemove" class="prof-icon"> <circle cx="9" cy="9" r="6" class="base-circle"></circle> <path d="M 9 3 A 3 3 0 0 0 9 15 Z" class="half-fill"></path> <circle cx="9" cy="9" r="6" class="full-fill"></circle> <circle cx="9" cy="9" r="8" class="ring-stroke"></circle> </svg></span></td>
 														<td>+0</td>
 														<td>Intimidation</td>
 														<td>Cha</td>
 													</tr>
 													<tr>
-														<td>&#8203;<span data-state="0" class="prof-checkbox"><svg name="preventRemove" class="prof-icon"> <circle cx="9" cy="9" r="6" class="base-circle"></circle> <path d="M 9 3 A 3 3 0 0 0 9 15 Z" class="half-fill"></path> <circle cx="9" cy="9" r="6" class="full-fill"></circle> <circle cx="9" cy="9" r="8" class="ring-stroke"></circle> </svg></span>&#8203;</td>
+														<td><span data-state="0" class="prof-checkbox"><svg name="preventRemove" class="prof-icon"> <circle cx="9" cy="9" r="6" class="base-circle"></circle> <path d="M 9 3 A 3 3 0 0 0 9 15 Z" class="half-fill"></path> <circle cx="9" cy="9" r="6" class="full-fill"></circle> <circle cx="9" cy="9" r="8" class="ring-stroke"></circle> </svg></span></td>
 														<td>+0</td>
 														<td>Investigation</td>
 														<td>Int</td>
 													</tr>
 													<tr>
-														<td>&#8203;<span data-state="0" class="prof-checkbox"><svg name="preventRemove" class="prof-icon"> <circle cx="9" cy="9" r="6" class="base-circle"></circle> <path d="M 9 3 A 3 3 0 0 0 9 15 Z" class="half-fill"></path> <circle cx="9" cy="9" r="6" class="full-fill"></circle> <circle cx="9" cy="9" r="8" class="ring-stroke"></circle> </svg></span>&#8203;</td>
+														<td><span data-state="0" class="prof-checkbox"><svg name="preventRemove" class="prof-icon"> <circle cx="9" cy="9" r="6" class="base-circle"></circle> <path d="M 9 3 A 3 3 0 0 0 9 15 Z" class="half-fill"></path> <circle cx="9" cy="9" r="6" class="full-fill"></circle> <circle cx="9" cy="9" r="8" class="ring-stroke"></circle> </svg></span></td>
 														<td>+0</td>
 														<td>Medicine</td>
 														<td>Wis</td>
 													</tr>
 													<tr>
-														<td>&#8203;<span data-state="0" class="prof-checkbox"><svg name="preventRemove" class="prof-icon"> <circle cx="9" cy="9" r="6" class="base-circle"></circle> <path d="M 9 3 A 3 3 0 0 0 9 15 Z" class="half-fill"></path> <circle cx="9" cy="9" r="6" class="full-fill"></circle> <circle cx="9" cy="9" r="8" class="ring-stroke"></circle> </svg></span>&#8203;</td>
+														<td><span data-state="0" class="prof-checkbox"><svg name="preventRemove" class="prof-icon"> <circle cx="9" cy="9" r="6" class="base-circle"></circle> <path d="M 9 3 A 3 3 0 0 0 9 15 Z" class="half-fill"></path> <circle cx="9" cy="9" r="6" class="full-fill"></circle> <circle cx="9" cy="9" r="8" class="ring-stroke"></circle> </svg></span></td>
 														<td>+0</td>
 														<td>Nature</td>
 														<td>Int</td>
 													</tr>
 													<tr>
-														<td>&#8203;<span data-state="0" class="prof-checkbox"><svg name="preventRemove" class="prof-icon"> <circle cx="9" cy="9" r="6" class="base-circle"></circle> <path d="M 9 3 A 3 3 0 0 0 9 15 Z" class="half-fill"></path> <circle cx="9" cy="9" r="6" class="full-fill"></circle> <circle cx="9" cy="9" r="8" class="ring-stroke"></circle> </svg></span>&#8203;</td>
+														<td><span data-state="0" class="prof-checkbox"><svg name="preventRemove" class="prof-icon"> <circle cx="9" cy="9" r="6" class="base-circle"></circle> <path d="M 9 3 A 3 3 0 0 0 9 15 Z" class="half-fill"></path> <circle cx="9" cy="9" r="6" class="full-fill"></circle> <circle cx="9" cy="9" r="8" class="ring-stroke"></circle> </svg></span></td>
 														<td>+0</td>
 														<td>Perception</td>
 														<td>Wis</td>
 													</tr>
 													<tr>
-														<td>&#8203;<span data-state="0" class="prof-checkbox"><svg name="preventRemove" class="prof-icon"> <circle cx="9" cy="9" r="6" class="base-circle"></circle> <path d="M 9 3 A 3 3 0 0 0 9 15 Z" class="half-fill"></path> <circle cx="9" cy="9" r="6" class="full-fill"></circle> <circle cx="9" cy="9" r="8" class="ring-stroke"></circle> </svg></span>&#8203;</td>
+														<td><span data-state="0" class="prof-checkbox"><svg name="preventRemove" class="prof-icon"> <circle cx="9" cy="9" r="6" class="base-circle"></circle> <path d="M 9 3 A 3 3 0 0 0 9 15 Z" class="half-fill"></path> <circle cx="9" cy="9" r="6" class="full-fill"></circle> <circle cx="9" cy="9" r="8" class="ring-stroke"></circle> </svg></span></td>
 														<td>+0</td>
 														<td>Performance</td>
 														<td>Cha</td>
 													</tr>
 													<tr>
-														<td>&#8203;<span data-state="0" class="prof-checkbox"><svg name="preventRemove" class="prof-icon"> <circle cx="9" cy="9" r="6" class="base-circle"></circle> <path d="M 9 3 A 3 3 0 0 0 9 15 Z" class="half-fill"></path> <circle cx="9" cy="9" r="6" class="full-fill"></circle> <circle cx="9" cy="9" r="8" class="ring-stroke"></circle> </svg></span>&#8203;</td>
+														<td><span data-state="0" class="prof-checkbox"><svg name="preventRemove" class="prof-icon"> <circle cx="9" cy="9" r="6" class="base-circle"></circle> <path d="M 9 3 A 3 3 0 0 0 9 15 Z" class="half-fill"></path> <circle cx="9" cy="9" r="6" class="full-fill"></circle> <circle cx="9" cy="9" r="8" class="ring-stroke"></circle> </svg></span></td>
 														<td>+0</td>
 														<td>Persuasion</td>
 														<td>Cha</td>
 													</tr>
 													<tr>
-														<td>&#8203;<span data-state="0" class="prof-checkbox"><svg name="preventRemove" class="prof-icon"> <circle cx="9" cy="9" r="6" class="base-circle"></circle> <path d="M 9 3 A 3 3 0 0 0 9 15 Z" class="half-fill"></path> <circle cx="9" cy="9" r="6" class="full-fill"></circle> <circle cx="9" cy="9" r="8" class="ring-stroke"></circle> </svg></span>&#8203;</td>
+														<td><span data-state="0" class="prof-checkbox"><svg name="preventRemove" class="prof-icon"> <circle cx="9" cy="9" r="6" class="base-circle"></circle> <path d="M 9 3 A 3 3 0 0 0 9 15 Z" class="half-fill"></path> <circle cx="9" cy="9" r="6" class="full-fill"></circle> <circle cx="9" cy="9" r="8" class="ring-stroke"></circle> </svg></span></td>
 														<td>+0</td>
 														<td>Religion</td>
 														<td>Int</td>
 													</tr>
 													<tr>
-														<td>&#8203;<span data-state="0" class="prof-checkbox"><svg name="preventRemove" class="prof-icon"> <circle cx="9" cy="9" r="6" class="base-circle"></circle> <path d="M 9 3 A 3 3 0 0 0 9 15 Z" class="half-fill"></path> <circle cx="9" cy="9" r="6" class="full-fill"></circle> <circle cx="9" cy="9" r="8" class="ring-stroke"></circle> </svg></span>&#8203;</td>
+														<td><span data-state="0" class="prof-checkbox"><svg name="preventRemove" class="prof-icon"> <circle cx="9" cy="9" r="6" class="base-circle"></circle> <path d="M 9 3 A 3 3 0 0 0 9 15 Z" class="half-fill"></path> <circle cx="9" cy="9" r="6" class="full-fill"></circle> <circle cx="9" cy="9" r="8" class="ring-stroke"></circle> </svg></span></td>
 														<td>+0</td>
 														<td>Sleight of Hand</td>
 														<td>Dex</td>
 													</tr>
 													<tr>
-														<td>&#8203;<span data-state="0" class="prof-checkbox"><svg name="preventRemove" class="prof-icon"> <circle cx="9" cy="9" r="6" class="base-circle"></circle> <path d="M 9 3 A 3 3 0 0 0 9 15 Z" class="half-fill"></path> <circle cx="9" cy="9" r="6" class="full-fill"></circle> <circle cx="9" cy="9" r="8" class="ring-stroke"></circle> </svg></span>&#8203;</td>
+														<td><span data-state="0" class="prof-checkbox"><svg name="preventRemove" class="prof-icon"> <circle cx="9" cy="9" r="6" class="base-circle"></circle> <path d="M 9 3 A 3 3 0 0 0 9 15 Z" class="half-fill"></path> <circle cx="9" cy="9" r="6" class="full-fill"></circle> <circle cx="9" cy="9" r="8" class="ring-stroke"></circle> </svg></span></td>
 														<td>+0</td>
 														<td>Stealth</td>
 														<td>Dex</td>
 													</tr>
 													<tr>
-														<td>&#8203;<span data-state="0" class="prof-checkbox"><svg name="preventRemove" class="prof-icon"> <circle cx="9" cy="9" r="6" class="base-circle"></circle> <path d="M 9 3 A 3 3 0 0 0 9 15 Z" class="half-fill"></path> <circle cx="9" cy="9" r="6" class="full-fill"></circle> <circle cx="9" cy="9" r="8" class="ring-stroke"></circle> </svg></span>&#8203;</td>
+														<td><span data-state="0" class="prof-checkbox"><svg name="preventRemove" class="prof-icon"> <circle cx="9" cy="9" r="6" class="base-circle"></circle> <path d="M 9 3 A 3 3 0 0 0 9 15 Z" class="half-fill"></path> <circle cx="9" cy="9" r="6" class="full-fill"></circle> <circle cx="9" cy="9" r="8" class="ring-stroke"></circle> </svg></span></td>
 														<td>+0</td>
 														<td>Survival</td>
 														<td>Wis</td>
@@ -6371,40 +6428,40 @@ class JournalManager{
 												</thead>
 												<tbody>
 													<tr>
-														<td contenteditable="true">[magicItem]Dagger of Venom[/magicItem]</td>
-														<td contenteditable="true">+1</td>
-														<td contenteditable="true">1d4+1 piercing</td>
-														<td contenteditable="true">DC15 Con (2d10) Poison , [wprop]Nick[/wprop]</td>
+														<td>[magicItem]Dagger of Venom[/magicItem]</td>
+														<td>+1</td>
+														<td>1d4+1 piercing</td>
+														<td>DC15 Con (2d10) Poison , [wprop]Nick[/wprop]</td>
 													</tr>
 													<tr>
-														<td contenteditable="true">Handaxe</td>
-														<td contenteditable="true">+0</td>
-														<td contenteditable="true">(1d6) slashing</td>
-														<td contenteditable="true">[wprop]Light[/wprop], [wprop]Thrown[/wprop](20/60)</td>
+														<td>Handaxe</td>
+														<td>+0</td>
+														<td>(1d6) slashing</td>
+														<td>[wprop]Light[/wprop], [wprop]Thrown[/wprop](20/60)</td>
 													</tr>
 													<tr>
-														<td contenteditable="true">[spell]Acid Splash[/spell]</td>
-														<td contenteditable="true">10 DEX</td>
-														<td contenteditable="true">(1d6) acid</td>
-														<td contenteditable="true">5-foot-radius Sphere</td>
+														<td>[spell]Acid Splash[/spell]</td>
+														<td>10 DEX</td>
+														<td>(1d6) acid</td>
+														<td>5-foot-radius Sphere</td>
 													</tr>
 													<tr>
-														<td contenteditable="true">&nbsp;</td>
-														<td contenteditable="true">&nbsp;</td>
-														<td contenteditable="true">&nbsp;</td>
-														<td contenteditable="true">&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
 													</tr>
 													<tr>
-														<td contenteditable="true">&nbsp;</td>
-														<td contenteditable="true">&nbsp;</td>
-														<td contenteditable="true">&nbsp;</td>
-														<td contenteditable="true">&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
 													</tr>
 													<tr>
-														<td contenteditable="true">&nbsp;</td>
-														<td contenteditable="true">&nbsp;</td>
-														<td contenteditable="true">&nbsp;</td>
-														<td contenteditable="true">&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
 													</tr>
 												</tbody>
 											</table>
@@ -7256,7 +7313,7 @@ class JournalManager{
 							onclick: (e) => { 
 								e.preventDefault();
 								e.stopPropagation(); 
-								editor.insertContent(`&#8203;<span data-state="0" class="prof-checkbox"><svg name="preventRemove" class="prof-icon"> <circle cx="9" cy="9" r="6" class="base-circle"></circle> <path d="M 9 3 A 3 3 0 0 0 9 15 Z" class="half-fill"></path> <circle cx="9" cy="9" r="6" class="full-fill"></circle> <circle cx="9" cy="9" r="8" class="ring-stroke"></circle> </svg></span>&#8203;`);
+								editor.insertContent(`<span data-state="0" class="prof-checkbox"><svg name="preventRemove" class="prof-icon"> <circle cx="9" cy="9" r="6" class="base-circle"></circle> <path d="M 9 3 A 3 3 0 0 0 9 15 Z" class="half-fill"></path> <circle cx="9" cy="9" r="6" class="full-fill"></circle> <circle cx="9" cy="9" r="8" class="ring-stroke"></circle> </svg></span>`);
 							}
 						},
 					],
