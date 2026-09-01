@@ -2714,7 +2714,7 @@ class JournalManager{
 			header.find('> tr').each(function() {
 				const $row = $(this);
 				if ($row.find('> .header-spacer').length === 0) {
-					const $handleCell = $('<th class="header-spacer" aria-hidden="true"></td>');
+					const $handleCell = $('<th class="header-spacer" aria-hidden="true"></th>');
 					$row.prepend($handleCell);
 				}
 			});
@@ -2920,7 +2920,7 @@ class JournalManager{
 		targetRescan[0].scrollTop = scrollTop;
 		return true;
 	}
-	
+
 	/**
 	 * Wraps elements that prevent the caret from being placed beside them.
 	 * This is achieved by inserting zero-width space characters before and after such elements.
@@ -2957,7 +2957,7 @@ class JournalManager{
 			}
 		});
 
-		const targetContainers = container.querySelectorAll('[contenteditable="true"], td, th');
+		const targetContainers = container.querySelectorAll('[contenteditable="true"]');
 
 		targetContainers.forEach((el) => {
 			if (el.firstChild?.nodeType === Node.TEXT_NODE) {
@@ -6207,38 +6207,38 @@ class JournalManager{
 												<tbody>
 													<tr>
 														<td>Str</td>
-														<td><span contenteditable="true">+0</span></td>
-														<td><span data-state="0" class="prof-checkbox"><svg name="preventRemove" class="prof-icon"> <circle cx="9" cy="9" r="6" class="base-circle"></circle> <path d="M 9 3 A 3 3 0 0 0 9 15 Z" class="half-fill"></path> <circle cx="9" cy="9" r="6" class="full-fill"></circle> <circle cx="9" cy="9" r="8" class="ring-stroke"></circle> </svg></span><span contenteditable="true">+0</span></td>
+														<td>+0</td>
+														<td><span data-state="0" class="prof-checkbox"><svg name="preventRemove" class="prof-icon"> <circle cx="9" cy="9" r="6" class="base-circle"></circle> <path d="M 9 3 A 3 3 0 0 0 9 15 Z" class="half-fill"></path> <circle cx="9" cy="9" r="6" class="full-fill"></circle> <circle cx="9" cy="9" r="8" class="ring-stroke"></circle> </svg></span>+0</td>
 														<td>10</td>
 													</tr>
 													<tr>
 														<td>Dex</td>
-														<td><span contenteditable="true">+0</span></td>
-														<td><span data-state="0" class="prof-checkbox"><svg name="preventRemove" class="prof-icon"> <circle cx="9" cy="9" r="6" class="base-circle"></circle> <path d="M 9 3 A 3 3 0 0 0 9 15 Z" class="half-fill"></path> <circle cx="9" cy="9" r="6" class="full-fill"></circle> <circle cx="9" cy="9" r="8" class="ring-stroke"></circle> </svg></span><span contenteditable="true">+0</span></td>
+														<td>+0</td>
+														<td><span data-state="0" class="prof-checkbox"><svg name="preventRemove" class="prof-icon"> <circle cx="9" cy="9" r="6" class="base-circle"></circle> <path d="M 9 3 A 3 3 0 0 0 9 15 Z" class="half-fill"></path> <circle cx="9" cy="9" r="6" class="full-fill"></circle> <circle cx="9" cy="9" r="8" class="ring-stroke"></circle> </svg></span>+0</td>
 														<td>10</td>
 													</tr>
 													<tr>
 														<td>Con</td>
-														<td><span contenteditable="true">+0</span></td>
-														<td><span data-state="0" class="prof-checkbox"><svg name="preventRemove" class="prof-icon"> <circle cx="9" cy="9" r="6" class="base-circle"></circle> <path d="M 9 3 A 3 3 0 0 0 9 15 Z" class="half-fill"></path> <circle cx="9" cy="9" r="6" class="full-fill"></circle> <circle cx="9" cy="9" r="8" class="ring-stroke"></circle> </svg></span><span contenteditable="true">+0</span></td>
+														<td>+0</td>
+														<td><span data-state="0" class="prof-checkbox"><svg name="preventRemove" class="prof-icon"> <circle cx="9" cy="9" r="6" class="base-circle"></circle> <path d="M 9 3 A 3 3 0 0 0 9 15 Z" class="half-fill"></path> <circle cx="9" cy="9" r="6" class="full-fill"></circle> <circle cx="9" cy="9" r="8" class="ring-stroke"></circle> </svg></span>+0</td>
 														<td>10</td>
 													</tr>
 													<tr>
 														<td>Int</td>
-														<td><span contenteditable="true">+0</span></td>
-														<td><span data-state="0" class="prof-checkbox"><svg name="preventRemove" class="prof-icon"> <circle cx="9" cy="9" r="6" class="base-circle"></circle> <path d="M 9 3 A 3 3 0 0 0 9 15 Z" class="half-fill"></path> <circle cx="9" cy="9" r="6" class="full-fill"></circle> <circle cx="9" cy="9" r="8" class="ring-stroke"></circle> </svg></span><span contenteditable="true">+0</span></td>
+														<td>+0</td>
+														<td><span data-state="0" class="prof-checkbox"><svg name="preventRemove" class="prof-icon"> <circle cx="9" cy="9" r="6" class="base-circle"></circle> <path d="M 9 3 A 3 3 0 0 0 9 15 Z" class="half-fill"></path> <circle cx="9" cy="9" r="6" class="full-fill"></circle> <circle cx="9" cy="9" r="8" class="ring-stroke"></circle> </svg></span>+0</td>
 														<td>10</td>
 													</tr>
 													<tr>
 														<td>Wis</td>
-														<td><span contenteditable="true">+0</span></td>
-														<td><span data-state="0" class="prof-checkbox"><svg name="preventRemove" class="prof-icon"> <circle cx="9" cy="9" r="6" class="base-circle"></circle> <path d="M 9 3 A 3 3 0 0 0 9 15 Z" class="half-fill"></path> <circle cx="9" cy="9" r="6" class="full-fill"></circle> <circle cx="9" cy="9" r="8" class="ring-stroke"></circle> </svg></span><span contenteditable="true">+0</span></td>
+														<td>+0</td>
+														<td><span data-state="0" class="prof-checkbox"><svg name="preventRemove" class="prof-icon"> <circle cx="9" cy="9" r="6" class="base-circle"></circle> <path d="M 9 3 A 3 3 0 0 0 9 15 Z" class="half-fill"></path> <circle cx="9" cy="9" r="6" class="full-fill"></circle> <circle cx="9" cy="9" r="8" class="ring-stroke"></circle> </svg></span>+0</td>
 														<td>10</td>
 													</tr>
 													<tr>
 														<td>Cha</td>
-														<td><span contenteditable="true">+0</span></td>
-														<td><span data-state="0" class="prof-checkbox"><svg name="preventRemove" class="prof-icon"> <circle cx="9" cy="9" r="6" class="base-circle"></circle> <path d="M 9 3 A 3 3 0 0 0 9 15 Z" class="half-fill"></path> <circle cx="9" cy="9" r="6" class="full-fill"></circle> <circle cx="9" cy="9" r="8" class="ring-stroke"></circle> </svg></span><span contenteditable="true">+0</span></td>
+														<td>+0</td>
+														<td><span data-state="0" class="prof-checkbox"><svg name="preventRemove" class="prof-icon"> <circle cx="9" cy="9" r="6" class="base-circle"></circle> <path d="M 9 3 A 3 3 0 0 0 9 15 Z" class="half-fill"></path> <circle cx="9" cy="9" r="6" class="full-fill"></circle> <circle cx="9" cy="9" r="8" class="ring-stroke"></circle> </svg></span>+0</td>
 														<td>10</td>
 													</tr>
 												</tbody>
