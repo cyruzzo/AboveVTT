@@ -882,27 +882,27 @@ function hide_scrollbar() {
         const style = document.createElement("style");
         style.id = sb_scroll_style
         style.textContent = `
-    body::-webkit-scrollbar {
-        width: 0px;
-        height: 0px;
-    }
-    body::-webkit-scrollbar-track {
-        background: transparent !important;
-    }
-    body::-webkit-scrollbar-thumb {
-        background-color: transparent;
-        border-radius: 6px;
-        border: none;
-    }
-    body::-webkit-scrollbar-corner {
-        background: transparent;
-    }
-    .sidebar__pane-content {
-        box-shadow: none;
-    }
-    html {
-        scrollbar-width: none;
-    }
+            body::-webkit-scrollbar {
+                width: 0px !important;
+                height: 0px !important;
+            }
+            body::-webkit-scrollbar-track {
+                background: transparent !important;
+            }
+            body::-webkit-scrollbar-thumb {
+                background-color: transparent !important;
+                border-radius: 6px !important;
+                border: none !important;
+            }
+            body::-webkit-scrollbar-corner {
+                background: transparent !important;
+            }
+            .sidebar__pane-content {
+                box-shadow: none !important;
+            }
+            html {
+                scrollbar-width: none !important;
+            }
         `;
         document.head.appendChild(style);
     }
