@@ -1966,11 +1966,10 @@ class JournalManager{
 					const range = selection.getRangeAt(0);
 					range.deleteContents();
 					const lineBreak = document.createElement('br');
+					const caretAnchor = document.createTextNode('\u200B');
 					range.insertNode(lineBreak);
-					if (lineBreak.nextSibling == null) {
-						lineBreak.parentNode.appendChild(document.createElement('br'));
-					}
-					range.setStartAfter(lineBreak);
+					lineBreak.parentNode.insertBefore(caretAnchor, lineBreak.nextSibling);
+					range.setStart(caretAnchor, caretAnchor.nodeValue.length);
 					range.collapse(true);
 					selection.removeAllRanges();
 					selection.addRange(range);
@@ -2636,11 +2635,10 @@ class JournalManager{
 			const range = selection.getRangeAt(0);
 			range.deleteContents();
 			const lineBreak = ownerDocument.createElement('br');
+			const caretAnchor = ownerDocument.createTextNode('\u200B');
 			range.insertNode(lineBreak);
-			if(lineBreak.nextSibling == null){
-				lineBreak.parentNode.appendChild(ownerDocument.createElement('br')); // the caret needs a following break to land on the new line
-			}
-			range.setStartAfter(lineBreak);
+			lineBreak.parentNode.insertBefore(caretAnchor, lineBreak.nextSibling);
+			range.setStart(caretAnchor, caretAnchor.nodeValue.length);
 			range.collapse(true);
 			selection.removeAllRanges();
 			selection.addRange(range);
