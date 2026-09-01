@@ -1175,9 +1175,10 @@ function add_journal_roll_buttons(target, tokenId=undefined, specificImage=undef
       rollType = 'Check'
     } else if(targetButton.closest('.dnd-sheet .abilities-table-container').length>0){
       if(targetButton.closest('td').length>0){
-        const columnIndex = targetButton.closest('td')[0].cellIndex;
-        rollAction = targetButton.closest('tr').find('td').first().text();
-        rollType = columnIndex == 2 ? 'Save' : 'Check';
+        const $dataCells = targetButton.closest('tr').children('td:not(.table-row-drag-handle)');
+        const columnIndex = $dataCells.index(targetButton.closest('td'));
+        rollAction = $dataCells.first().text();
+        rollType = columnIndex === 1 ? 'Check' : 'Save';
       }
     } else if(targetButton.closest('.dnd-sheet .skills-box').length>0){
       if(targetButton.closest('td').length>0){
@@ -1192,11 +1193,12 @@ function add_journal_roll_buttons(target, tokenId=undefined, specificImage=undef
       rollType = 'roll'
     } else if(targetButton.closest('.dnd-sheet .attacks-field').length>0){
       if(targetButton.closest('td').length>0){
-        const columnIndex = targetButton.closest('td')[0].cellIndex; 
-        rollAction = targetButton.closest('tr').find('td').first().text();
-        if(columnIndex == 1){ 
+        const $dataCells = targetButton.closest('tr').children('td:not(.table-row-drag-handle)');
+        const columnIndex = $dataCells.index(targetButton.closest('td'));
+        rollAction = $dataCells.first().text();
+        if(columnIndex === 1){ 
           rollType = 'To Hit';
-        }else if(columnIndex == 2){
+        }else if(columnIndex === 2){
           rollType = 'Damage';
           let saveText = targetButton.closest('td').prev('td').text();
           const regex = /\D*(\d+)\s+(CON|INT|WIS|CHA|DEX|STR).*|.*(CON|INT|WIS|CHA|DEX|STR)\s+(\d+)\D*/i
@@ -3431,7 +3433,7 @@ function createDialogMenu(rootId, options) {
 }
 function basic_sanitize_html(html){
   let sanitized = DOMPurify.sanitize(html,{ALLOWED_TAGS: ['video','img','div','p', 'b', 'i', 'button', 'span', 'path', 'polygon', 'rect', 'svg', 'circle', 'a', 'hr', 'ul', 'li', 'ol', 'h3', 'h2', 'h4', 'h1', 'table', 'thead', 'tbody', 'tr', 'td', 'th', 'br', 'input', 'strong', 'em'], ADD_ATTR: ['target', 'contenteditable']}); //This array needs to include all HTML elements the extension sends via chat.
-  sanitized = sanitized.replace(/(?=([^\S\n]*(?:\n[^\S\n]*){2,}))\1(<)|(>)(?=([^\S\n]*(?:\n[^\S\n]*){2,}))\4/gi, '$2$3');
+  sanitized = sanitized.replace(/(?=([^\S\n]*(?:\n[^\S\n]*){2,}))\1(<)|(>)(?=([^\S\n]*(?:\n[^\S\n]*){2,}))\4/gi, '$2$3').replaceAll(/[\u200B-\u200D\uFEFF]|&(ZeroWidthSpace|#8203|#x200B);/gi, '');
   return sanitized;
 }
 

@@ -1797,7 +1797,7 @@ class JournalManager{
 		closestNote.find('[style=""]').removeAttr('style');
   		closestNote.find('[class=""]').removeAttr('class');
 		closestNote.find('[data-avtt-suggestion-type]').removeAttr('data-avtt-suggestion-type');
-		let sanitizedHTML = basic_sanitize_html(closestNote[0].innerHTML).replaceAll(/\[(\/)?spell\]/gi, `[$1spell]`).replaceAll(/\[(\/)?magicitem\]/gi, `[$1magicItem]`).replaceAll(/\[(\/)?item\]/gi, `[$1item]`);
+		let sanitizedHTML = basic_sanitize_html(closestNote[0].innerHTML).replaceAll(/\[(\/)?spell\]/gi, `[$1spell]`).replaceAll(/\[(\/)?magicitem\]/gi, `[$1magicItem]`)
 		const changes = forceSave || $(sanitizedHTML).text().replace(/[\s\n\r]/gi, '') != $(this.notes[id].text).text().replace(/[\s\n\r]/gi, '');
 		if(changes){
 			if(tokenId){		
@@ -1945,12 +1945,11 @@ class JournalManager{
 						});
 					}
 				}			
-				document.querySelectorAll('[contenteditable="true"]').forEach((el) => {
-					el.addEventListener('paste', (e) => {
-						e.preventDefault();
-						const text = (e.originalEvent?.clipboardData || e.clipboardData || window.clipboardData).getData('text/plain');
-						document.execCommand('insertText', false, text);
-					})
+				document.addEventListener('paste', (e) => {
+					if (!e.target?.closest?.('[contenteditable="true"]')) return;
+					e.preventDefault();
+					const text = (e.originalEvent?.clipboardData || e.clipboardData || window.clipboardData).getData('text/plain');
+					document.execCommand('insertText', false, text);
 				});
 				document.querySelectorAll('input').forEach((el) => {
 					el.addEventListener('input change', (e) => {
@@ -1967,11 +1966,10 @@ class JournalManager{
 					const range = selection.getRangeAt(0);
 					range.deleteContents();
 					const lineBreak = document.createElement('br');
+					const caretAnchor = document.createTextNode('\u200B');
 					range.insertNode(lineBreak);
-					if (lineBreak.nextSibling == null) {
-						lineBreak.parentNode.appendChild(document.createElement('br'));
-					}
-					range.setStartAfter(lineBreak);
+					lineBreak.parentNode.insertBefore(caretAnchor, lineBreak.nextSibling);
+					range.setStart(caretAnchor, caretAnchor.nodeValue.length);
 					range.collapse(true);
 					selection.removeAllRanges();
 					selection.addRange(range);
@@ -2637,11 +2635,10 @@ class JournalManager{
 			const range = selection.getRangeAt(0);
 			range.deleteContents();
 			const lineBreak = ownerDocument.createElement('br');
+			const caretAnchor = ownerDocument.createTextNode('\u200B');
 			range.insertNode(lineBreak);
-			if(lineBreak.nextSibling == null){
-				lineBreak.parentNode.appendChild(ownerDocument.createElement('br')); // the caret needs a following break to land on the new line
-			}
-			range.setStartAfter(lineBreak);
+			lineBreak.parentNode.insertBefore(caretAnchor, lineBreak.nextSibling);
+			range.setStart(caretAnchor, caretAnchor.nodeValue.length);
 			range.collapse(true);
 			selection.removeAllRanges();
 			selection.addRange(range);
@@ -3826,7 +3823,7 @@ class JournalManager{
 
        	data = this.replaceNoteEmbed(data, [displayNoteId]);
 
-        let lines = data.split(/(<br \/>|<br>|<p>|<\/p>|\n)/g);
+		let lines = data.split(/(<br \/>|<br>|<p>|<\/p>|<div\b[^>]*>|<\/div>|\n)/gi);
         lines = lines.map((line, li) => {
             let input = line;
 
