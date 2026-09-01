@@ -3782,8 +3782,8 @@ function show_sidebar(dispatchResize = true) {
 	} else {
 		$("#sheet").removeClass("sidebar_hidden");
 	}
-	$('canvas.dice-rolling-panel__container, .roll-mod-container').css('--sidebar-width', get_sidebar_width() + 'px');
-	$('canvas.streamer-canvas').css('--sidebar-width', get_sidebar_width() + 'px');
+	$('canvas.dice-rolling-panel__container, .roll-mod-container, canvas.streamer-canvas, #character-tools-target>canvas').css('--sidebar-width', get_sidebar_width() + 'px');
+
 	if(dispatchResize)
 		window.dispatchEvent(new Event('resize'));
 	addGamelogPopoutButton()
@@ -3957,8 +3957,8 @@ function hide_sidebar(triggerResize = true) {
 	} else {
 		$("#sheet").addClass("sidebar_hidden");
 	}
-	$('canvas.dice-rolling-panel__container, .roll-mod-container').css('--sidebar-width', '0px');
-	$('canvas.streamer-canvas').css('--sidebar-width', '0px');
+	$('canvas.dice-rolling-panel__container, .roll-mod-container, canvas.streamer-canvas, #character-tools-target>canvas').css('--sidebar-width', '0px');
+
 	if(triggerResize)
 		window.dispatchEvent(new Event('resize'));
 }

@@ -1434,7 +1434,7 @@ Tbh I feel like these overcomplicate things
 		if (window.CURRENT_SCENE_DATA.id == scene.id) {
 			window.CURRENT_SCENE_DATA.weather = selectedWeather;
 			window.CURRENT_SCENE_DATA.weatherIntensity = intensitySlider.val();
-			set_weather();
+			set_weather_size(window.CURRENT_SCENE_DATA.width ?? 0, window.CURRENT_SCENE_DATA.height ?? 0);
 		}
 	});
 
