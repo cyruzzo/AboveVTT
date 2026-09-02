@@ -1780,6 +1780,11 @@ class JournalManager{
 		closestNote.find('.abovevtt-slash-command-journal').replaceWith((i, innerHTML) =>{
 			return innerHTML;
 		})
+		closestNote.find('.dnd-sheet [contenteditable="true"]').each(function(){
+			if(this.childNodes.length === 1 && this.firstElementChild?.nodeName === 'BR'){
+				this.replaceChildren(this.ownerDocument.createTextNode('\u200B'));
+			}
+		});
 		const customTrackers = closestNote.find('.avtt-custom-tracker');
 		customTrackers.replaceWith((i, innerHTML) =>{
 			const trackerVal = customTrackers[i].getAttribute('data-number');
@@ -2390,6 +2395,7 @@ class JournalManager{
 		if(suggestions.length === 0)
 			return;
 		const suggestionBox = $(`<div class="dnd-sheet-cell-suggestions" role="listbox"></div>`);
+		suggestionBox.data('sourceElement', cell);
 		suggestions.forEach((suggestion, index) => {
 			const option = $(`<button type="button" class="dnd-sheet-cell-suggestion" data-index="${index}" role="option" aria-selected="false">
 				<span class="dnd-sheet-cell-suggestion-name"></span>
@@ -2574,10 +2580,15 @@ class JournalManager{
 			e.preventDefault();
 			e.stopPropagation();
 			e.stopImmediatePropagation();
-			if($(e.target).is('[data-avtt-suggestion-type]')){
-				const ownerDocument = e.target?.ownerDocument || document;
-				setTimeout(() => self.removeDndSheetCellSuggestions(ownerDocument), 150);
-			}
+			const ownerDocument = e.target?.ownerDocument || document;
+			setTimeout(() => {
+				$('.dnd-sheet-cell-suggestions', ownerDocument).each(function(){
+					const sourceElement = $(this).data('sourceElement');
+					if(!sourceElement?.matches(':focus-within')){
+						$(this).remove();
+					}
+				});
+			}, 0);
 			setTimeout(()=>{
 				if(container.find('.dnd-sheet [contenteditable="true"]:is(:focus, :focus-within)').length>0) return;
 				if($(e.target).is('.injected-input')) return;  
@@ -2928,7 +2939,7 @@ class JournalManager{
 	ensureEnclosingZWSP(container) {
 		const zwspChar = '\u200B';
 		const stripRegex = /[\u200B-\u200D\uFEFF]|&(ZeroWidthSpace|#8203|#x200B);/gi;
-
+		const caretBoundaryTags = ['BR', 'DIV', 'P', 'LI', 'BLOCKQUOTE', 'PRE', 'H1', 'H2', 'H3', 'H4', 'H5', 'H6'];
 		const docWalker = document.createTreeWalker(container, NodeFilter.SHOW_TEXT, null);
 		let textNode = docWalker.nextNode();
 		while (textNode) {
@@ -2965,10 +2976,10 @@ class JournalManager{
 			}
 			el.normalize();
 
-			if (el.firstChild?.nodeType !== Node.TEXT_NODE) {
+			if (el.firstChild?.nodeType !== Node.TEXT_NODE  && !caretBoundaryTags.includes(el.firstChild?.tagName)) {
 				el.insertBefore(document.createTextNode(zwspChar), el.firstChild);
 			}
-			if (el.lastChild?.nodeType !== Node.TEXT_NODE && !el.lastChild?.classList?.contains('add-table-row')) {
+			if (el.lastChild?.nodeType !== Node.TEXT_NODE && !el.lastChild?.classList?.contains('add-table-row') && !caretBoundaryTags.includes(el.lastChild?.tagName)) {
 				el.appendChild(document.createTextNode(zwspChar));
 			}
 		});
@@ -6808,6 +6819,1185 @@ class JournalManager{
 							</div>
 						</div>
 					</div>
+					`
+				},
+				{
+					"title": "Fillable Character Sheet - Fullscreen Template",
+					"description": "Adds a fillable character sheet to the note. This style is meant for full screen popout use. Has limited edit capabilities for Players.",
+					"content": `
+						<style id='contentStyles'>${contentStyles}</style>
+						<div class="dnd-sheet">
+							<div class="dnd-page">
+								<div class="header-box" style="padding: 0px; border: none;">
+									<div class="combat-stats-grid" style="flex: 6;">
+										<div class="combat-metric" style="flex: 2;"><span class="label">Armor Class</span>
+											<div class="metric-val" contenteditable="true">16</div>
+										</div>
+										<div class="combat-metric"><span class="label">Initiative</span>
+											<div class="metric-val" contenteditable="true">+0</div>
+										</div>
+										<div class="combat-metric"><span class="label">Speed</span>
+											<div class="metric-val" contenteditable="true">30 ft</div>
+										</div>
+										<div class="combat-metric"><span class="label">Proficiency Bonus</span>
+											<div class="metric-val" contenteditable="true">+2</div>
+										</div>
+										<div class="combat-metric"><span class="label">Heroic <a class="tooltip-hover condition-tooltip"
+													style="display: inline-block;" contenteditable="false"
+													href="https://www.dndbeyond.com/compendium/rules/basic-rules/combat#Inspiration"
+													target="_blank" data-tooltip-href="//www.dndbeyond.com/rules/80-tooltip"
+													data-tooltip-json-href="//www.dndbeyond.com/conditions/80/tooltip-json">Inspiration</a></span>
+											<div class="box-field heroic-inspiration"><input id="template-heroic-inspiration" type="checkbox" />
+											</div>
+										</div>
+									</div>
+									<div class="col char-name-box combat-metric"><span class="label">Character Name</span>
+										<div class="box-field" contenteditable="true">&nbsp;</div>
+									</div>
+									<div class="col combat-metric" style="flex: 2;"><span class="label">Class &amp; Level</span>
+										<div class="box-field" contenteditable="true">&nbsp;</div>
+									</div>
+									<div class="col combat-metric"><span class="label">Background</span>
+										<div class="box-field" contenteditable="true">&nbsp;</div>
+									</div>
+									<div class="col combat-metric"><span class="label">Species (Race)</span>
+										<div class="box-field" contenteditable="true">&nbsp;</div>
+									</div>
+									<div class="col combat-metric"><span class="label">Alignment</span>
+										<div class="box-field" contenteditable="true">&nbsp;</div>
+									</div>
+								</div>
+								<div class="col-container">
+									<div class="small-column">
+										<div class="abilities-table-container">
+											<div class="section-title">Abilities</div>
+											<div class="box-field">
+												<table class="ui-sortable" contenteditable="true">
+													<thead>
+														<tr>
+															<th>Ability</th>
+															<th>Mod</th>
+															<th>Save</th>
+															<th>Score</th>
+														</tr>
+													</thead>
+													<tbody>
+														<tr draggable="false">
+															<td>Str</td>
+															<td><span contenteditable="true">+0</span></td>
+															<td><span class="prof-checkbox" data-state="0"><svg name="preventRemove"
+																		class="prof-icon">
+																		<circle cx="9" cy="9" r="6" class="base-circle"></circle>
+																		<path d="M 9 3 A 3 3 0 0 0 9 15 Z" class="half-fill"></path>
+																		<circle cx="9" cy="9" r="6" class="full-fill"></circle>
+																		<circle cx="9" cy="9" r="8" class="ring-stroke"></circle>
+																	</svg></span> <span style="letter-spacing: 1px;"><strong> +0</strong></span>
+															</td>
+															<td>10</td>
+														</tr>
+														<tr draggable="false">
+															<td>Dex</td>
+															<td><span contenteditable="true">+0</span></td>
+															<td><span class="prof-checkbox" data-state="0"><svg name="preventRemove"
+																		class="prof-icon">
+																		<circle cx="9" cy="9" r="6" class="base-circle"></circle>
+																		<path d="M 9 3 A 3 3 0 0 0 9 15 Z" class="half-fill"></path>
+																		<circle cx="9" cy="9" r="6" class="full-fill"></circle>
+																		<circle cx="9" cy="9" r="8" class="ring-stroke"></circle>
+																	</svg></span> +0</td>
+															<td>10</td>
+														</tr>
+														<tr draggable="false">
+															<td>Con</td>
+															<td><span contenteditable="true">+0</span></td>
+															<td><span class="prof-checkbox" data-state="0"><svg name="preventRemove"
+																		class="prof-icon">
+																		<circle cx="9" cy="9" r="6" class="base-circle"></circle>
+																		<path d="M 9 3 A 3 3 0 0 0 9 15 Z" class="half-fill"></path>
+																		<circle cx="9" cy="9" r="6" class="full-fill"></circle>
+																		<circle cx="9" cy="9" r="8" class="ring-stroke"></circle>
+																	</svg></span> <span contenteditable="true">+0</span></td>
+															<td>10</td>
+														</tr>
+														<tr draggable="false">
+															<td>Int</td>
+															<td>+0</td>
+															<td><span class="prof-checkbox" data-state="0"><svg name="preventRemove"
+																		class="prof-icon">
+																		<circle cx="9" cy="9" r="6" class="base-circle"></circle>
+																		<path d="M 9 3 A 3 3 0 0 0 9 15 Z" class="half-fill"></path>
+																		<circle cx="9" cy="9" r="6" class="full-fill"></circle>
+																		<circle cx="9" cy="9" r="8" class="ring-stroke"></circle>
+																	</svg></span> <span contenteditable="true">+0</span></td>
+															<td>10</td>
+														</tr>
+														<tr draggable="false">
+															<td>Wis</td>
+															<td><span contenteditable="true">+0</span></td>
+															<td><span class="prof-checkbox" data-state="0"><svg name="preventRemove"
+																		class="prof-icon">
+																		<circle cx="9" cy="9" r="6" class="base-circle"></circle>
+																		<path d="M 9 3 A 3 3 0 0 0 9 15 Z" class="half-fill"></path>
+																		<circle cx="9" cy="9" r="6" class="full-fill"></circle>
+																		<circle cx="9" cy="9" r="8" class="ring-stroke"></circle>
+																	</svg></span> <span contenteditable="true">+0</span></td>
+															<td>10</td>
+														</tr>
+														<tr draggable="false">
+															<td>Cha</td>
+															<td>+0</td>
+															<td><span class="prof-checkbox" data-state="0"><svg name="preventRemove"
+																		class="prof-icon">
+																		<circle cx="9" cy="9" r="6" class="base-circle"></circle>
+																		<path d="M 9 3 A 3 3 0 0 0 9 15 Z" class="half-fill"></path>
+																		<circle cx="9" cy="9" r="6" class="full-fill"></circle>
+																		<circle cx="9" cy="9" r="8" class="ring-stroke"></circle>
+																	</svg></span> <span contenteditable="true">+0</span></td>
+															<td>10</td>
+														</tr>
+													</tbody>
+												</table>
+											</div>
+										</div>
+										<div class="skills-box">
+											<div class="section-title"><strong>Skills</strong></div>
+											<div class="box-field">
+												<table class="ui-sortable" contenteditable="true">
+													<tbody>
+														<tr draggable="false">
+															<td><span class="prof-checkbox" data-state="0"><svg name="preventRemove"
+																		class="prof-icon">
+																		<circle cx="9" cy="9" r="6" class="base-circle"></circle>
+																		<path d="M 9 3 A 3 3 0 0 0 9 15 Z" class="half-fill"></path>
+																		<circle cx="9" cy="9" r="6" class="full-fill"></circle>
+																		<circle cx="9" cy="9" r="8" class="ring-stroke"></circle>
+																	</svg></span></td>
+															<td>+0</td>
+															<td><a class="tooltip-hover skill-tooltip" style="display: inline-block;"
+																	contenteditable="false"
+																	href="https://www.dndbeyond.com/compendium/rules/basic-rules/using-ability-scores#Acrobatics"
+																	target="_blank" data-tooltip-href="//www.dndbeyond.com/skills/3-tooltip"
+																	data-tooltip-json-href="//www.dndbeyond.com/skills/3/tooltip-json">Acrobatics</a>
+															</td>
+															<td>Dex</td>
+														</tr>
+														<tr draggable="false">
+															<td><span class="prof-checkbox" data-state="0"><svg name="preventRemove"
+																		class="prof-icon">
+																		<circle cx="9" cy="9" r="6" class="base-circle"></circle>
+																		<path d="M 9 3 A 3 3 0 0 0 9 15 Z" class="half-fill"></path>
+																		<circle cx="9" cy="9" r="6" class="full-fill"></circle>
+																		<circle cx="9" cy="9" r="8" class="ring-stroke"></circle>
+																	</svg></span></td>
+															<td>+0</td>
+															<td><a class="tooltip-hover skill-tooltip" style="display: inline-block;"
+																	contenteditable="false"
+																	href="https://www.dndbeyond.com/compendium/rules/basic-rules/using-ability-scores#Animal Handling"
+																	target="_blank" data-tooltip-href="//www.dndbeyond.com/skills/11-tooltip"
+																	data-tooltip-json-href="//www.dndbeyond.com/skills/11/tooltip-json">Animal
+																	Handling</a></td>
+															<td>Wis</td>
+														</tr>
+														<tr draggable="false">
+															<td><span class="prof-checkbox" data-state="0"><svg name="preventRemove"
+																		class="prof-icon">
+																		<circle cx="9" cy="9" r="6" class="base-circle"></circle>
+																		<path d="M 9 3 A 3 3 0 0 0 9 15 Z" class="half-fill"></path>
+																		<circle cx="9" cy="9" r="6" class="full-fill"></circle>
+																		<circle cx="9" cy="9" r="8" class="ring-stroke"></circle>
+																	</svg></span></td>
+															<td>+0</td>
+															<td><a class="tooltip-hover skill-tooltip" style="display: inline-block;"
+																	contenteditable="false"
+																	href="https://www.dndbeyond.com/compendium/rules/basic-rules/using-ability-scores#Arcana"
+																	target="_blank" data-tooltip-href="//www.dndbeyond.com/skills/6-tooltip"
+																	data-tooltip-json-href="//www.dndbeyond.com/skills/6/tooltip-json">Arcana</a>
+															</td>
+															<td>Int</td>
+														</tr>
+														<tr draggable="false">
+															<td><span class="prof-checkbox" data-state="0"><svg name="preventRemove"
+																		class="prof-icon">
+																		<circle cx="9" cy="9" r="6" class="base-circle"></circle>
+																		<path d="M 9 3 A 3 3 0 0 0 9 15 Z" class="half-fill"></path>
+																		<circle cx="9" cy="9" r="6" class="full-fill"></circle>
+																		<circle cx="9" cy="9" r="8" class="ring-stroke"></circle>
+																	</svg></span></td>
+															<td>+0</td>
+															<td><a class="tooltip-hover skill-tooltip" style="display: inline-block;"
+																	contenteditable="false"
+																	href="https://www.dndbeyond.com/compendium/rules/basic-rules/using-ability-scores#Athletics"
+																	target="_blank" data-tooltip-href="//www.dndbeyond.com/skills/2-tooltip"
+																	data-tooltip-json-href="//www.dndbeyond.com/skills/2/tooltip-json">Athletics</a>
+															</td>
+															<td>Str</td>
+														</tr>
+														<tr draggable="false">
+															<td><span class="prof-checkbox" data-state="0"><svg name="preventRemove"
+																		class="prof-icon">
+																		<circle cx="9" cy="9" r="6" class="base-circle"></circle>
+																		<path d="M 9 3 A 3 3 0 0 0 9 15 Z" class="half-fill"></path>
+																		<circle cx="9" cy="9" r="6" class="full-fill"></circle>
+																		<circle cx="9" cy="9" r="8" class="ring-stroke"></circle>
+																	</svg></span></td>
+															<td><span style="letter-spacing: 1px; white-space: nowrap;"> +0</span></td>
+															<td><a class="tooltip-hover skill-tooltip" style="display: inline-block;"
+																	contenteditable="false"
+																	href="https://www.dndbeyond.com/compendium/rules/basic-rules/using-ability-scores#Deception"
+																	target="_blank" data-tooltip-href="//www.dndbeyond.com/skills/16-tooltip"
+																	data-tooltip-json-href="//www.dndbeyond.com/skills/16/tooltip-json">Deception</a>
+															</td>
+															<td>Cha</td>
+														</tr>
+														<tr draggable="false">
+															<td><span class="prof-checkbox" data-state="0"><svg name="preventRemove"
+																		class="prof-icon">
+																		<circle cx="9" cy="9" r="6" class="base-circle"></circle>
+																		<path d="M 9 3 A 3 3 0 0 0 9 15 Z" class="half-fill"></path>
+																		<circle cx="9" cy="9" r="6" class="full-fill"></circle>
+																		<circle cx="9" cy="9" r="8" class="ring-stroke"></circle>
+																	</svg></span></td>
+															<td><strong style="letter-spacing: 1px; white-space: nowrap;"> +0</strong></td>
+															<td><a class="tooltip-hover skill-tooltip" style="display: inline-block;"
+																	contenteditable="false"
+																	href="https://www.dndbeyond.com/compendium/rules/basic-rules/using-ability-scores#History"
+																	target="_blank" data-tooltip-href="//www.dndbeyond.com/skills/7-tooltip"
+																	data-tooltip-json-href="//www.dndbeyond.com/skills/7/tooltip-json">History</a>
+															</td>
+															<td>Int</td>
+														</tr>
+														<tr draggable="false">
+															<td><span class="prof-checkbox" data-state="0"><svg name="preventRemove"
+																		class="prof-icon">
+																		<circle cx="9" cy="9" r="6" class="base-circle"></circle>
+																		<path d="M 9 3 A 3 3 0 0 0 9 15 Z" class="half-fill"></path>
+																		<circle cx="9" cy="9" r="6" class="full-fill"></circle>
+																		<circle cx="9" cy="9" r="8" class="ring-stroke"></circle>
+																	</svg></span></td>
+															<td>+0</td>
+															<td><a class="tooltip-hover skill-tooltip" style="display: inline-block;"
+																	contenteditable="false"
+																	href="https://www.dndbeyond.com/compendium/rules/basic-rules/using-ability-scores#Insight"
+																	target="_blank" data-tooltip-href="//www.dndbeyond.com/skills/12-tooltip"
+																	data-tooltip-json-href="//www.dndbeyond.com/skills/12/tooltip-json">Insight</a>
+															</td>
+															<td>Wis</td>
+														</tr>
+														<tr draggable="false">
+															<td><span class="prof-checkbox" data-state="0"><svg name="preventRemove"
+																		class="prof-icon">
+																		<circle cx="9" cy="9" r="6" class="base-circle"></circle>
+																		<path d="M 9 3 A 3 3 0 0 0 9 15 Z" class="half-fill"></path>
+																		<circle cx="9" cy="9" r="6" class="full-fill"></circle>
+																		<circle cx="9" cy="9" r="8" class="ring-stroke"></circle>
+																	</svg></span></td>
+															<td>+0</td>
+															<td><a class="tooltip-hover skill-tooltip" style="display: inline-block;"
+																	contenteditable="false"
+																	href="https://www.dndbeyond.com/compendium/rules/basic-rules/using-ability-scores#Intimidation"
+																	target="_blank" data-tooltip-href="//www.dndbeyond.com/skills/17-tooltip"
+																	data-tooltip-json-href="//www.dndbeyond.com/skills/17/tooltip-json">Intimidation</a>
+															</td>
+															<td>Cha</td>
+														</tr>
+														<tr draggable="false">
+															<td><span class="prof-checkbox" data-state="0"><svg name="preventRemove"
+																		class="prof-icon">
+																		<circle cx="9" cy="9" r="6" class="base-circle"></circle>
+																		<path d="M 9 3 A 3 3 0 0 0 9 15 Z" class="half-fill"></path>
+																		<circle cx="9" cy="9" r="6" class="full-fill"></circle>
+																		<circle cx="9" cy="9" r="8" class="ring-stroke"></circle>
+																	</svg></span></td>
+															<td><strong style="letter-spacing: 1px; white-space: nowrap;"> +0</strong></td>
+															<td><a class="tooltip-hover skill-tooltip" style="display: inline-block;"
+																	contenteditable="false"
+																	href="https://www.dndbeyond.com/compendium/rules/basic-rules/using-ability-scores#Investigation"
+																	target="_blank" data-tooltip-href="//www.dndbeyond.com/skills/8-tooltip"
+																	data-tooltip-json-href="//www.dndbeyond.com/skills/8/tooltip-json">Investigation</a>
+															</td>
+															<td>Int</td>
+														</tr>
+														<tr draggable="false">
+															<td><span class="prof-checkbox" data-state="0"><svg name="preventRemove"
+																		class="prof-icon">
+																		<circle cx="9" cy="9" r="6" class="base-circle"></circle>
+																		<path d="M 9 3 A 3 3 0 0 0 9 15 Z" class="half-fill"></path>
+																		<circle cx="9" cy="9" r="6" class="full-fill"></circle>
+																		<circle cx="9" cy="9" r="8" class="ring-stroke"></circle>
+																	</svg></span></td>
+															<td>+0</td>
+															<td><a class="tooltip-hover skill-tooltip" style="display: inline-block;"
+																	contenteditable="false"
+																	href="https://www.dndbeyond.com/compendium/rules/basic-rules/using-ability-scores#Medicine"
+																	target="_blank" data-tooltip-href="//www.dndbeyond.com/skills/13-tooltip"
+																	data-tooltip-json-href="//www.dndbeyond.com/skills/13/tooltip-json">Medicine</a>
+															</td>
+															<td>Wis</td>
+														</tr>
+														<tr draggable="false">
+															<td><span class="prof-checkbox" data-state="0"><svg name="preventRemove"
+																		class="prof-icon">
+																		<circle cx="9" cy="9" r="6" class="base-circle"></circle>
+																		<path d="M 9 3 A 3 3 0 0 0 9 15 Z" class="half-fill"></path>
+																		<circle cx="9" cy="9" r="6" class="full-fill"></circle>
+																		<circle cx="9" cy="9" r="8" class="ring-stroke"></circle>
+																	</svg></span></td>
+															<td>+0</td>
+															<td><a class="tooltip-hover skill-tooltip" style="display: inline-block;"
+																	contenteditable="false"
+																	href="https://www.dndbeyond.com/compendium/rules/basic-rules/using-ability-scores#Nature"
+																	target="_blank" data-tooltip-href="//www.dndbeyond.com/skills/9-tooltip"
+																	data-tooltip-json-href="//www.dndbeyond.com/skills/9/tooltip-json">Nature</a>
+															</td>
+															<td>Int</td>
+														</tr>
+														<tr draggable="false">
+															<td><span class="prof-checkbox" data-state="0"><svg name="preventRemove"
+																		class="prof-icon">
+																		<circle cx="9" cy="9" r="6" class="base-circle"></circle>
+																		<path d="M 9 3 A 3 3 0 0 0 9 15 Z" class="half-fill"></path>
+																		<circle cx="9" cy="9" r="6" class="full-fill"></circle>
+																		<circle cx="9" cy="9" r="8" class="ring-stroke"></circle>
+																	</svg></span></td>
+															<td>+0</td>
+															<td><a class="tooltip-hover skill-tooltip" style="display: inline-block;"
+																	contenteditable="false"
+																	href="https://www.dndbeyond.com/compendium/rules/basic-rules/using-ability-scores#Perception"
+																	target="_blank" data-tooltip-href="//www.dndbeyond.com/skills/14-tooltip"
+																	data-tooltip-json-href="//www.dndbeyond.com/skills/14/tooltip-json">Perception</a>
+															</td>
+															<td>Wis</td>
+														</tr>
+														<tr draggable="false">
+															<td><span class="prof-checkbox" data-state="0"><svg name="preventRemove"
+																		class="prof-icon">
+																		<circle cx="9" cy="9" r="6" class="base-circle"></circle>
+																		<path d="M 9 3 A 3 3 0 0 0 9 15 Z" class="half-fill"></path>
+																		<circle cx="9" cy="9" r="6" class="full-fill"></circle>
+																		<circle cx="9" cy="9" r="8" class="ring-stroke"></circle>
+																	</svg></span></td>
+															<td><strong style="letter-spacing: 1px; white-space: nowrap;"> +0</strong></td>
+															<td><a class="tooltip-hover skill-tooltip" style="display: inline-block;"
+																	contenteditable="false"
+																	href="https://www.dndbeyond.com/compendium/rules/basic-rules/using-ability-scores#Performance"
+																	target="_blank" data-tooltip-href="//www.dndbeyond.com/skills/18-tooltip"
+																	data-tooltip-json-href="//www.dndbeyond.com/skills/18/tooltip-json">Performance</a>
+															</td>
+															<td>Cha</td>
+														</tr>
+														<tr draggable="false">
+															<td><span class="prof-checkbox" data-state="0"><svg name="preventRemove"
+																		class="prof-icon">
+																		<circle cx="9" cy="9" r="6" class="base-circle"></circle>
+																		<path d="M 9 3 A 3 3 0 0 0 9 15 Z" class="half-fill"></path>
+																		<circle cx="9" cy="9" r="6" class="full-fill"></circle>
+																		<circle cx="9" cy="9" r="8" class="ring-stroke"></circle>
+																	</svg></span></td>
+															<td>+0</td>
+															<td><a class="tooltip-hover skill-tooltip" style="display: inline-block;"
+																	contenteditable="false"
+																	href="https://www.dndbeyond.com/compendium/rules/basic-rules/using-ability-scores#Persuasion"
+																	target="_blank" data-tooltip-href="//www.dndbeyond.com/skills/19-tooltip"
+																	data-tooltip-json-href="//www.dndbeyond.com/skills/19/tooltip-json">Persuasion</a>
+															</td>
+															<td>Cha</td>
+														</tr>
+														<tr draggable="false">
+															<td><span class="prof-checkbox" data-state="0"><svg name="preventRemove"
+																		class="prof-icon">
+																		<circle cx="9" cy="9" r="6" class="base-circle"></circle>
+																		<path d="M 9 3 A 3 3 0 0 0 9 15 Z" class="half-fill"></path>
+																		<circle cx="9" cy="9" r="6" class="full-fill"></circle>
+																		<circle cx="9" cy="9" r="8" class="ring-stroke"></circle>
+																	</svg></span></td>
+															<td><strong style="letter-spacing: 1px; white-space: nowrap;"> +0</strong></td>
+															<td><a class="tooltip-hover skill-tooltip" style="display: inline-block;"
+																	contenteditable="false"
+																	href="https://www.dndbeyond.com/compendium/rules/basic-rules/using-ability-scores#Religion"
+																	target="_blank" data-tooltip-href="//www.dndbeyond.com/skills/10-tooltip"
+																	data-tooltip-json-href="//www.dndbeyond.com/skills/10/tooltip-json">Religion</a>
+															</td>
+															<td>Int</td>
+														</tr>
+														<tr draggable="false">
+															<td><span class="prof-checkbox" data-state="0"><svg name="preventRemove"
+																		class="prof-icon">
+																		<circle cx="9" cy="9" r="6" class="base-circle"></circle>
+																		<path d="M 9 3 A 3 3 0 0 0 9 15 Z" class="half-fill"></path>
+																		<circle cx="9" cy="9" r="6" class="full-fill"></circle>
+																		<circle cx="9" cy="9" r="8" class="ring-stroke"></circle>
+																	</svg></span></td>
+															<td>+0</td>
+															<td><a class="tooltip-hover skill-tooltip" style="display: inline-block;"
+																	contenteditable="false"
+																	href="https://www.dndbeyond.com/compendium/rules/basic-rules/using-ability-scores#Sleight of Hand"
+																	target="_blank" data-tooltip-href="//www.dndbeyond.com/skills/4-tooltip"
+																	data-tooltip-json-href="//www.dndbeyond.com/skills/4/tooltip-json">Sleight
+																	of Hand</a></td>
+															<td>Dex</td>
+														</tr>
+														<tr draggable="false">
+															<td><span class="prof-checkbox" data-state="0"><svg name="preventRemove"
+																		class="prof-icon">
+																		<circle cx="9" cy="9" r="6" class="base-circle"></circle>
+																		<path d="M 9 3 A 3 3 0 0 0 9 15 Z" class="half-fill"></path>
+																		<circle cx="9" cy="9" r="6" class="full-fill"></circle>
+																		<circle cx="9" cy="9" r="8" class="ring-stroke"></circle>
+																	</svg></span></td>
+															<td>+0</td>
+															<td><a class="tooltip-hover skill-tooltip" style="display: inline-block;"
+																	contenteditable="false"
+																	href="https://www.dndbeyond.com/compendium/rules/basic-rules/using-ability-scores#Stealth"
+																	target="_blank" data-tooltip-href="//www.dndbeyond.com/skills/5-tooltip"
+																	data-tooltip-json-href="//www.dndbeyond.com/skills/5/tooltip-json">Stealth</a>
+															</td>
+															<td>Dex</td>
+														</tr>
+														<tr draggable="false">
+															<td><span class="prof-checkbox" data-state="0"><svg name="preventRemove"
+																		class="prof-icon">
+																		<circle cx="9" cy="9" r="6" class="base-circle"></circle>
+																		<path d="M 9 3 A 3 3 0 0 0 9 15 Z" class="half-fill"></path>
+																		<circle cx="9" cy="9" r="6" class="full-fill"></circle>
+																		<circle cx="9" cy="9" r="8" class="ring-stroke"></circle>
+																	</svg></span></td>
+															<td>+0</td>
+															<td><a class="tooltip-hover skill-tooltip" style="display: inline-block;"
+																	contenteditable="false"
+																	href="https://www.dndbeyond.com/compendium/rules/basic-rules/using-ability-scores#Survival"
+																	target="_blank" data-tooltip-href="//www.dndbeyond.com/skills/15-tooltip"
+																	data-tooltip-json-href="//www.dndbeyond.com/skills/15/tooltip-json">Survival</a>
+															</td>
+															<td>Wis</td>
+														</tr>
+													</tbody>
+												</table>
+											</div>
+										</div>
+										<div class="bio-block">
+											<div class="section-title">Magic Item Attunement (3 Slots Available)</div>
+											<div class="attunement-content" contenteditable="true">
+												<div style="margin-bottom: 2px;"><input type="checkbox" /></div>
+												<div style="margin-bottom: 2px;"><input type="checkbox" /></div>
+												<div><input type="checkbox" /></div>
+											</div>
+										</div>
+										<div class="bio-block">
+											<div class="section-title">Additional Features &amp; Traits</div>
+											<div class="bio-traits-add" contenteditable="true">
+												<div>Armor</div>
+												<div>&bull; Light Armor, Medium Armor, Shields</div>
+												<div>Weapons</div>
+												<div>&bull; Martial Weapons, Simple Weapons</div>
+												<div>Tools</div>
+												<div>&bull;</div>
+												<div><strong>Languages</strong></div>
+												<div>&bull; Common</div>
+											</div>
+										</div>
+									</div>
+									<div class="col" style="flex: 3;">
+										<div class="hp-box">
+											<div class="hp-row hp-input">
+												<div class="col"><span class="label">Current Hit Points</span>
+													<div class="box-field" contenteditable="true">10</div>
+												</div>
+												<div class="col"><span class="label">Maximum Hit Points</span>
+													<div class="box-field" contenteditable="true">10</div>
+												</div>
+												<div class="col"><span class="label"><a class="tooltip-hover condition-tooltip"
+															style="display: inline-block;" contenteditable="false"
+															href="https://www.dndbeyond.com/compendium/rules/basic-rules/combat#Temporary Hit Points"
+															target="_blank" data-tooltip-href="//www.dndbeyond.com/rules/76-tooltip"
+															data-tooltip-json-href="//www.dndbeyond.com/conditions/76/tooltip-json">Temporary
+															Hit Points</a></span>
+													<div class="box-field" contenteditable="true">&nbsp;</div>
+												</div>
+											</div>
+											<div class="hp-row">
+												<div class="col">
+													<div class="hp-subgrid">
+														<div><span class="label"><a class="tooltip-hover condition-tooltip"
+																	style="display: inline-block;" contenteditable="false"
+																	href="https://www.dndbeyond.com/compendium/rules/basic-rules/combat#Hit Dice"
+																	target="_blank" data-tooltip-href="//www.dndbeyond.com/rules/39-tooltip"
+																	data-tooltip-json-href="//www.dndbeyond.com/conditions/39/tooltip-json">Hit
+																	Dice</a></span>
+															<div class="box-field" contenteditable="true"><input type="checkbox" /> 1d8+0</div>
+														</div>
+														<div><span class="label">Defenses</span>
+															<div class="box-field" contenteditable="true">&nbsp;</div>
+														</div>
+														<div><span class="label">Conditions</span>
+															<div class="box-field" contenteditable="true">&nbsp;</div>
+														</div>
+														<div><span class="label">Death Saves</span>
+															<div class="box-field" contenteditable="true">&nbsp;</div>
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+										<div class="container-block">
+											<div class="section-title">Attacks &amp; Spellcasting</div>
+											<div class="attacks-field"><br />
+												<table class="ui-sortable" contenteditable="true">
+													<thead>
+														<tr>
+															<th>Weapon/ability</th>
+															<th>Attack/Save</th>
+															<th>Damage</th>
+															<th>Notes</th>
+														</tr>
+													</thead>
+													<tbody>
+														<tr draggable="false">
+															<td contenteditable="true">&nbsp;</td>
+															<td contenteditable="true">&nbsp;</td>
+															<td contenteditable="true">&nbsp;</td>
+															<td contenteditable="true">&nbsp;</td>
+														</tr>
+														<tr draggable="false">
+															<td contenteditable="true">&nbsp;</td>
+															<td contenteditable="true">&nbsp;</td>
+															<td contenteditable="true">&nbsp;</td>
+															<td contenteditable="true">&nbsp;</td>
+														</tr>
+														<tr draggable="false">
+															<td contenteditable="true">&nbsp;</td>
+															<td contenteditable="true">&nbsp;</td>
+															<td contenteditable="true">&nbsp;</td>
+															<td contenteditable="true">&nbsp;</td>
+														</tr>
+														<tr draggable="false">
+															<td contenteditable="true">&nbsp;</td>
+															<td contenteditable="true">&nbsp;</td>
+															<td contenteditable="true">&nbsp;</td>
+															<td contenteditable="true">&nbsp;</td>
+														</tr>
+														<tr draggable="false">
+															<td contenteditable="true">&nbsp;</td>
+															<td contenteditable="true">&nbsp;</td>
+															<td contenteditable="true">&nbsp;</td>
+															<td contenteditable="true">&nbsp;</td>
+														</tr>
+														<tr draggable="false">
+															<td contenteditable="true">&nbsp;</td>
+															<td contenteditable="true">&nbsp;</td>
+															<td contenteditable="true">&nbsp;</td>
+															<td contenteditable="true">&nbsp;</td>
+														</tr>
+														<tr draggable="false">
+															<td contenteditable="true">&nbsp;</td>
+															<td contenteditable="true">&nbsp;</td>
+															<td contenteditable="true">&nbsp;</td>
+															<td contenteditable="true">&nbsp;</td>
+														</tr>
+														<tr draggable="false">
+															<td contenteditable="true">&nbsp;</td>
+															<td contenteditable="true">&nbsp;</td>
+															<td contenteditable="true">&nbsp;</td>
+															<td contenteditable="true">&nbsp;</td>
+														</tr>
+														<tr draggable="false">
+															<td contenteditable="true">&nbsp;</td>
+															<td contenteditable="true">&nbsp;</td>
+															<td contenteditable="true">&nbsp;</td>
+															<td contenteditable="true">&nbsp;</td>
+														</tr>
+														<tr draggable="false">
+															<td contenteditable="true">&nbsp;</td>
+															<td contenteditable="true">&nbsp;</td>
+															<td contenteditable="true">&nbsp;</td>
+															<td contenteditable="true">&nbsp;</td>
+														</tr>
+														<tr draggable="false">
+															<td contenteditable="true">&nbsp;</td>
+															<td contenteditable="true">&nbsp;</td>
+															<td contenteditable="true">&nbsp;</td>
+															<td contenteditable="true">&nbsp;</td>
+														</tr>
+														<tr draggable="false">
+															<td contenteditable="true">&nbsp;</td>
+															<td contenteditable="true">&nbsp;</td>
+															<td contenteditable="true">&nbsp;</td>
+															<td contenteditable="true">&nbsp;</td>
+														</tr>
+														<tr draggable="false">
+															<td contenteditable="true">&nbsp;</td>
+															<td contenteditable="true">&nbsp;</td>
+															<td contenteditable="true">&nbsp;</td>
+															<td contenteditable="true">&nbsp;</td>
+														</tr>
+														<tr draggable="false">
+															<td contenteditable="true">&nbsp;</td>
+															<td contenteditable="true">&nbsp;</td>
+															<td contenteditable="true">&nbsp;</td>
+															<td contenteditable="true">&nbsp;</td>
+														</tr>
+														<tr draggable="false">
+															<td contenteditable="true">&nbsp;</td>
+															<td contenteditable="true">&nbsp;</td>
+															<td contenteditable="true">&nbsp;</td>
+															<td contenteditable="true">&nbsp;</td>
+														</tr>
+														<tr draggable="false">
+															<td contenteditable="true">&nbsp;</td>
+															<td contenteditable="true">&nbsp;</td>
+															<td contenteditable="true">&nbsp;</td>
+															<td contenteditable="true">&nbsp;</td>
+														</tr>
+														<tr draggable="false">
+															<td contenteditable="true">&nbsp;</td>
+															<td contenteditable="true">&nbsp;</td>
+															<td contenteditable="true">&nbsp;</td>
+															<td contenteditable="true">&nbsp;</td>
+														</tr>
+														<tr draggable="false">
+															<td contenteditable="true">&nbsp;</td>
+															<td contenteditable="true">&nbsp;</td>
+															<td contenteditable="true">&nbsp;</td>
+															<td contenteditable="true">&nbsp;</td>
+														</tr>
+														<tr draggable="false">
+															<td contenteditable="true">&nbsp;</td>
+															<td contenteditable="true">&nbsp;</td>
+															<td contenteditable="true">&nbsp;</td>
+															<td contenteditable="true">&nbsp;</td>
+														</tr>
+														<tr draggable="false">
+															<td contenteditable="true">&nbsp;</td>
+															<td contenteditable="true">&nbsp;</td>
+															<td contenteditable="true">&nbsp;</td>
+															<td contenteditable="true">&nbsp;</td>
+														</tr>
+														<tr draggable="false">
+															<td contenteditable="true">&nbsp;</td>
+															<td contenteditable="true">&nbsp;</td>
+															<td contenteditable="true">&nbsp;</td>
+															<td contenteditable="true">&nbsp;</td>
+														</tr>
+														<tr draggable="false">
+															<td contenteditable="true">&nbsp;</td>
+															<td contenteditable="true">&nbsp;</td>
+															<td contenteditable="true">&nbsp;</td>
+															<td contenteditable="true">&nbsp;</td>
+														</tr>
+														<tr draggable="false">
+															<td contenteditable="true">&nbsp;</td>
+															<td contenteditable="true">&nbsp;</td>
+															<td contenteditable="true">&nbsp;</td>
+															<td contenteditable="true">&nbsp;</td>
+														</tr>
+														<tr draggable="false">
+															<td contenteditable="true">&nbsp;</td>
+															<td contenteditable="true">&nbsp;</td>
+															<td contenteditable="true">&nbsp;</td>
+															<td contenteditable="true">&nbsp;</td>
+														</tr>
+														<tr draggable="false">
+															<td contenteditable="true">&nbsp;</td>
+															<td contenteditable="true">&nbsp;</td>
+															<td contenteditable="true">&nbsp;</td>
+															<td contenteditable="true">&nbsp;</td>
+														</tr>
+														<tr draggable="false">
+															<td contenteditable="true">&nbsp;</td>
+															<td contenteditable="true">&nbsp;</td>
+															<td contenteditable="true">&nbsp;</td>
+															<td contenteditable="true">&nbsp;</td>
+														</tr>
+														<tr draggable="false">
+															<td contenteditable="true">&nbsp;</td>
+															<td contenteditable="true">&nbsp;</td>
+															<td contenteditable="true">&nbsp;</td>
+															<td contenteditable="true">&nbsp;</td>
+														</tr>
+														<tr draggable="false">
+															<td contenteditable="true">&nbsp;</td>
+															<td contenteditable="true">&nbsp;</td>
+															<td contenteditable="true">&nbsp;</td>
+															<td contenteditable="true">&nbsp;</td>
+														</tr>
+														<tr draggable="false">
+															<td contenteditable="true">&nbsp;</td>
+															<td contenteditable="true">&nbsp;</td>
+															<td contenteditable="true">&nbsp;</td>
+															<td contenteditable="true">&nbsp;</td>
+														</tr>
+														<tr draggable="false">
+															<td contenteditable="true">&nbsp;</td>
+															<td contenteditable="true">&nbsp;</td>
+															<td contenteditable="true">&nbsp;</td>
+															<td contenteditable="true">&nbsp;</td>
+														</tr>
+														<tr draggable="false">
+															<td contenteditable="true">&nbsp;</td>
+															<td contenteditable="true">&nbsp;</td>
+															<td contenteditable="true">&nbsp;</td>
+															<td contenteditable="true">&nbsp;</td>
+														</tr>
+														<tr draggable="false">
+															<td contenteditable="true">&nbsp;</td>
+															<td contenteditable="true">&nbsp;</td>
+															<td contenteditable="true">&nbsp;</td>
+															<td contenteditable="true">&nbsp;</td>
+														</tr>
+														<tr draggable="false">
+															<td contenteditable="true">&nbsp;</td>
+															<td contenteditable="true">&nbsp;</td>
+															<td contenteditable="true">&nbsp;</td>
+															<td contenteditable="true">&nbsp;</td>
+														</tr>
+													</tbody>
+												</table>
+											</div>
+										</div>
+									</div>
+									<div class="col" style="flex: 3;">
+										<div class="bio-block">
+											<div class="section-title">Spellcasting Notes / Summary</div>
+											<div class="spellcasting-field" contenteditable="true">
+												<div><em><strong>Spellcasting.</strong></em> Spell save DC 10, +0 to hit with spell attacks
+												</div>
+												<div><br /><strong>Cantrips (at will):</strong><br /><br /><span class="add-input slots"
+														data-number="2" data-spell="1st level"><strong>1st level (2
+															slots):</strong></span><br /><br /></div>
+											</div>
+										</div>
+										<div class="container-block">
+											<div class="section-title">Features &amp; Traits</div>
+											<div class="features-field" contenteditable="true">
+												<table class="ui-sortable">
+													<tbody class="ui-sortable">
+														<tr draggable="false">
+															<td>&nbsp;</td>
+															<td>&nbsp;</td>
+														</tr>
+														<tr draggable="false">
+															<td>&nbsp;</td>
+															<td>&nbsp;</td>
+														</tr>
+														<tr draggable="false">
+															<td>&nbsp;</td>
+															<td>&nbsp;</td>
+														</tr>
+														<tr draggable="false">
+															<td>&nbsp;</td>
+															<td>&nbsp;</td>
+														</tr>
+														<tr draggable="false">
+															<td>&nbsp;</td>
+															<td>&nbsp;</td>
+														</tr>
+														<tr draggable="false">
+															<td>&nbsp;</td>
+															<td>&nbsp;</td>
+														</tr>
+														<tr draggable="false">
+															<td>&nbsp;</td>
+															<td>&nbsp;</td>
+														</tr>
+														<tr draggable="false">
+															<td>&nbsp;</td>
+															<td>&nbsp;</td>
+														</tr>
+														<tr draggable="false">
+															<td>&nbsp;</td>
+															<td>&nbsp;</td>
+														</tr>
+														<tr draggable="false">
+															<td>&nbsp;</td>
+															<td>&nbsp;</td>
+														</tr>
+														<tr draggable="false">
+															<td>&nbsp;</td>
+															<td>&nbsp;</td>
+														</tr>
+														<tr draggable="false">
+															<td>&nbsp;</td>
+															<td>&nbsp;</td>
+														</tr>
+														<tr draggable="false">
+															<td>&nbsp;</td>
+															<td>&nbsp;</td>
+														</tr>
+														<tr draggable="false">
+															<td>&nbsp;</td>
+															<td>&nbsp;</td>
+														</tr>
+														<tr draggable="false">
+															<td>&nbsp;</td>
+															<td>&nbsp;</td>
+														</tr>
+														<tr draggable="false">
+															<td>&nbsp;</td>
+															<td>&nbsp;</td>
+														</tr>
+														<tr draggable="false">
+															<td>&nbsp;</td>
+															<td>&nbsp;</td>
+														</tr>
+														<tr draggable="false">
+															<td>&nbsp;</td>
+															<td>&nbsp;</td>
+														</tr>
+														<tr draggable="false">
+															<td>&nbsp;</td>
+															<td>&nbsp;</td>
+														</tr>
+														<tr draggable="false">
+															<td>&nbsp;</td>
+															<td>&nbsp;</td>
+														</tr>
+														<tr draggable="false">
+															<td>&nbsp;</td>
+															<td>&nbsp;</td>
+														</tr>
+														<tr draggable="false">
+															<td>&nbsp;</td>
+															<td>&nbsp;</td>
+														</tr>
+														<tr draggable="false">
+															<td>&nbsp;</td>
+															<td>&nbsp;</td>
+														</tr>
+														<tr draggable="false">
+															<td>&nbsp;</td>
+															<td>&nbsp;</td>
+														</tr>
+														<tr draggable="false">
+															<td>&nbsp;</td>
+															<td>&nbsp;</td>
+														</tr>
+														<tr draggable="false">
+															<td>&nbsp;</td>
+															<td>&nbsp;</td>
+														</tr>
+														<tr draggable="false">
+															<td>&nbsp;</td>
+															<td>&nbsp;</td>
+														</tr>
+														<tr draggable="false">
+															<td>&nbsp;</td>
+															<td>&nbsp;</td>
+														</tr>
+														<tr draggable="false">
+															<td>&nbsp;</td>
+															<td>&nbsp;</td>
+														</tr>
+														<tr draggable="false">
+															<td>&nbsp;</td>
+															<td>&nbsp;</td>
+														</tr>
+														<tr draggable="false">
+															<td>&nbsp;</td>
+															<td>&nbsp;</td>
+														</tr>
+														<tr draggable="false">
+															<td>&nbsp;</td>
+															<td>&nbsp;</td>
+														</tr>
+													</tbody>
+												</table>
+											</div>
+										</div>
+									</div>
+									<div class="col" style="flex: 1;">
+										<div class="container-block equipment-block">
+											<div class="section-title">Spell Components</div>
+											<div class="equipment-field" contenteditable="true">
+												<table class="ui-sortable">
+													<thead>
+														<tr>
+															<th>Name</th>
+															<th>Weight</th>
+															<th>Qty</th>
+															<th>Cost (gp)</th>
+															<th>Notes</th>
+														</tr>
+													</thead>
+													<tbody>
+														<tr draggable="false">
+															<td>&nbsp;</td>
+															<td>&nbsp;</td>
+															<td>&nbsp;</td>
+															<td>&nbsp;</td>
+															<td>&nbsp;</td>
+														</tr>
+														<tr draggable="false">
+															<td>&nbsp;</td>
+															<td>&nbsp;</td>
+															<td>&nbsp;</td>
+															<td>&nbsp;</td>
+															<td>&nbsp;</td>
+														</tr>
+														<tr draggable="false">
+															<td>&nbsp;</td>
+															<td>&nbsp;</td>
+															<td>&nbsp;</td>
+															<td>&nbsp;</td>
+															<td>&nbsp;</td>
+														</tr>
+														<tr draggable="false">
+															<td>&nbsp;</td>
+															<td>&nbsp;</td>
+															<td>&nbsp;</td>
+															<td>&nbsp;</td>
+															<td>&nbsp;</td>
+														</tr>
+													</tbody>
+												</table>
+											</div>
+										</div>
+										<div class="container-block equipment-block">
+											<div class="section-title">Potion Pouch</div>
+											<div class="equipment-field" contenteditable="true">
+												<table class="ui-sortable">
+													<thead>
+														<tr>
+															<th>Name</th>
+															<th>Weight</th>
+															<th>Qty</th>
+															<th>Cost (gp)</th>
+															<th>Notes</th>
+														</tr>
+													</thead>
+													<tbody>
+														<tr draggable="false">
+															<td>&nbsp;</td>
+															<td>&nbsp;</td>
+															<td>&nbsp;</td>
+															<td>&nbsp;</td>
+															<td>&nbsp;</td>
+														</tr>
+														<tr draggable="false">
+															<td>&nbsp;</td>
+															<td>&nbsp;</td>
+															<td>&nbsp;</td>
+															<td>&nbsp;</td>
+															<td>&nbsp;</td>
+														</tr>
+														<tr draggable="false">
+															<td>&nbsp;</td>
+															<td>&nbsp;</td>
+															<td>&nbsp;</td>
+															<td>&nbsp;</td>
+															<td>&nbsp;</td>
+														</tr>
+														<tr draggable="false">
+															<td>&nbsp;</td>
+															<td>&nbsp;</td>
+															<td>&nbsp;</td>
+															<td>&nbsp;</td>
+															<td>&nbsp;</td>
+														</tr>
+													</tbody>
+												</table>
+											</div>
+										</div>
+										<div class="container-block equipment-block">
+											<div class="section-title">Consumables / Tools</div>
+											<div class="equipment-field" contenteditable="true">
+												<table class="ui-sortable">
+													<thead>
+														<tr>
+															<th>Name</th>
+															<th>Weight</th>
+															<th>Qty</th>
+															<th>Cost (gp)</th>
+															<th>Notes</th>
+														</tr>
+													</thead>
+													<tbody>
+														<tr draggable="false">
+															<td>&nbsp;</td>
+															<td>&nbsp;</td>
+															<td>&nbsp;</td>
+															<td>&nbsp;</td>
+															<td>&nbsp;</td>
+														</tr>
+														<tr draggable="false">
+															<td>&nbsp;</td>
+															<td>&nbsp;</td>
+															<td>&nbsp;</td>
+															<td>&nbsp;</td>
+															<td>&nbsp;</td>
+														</tr>
+														<tr draggable="false">
+															<td>&nbsp;</td>
+															<td>&nbsp;</td>
+															<td>&nbsp;</td>
+															<td>&nbsp;</td>
+															<td>&nbsp;</td>
+														</tr>
+														<tr draggable="false">
+															<td>&nbsp;</td>
+															<td>&nbsp;</td>
+															<td>&nbsp;</td>
+															<td>&nbsp;</td>
+															<td>&nbsp;</td>
+														</tr>
+													</tbody>
+												</table>
+											</div>
+										</div>
+										<div class="container-block">
+											<div class="section-title">Treasure &amp; Currency</div>
+											<div class="currency-container">
+												<div class="coin-slot">CP:
+													<div class="coin-input" contenteditable="true">&nbsp;</div>
+												</div>
+												<div class="coin-slot">SP:
+													<div class="coin-input" contenteditable="true">&nbsp;</div>
+												</div>
+												<div class="coin-slot">EP:
+													<div class="coin-input" contenteditable="true">&nbsp;</div>
+												</div>
+												<div class="coin-slot">GP:
+													<div class="coin-input" contenteditable="true">&nbsp;</div>
+												</div>
+												<div class="coin-slot">PP:
+													<div class="coin-input" contenteditable="true">&nbsp;</div>
+												</div>
+											</div>
+											<div class="treasure-field" contenteditable="true">&nbsp;</div>
+										</div>
+										<div class="container-block equipment-block">
+											<div class="section-title">Equipment</div>
+											<div class="equipment-field" contenteditable="true">
+												<table class="ui-sortable">
+													<thead>
+														<tr>
+															<th>Name</th>
+															<th>Weight</th>
+															<th>Qty</th>
+															<th>Cost (gp)</th>
+															<th>Notes</th>
+														</tr>
+													</thead>
+													<tbody>
+														<tr draggable="false">
+															<td>&nbsp;</td>
+															<td>&nbsp;</td>
+															<td>&nbsp;</td>
+															<td>&nbsp;</td>
+															<td>&nbsp;</td>
+														</tr>
+														<tr draggable="false">
+															<td>&nbsp;</td>
+															<td>&nbsp;</td>
+															<td>&nbsp;</td>
+															<td>&nbsp;</td>
+															<td>&nbsp;</td>
+														</tr>
+														<tr draggable="false">
+															<td>&nbsp;</td>
+															<td>&nbsp;</td>
+															<td>&nbsp;</td>
+															<td>&nbsp;</td>
+															<td>&nbsp;</td>
+														</tr>
+														<tr draggable="false">
+															<td>&nbsp;</td>
+															<td>&nbsp;</td>
+															<td>&nbsp;</td>
+															<td>&nbsp;</td>
+															<td>&nbsp;</td>
+														</tr>
+														<tr draggable="false">
+															<td>&nbsp;</td>
+															<td>&nbsp;</td>
+															<td>&nbsp;</td>
+															<td>&nbsp;</td>
+															<td>&nbsp;</td>
+														</tr>
+														<tr draggable="false">
+															<td>&nbsp;</td>
+															<td>&nbsp;</td>
+															<td>&nbsp;</td>
+															<td>&nbsp;</td>
+															<td>&nbsp;</td>
+														</tr>
+														<tr draggable="false">
+															<td>&nbsp;</td>
+															<td>&nbsp;</td>
+															<td>&nbsp;</td>
+															<td>&nbsp;</td>
+															<td>&nbsp;</td>
+														</tr>
+														<tr draggable="false">
+															<td>&nbsp;</td>
+															<td>&nbsp;</td>
+															<td>&nbsp;</td>
+															<td>&nbsp;</td>
+															<td>&nbsp;</td>
+														</tr>
+														<tr draggable="false">
+															<td>&nbsp;</td>
+															<td>&nbsp;</td>
+															<td>&nbsp;</td>
+															<td>&nbsp;</td>
+															<td>&nbsp;</td>
+														</tr>
+													</tbody>
+												</table>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="dnd-page">
+								<div class="page2-grid">
+									<div class="col">
+										<div class="bio-block">
+											<div class="section-title">Character Appearance</div>
+											<div class="bio-appearance" contenteditable="true">&nbsp;</div>
+										</div>
+										<div class="bio-block">
+											<div class="section-title">Character Backstory</div>
+											<div class="bio-backstory" contenteditable="true">&nbsp;</div>
+										</div>
+										<div class="traits-grid">
+											<div class="bio-block">
+												<div class="section-title">Personality Traits</div>
+												<div class="trait-box-field" contenteditable="true">&nbsp;</div>
+											</div>
+											<div class="bio-block">
+												<div class="section-title">Ideals</div>
+												<div class="trait-box-field" contenteditable="true">&nbsp;</div>
+											</div>
+											<div class="bio-block">
+												<div class="section-title">Bonds</div>
+												<div class="trait-box-field" contenteditable="true">&nbsp;</div>
+											</div>
+											<div class="bio-block">
+												<div class="section-title">Flaws</div>
+												<div class="trait-box-field" contenteditable="true">&nbsp;</div>
+											</div>
+										</div>
+										<div class="bio-block">
+											<div class="section-title">Organization &amp; Allies</div>
+											<div class="bio-allies" contenteditable="true">&nbsp;</div>
+										</div>
+									</div>
+									<div class="col">
+										<div class="notes-block">
+											<div class="section-title">Notes</div>
+											<div class="notes-field" contenteditable="true">&nbsp;</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="dnd-page">
+								<div class="col">
+									<div class="notes-block">
+										<div class="section-title">Notes</div>
+										<div class="notes-field" contenteditable="true">&nbsp;</div>
+									</div>
+								</div>
+							</div>
+						</div>
 					`
 				},
 				{
