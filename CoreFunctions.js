@@ -1004,7 +1004,7 @@ function apply_avtt_roll_button_markup(html){
   const damageRollRegexBracket = /\s*\((([+-]?\s?(\d+d\d+(min\d+|ro([<>]=?|=)\d+|kh\d+|kl\d+)*\s?))+\s?([+-]\s?[0-9]+)?)\)/gi
   const damageRollRegex = /\s*([:\s>]|^)(([+-]?\s?(\d+d\d+(min\d+|ro([<>]=?|=)\d+|kh\d+|kl\d+)*\s?))+\s?([+-]\s?[0-9]+)?)([\.\):\s<,]|$)/gi
   const hitRollRegexBracket = /\s*(?<![0-9]+d[0-9]+)(\()([+-]\s?[0-9]+)(\))/gi
-  const hitRollRegex = /\s*(?<![0-9]+d[0-9]+)([:\s>]|^)([+-]\s?[0-9]+)([:\s<,]|$)/gi
+  const hitRollRegex = /\s*(?<!(?:[0-9]+d)?[0-9]+)([:\s>]|^)([+-]\s?[0-9]+)([:\s<,]|$)/gi
   const dRollRegex = /\s*([\s>]|^)(\s?d[0-9]+)([^+-])/gi
   const rechargeRegEx = /\s*(Recharge [0-6]?\s?[—–-]?\s?[0-6])/gi
   const actionType = "roll"
