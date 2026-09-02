@@ -2963,9 +2963,10 @@ class JournalManager{
 			}
 		});
 
-		const targetContainers = container.querySelectorAll('[contenteditable="true"]:not("table")');
+		const targetContainers = container.querySelectorAll('[contenteditable="true"]');
 
 		targetContainers.forEach((el) => {
+			if(el.tagName === 'TABLE') return;
 			if (el.firstChild?.nodeType === Node.TEXT_NODE) {
 				el.firstChild.nodeValue = el.firstChild.nodeValue.trimStart();
 			}

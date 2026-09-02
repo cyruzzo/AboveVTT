@@ -1049,10 +1049,24 @@ function apply_avtt_slash_command_button(sourceElement, targetElement){
   }
   $(targetElement).empty().append(updatedInnerHtml);
 }
+/* The character sheet snippets will format partial dice rolls due to snippet formulas. Eg <strong>1d8</strong>+5
+   This function unwraps those roll formulas to ensure proper dice roll injection. */
+function unwrap_roll_formulas(sheetElement){
+  const diceTerm = String.raw`\d+d\d+(?:(?:min\d+)|(?:ro(?:[<>=]{1,2})?\d+)|(?:k[hl]\d+))*`;
+  const rollFragment = new RegExp(String.raw`^\s*(?:${diceTerm}(?:\s*[+\-−]\s*(?:${diceTerm}|\d+))*|[+\-−]\s*\d+)\s*$`, 'i');
+  const inlineFormattingElements = sheetElement.querySelectorAll('strong, b, em, i, span, u, mark');
+
+  for(const element of inlineFormattingElements){
+    if(rollFragment.test(element.textContent)){
+      element.replaceWith(sheetElement.ownerDocument.createTextNode(element.textContent));
+    }
+  }
+}
 
 /** Injects roll/aoe buttons into a dnd sheet one editable text node at a time so the replacements can't rewrite the sheet's own markup. */
 function add_roll_buttons_to_text(sheetElement){
   const ownerDocument = sheetElement.ownerDocument;
+  unwrap_roll_formulas(sheetElement);
   sheetElement.normalize(); // stripping the previous buttons leaves split text nodes that would break the matches below
   const walker = ownerDocument.createTreeWalker(sheetElement, NodeFilter.SHOW_TEXT);
   const textNodes = [];
