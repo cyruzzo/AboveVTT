@@ -91,6 +91,197 @@ function sync_drawings(options = {newDraw: true, wallsChanged: false}){
 		window.DRAWINGS.shift();
 }
 
+async function create_walls_from_mask_file(file, alphaThreshold = 128) {
+	const imageUrl = await new Promise((resolve, reject) => {
+		const reader = new FileReader();
+		reader.onload = () => resolve(reader.result);
+		reader.onerror = reject;
+		reader.readAsDataURL(file);
+	});
+	const image = await new Promise((resolve, reject) => {
+		const source = new Image();
+		source.onload = () => resolve(source);
+		source.onerror = reject;
+		source.src = imageUrl;
+	});
+	const {sceneWidth, sceneHeight} = getSceneMapSize();
+	if (!sceneWidth || !sceneHeight) return;
+	const sampleSize = Math.max(2, Math.ceil(Math.max(sceneWidth, sceneHeight) / 600));
+	const columns = Math.ceil(sceneWidth / sampleSize);
+	const rows = Math.ceil(sceneHeight / sampleSize);
+	const canvas = new OffscreenCanvas(columns, rows);
+	const context = canvas.getContext("2d", {willReadFrequently: true});
+	context.drawImage(image, 0, 0, columns, rows);
+	const pixels = context.getImageData(0, 0, columns, rows).data;
+	const solid = (column, row) => pixels[(row * columns + column) * 4 + 3] >= alphaThreshold;
+	const segments = [];
+	const segmentCases = {
+		1: [['left', 'top']],
+		2: [['top', 'right']],
+		3: [['left', 'right']],
+		4: [['right', 'bottom']],
+		5: [['left', 'top'], ['right', 'bottom']],
+		6: [['top', 'bottom']],
+		7: [['left', 'bottom']],
+		8: [['bottom', 'left']],
+		9: [['top', 'bottom']],
+		10: [['top', 'right'], ['bottom', 'left']],
+		11: [['right', 'bottom']],
+		12: [['left', 'right']],
+		13: [['top', 'right']],
+		14: [['left', 'top']]
+	};
+
+	for (let row = 0; row < rows - 1; row++) {
+		for (let column = 0; column < columns - 1; column++) {
+			const mask =
+				(solid(column, row) ? 1 : 0) |
+				(solid(column + 1, row) ? 2 : 0) |
+				(solid(column + 1, row + 1) ? 4 : 0) |
+				(solid(column, row + 1) ? 8 : 0);
+			const edgePoints = {
+				top: [(column + 0.5) * sampleSize, row * sampleSize],
+				right: [(column + 1) * sampleSize, (row + 0.5) * sampleSize],
+				bottom: [(column + 0.5) * sampleSize, (row + 1) * sampleSize],
+				left: [column * sampleSize, (row + 0.5) * sampleSize]
+			};
+
+			for (const [start, end] of segmentCases[mask] || []) {
+				segments.push([...edgePoints[start], ...edgePoints[end]]);
+			}
+		}
+	}
+
+	const pointKey = point => `${point[0]},${point[1]}`;
+	const edges = segments.map(([x1, y1, x2, y2]) => ({
+		start: [x1, y1],
+		end: [x2, y2],
+		used: false
+	}));
+	const contours = [];
+
+	for (const edge of edges) {
+		if (edge.used) continue;
+
+		edge.used = true;
+		const contour = [edge.start, edge.end];
+
+		while (pointKey(contour[0]) !== pointKey(contour[contour.length - 1])) {
+			const lastPoint = contour[contour.length - 1];
+			const next = edges.find(candidate =>
+				!candidate.used &&
+				(pointKey(candidate.start) === pointKey(lastPoint) || pointKey(candidate.end) === pointKey(lastPoint))
+			);
+			if (!next) break;
+
+			next.used = true;
+			contour.push(pointKey(next.start) === pointKey(lastPoint) ? next.end : next.start);
+		}
+
+		contours.push(contour);
+	}
+
+	const pointLineDistance = (point, start, end) => {
+		const dx = end[0] - start[0];
+		const dy = end[1] - start[1];
+
+		if (!dx && !dy) return Math.hypot(point[0] - start[0], point[1] - start[1]);
+
+		return Math.abs(dy * point[0] - dx * point[1] + end[0] * start[1] - end[1] * start[0]) / Math.hypot(dx, dy);
+	};
+
+	const simplifyPath = (points, tolerance) => {
+		const keep = new Array(points.length).fill(false);
+		keep[0] = true;
+		keep[points.length - 1] = true;
+		const ranges = [[0, points.length - 1]];
+
+		while (ranges.length) {
+			const [start, end] = ranges.pop();
+			let distance = 0;
+			let index = -1;
+
+			for (let point = start + 1; point < end; point++) {
+				const candidateDistance = pointLineDistance(points[point], points[start], points[end]);
+
+				if (candidateDistance > distance) {
+					distance = candidateDistance;
+					index = point;
+				}
+			}
+			if (distance > tolerance) {
+				keep[index] = true;
+				ranges.push([start, index], [index, end]);
+			}
+		}
+
+		return points.filter((point, index) => keep[index]);
+	};
+
+	const simplifiedSegments = [];
+
+	for (const contour of contours) {
+		const closed = pointKey(contour[0]) === pointKey(contour[contour.length - 1]);
+		const points = closed ? contour.slice(0, -1) : contour;
+		if (points.length < 2) continue;
+
+		let simplified;
+
+		if (closed) {
+			let farthest = 1;
+
+			for (let point = 2; point < points.length; point++) {
+				const distance = Math.hypot(points[point][0] - points[0][0], points[point][1] - points[0][1]);
+				const farthestDistance = Math.hypot(points[farthest][0] - points[0][0], points[farthest][1] - points[0][1]);
+
+				if (distance > farthestDistance) farthest = point;
+			}
+
+			const firstHalf = simplifyPath(points.slice(0, farthest + 1), sampleSize * 2);
+			const secondHalf = simplifyPath([...points.slice(farthest), points[0]], sampleSize * 2);
+			simplified = firstHalf.concat(secondHalf.slice(1, -1));
+		}
+		else {
+			simplified = simplifyPath(points, sampleSize * 2);
+		}
+
+		for (let point = 1; point < simplified.length; point++) {
+			simplifiedSegments.push([...simplified[point - 1], ...simplified[point]]);
+		}
+
+		if (closed && simplified.length > 2) {
+			simplifiedSegments.push([...simplified[simplified.length - 1], ...simplified[0]]);
+		}
+	}
+
+	const wallScale = window.CURRENT_SCENE_DATA.conversion ?? 1;
+	const walls = simplifiedSegments.map(([x1, y1, x2, y2]) => [
+		'line',
+		'wall',
+		'rgba(0, 255, 0, 1)',
+		Math.min(x1, sceneWidth),
+		Math.min(y1, sceneHeight),
+		Math.min(x2, sceneWidth),
+		Math.min(y2, sceneHeight),
+		6,
+		wallScale,
+		0,
+		'',
+		''
+	]);
+
+	window.DRAWINGS.push(...walls);
+	pushWallUndo({undo: walls.map(wall => [...wall])});
+	redraw_light_walls({wallsChanged: true});
+	redraw_light();
+	redraw_fog();
+	redraw_elev();
+	redraw_drawn_light();
+	redraw_drawings();
+	sync_drawings({wallsChanged: true});
+	return walls.length;
+}
+
 
 
 function roundRect(ctx, x, y, width, height, radius, fill, stroke) {
@@ -7047,6 +7238,29 @@ Example usage:
 				 	Erase Area
 			</button>
 		</div>`);
+	const maskWallInput = $("<input type='file' accept='image/*' style='display:none' />");
+	wall_menu.append(maskWallInput);
+	wall_menu.append(
+		`<div class='ddbc-tab-options--layout-pill menu-option'>
+			<button id='walls_from_mask' class='menu-option ddbc-tab-options__header-heading'>
+				Walls From Mask
+			</button>
+		</div>`);
+	wall_menu.find('#walls_from_mask').on('click', function() {
+		maskWallInput.trigger('click');
+	});
+	maskWallInput.on('change', async function() {
+		const file = this.files[0];
+		if (!file) return;
+		try {
+			const count = await create_walls_from_mask_file(file);
+			noisy_log(`Created ${count} walls from the mask.`);
+		}
+		catch (error) {
+			noisy_log(error.message || 'Unable to create walls from this mask.');
+		}
+		this.value = '';
+	});
 	const showWallsDesc = `With this toggled the walls will remain visible to you with the walls menu closed (Shift+W). This allows you to interact with doors that have hidden icons or just see the walls when using other tools.`
 	wall_menu.append(
 		`<div class='ddbc-tab-options--layout-pill menu-option' data-skip="true" data-desc="${showWallsDesc}">
