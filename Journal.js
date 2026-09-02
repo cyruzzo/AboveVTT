@@ -2939,7 +2939,7 @@ class JournalManager{
 	ensureEnclosingZWSP(container) {
 		const zwspChar = '\u200B';
 		const stripRegex = /[\u200B-\u200D\uFEFF]|&(ZeroWidthSpace|#8203|#x200B);/gi;
-		const caretBoundaryTags = ['BR', 'DIV', 'P', 'LI', 'BLOCKQUOTE', 'PRE', 'H1', 'H2', 'H3', 'H4', 'H5', 'H6'];
+		const caretBoundaryTags = ['BR', 'DIV', 'P', 'LI', 'BLOCKQUOTE', 'PRE', 'H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'TABLE'];
 		const docWalker = document.createTreeWalker(container, NodeFilter.SHOW_TEXT, null);
 		let textNode = docWalker.nextNode();
 		while (textNode) {
@@ -2951,9 +2951,7 @@ class JournalManager{
 		container.normalize();
 
 
-		const wrapTargets = container.querySelectorAll(
-			'.prof-checkbox, input[type="checkbox"], input[type="number"]'
-		);
+		const wrapTargets = container.querySelectorAll('.prof-checkbox, input[type="checkbox"], input[type="number"]');
 
 		wrapTargets.forEach((target) => {
 			if (target.previousSibling?.nodeType !== Node.TEXT_NODE) {
@@ -2965,7 +2963,7 @@ class JournalManager{
 			}
 		});
 
-		const targetContainers = container.querySelectorAll('[contenteditable="true"]');
+		const targetContainers = container.querySelectorAll('[contenteditable="true"]:not("table")');
 
 		targetContainers.forEach((el) => {
 			if (el.firstChild?.nodeType === Node.TEXT_NODE) {
