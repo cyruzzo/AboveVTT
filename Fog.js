@@ -237,12 +237,12 @@ async function create_walls_from_mask_file(file, alphaThreshold = 128) {
 				if (distance > farthestDistance) farthest = point;
 			}
 
-			const firstHalf = simplifyPath(points.slice(0, farthest + 1), 3);
-			const secondHalf = simplifyPath([...points.slice(farthest), points[0]], 3);
+			const firstHalf = simplifyPath(points.slice(0, farthest + 1), 5);
+			const secondHalf = simplifyPath([...points.slice(farthest), points[0]], 5);
 			simplified = firstHalf.concat(secondHalf.slice(1, -1));
 		}
 		else {
-			simplified = simplifyPath(points, 3);
+			simplified = simplifyPath(points, 5);
 		}
 
 		for (let point = 1; point < simplified.length; point++) {
