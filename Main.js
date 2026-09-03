@@ -2205,6 +2205,7 @@ function init_ui() {
 	// canvas, based on the drawing function
 	const tempOverlay = $("<canvas id='temp_overlay' class='TLA'/>");
 	tempOverlay.css("z-index", "25");
+	
 	const captureMouse = $("<div id='capture_mouse' class='TLA'/>");
 	captureMouse.css({
 		"z-index": "25",
@@ -2213,7 +2214,7 @@ function init_ui() {
 	});
 	const darknessLayer = $("<div id='darkness_layer' class='TLA'/>");
 
-	tempOverlay.dblclick(function(e) {
+	captureMouse.dblclick(function(e) {
 		if(window.DRAWFUNCTION != 'select')
 			return;
 		e.preventDefault();
