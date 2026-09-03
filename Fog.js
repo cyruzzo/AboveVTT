@@ -3688,7 +3688,13 @@ function get_event_cursor_position(event, preventSnap = false) {
     let pointX = Math.round(((eventLocation.pageX - window.VTTMargin) * (1.0 / window.ZOOM)));
     let pointY = Math.round(((eventLocation.pageY - window.VTTMargin) * (1.0 / window.ZOOM)));
 
-    if (!preventSnap && 
+
+    // Apply snapping if enabled
+    if (!preventSnap && ((window.toggleSnap && !window.toggleDrawingSnap) || (window.toggleDrawingSnap && !window.toggleSnap))) {
+        [pointX, pointY] = get_snapped_coordinates(pointX, pointY);
+    }
+
+	if (!preventSnap && 
 		(window.DRAWFUNCTION === 'wall' || 
 			window.DRAWFUNCTION == 'wall-door' || 
 			window.DRAWFUNCTION == 'wall-window') &&
@@ -3699,11 +3705,6 @@ function get_event_cursor_position(event, preventSnap = false) {
 	    window.SNAP_WALLS === true
     ) {
 	    return wall_snap(pointX, pointY);
-    }
-	
-    // Apply snapping if enabled
-    if (!preventSnap && ((window.toggleSnap && !window.toggleDrawingSnap) || (window.toggleDrawingSnap && !window.toggleSnap))) {
-        [pointX, pointY] = get_snapped_coordinates(pointX, pointY);
     }
 	
     return [pointX, pointY];
