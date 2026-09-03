@@ -106,9 +106,9 @@ async function create_walls_from_mask_file(file, alphaThreshold = 128) {
 	});
 	const {sceneWidth, sceneHeight} = getSceneMapSize();
 	if (!sceneWidth || !sceneHeight) return;
-	const sampleSize = Math.max(2, Math.ceil(Math.max(sceneWidth, sceneHeight) / 600));
-	const columns = Math.ceil(sceneWidth / sampleSize);
-	const rows = Math.ceil(sceneHeight / sampleSize);
+	const sampleSize = {width: Math.max(2, Math.ceil(sceneWidth/parseInt(window.CURRENT_SCENE_DATA.hpps ?? 50)/4)), height: Math.max(2, Math.ceil(sceneHeight/parseInt(window.CURRENT_SCENE_DATA.vpps ?? 50)/4))};
+	const columns = Math.ceil(sceneWidth / sampleSize.width);
+	const rows = Math.ceil(sceneHeight / sampleSize.height);
 	const canvas = new OffscreenCanvas(columns, rows);
 	const context = canvas.getContext("2d", {willReadFrequently: true});
 	context.drawImage(image, 0, 0, columns, rows);
@@ -140,10 +140,10 @@ async function create_walls_from_mask_file(file, alphaThreshold = 128) {
 				(solid(column + 1, row + 1) ? 4 : 0) |
 				(solid(column, row + 1) ? 8 : 0);
 			const edgePoints = {
-				top: [(column + 0.5) * sampleSize, row * sampleSize],
-				right: [(column + 1) * sampleSize, (row + 0.5) * sampleSize],
-				bottom: [(column + 0.5) * sampleSize, (row + 1) * sampleSize],
-				left: [column * sampleSize, (row + 0.5) * sampleSize]
+				top: [(column + 0.5) * sampleSize.width, row * sampleSize.height],
+				right: [(column + 1) * sampleSize.width, (row + 0.5) * sampleSize.height],
+				bottom: [(column + 0.5) * sampleSize.width, (row + 1) * sampleSize.height],
+				left: [column * sampleSize.width, (row + 0.5) * sampleSize.height]
 			};
 
 			for (const [start, end] of segmentCases[mask] || []) {
@@ -237,12 +237,12 @@ async function create_walls_from_mask_file(file, alphaThreshold = 128) {
 				if (distance > farthestDistance) farthest = point;
 			}
 
-			const firstHalf = simplifyPath(points.slice(0, farthest + 1), sampleSize * 2);
-			const secondHalf = simplifyPath([...points.slice(farthest), points[0]], sampleSize * 2);
+			const firstHalf = simplifyPath(points.slice(0, farthest + 1), 3);
+			const secondHalf = simplifyPath([...points.slice(farthest), points[0]], 3);
 			simplified = firstHalf.concat(secondHalf.slice(1, -1));
 		}
 		else {
-			simplified = simplifyPath(points, sampleSize * 2);
+			simplified = simplifyPath(points, 3);
 		}
 
 		for (let point = 1; point < simplified.length; point++) {
