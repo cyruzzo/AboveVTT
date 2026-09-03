@@ -253,9 +253,40 @@ async function create_walls_from_mask_file(file, alphaThreshold = 128) {
 			simplifiedSegments.push([...simplified[simplified.length - 1], ...simplified[0]]);
 		}
 	}
+	const snapDistance = Math.max(sampleSize.width, sampleSize.height);
+    const snapBuckets = new Map();
+    const snapPoint = point => {
+        const cellX = Math.floor(point[0] / snapDistance);
+        const cellY = Math.floor(point[1] / snapDistance);
 
+        for (let offsetX = -1; offsetX <= 1; offsetX++) {
+            for (let offsetY = -1; offsetY <= 1; offsetY++) {
+                const bucket = snapBuckets.get(`${cellX + offsetX},${cellY + offsetY}`);
+                if (!bucket) continue;
+
+                for (const candidate of bucket) {
+                    if (Math.hypot(candidate[0] - point[0], candidate[1] - point[1]) <= snapDistance) return candidate;
+                }
+            }
+        }
+
+        const key = `${cellX},${cellY}`;
+        if (!snapBuckets.has(key)) snapBuckets.set(key, []);
+        snapBuckets.get(key).push(point);
+        return point;
+    };
+
+    const snappedSegments = [];
+
+    for (const [x1, y1, x2, y2] of simplifiedSegments) {
+        const start = snapPoint([x1, y1]);
+        const end = snapPoint([x2, y2]);
+        if (start[0] === end[0] && start[1] === end[1]) continue;
+
+        snappedSegments.push([...start, ...end]);
+    }
 	const wallScale = window.CURRENT_SCENE_DATA.conversion ?? 1;
-	const walls = simplifiedSegments.map(([x1, y1, x2, y2]) => [
+	const walls = snappedSegments.map(([x1, y1, x2, y2]) => [
 		'line',
 		'wall',
 		'rgba(0, 255, 0, 1)',
