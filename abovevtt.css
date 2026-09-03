@@ -1965,6 +1965,7 @@ div#scene_properties form > div{
     text-shadow: 0px 1px 1px #000;
     visibility: hidden;
     transition: 0.2s ease-in-out 0.5s;
+    position:absolute;
 }
 
 .hasTooltip::after,

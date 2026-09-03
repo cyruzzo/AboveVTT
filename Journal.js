@@ -2963,9 +2963,10 @@ class JournalManager{
 			}
 		});
 
-		const targetContainers = container.querySelectorAll('[contenteditable="true"]:not("table")');
+		const targetContainers = container.querySelectorAll('[contenteditable="true"]');
 
 		targetContainers.forEach((el) => {
+			if(el.tagName === 'TABLE') return;
 			if (el.firstChild?.nodeType === Node.TEXT_NODE) {
 				el.firstChild.nodeValue = el.firstChild.nodeValue.trimStart();
 			}
@@ -7272,17 +7273,17 @@ class JournalManager{
 												</table>
 											</div>
 										</div>
-										<div class="bio-block">
+										<div class="container-block">
 											<div class="section-title">Magic Item Attunement (3 Slots Available)</div>
-											<div class="attunement-content" contenteditable="true">
+											<div class="box-field" contenteditable="true">
 												<div style="margin-bottom: 2px;"><input type="checkbox" /></div>
 												<div style="margin-bottom: 2px;"><input type="checkbox" /></div>
 												<div><input type="checkbox" /></div>
 											</div>
 										</div>
-										<div class="bio-block">
+										<div class="container-block">
 											<div class="section-title">Additional Features &amp; Traits</div>
-											<div class="bio-traits-add" contenteditable="true">
+											<div class="box-field" contenteditable="true">
 												<div>Armor</div>
 												<div>&bull; Light Armor, Medium Armor, Shields</div>
 												<div>Weapons</div>
@@ -7553,19 +7554,19 @@ class JournalManager{
 										</div>
 									</div>
 									<div class="col" style="flex: 3;">
-										<div class="bio-block">
+										<div class="container-block">
 											<div class="section-title">Spellcasting Notes / Summary</div>
-											<div class="spellcasting-field" contenteditable="true">
+											<div class="box-field" contenteditable="true">
 												<div><em><strong>Spellcasting.</strong></em> Spell save DC 10, +0 to hit with spell attacks
 												</div>
-												<div><br /><strong>Cantrips (at will):</strong><br /><br /><span class="add-input slots"
+												<div><br/><strong>Cantrips (at will):</strong><br/><br/><span class="add-input slots"
 														data-number="2" data-spell="1st level"><strong>1st level (2
-															slots):</strong></span><br /><br /></div>
+															slots):</strong></span><br/><br/></div>
 											</div>
 										</div>
 										<div class="container-block">
 											<div class="section-title">Features &amp; Traits</div>
-											<div class="features-field" contenteditable="true">
+											<div class="box-field" contenteditable="true">
 												<table class="ui-sortable">
 													<tbody class="ui-sortable">
 														<tr draggable="false">
@@ -7859,7 +7860,7 @@ class JournalManager{
 													<div class="coin-input" contenteditable="true">&nbsp;</div>
 												</div>
 											</div>
-											<div class="treasure-field" contenteditable="true">&nbsp;</div>
+											<div class="box-field" contenteditable="true">&nbsp;</div>
 										</div>
 										<div class="container-block equipment-block">
 											<div class="section-title">Equipment</div>
@@ -7948,33 +7949,33 @@ class JournalManager{
 							<div class="dnd-page">
 								<div class="page2-grid">
 									<div class="col">
-										<div class="bio-block">
+										<div class="container-block">
 											<div class="section-title">Character Appearance</div>
 											<div class="bio-appearance" contenteditable="true">&nbsp;</div>
 										</div>
-										<div class="bio-block">
+										<div class="container-block">
 											<div class="section-title">Character Backstory</div>
 											<div class="bio-backstory" contenteditable="true">&nbsp;</div>
 										</div>
 										<div class="traits-grid">
-											<div class="bio-block">
+											<div class="container-block">
 												<div class="section-title">Personality Traits</div>
-												<div class="trait-box-field" contenteditable="true">&nbsp;</div>
+												<div class="box-field" contenteditable="true">&nbsp;</div>
 											</div>
-											<div class="bio-block">
+											<div class="container-block">
 												<div class="section-title">Ideals</div>
-												<div class="trait-box-field" contenteditable="true">&nbsp;</div>
+												<div class="box-field" contenteditable="true">&nbsp;</div>
 											</div>
-											<div class="bio-block">
+											<div class="container-block">
 												<div class="section-title">Bonds</div>
-												<div class="trait-box-field" contenteditable="true">&nbsp;</div>
+												<div class="box-field" contenteditable="true">&nbsp;</div>
 											</div>
-											<div class="bio-block">
+											<div class="container-block">
 												<div class="section-title">Flaws</div>
-												<div class="trait-box-field" contenteditable="true">&nbsp;</div>
+												<div class="box-field" contenteditable="true">&nbsp;</div>
 											</div>
 										</div>
-										<div class="bio-block">
+										<div class="container-block">
 											<div class="section-title">Organization &amp; Allies</div>
 											<div class="bio-allies" contenteditable="true">&nbsp;</div>
 										</div>
@@ -7982,7 +7983,7 @@ class JournalManager{
 									<div class="col">
 										<div class="notes-block">
 											<div class="section-title">Notes</div>
-											<div class="notes-field" contenteditable="true">&nbsp;</div>
+											<div class="box-field" contenteditable="true">&nbsp;</div>
 										</div>
 									</div>
 								</div>
@@ -7991,7 +7992,7 @@ class JournalManager{
 								<div class="col">
 									<div class="notes-block">
 										<div class="section-title">Notes</div>
-										<div class="notes-field" contenteditable="true">&nbsp;</div>
+										<div class="box-field" contenteditable="true">&nbsp;</div>
 									</div>
 								</div>
 							</div>
