@@ -3774,16 +3774,17 @@ function show_sidebar(dispatchResize = true) {
 			$(`[class*='styles_mobileNav']>button`).click();
 	} else {
 		let sidebar = is_characters_page() ? $(".ct-sidebar__portal") : $(".sidebar--right");
-		sidebar.css("transform", "translateX(0px)");
-		$('#combat_carousel_container.tracker-list, .boss-hp-bar').toggleClass('sidebarClosed', false)
+		sidebar.css("transform", "translateX(0px)");		
 	}
-
+	
 	if (is_characters_page()) {
 		reposition_player_sheet();
 	} else {
 		$("#sheet").removeClass("sidebar_hidden");
 	}
-	$('canvas.dice-rolling-panel__container, .roll-mod-container, canvas.streamer-canvas, #character-tools-target>canvas').css('--sidebar-width', get_sidebar_width() + 'px');
+	
+	$('#combat_carousel_container.tracker-list').toggleClass('sidebarClosed', false)
+	$('canvas.dice-container, canvas.dice-rolling-panel__container, .roll-mod-container, canvas.streamer-canvas, #character-tools-target>canvas, .boss-hp-bar').css('--sidebar-width', get_sidebar_width() + 'px');
 
 	if(dispatchResize)
 		window.dispatchEvent(new Event('resize'));
@@ -3949,16 +3950,17 @@ function hide_sidebar(triggerResize = true) {
 		
 	} else {
 		let sidebar = is_characters_page() ? $(".ct-sidebar__portal") : $(".sidebar--right");
-		sidebar.css("transform", `translateX(${get_sidebar_width()}px)`);
-		$('#combat_carousel_container.tracker-list, .boss-hp-bar').toggleClass('sidebarClosed', true)
+		sidebar.css("transform", `translateX(${get_sidebar_width()}px)`);	
 	}
-
+	
 	if (is_characters_page()) {
 		reposition_player_sheet();
 	} else {
 		$("#sheet").addClass("sidebar_hidden");
 	}
-	$('canvas.dice-rolling-panel__container, .roll-mod-container, canvas.streamer-canvas, #character-tools-target>canvas').css('--sidebar-width', '0px');
+
+	$('#combat_carousel_container.tracker-list').toggleClass('sidebarClosed', true)
+	$('canvas.dice-container, canvas.dice-rolling-panel__container, .roll-mod-container, canvas.streamer-canvas, #character-tools-target>canvas, .boss-hp-bar').css('--sidebar-width', '0px');
 
 	if(triggerResize)
 		window.dispatchEvent(new Event('resize'));
