@@ -158,6 +158,14 @@ async function create_walls_from_mask_file(file, alphaThreshold = 128) {
 		end: [x2, y2],
 		used: false
 	}));
+	const edgesByPoint = new Map();
+	for (let edgeIndex = 0; edgeIndex < edges.length; edgeIndex++) {
+		for (const point of [edges[edgeIndex].start, edges[edgeIndex].end]) {
+			const key = pointKey(point);
+			if (!edgesByPoint.has(key)) edgesByPoint.set(key, []);
+			edgesByPoint.get(key).push(edgeIndex);
+		}
+	}
 	const contours = [];
 
 	for (const edge of edges) {
@@ -168,12 +176,10 @@ async function create_walls_from_mask_file(file, alphaThreshold = 128) {
 
 		while (pointKey(contour[0]) !== pointKey(contour[contour.length - 1])) {
 			const lastPoint = contour[contour.length - 1];
-			const next = edges.find(candidate =>
-				!candidate.used &&
-				(pointKey(candidate.start) === pointKey(lastPoint) || pointKey(candidate.end) === pointKey(lastPoint))
-			);
-			if (!next) break;
+			const nextIndex = edgesByPoint.get(pointKey(lastPoint))?.find(index => !edges[index].used);
+			if (nextIndex === undefined) break;
 
+			const next = edges[nextIndex];
 			next.used = true;
 			contour.push(pointKey(next.start) === pointKey(lastPoint) ? next.end : next.start);
 		}
@@ -218,6 +224,86 @@ async function create_walls_from_mask_file(file, alphaThreshold = 128) {
 		return points.filter((point, index) => keep[index]);
 	};
 
+	const mergeTolerance = Math.max(2, Math.min(sampleSize.width, sampleSize.height));
+	const simplifyForMerge = path => mergeTolerance > 2
+		? simplifyPath(simplifyPath(path, 2), mergeTolerance)
+		: simplifyPath(path, 2);
+
+	const simplifyCollinearPath = (points, closed) => {
+		const simplified = points.slice();
+		const distanceTolerance = Math.max(2, Math.min(sampleSize.width, sampleSize.height));
+		const fuzzTolerance = distanceTolerance * 2;
+		const shortSegmentLength = Math.max(sampleSize.width, sampleSize.height) * 3;
+		let changed = true;
+
+		while (changed && simplified.length > (closed ? 3 : 2)) {
+			changed = false;
+
+			for (let index = closed ? 0 : 1; index < (closed ? simplified.length : simplified.length - 1); index++) {
+				const previous = simplified[(index - 1 + simplified.length) % simplified.length];
+				const current = simplified[index];
+				const next = simplified[(index + 1) % simplified.length];
+				const previousDirection = [current[0] - previous[0], current[1] - previous[1]];
+				const nextDirection = [next[0] - current[0], next[1] - current[1]];
+				const previousLength = Math.hypot(previousDirection[0], previousDirection[1]);
+				const nextLength = Math.hypot(nextDirection[0], nextDirection[1]);
+
+				if (!previousLength || !nextLength) {
+					simplified.splice(index, 1);
+					changed = true;
+					break;
+				}
+
+				const currentDistance = pointLineDistance(current, previous, next);
+				if (currentDistance <= distanceTolerance ||
+					(currentDistance <= fuzzTolerance && previousLength <= shortSegmentLength && nextLength <= shortSegmentLength)) {
+					simplified.splice(index, 1);
+					changed = true;
+					break;
+				}
+			}
+		}
+
+		return simplified;
+	};
+	const straightenPath = (points, closed) => {
+		const simplified = points.slice();
+		const distanceTolerance = Math.max(2, Math.min(sampleSize.width, sampleSize.height));
+		const minimumRunLength = Math.max(sampleSize.width, sampleSize.height) * 2;
+		let changed = true;
+
+		while (changed && simplified.length > (closed ? 3 : 2)) {
+			changed = false;
+			const limit = closed ? simplified.length : simplified.length - 1;
+
+			for (let start = 0; start < limit - 2; start++) {
+				for (let end = start + 2; end < limit; end++) {
+					const runLength = Math.hypot(
+						simplified[end][0] - simplified[start][0],
+						simplified[end][1] - simplified[start][1]
+					);
+					if (runLength < minimumRunLength) continue;
+
+					let withinTolerance = true;
+					for (let index = start + 1; index < end; index++) {
+						if (pointLineDistance(simplified[index], simplified[start], simplified[end]) > distanceTolerance) {
+							withinTolerance = false;
+							break;
+						}
+					}
+					if (!withinTolerance) continue;
+
+					simplified.splice(start + 1, end - start - 1);
+					changed = true;
+					break;
+				}
+				if (changed) break;
+			}
+		}
+
+		return simplified;
+	};
+
 	const simplifiedSegments = [];
 
 	for (const contour of contours) {
@@ -237,12 +323,16 @@ async function create_walls_from_mask_file(file, alphaThreshold = 128) {
 				if (distance > farthestDistance) farthest = point;
 			}
 
-			const firstHalf = simplifyPath(points.slice(0, farthest + 1), 5);
-			const secondHalf = simplifyPath([...points.slice(farthest), points[0]], 5);
+			const firstHalf = simplifyForMerge(points.slice(0, farthest + 1));
+			const secondHalf = simplifyForMerge([...points.slice(farthest), points[0]]);
 			simplified = firstHalf.concat(secondHalf.slice(1, -1));
+			simplified = simplifyCollinearPath(simplified, true);
+			simplified = straightenPath(simplified, true);
 		}
 		else {
-			simplified = simplifyPath(points, 5);
+			simplified = simplifyForMerge(points);
+			simplified = simplifyCollinearPath(simplified, false);
+			simplified = straightenPath(simplified, false);
 		}
 
 		for (let point = 1; point < simplified.length; point++) {
@@ -253,40 +343,8 @@ async function create_walls_from_mask_file(file, alphaThreshold = 128) {
 			simplifiedSegments.push([...simplified[simplified.length - 1], ...simplified[0]]);
 		}
 	}
-	const snapDistance = Math.max(sampleSize.width, sampleSize.height);
-    const snapBuckets = new Map();
-    const snapPoint = point => {
-        const cellX = Math.floor(point[0] / snapDistance);
-        const cellY = Math.floor(point[1] / snapDistance);
-
-        for (let offsetX = -1; offsetX <= 1; offsetX++) {
-            for (let offsetY = -1; offsetY <= 1; offsetY++) {
-                const bucket = snapBuckets.get(`${cellX + offsetX},${cellY + offsetY}`);
-                if (!bucket) continue;
-
-                for (const candidate of bucket) {
-                    if (Math.hypot(candidate[0] - point[0], candidate[1] - point[1]) <= snapDistance) return candidate;
-                }
-            }
-        }
-
-        const key = `${cellX},${cellY}`;
-        if (!snapBuckets.has(key)) snapBuckets.set(key, []);
-        snapBuckets.get(key).push(point);
-        return point;
-    };
-
-    const snappedSegments = [];
-
-    for (const [x1, y1, x2, y2] of simplifiedSegments) {
-        const start = snapPoint([x1, y1]);
-        const end = snapPoint([x2, y2]);
-        if (start[0] === end[0] && start[1] === end[1]) continue;
-
-        snappedSegments.push([...start, ...end]);
-    }
 	const wallScale = window.CURRENT_SCENE_DATA.conversion ?? 1;
-	const walls = snappedSegments.map(([x1, y1, x2, y2]) => [
+	const walls = simplifiedSegments.map(([x1, y1, x2, y2]) => [
 		'line',
 		'wall',
 		'rgba(0, 255, 0, 1)',
