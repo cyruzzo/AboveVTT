@@ -924,7 +924,7 @@ class Token {
                 const copyImage = tokenClone.find('.token-image');
 
 				if(!this.isAoe()){
-						
+					const imageSrc = this.options.imgsrc;	
 					if(imageSrc.startsWith('above-bucket-not-a-url')){
 						const fileSrc = imageSrc.replace('above-bucket-not-a-url', '');
 						if (!copyImage.attr('src')?.includes(encodeURI(fileSrc))){
@@ -1810,8 +1810,8 @@ class Token {
 			tok = $(`#tokens div[data-id="${this.options.id}"]`);
 		}
 
-		if (!tok) {
-			console.log("update_opacity failed to find an html element", this);
+		if (!tok || !window.TOKEN_OBJECTS[this.options.id]) {
+			noisy_log(2, "update_opacity failed to find an html element or token objects on the scene", this);
 			return;
 		}
 		let fogContext = $('#fog_overlay')[0].getContext('2d');

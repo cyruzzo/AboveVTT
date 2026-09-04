@@ -585,8 +585,12 @@ Other Commands:
       e.stopPropagation();
       e.stopImmediatePropagation();
     });
+    modInput.off('contextmenu').on('contextmenu', '#contextSelect', function(e){
+      e.preventDefault();
+      e.stopPropagation();
+      e.stopImmediatePropagation();
+    });
     modInput.off('pointerdown.button touchstart.button').on('pointerdown.button touchstart.button', '#contextSelect', function(e){
-      if(e.button === 2) return;
       e.preventDefault();
       e.stopPropagation();
       e.stopImmediatePropagation();
