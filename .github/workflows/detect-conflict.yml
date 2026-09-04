@@ -12,7 +12,7 @@ on:
 
 jobs:
   main:
-    if: github.repository == 'cyruzzo/AboveVTT' && (github.event_name == 'push' || (github.event.pull_request.state == 'open' && github.event.pull_request.draft == false))
+    if: github.repository == 'cyruzzo/AboveVTT'
     runs-on: ubuntu-latest
     steps:
       - name: check if prs are dirty
