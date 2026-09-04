@@ -91,6 +91,286 @@ function sync_drawings(options = {newDraw: true, wallsChanged: false}){
 		window.DRAWINGS.shift();
 }
 
+async function create_walls_from_mask_file(file, alphaThreshold = 128) {
+	const imageUrl = await new Promise((resolve, reject) => {
+		const reader = new FileReader();
+		reader.onload = () => resolve(reader.result);
+		reader.onerror = reject;
+		reader.readAsDataURL(file);
+	});
+	const image = await new Promise((resolve, reject) => {
+		const source = new Image();
+		source.onload = () => resolve(source);
+		source.onerror = reject;
+		source.src = imageUrl;
+	});
+	const {sceneWidth, sceneHeight} = getSceneMapSize();
+	if (!sceneWidth || !sceneHeight) return;
+	const sampleSize = {width: Math.max(2, Math.ceil(sceneWidth/parseInt(window.CURRENT_SCENE_DATA.hpps ?? 50)/4)), height: Math.max(2, Math.ceil(sceneHeight/parseInt(window.CURRENT_SCENE_DATA.vpps ?? 50)/4))};
+	const columns = Math.ceil(sceneWidth / sampleSize.width);
+	const rows = Math.ceil(sceneHeight / sampleSize.height);
+	const canvas = new OffscreenCanvas(columns, rows);
+	const context = canvas.getContext("2d", {willReadFrequently: true});
+	context.drawImage(image, 0, 0, columns, rows);
+	const pixels = context.getImageData(0, 0, columns, rows).data;
+	const solid = (column, row) => pixels[(row * columns + column) * 4 + 3] >= alphaThreshold;
+	const segments = [];
+	const segmentCases = {
+		1: [['left', 'top']],
+		2: [['top', 'right']],
+		3: [['left', 'right']],
+		4: [['right', 'bottom']],
+		5: [['left', 'top'], ['right', 'bottom']],
+		6: [['top', 'bottom']],
+		7: [['left', 'bottom']],
+		8: [['bottom', 'left']],
+		9: [['top', 'bottom']],
+		10: [['top', 'right'], ['bottom', 'left']],
+		11: [['right', 'bottom']],
+		12: [['left', 'right']],
+		13: [['top', 'right']],
+		14: [['left', 'top']]
+	};
+
+	for (let row = 0; row < rows - 1; row++) {
+		for (let column = 0; column < columns - 1; column++) {
+			const mask =
+				(solid(column, row) ? 1 : 0) |
+				(solid(column + 1, row) ? 2 : 0) |
+				(solid(column + 1, row + 1) ? 4 : 0) |
+				(solid(column, row + 1) ? 8 : 0);
+			const edgePoints = {
+				top: [(column + 0.5) * sampleSize.width, row * sampleSize.height],
+				right: [(column + 1) * sampleSize.width, (row + 0.5) * sampleSize.height],
+				bottom: [(column + 0.5) * sampleSize.width, (row + 1) * sampleSize.height],
+				left: [column * sampleSize.width, (row + 0.5) * sampleSize.height]
+			};
+
+			for (const [start, end] of segmentCases[mask] || []) {
+				segments.push([...edgePoints[start], ...edgePoints[end]]);
+			}
+		}
+	}
+
+	const pointKey = point => `${point[0]},${point[1]}`;
+	const edges = segments.map(([x1, y1, x2, y2]) => ({
+		start: [x1, y1],
+		end: [x2, y2],
+		used: false
+	}));
+	const edgesByPoint = new Map();
+	for (let edgeIndex = 0; edgeIndex < edges.length; edgeIndex++) {
+		for (const point of [edges[edgeIndex].start, edges[edgeIndex].end]) {
+			const key = pointKey(point);
+			if (!edgesByPoint.has(key)) edgesByPoint.set(key, []);
+			edgesByPoint.get(key).push(edgeIndex);
+		}
+	}
+	const contours = [];
+
+	for (const edge of edges) {
+		if (edge.used) continue;
+
+		edge.used = true;
+		const contour = [edge.start, edge.end];
+
+		while (pointKey(contour[0]) !== pointKey(contour[contour.length - 1])) {
+			const lastPoint = contour[contour.length - 1];
+			const nextIndex = edgesByPoint.get(pointKey(lastPoint))?.find(index => !edges[index].used);
+			if (nextIndex === undefined) break;
+
+			const next = edges[nextIndex];
+			next.used = true;
+			contour.push(pointKey(next.start) === pointKey(lastPoint) ? next.end : next.start);
+		}
+
+		contours.push(contour);
+	}
+
+	const pointLineDistance = (point, start, end) => {
+		const dx = end[0] - start[0];
+		const dy = end[1] - start[1];
+
+		if (!dx && !dy) return Math.hypot(point[0] - start[0], point[1] - start[1]);
+
+		return Math.abs(dy * point[0] - dx * point[1] + end[0] * start[1] - end[1] * start[0]) / Math.hypot(dx, dy);
+	};
+
+	const simplifyPath = (points, tolerance) => {
+		const keep = new Array(points.length).fill(false);
+		keep[0] = true;
+		keep[points.length - 1] = true;
+		const ranges = [[0, points.length - 1]];
+
+		while (ranges.length) {
+			const [start, end] = ranges.pop();
+			let distance = 0;
+			let index = -1;
+
+			for (let point = start + 1; point < end; point++) {
+				const candidateDistance = pointLineDistance(points[point], points[start], points[end]);
+
+				if (candidateDistance > distance) {
+					distance = candidateDistance;
+					index = point;
+				}
+			}
+			if (distance > tolerance) {
+				keep[index] = true;
+				ranges.push([start, index], [index, end]);
+			}
+		}
+
+		return points.filter((point, index) => keep[index]);
+	};
+
+	const mergeTolerance = Math.max(2, Math.min(sampleSize.width, sampleSize.height));
+	const simplifyForMerge = path => mergeTolerance > 2
+		? simplifyPath(simplifyPath(path, 2), mergeTolerance)
+		: simplifyPath(path, 2);
+
+	const simplifyCollinearPath = (points, closed) => {
+		const simplified = points.slice();
+		const distanceTolerance = Math.max(2, Math.min(sampleSize.width, sampleSize.height));
+		const fuzzTolerance = distanceTolerance * 2;
+		const shortSegmentLength = Math.max(sampleSize.width, sampleSize.height) * 3;
+		let changed = true;
+
+		while (changed && simplified.length > (closed ? 3 : 2)) {
+			changed = false;
+
+			for (let index = closed ? 0 : 1; index < (closed ? simplified.length : simplified.length - 1); index++) {
+				const previous = simplified[(index - 1 + simplified.length) % simplified.length];
+				const current = simplified[index];
+				const next = simplified[(index + 1) % simplified.length];
+				const previousDirection = [current[0] - previous[0], current[1] - previous[1]];
+				const nextDirection = [next[0] - current[0], next[1] - current[1]];
+				const previousLength = Math.hypot(previousDirection[0], previousDirection[1]);
+				const nextLength = Math.hypot(nextDirection[0], nextDirection[1]);
+
+				if (!previousLength || !nextLength) {
+					simplified.splice(index, 1);
+					changed = true;
+					break;
+				}
+
+				const currentDistance = pointLineDistance(current, previous, next);
+				if (currentDistance <= distanceTolerance ||
+					(currentDistance <= fuzzTolerance && previousLength <= shortSegmentLength && nextLength <= shortSegmentLength)) {
+					simplified.splice(index, 1);
+					changed = true;
+					break;
+				}
+			}
+		}
+
+		return simplified;
+	};
+	const straightenPath = (points, closed) => {
+		const simplified = points.slice();
+		const distanceTolerance = Math.max(2, Math.min(sampleSize.width, sampleSize.height));
+		const minimumRunLength = Math.max(sampleSize.width, sampleSize.height) * 2;
+		let changed = true;
+
+		while (changed && simplified.length > (closed ? 3 : 2)) {
+			changed = false;
+			const limit = closed ? simplified.length : simplified.length - 1;
+
+			for (let start = 0; start < limit - 2; start++) {
+				for (let end = start + 2; end < limit; end++) {
+					const runLength = Math.hypot(
+						simplified[end][0] - simplified[start][0],
+						simplified[end][1] - simplified[start][1]
+					);
+					if (runLength < minimumRunLength) continue;
+
+					let withinTolerance = true;
+					for (let index = start + 1; index < end; index++) {
+						if (pointLineDistance(simplified[index], simplified[start], simplified[end]) > distanceTolerance) {
+							withinTolerance = false;
+							break;
+						}
+					}
+					if (!withinTolerance) continue;
+
+					simplified.splice(start + 1, end - start - 1);
+					changed = true;
+					break;
+				}
+				if (changed) break;
+			}
+		}
+
+		return simplified;
+	};
+
+	const simplifiedSegments = [];
+
+	for (const contour of contours) {
+		const closed = pointKey(contour[0]) === pointKey(contour[contour.length - 1]);
+		const points = closed ? contour.slice(0, -1) : contour;
+		if (points.length < 2) continue;
+
+		let simplified;
+
+		if (closed) {
+			let farthest = 1;
+
+			for (let point = 2; point < points.length; point++) {
+				const distance = Math.hypot(points[point][0] - points[0][0], points[point][1] - points[0][1]);
+				const farthestDistance = Math.hypot(points[farthest][0] - points[0][0], points[farthest][1] - points[0][1]);
+
+				if (distance > farthestDistance) farthest = point;
+			}
+
+			const firstHalf = simplifyForMerge(points.slice(0, farthest + 1));
+			const secondHalf = simplifyForMerge([...points.slice(farthest), points[0]]);
+			simplified = firstHalf.concat(secondHalf.slice(1, -1));
+			simplified = simplifyCollinearPath(simplified, true);
+			simplified = straightenPath(simplified, true);
+		}
+		else {
+			simplified = simplifyForMerge(points);
+			simplified = simplifyCollinearPath(simplified, false);
+			simplified = straightenPath(simplified, false);
+		}
+
+		for (let point = 1; point < simplified.length; point++) {
+			simplifiedSegments.push([...simplified[point - 1], ...simplified[point]]);
+		}
+
+		if (closed && simplified.length > 2) {
+			simplifiedSegments.push([...simplified[simplified.length - 1], ...simplified[0]]);
+		}
+	}
+	const wallScale = window.CURRENT_SCENE_DATA.conversion ?? 1;
+	const walls = simplifiedSegments.map(([x1, y1, x2, y2]) => [
+		'line',
+		'wall',
+		'rgba(0, 255, 0, 1)',
+		Math.min(x1, sceneWidth),
+		Math.min(y1, sceneHeight),
+		Math.min(x2, sceneWidth),
+		Math.min(y2, sceneHeight),
+		6,
+		wallScale,
+		0,
+		'',
+		''
+	]);
+
+	window.DRAWINGS.push(...walls);
+	pushWallUndo({undo: walls.map(wall => [...wall])});
+	redraw_light_walls({wallsChanged: true});
+	redraw_light();
+	redraw_fog();
+	redraw_elev();
+	redraw_drawn_light();
+	redraw_drawings();
+	sync_drawings({wallsChanged: true});
+	return walls.length;
+}
+
 
 
 function roundRect(ctx, x, y, width, height, radius, fill, stroke) {
@@ -7048,6 +7328,29 @@ Example usage:
 				 	Erase Area
 			</button>
 		</div>`);
+	const maskWallInput = $("<input type='file' accept='image/*' style='display:none' />");
+	wall_menu.append(maskWallInput);
+	wall_menu.append(
+		`<div class='ddbc-tab-options--layout-pill menu-option'>
+			<button id='walls_from_mask' class='menu-option ddbc-tab-options__header-heading'>
+				Walls From Mask
+			</button>
+		</div>`);
+	wall_menu.find('#walls_from_mask').on('click', function() {
+		maskWallInput.trigger('click');
+	});
+	maskWallInput.on('change', async function() {
+		const file = this.files[0];
+		if (!file) return;
+		try {
+			const count = await create_walls_from_mask_file(file);
+			noisy_log(`Created ${count} walls from the mask.`);
+		}
+		catch (error) {
+			noisy_log(error.message || 'Unable to create walls from this mask.');
+		}
+		this.value = '';
+	});
 	const showWallsDesc = `With this toggled the walls will remain visible to you with the walls menu closed (Shift+W). This allows you to interact with doors that have hidden icons or just see the walls when using other tools.`
 	wall_menu.append(
 		`<div class='ddbc-tab-options--layout-pill menu-option' data-skip="true" data-desc="${showWallsDesc}">
