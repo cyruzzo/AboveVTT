@@ -1113,11 +1113,11 @@ class Token {
 		if(bossHealthBar){
 			
 			const body = $(`body`);
-
+			const visibleSidebarWidth = is_sidebar_visible() ? get_sidebar_width() : 0;
 			let hpBar = $(`.boss-hp-bar[data-id='${this.options.id}']`);
 			if (hpBar.length < 1) {
 				hpBar = $(`
-					<div class='boss-hp-bar' data-id='${this.options.id}'>
+					<div class='boss-hp-bar' style="--sidebar-width: ${visibleSidebarWidth}px;" data-id='${this.options.id}'>
 						<div class="hp-bar-track">
 							<div class="hp-base">
 								<div class="hp-temp-layer1"></div>

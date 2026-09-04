@@ -684,7 +684,7 @@ const debounceResizeUI = mydebounce(function(){
   reposition_player_sheet();
   if(!window.showPanel){
     hide_sidebar(false);
-  }
+  }  
 }, 100)
 
 function inject_dm_roll_default_menu(){
