@@ -440,6 +440,23 @@ class JournalManager{
 		
 
 	}
+	isInvalidChapterParent(chapterId, targetId) {
+		if (!chapterId || !targetId || chapterId === targetId) {
+			return true;
+		}
+
+		let current = this.chapters.find(chapter => chapter.id === targetId);
+		const visited = new Set();
+		while (current?.parentID && !visited.has(current.id)) {
+			if (current.parentID === chapterId) {
+				return true;
+			}
+			visited.add(current.id);
+			current = this.chapters.find(chapter => chapter.id === current.parentID);
+		}
+
+		return false;
+	}
 	show_rename_input(note_id, searchText=''){	
 		const self = this;
 				
@@ -569,9 +586,64 @@ class JournalManager{
 		
 		// Create a chapter list that sorts journal-chapters with drag and drop
 		const chapter_list=$(`<ul class='folder-item-list'></ul>`);
+		let draggedFolderId;
+		let folderDropHandled = false;
+		let journalTreeDropActive = false;
+		let journalRebuildPending = false;
+		let journalRebuildScheduled = false;
+
+		const promoteChapterToRoot = (chapter, cursorY) => {
+			if(!chapter)
+				return;
+			if(chapter.parentID !== undefined)
+				delete chapter.parentID;
+			const chapterIndex = self.chapters.indexOf(chapter);
+			if(chapterIndex < 0)
+				return;
+			self.chapters.splice(chapterIndex, 1);
+			const rootFolders = Array.from(document.querySelectorAll(
+				'#journal-panel .folder-item-list > .folder'
+			)).filter(folder => folder.getAttribute('data-id') !== chapter.id);
+			let insertionIndex = self.chapters.length;
+			for(const rootFolder of rootFolders){
+				const rootChapterIndex = self.chapters.findIndex(currentChapter =>
+					currentChapter.id === rootFolder.getAttribute('data-id')
+				);
+				if(rootChapterIndex < 0)
+					continue;
+				const rect = rootFolder.getBoundingClientRect();
+				if(cursorY !== undefined && cursorY < rect.top + rect.height / 2){
+					insertionIndex = rootChapterIndex;
+					break;
+				}
+				insertionIndex = rootChapterIndex + 1;
+			}
+			self.chapters.splice(insertionIndex, 0, chapter);
+		};
+		const promoteDraggedFolderToRoot = (item, cursorY) => {
+			if(window.avttJournalFolderDropHandled){
+				folderDropHandled = true;
+				window.avttJournalFolderDropHandled = false;
+			}
+			if(!item?.hasClass('folder') || folderDropHandled || item.attr('data-id') !== draggedFolderId)
+				return false;
+			const chapter = self.chapters.find(currentChapter => currentChapter.id === draggedFolderId);
+			if(chapter?.parentID === undefined)
+				return false;
+			promoteChapterToRoot(chapter, cursorY);
+			self.build_journal(searchText);
+			return true;
+		};
 		chapter_list.sortable({
-			items: '.folder',
+			items: '> .folder',
 			refreshPositions: true,
+			start: function(event, ui) {
+				draggedFolderId = ui.item.hasClass('folder') ? ui.item.attr('data-id') : undefined;
+				folderDropHandled = false;
+				journalTreeDropActive = false;
+				window.avttJournalFolderDropHandled = false;
+				showJournalRootDropTarget();
+			},
 			update: function(event, ui) {
 				
 
@@ -589,14 +661,32 @@ class JournalManager{
 					chapters: self.chapters
 				});
 				self.build_journal(searchText);
+			},
+			beforeStop: function(event, ui) {
+				if(promoteDraggedFolderToRoot(ui.item, event?.clientY))
+					this._noFinalSort = true;
+			},
+			stop: function(event, ui) {
+				promoteDraggedFolderToRoot(ui.item, event?.clientY);
+				hideJournalRootDropTarget();
+				self.build_journal(searchText);
 			}
 		});
 
 		chapter_list.droppable({
-		    accept: '#journal-panel .folder>.folder',
+		    accept: function(draggable) {
+				return draggable.is('#journal-panel .folder>.folder');
+			},
 		    greedy: true,
 			tolerance: 'pointer',
+			over: function() {
+				journalTreeDropActive = true;
+			},
+			out: function() {
+				journalTreeDropActive = false;
+			},
 		    drop: function(e,ui) {
+				folderDropHandled = true;
 		    	let folderIndex = ui.draggable.attr('data-index');
 		    	if(self.chapters[folderIndex].parentID){
 		    		delete self.chapters[folderIndex].parentID;
@@ -615,6 +705,75 @@ class JournalManager{
 
 		    }
 		});
+		const journalRootDropOptions = {
+			accept: '#journal-panel .folder',
+			greedy: true,
+			tolerance: 'pointer',
+			drop: function(e, ui) {
+				const draggedId = ui.draggable.attr('data-id');
+				const chapter = self.chapters.find(currentChapter => currentChapter.id === draggedId);
+				if(!chapter)
+					return;
+				folderDropHandled = true;
+				promoteChapterToRoot(chapter, e?.clientY);
+				self.persist();
+				window.MB.sendMessage('custom/myVTT/JournalChapters', {
+					chapters: self.chapters
+				});
+				self.build_journal(searchText);
+			}
+		};
+		if(journalPanel.body.data('ui-droppable'))
+			journalPanel.body.droppable('option', journalRootDropOptions);
+		else
+			journalPanel.body.droppable(journalRootDropOptions);
+		let journalRootDropTarget = $('#avtt-journal-root-drop-target');
+		const journalPanelElement = $('#journal-panel');
+		const createJournalRootDropTarget = () => {
+			if(journalRootDropTarget.length > 0)
+				return journalRootDropTarget;
+			journalRootDropTarget = $('<div id="avtt-journal-root-drop-target" aria-hidden="true"></div>').appendTo('body');
+			journalRootDropTarget.css({
+				position: 'fixed',
+				top: 0,
+				left: 0,
+				width: '100vw',
+				height: '100vh',
+				display: 'block',
+				'z-index': 1000000,
+				'background-color': 'transparent',
+				'pointer-events': 'none'
+			});
+			journalRootDropTarget.droppable({
+				accept: '#journal-panel .folder',
+				tolerance: 'pointer',
+				drop: function(e, ui) {
+					if(journalTreeDropActive)
+						return;
+					const draggedId = ui.draggable.attr('data-id');
+					const chapter = self.chapters.find(currentChapter => currentChapter.id === draggedId);
+					if(!chapter)
+						return;
+					window.avttJournalFolderDropHandled = true;
+					promoteChapterToRoot(chapter, e?.clientY);
+					self.persist();
+					window.MB.sendMessage('custom/myVTT/JournalChapters', {
+						chapters: self.chapters
+					});
+					self.build_journal(searchText);
+				}
+			});
+			return journalRootDropTarget;
+		};
+		const showJournalRootDropTarget = () => {
+			const rootDropTarget = createJournalRootDropTarget();
+			rootDropTarget.show();
+		};
+		const hideJournalRootDropTarget = () => {
+			if(journalRootDropTarget.length === 0)
+				return;
+			journalRootDropTarget.hide();
+		};
 
 
 
@@ -715,16 +874,28 @@ class JournalManager{
 				// Create a sortale list of notes
 				const note_list=$("<ul class='note-list'></ul>");
 				section_chapter.droppable({
-					accept: '#journal-panel .folder',
+					accept: function(draggable) {
+						const draggedId = draggable.attr('data-id');
+						const targetId = section_chapter.attr('data-id');
+						return draggedId && !self.isInvalidChapterParent(draggedId, targetId);
+					},
 					greedy: true,
 					tolerance: 'pointer',
+					over: function() {
+						journalTreeDropActive = true;
+					},
+					out: function() {
+						journalTreeDropActive = false;
+					},
 					drop: function(e,ui) {
-						let targetID = $(this).attr('data-id');
-						let targetIndex = $(this).attr('data-index');
-						let folderIndex = ui.draggable.attr('data-index');
-						if(self.chapters[folderIndex].id == targetID)
+						folderDropHandled = true;
+						const targetID = $(this).attr('data-id');
+						const targetIndex = Number($(this).attr('data-index'));
+						const folderIndex = Number(ui.draggable.attr('data-index'));
+						const draggedChapter = self.chapters[folderIndex];
+						if(!draggedChapter || self.isInvalidChapterParent(draggedChapter.id, targetID))
 							return;
-						self.chapters[folderIndex].parentID = targetID;
+						draggedChapter.parentID = targetID;
 						const new_index = targetIndex+1;
 						// Move the dragged element to the new index
 						self.chapters.splice(new_index, 0, self.chapters.splice(folderIndex, 1)[0]);
@@ -742,7 +913,14 @@ class JournalManager{
 				section_chapter.sortable({
 					refreshPositions: true,
 					connectWith: "#journal-panel .folder",
-					items: '.sidebar-list-item-row',
+					items: '> .folder, > .note-list > .sidebar-list-item-row',
+					start: function(event, ui) {
+						draggedFolderId = ui.item.hasClass('folder') ? ui.item.attr('data-id') : undefined;
+						folderDropHandled = false;
+						journalTreeDropActive = false;
+						window.avttJournalFolderDropHandled = false;
+						showJournalRootDropTarget();
+					},
 					receive: function(event, ui) {
 						// Called only in case B (with !!sender == true)
 						sender = ui.sender;
@@ -790,6 +968,15 @@ class JournalManager{
 							self.build_journal(searchText);
 						}
 
+					},
+						beforeStop: function(event, ui) {
+							if(promoteDraggedFolderToRoot(ui.item, event?.clientY))
+								this._noFinalSort = true;
+						},
+					stop: function(event, ui) {
+						promoteDraggedFolderToRoot(ui.item, event?.clientY);
+						hideJournalRootDropTarget();
+						self.build_journal(searchText);
 					}
 				});
 				let folderIcon = $(`<div class="sidebar-list-item-row-img"><img src="${window.EXTENSION_PATH}assets/folder.svg" class="token-image"></div>`)
