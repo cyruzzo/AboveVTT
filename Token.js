@@ -2137,7 +2137,7 @@ class Token {
 						clearTimeout(hoverNoteTimer);
 						hoverNoteTimer = setTimeout(function () {
 			            	build_and_display_sidebar_flyout(e.clientY, async function (flyout) {
-					            setup_tooltip_flyout(flyout, noteHover, ['note-flyout'], e, {id:noteId, token:self});
+					            setup_tooltip_flyout(flyout, noteHover, ['note-flyout'], e, {id:noteId});
 					        });
 			        	}, 500);		
 					
