@@ -3025,7 +3025,9 @@ function edit_aoe_style_tokens(restoreState = {}) {
   if (typeof customization.tokenOptions.aoeStyleTokenDarkness !== "object" || customization.tokenOptions.aoeStyleTokenDarkness === null) {
     customization.tokenOptions.aoeStyleTokenDarkness = {};
   }
-
+  if (typeof customization.tokenOptions.aoeStyleName !== "object" || customization.tokenOptions.aoeStyleName === null) {
+    customization.tokenOptions.aoeStyleName = {};
+  }
   const container = find_or_create_generic_draggable_window(`aoeStyleTokenWindow`, "Adjust AoE Styles", false, false, undefined, width, height, top, left, false, 'input, button, select, option, textarea, .aoe-style-token-listing', false, true);
 
   const body = $(`<div class="encounter-body aoe-style-token-body"></div>`);
@@ -3062,6 +3064,7 @@ function edit_aoe_style_tokens(restoreState = {}) {
 
   get_available_styles().forEach(function(style) {
     const styleKey = normalize_aoe_style_key(style);
+    const styleName = customization.tokenOptions.aoeStyleName?.[styleKey] || style;
     const currentImage = customization.tokenOptions.aoeStyleTokens[styleKey] || "";
     const currentTiling = customization.tokenOptions.aoeStyleTokenTiling[styleKey] !== false;
     const currentOpacity = get_aoe_style_token_opacity(style);
@@ -3088,7 +3091,7 @@ function edit_aoe_style_tokens(restoreState = {}) {
     imgHolder.append(preview);
 
     const details = $(`<div class="sidebar-list-item-row-details"></div>`);
-    details.append(`<div class="sidebar-list-item-row-details-title">${style}</div>`);
+    details.append(`<div class="sidebar-list-item-row-details-title">${styleName}</div>`);
     const input = $(`<input class="aoe-style-token-input" type="text" placeholder="https://..." value="${currentImage}" />`);
     const toggles = build_aoe_style_toggles({
       tiled: currentTiling,
@@ -3151,6 +3154,9 @@ function edit_aoe_style_tokens(restoreState = {}) {
       clickEvent.stopPropagation();
       saveStyleImage(style, "");
       container.trigger('redrawListing');
+      saveStyleOrder($("#aoeStyleTokenWindow .aoe-style-token-listing .aoe-style-token-row[data-style-key]").map(function() {
+        return $(this).attr("data-style-key");
+      }).get());
     });
 
     rowItem.append(imgHolder, details, clearButton);
@@ -3206,6 +3212,8 @@ function edit_aoe_style_tokens(restoreState = {}) {
       basicSettingSave(styleKey, 'aoeStyleTokenBorder', toggles.border.prop("checked"));
       basicSettingSave(styleKey, 'aoeStyleTokenVideo', toggles.video.prop("checked"));
       basicSettingSave(styleKey, 'aoeStyleTokenOpacity', clamp_aoe_style_opacity(toggles.opacity.val()));
+      basicSettingSave(styleKey, 'aoeStyleName', styleName);
+      
       if (typeof refresh_aoe_style_menu === "function") {
         refresh_aoe_style_menu();
       }
