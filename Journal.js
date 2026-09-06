@@ -1814,7 +1814,7 @@ class JournalManager{
 		else {
 			window.JOURNAL.track_ability(spellName, numberFound, noteId);
 		}
-
+		
 		const trackerTarget = token || window.JOURNAL.notes[noteId];
 		const trackFunction = noteId && !token ? window.JOURNAL.track_ability : undefined;
 		const playerDisabled = target.hasClass('player-disabled');
@@ -3170,6 +3170,53 @@ class JournalManager{
 			}
 		});
 	}
+
+	add_input_event_listeners(container, noteId, tokenId){
+		if(tokenId && window.all_token_objects[tokenId].options.customCheckboxes?.length > 0){
+			container.find('input[type="checkbox"]').each((i, el) => {
+				el.checked = window.all_token_objects[tokenId].options.customCheckboxes.includes(i);
+			});
+		}
+		
+		container.off('change.checkbox').on('change.checkbox', 'input', (e)=>{
+			const target = e.target;
+			if (target && target.nodeName === 'INPUT' && target.type === 'checkbox') {				
+				e.preventDefault();
+				e.stopPropagation();
+				e.stopImmediatePropagation();
+				if (target.checked) {
+					target.setAttribute('checked', 'checked');
+				} else {
+					target.removeAttribute('checked');
+				}
+				let note_text = $(target).closest(`:is(div.note, .note-flyout)[data-id]`)?.find('.note-text')?.first();
+				if(note_text.length>0){
+					const noteContent = basic_sanitize_html(note_text.html());
+					window.JOURNAL.notes[noteId].text = noteContent;
+					window.JOURNAL.setPersistTimeout();
+					debounceSendNote(noteId, window.JOURNAL.notes[noteId], tokenId);
+					if(noteId == tokenId && window.TOKEN_OBJECTS[tokenId]){
+						window.TOKEN_OBJECTS[tokenId].place();
+					}
+				} else {
+					note_text = $(target).closest(`.avtt-stat-block-container`);
+					const mapAllCheckedInputIndexes = note_text.find('input[type="checkbox"]').map((i, el) => el.checked ? i : -1).get().filter(i => i !== -1);
+				
+					window.all_token_objects[tokenId].options.customCheckboxes = mapAllCheckedInputIndexes;
+					window.all_token_objects[tokenId].sync();
+					if(window.TOKEN_OBJECTS[tokenId]){
+						window.TOKEN_OBJECTS[tokenId].options.customCheckboxes = mapAllCheckedInputIndexes;
+						window.TOKEN_OBJECTS[tokenId].place();
+					} 
+				}
+				
+			} else if (target && target.nodeName === 'INPUT' && target.type === 'number') {
+				target.style.width = `${target.value.length+4}ch`;
+			}
+			
+		})
+	}
+
 	display_note(id, statBlock = false, scrollTop=0, bringToFront=true){
 		let self=this;
 		let noteAlreadyOpen = $(`div.note[data-id='${id}']`).length>0;
@@ -3301,7 +3348,7 @@ class JournalManager{
 			add_stat_block_hover(note_text);
 			add_aoe_statblock_click(note_text);
 			$(note_text).find('.add-input').each(function(){window.JOURNAL.addTrackedInputs($(this), {noteId: id})})
-
+			this.add_input_event_listeners(note_text, id, window.TOKEN_OBJECTS[id] ? id : undefined);
 			if (!noteAlreadyOpen) {
 				note.append(note_text);
 			}

@@ -102,6 +102,7 @@ async function display_stat_block_in_container(statBlock, container, tokenId, cu
 
       const customStatId = token.options.statBlock;
       window.JOURNAL.bindDndSheetTemplateEvents(customStatId, container.find('.avtt-stat-block-container').first(), container, {tokenId, showControls: false});
+      window.JOURNAL.add_input_event_listeners(container, customStatId, tokenId);
     }
     if($html.find('.dnd-sheet').length>0){
       container.css('min-width', '615px');

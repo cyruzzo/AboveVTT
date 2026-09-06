@@ -3739,6 +3739,7 @@ async function setup_tooltip_flyout(flyout, tooltipHtmlString, classes = [], eve
   window.JOURNAL.add_journal_tooltip_targets(tooltipHtml);
   window.JOURNAL.block_send_to_buttons(tooltipHtml);
   add_stat_block_hover(tooltipHtml);
+  window.JOURNAL.add_input_event_listeners(tooltipHtml, options.id, options.token?.options?.id);
   if(options.id != undefined || options.token != undefined)
     tooltipHtml.find('.add-input').each(function(){window.JOURNAL.addTrackedInputs($(this), {noteId: options.id, token: options.token})})
   flyout.find("a").attr("target", "_blank");
