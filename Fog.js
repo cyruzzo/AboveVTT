@@ -91,7 +91,7 @@ function sync_drawings(options = {newDraw: true, wallsChanged: false}){
 		window.DRAWINGS.shift();
 }
 
-async function create_walls_from_mask_file(file, alphaThreshold = 128) {
+async function create_walls_from_mask_file(file, alphaThreshold = 64) {
 	const imageUrl = await new Promise((resolve, reject) => {
 		const reader = new FileReader();
 		reader.onload = () => resolve(reader.result);
@@ -106,9 +106,9 @@ async function create_walls_from_mask_file(file, alphaThreshold = 128) {
 	});
 	const {sceneWidth, sceneHeight} = getSceneMapSize();
 	if (!sceneWidth || !sceneHeight) return;
-	const sampleSize = {width: Math.max(2, Math.ceil(sceneWidth/parseInt(window.CURRENT_SCENE_DATA.hpps ?? 50)/4)), height: Math.max(2, Math.ceil(sceneHeight/parseInt(window.CURRENT_SCENE_DATA.vpps ?? 50)/4))};
-	const columns = Math.ceil(sceneWidth / sampleSize.width);
-	const rows = Math.ceil(sceneHeight / sampleSize.height);
+	const sampleSize = 1;
+	const columns = Math.ceil(sceneWidth/sampleSize);
+	const rows = Math.ceil(sceneHeight/sampleSize);
 	const canvas = new OffscreenCanvas(columns, rows);
 	const context = canvas.getContext("2d", {willReadFrequently: true});
 	context.drawImage(image, 0, 0, columns, rows);
@@ -140,10 +140,10 @@ async function create_walls_from_mask_file(file, alphaThreshold = 128) {
 				(solid(column + 1, row + 1) ? 4 : 0) |
 				(solid(column, row + 1) ? 8 : 0);
 			const edgePoints = {
-				top: [(column + 0.5) * sampleSize.width, row * sampleSize.height],
-				right: [(column + 1) * sampleSize.width, (row + 0.5) * sampleSize.height],
-				bottom: [(column + 0.5) * sampleSize.width, (row + 1) * sampleSize.height],
-				left: [column * sampleSize.width, (row + 0.5) * sampleSize.height]
+				top: [(column + 0.5) * sampleSize, row * sampleSize],
+				right: [(column + 1) * sampleSize, (row + 0.5) * sampleSize],
+				bottom: [(column + 0.5) * sampleSize, (row + 1) * sampleSize],
+				left: [column * sampleSize, (row + 0.5) * sampleSize]
 			};
 
 			for (const [start, end] of segmentCases[mask] || []) {
@@ -224,16 +224,16 @@ async function create_walls_from_mask_file(file, alphaThreshold = 128) {
 		return points.filter((point, index) => keep[index]);
 	};
 
-	const mergeTolerance = Math.max(2, Math.min(sampleSize.width, sampleSize.height));
+	const mergeTolerance = Math.max(2, sampleSize)*4;
 	const simplifyForMerge = path => mergeTolerance > 2
 		? simplifyPath(simplifyPath(path, 2), mergeTolerance)
 		: simplifyPath(path, 2);
 
 	const simplifyCollinearPath = (points, closed) => {
 		const simplified = points.slice();
-		const distanceTolerance = Math.max(2, Math.min(sampleSize.width, sampleSize.height));
+		const distanceTolerance = mergeTolerance;
 		const fuzzTolerance = distanceTolerance * 2;
-		const shortSegmentLength = Math.max(sampleSize.width, sampleSize.height) * 3;
+		const shortSegmentLength = mergeTolerance * 3;
 		let changed = true;
 
 		while (changed && simplified.length > (closed ? 3 : 2)) {
@@ -268,8 +268,8 @@ async function create_walls_from_mask_file(file, alphaThreshold = 128) {
 	};
 	const straightenPath = (points, closed) => {
 		const simplified = points.slice();
-		const distanceTolerance = Math.max(2, Math.min(sampleSize.width, sampleSize.height));
-		const minimumRunLength = Math.max(sampleSize.width, sampleSize.height) * 2;
+		const distanceTolerance = mergeTolerance;
+		const minimumRunLength = mergeTolerance * 2;
 		let changed = true;
 
 		while (changed && simplified.length > (closed ? 3 : 2)) {
