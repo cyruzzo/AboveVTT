@@ -461,7 +461,7 @@ class JournalManager{
 		const self = this;
 				
 		const input_note_title=$(`
-			<input type='text' class='input-add-chapter' value='${self.notes[note_id].title}'>
+			<input type='text' class='input-add-chapter' value='${self.notes[note_id].title?.replace(/'/g, '&#39;').replace(/"/g, '&quot;') || ""}'>
 		`);
 		const rename_btn = $(`.sidebar-list-item-row[data-id='${note_id}'] button.save-rename`);
 		const edit_btn = $(`.sidebar-list-item-row[data-id='${note_id}'] button.edit-note`);
@@ -1543,7 +1543,7 @@ class JournalManager{
 		            menuItems["rename"] = {
 		                name: "Rename",
 		                callback: function(itemKey, opt, originalEvent) {
-		                    let input_chapter_title=$(`<input type='text' class='input-add-chapter' value='${currChapter.title}'>`);
+		                    let input_chapter_title=$(`<input type='text' class='input-add-chapter' value='${currChapter.title?.replace(/'/g, '&#39;').replace(/"/g, '&quot;') || ""}'>`);
 	
 							input_chapter_title.keypress(function(e){
 								
