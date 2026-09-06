@@ -343,8 +343,20 @@ async function create_walls_from_mask_file(file, alphaThreshold = 64) {
 			simplifiedSegments.push([...simplified[simplified.length - 1], ...simplified[0]]);
 		}
 	}
+	const segmentEndpointCounts = new Map();
+	for (const [x1, y1, x2, y2] of simplifiedSegments) {
+		for (const key of [`${x1},${y1}`, `${x2},${y2}`]) {
+			segmentEndpointCounts.set(key, (segmentEndpointCounts.get(key) ?? 0) + 1);
+		}
+	}
+	const minimumIsolatedWallLength = window.CURRENT_SCENE_DATA.hpps ?? 25;
+	const wallSegments = simplifiedSegments.filter(([x1, y1, x2, y2]) =>
+		Math.hypot(x2 - x1, y2 - y1) >= minimumIsolatedWallLength ||
+		segmentEndpointCounts.get(`${x1},${y1}`) > 1 ||
+		segmentEndpointCounts.get(`${x2},${y2}`) > 1
+	);
 	const wallScale = window.CURRENT_SCENE_DATA.conversion ?? 1;
-	const walls = simplifiedSegments.map(([x1, y1, x2, y2]) => [
+	const walls = wallSegments.map(([x1, y1, x2, y2]) => [
 		'line',
 		'wall',
 		'rgba(0, 255, 0, 1)',
