@@ -1640,7 +1640,8 @@ function build_sidebar_list_row(listItem) {
 
   const isCustomEncounterFolder = !listItem.isRootFolder() && listItem.folderType == ItemType.Encounter;
 
-  if ((!listItem.isTypeFolder() && !listItem.isTypeScene()) || isCustomEncounterFolder) {
+
+  if ((!listItem.isTypeFolder() && !listItem.isTypeScene()) || isCustomEncounterFolder || listItem.folderType == ItemType.PC) {
     if(isCustomEncounterFolder){
       let editEncounter = $(`<button class="token-row-button token-row-edit-encounter" title="Edit Encounter">
          <span class="material-symbols-outlined">

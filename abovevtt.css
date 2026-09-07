@@ -6338,7 +6338,7 @@ button.token-row-button.token-row-edit-encounter{
 }
 #playersFolder .players-popout-button.subfolder-popout{
     left:unset;
-    right:30px;
+    right:60px;
 }
 #playersFolder .hp-attribute.death-saves.ct-health-summary__data.ct-health-summary__deathsaves {
     float: right;
