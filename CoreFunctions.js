@@ -1173,6 +1173,7 @@ function add_journal_roll_buttons(target, tokenId=undefined, specificImage=undef
     rollAction = (rollAction == '') ? targetButton.parent().prevUntil('em>strong').find('strong').last().text().replace('.', '') : rollAction;
     rollAction = (rollAction == '') ? targetButton.closest('.mon-stat-block__attribute-value').prev().text().replace('.', '') : rollAction;
     rollAction = (rollAction == '') ? targetButton.closest('.mon-stat-block__tidbit, [class*="styles_attribute"]').find('>.mon-stat-block__tidbit-label, >[class*="styles_attributeLabel"]').text().replace('.', '') : rollAction;
+    rollAction = (rollAction == '') ? (targetButton.prev().text().replace('.', '').toLowerCase() == 'initiative' ? 'Initiative' : '') : rollAction;
     let rollType = targetButton.attr('data-rolltype')
     let newStatBlockTables = targetButton.closest('table').find('tbody tr:first th').text().toLowerCase();
     if(newStatBlockTables.includes('str') || newStatBlockTables.includes('int')){

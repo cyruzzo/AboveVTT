@@ -51,7 +51,7 @@ function scan_monster(target, stats, tokenId) {
 				const followingText = $(this)[0].nextSibling?.textContent?.trim()?.split(' ')[0]
 
 				const button = `<button data-exp='${dice}' data-mod='${modifier}' data-rolltype='${rollType}' ${followingText && window.ddbConfigJson.damageTypes.some(d => d.name.toLowerCase() == followingText.toLowerCase()) ? `data-damagetype='${followingText}'` : ''} data-actiontype='${actionType}' class='avtt-roll-button' title="${actionType} ${rollType}">${text}</button>`
-				const targetTitle = 	$(this).closest('p').length > 0 ? $(this).closest('p>strong:first-of-type:has(em), p>em:first-of-type:has(strong)') : $(this).closest('strong:first-of-type:has(em), em:first-of-type:has(strong)')
+				const targetTitle = $(this).closest('p').length > 0 ? $(this).closest('p>strong:first-of-type:has(em), p>em:first-of-type:has(strong)') : $(this).closest('strong:first-of-type:has(em), em:first-of-type:has(strong)')
 					
 				if(rollType == 'recharge' && targetTitle.length > 0){
 					const rechargeRegEx = /(Recharge [0-6]?\s?[—–-]?\s?[0-6])/gi
