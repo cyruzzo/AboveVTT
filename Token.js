@@ -924,7 +924,7 @@ class Token {
                 const copyImage = tokenClone.find('.token-image');
 
 				if(!this.isAoe()){
-						
+					const imageSrc = this.options.imgsrc;	
 					if(imageSrc.startsWith('above-bucket-not-a-url')){
 						const fileSrc = imageSrc.replace('above-bucket-not-a-url', '');
 						if (!copyImage.attr('src')?.includes(encodeURI(fileSrc))){
@@ -1113,11 +1113,11 @@ class Token {
 		if(bossHealthBar){
 			
 			const body = $(`body`);
-
+			const visibleSidebarWidth = is_sidebar_visible() ? get_sidebar_width() : 0;
 			let hpBar = $(`.boss-hp-bar[data-id='${this.options.id}']`);
 			if (hpBar.length < 1) {
 				hpBar = $(`
-					<div class='boss-hp-bar' data-id='${this.options.id}'>
+					<div class='boss-hp-bar' style="--sidebar-width: ${visibleSidebarWidth}px;" data-id='${this.options.id}'>
 						<div class="hp-bar-track">
 							<div class="hp-base">
 								<div class="hp-temp-layer1"></div>
@@ -1810,8 +1810,8 @@ class Token {
 			tok = $(`#tokens div[data-id="${this.options.id}"]`);
 		}
 
-		if (!tok) {
-			console.log("update_opacity failed to find an html element", this);
+		if (!tok || !window.TOKEN_OBJECTS[this.options.id]) {
+			noisy_log(2, "update_opacity failed to find an html element or token objects on the scene", this);
 			return;
 		}
 		let fogContext = $('#fog_overlay')[0].getContext('2d');
@@ -2137,7 +2137,7 @@ class Token {
 						clearTimeout(hoverNoteTimer);
 						hoverNoteTimer = setTimeout(function () {
 			            	build_and_display_sidebar_flyout(e.clientY, async function (flyout) {
-					            setup_tooltip_flyout(flyout, noteHover, ['note-flyout'], e, {id:noteId, token:self});
+					            setup_tooltip_flyout(flyout, noteHover, ['note-flyout'], e, {id:noteId});
 					        });
 			        	}, 500);		
 					

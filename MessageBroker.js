@@ -1265,7 +1265,7 @@ class MessageBroker {
 				let data = msg.data;
 				let self=this;
 				let loadMap = "";
-				if(data.dm_map_usable=="1"){ // IN THE CLOUD WE DON'T RECEIVE WIDTH AND HEIGT. ALWAYS LOAD THE DM_MAP FIRST, AS TO GET THE PROPER WIDTH
+				if(window.DM && data.dm_map_usable=="1" && data.dm_map && data.dm_map != ""){ // IN THE CLOUD WE DON'T RECEIVE WIDTH AND HEIGT. ALWAYS LOAD THE DM_MAP FIRST, AS TO GET THE PROPER WIDTH
 					loadMap=data.dm_map;
 					if(data.dm_map_is_video=="1" || data.dm_map?.includes('youtube.com') || data.dm_map?.includes("youtu.be"))
 						data.is_video=true;
@@ -1311,16 +1311,12 @@ class MessageBroker {
 				if(data.UVTTFile == 1){
 					build_import_loading_indicator("Loading UVTT Map");
 					try{
-						if (window.DM && data.dm_map && data.dm_map_usable == '1'){
-							loadMap = await get_map_from_uvtt_file(loadMap)
-						}
-						else{
-							loadMap = await get_map_from_uvtt_file(data.player_map);
-						}			
+						loadMap = await get_map_from_uvtt_file(loadMap)
 					}
 					catch{
 						console.log('non-UVTT file found for map')
-						if (window.DM && data.dm_map && data.dm_map_usable == '1'){
+						data.UVTTFile = 0;
+						if (window.DM && data.dm_map && data.dm_map != "" && data.dm_map_usable == '1'){
 							loadMap = data.dm_map;
 						}
 						else{
@@ -1329,12 +1325,6 @@ class MessageBroker {
 					}
 				}
 				else{
-					if (window.DM && data.dm_map && data.dm_map_usable == '1') {
-						loadMap = data.dm_map;
-					}
-					else {
-						loadMap = data.player_map;
-					}
 					await build_import_loading_indicator(`Loading ${window.DM ? data.title : 'Scene'}`);		
 				}
 				$('.import-loading-indicator .percentageLoaded').css('width', `0%`);

@@ -79,8 +79,8 @@ function forceDdbWsReconnect() {
                     setTimeout(()=>{worker.postMessage({"type": "props", "payload": { "dpr": 1, "frameloop": `${name.includes('physics') ? 'never' : 'demand'  }` }})}, 60);
                     return;
                 }
-                else if(message.type == 'dice/roll/deferred' && parseInt(message.payload?.dateTime) + 10000 < Date.now()){
-                    return; // ignore old messages that are more than 10 seconds old so a bunch of dice don't roll on the screen on websocket reconnect/delayed messages
+                else if(message.type == 'dice/roll/deferred' && (DDB_WS_FORCE_RECONNECT_LOCK || parseInt(message.payload?.dateTime) + 10000 < Date.now())){
+                    return; // ignore old messages if they happen to come in and ignore while trying to reconnect to DDB websocket as DDB resends all dice message on reconnect
                 }
             }
             

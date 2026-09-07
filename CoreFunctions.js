@@ -585,8 +585,12 @@ Other Commands:
       e.stopPropagation();
       e.stopImmediatePropagation();
     });
+    modInput.off('contextmenu').on('contextmenu', '#contextSelect', function(e){
+      e.preventDefault();
+      e.stopPropagation();
+      e.stopImmediatePropagation();
+    });
     modInput.off('pointerdown.button touchstart.button').on('pointerdown.button touchstart.button', '#contextSelect', function(e){
-      if(e.button === 2) return;
       e.preventDefault();
       e.stopPropagation();
       e.stopImmediatePropagation();
@@ -1617,8 +1621,8 @@ async function add_new_dice(){
     canvas2.style.width = `${width}px`;
     canvas2.style.height = `${height}px`;
 
-    canvas.style.setProperty('--sidebar-width', `${visibleSidebarWidth}px`);
-    canvas2.style.setProperty('--sidebar-width', `${visibleSidebarWidth}px`);
+    document.documentElement.style.setProperty('--sidebar-width', `${visibleSidebarWidth}px`);
+
     
     physicsWorker.postMessage({
         "type": "resize",
