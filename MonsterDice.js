@@ -519,7 +519,7 @@ function roll_button_clicked(clickEvent, displayName, imgUrl, entityType = undef
 	const action = pressedButton.attr('data-actiontype');
 	const save = pressedButton.attr('data-save');
 	const damageType = pressedButton.attr('data-damagetype');
-	modifier = modifier == 0 ? '+0' : modifier;
+	modifier = modifier == 0 && modifier != '' ? '+0' : modifier;
 
 	
   if (/^1d20/g.test(expression)) {
