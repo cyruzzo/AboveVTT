@@ -289,6 +289,67 @@ const buffsDebuffs = {
     "class": "barbarian",
     "condition": "Rage",
   },
+  "Sneak Attack": {
+    "multiOptions": {
+      "+1d6": {
+        "tohit": "0",
+        "dmg": "+1d6",
+        "save": "0",
+        "check": "0",
+      },
+      "+2d6": {
+        "tohit": "0",
+        "dmg": "+2d6",
+        "save": "0",
+        "check": "0",
+      },
+      "+4d6": {
+        "tohit": "0",
+        "dmg": "+4d6",
+        "save": "0",
+        "check": "0",
+      },
+      "+5d6": {
+        "tohit": "0",
+        "dmg": "+5d6",
+        "save": "0",
+        "check": "0",
+      },
+      "+6d6": {
+        "tohit": "0",
+        "dmg": "+6d6",
+        "save": "0",
+        "check": "0",
+      },
+      "+7d6": {
+        "tohit": "0",
+        "dmg": "+7d6",
+        "save": "0",
+        "check": "0",
+      },
+      "+8d6": {
+        "tohit": "0",
+        "dmg": "+8d6",
+        "save": "0",
+        "check": "0",
+      },
+      "+9d6": {
+        "tohit": "0",
+        "dmg": "+9d6",
+        "save": "0",
+        "check": "0",
+      },
+      "+10d6": {
+        "tohit": "0",
+        "dmg": "+10d6",
+        "save": "0",
+        "check": "0",
+      },
+    },
+    "type": "class",
+    "class": "rogue",
+    "condition": "Sneak Attack",
+  },
   "Elemental Cleaver": {
     "multiOptions": {
       "1d6": {
