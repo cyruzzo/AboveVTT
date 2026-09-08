@@ -25,6 +25,20 @@
             console.log("⛔  AVTT: no extension loading here.")
             return; //don't load anything
         }
+    } else{
+        function stopRollPropagation(e) {
+          const target = $(e.target);
+          if(target.is('.integrated-dice__container').length>0) {
+              if(e.button == 2) return;
+              e.stopImmediatePropagation();
+              e.stopPropagation();
+          }
+          else if(target.is('.ddbc-combat-attack__icon, .ddb-note-roll,.ct-spells-spell__action').length>0) {
+              e.stopImmediatePropagation();
+              e.stopPropagation();
+          }
+        }
+        $(window).off('click.blocker').on('click.blocker', '.integrated-dice__container, .ddbc-combat-attack__icon, .ddb-note-roll,.ct-spells-spell__action', stopRollPropagation);
     }
         
 
@@ -95,13 +109,13 @@
     	"WeatherOverlay.js"
     ]
     const avttCharacterScripts = [
-        "Load.js", //load Loader on character sheets to support DBB Character Overhaul Extension
-        // External Dependencies
+        // External Dependencies	
         "jquery-3.6.0.min.js",
-        "jquery.contextMenu.js",	
+        "jquery.contextMenu.js",   
         "purify.min.js",	
         "ajaxQueue/ajaxQueueIndex.mjs",
         // AboveVTT Files
+        "Load.js", //load this script to support iframe inject
         "CoreFunctions.js", // Make sure CoreFunctions executes first
         "DDBApi.js",
         "MonsterDice.js",
@@ -205,8 +219,8 @@
                   "Settings.js",
                   "CampaignPage.mjs"
               ] : [
-                    "Load.js",//load Loader on VTT full pages (for iframe inject - see below)
                     ...avttScripts,
+                    "Load.js",//load Loader on VTT full pages (for iframe inject - see below)
                    (pgType.endsWith("-dm") ? "SceneData.js" : "CharactersPage.js"),
                   ];
         if(pgType.startsWith("vtt-")) scripts.push("Startup.mjs");        
