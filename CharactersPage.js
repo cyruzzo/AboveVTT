@@ -3343,7 +3343,8 @@ function observe_character_sheet_changes(documentToObserve) {
           if (is_abovevtt_page()) {
             inject_chat_buttons();
           }
-          window.MB.reprocess_chat_message_history();
+          if(typeof window.MB?.reprocess_chat_message_history === 'function')
+            window.MB.reprocess_chat_message_history();
         }
 
         if(is_abovevtt_page()){
@@ -3520,8 +3521,8 @@ function observe_non_sheet_changes(documentToObserve) {
             }
             gameLogButton.click();
           }
-          
-          window.MB.reprocess_chat_message_history();
+          if(typeof window.MB?.reprocess_chat_message_history === 'function')
+            window.MB.reprocess_chat_message_history();
           return false;
         }
         return true;

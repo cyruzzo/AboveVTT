@@ -25,21 +25,7 @@
             console.log("⛔  AVTT: no extension loading here.")
             return; //don't load anything
         }
-    } else{
-        function stopRollPropagation(e) {
-          const target = $(e.target);
-          if(target.is('.integrated-dice__container').length>0) {
-              if(e.button == 2) return;
-              e.stopImmediatePropagation();
-              e.stopPropagation();
-          }
-          else if(target.is('.ddbc-combat-attack__icon, .ddb-note-roll,.ct-spells-spell__action').length>0) {
-              e.stopImmediatePropagation();
-              e.stopPropagation();
-          }
-        }
-        $(window).off('click.blocker').on('click.blocker', '.integrated-dice__container, .ddbc-combat-attack__icon, .ddb-note-roll,.ct-spells-spell__action', stopRollPropagation);
-    }
+    } 
         
 
     //setup to work in both contexts
