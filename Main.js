@@ -3316,7 +3316,7 @@ function init_help_menu() {
 
 						<dl>
 							<dt>${getModKeyName()}+click scenes/tokens while reordering (DM only)</dt>
-							<dd>While reordering the scenes listing or token listing this will to add/remove scenes to multi-selection</dd>
+							<dd>While reordering the scenes listing or token listing this will add/remove scenes to multi-selection</dd>
 						</dl>
 						<dl>
 							<dt>${getShiftKeyName()}+click scenes/tokens while reordering (DM only)</dt>

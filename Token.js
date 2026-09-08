@@ -746,8 +746,15 @@ class Token {
 			// when a move "lands on" an edge (arbitrarily go either direction)
 			// todo: there is some small bug with this mechanism (it's not 100% consistent)
 			const halfTokenSize = this.options.size / 2;
-			tmpx += (Math.round(tmpx / grsize[0]) % 2 ? 1 : -1) + halfTokenSize;
-			tmpy += (Math.round(tmpy / grsize[1]) % 2 ? 1 : -1) + halfTokenSize;
+			tmpx += (Math.round(tmpx / grsize[0]) % 2 ? 1 : -1) + (halfTokenSize) - dx*5;
+			tmpy += (Math.round(tmpy / grsize[1]) % 2 ? 1 : -1) + (halfTokenSize) - dy*5;
+			if(this.options.gridSquares % 2 == 0) {
+				if (gridType == 2) {
+					dx *= Math.abs(dx+dy) % 2 == 0 ? 0.5 : 1;
+				} else {
+					dy *= Math.abs(dx+dy) % 2 == 0 ? 0.5 : 1;
+				}
+			}
 		} else{
 			tmpx += 5; // +5 makes sure it doesn't land on a grid intersection which can prevent tokens from moving or skip squares
 			tmpy += 5;
