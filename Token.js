@@ -643,20 +643,15 @@ class Token {
 		}
 		if(removeFromCombatTracker == true){
 			if(this.options.combatGroupToken && window.DM){
-				for(let i in window.TOKEN_OBJECTS){
+				for(let i in window.all_token_objects){
 					if(i == this.options.combatGroupToken)
 						continue;
-
-					
-					if(window.TOKEN_OBJECTS[i].options.combatGroup == this.options.combatGroupToken){
-						delete window.TOKEN_OBJECTS[i].options.combatGroup;
-						delete window.TOKEN_OBJECTS[i].options.ct_show;
-						if(window.all_token_objects[i] != undefined){
-							delete window.all_token_objects[i].options.combatGroup;
-							delete window.all_token_objects[i].options.ct_show;
-						}
-						ct_remove_token(window.TOKEN_OBJECTS[i], false);
-						window.TOKEN_OBJECTS[i].update_and_sync();
+			
+					if(window.all_token_objects[i].options.combatGroup == this.options.combatGroupToken){
+						delete window.all_token_objects[i].options.combatGroup;
+						delete window.all_token_objects[i].options.ct_show;
+						ct_remove_token(window.all_token_objects[i], false);
+						window.all_token_objects[i].update_and_sync();
 					}
 				}
 			}
@@ -667,7 +662,7 @@ class Token {
 						count++;
 					}
 				}
-				if(count == 1){
+				if(count == 0){
 					window.TOKEN_OBJECTS[this.options.combatGroup].delete();
 				}
 			}

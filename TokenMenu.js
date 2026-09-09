@@ -1179,7 +1179,7 @@ function token_context_menu_expanded(tokenIds, e, crossScenePortalData) {
 				});
 				const reset_init = getCombatTrackerSettings().remove_init;
 				tokens.forEach(t =>{
-					if(t.options.combatGroup && Object.values(window.TOKEN_OBJECTS).filter(d=>d.options.combatGroup == t.options.combatGroup).length == 2 && window.TOKEN_OBJECTS[t.options.combatGroup]){
+					if(t.options.combatGroup && Object.values(window.TOKEN_OBJECTS).filter(d=>d.options.combatGroup == t.options.combatGroup).length == 1 && window.TOKEN_OBJECTS[t.options.combatGroup]){
 						window.TOKEN_OBJECTS[t.options.combatGroup].delete()
 					}
 					if(window.all_token_objects[t.options.id] == undefined)
@@ -1218,7 +1218,20 @@ function token_context_menu_expanded(tokenIds, e, crossScenePortalData) {
 						let allHidden = true;
 						let allVisibleNames = true
 						const reset_init = getCombatTrackerSettings().remove_init;
-						
+						let groupToken = new Token({
+							...groupedByStat[i][0].options,
+							id: group,
+							combatGroupToken: group,
+							name: `${groupedByStat[i][0].options.name} Group`,
+						});
+						delete groupToken.options.groupId; 
+						if(!i.includes('/character')){
+							window.TOKEN_OBJECTS[group] = groupToken;
+							if(window.all_token_objects[group] == undefined){
+								window.all_token_objects[group] = groupToken;
+							}
+						}
+
 						groupedByStat[i].forEach(t => {
 							if(t.isPlayer()){
 								if(window.all_token_objects[t.options.id] == undefined)
@@ -1235,7 +1248,7 @@ function token_context_menu_expanded(tokenIds, e, crossScenePortalData) {
 								return;
 							}
 							ct_remove_token(t, false);
-							if(t.options.combatGroup != undefined && Object.values(window.TOKEN_OBJECTS)?.filter(d=>d.options.combatGroup == t.options.combatGroup)?.length == 2 && window.TOKEN_OBJECTS[t.options.combatGroup]){
+							if(t.options.combatGroup != undefined && Object.values(window.TOKEN_OBJECTS)?.filter(d=>d.options.combatGroup == t.options.combatGroup)?.length == 1 && window.TOKEN_OBJECTS[t.options.combatGroup]){
 								window.TOKEN_OBJECTS[t.options.combatGroup].delete()
 							}
 							if(t.options.hidden !== true){
@@ -1258,21 +1271,9 @@ function token_context_menu_expanded(tokenIds, e, crossScenePortalData) {
 						});
 						if(i.includes('/character')) // player was added invidiually don't put a group in the combat tracker
 							continue;
-						let t = new Token({
-							...groupedByStat[i][0].options,
-							id: group,
-							combatGroupToken: group,
-							ct_show: !allHidden,
-							revealname: allVisibleNames,
-							name: `${groupedByStat[i][0].options.name} Group`,
-						});
-						delete t.options.groupId; 
-						window.TOKEN_OBJECTS[group] = t;
-						if(window.all_token_objects[group] == undefined){
-							window.all_token_objects[group] = t;
-						}
-
-						t.place_sync_persist();
+						groupToken.options.ct_show = !allHidden;
+						groupToken.options.revealname = allVisibleNames;
+						groupToken.place_sync_persist();
 						ct_add_token(window.TOKEN_OBJECTS[group], false, undefined, clickEvent.shiftKey, clickEvent.ctrlKey)	
 					
 					}
@@ -1314,7 +1315,7 @@ function token_context_menu_expanded(tokenIds, e, crossScenePortalData) {
 				});
 				const reset_init = getCombatTrackerSettings().remove_init;
 				tokens.forEach(t =>{
-					if(t.options.combatGroup != undefined && Object.values(window.TOKEN_OBJECTS)?.filter(d=>d.options.combatGroup == t.options.combatGroup)?.length == 2 && window.TOKEN_OBJECTS[t.options.combatGroup]){
+					if(t.options.combatGroup != undefined && Object.values(window.TOKEN_OBJECTS)?.filter(d=>d.options.combatGroup == t.options.combatGroup)?.length == 1 && window.TOKEN_OBJECTS[t.options.combatGroup]){
 						window.TOKEN_OBJECTS[t.options.combatGroup].delete()
 					}
 					if(window.all_token_objects[t.options.id] == undefined)
@@ -1341,10 +1342,20 @@ function token_context_menu_expanded(tokenIds, e, crossScenePortalData) {
 				let allVisibleNames = true
 				const reset_init = getCombatTrackerSettings().remove_init;
 	
-
+				let t = new Token({
+					...tokens[0].options,
+					id: group,
+					combatGroupToken: group,
+					name: `${tokens[0].options.name} Group`,
+				});
+				delete t.options.groupId; 
+				window.TOKEN_OBJECTS[group] = t;
+				if(window.all_token_objects[group] == undefined){
+					window.all_token_objects[group] = t;
+				}
 				tokens.forEach(t => {
 					ct_remove_token(t, false);
-					if(t.options.combatGroup != undefined && Object.values(window.TOKEN_OBJECTS)?.filter(d=>d.options.combatGroup == t.options.combatGroup)?.length == 2 && window.TOKEN_OBJECTS[t.options.combatGroup]){
+					if(t.options.combatGroup != undefined && Object.values(window.TOKEN_OBJECTS)?.filter(d=>d.options.combatGroup == t.options.combatGroup)?.length == 1 && window.TOKEN_OBJECTS[t.options.combatGroup]){
 						window.TOKEN_OBJECTS[t.options.combatGroup].delete()
 					}
 					if(t.options.hidden !== true){
@@ -1365,19 +1376,10 @@ function token_context_menu_expanded(tokenIds, e, crossScenePortalData) {
 					ct_add_token(t, false, undefined, clickEvent.shiftKey,  clickEvent.ctrlKey);
 					t.update_and_sync();
 				});	
-				let t = new Token({
-					...tokens[0].options,
-					id: group,
-					combatGroupToken: group,
-					ct_show: !allHidden,
-					revealname: allVisibleNames,
-					name: `${tokens[0].options.name} Group`,
-				});
-				delete t.options.groupId; 
-				window.TOKEN_OBJECTS[group] = t;
-				if(window.all_token_objects[group] == undefined){
-					window.all_token_objects[group] = t;
-				}
+				
+				t.options.ct_show= !allHidden;
+				t.options.revealname = allVisibleNames;
+				
 
 				t.place_sync_persist();
 				ct_add_token(window.TOKEN_OBJECTS[group], false, undefined, clickEvent.shiftKey, clickEvent.ctrlKey)

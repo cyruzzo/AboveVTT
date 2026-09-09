@@ -224,7 +224,7 @@ function init_combat_tracker(){
 		let tokenID = $("#combat_area tr[data-current]").attr('data-target');
 		if(window.TOKEN_OBJECTS[tokenID] != undefined){
 			window.TOKEN_OBJECTS[tokenID].options.round = window.ROUND_NUMBER;
-			window.TOKEN_OBJECTS[tokenID].update_and_sync();
+			window.TOKEN_OBJECTS[tokenID].place_sync_persist();
 		}
 	});
 	
@@ -378,7 +378,7 @@ function init_combat_tracker(){
 			if(window.TOKEN_OBJECTS[currentTarget] != undefined){
 				delete window.TOKEN_OBJECTS[currentTarget].options.current;
 				delete window.TOKEN_OBJECTS[currentTarget].options.round;
-				window.TOKEN_OBJECTS[currentTarget].place_sync_persist();;
+				window.TOKEN_OBJECTS[currentTarget].place_sync_persist();
 			}
 			if(window.TOKEN_OBJECTS[newTarget] != undefined){
 				adjust_age(window.TOKEN_OBJECTS[newTarget], 1)
@@ -1161,9 +1161,15 @@ function ct_add_token(token,persist=true,disablerolling=false, adv=false, dis=fa
 	entry.attr("data-target",token.options.id);	
 	entry.attr("ishidden", token.options.hidden);
 	if(token.options.combatGroup && !token.options.combatGroupToken){
-		entry.attr("skipTurn", token.options.combatGroup);
-		if(window.expandedGroupIds != undefined && window.expandedGroupIds.includes(token.options.combatGroup))
-			entry.toggleClass('showGroupTokens', true)	
+		if(window.all_token_objects[token.options.combatGroup] === undefined){
+			delete token.options.combatGroup;
+		}
+		else{
+			entry.attr("skipTurn", token.options.combatGroup);
+			if(window.expandedGroupIds != undefined && window.expandedGroupIds.includes(token.options.combatGroup))
+				entry.toggleClass('showGroupTokens', true)	
+		}
+
 	}
 	entry.addClass("CTToken");
 	if(window.DM && !token.options.combatGroupToken){
