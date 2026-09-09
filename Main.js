@@ -106,7 +106,9 @@ const debounce_font_change = mydebounce(function(){
 const throttleRedrawAfterZoom = throttle((sceneContainer = $('#scene_map_container')) => {
 	sceneContainer.css('will-change','');
 	sceneContainer[0].offsetHeight; // triggers reloading image at new scale after will-change is removed
-}, 250)
+
+}, 150)
+
 
 /**
  * Changes the zoom level.
