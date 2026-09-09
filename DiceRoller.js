@@ -802,6 +802,7 @@ class DiceRoller {
                                         type: "dice/roll/deferred",
                                         payload: {
                                             ...msg,
+                                            persist:false,
                                             eventType: "dice/roll/deferred"
                                         }
                                     });
@@ -1369,6 +1370,7 @@ class DiceRoller {
                                     type: "dice/roll/deferred",
                                     payload: {
                                         ...ddbMessage,
+                                        persist:false,
                                         eventType: "dice/roll/deferred"
                                     }
                                 })
@@ -1379,6 +1381,7 @@ class DiceRoller {
                 if(sendTo.toLowerCase() != 'self'){
                     this.ddbDispatch({
                         ...ddbMessage,
+                        persist:false,
                         eventType: "dice/roll/deferred"
                     });
                 }
@@ -1455,7 +1458,9 @@ class DiceRoller {
             this.ddbDispatch(message);
             return;
         }
-
+        if(message.eventType !== "dice/roll/fulfilled"){
+            message.persist = false;
+        }
         if (message.eventType === "dice/roll/pending" || message.eventType == 'dice/roll/deferred') {
             noisy_log("capturing pending message: ", message);
             let ddbMessage = { ...message };
