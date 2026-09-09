@@ -1,5 +1,29 @@
 var DDB_WS_OBJ = null;
 var DDB_WS_FORCE_RECONNECT_LOCK = false; // Best effort (not atomic) - ensure function is called only once at a time
+var DDB_WS_RETRIES = 0;
+var DDB_MAX_RETRIES = 5;
+var DDB_RETRY_TIMEOUT;
+
+function showDDBDisconnectWarning(){
+    let container = $("#above-vtt-error-message");
+    container.remove();
+    container = $(`
+        <div id="above-vtt-error-message" class="small-error">
+        <h2>You have Disconnected from DDBs websocket</h2>
+        <div id="error-message-details"><p>You have disconnected from the DDB websocket ${DDB_WS_RETRIES} times.</p><p>This could be caused by a VPN, anti-tracker, adblocker, firewall, school/work network settings, or other extention/program. It may also happen if the tab was in the background too long</p><p>If disconnecting due to an unstable connection you can enable auto reconnect in settings. Note: Auto reconnect won't always connect before rolls come in a you may still miss sending/receiving rolls</p></div>
+        <div class="error-message-buttons">
+            <button id="reconnect-button">Reconnect</button>
+        </div>
+        </div>
+    `)
+    
+    $(document.body).append(container);
+
+    $("#reconnect-button").on("click", function(){
+        forceDdbWsReconnect();
+        container.remove();
+    });
+}
 /**
  * Attempts to force DDBs WebSocket to re-connect.
  * @returns Bool false - wasn't able to force / no need
@@ -29,15 +53,8 @@ function forceDdbWsReconnect() {
             DDB_WS_OBJ.reset();
             DDB_WS_OBJ.connect();
 
-            setTimeout(function() {
-                if (DDB_WS_OBJ.status == 'open') {
-                    console.log("Managed to reconnect DDBs WebSocket successfully!");
-                }
-                DDB_WS_FORCE_RECONNECT_LOCK = false;
-            }, 8000);
             return true;
         }
-
         DDB_WS_FORCE_RECONNECT_LOCK = false;
 
         return false;
@@ -89,7 +106,7 @@ function forceDdbWsReconnect() {
         window.ActiveWorkers[scriptURL] = worker;
         return worker;
     };
-
+    
     //for listening to the game log websocket and intercepting messages for the DDB onmessage function
     const originalAddEventListener = WebSocket.prototype.addEventListener;
     WebSocket.prototype.addEventListener = function (type, listener, options) {
@@ -112,10 +129,27 @@ function forceDdbWsReconnect() {
             }
             else if((type === 'close' || type === 'error')) {
                 const interceptor = (event) => {
-                    forceDdbWsReconnect();
+                    DDB_WS_FORCE_RECONNECT_LOCK = false;
+                    if(DDB_RETRY_TIMEOUT != undefined){
+                        clearTimeout(DDB_RETRY_TIMEOUT);
+                    }	
+
+                    console.log('Attempting reconnect to DDB Websocket');
+  
+                    DDB_WS_RETRIES++;
+                    if(DDB_WS_RETRIES > DDB_MAX_RETRIES && !get_avtt_setting_value('autoReconnect')){
+                        self.showDDBDisconnectWarning();
+                    }	
+                    else{
+                        DDB_RETRY_TIMEOUT = setTimeout(function() {
+                            forceDdbWsReconnect();
+                        }, Math.min(10000,2**DDB_WS_RETRIES*250));
+                    }
                 };
                 
                 originalAddEventListener.call(this, type, interceptor, options);
+            } else if((type == 'open')){
+                console.log('DDB websocket connected')
             }
         }
         
