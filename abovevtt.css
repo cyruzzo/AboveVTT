@@ -10053,6 +10053,11 @@ body.preventSelectDefinitelyNot .token.declutterToken[style*='opacity: 0.5']{
     transition: opacity 1.5s linear 0s;
     opacity:1;
     background:#000;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    scale: var(--scene-scale);
+    translate: 0 0 0;
+    transform-origin: top left;
 }
 #scene_map_container.map-loading{
     opacity: 0;
@@ -10061,11 +10066,6 @@ body.preventSelectDefinitelyNot .token.declutterToken[style*='opacity: 0.5']{
 
 #peer_overlay {
     pointer-events: none;
-}
-
-#scene_map_container{
-    transform: scale(var(--scene-scale));
-    transform-origin: top left;
 }
 
 #scene_map_container.preview{

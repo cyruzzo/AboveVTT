@@ -102,6 +102,12 @@ const debounce_scroll_event = mydebounce(function(){
 const debounce_font_change = mydebounce(function(){
 	$('#VTTWRAPPER').css({"--font-size-zoom": Math.max(12 * Math.max((3 - window.ZOOM), 0), 8.5) + "px"})
 }, 25);
+
+const throttleRedrawAfterZoom = throttle((sceneContainer = $('#scene_map_container')) => {
+	sceneContainer.css('will-change','');
+	sceneContainer[0].offsetHeight; // triggers reloading image at new scale after will-change is removed
+}, 250)
+
 /**
  * Changes the zoom level.
  * @param {Number} newZoom new zoom value
@@ -111,6 +117,10 @@ const debounce_font_change = mydebounce(function(){
 function change_zoom(newZoom, x, y, reset = false) {
 	console.group("change_zoom")
 	noisy_log("zoom", newZoom, x , y)
+	const zoomingIn = newZoom > window.ZOOM;
+	const sceneContainer = $('#scene_map_container');
+	sceneContainer.css('will-change','transform');
+						
 	let zoomCenterX = x || $(window).width() / 2
 	let zoomCenterY = y || $(window).height() / 2
 	// window.VTTMargin is the size of the black area to the left and top of the map
@@ -154,8 +164,19 @@ function change_zoom(newZoom, x, y, reset = false) {
 	$(".peerCursorPosition").css("transform", "scale(" + 1/window.ZOOM + ")");
 	if($('#projector_zoom_lock.enabled > [class*="is-active"]').length>0 && window.DM)
 		debounce_scroll_event()
-	
-	
+
+	if(zoomingIn){
+		//we can fully reset this as we don't lose parts of the map as we zoom in
+		clearTimeout(window.redrawAfterZoom);
+		window.redrawAfterZoom = setTimeout(()=>{
+			sceneContainer.css('will-change','');
+			sceneContainer[0].offsetHeight; // triggers reloading image at new scale after will-change is removed
+		}, 500)
+	}else{
+		// we only throttle this so that as we zoom out, unloaded sections of the map off screen still load
+		throttleRedrawAfterZoom(sceneContainer);
+	}
+
 	console.groupEnd()
 }
 
