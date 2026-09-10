@@ -657,11 +657,11 @@ function is_token_under_truesight_aura(tokenid, imageData){
 	if (imageData == undefined)
 		return
 	let x = parseInt(window.TOKEN_OBJECTS[tokenid].options.left) / window.CURRENT_SCENE_DATA.scale_factor;
-	let y = parseInt(window.TOKEN_OBJECTS[tokenid].options.top) / window.CURRENT_SCENE_DATA.scale_factor;
-	const right = parseInt(x+(window.TOKEN_OBJECTS[tokenid].sizeWidth() / window.CURRENT_SCENE_DATA.scale_factor));
-	const bottom = parseInt(y+(window.TOKEN_OBJECTS[tokenid].sizeHeight() / window.CURRENT_SCENE_DATA.scale_factor));
+	const top = parseInt(window.TOKEN_OBJECTS[tokenid].options.top) / window.CURRENT_SCENE_DATA.scale_factor;
+	const right = x + (parseInt((window.TOKEN_OBJECTS[tokenid].sizeWidth()) / window.CURRENT_SCENE_DATA.scale_factor));
+	const bottom = top + (parseInt((window.TOKEN_OBJECTS[tokenid].sizeHeight()) / window.CURRENT_SCENE_DATA.scale_factor));
 	for (; x < right; x++) {
-		for (; y < bottom; y++) {
+		for (let y = top; y < bottom; y++) {
 			const pixeldata = getPixelFromImageData(imageData, x, y)
 			if (pixeldata[0] > 4 || pixeldata[1] > 4 || pixeldata[2] > 4)
 				return true;
