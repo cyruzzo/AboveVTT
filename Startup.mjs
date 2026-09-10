@@ -97,8 +97,6 @@ $(function() {
         const isDmPage = is_encounters_page();
         const isSpectator = is_spectator_page();
         const userId = $(`#message-broker-client[data-userid]`)?.attr('data-userid') || Cobalt?.User?.ID;
-        window.myUser = userId ? userId : window.CAMPAIGN_INFO.dmId;
-        
         if ((isDmPage && campaignDmId == userId) || isSpectator) {
           add_new_dice();
         }
@@ -125,7 +123,11 @@ $(function() {
           // this should never happen because `is_abovevtt_page` covers all the above cases, but cover all possible cases anyway
           throw new Error(`Invalid AboveVTT page: ${window.location.href}`)
         }
+
       }).then(()=>{
+        const userId = $(`#message-broker-client[data-userid]`)?.attr('data-userid') || Cobalt?.User?.ID;   
+        let playerUser = window.playerUsers.filter(d=> d.id == (window.PLAYER_ID ?? getPlayerIdFromSheet(window.location.pathname)))[0]?.userId;
+        window.myUser = playerUser ? playerUser : userId; // current tabs player user
         refresh_aoe_style_menu();
         addExtensionPathStyles();
         $('body').append(`<script type="text/javascript" src="https://www.dropbox.com/static/api/2/dropins.js" id="dropboxjs" data-app-key="h3iaoazdu0wqrfd"></script>`)
