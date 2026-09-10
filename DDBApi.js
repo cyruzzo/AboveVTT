@@ -354,14 +354,14 @@ class DDBApi {
     for (let attempt = 1; attempt <= maxRetries; attempt++) {
       try {
         window.playerUsers = await DDBApi.fetchCampaignCharacters(campaignId);
-        characterIds = window.playerUsers.map(c => c.id);
+        characterIds = await window.playerUsers.map(c => c.id);
         break;
       }
       catch (error) {
         try {
           // This is what the campaign page calls
           window.playerUsers = await DDBApi.fetchActiveCharacters(campaignId);
-          window.playerUsers.forEach(c => {
+          await window.playerUsers.forEach(c => {
             if (!characterIds.includes(c.id)) {
               characterIds.push(c.id);
             }
@@ -381,8 +381,20 @@ class DDBApi {
         }
       }
     }
-    let playerUser = window.playerUsers.filter(d=> d.id == window.PLAYER_ID)[0]?.userId;
-    window.myUser = playerUser ? playerUser : window.CAMPAIGN_INFO.dmId;
+    const promiseUserFound = new Promise((resolve) => {
+       window.waitForPlayerId = setInterval(() => {
+        if(window.PLAYER_ID){
+          clearInterval(window.waitForPlayerId);
+          window.waitForPlayerId = undefined;
+          let playerUser = window.playerUsers.filter(d=> d.id == window.PLAYER_ID)[0]?.userId;
+          window.myUser = playerUser ? playerUser : window.CAMPAIGN_INFO.dmId;
+          resolve(window.myUser);
+        }
+      },500);
+    });
+   
+    await Promise.all([promiseUserFound]);
+  
     return characterIds;
   }
 
