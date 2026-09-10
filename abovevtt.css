@@ -1935,7 +1935,7 @@ div#scene_properties form > div{
 .token {
     overflow: visible !important;
     border-radius: 50%;
-    transition: box-shadow 0.5 ease-in-out;
+    transition: box-shadow 0.5s ease-in-out;
     z-index: 50;
 }
 [class*='styles_mobileNav']>div>button[class*='styles_navToggle']{
@@ -1964,7 +1964,7 @@ div#scene_properties form > div{
     border-radius: 2px;
     text-shadow: 0px 1px 1px #000;
     visibility: hidden;
-    transition: 0.2s ease-in-out 0.5s;
+    transition: opacity 0.2s ease-in-out 0.5s, visibility 0s linear 0.5s;
     position:absolute;
 }
 
@@ -2052,7 +2052,7 @@ div#scene_properties form > div{
 .mobileAVTTUI .drawbutton.hasTooltip:hover:after {
     opacity: 1;
     visibility: visible;
-    transition: 0.05s ease-in-out 0.4s;
+    transition: opacity 0.05s ease-in-out 0.4s, visibility 0s linear 0.4s;
 }
 #wall_menu [data-desc]::after{
     visibility: hidden;
@@ -10058,6 +10058,7 @@ body.preventSelectDefinitelyNot .token.declutterToken[style*='opacity: 0.5']{
     scale: var(--scene-scale);
     translate: 0 0 0;
     transform-origin: top left;
+    contain: strict;
 }
 #scene_map_container.map-loading{
     opacity: 0;
