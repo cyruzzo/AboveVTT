@@ -381,6 +381,7 @@ class DDBApi {
         }
       }
     }
+
     const promiseUserFound = new Promise((resolve, reject) => {
       const waitStartedAt = Date.now();
       window.waitForPlayerId = setInterval(() => {
@@ -394,12 +395,14 @@ class DDBApi {
           resolve(window.myUser);
         }
       },500);
+
       window.waitForPlayerIdTimeout = setTimeout(() => {
         clearInterval(window.waitForPlayerId);
         delete window.waitForPlayerId;
         delete window.waitForPlayerIdTimeout;
         reject(showErrorMessage(`Failed to fetch player data, if there are no larger outages, trying again shortly may resolve the issue.`));
       }, 30000);
+
     });
    
     await Promise.all([promiseUserFound]);
