@@ -354,14 +354,14 @@ class DDBApi {
     for (let attempt = 1; attempt <= maxRetries; attempt++) {
       try {
         window.playerUsers = await DDBApi.fetchCampaignCharacters(campaignId);
-        characterIds = window.playerUsers.map(c => c.id);
+        characterIds = await window.playerUsers.map(c => c.id);
         break;
       }
       catch (error) {
         try {
           // This is what the campaign page calls
           window.playerUsers = await DDBApi.fetchActiveCharacters(campaignId);
-          window.playerUsers.forEach(c => {
+          await window.playerUsers.forEach(c => {
             if (!characterIds.includes(c.id)) {
               characterIds.push(c.id);
             }
@@ -381,8 +381,29 @@ class DDBApi {
         }
       }
     }
-    let playerUser = window.playerUsers.filter(d=> d.id == window.PLAYER_ID)[0]?.userId;
-    window.myUser = playerUser ? playerUser : window.CAMPAIGN_INFO.dmId;
+    const promiseUserFound = new Promise((resolve, reject) => {
+      const waitStartedAt = Date.now();
+      window.waitForPlayerId = setInterval(() => {
+        if(window.PLAYER_ID){
+          clearInterval(window.waitForPlayerId);
+          clearTimeout(window.waitForPlayerIdTimeout);
+          delete window.waitForPlayerId;
+          delete window.waitForPlayerIdTimeout;
+          let playerUser = window.playerUsers.filter(d=> d.id == window.PLAYER_ID)[0]?.userId;
+          window.myUser = playerUser ? playerUser : window.CAMPAIGN_INFO.dmId;
+          resolve(window.myUser);
+        }
+      },500);
+      window.waitForPlayerIdTimeout = setTimeout(() => {
+        clearInterval(window.waitForPlayerId);
+        delete window.waitForPlayerId;
+        delete window.waitForPlayerIdTimeout;
+        reject(showErrorMessage(`Failed to fetch player data, if there are no larger outages, trying again shortly may resolve the issue.`));
+      }, 30000);
+    });
+   
+    await Promise.all([promiseUserFound]);
+  
     return characterIds;
   }
 
