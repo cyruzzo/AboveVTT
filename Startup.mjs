@@ -97,6 +97,8 @@ $(function() {
         const isDmPage = is_encounters_page();
         const isSpectator = is_spectator_page();
         const userId = $(`#message-broker-client[data-userid]`)?.attr('data-userid') || Cobalt?.User?.ID;
+        window.myUser = userId ? userId : window.CAMPAIGN_INFO.dmId;
+        
         if ((isDmPage && campaignDmId == userId) || isSpectator) {
           add_new_dice();
         }
