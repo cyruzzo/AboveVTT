@@ -7343,8 +7343,9 @@ Example usage:
 		</div>`);
 	const maskWallInput = $("<input type='file' accept='image/*' style='display:none' />");
 	wall_menu.append(maskWallInput);
+	const maskWallDesc = `Imports a transparency mask to create walls along the edges of the mask image.`	
 	wall_menu.append(
-		`<div class='ddbc-tab-options--layout-pill menu-option'>
+		`<div class='ddbc-tab-options--layout-pill menu-option' data-desc="${maskWallDesc}">
 			<button id='walls_from_mask' class='menu-option ddbc-tab-options__header-heading'>
 				Walls From Mask
 			</button>
