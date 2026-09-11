@@ -1251,7 +1251,10 @@ function token_context_menu_expanded(tokenIds, e, crossScenePortalData) {
 							if(t.options.combatGroup != undefined && Object.values(window.TOKEN_OBJECTS)?.filter(d=>d.options.combatGroup == t.options.combatGroup)?.length == 1 && window.TOKEN_OBJECTS[t.options.combatGroup]){
 								window.TOKEN_OBJECTS[t.options.combatGroup].delete()
 							}
-							if(t.options.hidden !== true){
+							const addHidden = getCombatTrackerSettings().always_add_hidden;
+							const shouldHide =  t.options.hidden ||
+								(addHidden && addHidden != 0 && !t.isPlayer() && !t.options.share_vision && !t.options.player_owned)
+							if(!shouldHide){
 								allHidden = false
 							}
 							if(!t.isPlayer() && t.options.revealname == false){
@@ -1358,7 +1361,10 @@ function token_context_menu_expanded(tokenIds, e, crossScenePortalData) {
 					if(t.options.combatGroup != undefined && Object.values(window.TOKEN_OBJECTS)?.filter(d=>d.options.combatGroup == t.options.combatGroup)?.length == 1 && window.TOKEN_OBJECTS[t.options.combatGroup]){
 						window.TOKEN_OBJECTS[t.options.combatGroup].delete()
 					}
-					if(t.options.hidden !== true){
+					const addHidden = getCombatTrackerSettings().always_add_hidden;
+					const shouldHide =  t.options.hidden ||
+						(addHidden && addHidden != 0 && !t.isPlayer() && !t.options.share_vision && !t.options.player_owned)
+					if(!shouldHide){
 						allHidden = false
 					}
 					if(!t.isPlayer() && t.options.revealname == false){
