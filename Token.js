@@ -3527,7 +3527,7 @@ class Token {
 		
 				if(this.options.darkness){
 					let tokenClone = tok.clone();
-					if(this.isAoe()) tokenClone.find('.token-image').replaceWith(build_aoe_token_image(this))
+					tokenClone.find('.token-image').replaceWith(build_aoe_token_image(this, 1))
 					tokenClone.css({
 						left: parseFloat(this.options.left) / window.CURRENT_SCENE_DATA.scale_factor,
 						top: parseFloat(this.options.top) / window.CURRENT_SCENE_DATA.scale_factor,
