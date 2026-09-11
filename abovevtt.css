@@ -9933,8 +9933,12 @@ body:not(.body-rpgcampaign) .site-bar{
 }
 [data-darkness] .token-image{
     transform: none !important;
+    filter: grayscale(1) brightness(0) drop-shadow(0px 0px 0px black) !important;
 }
-
+[data-darkness] .token-image [data-img]{
+    background:#000 !important;
+    opacity: 1 !important;
+}
 [data-darkness] .aoe-style-darkness,
 [data-darkness] .aoe-border-cone{
     opacity: 1 !important;

@@ -412,13 +412,13 @@ function apply_aoe_style_display(element, settings, tileSize = "300px") {
     }
 
     node.style.setProperty("opacity", settings.opacity ?? 0.5, "important");
-}
 
+}
 function is_aoe_video_image(url) {
     return typeof url === "string" && ['.mp4', '.webm', '.m4v'].some(d => url.includes(d));
 }
 
-function build_aoe_token_image(token){
+function build_aoe_token_image(token, opacityOverride = null) {
     let tokenImageContainer = $(`<div class=token-image style='transform:scale(var(--token-scale)) rotate(var(--token-rotation))'>`);
     let aoeClassName = token.options.imgsrc.replace("class=","").trim();
     let tokenImage;
@@ -431,7 +431,7 @@ function build_aoe_token_image(token){
         updateTokenSrc(token.options.aoeImage, tokenImage, isVideo).then(function() {
             // a video cannot repeat, so only images take the tiling setting
             if (!isVideo) {
-                apply_aoe_style_display(tokenImage, { tiled: token.options.aoeImageTiled });
+                apply_aoe_style_display(tokenImage, { tiled: token.options.aoeImageTiled, opacity: opacityOverride !== null ? opacityOverride : token.options.aoeImageOpacity });
             }
         });
     } else {
@@ -439,7 +439,7 @@ function build_aoe_token_image(token){
     }
 
     apply_aoe_style_display(tokenImage, {
-        opacity: token.options.aoeImageOpacity,
+        opacity: opacityOverride !== null ? opacityOverride : token.options.aoeImageOpacity,
     });
 
     if (token.options.aoeImageBorder !== false) {
