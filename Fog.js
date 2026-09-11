@@ -8137,7 +8137,7 @@ Ray.prototype.cast = function(boundary) {
 				return p1
 			}
 		}
-	}			
+	}		
 	else {
 		const x1 = boundary.a.x;
 		const y1 = boundary.a.y;
