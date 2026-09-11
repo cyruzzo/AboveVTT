@@ -529,26 +529,14 @@ Other Commands:
           return;
         }
 
-        if(advDis != undefined){
-          const countValue = Math.abs(numericCount);
-          for (let i = 0; i<countValue; i++){
-            const advantageExpression = '2' + dieType + advDis + '1';
-            if (numericCount < 0) {
-              negativeTerms.push(advantageExpression);
-            } else {
-              positiveTerms.push(advantageExpression);
-            }
-          }
-        } else{
-          const normalizedTerm = `${Math.abs(numericCount)}${dieType}`;
-          if (numericCount < 0) {
-            negativeTerms.push(normalizedTerm);
-          } else {
-            positiveTerms.push(normalizedTerm);
-          }
+        const normalizedTerm = `${Math.abs(numericCount)}${dieType}`;
+        if (numericCount < 0) {
+          negativeTerms.push(normalizedTerm);
+        } else {
+          positiveTerms.push(normalizedTerm);
         }
       });
-      advDis = undefined;
+
       $('.dice-toolbar__dropdown-selected>div:first-of-type')?.click();
 
       let expression = positiveTerms.join('+');
@@ -557,6 +545,11 @@ Other Commands:
       });
 
       expression += modValue < 0 ? `${modValue}` : `+${modValue}`;
+      
+      if(advDis != undefined){
+          expression = `{${expression},${expression}}${advDis}1`
+      } 
+      advDis = undefined;
       return expression;
     }
 

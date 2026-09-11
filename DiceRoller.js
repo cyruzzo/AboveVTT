@@ -2,11 +2,11 @@
 
 const allDiceRegex = /\d+d(?:100|20|12|10|8|6|4)((?:kh|kl|ro(<|<=|>|>=|=)|min)\d+)*|^\d+|^([-+]?\d+)+$/gi; // ([numbers]d[diceTypes]kh[numbers] or [numbers]d[diceTypes]kl[numbers]) or [numbers]d[diceTypes]
 const rpgDiceRegex = /\d+d(?:\d+)((?:kh|kl|ro(<|<=|>|>=|=)|min)\d+)*|^\d+|^([-+]?\d+)+$/gi; 
-const validExpressionRegex = /^[dkhlromin<=>\s\d+\-\(\)]+$/gi; // any of these [d, kh, kl, spaces, numbers, +, -] // Should we support [*, /] ?
+const validExpressionRegex = /^[dkhlromin<=>\s\d+\-\(\){},]+$/gi; // any of these [d, kh, kl, spaces, numbers, +, -, grouped dice separators] // Should we support [*, /] ?
 const validModifierSubstitutions = /(?<!\w)(str|dex|con|int|wis|cha|pb)(?!\w)/gi // case-insensitive shorthand for stat modifiers as long as there are no letters before or after the match. For example `int` and `STR` would match, but `mint` or `strong` would not match.
 const diceRollCommandRegex = /^\/(r|roll|save|hit|dmg|skill|heal)\s/gi; // matches only the slash command. EG: `/r 1d20` would only match `/r`
 const multiDiceRollCommandRegex = /\/(ir|r|roll|save|hit|dmg|skill|heal) [^\/]*/gi; // globally matches the full command. EG: `note: /r 1d20 /r2d4` would find ['/r 1d20', '/r2d4']
-const allowedExpressionCharactersRegex = /^(d\d|\d+d\d+|kh\d+|kl\d+|ro(<|<=|>|>=|=)\d+|min\d+|\d+|\s+|[+-]\s*STR|[+-]\s*DEX|[+-]\s*CON|[+-]\s*INT|[+-]\s*WIS|[+-]\s*CHA|[+-]\s*PB|\+|-)*/gi; // this is explicitly different from validExpressionRegex. This matches an expression at the beginning of a string while validExpressionRegex requires the entire string to match. +/- at the end so it includes modifiers first
+const allowedExpressionCharactersRegex = /^(d\d|\d+d\d+|kh\d+|kl\d+|ro(<|<=|>|>=|=)\d+|min\d+|\d+|\s+|[+-]\s*STR|[+-]\s*DEX|[+-]\s*CON|[+-]\s*INT|[+-]\s*WIS|[+-]\s*CHA|[+-]\s*PB|[{},]|\+|-)*/gi; // this is explicitly different from validExpressionRegex. This matches an expression at the beginning of a string while validExpressionRegex requires the entire string to match. +/- at the end so it includes modifiers first
 
 class DiceRoll {
     // `${action}: ${rollType}` is how the gamelog message is displayed
@@ -1241,6 +1241,44 @@ class DiceRoller {
                 let currentRoll = roll.rolls[i];
                 if (typeof currentRoll === "object") {
                     let currentNotation = notationList[i];
+
+                    if (currentRoll.isRollGroup === true) {
+                        const groupedNotations = currentNotation.match(/\d*d\d+(?:(?:kh|kl|ro(?:<|<=|>|>=|=)|min)\d+)*/gi) || [];
+                        const groupedResults = [];
+                        const collectGroupedResults = (node) => {
+                            if (node?.rolls !== undefined) {
+                                groupedResults.push(node.rolls);
+                                return;
+                            }
+                            node?.results?.forEach(collectGroupedResults);
+                        };
+                        collectGroupedResults(currentRoll);
+
+                        for (let groupIndex = 0; groupIndex < groupedResults.length; groupIndex++) {
+                            const groupNotation = groupedNotations[groupIndex];
+                            const groupDiceType = supportedDieTypes.find(dt => new RegExp(`${dt}(\\D|$)`, "i").test(groupNotation));
+                            if (!groupNotation || !supportedDieTypes.includes(groupDiceType)) {
+                                console.warn(`found an unsupported grouped dieType ${groupNotation}`);
+                                console.groupEnd();
+                                return false;
+                            }
+
+                            const groupDice = groupedResults[groupIndex].map(die => {
+                                if (die.modifiers?.has('re-roll-once'))
+                                    allValues.push(`${die.initialValue}ro`);
+                                allValues.push(die.value);
+                                return { dieType: groupDiceType, dieValue: die.value };
+                            });
+                            convertedDice.push({
+                                dice: groupDice,
+                                count: groupDice.length,
+                                dieType: groupDiceType,
+                                operation: 0
+                            });
+                        }
+                        convertedExpression.push(currentRoll.value);
+                        continue;
+                    }
                     
                     let currentDieType = supportedDieTypes.find(dt => {
                         const regex = new RegExp(`${dt}(\\D|$)`, "i");
@@ -1593,8 +1631,8 @@ class DiceRoller {
                     replacedValues = replacedValues.concat(calculationValues);
                 });
 
-                // now that we've replaced all the dice expressions with their results, we need to execute the expression to get the final result
-                let calculatedTotal = eval(replacedExpression.replace(/ro/gi,''));
+                // RPG Dice Roller has already applied all modifiers and group semantics.
+                let calculatedTotal = r.result.total;
                 if((critAttackAction != undefined && pendingCritType == 3) || pendingCrit == 3){
                     calculatedTotal = calculatedTotal * 2; 
                 }
