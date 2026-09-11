@@ -8109,34 +8109,24 @@ Ray.prototype.cast = function(boundary) {
 		};
 
 		let u2 = new Vector(u.x - u1.x, u.y - u1.y);
-		let d = Math.hypot(u2.x, u2.y);
+		const perpendicularDistanceSquared = Vector.sqDist(u2, new Vector(0, 0));
+		const radiusSquared = boundary.radius ** 2;
+		const discriminant = radiusSquared - perpendicularDistanceSquared;
+		const tangentTolerance = Math.max(1e-7, radiusSquared * 1e-12);
 
-		if (d > boundary.radius) {
+		if (discriminant <= tangentTolerance)
 			return;
-		}
-		else {
-			let m = Math.sqrt(boundary.radius ** 2 - d ** 2);
-			let p1 = new Vector(this.pos.x + u1.x + m * this.dir.x, this.pos.y + u1.y + m * this.dir.y);
 
-			if (d < boundary.radius && Vector.sqDist(this.pos, boundary.a) > boundary.radius ** 2) {
+		const intersectionOffset = Math.sqrt(discriminant);
+		const nearDistance = scalar - intersectionOffset;
+		const farDistance = scalar + intersectionOffset;
+		const originInsideCircle = Vector.sqDist(this.pos, boundary.a) < radiusSquared;
+		const hitDistance = originInsideCircle || boundary.getOtherPoint ? farDistance : nearDistance;
 
-				let p2 = new Vector(this.pos.x + u1.x - m * this.dir.x, this.pos.y + u1.y - m * this.dir.y);
+		if (hitDistance < 0)
+			return;
 
-
-				let distance1 = Vector.sqDist(this.pos, p1);
-				let distance2 = Vector.sqDist(this.pos, p2);
-				if (distance1 >= distance2) {
-					if (!boundary.getOtherPoint)
-						return p2;
-					else
-						return p1;
-				}
-
-			}
-			else {
-				return p1
-			}
-		}
+		return new Vector(this.pos.x + hitDistance * this.dir.x, this.pos.y + hitDistance * this.dir.y);
 	}			
 	else {
 		const x1 = boundary.a.x;

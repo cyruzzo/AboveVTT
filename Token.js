@@ -3537,6 +3537,7 @@ class Token {
 			        tokenClone.attr('data-darkness', `darkness_${this.options.id}`);
 			        tokenClone.find('.conditions').remove();
 			        tokenClone.removeClass(['token', 'VTTToken']);
+					tokenClone.find('.token-image>*').css('opacity', '1');
 			        if($(`[data-darkness='darkness_${this.options.id}]'`).length == 0)
 			        	$('#light_container').append(tokenClone);
 			        redraw_drawn_light();
