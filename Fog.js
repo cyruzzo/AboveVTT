@@ -9230,8 +9230,8 @@ function draw_aoe_to_canvas(targetAoes, ctx, isDarkness = false){
 
 		let left = parseFloat(targetAoes[i].style.left);
 		let top = parseFloat(targetAoes[i].style.top);
-		let width = parseFloat(targetAoes[i].style.width);
-		let height = parseFloat(targetAoes[i].style.height);
+		let width = targetAoes[i].clientWidth;
+		let height = targetAoes[i].clientHeight;
 		let scale = window.CURRENT_SCENE_DATA.scale_factor != undefined ? window.CURRENT_SCENE_DATA.scale_factor : 1;
 		let halfGrid = window.CURRENT_SCENE_DATA.hpps/2;
 		let divideScale = 1;
@@ -9252,8 +9252,8 @@ function draw_aoe_to_canvas(targetAoes, ctx, isDarkness = false){
 		if(currentAoe.find('.aoe-shape-square').length>0){
 			width = width;
 			height = height;
-			let centerX = (left + width/2)/divideScale;
-			let centerY = (top + height/2)/divideScale;
+			let centerX = (left + width/2);
+			let centerY = (top + height/2);
 
 			let rotationRad = parseFloat(currentAoe.css('--token-rotation')) * (Math.PI/180) 
 
@@ -9266,8 +9266,8 @@ function draw_aoe_to_canvas(targetAoes, ctx, isDarkness = false){
 		if(currentAoe.find('.aoe-shape-line').length>0){
 			width = width;
 			height = height;
-			let centerX = (left + width/2)/divideScale;
-			let centerY = (top + height/2)/divideScale;
+			let centerX = (left + width/2);
+			let centerY = (top + height/2);
 
 			let rotationRad = parseFloat(currentAoe.css('--token-rotation')) * (Math.PI/180) 
 
@@ -9280,8 +9280,8 @@ function draw_aoe_to_canvas(targetAoes, ctx, isDarkness = false){
 		if(currentAoe.find('.aoe-shape-cone').length>0){
 			width = width;
 			height = height;
-			let centerX = (left + width/2)/divideScale;
-			let centerY = (top + height/2)/divideScale;
+			let centerX = (left + width/2);
+			let centerY = (top + height/2);
 
 			let rotationRad = parseFloat(currentAoe.css('--token-rotation')) * (Math.PI/180) 
 
@@ -9296,8 +9296,12 @@ function draw_aoe_to_canvas(targetAoes, ctx, isDarkness = false){
 
 function draw_darkness_aoe_to_canvas(ctx){
 	let darknessAoes = $('[data-darkness]');
-	ctx.globalCompositeOperation='source-over';
+	ctx.save();
+	ctx.globalCompositeOperation = 'destination-out';
+	ctx.globalAlpha = 1;
+	ctx.filter = 'none';
 	draw_aoe_to_canvas(darknessAoes, ctx, true);
+	ctx.restore();
 }
 function clipped_light(auraId, maskPolygon, playerTokenId, canvasWidth = getSceneMapSize().sceneWidth, canvasHeight = getSceneMapSize().sceneHeight, darknessBoundarys = getDarknessBoundarys(), numberOfSharedVisionTokens = 0, tokenWalls = getVisionBlockingTokenWalls()){
 	let visionColor = `rgba(0,0,0,0)`;
