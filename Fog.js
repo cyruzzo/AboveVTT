@@ -8907,7 +8907,7 @@ function redraw_light(darknessMoved = false, limitActiveRays = 0) {
 			clip_circle_with_polygon(lightInLosContext, window.lightAuraClipPolygon[auraId].middle.x, window.lightAuraClipPolygon[auraId].middle.y, window.lightAuraClipPolygon[auraId].light2.range, window.lightAuraClipPolygon[auraId].light2.color, window.lightPolygon, tokenObject.options);
 			clip_circle_with_polygon(lightInLosContext, window.lightAuraClipPolygon[auraId].middle.x, window.lightAuraClipPolygon[auraId].middle.y, window.lightAuraClipPolygon[auraId].light1.range, window.lightAuraClipPolygon[auraId].light1.color, window.lightPolygon, tokenObject.options);
 		}
-		if (selectedIds.length === 0 || selectedTokens.length === 0 || found || (window.SelectedTokenVision !== true && !window.DM)) {
+		if ((selectedIds.length === 0 && selectedTokens.length === 0) || found || (window.SelectedTokenVision !== true && !window.DM)) {
 
 			let hideVisionWhenNoPlayerToken = (playerTokenId === undefined && !tokenObject.options.share_vision && !window.DM && tokenObject.options.itemType !== 'pc')
 		
