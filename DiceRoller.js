@@ -247,8 +247,9 @@ function getRollData(rollButton){
     if($rollButton.find('.ddbc-damage__value, .ct-spell-caster__modifier-amount').length>0){
       expression = $rollButton.find('.ddbc-damage__value, .ct-spell-caster__modifier-amount').text();
       const diceModifier = `(?:min\\d+|ro(?:[<>=]{1,2})?\\d+|k[hl]\\d+|!(?:\\d*(?:[<>=]{1,2})?\\d*)*)`;
-      const singleDiceTerm = `\\d+d\\d+${diceModifier}*`;
-      const groupDiceTerm = `\\{[^{}]+?\\}${diceModifier}*`;
+      const singleDiceTerm = `\\d*d\\d+${diceModifier}*`;
+      const subFormula = `(?:[+-]?\\s*(?:${singleDiceTerm}|\\d+)(?:\\s*[+-]\\s*(?:${singleDiceTerm}|\\d+))*)`;
+      const groupDiceTerm = `\\{(?:\\s*${subFormula}\\s*,)*\\s*(?:[+-]?\\s*${singleDiceTerm}(?:\\s*[+-]\\s*(?:${singleDiceTerm}|\\d+))*)\\s*(?:,\\s*${subFormula}\\s*)*\\}${diceModifier}*`;
       const rollFormula = `(?:[+-]?\\s*(?:${singleDiceTerm}|${groupDiceTerm})\\s*)(?:\\s*[+-]\\s*(?:${singleDiceTerm}|${groupDiceTerm}|\\d+))*`;
       const damageRollRegex = new RegExp(`([:\\s>]|^)(${rollFormula})([\\.\\):\\s<,]|\$)|^\\d+$`, 'gi');
       expression = `${expression.match(damageRollRegex)[0].replace(/\s*/gi, '')}`
