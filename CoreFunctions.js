@@ -279,10 +279,11 @@ Roll Modifiers:
     Dice Groups: 
       • {2d6, 2d6}kh1 (keeps higher of each 
         grouped expressions)
-      • {2d6min3, 1d4}!3
+      • {2d6+4, 1d4, 1d8}!3
         Will explode for any of the grouped 
         expressions. Max number of dice applies 
-        across all grouped expressions
+        across all grouped expressions. Targets
+        largest die type first.
       • Other modifiers can be applied to groups
         or they can be used to just group results
 Other Commands:
