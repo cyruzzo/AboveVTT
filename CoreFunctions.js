@@ -413,40 +413,51 @@ Other Commands:
     window.diceResultsObserver.disconnect();
   window.diceResultsObserver = new MutationObserver(function (mutations) {
     mutations.every((mutation) => {
-      const firstAddedNode = $(mutation.addedNodes[0]);
-      if (firstAddedNode.is('[class*="-Line-Notation"]') && firstAddedNode.closest("[data-avtt-expression]").length > 0) {
-        replace_gamelog_message_expressions(firstAddedNode.closest("[data-avtt-expression]"))
+      const added = $(mutation.addedNodes);
+      const notationNode = added.is('[class*="-Line-Notation"]') ? added : added.find('[class*="-Line-Notation"]');
+      if (notationNode.length > 0 && notationNode.closest("[data-avtt-expression]").length > 0) {
+        replace_gamelog_message_expressions(notationNode.closest("[data-avtt-expression]"));
         return false;
       }
       return true;
-    })
-  })
-
-  if(window.gamelogObserver)
-    window.gamelogObserver.disconnect();
-  window.gamelogObserver = new MutationObserver((mutations) => {
-    mutations.every((mutation) =>{
-      if (!mutation.addedNodes) return
-      for (let i = 0; i < mutation.addedNodes.length; i++) {
-        // do things to your newly added nodes here
-        let node = mutation.addedNodes[i]
-        if($(node).attr('class')?.includes('-SendToLabel') || $('.glc-game-log [class*="-SendToLabel"] ~ button').length>0){
-          const sendto_mutation_target = $(".glc-game-log [class*='-SendToLabel'] ~ button")[0];
-          const sendto_mutation_config = { attributes: true, childList: true, characterData: true, subtree: true };
-          window.sendToDefaultObserver.observe(sendto_mutation_target, sendto_mutation_config);
-          const results_mutation_target = $(".glc-game-log")[0];
-          const results_mutation_config = { attributes: false, childList: true, characterData: false, subtree: true };
-          window.diceResultsObserver.observe(results_mutation_target, results_mutation_config);
-          gamelogObserver.disconnect();
-          return false;
-        }
-      }
-      return true;
-    })
+    });
   });
 
-  gamelogObserver.observe(document.body, {childList: true, subtree: true, attributes: false, characterData: false});
+   let diceObserverInitialized = false;
+  let sendToObserverInitialized = false;
 
+  if (window.gamelogObserver)
+    window.gamelogObserver.disconnect();
+
+  const initGamelogObservers = () => {
+    if ($(".glc-game-log").length > 0 && !diceObserverInitialized) {
+      const results_mutation_target = $(".glc-game-log")[0];
+      const results_mutation_config = { attributes: false, childList: true, characterData: false, subtree: true };
+      window.diceResultsObserver.observe(results_mutation_target, results_mutation_config);
+      diceObserverInitialized = true;
+    }
+    if ($(".glc-game-log [class*='-SendToLabel'] ~ button").length > 0 && !sendToObserverInitialized) {
+      const sendto_mutation_target = $(".glc-game-log [class*='-SendToLabel'] ~ button")[0];
+      const sendto_mutation_config = { attributes: true, childList: true, characterData: true, subtree: true };
+      window.sendToDefaultObserver.observe(sendto_mutation_target, sendto_mutation_config);
+      sendToObserverInitialized = true;
+    }
+    
+    if (diceObserverInitialized && sendToObserverInitialized) {
+      if (window.gamelogObserver) {
+        window.gamelogObserver.disconnect();
+      }
+      return true;
+    }
+    return false;
+  };
+
+  if (!initGamelogObservers()) {
+    window.gamelogObserver = new MutationObserver(() => {
+      initGamelogObservers();
+    });
+    window.gamelogObserver.observe(document.body, { childList: true, subtree: true, attributes: false, characterData: false });
+  }
 
 
   $(".dice-roller > div img").on("contextmenu", function(e) {
@@ -529,26 +540,14 @@ Other Commands:
           return;
         }
 
-        if(advDis != undefined){
-          const countValue = Math.abs(numericCount);
-          for (let i = 0; i<countValue; i++){
-            const advantageExpression = '2' + dieType + advDis + '1';
-            if (numericCount < 0) {
-              negativeTerms.push(advantageExpression);
-            } else {
-              positiveTerms.push(advantageExpression);
-            }
-          }
-        } else{
-          const normalizedTerm = `${Math.abs(numericCount)}${dieType}`;
-          if (numericCount < 0) {
-            negativeTerms.push(normalizedTerm);
-          } else {
-            positiveTerms.push(normalizedTerm);
-          }
+        const normalizedTerm = `${Math.abs(numericCount)}${dieType}`;
+        if (numericCount < 0) {
+          negativeTerms.push(normalizedTerm);
+        } else {
+          positiveTerms.push(normalizedTerm);
         }
       });
-      advDis = undefined;
+
       $('.dice-toolbar__dropdown-selected>div:first-of-type')?.click();
 
       let expression = positiveTerms.join('+');
@@ -557,6 +556,11 @@ Other Commands:
       });
 
       expression += modValue < 0 ? `${modValue}` : `+${modValue}`;
+      
+      if(advDis != undefined){
+          expression = `{${expression},${expression}}${advDis}1`
+      } 
+      advDis = undefined;
       return expression;
     }
 
