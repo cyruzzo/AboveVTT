@@ -271,6 +271,20 @@ Roll Modifiers:
     Disadvantage: 2d20kl1 (keep lowest)
     Min: 2d6min3 (minimum 3)
     Reroll: 2d6ro<2 (reroll <2, Can also use = or <=)
+    Exploding Dice: 
+      • 2d6! (max rolls add a die)
+      • 2d6!>4 (if greater than 4)
+      • 2d6!3 (adds up 3 dice)   
+      • 2d6!3>4 (adds up 3 dice when > 4)
+    Dice Groups: 
+      • {2d6, 2d6}kh1 (keeps higher of each 
+        grouped expressions)
+      • {2d6min3, 1d4}!3
+        Will explode for any of the grouped 
+        expressions. Max number of dice applies 
+        across all grouped expressions
+      • Other modifiers can be applied to groups
+        or they can be used to just group results
 Other Commands:
     '/w [playername] a whisper to playername'
     '/dm for a shortcut to whisper THE DM'
