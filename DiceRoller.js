@@ -298,8 +298,21 @@ function buildCritSingleTerm(term, critType = 0) {
     }
     if (current.trim()) subExpressions.push(current.trim());
 
-    const transformedSubs = subExpressions.map(sub => buildCritExpression(sub, critType));
-    return `{${transformedSubs.join(', ')}}${groupModifiers}`;
+    if (critType === 0) {
+      const transformedSubs = subExpressions.map(sub => buildCritExpression(sub, 0));
+      let finalModifiers = groupModifiers;
+      if (/!(?:\d*(?:[<>]=?|=)\d+|\d+)?/i.test(finalModifiers) && !/!(?:\d*(?:[<>]=?|=)\d+|\d+)?[*x]/i.test(finalModifiers)) {
+        finalModifiers = finalModifiers.replace(/(!(?:[0-9]*(?:[<>]=?|=)[0-9]+|[0-9]+)?)/i, '$1*2');
+      }
+      return `{${transformedSubs.join(', ')}}${finalModifiers}`;
+    } else if (critType === 1) {
+      const transformedSubs = subExpressions.map(sub => buildCritExpression(sub, 1));
+      let finalModifiers = groupModifiers;
+      if (/!(?:\d*(?:[<>]=?|=)\d+|\d+)?/i.test(finalModifiers) && !/!(?:\d*(?:[<>]=?|=)\d+|\d+)?[*x]/i.test(finalModifiers)) {
+        finalModifiers = finalModifiers.replace(/(!(?:[0-9]*(?:[<>]=?|=)[0-9]+|[0-9]+)?)/i, '$1*2');
+      }
+      return `{${transformedSubs.join(', ')}}${finalModifiers}`;
+    }
   }
 
   // Check if single dice expression has exploding modifier ! (e.g. 2d6!3, 1d8!>4, 2d6!3<6)
@@ -310,11 +323,11 @@ function buildCritSingleTerm(term, critType = 0) {
       const [, sign, qtyStr, sides, explodeMod, rest] = diceMatch;
       const qty = qtyStr ? parseInt(qtyStr, 10) : 1;
       if (critType === 1) {
-        // Perfect crit: {2d6, 2d6min6}!3
+        // Perfect crit: {2d6, 2d6min6}!3*2
         const baseDice = `${sign}${qty}d${sides}${rest}`;
         let cleanRest = rest.replace(new RegExp(`min${sides}`, 'i'), '');
         const maxDice = `${qty}d${sides}min${sides}${cleanRest}`;
-        return `{${baseDice}, ${maxDice}}${explodeMod}`;
+        return `{${baseDice}, ${maxDice}}${explodeMod}*2`;
       } else {
         // Normal crit: 4d6!3*2 (each exploding die explodes into 2 dice)
         const totalQty = qty * 2;

@@ -1495,7 +1495,6 @@ function convertToRPGRoller(){
           const button = $(this);
           if(button.hasClass('avtt-roll-formula-button')){
              rollData = DiceRoll.fromSlashCommand(button.attr('data-slash-command'))
-             rollData.modifier = `${Math.sign(rollData.calculatedConstant) == 1 ? '+' : ''}${rollData.calculatedConstant}`
           }
           else{
             rollData = getRollData(button[0])
@@ -1739,12 +1738,10 @@ function inject_dice_roll(element, clear=true) {
       e.preventDefault();
       let rollData = {}
       if($(this).hasClass('avtt-roll-formula-button')){
-         rollData = DiceRoll.fromSlashCommand($(this).attr('data-slash-command'))
-         rollData.modifier = `${Math.sign(rollData.calculatedConstant) == 1 ? '+' : ''}${rollData.calculatedConstant}`
-         rollData.rollTitle = rollData.action;
+        rollData = DiceRoll.fromSlashCommand($(this).attr('data-slash-command'))
       }
       else{
-         rollData = getRollData(this)
+        rollData = getRollData(this)
       }
       
       
@@ -2441,7 +2438,7 @@ function observe_character_sheet_changes(documentToObserve) {
         let rollData = {} 
         if($(this).hasClass('avtt-roll-formula-button')){
            rollData = DiceRoll.fromSlashCommand($(this).attr('data-slash-command'))
-           rollData.modifier = `${Math.sign(rollData.calculatedConstant) == 1 ? '+' : ''}${rollData.calculatedConstant}`
+
         }
         else{
            rollData = getRollData(this)
