@@ -1741,6 +1741,7 @@ function inject_dice_roll(element, clear=true) {
       if($(this).hasClass('avtt-roll-formula-button')){
          rollData = DiceRoll.fromSlashCommand($(this).attr('data-slash-command'))
          rollData.modifier = `${Math.sign(rollData.calculatedConstant) == 1 ? '+' : ''}${rollData.calculatedConstant}`
+         rollData.rollTitle = rollData.action;
       }
       else{
          rollData = getRollData(this)

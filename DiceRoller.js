@@ -235,7 +235,11 @@ class DiceRoll {
         } else if (slashCommand.startsWith("/heal")) {
             rollType = "heal";
         }
-        return new DiceRoll(expression, action, rollType, name, avatarUrl, entityType, entityId, sendToOverride, damageType, spellSave);
+        const rollData = new DiceRoll(expression, action, rollType, name, avatarUrl, entityType, entityId, sendToOverride, damageType, spellSave);
+        rollData.rollTitle = `${rollData.action?.toUpperCase() ?? "CUSTOM"}`;
+        rollData.modifier = `${Math.sign(rollData.calculatedConstant) == 1 ? '+' : ''}${rollData.calculatedConstant}`
+        
+        return rollData;
     }
 }
 function splitTopLevelTerms(expression) {
