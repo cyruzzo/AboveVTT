@@ -1221,22 +1221,8 @@ class DiceRoller {
             const supportedDieTypes = ["d4", "d6", "d8", "d10", "d12", "d20", "d100"];
 
             let roll = new rpgDiceRoller.DiceRoll(expression);
-
-            // rpgDiceRoller doesn't give us the notation of each roll so we're going to do our best to find and match them as we go
-            let choppedExpression = expression;
-            let notationList = [];
-            for (let i = 0; i < roll.rolls.length; i++) {
-                let currentRoll = roll.rolls[i];
-                if (typeof currentRoll === "string") {
-                    let idx = choppedExpression.indexOf(currentRoll);
-                    let previousNotation = choppedExpression.slice(0, idx);
-                    notationList.push(previousNotation);
-                    notationList.push(currentRoll);
-                    choppedExpression = choppedExpression.slice(idx + currentRoll.length);
-                }
-            }
-            noisy_log("chopped expression", choppedExpression)
-            notationList.push(choppedExpression); // our last notation will still be here so add it to the list
+            let parsed = rpgDiceRoller.Parser.parse(expression);
+            let notationList = parsed.map(p => (typeof p === 'object' && p.notation ? p.notation : (typeof p === 'number' || typeof p === 'string' ? `${p}` : '')));
 
             if (roll.rolls.length != notationList.length) {
                 console.warn(`Failed to convert expression to DDB roll; expression ${expression}`);
@@ -1292,6 +1278,30 @@ class DiceRoller {
                     modifiers: Array.from(die.modifiers ?? [])
                 }];
             };
+            const formatSubGroup = (node) => {
+                if (!node) return '';
+                if (node.rolls !== undefined) {
+                    return node.rolls.map(dieDisplayToken).join('+');
+                }
+                if (Array.isArray(node.results)) {
+                    let parts = [];
+                    node.results.forEach(item => {
+                        if (item && item.rolls !== undefined) {
+                            parts.push(item.rolls.map(dieDisplayToken).join('+'));
+                        } else if (typeof item === 'object' && item.results !== undefined) {
+                            parts.push(formatSubGroup(item));
+                        } else if (typeof item === 'string' || typeof item === 'number') {
+                            parts.push(item);
+                        }
+                    });
+                    return parts.join('');
+                }
+                if (typeof node === 'string' || typeof node === 'number') {
+                    return `${node}`;
+                }
+                return '';
+            };
+
             for (let i = 0; i < roll.rolls.length; i++) {
                 let currentRoll = roll.rolls[i];
                 if (typeof currentRoll === "object") {
@@ -1309,7 +1319,6 @@ class DiceRoller {
                         };
                         collectGroupedResults(currentRoll);
 
-                        const groupParts = [];
                         for (let groupIndex = 0; groupIndex < groupedResults.length; groupIndex++) {
                             const groupNotation = groupedNotations[groupIndex];
                             const groupDiceType = supportedDieTypes.find(dt => new RegExp(`${dt}(\\D|$)`, "i").test(groupNotation));
@@ -1326,10 +1335,13 @@ class DiceRoller {
                                 dieType: groupDiceType,
                                 operation: 0
                             });
-
-                            const groupTokens = groupedResults[groupIndex].map(dieDisplayToken);
-                            groupParts.push(groupTokens.length > 1 ? `[${groupTokens.join(', ')}]` : groupTokens[0]);
                         }
+
+                        const groupParts = (currentRoll.results || [currentRoll]).map(sub => {
+                            const isDropped = sub.modifiers?.has('drop') || sub.useInTotal === false;
+                            const dropFlag = isDropped ? 'd' : '';
+                            return `[${formatSubGroup(sub)}]${dropFlag}`;
+                        });
                         displayParts.push(groupParts.length > 1 ? `(${groupParts.join(', ')})` : groupParts[0]);
                         convertedExpression.push(currentRoll.value);
                         continue;
@@ -1338,7 +1350,7 @@ class DiceRoller {
                     let currentDieType = supportedDieTypes.find(dt => {
                         const regex = new RegExp(`${dt}(\\D|$)`, "i");
                         return currentNotation.match(regex);
-                    }); // we do it this way instead of splitting the string so we can easily clean up things like d20kh1, etc. It's less clever, but it avoids any parsing errors
+                    }); 
                     if (!supportedDieTypes.includes(currentDieType)) {
                         console.warn(`found an unsupported dieType ${currentNotation}`);
                         console.groupEnd()
@@ -1346,10 +1358,10 @@ class DiceRoller {
                     }
                     if (currentNotation.includes("kh") || currentNotation.includes("kl")) {
                         let cleanerString = currentRoll.toString()
-                            .replace("[", "(")    // swap square brackets with parenthesis
-                            .replace("]", ")")    // swap square brackets with parenthesis
-                            .replace(/d/g, "")     // remove all drop notations
-                            .replace(/\s+/g, ''); // remove all whitespace
+                            .replace("[", "(")    
+                            .replace("]", ")")    
+                            .replace(/d/g, "")// remove all drop notations
+                            .replace(/\s+/g, ''); 
                         convertedExpression.push(cleanerString);
                     } else {
                         convertedExpression.push(currentRoll.value);
@@ -1365,8 +1377,9 @@ class DiceRoller {
                         "operation": 0
                     })
 
+                    const isKeep = currentNotation.includes("kh") || currentNotation.includes("kl");
                     const tokens = currentRoll.rolls.map(dieDisplayToken);
-                    displayParts.push(tokens.length > 1 ? `[${tokens.join(', ')}]` : tokens[0]);
+                    displayParts.push(isKeep ? `[${tokens.join(', ')}]` : tokens.join(' + '));
                 } else if (typeof currentRoll === "string") {
                     convertedExpression.push(currentRoll);
                     displayParts.push(currentRoll);
