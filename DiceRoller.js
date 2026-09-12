@@ -1,12 +1,12 @@
 /** DiceRoller.js - DDB dice rolling functions */
 
-const allDiceRegex = /\d+d(?:100|20|12|10|8|6|4)((?:kh|kl|ro(<|<=|>|>=|=)|min)\d+|!{1,2})*|^\d+|^([-+]?\d+)+$/gi; // ([numbers]d[diceTypes]kh[numbers], explode, or compound explode) or [numbers]d[diceTypes]
-const rpgDiceRegex = /\d+d(?:\d+)((?:kh|kl|ro(<|<=|>|>=|=)|min)\d+|!(?:<|<=|>|>=|=)\d+|!(?!\!))*|^\d+|^([-+]?\d+)+$/gi; 
+const allDiceRegex = /\d+d(?:100|20|12|10|8|6|4)((?:kh|kl|ro(?:<|<=|>|>=|=)|min)\d+|!(?:\d*(?:[<>]=?|=)\d+|\d+)?|!{1,2})*|^\d+|^([-+]?\d+)+$/gi; // ([numbers]d[diceTypes]kh[numbers], explode, or compound explode) or [numbers]d[diceTypes]
+const rpgDiceRegex = /\d+d(?:\d+)((?:kh|kl|ro(?:<|<=|>|>=|=)|min)\d+|!(?:\d*(?:[<>]=?|=)\d+|\d+)?|!(?!\!))*|^\d+|^([-+]?\d+)+$/gi; 
 const validExpressionRegex = /^(?!.*!!)[dkhlromin<=>!\s\d+\-\(\){},]+$/gi; // any of these [d, kh, kl, explode, spaces, numbers, +, -, grouped dice separators]
 const validModifierSubstitutions = /(?<!\w)(str|dex|con|int|wis|cha|pb)(?!\w)/gi // case-insensitive shorthand for stat modifiers as long as there are no letters before or after the match. For example `int` and `STR` would match, but `mint` or `strong` would not match.
 const diceRollCommandRegex = /^\/(r|roll|save|hit|dmg|skill|heal)\s/gi; // matches only the slash command. EG: `/r 1d20` would only match `/r`
 const multiDiceRollCommandRegex = /\/(ir|r|roll|save|hit|dmg|skill|heal) [^\/]*/gi; // globally matches the full command. EG: `note: /r 1d20 /r2d4` would find ['/r 1d20', '/r2d4']
-const allowedExpressionCharactersRegex = /^(?!.*!!)(d\d|\d+d\d+|kh\d+|kl\d+|ro(<|<=|>|>=|=)\d+|min\d+|!(?:<|<=|>|>=|=)\d+|!(?!\!)|\d+|\s+|[+-]\s*STR|[+-]\s*DEX|[+-]\s*CON|[+-]\s*INT|[+-]\s*WIS|[+-]\s*CHA|[+-]\s*PB|[{},]|\+|-)*/gi; // this is explicitly different from validExpressionRegex. This matches an expression at the beginning of a string while validExpressionRegex requires the entire string to match. +/- at the end so it includes modifiers first
+const allowedExpressionCharactersRegex = /^(?!.*!!)(d\d|\d+d\d+|kh\d+|kl\d+|ro(?:<|<=|>|>=|=)\d+|min\d+|!(?:\d*(?:[<>]=?|=)\d+|\d+)?|!(?!\!)|\d+|\s+|[+-]\s*STR|[+-]\s*DEX|[+-]\s*CON|[+-]\s*INT|[+-]\s*WIS|[+-]\s*CHA|[+-]\s*PB|[{},]|\+|-)*/gi; // this is explicitly different from validExpressionRegex. This matches an expression at the beginning of a string while validExpressionRegex requires the entire string to match. +/- at the end so it includes modifiers first
 
 class DiceRoll {
     // `${action}: ${rollType}` is how the gamelog message is displayed
@@ -246,7 +246,7 @@ function getRollData(rollButton){
     let damageType = window.diceRoller.getDamageType(rollButton);
     if($rollButton.find('.ddbc-damage__value, .ct-spell-caster__modifier-amount').length>0){
       expression = $rollButton.find('.ddbc-damage__value, .ct-spell-caster__modifier-amount').text();
-      const diceModifier = `(?:min\\d+|ro(?:[<>=]{1,2})?\\d+|k[hl]\\d+|!(?:[<>=]{1,2})?\\d*)`;
+      const diceModifier = `(?:min\\d+|ro(?:[<>=]{1,2})?\\d+|k[hl]\\d+|!(?:\\d*(?:[<>=]{1,2})?\\d*)*)`;
       const singleDiceTerm = `\\d+d\\d+${diceModifier}*`;
       const groupDiceTerm = `\\{[^{}]+?\\}${diceModifier}*`;
       const rollFormula = `(?:[+-]?\\s*(?:${singleDiceTerm}|${groupDiceTerm})\\s*)(?:\\s*[+-]\\s*(?:${singleDiceTerm}|${groupDiceTerm}|\\d+))*`;
@@ -1297,7 +1297,7 @@ class DiceRoller {
                     let currentNotation = notationList[i];
 
                     if (currentRoll.isRollGroup === true) {
-                        const groupedNotations = currentNotation.match(/\d*d\d+(?:(?:kh|kl|ro(?:<|<=|>|>=|=)|min)\d+|!(?:<|<=|>|>=|=)\d+|!)*/gi) || [];
+                        const groupedNotations = currentNotation.match(/\d*d\d+(?:(?:kh|kl|ro(?:<|<=|>|>=|=)|min)\d+|!(?:\d*(?:[<>]=?|=)\d+|\d+)?|!)*/gi) || [];
                         const groupedResults = [];
                         const collectGroupedResults = (node) => {
                             if (node?.rolls !== undefined) {
