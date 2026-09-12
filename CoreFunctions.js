@@ -1008,9 +1008,14 @@ function apply_avtt_roll_button_markup(html){
   // to account for all the nuances of DNDB dice notation.
   // numbers can be swapped for any number in the following comment
   // matches "1d10", " 1d10 ", "1d10+1", " 1d10+1 ", "1d10 + 1" " 1d10 + 1 "
-  const strongRoll = /(\s*)(<strong>)(([+-]?\s?\d+d\d+(min\d+|ro[><=]?|kh\d+|kl\d+)?\s?)+\s?([+-]\s?[0-9]+)?)(<\/strong>)/gi
-  const damageRollRegexBracket = /\s*\((([+-]?\s?(\d+d\d+(min\d+|ro([<>]=?|=)\d+|kh\d+|kl\d+)*\s?))+\s?([+-]\s?[0-9]+)?)\)/gi
-  const damageRollRegex = /\s*([:\s>]|^)(([+-]?\s?(\d+d\d+(min\d+|ro([<>]=?|=)\d+|kh\d+|kl\d+)*\s?))+\s?([+-]\s?[0-9]+)?)([\.\):\s<,]|$)/gi
+  const diceModifier = `(?:min\\d+|ro(?:[<>=]{1,2})?\\d+|k[hl]\\d+|!(?:\\d*(?:[<>=]{1,2})?\\d*)*)`;
+  const singleDiceTerm = `\\d+d\\d+${diceModifier}*`;
+  const groupDiceTerm = `\\{[^{}]+?\\}${diceModifier}*`;
+  const rollFormula = `(?:[+-]?\\s*(?:${singleDiceTerm}|${groupDiceTerm})\\s*)(?:\\s*[+-]\\s*(?:${singleDiceTerm}|${groupDiceTerm}|\\d+))*`;
+
+  const strongRoll = new RegExp(`(\\s*)(<strong>)(${rollFormula})(<\\/strong>)`, 'gi');
+  const damageRollRegexBracket = new RegExp(`\\s*\\((${rollFormula})\\)`, 'gi');
+  const damageRollRegex = new RegExp(`\\s*([:\\s>]|^)(${rollFormula})([\\.\\):\\s<,]|\$)`, 'gi');
   const hitRollRegexBracket = /\s*(?<![0-9]+d[0-9]+)(\()([+-]\s?[0-9]+)(\))/gi
   const hitRollRegex = /\s*(?<!(?:[0-9]+d)?[0-9]+)([:\s>]|^)([+-]\s?[0-9]+)([:\s<,]|$)/gi
   const dRollRegex = /\s*([\s>]|^)(\s?d[0-9]+)([^+-])/gi
@@ -1019,12 +1024,12 @@ function apply_avtt_roll_button_markup(html){
 
   const updated = html
     .replaceAll(/[\u200B-\u200D\uFEFF]/gi, '')
-    .replaceAll(/(\d+d\d+(min\d+|k[hl]\d+)*ro)&lt;/gi, '$1<')
-    .replaceAll(/(\d+d\d+(min\d+|k[hl]\d+)*ro)&gt;/gi, '$1>')
+    .replaceAll(/(ro|!\d*)&lt;/gi, '$1<')
+    .replaceAll(/(ro|!\d*)&gt;/gi, '$1>')
     .replaceAll(strongRoll, `$1$3`)
     .replaceAll(dashToMinus, `$1-$2`)
     .replaceAll(damageRollRegexBracket, ` <button data-exp='$1' data-mod='' data-rolltype='damage' data-actiontype='${actionType}' class='avtt-roll-button' title='${actionType}'>($1)</button>`)
-    .replaceAll(damageRollRegex, ` $1<button data-exp='$2' data-mod='' data-rolltype='damage' data-actiontype='${actionType}' class='avtt-roll-button' title='${actionType}'>$2</button>$8`)
+    .replaceAll(damageRollRegex, ` $1<button data-exp='$2' data-mod='' data-rolltype='damage' data-actiontype='${actionType}' class='avtt-roll-button' title='${actionType}'>$2</button>$3`)
     .replaceAll(hitRollRegexBracket, ` <button data-exp='1d20' data-mod='$2' data-rolltype='to hit' data-actiontype=${actionType} class='avtt-roll-button' title='${actionType}'>$1$2$3</button>`)
     .replaceAll(hitRollRegex, ` $1<button data-exp='1d20' data-mod='$2' data-rolltype='to hit' data-actiontype=${actionType} class='avtt-roll-button' title='${actionType}'>$2</button>$3`)
     .replaceAll(dRollRegex, `$1<button data-exp='1$2' data-mod='' data-rolltype='to hit' data-actiontype=${actionType} class='avtt-roll-button' title='${actionType}'>$2</button>$3`)
@@ -1060,7 +1065,7 @@ function apply_avtt_slash_command_button(sourceElement, targetElement){
 /* The character sheet snippets will format partial dice rolls due to snippet formulas. Eg <strong>1d8</strong>+5
    This function unwraps those roll formulas to ensure proper dice roll injection. */
 function unwrap_roll_formulas(sheetElement){
-  const diceTerm = String.raw`\d+d\d+(?:(?:min\d+)|(?:ro(?:[<>=]{1,2})?\d+)|(?:k[hl]\d+))*`;
+  const diceTerm = String.raw`(?:\d+d\d+(?:(?:min\d+)|(?:ro(?:[<>=]{1,2})?\d+)|(?:k[hl]\d+)|(?:!(?:\d*(?:[<>=]{1,2})?\d*)*))*|\{[^{}]+?\}(?:(?:min\d+)|(?:ro(?:[<>=]{1,2})?\d+)|(?:k[hl]\d+)|(?:!(?:\d*(?:[<>=]{1,2})?\d*)*))*)`;
   const rollFragment = new RegExp(String.raw`^\s*(?:${diceTerm}(?:\s*[+\-−]\s*(?:${diceTerm}|\d+))*|[+\-−]\s*\d+)\s*$`, 'i');
   const inlineFormattingElements = sheetElement.querySelectorAll('strong, b, em, i, span, u, mark');
 
