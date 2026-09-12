@@ -1309,6 +1309,7 @@ class DiceRoller {
                         };
                         collectGroupedResults(currentRoll);
 
+                        const groupParts = [];
                         for (let groupIndex = 0; groupIndex < groupedResults.length; groupIndex++) {
                             const groupNotation = groupedNotations[groupIndex];
                             const groupDiceType = supportedDieTypes.find(dt => new RegExp(`${dt}(\\D|$)`, "i").test(groupNotation));
@@ -1327,8 +1328,9 @@ class DiceRoller {
                             });
 
                             const groupTokens = groupedResults[groupIndex].map(dieDisplayToken);
-                            displayParts.push(groupTokens.length > 1 ? `[${groupTokens.join(', ')}]` : groupTokens[0]);
+                            groupParts.push(groupTokens.length > 1 ? `[${groupTokens.join(', ')}]` : groupTokens[0]);
                         }
+                        displayParts.push(groupParts.length > 1 ? `(${groupParts.join(', ')})` : groupParts[0]);
                         convertedExpression.push(currentRoll.value);
                         continue;
                     }
