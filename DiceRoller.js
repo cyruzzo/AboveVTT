@@ -1,12 +1,12 @@
 /** DiceRoller.js - DDB dice rolling functions */
 
-const allDiceRegex = /\d+d(?:100|20|12|10|8|6|4)((?:kh|kl|ro(<|<=|>|>=|=)|min)\d+)*|^\d+|^([-+]?\d+)+$/gi; // ([numbers]d[diceTypes]kh[numbers] or [numbers]d[diceTypes]kl[numbers]) or [numbers]d[diceTypes]
-const rpgDiceRegex = /\d+d(?:\d+)((?:kh|kl|ro(<|<=|>|>=|=)|min)\d+)*|^\d+|^([-+]?\d+)+$/gi; 
-const validExpressionRegex = /^[dkhlromin<=>\s\d+\-\(\){},]+$/gi; // any of these [d, kh, kl, spaces, numbers, +, -, grouped dice separators] // Should we support [*, /] ?
+const allDiceRegex = /\d+d(?:100|20|12|10|8|6|4)((?:kh|kl|ro(<|<=|>|>=|=)|min)\d+|!{1,2})*|^\d+|^([-+]?\d+)+$/gi; // ([numbers]d[diceTypes]kh[numbers], explode, or compound explode) or [numbers]d[diceTypes]
+const rpgDiceRegex = /\d+d(?:\d+)((?:kh|kl|ro(<|<=|>|>=|=)|min)\d+|!(?:<|<=|>|>=|=)\d+|!(?!\!))*|^\d+|^([-+]?\d+)+$/gi; 
+const validExpressionRegex = /^(?!.*!!)[dkhlromin<=>!\s\d+\-\(\){},]+$/gi; // any of these [d, kh, kl, explode, spaces, numbers, +, -, grouped dice separators]
 const validModifierSubstitutions = /(?<!\w)(str|dex|con|int|wis|cha|pb)(?!\w)/gi // case-insensitive shorthand for stat modifiers as long as there are no letters before or after the match. For example `int` and `STR` would match, but `mint` or `strong` would not match.
 const diceRollCommandRegex = /^\/(r|roll|save|hit|dmg|skill|heal)\s/gi; // matches only the slash command. EG: `/r 1d20` would only match `/r`
 const multiDiceRollCommandRegex = /\/(ir|r|roll|save|hit|dmg|skill|heal) [^\/]*/gi; // globally matches the full command. EG: `note: /r 1d20 /r2d4` would find ['/r 1d20', '/r2d4']
-const allowedExpressionCharactersRegex = /^(d\d|\d+d\d+|kh\d+|kl\d+|ro(<|<=|>|>=|=)\d+|min\d+|\d+|\s+|[+-]\s*STR|[+-]\s*DEX|[+-]\s*CON|[+-]\s*INT|[+-]\s*WIS|[+-]\s*CHA|[+-]\s*PB|[{},]|\+|-)*/gi; // this is explicitly different from validExpressionRegex. This matches an expression at the beginning of a string while validExpressionRegex requires the entire string to match. +/- at the end so it includes modifiers first
+const allowedExpressionCharactersRegex = /^(?!.*!!)(d\d|\d+d\d+|kh\d+|kl\d+|ro(<|<=|>|>=|=)\d+|min\d+|!(?:<|<=|>|>=|=)\d+|!(?!\!)|\d+|\s+|[+-]\s*STR|[+-]\s*DEX|[+-]\s*CON|[+-]\s*INT|[+-]\s*WIS|[+-]\s*CHA|[+-]\s*PB|[{},]|\+|-)*/gi; // this is explicitly different from validExpressionRegex. This matches an expression at the beginning of a string while validExpressionRegex requires the entire string to match. +/- at the end so it includes modifiers first
 
 class DiceRoll {
     // `${action}: ${rollType}` is how the gamelog message is displayed
@@ -88,6 +88,12 @@ class DiceRoll {
             return true; // min requires setting a minimum result
         }
 
+        if (this.expression.includes("!") || this.expression.includes("{")) {
+            return true; // exploding dice
+        }
+        if (this.expression.includes("{")) {
+            return true; // grouped dice
+        }
         if (this.expression.indexOf(this.diceExpressions[0]) !== 0) {
             return true; // 1-1d4 messes with the parsing that DDB does, but 1d4-1 is just fine
         }
@@ -1236,14 +1242,58 @@ class DiceRoller {
             let convertedDice = [];       // a list of objects in the format that DDB expects
             let allValues = [];           // all the rolled values
             let convertedExpression = []; // a list of strings that we'll concat for a string representation of the final math being done
+            let displayParts = [];        // per-group display tokens used to build a human readable breakdown, eg "(1ro, 3) + 15"
             let constantsTotal = 0;       // all the constants added together
+            const dieDisplayToken = (die) => {
+                if (die.modifiers?.has('re-roll-once') || die.modifiers?.has('re-roll'))
+                    return `(${die.initialValue}ro, ${die.value})`;
+                const flag = (die.modifierFlags || '').replace(/[\^v]/g, '');
+                return `${die.value}${flag}`;
+            };
+            const convertDie = (die, dieType) => {
+                const rerollModifier = die.modifiers?.has('re-roll-once') ? 're-roll-once' : die.modifiers?.has('re-roll') ? 're-roll' : undefined;
+                if (rerollModifier) {
+                    allValues.push(`${die.initialValue}ro`);
+                    allValues.push(die.value);
+                    return [
+                        {
+                            dieType,
+                            dieValue: die.initialValue,
+                            initialValue: die.initialValue,
+                            calculationValue: die.initialValue,
+                            useInTotal: false,
+                            modifierFlags: die.modifierFlags,
+                            modifiers: [rerollModifier]
+                        },
+                        {
+                            dieType,
+                            dieValue: die.value,
+                            initialValue: die.value,
+                            calculationValue: die.calculationValue,
+                            useInTotal: die.useInTotal,
+                            modifierFlags: '',
+                            modifiers: []
+                        }
+                    ];
+                }
+                allValues.push(die.value);
+                return [{
+                    dieType,
+                    dieValue: die.value,
+                    initialValue: die.initialValue,
+                    calculationValue: die.calculationValue,
+                    useInTotal: die.useInTotal,
+                    modifierFlags: die.modifierFlags,
+                    modifiers: Array.from(die.modifiers ?? [])
+                }];
+            };
             for (let i = 0; i < roll.rolls.length; i++) {
                 let currentRoll = roll.rolls[i];
                 if (typeof currentRoll === "object") {
                     let currentNotation = notationList[i];
 
                     if (currentRoll.isRollGroup === true) {
-                        const groupedNotations = currentNotation.match(/\d*d\d+(?:(?:kh|kl|ro(?:<|<=|>|>=|=)|min)\d+)*/gi) || [];
+                        const groupedNotations = currentNotation.match(/\d*d\d+(?:(?:kh|kl|ro(?:<|<=|>|>=|=)|min)\d+|!(?:<|<=|>|>=|=)\d+|!)*/gi) || [];
                         const groupedResults = [];
                         const collectGroupedResults = (node) => {
                             if (node?.rolls !== undefined) {
@@ -1263,18 +1313,16 @@ class DiceRoller {
                                 return false;
                             }
 
-                            const groupDice = groupedResults[groupIndex].map(die => {
-                                if (die.modifiers?.has('re-roll-once'))
-                                    allValues.push(`${die.initialValue}ro`);
-                                allValues.push(die.value);
-                                return { dieType: groupDiceType, dieValue: die.value };
-                            });
+                            const groupDice = groupedResults[groupIndex].flatMap(die => convertDie(die, groupDiceType));
                             convertedDice.push({
                                 dice: groupDice,
                                 count: groupDice.length,
                                 dieType: groupDiceType,
                                 operation: 0
                             });
+
+                            const groupTokens = groupedResults[groupIndex].map(dieDisplayToken);
+                            displayParts.push(groupTokens.length > 1 ? `[${groupTokens.join(', ')}]` : groupTokens[0]);
                         }
                         convertedExpression.push(currentRoll.value);
                         continue;
@@ -1301,14 +1349,7 @@ class DiceRoller {
                     }
 
 
-                    let dice = currentRoll.rolls.map(d => {
-                        if(d.modifiers.has('re-roll-once')){
-                            allValues.push(`${d.initialValue}ro`);
-                        }
-                        allValues.push(d.value);
-                        console.groupEnd()
-                        return { dieType: currentDieType, dieValue: d.value };
-                    });
+                    let dice = currentRoll.rolls.flatMap(d => convertDie(d, currentDieType));
 
                     convertedDice.push({
                         "dice": dice,
@@ -1316,10 +1357,15 @@ class DiceRoller {
                         "dieType": currentDieType,
                         "operation": 0
                     })
+
+                    const tokens = currentRoll.rolls.map(dieDisplayToken);
+                    displayParts.push(tokens.length > 1 ? `[${tokens.join(', ')}]` : tokens[0]);
                 } else if (typeof currentRoll === "string") {
                     convertedExpression.push(currentRoll);
+                    displayParts.push(currentRoll);
                 } else if (typeof currentRoll === "number") {
                     convertedExpression.push(currentRoll);
+                    displayParts.push(currentRoll);
                     if (i > 0) {
                         if (convertedExpression[i - 1] == "-") {
                             constantsTotal -= currentRoll;
@@ -1377,7 +1423,8 @@ class DiceRoller {
                                 constant: constantsTotal,
                                 values: allValues,
                                 total: roll.total,
-                                text: convertedExpression.join("")
+                                // eg "(1ro, 3) + 15" for a rerolled die plus a constant; total is already shown separately so it's omitted here
+                                text: displayParts.reduce((text, part) => (part === '+' || part === '-') ? `${text} ${part} ` : `${text}${part}`, '').trim()
                             }
                         }
                     ]
@@ -1576,7 +1623,7 @@ class DiceRoller {
                     }
                     matchedValues[diceType] = matchedValues[diceType].concat(valuesToMatch.slice(0, numberOfDice));
                     valuesToMatch = valuesToMatch.slice(numberOfDice);
-                });
+                }); 
 
                 // 2. replace each dice expression in #pendingDiceRoll.expression with the corresponding dice roll results
                 // For example: "2d20kh1+1d4-3" with rolled results of [9, 18, 2] will turn into "18+2-3"
@@ -1642,11 +1689,7 @@ class DiceRoller {
                 r.diceNotationStr = pendingDiceRoll.expression; 
                 r.diceNotation.constant = pendingDiceRoll.calculatedConstant;
                 r.result.constant = pendingDiceRoll.calculatedConstant;
-                r.result.text = replacedExpression;
                 r.result.total = calculatedTotal;
-                if (pendingDiceRoll.isComplex()) {
-                    r.result.values = replacedValues;
-                }
                 if (pendingDiceRoll.rollType) {
                     r.rollType = pendingDiceRoll.rollType;
                 }
@@ -1657,8 +1700,8 @@ class DiceRoller {
                     r.rollKind = "disadvantage";
                 }
                 pendingDiceRoll.resultTotal = calculatedTotal;
-                pendingDiceRoll.resultValues = replacedValues;
-                pendingDiceRoll.expressionResult = replacedExpression;
+                pendingDiceRoll.resultValues = r.result.values;
+                pendingDiceRoll.expressionResult = r.result.text;
             });
             if(pendingCritRange != undefined){
                 alteredMessage.data.critRange = pendingCritRange;
@@ -1682,18 +1725,21 @@ class DiceRoller {
             // We manipulated this enough that DDB won't properly display the formula.
             // We'll look for this later to know that we should swap some HTML after this render
             ddbMessage.avttExpression = pendingDiceRoll.expression;
-            ddbMessage.avttExpressionResult = pendingDiceRoll.expressionResult;
+            if (pendingDiceRoll.expressionResult !== undefined)
+                ddbMessage.avttExpressionResult = pendingDiceRoll.expressionResult;
             noisy_log("DiceRoll ddbMessage.avttExpression: ", ddbMessage.avttExpression);
         }
         if((critAttackAction != undefined && pendingCritType == 3) || pendingCrit == 3){
             ddbMessage.avttExpression = `2(${pendingDiceRoll.expression})`;
-            ddbMessage.avttExpressionResult = `2(${pendingDiceRoll.expressionResult})`;
+            if (pendingDiceRoll.expressionResult !== undefined)
+                ddbMessage.avttExpressionResult = `2(${pendingDiceRoll.expressionResult})`;
         }
 
         if(ddbMessage.avttExpression != undefined){
             const removeLeadTrailZero = /^0+(\+|(\-))|[+-]0+$/gi;
             ddbMessage.avttExpression = ddbMessage.avttExpression.replaceAll(removeLeadTrailZero, '$2');
-            ddbMessage.avttExpressionResult = ddbMessage.avttExpressionResult.replaceAll(removeLeadTrailZero, '$2');
+            if (ddbMessage.avttExpressionResult !== undefined)
+                ddbMessage.avttExpressionResult = ddbMessage.avttExpressionResult.replaceAll(removeLeadTrailZero, '$2');
         }
 
         ddbMessage.avttSpellSave = pendingSpellSave;

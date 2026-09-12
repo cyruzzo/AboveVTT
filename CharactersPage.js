@@ -3423,7 +3423,10 @@ function observe_character_sheet_changes(documentToObserve) {
               send_movement_speeds(documentToObserve, mutationTarget);
             } else if(firstAddedNode.hasClass('ct-extra-row') || (firstAddedNode.hasClass('ct-content-group') && $('.ct-extra-row').length>0)){
               debounce_add_extras();
-            } else if (firstAddedNode.is('[class*="-Line-Notation"]') && mutationTarget.closest("[data-avtt-expression]").length>0){
+            } else if (mutationTarget.closest("[data-avtt-expression]").length>0 && (mutation.addedNodes.length > 0 && Array.from(mutation.addedNodes).some(node => {
+              const addedNode = $(node);
+              return addedNode.is('[class*="-Line-Notation"]') || addedNode.find('[class*="-Line-Notation"]').length > 0;
+            }))){
               replace_gamelog_message_expressions(mutationTarget.closest("[data-avtt-expression]"))
             }
 
