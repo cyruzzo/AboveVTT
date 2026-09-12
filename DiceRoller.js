@@ -1,12 +1,12 @@
 /** DiceRoller.js - DDB dice rolling functions */
 
-const allDiceRegex = /\d+d(?:100|20|12|10|8|6|4)((?:kh|kl|ro(?:<|<=|>|>=|=)|min)\d+|!(?:\d*(?:[<>]=?|=)\d+|\d+)?|!{1,2})*|^\d+|^([-+]?\d+)+$/gi; // ([numbers]d[diceTypes]kh[numbers], explode, or compound explode) or [numbers]d[diceTypes]
-const rpgDiceRegex = /\d+d(?:\d+)((?:kh|kl|ro(?:<|<=|>|>=|=)|min)\d+|!(?:\d*(?:[<>]=?|=)\d+|\d+)?|!(?!\!))*|^\d+|^([-+]?\d+)+$/gi; 
-const validExpressionRegex = /^(?!.*!!)[dkhlromin<=>!\s\d+\-\(\){},]+$/gi; // any of these [d, kh, kl, explode, spaces, numbers, +, -, grouped dice separators]
+const allDiceRegex = /\d+d(?:100|20|12|10|8|6|4)((?:kh|kl|ro(?:<|<=|>|>=|=)|min)\d+|!(?:\d*(?:[<>]=?|=)\d+|\d+)?(?:[*x]\d+)?|!{1,2})*|^\d+|^([-+]?\d+)+$/gi; // ([numbers]d[diceTypes]kh[numbers], explode, or compound explode) or [numbers]d[diceTypes]
+const rpgDiceRegex = /\d+d(?:\d+)((?:kh|kl|ro(?:<|<=|>|>=|=)|min)\d+|!(?:\d*(?:[<>]=?|=)\d+|\d+)?(?:[*x]\d+)?|!(?!\!))*|^\d+|^([-+]?\d+)+$/gi; 
+const validExpressionRegex = /^(?!.*!!)[dkhlromin<=>!\s\d+\-\(\){},*x]+$/gi; // any of these [d, kh, kl, explode, spaces, numbers, +, -, grouped dice separators]
 const validModifierSubstitutions = /(?<!\w)(str|dex|con|int|wis|cha|pb)(?!\w)/gi // case-insensitive shorthand for stat modifiers as long as there are no letters before or after the match. For example `int` and `STR` would match, but `mint` or `strong` would not match.
 const diceRollCommandRegex = /^\/(r|roll|save|hit|dmg|skill|heal)\s/gi; // matches only the slash command. EG: `/r 1d20` would only match `/r`
 const multiDiceRollCommandRegex = /\/(ir|r|roll|save|hit|dmg|skill|heal) [^\/]*/gi; // globally matches the full command. EG: `note: /r 1d20 /r2d4` would find ['/r 1d20', '/r2d4']
-const allowedExpressionCharactersRegex = /^(?!.*!!)(d\d|\d+d\d+|kh\d+|kl\d+|ro(?:<|<=|>|>=|=)\d+|min\d+|!(?:\d*(?:[<>]=?|=)\d+|\d+)?|!(?!\!)|\d+|\s+|[+-]\s*STR|[+-]\s*DEX|[+-]\s*CON|[+-]\s*INT|[+-]\s*WIS|[+-]\s*CHA|[+-]\s*PB|[{},]|\+|-)*/gi; // this is explicitly different from validExpressionRegex. This matches an expression at the beginning of a string while validExpressionRegex requires the entire string to match. +/- at the end so it includes modifiers first
+const allowedExpressionCharactersRegex = /^(?!.*!!)(d\d|\d+d\d+|kh\d+|kl\d+|ro(?:<|<=|>|>=|=)\d+|min\d+|!(?:\d*(?:[<>]=?|=)\d+|\d+)?(?:[*x]\d+)?|!(?!\!)|\d+|\s+|[+-]\s*STR|[+-]\s*DEX|[+-]\s*CON|[+-]\s*INT|[+-]\s*WIS|[+-]\s*CHA|[+-]\s*PB|[{},*x]|\+|-)*/gi; // this is explicitly different from validExpressionRegex. This matches an expression at the beginning of a string while validExpressionRegex requires the entire string to match. +/- at the end so it includes modifiers first
 
 class DiceRoll {
     // `${action}: ${rollType}` is how the gamelog message is displayed
@@ -238,6 +238,118 @@ class DiceRoll {
         return new DiceRoll(expression, action, rollType, name, avatarUrl, entityType, entityId, sendToOverride, damageType, spellSave);
     }
 }
+function splitTopLevelTerms(expression) {
+  const terms = [];
+  let depth = 0;
+  let current = '';
+  let currentSign = '';
+
+  for (let i = 0; i < expression.length; i++) {
+    const char = expression[i];
+    if (char === '{') {
+      depth++;
+      current += char;
+    } else if (char === '}') {
+      depth--;
+      current += char;
+    } else if ((char === '+' || char === '-') && depth === 0) {
+      if (current.trim() === '') {
+        currentSign = char;
+      } else {
+        terms.push({ sign: currentSign, term: current.trim() });
+        currentSign = char;
+        current = '';
+      }
+    } else {
+      current += char;
+    }
+  }
+  if (current.trim() !== '') {
+    terms.push({ sign: currentSign, term: current.trim() });
+  }
+  return terms;
+}
+
+function buildCritSingleTerm(term, critType = 0) {
+  if (!term) return term;
+
+  const isGroup = term.startsWith('{') && term.includes('}');
+  if (isGroup) {
+    const closeBracketIdx = term.lastIndexOf('}');
+    const inside = term.substring(1, closeBracketIdx);
+    const groupModifiers = term.substring(closeBracketIdx + 1);
+
+    const subExpressions = [];
+    let depth = 0;
+    let current = '';
+    for (let char of inside) {
+      if (char === '{') depth++;
+      else if (char === '}') depth--;
+      else if (char === ',' && depth === 0) {
+        subExpressions.push(current.trim());
+        current = '';
+        continue;
+      }
+      current += char;
+    }
+    if (current.trim()) subExpressions.push(current.trim());
+
+    const transformedSubs = subExpressions.map(sub => buildCritExpression(sub, critType));
+    return `{${transformedSubs.join(', ')}}${groupModifiers}`;
+  }
+
+  // Check if single dice expression has exploding modifier ! (e.g. 2d6!3, 1d8!>4, 2d6!3<6)
+  const isExploding = /^[+-]?\s*\d*d\d+!(?:\d*(?:[<>]=?|=)\d+|\d+)?/i.test(term);
+  if (isExploding) {
+    const diceMatch = term.match(/^([+-]?\s*)(\d*)d(\d+)(!(?:\d*(?:[<>]=?|=)\d+|\d+)?)(.*)$/i);
+    if (diceMatch) {
+      const [, sign, qtyStr, sides, explodeMod, rest] = diceMatch;
+      const qty = qtyStr ? parseInt(qtyStr, 10) : 1;
+      if (critType === 1) {
+        // Perfect crit: {2d6, 2d6min6}!3
+        const baseDice = `${sign}${qty}d${sides}${rest}`;
+        let cleanRest = rest.replace(new RegExp(`min${sides}`, 'i'), '');
+        const maxDice = `${qty}d${sides}min${sides}${cleanRest}`;
+        return `{${baseDice}, ${maxDice}}${explodeMod}`;
+      } else {
+        // Normal crit: 4d6!3*2 (each exploding die explodes into 2 dice)
+        const totalQty = qty * 2;
+        return `${sign}${totalQty}d${sides}${explodeMod}*2${rest}`;
+      }
+    }
+  }
+
+  if (critType === 0) {
+    return term.replaceAll(/([+-]|^)([\d]+)?d([\d]+)/gi, function(m, m1, m2, m3) {
+      m2 = m2 != undefined ? m2 : 1;
+      return m1 == '-' ? `${m1}${parseInt(m2)}d${m3}` : `${m1 != undefined ? m1 : ''}${parseInt(m2)*2}d${m3}`;
+    });
+  } else if (critType === 1) {
+    return term.replaceAll(/(([+-]|^)([\d]+)?d([\d]+).*?)([+-]|$)/gi, function(m, m1, m2, m3, m4, m5) {
+      m3 = m3 != undefined ? m3 : 1;
+      let extra = `+${m3}d${m4}min${m4}`;
+      if (m4 && m5 && m5.includes(`min${m4}`)) {
+        extra = `+${m3}d${m4}`;
+      }
+      return `${m1}${m2 == '-' ? '' : extra + m5}`;
+    });
+  }
+
+  return term;
+}
+
+function buildCritExpression(expression, critType = 0) {
+  if (!expression) return expression;
+  const terms = splitTopLevelTerms(expression);
+  if (terms.length > 1) {
+    return terms.map(t => {
+      const transformed = buildCritSingleTerm(t.term, critType);
+      return t.sign ? `${t.sign} ${transformed}` : transformed;
+    }).join(' ');
+  }
+  return buildCritSingleTerm(expression, critType);
+}
+
 function getRollData(rollButton){
     let expression = '';
     let rollType = 'roll';
@@ -246,7 +358,7 @@ function getRollData(rollButton){
     let damageType = window.diceRoller.getDamageType(rollButton);
     if($rollButton.find('.ddbc-damage__value, .ct-spell-caster__modifier-amount').length>0){
       expression = $rollButton.find('.ddbc-damage__value, .ct-spell-caster__modifier-amount').text();
-      const diceModifier = `(?:min\\d+|ro(?:[<>=]{1,2})?\\d+|k[hl]\\d+|!(?:\\d*(?:[<>=]{1,2})?\\d*)*)`;
+      const diceModifier = `(?:min\\d+|ro(?:[<>=]{1,2})?\\d+|k[hl]\\d+|!(?:\\d*(?:[<>=]{1,2})?\\d*)*(?:[*x]\\d+)?)`;
       const singleDiceTerm = `\\d*d\\d+${diceModifier}*`;
       const subFormula = `(?:[+-]?\\s*(?:${singleDiceTerm}|\\d+)(?:\\s*[+-]\\s*(?:${singleDiceTerm}|\\d+))*)`;
       const groupDiceTerm = `\\{(?:\\s*${subFormula}\\s*,)*\\s*(?:[+-]?\\s*${singleDiceTerm}(?:\\s*[+-]\\s*(?:${singleDiceTerm}|\\d+))*)\\s*(?:,\\s*${subFormula}\\s*)*\\}${diceModifier}*`;
@@ -1178,19 +1290,8 @@ class DiceRoller {
         let diceRoll = this.#multiRollArray.shift();
         let damageType = diceRoll.damageType;
         if(this.#critAttackAction != undefined && diceRoll.rollType == 'damage'){
-            if(critType == 0){
-                const newExpression = diceRoll.expression.replaceAll(/([+-]|^)([\d]+)?d([\d]+)/gi, function(m, m1, m2, m3){
-                    m2 = m2 != undefined ? m2 : 1;
-                    return m1 == '-' ? `${m1}${parseInt(m2)}d${m3}` : `${m1 != undefined ? m1 : ''}${parseInt(m2)*2}d${m3}`
-                })
-                this.roll(new DiceRoll(newExpression, diceRoll.action, diceRoll.rollType, diceRoll.name, diceRoll.avatarUrl, diceRoll.entityType, diceRoll.entityId), true, critRange, critType, undefined, damageType);
-            }
-            else if(critType == 1){
-                // perfect crit damage
-                const newExpression = diceRoll.expression.replaceAll(/(([+-]|^)([\d]+)?d([\d]+).*?)([+-]|$)/gi, function (m, m1, m2, m3, m4, m5) {
-                    m3 = m3 != undefined ? m3 : 1;
-                    return `${m1}${m2 == '-' ? '' : `+${m3}d${m4}min${m4}${m5}`}`
-                })
+            if(critType == 0 || critType == 1){
+                const newExpression = buildCritExpression(diceRoll.expression, critType);
                 this.roll(new DiceRoll(newExpression, diceRoll.action, diceRoll.rollType, diceRoll.name, diceRoll.avatarUrl, diceRoll.entityType, diceRoll.entityId), true, critRange, critType, undefined, damageType);
             }
             else if(critType == 2 || critType == 3){
@@ -1308,7 +1409,7 @@ class DiceRoller {
                     let currentNotation = notationList[i];
 
                     if (currentRoll.isRollGroup === true) {
-                        const groupedNotations = currentNotation.match(/\d*d\d+(?:(?:kh|kl|ro(?:<|<=|>|>=|=)|min)\d+|!(?:\d*(?:[<>]=?|=)\d+|\d+)?|!)*/gi) || [];
+                        const groupedNotations = currentNotation.match(/\d*d\d+(?:(?:kh|kl|ro(?:<|<=|>|>=|=)|min)\d+|!(?:\d*(?:[<>]=?|=)\d+|\d+)?(?:[*x]\d+)?|!)*/gi) || [];
                         const groupedResults = [];
                         const collectGroupedResults = (node) => {
                             if (node?.rolls !== undefined) {

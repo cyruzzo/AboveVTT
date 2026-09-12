@@ -116,18 +116,18 @@ function damage_dice_context_menu(diceExpression, modifierString = "", action = 
             let diceRoll;
             if (rollAsIndex === 0) {
                 // crit damage
-                diceExpression = diceExpression.replaceAll(/([+-]|^)([\d]+)?d([\d]+)/gi, function(m, m1, m2, m3){
+                diceExpression = typeof buildCritExpression === 'function' ? buildCritExpression(diceExpression, 0) : diceExpression.replaceAll(/([+-]|^)([\d]+)?d([\d]+)/gi, function(m, m1, m2, m3){
                     m2 = m2 != undefined ? m2 : 1;
                     return m1 == '-' ? `${m1}${parseInt(m2)}d${m3}` : `${m1 != undefined ? m1 : ''}${parseInt(m2)*2}d${m3}`
-                })
+                });
                 diceRoll = new DiceRoll(diceExpression)
             } 
              else if (rollAsIndex === 1) {
                 // perfect crit damage
-                diceExpression = diceExpression.replaceAll(/(([+-]|^)([\d]+)?d([\d]+).*?)([+-]|$)/gi, function(m, m1, m2, m3, m4, m5){
+                diceExpression = typeof buildCritExpression === 'function' ? buildCritExpression(diceExpression, 1) : diceExpression.replaceAll(/(([+-]|^)([\d]+)?d([\d]+).*?)([+-]|$)/gi, function(m, m1, m2, m3, m4, m5){
                     m3 = m3 != undefined ? m3 : 1;
                     return `${m1}${m2 == '-' ? '' : `+${m3}d${m4}min${m4}${m5}`}`
-                })
+                });
                 diceRoll = new DiceRoll(diceExpression)
             } 
             else if (rollAsIndex === 2 ) {

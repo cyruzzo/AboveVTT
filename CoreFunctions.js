@@ -1008,7 +1008,7 @@ function apply_avtt_roll_button_markup(html){
   // to account for all the nuances of DNDB dice notation.
   // numbers can be swapped for any number in the following comment
   // matches "1d10", " 1d10 ", "1d10+1", " 1d10+1 ", "1d10 + 1" " 1d10 + 1 "
-  const diceModifier = `(?:min\\d+|ro(?:[<>=]{1,2})?\\d+|k[hl]\\d+|!(?:\\d*(?:[<>=]{1,2})?\\d*)*)`;
+  const diceModifier = `(?:min\\d+|ro(?:[<>=]{1,2})?\\d+|k[hl]\\d+|!(?:\\d*(?:[<>=]{1,2})?\\d*)*(?:[*x]\\d+)?)`;
   const singleDiceTerm = `\\d*d\\d+${diceModifier}*`;
   const subFormula = `(?:[+-]?\\s*(?:${singleDiceTerm}|\\d+)(?:\\s*[+-]\\s*(?:${singleDiceTerm}|\\d+))*)`;
   const groupDiceTerm = `\\{(?:\\s*${subFormula}\\s*,)*\\s*(?:[+-]?\\s*${singleDiceTerm}(?:\\s*[+-]\\s*(?:${singleDiceTerm}|\\d+))*)\\s*(?:,\\s*${subFormula}\\s*)*\\}${diceModifier}*`;
@@ -1066,9 +1066,9 @@ function apply_avtt_slash_command_button(sourceElement, targetElement){
 /* The character sheet snippets will format partial dice rolls due to snippet formulas. Eg <strong>1d8</strong>+5
    This function unwraps those roll formulas to ensure proper dice roll injection. */
 function unwrap_roll_formulas(sheetElement){
-  const diceModifier = String.raw`(?:\d*d\d+(?:(?:min\d+)|(?:ro(?:[<>=]{1,2})?\d+)|(?:k[hl]\d+)|(?:!(?:\d*(?:[<>=]{1,2})?\d*)*))*)`;
+  const diceModifier = String.raw`(?:\d*d\d+(?:(?:min\d+)|(?:ro(?:[<>=]{1,2})?\d+)|(?:k[hl]\d+)|(?:!(?:\d*(?:[<>=]{1,2})?\d*)*(?:[*x]\d+)?))*)`;
   const subFormula = String.raw`(?:[+-]?\s*(?:${diceModifier}|\d+)(?:\s*[+-]\s*(?:${diceModifier}|\d+))*)`;
-  const groupDiceTerm = String.raw`\{(?:\\s*${subFormula}\s*,)*\s*(?:[+-]?\s*${diceModifier}(?:\s*[+-]\s*(?:${diceModifier}|\d+))*)\s*(?:,\s*${subFormula}\s*)*\}(?:(?:min\d+)|(?:ro(?:[<>=]{1,2})?\d+)|(?:k[hl]\d+)|(?:!(?:\d*(?:[<>=]{1,2})?\d*)*))*`;
+  const groupDiceTerm = String.raw`\{(?:\\s*${subFormula}\s*,)*\s*(?:[+-]?\s*${diceModifier}(?:\s*[+-]\s*(?:${diceModifier}|\d+))*)\s*(?:,\s*${subFormula}\s*)*\}(?:(?:min\d+)|(?:ro(?:[<>=]{1,2})?\d+)|(?:k[hl]\d+)|(?:!(?:\d*(?:[<>=]{1,2})?\d*)*(?:[*x]\d+)?))*`;
   const diceTerm = String.raw`(?:${diceModifier}|${groupDiceTerm})`;
   const rollFragment = new RegExp(String.raw`^\s*(?:${diceTerm}(?:\s*[+\-−]\s*(?:${diceTerm}|\d+))*|[+\-−]\s*\d+)\s*$`, 'i');
   const inlineFormattingElements = sheetElement.querySelectorAll('strong, b, em, i, span, u, mark');
