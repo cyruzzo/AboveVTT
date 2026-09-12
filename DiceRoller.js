@@ -246,7 +246,11 @@ function getRollData(rollButton){
     let damageType = window.diceRoller.getDamageType(rollButton);
     if($rollButton.find('.ddbc-damage__value, .ct-spell-caster__modifier-amount').length>0){
       expression = $rollButton.find('.ddbc-damage__value, .ct-spell-caster__modifier-amount').text();
-      const damageRollRegex = /([:\s>]|^)(([0-9]+d[0-9]+)\s?([+-]\s?[0-9]+)?)([\.\):\s<,]|$)|^\d+$/gi
+      const diceModifier = `(?:min\\d+|ro(?:[<>=]{1,2})?\\d+|k[hl]\\d+|!(?:[<>=]{1,2})?\\d*)`;
+      const singleDiceTerm = `\\d+d\\d+${diceModifier}*`;
+      const groupDiceTerm = `\\{[^{}]+?\\}${diceModifier}*`;
+      const rollFormula = `(?:[+-]?\\s*(?:${singleDiceTerm}|${groupDiceTerm})\\s*)(?:\\s*[+-]\\s*(?:${singleDiceTerm}|${groupDiceTerm}|\\d+))*`;
+      const damageRollRegex = new RegExp(`([:\\s>]|^)(${rollFormula})([\\.\\):\\s<,]|\$)|^\\d+$`, 'gi');
       expression = `${expression.match(damageRollRegex)[0].replace(/\s*/gi, '')}`
 
       if($rollButton.find('.ct-spell-caster__modifier-amount').length>0){
