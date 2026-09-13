@@ -2306,12 +2306,14 @@ class JournalManager{
 			suggestions = suggestions.concat(window.ITEMS_CACHE
 				.filter(item => (isLegacy || item.isLegacy == isLegacy) || item.isHomebrew)
 				.map(item => ({
+					rarity: item.rarity,
 					name: item.name,
 					type: item.magic ? 'Magic Item' : item.filterType || 'Item',
 					color: item.magic ? 'var(--compendium-magic-item-tooltip,#0f5cbc)' : 'var(--compendium-item-tooltip,#774521)',
 					match: normalize(item.name),
 					matchAlphanumeric: removeSpecial(item.name),
-					matchCondensed: removeSpecial(item.name).replace(/\s+/g, '')
+					matchCondensed: removeSpecial(item.name).replace(/\s+/g, ''),
+					isLegacy: item.isLegacy
 				})));
 		}
 		if((suggestionType == 'attack' || suggestionType == 'spellcasting') && window.SPELLS_CACHE != undefined){
@@ -2323,7 +2325,8 @@ class JournalManager{
 					color: 'var(--compendium-spell-tooltip,#704cd9)',
 					match: normalize(spell.definition.name),
 					matchAlphanumeric: removeSpecial(spell.definition.name),
-					matchCondensed: removeSpecial(spell.definition.name).replace(/\s+/g, '')
+					matchCondensed: removeSpecial(spell.definition.name).replace(/\s+/g, ''),
+					isLegacy: spell.definition.isLegacy
 				})));
 		}
 		const seen = new Set();
@@ -2586,7 +2589,9 @@ class JournalManager{
 		suggestions.forEach((suggestion, index) => {
 			const option = $(`<button type="button" class="dnd-sheet-cell-suggestion" data-index="${index}" role="option" aria-selected="false">
 				<span class="dnd-sheet-cell-suggestion-name"></span>
+				${suggestion.isLegacy ? `<span class="dnd-sheet-cell-suggestion-legacy">L</span>` : ''}
 				<span class="dnd-sheet-cell-suggestion-type"></span>
+				
 			</button>`);
 			option.find('.dnd-sheet-cell-suggestion-name').text(suggestion.name);
 			option.find('.dnd-sheet-cell-suggestion-type').text(suggestion.type);
