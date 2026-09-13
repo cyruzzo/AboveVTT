@@ -48,7 +48,7 @@ function forceDdbWsReconnect() {
             DDB_WS_OBJ = window[key];
         }
 
-        if ((DDB_WS_OBJ && DDB_WS_OBJ.status == 'disconnected') || forceReconnect == true) {
+        if ((DDB_WS_OBJ && DDB_WS_OBJ.status == 'disconnected')) {
             DDB_WS_OBJ.reset();
             DDB_WS_OBJ.connect();
 
