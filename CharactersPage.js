@@ -1855,6 +1855,9 @@ function observe_character_sheet_changes(documentToObserve) {
                   letter-spacing: 1px;
                   padding: 1px 4px 0;  
               }
+              .ct-sidebar__inner [class*="GameLogEntries"] [class*="Message-Collapsed-Other-Flex"] .avtt-roll-button{
+                color: #3f3f3f !important;
+              }
               .ct-character-sheet__inner button.avtt-roll-button:hover,
               .ct-sidebar__inner .integrated-dice__container:hover,
               .ct-sidebar__inner .avtt-roll-button:hover,

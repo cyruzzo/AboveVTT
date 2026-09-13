@@ -48,8 +48,7 @@ function forceDdbWsReconnect() {
             DDB_WS_OBJ = window[key];
         }
 
-        if ((DDB_WS_OBJ && DDB_WS_OBJ.status == 'disconnected')) {
-            console.log("Detected that DDBs WebSocket is disconnected - attempting to force reconnect.");
+        if ((DDB_WS_OBJ && DDB_WS_OBJ.status == 'disconnected') || forceReconnect == true) {
             DDB_WS_OBJ.reset();
             DDB_WS_OBJ.connect();
 
@@ -106,15 +105,16 @@ function forceDdbWsReconnect() {
         window.ActiveWorkers[scriptURL] = worker;
         return worker;
     };
-    
+    window.eventsAttached = new Set();
     //for listening to the game log websocket and intercepting messages for the DDB onmessage function
     const originalAddEventListener = WebSocket.prototype.addEventListener;
     WebSocket.prototype.addEventListener = function (type, listener, options) {
         const isGameLog = this.url && this.url.toLowerCase().includes('game-log-api-live');
         if(isGameLog){
             if (type === 'message') {
-            const interceptor = (event) => {
-                if (event.data && event.data !== 'pong') {
+                window.eventsAttached.add(type);
+                const interceptor = (event) => {
+                    if (event.data && event.data !== 'pong') {
                         try {
                             if (window.diceRoller && typeof window.diceRoller.ddbonmessage === 'function') {
                                 window.diceRoller.ddbonmessage(event);
@@ -128,6 +128,7 @@ function forceDdbWsReconnect() {
                 originalAddEventListener.call(this, type, interceptor, options);
             }
             else if((type === 'close' || type === 'error')) {
+                window.eventsAttached.add(type);
                 const interceptor = (event) => {
                     DDB_WS_FORCE_RECONNECT_LOCK = false;
                     if(DDB_RETRY_TIMEOUT != undefined){
@@ -149,6 +150,7 @@ function forceDdbWsReconnect() {
                 
                 originalAddEventListener.call(this, type, interceptor, options);
             } else if((type == 'open')){
+                window.eventsAttached.add('open');
                 console.log('DDB websocket connected')
             }
         }
@@ -190,5 +192,35 @@ function forceDdbWsReconnect() {
         configurable: false,
         writable: false,
         value: window.fbq
+    });
+    
+    //This ensures our events get attached if the message broker loads before this does for some reason
+    const waitForMessageBroker = new Promise((resolve) => {
+        const ensureMessageEvents = () => {
+            const key = Symbol.for('@dndbeyond/message-broker-lib');
+            if (key) {
+                DDB_WS_OBJ = window[key];
+            }
+
+            if ((DDB_WS_OBJ && DDB_WS_OBJ.status == 'open')){
+                resolve(DDB_WS_OBJ);
+            } else {
+                setTimeout(ensureMessageEvents, 1000);
+            }
+        };
+        setTimeout(() =>{
+            if(!['message', 'close', 'error', 'open'].every(val => window.eventsAttached.has(val))){
+                ensureMessageEvents();
+                return;
+            } 
+            resolve(false);
+        }, 5000);
+        
+    });
+    waitForMessageBroker.then((messageBroker) => {
+        delete window.eventsAttached;
+        if(!messageBroker) return;
+        messageBroker.reset();
+        messageBroker.connect();
     });
 })()
