@@ -37,9 +37,11 @@ async function get_edit_form_data(){
 
 			if ( ((inputName === 'player_map') || (inputName==='dm_map')) ) {
 				inputValue = await parse_img(inputValue);
-			}
-			else if ($(this).is("button")){
+			} else if ($(this).is("button")){
 				inputValue = $(this).hasClass("rc-switch-checked") ? "1" : "0"
+			} else if($(this).is("input.spectrum")){
+				const rgbData = $(this).spectrum("get").toRgb();
+				inputValue = `rgba(${rgbData.r}, ${rgbData.g}, ${rgbData.b}, ${rgbData.a})`;
 			}
 			
 			data[inputName] = await inputValue;
