@@ -13323,9 +13323,22 @@ p.monster-header+p {
     stroke: #333;
     stroke-width: 1;
 }
+.dnd-sheet-cell-suggestion-name{
+    flex:1;
+}
 .dnd-sheet-cell-suggestion-type{
     white-space: nowrap;
     color: color-mix(in srgb, var(--text-color, #111) 70%, transparent 0%);
+}
+.dnd-sheet-cell-suggestion-legacy {
+    white-space: nowrap;
+    color: color-mix(in srgb, var(--text-color, #ffffff) 70%, transparent 0%);
+    background:#00000075;
+    border-radius:50%;
+    width:15px;
+    height:15px;
+    text-align:center;
+    font-weight:bold; 
 }
 .dnd-sheet-cell-suggestion{
     display: flex;
