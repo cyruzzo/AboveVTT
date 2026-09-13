@@ -105,11 +105,13 @@ function forceDdbWsReconnect() {
         window.ActiveWorkers[scriptURL] = worker;
         return worker;
     };
-    window.eventsAttached = new Set();
+    window.eventsAttached ||= new Set();
     //for listening to the game log websocket and intercepting messages for the DDB onmessage function
     const originalAddEventListener = WebSocket.prototype.addEventListener;
     WebSocket.prototype.addEventListener = function (type, listener, options) {
-        const isGameLog = this.url && this.url.toLowerCase().includes('game-log-api-live');
+        window.eventsAttached ||= new Set();
+        const url = this.url || '';
+        const isGameLog = url && url.toLowerCase().includes('game-log-api-live');
         if(isGameLog){
             if (type === 'message') {
                 window.eventsAttached.add(type);
