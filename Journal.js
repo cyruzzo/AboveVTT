@@ -2304,7 +2304,7 @@ class JournalManager{
 		let suggestions = [];
 		if(window.ITEMS_CACHE != undefined && suggestionType != 'spellcasting'){
 			suggestions = suggestions.concat(window.ITEMS_CACHE
-				.filter(item => item.isLegacy == isLegacy || item.isHomebrew)
+				.filter(item => (isLegacy || item.isLegacy == isLegacy) || item.isHomebrew)
 				.map(item => ({
 					name: item.name,
 					type: item.magic ? 'Magic Item' : item.filterType || 'Item',
@@ -2316,7 +2316,7 @@ class JournalManager{
 		}
 		if((suggestionType == 'attack' || suggestionType == 'spellcasting') && window.SPELLS_CACHE != undefined){
 			suggestions = suggestions.concat(window.SPELLS_CACHE
-				.filter(spell => spell.definition?.isLegacy == isLegacy)
+				.filter(spell => (isLegacy || spell.definition?.isLegacy == isLegacy))
 				.map(spell => ({
 					name: spell.definition.name,
 					type: 'Spell',
@@ -3609,7 +3609,7 @@ class JournalManager{
 					const splitUrl = url.split('spells/');
 					const name = decodeURIComponent(splitUrl[splitUrl.length-1].replaceAll('-', ' ')).replaceAll("’", "'");
 					const isLegacy = !get_avtt_setting_value('2024Tooltips');
-					let spell = window.SPELLS_CACHE.filter(d => d.definition.name.toLowerCase() == name.toLowerCase() && d.definition.isLegacy == isLegacy)
+					let spell = window.SPELLS_CACHE.filter(d => d.definition.name.toLowerCase() == name.toLowerCase() && (isLegacy || d.definition.isLegacy == isLegacy))
 					if(!spell.length){
 						noisy_log(3, `spell not found`, name, `isLegacy`, isLegacy);
 						spell = window.SPELLS_CACHE.filter(d => d.definition.name.toLowerCase() == name.toLowerCase())
@@ -3624,7 +3624,7 @@ class JournalManager{
 					const splitUrl = url.split(/(magic-items|adventuring-gear|equipment|armor|weapons)\//gi);
 					const name = decodeURIComponent(splitUrl[splitUrl.length-1].replaceAll('-', ' ')).replaceAll("’", "'");
 					const isLegacy = !get_avtt_setting_value('2024Tooltips');
-					let item = window.ITEMS_CACHE.filter(d => d.name.toLowerCase() == name.toLowerCase() && d.isLegacy == isLegacy)
+					let item = window.ITEMS_CACHE.filter(d => d.name.toLowerCase() == name.toLowerCase() && (isLegacy || d.isLegacy == isLegacy))
 					if(!item.length){
 						noisy_log(3, `item not found`, name, `isLegacy`, isLegacy);
 						item = window.ITEMS_CACHE.filter(d => d.name.toLowerCase() == name.toLowerCase())
@@ -3900,7 +3900,7 @@ class JournalManager{
 					if(text.match(/(\[(magicitem|item)\])/gi) || text.trim() === '') continue;
 
 					const isLegacy = !get_avtt_setting_value('2024Tooltips');
-					let item = window.ITEMS_CACHE.filter(d => d.name.toLowerCase() == text.toLowerCase() && d.isLegacy == isLegacy)
+					let item = window.ITEMS_CACHE.filter(d => d.name.toLowerCase() == text.toLowerCase() && (isLegacy || d.isLegacy == isLegacy))
 					if(!item.length){
 						noisy_log(2, `item not found`, text, `isLegacy`, isLegacy);
 						item = window.ITEMS_CACHE.filter(d => d.name.toLowerCase() == text.toLowerCase())
@@ -3959,12 +3959,12 @@ class JournalManager{
 					if(text.match(/(\[(magicitem|item)\])/gi) || text.trim() === '') continue;
 					let type = 'item';
 					const isLegacy = !get_avtt_setting_value('2024Tooltips');
-					let item = window.ITEMS_CACHE.filter(d => d.name.toLowerCase() == text.toLowerCase() && d.isLegacy == isLegacy)
+					let item = window.ITEMS_CACHE.filter(d => d.name.toLowerCase() == text.toLowerCase() && (isLegacy || d.isLegacy == isLegacy))
 					if(!item.length){
 						item = window.ITEMS_CACHE.filter(d => d.name.toLowerCase() == text.toLowerCase())
 					}
 					if(!item.length){
-						item = window.SPELLS_CACHE.filter(d => d.definition.name.toLowerCase() == text.toLowerCase() && d.definition.isLegacy == isLegacy)
+						item = window.SPELLS_CACHE.filter(d => d.definition.name.toLowerCase() == text.toLowerCase() && (isLegacy || d.definition.isLegacy == isLegacy))
 						if(!item.length){
 							item = window.SPELLS_CACHE.filter(d => d.definition.name.toLowerCase() == text.toLowerCase())
 						}
@@ -4409,15 +4409,15 @@ class JournalManager{
 									$(this).find('.item-link-cell')?.text();
 
 				const idNameMatch = targetLink?.match(/https.*\/(\d*?)\-(.*)?$/i);
-			
-				const itemId = link.length > 0 
+				
+				let itemId = link.length > 0 
 								? targetLink?.match(/\/(\d*?)\-.*?$/i)?.[1] 
 								: idNameMatch?.[1];
 
 				const name = link.length > 0
 								? link.text()
 									: idNameMatch?.[2].replace(/\-/g, ' ').replace(/\d+$/gi, '').trim();
-									
+
 				const quantityCell = $(this).find('.item-quantity-cell');
 				const quantity = parseInt($(this).find('.item-quantity-cell').text());
 				const itemAddCell = $(this).find('.item-add-cell');
