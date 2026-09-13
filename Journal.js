@@ -2847,6 +2847,63 @@ class JournalManager{
 			$(document).off(`pointerdown.${dismissNamespace} mousedown.${dismissNamespace}`);
 		});
 	}
+	/** Adds a "+" element under every table while editing in tinyMCE, for quickly appending a row.
+	 * marked data-mce-bogus="all" so tinyMCE excludes it when saving*/
+	bindTinyMceTableRowButtons(editor){
+		const syncButtonWidth = (table, button) => {
+			const width = table.getBoundingClientRect().width;
+			if(width > 0)
+				button.style.width = `${width}px`;
+		};
+		const observeTableResize = (table, button) => {
+			const ownerWindow = table.ownerDocument.defaultView || window;
+			if(typeof ownerWindow.ResizeObserver !== 'function')
+				return;
+			const observer = new ownerWindow.ResizeObserver(() => syncButtonWidth(table, button));
+			observer.observe(table);
+		};
+		const syncAddRowButtons = () => {
+			const body = $(editor.getBody());
+			body.find('.avtt-tinymce-add-row').each(function(){
+				if(!$(this).prev().is('table'))
+					$(this).remove();
+			});
+			body.find('table').each(function(){
+				const table = this;
+				const $table = $(table);
+				let button = $table.next('.avtt-tinymce-add-row');
+				if(button.length === 0){
+					button = $(`<div class="avtt-tinymce-add-row" contenteditable="false" data-mce-bogus="all">+</div>`);
+					$table.after(button);
+				}
+				syncButtonWidth(table, button[0]);
+				if(!$table.data('avttRowButtonObserved')){
+					observeTableResize(table, button[0]);
+					$table.data('avttRowButtonObserved', true);
+				}
+			});
+		};
+		editor.on('init SetContent NodeChange Undo Redo', syncAddRowButtons);
+		editor.on('mousedown', function(e){
+			const button = $(e.target).closest('.avtt-tinymce-add-row');
+			if(button.length === 0)
+				return;
+			e.preventDefault();
+			const table = button.prev('table');
+			if(table.length === 0)
+				return;
+			const tbody = table.find('tbody');
+			const targetContainer = tbody.length > 0 ? tbody : table;
+			const lastRow = targetContainer.find('> tr:last');
+			if(lastRow.length === 0)
+				return;
+			const newRow = lastRow.clone();
+			newRow.find('td, th').html('&nbsp;');
+			targetContainer.append(newRow);
+			syncButtonWidth(table[0], button[0]);
+			editor.fire('change');
+		});
+	}
 
 	async getSortableJquery(ownerDocument){
 		const ownerWindow = ownerDocument.defaultView || window;
@@ -6334,6 +6391,25 @@ class JournalManager{
 			}
 			
 			/***** END NEW STAT BLOCKS ****/
+			.avtt-tinymce-add-row{
+				outline: none;
+				display: block;
+				box-sizing: border-box;
+				margin: 2px 0 10px;
+				padding: 2px 0;
+				text-align: center;
+				border: 1px dashed var(--border-color, #999);
+				border-radius: 4px;
+				background: none;
+				color: var(--text-color, #999999);
+				font-weight: 800;
+				font-size: 16px;
+				line-height: 18px;
+				cursor: pointer;
+			}
+			.avtt-tinymce-add-row:hover{
+				background: color-mix(in srgb, var(--text-color, #111) 8%, transparent 92%);
+			}
 		`
 	}
 	edit_note(id, statBlock = false){
@@ -8744,7 +8820,8 @@ class JournalManager{
 									<td class="item-add-cell" style="padding: 8px; text-align: left;">&nbsp;</td>
 								</tr>
 							</tbody>
-						</table>		
+						</table>	
+						<br/>	
 					`
 				},
 				{
@@ -8798,7 +8875,8 @@ class JournalManager{
 									<td class="item-add-cell" style="padding: 8px; text-align: left;">&nbsp;</td>
 								</tr>
 							</tbody>
-						</table>		
+						</table>	
+						<br/>	
 					`
 				},
 			],
@@ -8818,6 +8896,7 @@ class JournalManager{
 			extended_valid_elements: 'svg[name|xmlns|viewBox|width|height|class|fill|stroke],path[d|fill|stroke|stroke-width|class],g[class|fill|stroke|class],circle[cx|cy|r|fill|stroke|class],rect[x|y|width|height|fill|stroke|class],polygon[points|fill|stroke|class]',
 			setup: function (editor) { 
 				self.bindTinyMceSuggestionEvents(editor);
+				self.bindTinyMceTableRowButtons(editor);
 				editor.on('PreInit', function() {
 					const iframeWin = editor.getWin();
 					if (iframeWin && iframeWin.addEventListener) {
