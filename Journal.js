@@ -2313,7 +2313,8 @@ class JournalManager{
 					match: normalize(item.name),
 					matchAlphanumeric: removeSpecial(item.name),
 					matchCondensed: removeSpecial(item.name).replace(/\s+/g, ''),
-					isLegacy: item.isLegacy
+					isLegacy: item.isLegacy,
+					raw: item
 				})));
 		}
 		if((suggestionType == 'attack' || suggestionType == 'spellcasting') && window.SPELLS_CACHE != undefined){
@@ -2381,13 +2382,46 @@ class JournalManager{
 				return a.name.localeCompare(b.name);
 			})
 			.filter(suggestion => {
-				const key = `${suggestion.type}:${suggestion.name}`.toLowerCase();
+				const key = `${suggestion.type}:${suggestion.name}:${suggestion.isLegacy}`.toLowerCase();
 				if(seen.has(key))
 					return false;
 				seen.add(key);
 				return true;
 			})
 			.slice(0, 8);
+	}
+
+	getRandomItemSuggestions(rarity){
+		if(window.ITEMS_CACHE == undefined)
+			return [];
+		const isLegacy = !get_avtt_setting_value('2024Tooltips');
+		const normalizedRarity = rarity ? rarity.toLowerCase().trim() : undefined;
+		const pool = window.ITEMS_CACHE.filter(item => ((isLegacy || item.isLegacy == isLegacy) || item.isHomebrew)
+			&& (!normalizedRarity || item.rarity?.toLowerCase().trim() == normalizedRarity));
+		const shuffled = [...pool];
+		for(let i=shuffled.length-1; i>0; i--){
+			const j = Math.floor(Math.random() * (i + 1));
+			[shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+		}
+		return shuffled.slice(0, 8).map(item => ({
+			rarity: item.rarity,
+			name: item.name,
+			type: item.magic ? 'Magic Item' : item.filterType || 'Item',
+			color: item.magic ? 'var(--compendium-magic-item-tooltip,#0f5cbc)' : 'var(--compendium-item-tooltip,#774521)',
+			isLegacy: item.isLegacy,
+			raw: item
+		}));
+	}
+	
+	buildItemTooltipLinkHtml(item){
+		if(!item)
+			return '';
+		const text = item.name;
+		const itemId = `${item.id}-${text.replace(/[\s\/\\]/g, '-')}`;
+		const filterType = (item.filterType || '').toLowerCase();
+		const path = item.magic ? 'magic-items' : filterType == 'armor' ? 'armor' : filterType == 'weapon' ? 'weapons' : 'equipment';
+		const href = `https://www.dndbeyond.com/${path}/${itemId}`;
+		return `<a class="tooltip-hover no-border ignore-abovevtt-formating" href="${href}">${text}</a>`;
 	}
 	removeDndSheetCellSuggestions(ownerDocument = document){
 		$('.dnd-sheet-cell-suggestions', ownerDocument).remove();
@@ -2526,20 +2560,39 @@ class JournalManager{
 		}
 		return { model, segments, index, isSpellListLine: true };
 	}
+	// detects a `[random]` or `[random <rarity>]` bracket on the current line
+	getDndSheetRandomBracketMatch(cell){
+		const model = this.getDndSheetCellTextModel(cell);
+		const { text, caretOffset } = model;
+		const lineStart = text.lastIndexOf('\n', Math.max(caretOffset - 1, 0)) + 1;
+		let lineEnd = text.indexOf('\n', caretOffset);
+		if(lineEnd === -1)
+			lineEnd = text.length;
+		const lineText = text.slice(lineStart, lineEnd);
+		const randomRegex = /\[random\s?(common|uncommon|rare|very rare|legendary|artifact)?\]/gi;
+		let match;
+		while((match = randomRegex.exec(lineText)) != null){
+			const start = lineStart + match.index;
+			const end = start + match[0].length;
+			if(caretOffset >= start && caretOffset <= end)
+				return { model, start, end, rarity: match[1] };
+		}
+		return undefined;
+	}
+	getDndSheetCellRangePoint(model, offset, cell){
+		for(const run of model.runs){
+			if(offset <= run.end)
+				return { node: run.node, offset: Math.max(0, offset - run.start) };
+		}
+		const lastRun = model.runs[model.runs.length - 1];
+		return lastRun ? { node: lastRun.node, offset: lastRun.node.nodeValue.length } : { node: cell, offset: cell.childNodes.length };
+	}
 	replaceDndSheetCellRange(cell, model, start, end, replacementText){
 		const ownerDocument = cell.ownerDocument || document;
 		const ownerWindow = ownerDocument.defaultView || window;
-		const pointAt = (offset) => {
-			for(const run of model.runs){
-				if(offset <= run.end)
-					return { node: run.node, offset: Math.max(0, offset - run.start) };
-			}
-			const lastRun = model.runs[model.runs.length - 1];
-			return lastRun ? { node: lastRun.node, offset: lastRun.node.nodeValue.length } : { node: cell, offset: cell.childNodes.length };
-		};
 		const range = ownerDocument.createRange();
-		const startPoint = pointAt(start);
-		const endPoint = pointAt(end);
+		const startPoint = this.getDndSheetCellRangePoint(model, start, cell);
+		const endPoint = this.getDndSheetCellRangePoint(model, end, cell);
 		range.setStart(startPoint.node, startPoint.offset);
 		range.setEnd(endPoint.node, endPoint.offset);
 		range.deleteContents();
@@ -2547,6 +2600,32 @@ class JournalManager{
 		range.insertNode(textNode);
 		const caretRange = ownerDocument.createRange();
 		caretRange.setStart(textNode, textNode.nodeValue.length);
+		caretRange.collapse(true);
+		const selection = ownerWindow.getSelection?.();
+		if(selection){
+			selection.removeAllRanges();
+			selection.addRange(caretRange);
+		}
+	}
+	// like replaceDndSheetCellRange but inserts an <a> instead of a plain text node
+	replaceDndSheetCellRangeHtml(cell, model, start, end, html){
+		const ownerDocument = cell.ownerDocument || document;
+		const ownerWindow = ownerDocument.defaultView || window;
+		const range = ownerDocument.createRange();
+		const startPoint = this.getDndSheetCellRangePoint(model, start, cell);
+		const endPoint = this.getDndSheetCellRangePoint(model, end, cell);
+		range.setStart(startPoint.node, startPoint.offset);
+		range.setEnd(endPoint.node, endPoint.offset);
+		range.deleteContents();
+		const fragment = range.createContextualFragment(html);
+		const lastNode = fragment.lastChild;
+		range.insertNode(fragment);
+		const caretRange = ownerDocument.createRange();
+		if(lastNode){
+			caretRange.setStartAfter(lastNode);
+		} else {
+			caretRange.setStart(range.startContainer, range.startOffset);
+		}
 		caretRange.collapse(true);
 		const selection = ownerWindow.getSelection?.();
 		if(selection){
@@ -2570,18 +2649,42 @@ class JournalManager{
 		}
 		return cell.getBoundingClientRect();
 	}
-	showDndSheetCellSuggestions(cell, suggestionType, onSelect){
-		const target = $(cell);
-		const ownerDocument = cell.ownerDocument || document;
+	/** Resolves which document a floating suggestion box should be appended to: the top window's document
+	 * when the cell lives inside a same-page iframe (e.g. tinyMCE), or the cell's own document otherwise
+	 * (e.g. a genuine popout window). */
+	getSuggestionHostDocument(node){
+		const ownerDocument = node?.nodeType === 9 ? node : (node?.ownerDocument || document);
 		const ownerWindow = ownerDocument.defaultView || window;
+		if(ownerWindow !== window && ownerWindow.frameElement && ownerWindow.frameElement.ownerDocument === document)
+			return document;
+		return ownerDocument;
+	}
+	// pixel offset to add to a cell's own-document rect to position it correctly within the suggestion host document
+	getSuggestionFrameOffset(cell){
+		const ownerDocument = cell?.ownerDocument || document;
+		const ownerWindow = ownerDocument.defaultView || window;
+		if(ownerWindow !== window && ownerWindow.frameElement && ownerWindow.frameElement.ownerDocument === document){
+			const frameRect = ownerWindow.frameElement.getBoundingClientRect();
+			return { left: frameRect.left, top: frameRect.top };
+		}
+		return { left: 0, top: 0 };
+	}
+	showDndSheetCellSuggestions(cell, suggestionType, onSelect, insertOptions = {}){
+		const target = $(cell);
+		const hostDocument = this.getSuggestionHostDocument(cell);
+		const hostWindow = hostDocument.defaultView || window;
+		const frameOffset = this.getSuggestionFrameOffset(cell);
 
-		const segmentInfo = this.getDndSheetSuggestionCommaSegment(cell);
-		const useSegmentedMatch = segmentInfo.isSpellListLine;
+		const randomMatch = this.getDndSheetRandomBracketMatch(cell);
+		const segmentInfo = randomMatch ? undefined : this.getDndSheetSuggestionCommaSegment(cell);
+		const useSegmentedMatch = segmentInfo?.isSpellListLine === true;
 		// a spell list line always searches spells only, regardless of the cell's assigned suggestion type
-		const effectiveSuggestionType = useSegmentedMatch ? 'spellcasting' : suggestionType;
-		const searchText = useSegmentedMatch ? segmentInfo.segments[segmentInfo.index].text.trim() : target.text().trim();
-		const suggestions = this.getDndSheetCellSuggestionItems(effectiveSuggestionType, searchText);
-		this.removeDndSheetCellSuggestions(ownerDocument);
+		const effectiveSuggestionType = randomMatch ? 'random' : (useSegmentedMatch ? 'spellcasting' : suggestionType);
+		const searchText = randomMatch ? '' : (useSegmentedMatch ? segmentInfo.segments[segmentInfo.index].text.trim() : target.text().trim());
+		const suggestions = randomMatch
+			? this.getRandomItemSuggestions(randomMatch.rarity)
+			: this.getDndSheetCellSuggestionItems(effectiveSuggestionType, searchText);
+		this.removeDndSheetCellSuggestions(hostDocument);
 		if(suggestions.length === 0)
 			return;
 		const suggestionBox = $(`<div class="dnd-sheet-cell-suggestions" role="listbox"></div>`);
@@ -2596,21 +2699,30 @@ class JournalManager{
 			option.find('.dnd-sheet-cell-suggestion-name').text(suggestion.name);
 			option.find('.dnd-sheet-cell-suggestion-type').text(suggestion.type);
 			option.on('mouseenter', () => {
-				this.setActiveDndSheetCellSuggestion(ownerDocument, index);
+				this.setActiveDndSheetCellSuggestion(hostDocument, index);
 			});
 			option.on('mousedown', (event) => {
 				event.preventDefault();
 				event.stopPropagation();
-				if(useSegmentedMatch){
+				if(randomMatch){
+					if(insertOptions.asLink){
+						this.replaceDndSheetCellRangeHtml(cell, randomMatch.model, randomMatch.start, randomMatch.end, this.buildItemTooltipLinkHtml(suggestion.raw));
+					} else {
+						const replacementText = insertOptions.wrapTag ? `[${insertOptions.wrapTag}]${suggestion.name}[/${insertOptions.wrapTag}]` : suggestion.name;
+						this.replaceDndSheetCellRange(cell, randomMatch.model, randomMatch.start, randomMatch.end, replacementText);
+					}
+				} else if(useSegmentedMatch){
 					const segment = segmentInfo.segments[segmentInfo.index];
 					const leadingWhitespace = segment.text.match(/^\s*/)[0];
 					const trailingSuffix = segment.text.slice(leadingWhitespace.length).match(/[^a-zA-Z0-9)']*$/)[0];
 					const replacementText = `${leadingWhitespace}${suggestion.name}${trailingSuffix}`;
 					this.replaceDndSheetCellRange(cell, segmentInfo.model, segment.start, segment.end, replacementText);
+				} else if(insertOptions.asLink){
+					target.html(this.buildItemTooltipLinkHtml(suggestion.raw));
 				} else {
 					target.text(suggestion.name);
 				}
-				this.removeDndSheetCellSuggestions(ownerDocument);
+				this.removeDndSheetCellSuggestions(hostDocument);
 				onSelect?.();
 				cell.focus();
 			});
@@ -2619,14 +2731,14 @@ class JournalManager{
 			suggestionName.style.setProperty('color', 'var(--dnd-sheet-suggestion-color)');
 			suggestionBox.append(option);
 		});
-		$(ownerDocument.body).append(suggestionBox);
+		$(hostDocument.body).append(suggestionBox);
 		const rect = cell.getBoundingClientRect();
 		const anchorRect = this.getDndSheetSuggestionAnchorRect(cell);
 		suggestionBox.css({
 			position: 'absolute',
-			left: `${rect.left + ownerWindow.scrollX}px`,
+			left: `${rect.left + frameOffset.left + hostWindow.scrollX}px`,
 			top: '0px',
-			width: `${Math.max(rect.width, 240)}px`,
+			width: `240px`,
 			'z-index': 100000000,
 			background: 'var(--background-color, #fff)',
 			color: 'var(--text-color, #111)',
@@ -2639,10 +2751,101 @@ class JournalManager{
 
 		const suggestionBoxHeight = suggestionBox.outerHeight();
 		suggestionBox.css({
-			top: `${anchorRect.top + ownerWindow.scrollY - suggestionBoxHeight}px`,
+			top: `${anchorRect.top + frameOffset.top + hostWindow.scrollY - suggestionBoxHeight}px`,
 			visibility: 'visible'
 		});
-		this.setActiveDndSheetCellSuggestion(ownerDocument, 0);
+		this.setActiveDndSheetCellSuggestion(hostDocument, 0);
+	}
+	/** Determines whether the caret in a tinyMCE note editor is somewhere suggestions should appear:
+	 * a party-loot-table item-link-cell, a spellcasting list line, or a [random...] bracket. */
+	getTinyMceSuggestionCellFromEvent(e){
+		const ownerDocument = e.target?.ownerDocument || document;
+		const selection = (ownerDocument.defaultView || window).getSelection?.();
+		let anchor = selection && selection.rangeCount > 0 ? selection.anchorNode : e.target;
+		if(anchor && anchor.nodeType === Node.TEXT_NODE)
+			anchor = anchor.parentElement;
+		if(!anchor)
+			return undefined;
+		const lootCell = $(anchor).closest('.party-item-table td.item-link-cell')[0];
+		if(lootCell)
+			return { cell: lootCell, suggestionType: 'equipment', insertOptions: { asLink: true } };
+		const block = $(anchor).closest('p, li, td, div, h1, h2, h3, h4, h5, h6')[0];
+		if(!block)
+			return undefined;
+		if(this.getDndSheetRandomBracketMatch(block))
+			return { cell: block, suggestionType: 'random', insertOptions: { wrapTag: 'magicItem' } };
+		if(this.getDndSheetSuggestionCommaSegment(block).isSpellListLine)
+			return { cell: block, suggestionType: 'spellcasting', insertOptions: {} };
+		return undefined;
+	}
+
+	bindTinyMceSuggestionEvents(editor){
+		const self = this;
+		let suppressNextSuggestionFocusin = false;
+		editor.on('keydown keyup input focusin', function(e){
+			if(e.type == 'focusin' && suppressNextSuggestionFocusin){
+				suppressNextSuggestionFocusin = false;
+				return;
+			}
+			const context = self.getTinyMceSuggestionCellFromEvent(e);
+			if(!context)
+				return;
+			const { cell, suggestionType, insertOptions } = context;
+			const hostDocument = self.getSuggestionHostDocument(cell);
+			if(e.type == 'keydown' && !['ArrowDown', 'ArrowUp', 'Enter', 'Escape', 'Tab'].includes(e.key))
+				return;
+			if(e.type == 'keyup' && ['ArrowDown', 'ArrowUp', 'Enter', 'Escape'].includes(e.key))
+				return;
+			if(e.type == 'keydown' && e.key == 'Tab'){
+				suppressNextSuggestionFocusin = true;
+				self.removeDndSheetCellSuggestions(hostDocument);
+				return;
+			}
+			if(e.type == 'keydown' && ['ArrowDown', 'ArrowUp'].includes(e.key)){
+				e.preventDefault();
+				if(self.getDndSheetCellSuggestionOptions(hostDocument).length === 0){
+					self.showDndSheetCellSuggestions(cell, suggestionType, undefined, insertOptions);
+				}
+				self.moveActiveDndSheetCellSuggestion(hostDocument, e.key == 'ArrowDown' ? 1 : -1);
+				return;
+			}
+			if(e.type == 'keyup' && !['ArrowDown', 'ArrowUp', 'Enter', 'Escape'].includes(e.key))
+				return;
+			if(e.key == 'Escape'){
+				e.preventDefault();
+				self.removeDndSheetCellSuggestions(hostDocument);
+				return;
+			}
+			if(e.key == 'Enter'){
+				const activeSuggestion = $('.dnd-sheet-cell-suggestions .dnd-sheet-cell-suggestion.is-active', hostDocument).first();
+				const selectedSuggestion = activeSuggestion.length > 0 ? activeSuggestion : $('.dnd-sheet-cell-suggestions .dnd-sheet-cell-suggestion', hostDocument).first();
+				if(selectedSuggestion.length > 0){
+					e.preventDefault();
+					selectedSuggestion.trigger('mousedown');
+				}
+				return;
+			}
+			self.showDndSheetCellSuggestions(cell, suggestionType, () => editor.fire('change'), insertOptions);
+		});
+		const dismissNamespace = `tinyMceSuggestionDismiss${editor.id}`;
+		const dismissHandler = function(e){
+			const hostDocument = self.getSuggestionHostDocument(editor.getDoc());
+			const suggestionBox = $('.dnd-sheet-cell-suggestions', hostDocument);
+			if(suggestionBox.length === 0)
+				return;
+			if($(e.target).closest('.dnd-sheet-cell-suggestions').length > 0)
+				return;
+			const sourceElement = suggestionBox.data('sourceElement');
+			if(sourceElement && $(e.target).closest(sourceElement).length > 0)
+				return;
+			self.removeDndSheetCellSuggestions(hostDocument);
+		};
+		editor.on('init', function(){
+			$(document).off(`pointerdown.${dismissNamespace} mousedown.${dismissNamespace}`).on(`pointerdown.${dismissNamespace} mousedown.${dismissNamespace}`, dismissHandler);
+		});
+		editor.on('remove', function(){
+			$(document).off(`pointerdown.${dismissNamespace} mousedown.${dismissNamespace}`);
+		});
 	}
 
 	async getSortableJquery(ownerDocument){
@@ -8614,6 +8817,7 @@ class JournalManager{
 			valid_children : '+body[style]',
 			extended_valid_elements: 'svg[name|xmlns|viewBox|width|height|class|fill|stroke],path[d|fill|stroke|stroke-width|class],g[class|fill|stroke|class],circle[cx|cy|r|fill|stroke|class],rect[x|y|width|height|fill|stroke|class],polygon[points|fill|stroke|class]',
 			setup: function (editor) { 
+				self.bindTinyMceSuggestionEvents(editor);
 				editor.on('PreInit', function() {
 					const iframeWin = editor.getWin();
 					if (iframeWin && iframeWin.addEventListener) {
