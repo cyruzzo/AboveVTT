@@ -504,31 +504,7 @@ const rollTypeKeys = Object.freeze({
     'check': { 'char': 'checkRoll', 'buff':'check'}
 });
 
-/** Buffs whose `replaceType` selectors only exist on the character sheet, remapped onto the
- * `data-actiontype` of stat block roll buttons. An empty map means the gate can't be expressed
- * on a stat block, so the buff is skipped there. Buffs absent from this list stay eligible for
- * whichever roll types their `replaceType` already gates. */
-const TOKEN_BUFF_TARGETS = Object.freeze({
-    'Invisible': { 'check': ['initiative'] },
-    'Restrained': { 'save': ['dex'] },
-    'Rage': { 'check': ['str'], 'save': ['str'] },
-    'Reliable Talent': {},
-    'Great Weapon Master (2024)': {},
-    'Great Weapon Fighting': {},
-    'Pass Without a Trace': { 'check': ['stealth'] },
-    'Mark of Detection': { 'check': ['investigation', 'insight'] },
-    'Mark of Finding': { 'check': ['perception', 'survival'] },
-    'Mark of Handling': { 'check': ['nature', 'animal handling'] },
-    'Mark of Healing': { 'check': ['medicine', 'herbalism kit'] },
-    'Mark of Hospitality': { 'check': ['persuasion', "brewer's supplies", "cook's utensils"] },
-    'Mark of Making': { 'check': ['arcana', "artisan's tools"] },
-    'Mark of Passage': { 'check': ['athletics', 'acrobatics'] },
-    'Mark of Scribing': { 'check': ['int', "calligrapher's supplies"] },
-    'Mark of Sentinel': { 'check': ['insight', 'perception'] },
-    'Mark of Shadow': { 'check': ['stealth', 'performance'] },
-    'Mark of Storm': { 'check': ['acrobatics', "navigator's tools"] },
-    'Mark of Warding': { 'check': ['investigation', "thieves' tools"] }
-});
+
 
 /** Reads a monster's proficiency bonus out of the open stat block, since `getPB` only knows how
  * to read the character sheet. */
