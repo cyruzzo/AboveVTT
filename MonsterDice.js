@@ -495,10 +495,10 @@ function roll_button_contextmenu_handler(contextmenuEvent, displayName, imgUrl, 
 
 
 	if (rollType === "damage" || (expression !== "1d20" && !/^1d20/gi.test(expression))) {
-		damage_dice_context_menu(`${expression}${modifier}`, modifier, actionType, rollType, displayName, imgUrl, entityType, entityId, damageType, save)
+		damage_dice_context_menu(adjustRollWithRollBuffs(`${expression}${modifier}`, rollType, pressedButton), modifier, actionType, rollType, displayName, imgUrl, entityType, entityId, damageType, save)
 			.present(contextmenuEvent.clientY, contextmenuEvent.clientX) // TODO: convert from iframe to main window
 	} else {
-		standard_dice_context_menu(`${expression}${modifier}`, modifier, actionType, rollType, displayName, imgUrl, entityType, entityId)
+		standard_dice_context_menu(adjustRollWithRollBuffs(`${expression}${modifier}`, rollType, pressedButton), modifier, actionType, rollType, displayName, imgUrl, entityType, entityId)
 			.present(contextmenuEvent.clientY, contextmenuEvent.clientX) // TODO: convert from iframe to main window
 	}
 }
@@ -539,10 +539,11 @@ function roll_button_clicked(clickEvent, displayName, imgUrl, entityType = undef
      }
   }
  
-	
+	// applied after the advantage/disadvantage rewrite so a buff's ^1d20 replacement can't undo it
+	const buffedExpression = adjustRollWithRollBuffs(`${expression}${modifier}`, rollType, $(clickEvent.currentTarget));
 
 	window.diceRoller.roll(new DiceRoll(
-		`${expression}${modifier}`,
+		buffedExpression,
 		action,
 		rollType,
 		displayName,

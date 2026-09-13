@@ -504,26 +504,89 @@ const rollTypeKeys = Object.freeze({
     'check': { 'char': 'checkRoll', 'buff':'check'}
 });
 
+/** Buffs whose `replaceType` selectors only exist on the character sheet, remapped onto the
+ * `data-actiontype` of stat block roll buttons. An empty map means the gate can't be expressed
+ * on a stat block, so the buff is skipped there. Buffs absent from this list stay eligible for
+ * whichever roll types their `replaceType` already gates. */
+const TOKEN_BUFF_TARGETS = Object.freeze({
+    'Invisible': { 'check': ['initiative'] },
+    'Restrained': { 'save': ['dex'] },
+    'Rage': { 'check': ['str'], 'save': ['str'] },
+    'Reliable Talent': {},
+    'Great Weapon Master (2024)': {},
+    'Great Weapon Fighting': {},
+    'Pass Without a Trace': { 'check': ['stealth'] },
+    'Mark of Detection': { 'check': ['investigation', 'insight'] },
+    'Mark of Finding': { 'check': ['perception', 'survival'] },
+    'Mark of Handling': { 'check': ['nature', 'animal handling'] },
+    'Mark of Healing': { 'check': ['medicine', 'herbalism kit'] },
+    'Mark of Hospitality': { 'check': ['persuasion', "brewer's supplies", "cook's utensils"] },
+    'Mark of Making': { 'check': ['arcana', "artisan's tools"] },
+    'Mark of Passage': { 'check': ['athletics', 'acrobatics'] },
+    'Mark of Scribing': { 'check': ['int', "calligrapher's supplies"] },
+    'Mark of Sentinel': { 'check': ['insight', 'perception'] },
+    'Mark of Shadow': { 'check': ['stealth', 'performance'] },
+    'Mark of Storm': { 'check': ['acrobatics', "navigator's tools"] },
+    'Mark of Warding': { 'check': ['investigation', "thieves' tools"] }
+});
+
+/** Reads a monster's proficiency bonus out of the open stat block, since `getPB` only knows how
+ * to read the character sheet. */
+function get_statblock_pb($statBlock) {
+    if (!$statBlock || $statBlock.length === 0) return 0;
+    const label = $statBlock
+        .find(`.mon-stat-block__tidbit-label, .ddbc-creature-block__tidbit-label, [class*="styles_attributeLabel"], .dnd-sheet .label`)
+        .filter(function () { return /proficiency\s*bonus/i.test($(this).text()); })
+        .first();
+    if (label.length === 0) return 0;
+    const parsed = parseInt(label.parent().text().replace(/proficiency\s*bonus/i, '').replace(/[^\d+-]/g, ''));
+    return isNaN(parsed) ? 0 : parsed;
+}
+
 function adjustRollWithRollBuffs(expression, rollType, $rollButton){
-    if ($rollButton.closest('.ct-character-sheet__inner').length == 0)
+    // stat block buttons use mixed case and dashes ("To Hit", "to-hit") unlike the sheet's "to hit"
+    const normalizedRollType = typeof rollType === 'string' ? rollType.trim().toLowerCase().replace(/[\s_-]+/g, ' ') : '';
+    if (normalizedRollType === 'recharge')
         return expression;
-    
-    const rollBuffs = window.rollBuffs;
-    const charRollKey = rollTypeKeys[rollType]?.char;
-    const rollBuffKey = rollTypeKeys[rollType]?.buff || rollType;
-    if(charRollKey != undefined ){
+
+    const onCharacterSheet = $rollButton.closest('.ct-character-sheet__inner').length > 0;
+    const $statBlock = onCharacterSheet ? $() : $rollButton.closest('.avtt-stat-block-container[data-token-id]');
+    const token = (onCharacterSheet || typeof get_buff_token !== 'function')
+        ? undefined
+        : get_buff_token($statBlock.attr('data-token-id'));
+    if (!onCharacterSheet && token == undefined)
+        return expression;
+
+    const rollBuffs = onCharacterSheet ? window.rollBuffs : token.options.rollbuffs;
+    const charRollKey = rollTypeKeys[normalizedRollType]?.char;
+    const rollBuffKey = rollTypeKeys[normalizedRollType]?.buff || normalizedRollType;
+    if(onCharacterSheet && charRollKey != undefined ){
         const addToRoll = window.CHARACTER_AVTT_SETTINGS?.[charRollKey]?.replace('PB', getPB());// used to check for custom entered numbers in character roll settings
         const addToRollValid = (addToRoll?.match(validExpressionRegex));
         if(addToRollValid)
             expression = `${expression}${addToRoll.match(/^[+-]/g) ? '' : '+'}${addToRoll}`;
     }
 
-    if (typeof rollBuffs == 'undefined') 
+    if (!Array.isArray(rollBuffs))
         return expression;
+
+    /** Whether this button is one the buff's `replace`/`newRoll` rewrite should apply to. */
+    const replaceApplies = function (buffName, selectorMap) {
+        if (selectorMap == undefined) return true;
+        if (onCharacterSheet)
+            return selectorMap[rollBuffKey] != undefined && $rollButton.closest(selectorMap[rollBuffKey]).length > 0;
+        const targets = TOKEN_BUFF_TARGETS[buffName];
+        if (targets == undefined) return selectorMap[rollBuffKey] != undefined;
+        const allowed = targets[rollBuffKey];
+        if (!Array.isArray(allowed) || allowed.length === 0) return selectorMap[rollBuffKey] != undefined;
+        const action = ($rollButton.attr('data-actiontype') || '').trim().toLowerCase();
+        return allowed.some(a => action.startsWith(a));
+    };
 
     for (let i in rollBuffs) {
         const currBuffSet = rollBuffs[i];
         const isMultiOption = Array.isArray(currBuffSet);
+        const buffName = isMultiOption ? currBuffSet[0] : currBuffSet;
         const targetBuff = buffsDebuffs?.[currBuffSet?.[0]];
         const targetMultiOptions = targetBuff?.multiOptions?.[currBuffSet?.[1]];
         const multiOptionAdd = targetMultiOptions?.[rollBuffKey];
@@ -537,13 +600,11 @@ function adjustRollWithRollBuffs(expression, rollType, $rollButton){
         }
 
         const multiReplaceRegex = targetMultiOptions?.replace;
-        const multiReplaceSelector = targetMultiOptions?.replaceType
-        const validMultiButton = (multiReplaceSelector == undefined || multiReplaceSelector?.[rollBuffKey] != undefined && $rollButton.closest(multiReplaceSelector[rollBuffKey]).length > 0);
-        
+        const validMultiButton = replaceApplies(buffName, targetMultiOptions?.replaceType);
+
         const singleReplaceRegex = singleTarget?.replace;
-        const singleReplaceSelector = singleTarget?.replaceType;
-        const validSingleButton = singleReplaceSelector == undefined || (singleReplaceSelector?.[rollBuffKey] != undefined && $rollButton.closest(singleReplaceSelector[rollBuffKey]).length > 0);
-       
+        const validSingleButton = replaceApplies(buffName, singleTarget?.replaceType);
+
         if (multiReplaceRegex != undefined && validMultiButton) {
             const newRoll = typeof targetMultiOptions?.newRoll === 'function' ? targetMultiOptions.newRoll(expression) : targetMultiOptions?.newRoll;
             expression = `${expression.replace(multiReplaceRegex, newRoll)}`   
@@ -553,7 +614,7 @@ function adjustRollWithRollBuffs(expression, rollType, $rollButton){
             expression = `${expression.replace(singleReplaceRegex, newRoll)}` 
         }
     }
-    const PB = getPB();
+    const PB = onCharacterSheet ? getPB() : get_statblock_pb($statBlock);
     return expression.replaceAll('PB', PB); 
 }
 class DiceRoller {

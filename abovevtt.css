@@ -13784,6 +13784,292 @@ p.monster-header+p {
 }
  
 /***** END NEW STAT BLOCKS ****/
+.dropdown-check-list {
+  display: inline-block;
+  position: absolute;
+  left: 130px;
+  font-size: 10px;
+  width: 250px;
+}
+
+.ct-tablet-box__header ~ .dropdown-check-list {
+  left: unset;
+}
+
+.dropdown-check-list .clickHandle {
+  position: relative;
+  cursor: pointer;
+  display: inline-block;
+  padding: 0px 50px 0px 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px 5px 0px 0px;
+  width: 250px;
+}
+.avtt-stat-block-container .dropdown-check-list .clickHandle {
+    border-radius:3px;
+}
+.dropdown-check-list .clickHandle:after {
+  position: absolute;
+  content: "";
+  border-left: 2px solid var(--theme-contrast, #242528);
+  border-top: 2px solid var(--theme-contrast, #242528);
+  padding: 3px;
+  right: 10px;
+  top: 0px;
+  -moz-transform: rotate(-135deg);
+  -ms-transform: rotate(-135deg);
+  -o-transform: rotate(-135deg);
+  -webkit-transform: rotate(-135deg);
+  transform: rotate(-135deg);
+}
+
+.dropdown-check-list ul.avttBuffItems {
+  padding: 2px;
+  display: none;
+  margin: 0;
+  border: 1px solid #ccc;
+  border-top: none;
+  border-radius: 0px 0px 5px 5px;
+  height: 300px;
+  overflow: auto;
+  scrollbar-width: thin;
+  width: 250px;
+}
+
+.dropdown-check-list ul.avttBuffItems > ul.collapsed,
+.dropdown-check-list ul.avttBuffItems > ul > ul.collapsed {
+  height: 22px;
+  overflow: hidden;
+  background: none;
+}
+
+.dropdown-check-list ul.avttBuffItems > ul > li,
+.dropdown-check-list ul.avttBuffItems > ul > ul > li {
+  list-style: none;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 3px;
+  font-weight: normal;
+  margin-left: 2px;
+}
+
+.dropdown-check-list ul.avttBuffItems > ul > li:first-of-type,
+.dropdown-check-list ul.avttBuffItems > ul > ul > li:first-of-type {
+  font-size: 12px;
+  font-weight: bold;
+  position: relative;
+}
+
+.dropdown-check-list ul.avttBuffItems > ul > ul > li:first-of-type {
+  font-size: 10px;
+  margin-left: 5px;
+}
+
+.dropdown-check-list ul.avttBuffItems > ul > ul > li {
+  margin-left: 7px;
+}
+
+.dropdown-check-list.visible .clickHandle {
+  color: #0094ff;
+}
+
+.dropdown-check-list .avttBuffItems {
+  display: none;
+}
+
+.dropdown-check-list.visible .avttBuffItems {
+  display: block;
+  position: absolute;
+  background: var(--theme-background-solid, #fff);
+  z-index: 200;
+}
+
+.avttBuffItems li input {
+  margin-right: 4px;
+  width: 16px;
+  height: 16px;
+  min-width: 16px;
+  min-height: 16px;
+}
+
+.avttBuffItems li label {
+  font-size: 12px;
+  padding: 3px;
+}
+
+.dropdown-check-list ul.avttBuffItems > ul > li:first-of-type:after,
+.dropdown-check-list ul.avttBuffItems > ul > ul > li:first-of-type:after {
+  position: absolute;
+  content: "";
+  border-left: 2px solid var(--theme-contrast, #242528);
+  border-top: 2px solid var(--theme-contrast, #242528);
+  padding: 3px;
+  right: 3px;
+  top: 9px;
+  transform-origin: center;
+  -moz-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+  -o-transform: rotate(45deg);
+  -webkit-transform: rotate(45deg);
+  transform: rotate(45deg);
+}
+
+.dropdown-check-list ul.avttBuffItems > ul.collapsed > li:first-of-type:after,
+.dropdown-check-list ul.avttBuffItems > ul > ul.collapsed > li:first-of-type:after {
+  top: 5px;
+  -webkit-transform: rotate(-135deg);
+  transform: rotate(-135deg);
+}
+
+.dropdown-check-list ul.avttBuffItems > ul > li:first-of-type:hover,
+.dropdown-check-list ul.avttBuffItems > ul > ul > li:first-of-type:hover {
+  backdrop-filter: brightness(0.9);
+  border-radius: 5px;
+}
+
+.ct-character-sheet--dark-mode .dropdown-check-list ul.avttBuffItems > ul > li:first-of-type:hover {
+  backdrop-filter: brightness(3);
+}
+
+ul.avttBuffItems select,
+.avttBuffSheetPins select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  text-indent: 1px;
+  text-overflow: '';
+  margin-right: 5px;
+  border-color: #7d7d7d;
+  padding: 0px;
+  width: 16px;
+  height: 16px;
+  border-radius: 3px;
+  background: #fff;
+  color: var(--theme-contrast, #242528);
+  text-shadow: none !important;
+  font-weight: bold;
+}
+
+.ct-character-sheet--dark-mode ul.avttBuffItems select,
+.ct-character-sheet--dark-mode .avttBuffSheetPins select {
+  background: #363636 !important;
+}
+
+.avttBuffSheetPins select {
+  font-size: 10px;
+}
+
+.dropdown-check-list span.material-symbols-outlined {
+  opacity: 0.2;
+  font-size: 16px;
+  margin-right: 2px;
+  cursor: pointer;
+}
+
+.dropdown-check-list span.material-symbols-outlined.enabled {
+  opacity: 1;
+}
+
+.pinToSheet.material-symbols-outlined:before {
+  content: "\f3ab";
+}
+
+.favorite.material-symbols-outlined:before {
+  content: "\e8d0";
+}
+
+.avttBuffSheetPins div.iconButtons {
+  display: none;
+}
+
+.dropdown-check-list .iconButtons {
+  position: absolute;
+  display: flex;
+  right: 0px;
+}
+
+.dropdown-check-list .collapsed .iconButtons {
+  display: none;
+}
+
+.dropdown-check-list li:has(label) {
+  width: calc(100% - 30px);
+}
+
+#avtt-buff-options ~ [class*='styles_tabFilter'] > [class*='styles_buttons'] {
+  margin-bottom: 2px;
+}
+
+.avttBuffSheetPins {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 5px 0px;
+  flex-direction: row;
+}
+
+.avttBuffSheetPins li {
+  list-style: none;
+  display: flex;
+  align-items: center;
+  margin-right: 20px;
+}
+
+.avttBuffSheetPins li input {
+  margin-right: 5px;
+  width: 16px;
+  height: 16px;
+}
+
+.avtt-statblock-buffs {
+    position: relative;
+    top: 0;
+    z-index: 5;
+    padding: 2px 6px;
+    background: var(--theme-background-solid, #fff);
+    border-bottom: 1px solid #ddd;
+}
+
+.avtt-statblock-buffs .dropdown-check-list {
+  position: relative;
+  left: unset;
+  width: 100%;
+  color: var(--theme-contrast, #242528);
+}
+
+.avtt-statblock-buffs .dropdown-check-list .clickHandle {
+  line-height: 16px;
+}
+
+.avtt-statblock-buffs .dropdown-check-list .clickHandle,
+.avtt-statblock-buffs .dropdown-check-list ul.avttBuffItems {
+  width: 100%;
+  box-sizing: border-box;
+  background: var(--theme-background-solid, #fff);
+  max-width: 240px;
+}
+
+.avtt-statblock-buffs .dropdown-check-list.readonly .clickHandle {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.avtt-statblock-buffs .avttBuffSheetPins {
+  margin: 3px 0px 0px 0px;
+  font-size: 10px;
+  row-gap: 2px;
+}
+
+.avtt-statblock-buffs .avttBuffSheetPins li {
+  margin-right: 10px;
+  flex:1;
+}
+
+.avtt-statblock-buffs .avttBuffSheetPins label {
+  font-size: 11px;
+  padding: 0px;
+  text-wrap: nowrap;
+}
 
 
 /***** MORE INFO STYLES *****/

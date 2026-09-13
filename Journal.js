@@ -1954,7 +1954,7 @@ class JournalManager{
 		const avttImages = closestNote.find('img[data-src*="above-bucket-not-a-url"]');
 		avttImages.attr('src', '');
 		avttImages.attr('href', '');
-		closestNote.find('a:empty, button:empty, .add-table-row, .table-row-drag-handle, .header-spacer, .injected-input, .added-input-desc, .spell-tooltip>svg.ritual-icon-svg').remove();
+		closestNote.find('a:empty, button:empty, .add-table-row, .table-row-drag-handle, .header-spacer, .injected-input, .added-input-desc, .avtt-statblock-buffs, .spell-tooltip>svg.ritual-icon-svg').remove();
 		closestNote.find('.dnd-sheet [contenteditable] div:not([class]):not([id]):empty').remove();
 		const noteButtons = closestNote.find('button');
 		noteButtons.replaceWith((i, innerHTML)=>{
@@ -3377,6 +3377,8 @@ class JournalManager{
 			});
 		}
 		this.bindDndSheetTemplateEvents(id, targetRescan, popoutBody, {tokenId, showControls: false});
+		if(typeof inject_statblock_buff_dropdown === 'function')
+			inject_statblock_buff_dropdown(popoutBody, tokenId);
 		targetRescan[0].scrollTop = scrollTop;
 		return true;
 	}
@@ -3437,8 +3439,10 @@ class JournalManager{
 	}
 
 	add_input_event_listeners(container, noteId, tokenId){
+		// the roll buff bar lives inside the stat block, we don't want to count those
+		const sheetCheckboxes = 'input[type="checkbox"]:not(.avtt-statblock-buffs input)';
 		if(tokenId && window.all_token_objects[tokenId].options.customCheckboxes?.length > 0){
-			container.find('input[type="checkbox"]').each((i, el) => {
+			container.find(sheetCheckboxes).each((i, el) => {
 				el.checked = window.all_token_objects[tokenId].options.customCheckboxes.includes(i);
 			});
 		}
@@ -3465,7 +3469,7 @@ class JournalManager{
 					}
 				} else {
 					note_text = $(target).closest(`.avtt-stat-block-container`);
-					const mapAllCheckedInputIndexes = note_text.find('input[type="checkbox"]').map((i, el) => el.checked ? i : -1).get().filter(i => i !== -1);
+					const mapAllCheckedInputIndexes = note_text.find(sheetCheckboxes).map((i, el) => el.checked ? i : -1).get().filter(i => i !== -1);
 				
 					window.all_token_objects[tokenId].options.customCheckboxes = mapAllCheckedInputIndexes;
 					window.all_token_objects[tokenId].sync();

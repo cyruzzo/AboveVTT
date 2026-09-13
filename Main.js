@@ -1072,6 +1072,8 @@ function build_draggable_monster_window(tokenId, bringToFront=true) {
 		popoutWindow(windowName, $("#resizeDragMon .avtt-stat-block-container"), $("#resizeDragMon").width(), $("#resizeDragMon").height());
 		const popoutBody = $(window.childWindows[windowName].document).find("body");
 		const popoutStatBlock = popoutBody.find(".avtt-stat-block-container").first();
+		// the clone's handlers still point at the original window's element, so build a fresh one
+		inject_statblock_buff_dropdown(popoutBody, tokenId);
 		if(popoutStatBlock.find('.dnd-sheet').length > 0){
 			const noteId = popoutStatBlock.attr('data-stat-id') || token?.options?.statBlock;
 			window.JOURNAL.bindDndSheetTemplateEvents(noteId, popoutStatBlock, popoutBody, {tokenId, showControls: false});
@@ -1128,7 +1130,7 @@ function build_draggable_monster_window(tokenId, bringToFront=true) {
 		stop: function() {
 			$('.iframeResizeCover').remove();
 		},
-		cancel: 'input, [contenteditable]'
+		cancel: 'input, select, [contenteditable], .avtt-statblock-buffs'
 	});
 	minimize_player_monster_window_double_click(container);
 

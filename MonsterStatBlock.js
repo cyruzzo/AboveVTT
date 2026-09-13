@@ -222,7 +222,25 @@ async function display_stat_block_in_container(statBlock, container, tokenId, cu
 			window.JOURNAL.bindDndSheetTemplateEvents(customStatId, $html, container, {tokenId, showControls: true, uploadId: tokenId, downloadToken: token});
       window.JOURNAL.ensureEnclosingZWSP($html[0]);
     }
+    inject_statblock_buff_dropdown(container, tokenId);
 	}
+
+/** Adds the roll buff dropdown to the top of a token's stat block and tags the block with its token
+ * id so roll buttons inside it can find the token's buffs. It lives inside the stat block container
+ * so popouts (which clone that container) get it too; `persistStatBlockContent` strips it back out
+ * before saving. */
+function inject_statblock_buff_dropdown(container, tokenId) {
+  if (tokenId == undefined || typeof build_buff_dropdown !== "function") return;
+  const statBlock = $(container).find(".avtt-stat-block-container").first();
+  if (statBlock.length === 0 || statBlock.find("#noAccessToContent").length > 0) return;
+
+  statBlock.attr("data-token-id", tokenId);
+  $(container).find(".avtt-statblock-buffs").remove();
+
+  const dropdown = build_buff_dropdown({ type: "token", tokenId }, true);
+  if (!dropdown) return;
+  statBlock.prepend($(`<div class="avtt-statblock-buffs"></div>`).append(dropdown));
+}
 
 function import_open_template(id){
   $(`.import_pc_template[data-id='${id}']`).trigger("click");
@@ -403,6 +421,7 @@ const debounceRescanStatBlock = mydebounce(async (container, noteId, tokenId, cu
   }
   window.JOURNAL.bindDndSheetTemplateEvents(noteId, targetRescan, container, {tokenId, showControls: false});
   window.JOURNAL.ensureEnclosingZWSP(targetRescan[0]);
+  inject_statblock_buff_dropdown(container, tokenId);
   $(container).find('.avtt-stat-block-container, .note-text')[0].scrollTop = currScroll;
 }, 1000);
 

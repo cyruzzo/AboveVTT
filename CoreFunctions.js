@@ -3751,7 +3751,7 @@ function find_or_create_generic_draggable_window(id, titleBarText, addLoadingInd
     stop: function(event, ui) {
       $('.iframeResizeCover').remove();
     },
-    cancel: cancelClasses
+    cancel: cancelClasses ? `${cancelClasses}, select, .avtt-statblock-buffs` : 'input, textarea, button, select, option, .avtt-statblock-buffs'
   });
   if(alwaysDisplayTitle)
     titleBar.prepend(`<div class="title_bar_text">${titleBarText}</div>`);
@@ -3808,3 +3808,1519 @@ function close_and_cleanup_generic_draggable_window(id) {
   container.find('.popout-button').off('click');
   container.remove();
 } 
+const buffsDebuffs = {
+  "Bane": {
+      "tohit": "-d4",
+      "dmg": "0",
+      "save": "-d4",
+      "check": "0",
+      "type": "spell",
+	  "condition": "Baned",
+  },
+  "Bless": {
+      "tohit": "+d4",
+      "dmg": "0",
+      "save": "+d4",
+      "check": "0",
+      "type": "spell",
+	  "condition": "Blessed",
+  },
+  
+  "Exhaustion": {
+    "condition": "Exhaustion",
+    "multiOptions": {
+      "-2": {
+        "tohit": "0",
+        "dmg": "0",
+        "save": "0",
+        "check": "0",
+        "replace": /^1d20/gi,
+        "newRoll": '1d20-2',
+      },
+      "-4": {
+        "tohit": "0",
+        "dmg": "0",
+        "save": "0",
+        "check": "0",
+        "replace": /^1d20/gi,
+        "newRoll": '1d20-4',
+      },
+      "-6": {
+        "tohit": "0",
+        "dmg": "0",
+        "save": "0",
+        "check": "0",
+        "replace": /^1d20/gi,
+        "newRoll": '1d20-6',
+      },
+      "-8": {
+        "tohit": "0",
+        "dmg": "0",
+        "save": "0",
+        "check": "0",
+        "replace": /^1d20/gi,
+        "newRoll": '1d20-8',
+      },
+      "-10": {
+        "tohit": "0",
+        "dmg": "0",
+        "save": "0",
+        "check": "0",
+        "replace": /^1d20/gi,
+        "newRoll": '1d20-10',
+      }
+    },
+    "type": "2024condition",
+  },
+  "Blinded": {
+    "tohit": "0",
+    "dmg": "0",
+    "save": "0",
+    "check": "0",
+    "replace": /^1d20/gi,
+    "replaceType": {
+      "tohit": "button",
+    },
+    "newRoll": '2d20kl1',
+    "type": "2024condition",
+	"condition": "Blinded",
+  },
+  "Frightened": {
+    "tohit": "0",
+    "dmg": "0",
+    "save": "0",
+    "check": "0",
+    "replace": /^1d20/gi,
+    "replaceType": {
+      "tohit": "button",
+      "check": "button",
+    },
+    "newRoll": '2d20kl1',
+    "type": "2024condition",
+	"condition": "Frightened",
+  },
+  "Invisible": {
+    "tohit": "0",
+    "dmg": "0",
+    "save": "0",
+    "check": "0",
+    "replace": /^1d20/gi,
+    "replaceType": {
+      "tohit": "button",
+      "check": ".ct-combat__summary-group--initiative button",
+    },
+    "newRoll": '2d20kl1',
+    "type": "2024condition",
+	"condition": "Invisible"
+  },
+  "Poisoned": {
+    "tohit": "0",
+    "dmg": "0",
+    "save": "0",
+    "check": "0",
+    "replace": /^1d20/gi,
+    "replaceType": {
+      "tohit": "button",
+      "check": "button",
+    },
+    "newRoll": '2d20kl1',
+    "type": "2024condition",
+	"condition": "Poisoned",
+  },
+  "Prone": {
+    "tohit": "0",
+    "dmg": "0",
+    "save": "0",
+    "check": "0",
+    "replace": /^1d20/gi,
+    "replaceType": {
+      "tohit": "button",
+    },
+    "newRoll": '2d20kl1',
+    "type": "2024condition",
+	"condition": "Prone",
+  },
+  "Restrained" :{
+    "tohit": "0",
+    "dmg": "0",
+    "save": "0",
+    "check": "0",
+    "replace": /^1d20/gi,
+    "replaceType": {
+      "tohit": "button",
+      "save": '.ddbc-saving-throws-summary__ability--dex' 
+    },
+    "newRoll": '2d20kl1',
+    "type": "2024condition",
+	"condition": "Restrained",
+  },
+  "Rage": {
+    "multiOptions": {
+      "+2": {
+        "tohit": "0",
+        "dmg": "+2",
+        "save": "0",
+        "check": "0",
+        "replace": /^1d20/gi,
+        "replaceType": {
+          "check": '.ct-skills__item:has(.ct-skills__col--stat:contains("STR")), .ddbc-ability-summary .ddbc-ability-summary__abbr:contains("str")', 
+          "save": '.ddbc-saving-throws-summary__ability--str' 
+        },
+        "newRoll": '2d20kh1',
+      },
+      "+3": {
+        "tohit": "0",
+        "dmg": "+3",
+        "save": "0",
+        "check": "0",
+        "replace": /^1d20/gi,
+        "replaceType": {
+          "check": '.ct-skills__item:has(.ct-skills__col--stat:contains("STR")), .ddbc-ability-summary .ddbc-ability-summary__abbr:contains("str")', 
+          "save": '.ddbc-saving-throws-summary__ability--str' 
+        },
+        "newRoll": '2d20kh1',
+      },
+      "+4": {
+        "tohit": "0",
+        "dmg": "+4",
+        "save": "0",
+        "check": "0",
+        "replace": /^1d20/gi,
+        "replaceType": {
+          "check": '.ct-skills__item:has(.ct-skills__col--stat:contains("STR")), .ddbc-ability-summary .ddbc-ability-summary__abbr:contains("str")', 
+          "save": '.ddbc-saving-throws-summary__ability--str' 
+        },
+        "newRoll": '2d20kh1',
+      },
+    },
+    "type": "class",
+    "class": "barbarian",
+    "condition": "Rage",
+  },
+  "Sneak Attack": {
+    "multiOptions": {
+      "+1d6": {
+        "tohit": "0",
+        "dmg": "+1d6",
+        "save": "0",
+        "check": "0",
+      },
+      "+2d6": {
+        "tohit": "0",
+        "dmg": "+2d6",
+        "save": "0",
+        "check": "0",
+      },
+      "+4d6": {
+        "tohit": "0",
+        "dmg": "+4d6",
+        "save": "0",
+        "check": "0",
+      },
+      "+5d6": {
+        "tohit": "0",
+        "dmg": "+5d6",
+        "save": "0",
+        "check": "0",
+      },
+      "+6d6": {
+        "tohit": "0",
+        "dmg": "+6d6",
+        "save": "0",
+        "check": "0",
+      },
+      "+7d6": {
+        "tohit": "0",
+        "dmg": "+7d6",
+        "save": "0",
+        "check": "0",
+      },
+      "+8d6": {
+        "tohit": "0",
+        "dmg": "+8d6",
+        "save": "0",
+        "check": "0",
+      },
+      "+9d6": {
+        "tohit": "0",
+        "dmg": "+9d6",
+        "save": "0",
+        "check": "0",
+      },
+      "+10d6": {
+        "tohit": "0",
+        "dmg": "+10d6",
+        "save": "0",
+        "check": "0",
+      },
+    },
+    "type": "class",
+    "class": "rogue",
+    "condition": "Sneak Attack",
+  },
+  "Elemental Cleaver": {
+    "multiOptions": {
+      "1d6": {
+        "tohit": "0",
+        "dmg": "+d6",
+        "save": "0",
+        "check": "0"
+      },
+      "2d6": {
+        "tohit": "0",
+        "dmg": "+2d6",
+        "save": "0",
+        "check": "0"
+      },
+    },
+    "type": "class",
+    "class": "barbarian",
+  },
+  "Luck": {
+    "tohit": "0",
+    "dmg": "0",
+    "save": "0",
+    "check": "0",
+    "replace": /1d20/gi,
+    "newRoll": '1d20ro=1',
+    "type": "species",
+    "species": "halfling",
+  },
+  "Great Weapon Master (2024)": {
+    "tohit": "0",
+    "dmg": "0",
+    "save": "0",
+    "check": "0",
+    "type": "feat",
+    "replace": /(.)$/gi,//last character
+    "replaceType": {
+      "dmg": '[class*="styles_attack"]:has(.ddbc-note-components__component:contains("Heavy"))' //looks for Heavy trait in item note
+    },
+    "newRoll": '$1+PB', //add proficiency
+  },
+  "Reroll damage 1's": {
+    "tohit": "0",
+    "dmg": "0",
+    "save": "0",
+    "check": "0",
+    "replace": /(\d+d\d+)/gi,
+    "replaceType": {
+      "dmg": 'button' 
+    },
+    "newRoll": '$1ro<2',//reroll 1
+    "type": "feat",
+  },
+  "Healer (2024) reroll 1's": {
+    "tohit": "0",
+    "dmg": "0",
+    "save": "0",
+    "check": "0",
+    "replace": /(\d+d\d+)/gi,
+    "replaceType": {
+      "heal": 'button'
+    },
+    "newRoll": '$1ro<2',//reroll 1
+    "type": "feat",
+  },
+  "Triage Expert": {
+    "tohit": "0",
+    "dmg": "0",
+    "save": "0",
+    "check": "0",
+    "replace": /(\d+)(d\d+)/i,
+    "replaceType": {
+      "heal": 'button'
+    },
+    "newRoll": function(m){
+      const match = m.match(/(\d+)(d\d+)/i)
+      return `${1+parseInt(match[1])}${match[2]}kh${parseInt(match[1])}`
+    },
+    "type": "feat",
+ 
+  },
+  "Call the Hunt": {
+    "tohit": "0",
+    "dmg": "+d6",
+    "save": "0",
+    "check": "0",
+    "type": "class",
+    "class": "barbarian",
+  },
+  "Cosmic Omen":{
+    "multiOptions": {
+      "Weal": {
+        "tohit": "+d6",
+        "dmg": "0",
+        "save": "+d6",
+        "check": "+d6"
+      },
+      "Woe": {
+        "tohit": "+d6",
+        "dmg": "0",
+        "save": "+d6",
+        "check": "+d6"
+      },
+    },
+    "type": "class",
+    "class": "druid",
+  },
+  "Giant’s Might": {
+    "multiOptions": {
+      "1d6": {
+        "tohit": "0",
+        "dmg": "+d6",
+        "save": "0",
+        "check": "0"
+      },
+      "1d8": {
+        "tohit": "0",
+        "dmg": "+d8",
+        "save": "0",
+        "check": "0"
+      },
+      "1d10": {
+        "tohit": "0",
+        "dmg": "+1d10",
+        "save": "0",
+        "check": "0"
+      },
+    },
+    "type": "class",
+    "class": "fighter",
+  },
+  "-5 to hit, +10 damage":  {
+    "tohit": "-5",
+    "dmg": "+10",
+    "save": "0",
+    "check": "0",
+    "type": "feat"
+  },
+  "Guidance": {
+      "tohit": "0",
+      "dmg": "0",
+      "save": "0",
+      "check": "+d4",
+      "type": "spell"
+  },
+  "Enlarge": {
+      "tohit": "0",
+      "dmg": "+d4",
+      "save": "0",
+      "check": "0",
+      "type": "spell"
+  },
+  "Reduce": {
+      "tohit": "0",
+      "dmg": "-d4",
+      "save": "0",
+      "check": "0",
+      "type": "spell"
+  },
+  "Magic Weapon": {
+    "multiOptions": {
+      "+1": {
+        "tohit": "+1",
+        "dmg": "+1",
+        "save": "0",
+        "check": "0"
+      },
+      "+2": {
+        "tohit": "+2",
+        "dmg": "+2",
+        "save": "0",
+        "check": "0"
+      },
+      "+3": {
+        "tohit": "+3",
+        "dmg": "+3",
+        "save": "0",
+        "check": "0"
+      },
+    },
+    "type": "spell"
+  },
+  "Hunter's Mark": {
+    "multiOptions": {
+	  "+6": {
+        "tohit": "0",
+        "dmg": "+d6",
+        "save": "0",
+        "check": "0"
+	  },
+	  "+10": {
+        "tohit": "0",
+        "dmg": "+d10",
+        "save": "0",
+        "check": "0"
+	  },
+	},
+    "type": "spell"
+  },
+  "Hex": {
+      "tohit": "0",
+      "dmg": "+d6",
+      "save": "0",
+      "check": "0",
+      "type": "spell"
+  },
+  "Foresight": {
+    "tohit": "0",
+    "dmg": "0",
+    "save": "0",
+    "check": "0",
+    "replace": /^1d20/gi,
+    "newRoll": '2d20kh1',
+    "type": "spell"
+  },
+  "Hexblade's Curse": {
+      "tohit": "0",
+      "dmg": "+PB",
+      "save": "0",
+      "check": "0",
+      "type": "class",
+      "class": "warlock"
+  },
+  "Symbiotic Entity": {
+      "tohit": "0",
+      "dmg": "+d6",
+      "save": "0",
+      "check": "0",
+      "type": "class",
+      "class": "druid"
+  },
+  "Strike of the Giants": {
+    "multiOptions": {
+      "Cloud": {
+        "tohit": "0",
+        "dmg": "+1d4",
+        "save": "0",
+        "check": "0"
+      },
+      "Fire": {
+        "tohit": "0",
+        "dmg": "+1d10",
+        "save": "0",
+        "check": "0"
+      },
+      "Other": {
+        "tohit": "0",
+        "dmg": "+1d6",
+        "save": "0",
+        "check": "0"
+      },
+    },
+    "type": "feat"
+  },
+  "Gift of the Chromatic Dragon": {
+    "tohit": "0",
+    "dmg": "+d4",
+    "save": "0",
+    "check": "0",
+    "type": "feat"
+  },
+  "Emboldening Bond": {
+    "tohit": "+d4",
+    "dmg": "0",
+    "save": "+d4",
+    "check": "+d4",
+    "type": "class",
+    "class": "cleric"
+  },
+  "Divine Strike": {
+    "multiOptions": {
+      "1d8": {
+        "tohit": "0",
+        "dmg": "+1d8",
+        "save": "0",
+        "check": "0"
+      },
+      "2d8": {
+        "tohit": "0",
+        "dmg": "+2d8",
+        "save": "0",
+        "check": "0"
+      },
+    },
+    "type": "class",
+    "class": "cleric"
+  },
+  "Divine Favor": {
+      "tohit": "0",
+      "dmg": "+d4",
+      "save": "0",
+      "check": "0",
+      "type": "spell"
+  },
+  "Radiant Strikes (Improved Divine Smite)": {
+    "tohit": "0",
+    "dmg": "+d8",
+    "save": "0",
+    "check": "0",
+    "type": "class",
+    "class": "paladin"
+  },
+  "Crusader's Mantle": {
+      "tohit": "0",
+      "dmg": "+d4",
+      "save": "0",
+      "check": "0",
+      "type": "spell"
+  },
+  "Holy Weapon": {
+      "tohit": "0",
+      "dmg": "+2d8",
+      "save": "0",
+      "check": "0",
+      "type": "spell"
+  },
+  "Tenser's Transformation": {
+      "tohit": "0",
+      "dmg": "+2d12",
+      "save": "0",
+      "check": "0",
+      "type": "spell"
+  },
+  "Fount of Moonlight": {
+      "tohit": "0",
+      "dmg": "+2d6",
+      "save": "0",
+      "check": "0",
+      "type": "spell"
+  },
+  "Spirit Shroud": {
+      "multiOptions": {
+		  "1d8": {
+			"tohit": "0",
+			"dmg": "+1d8",
+			"save": "0",
+			"check": "0",
+		  },
+		  "2d8": {
+			"tohit": "0",
+			"dmg": "+2d8",
+			"save": "0",
+			"check": "0",
+		  },
+		  "3d8": {
+			"tohit": "0",
+			"dmg": "+3d8",
+			"save": "0",
+			"check": "0",
+		  },
+		  "4d8": {
+			"tohit": "0",
+			"dmg": "+4d8",
+			"save": "0",
+			"check": "0",
+		  },
+  	  },
+      "type": "spell"
+  },
+  "Conjure Minor Elementals": {
+      "multiOptions": {
+		  "2d8": {
+			"tohit": "0",
+			"dmg": "+2d8",
+			"save": "0",
+			"check": "0",
+		  },
+		  "3d8": {
+			"tohit": "0",
+			"dmg": "+3d8",
+			"save": "0",
+			"check": "0",
+		  },
+		  "4d8": {
+			"tohit": "0",
+			"dmg": "+4d8",
+			"save": "0",
+			"check": "0",
+		  },
+		  "5d8": {
+			"tohit": "0",
+			"dmg": "+5d8",
+			"save": "0",
+			"check": "0",
+		  },
+		  "6d8": {
+			"tohit": "0",
+			"dmg": "+6d8",
+			"save": "0",
+			"check": "0",
+		  },
+		  "7d8": {
+			"tohit": "0",
+			"dmg": "+7d8",
+			"save": "0",
+			"check": "0",
+		  },
+  	  },
+      "type": "spell"
+  },
+  "Synaptic Static": {
+      "tohit": "-d6",
+      "dmg": "0",
+      "save": "0",
+      "check": "-d6",
+      "type": "spell"
+  },
+  "Trance of Order": {
+      "tohit": "0",
+      "dmg": "0",
+      "save": "0",
+      "check": "0",
+      "replace": /1d20/gi,
+      "newRoll": '1d20min10',
+      "type": "sorcerer"
+  },
+  "Reliable Talent": {
+      "tohit": "0",
+      "dmg": "0",
+      "save": "0",
+      "check": "0",
+      "replace": /1d20/gi,
+      "replaceType": {
+        "check": '.ct-skills__item:has(.ct-skills__col--proficiency>:is([aria-label="Expert"], [aria-label="Proficient"]))' //looks for proficient or expertise class before a check
+      },
+      "newRoll": '1d20min10',
+      "type": "class",
+      "class": "rogue",
+  },
+  "Pass Without a Trace":{
+    "tohit": "0",
+    "dmg": "0",
+    "save": "0",
+    "check": "0",
+    "replace": /^1d20/gi,
+    "replaceType": {
+      "check": '.ct-skills__item:contains("Stealth")' //looks for stealth
+    },
+    "newRoll": '1d20+10',
+    "type": "spell",
+  },
+  "Mark of Detection":{
+    "multiOptions": {
+      "d4": {
+        "tohit": "0",
+        "dmg": "0",
+        "save": "0",
+        "check": "0",
+        "replace": /(.)$/gi,//last character
+        "replaceType": {
+          "check": '.ct-skills__item:contains("Investigation"), .ct-skills__item:contains("Insight")' 
+        },
+        "newRoll": '$1+1d4',
+      },
+      "d6": {
+        "tohit": "0",
+        "dmg": "0",
+        "save": "0",
+        "check": "0",
+        "replace": /(.)$/gi,//last character
+        "replaceType": {
+          "check": '.ct-skills__item:contains("Investigation"), .ct-skills__item:contains("Insight")' 
+        },
+        "newRoll": '$1+1d6',
+      }
+    },
+    "type": "feat",
+  },
+  "Mark of Finding":{
+    "multiOptions": {
+      "d4": {
+        "tohit": "0",
+        "dmg": "0",
+        "save": "0",
+        "check": "0",
+        "replace": /(.)$/gi,//last character
+        "replaceType": {
+          "check": '.ct-skills__item:contains("Perception"), .ct-skills__item:contains("Survival")' 
+        },
+        "newRoll": '$1+1d4',
+      },
+      "d6": {
+        "tohit": "0",
+        "dmg": "0",
+        "save": "0",
+        "check": "0",
+        "replace": /(.)$/gi,//last character
+        "replaceType": {
+          "check": '.ct-skills__item:contains("Perception"), .ct-skills__item:contains("Survival")' 
+        },
+        "newRoll": '$1+1d6',
+      }
+    },
+    "type": "feat",
+  },
+  "Mark of Handling":{
+    "multiOptions": {
+      "d4": {
+        "tohit": "0",
+        "dmg": "0",
+        "save": "0",
+        "check": "0",
+        "replace": /(.)$/gi,//last character
+        "replaceType": {
+          "check": '.ct-skills__item:contains("Nature"), .ct-skills__item:contains("Animal Handling")' 
+        },
+        "newRoll": '$1+1d4',
+      },
+      "d6": {
+        "tohit": "0",
+        "dmg": "0",
+        "save": "0",
+        "check": "0",
+        "replace": /(.)$/gi,//last character
+        "replaceType": {
+          "check": '.ct-skills__item:contains("Nature"), .ct-skills__item:contains("Animal Handling")' 
+        },
+        "newRoll": '$1+1d6',
+      }
+    },
+    "type": "feat",
+  },
+  "Mark of Healing":{
+    "multiOptions": {
+      "d4": {
+        "tohit": "0",
+        "dmg": "0",
+        "save": "0",
+        "check": "0",
+        "replace": /(.)$/gi,//last character
+        "replaceType": {
+          "check": '.ct-skills__item:contains("Medicine"), .ct-skills__item:contains("Herbalism Kit")' 
+        },
+        "newRoll": '$1+1d4',
+      },
+      "d6": {
+        "tohit": "0",
+        "dmg": "0",
+        "save": "0",
+        "check": "0",
+        "replace": /(.)$/gi,//last character
+        "replaceType": {
+          "check": '.ct-skills__item:contains("Medicine"), .ct-skills__item:contains("Herbalism Kit")' 
+        },
+        "newRoll": '$1+1d6',
+      }
+    },
+    "type": "feat",
+  },
+  "Mark of Hospitality":{
+    "multiOptions": {
+      "d4": {
+        "tohit": "0",
+        "dmg": "0",
+        "save": "0",
+        "check": "0",
+        "replace": /(.)$/gi,//last character
+        "replaceType": {
+          "check": `.ct-skills__item:contains("Persuasion"), .ct-skills__item:contains("Brewer's Supplies"), .ct-skills__item:contains("Cook's Utensils")` 
+        },
+        "newRoll": '$1+1d4',
+      },
+      "d6": {
+        "tohit": "0",
+        "dmg": "0",
+        "save": "0",
+        "check": "0",
+        "replace": /(.)$/gi,//last character
+        "replaceType": {
+          "check": `.ct-skills__item:contains("Persuasion"), .ct-skills__item:contains("Brewer's Supplies"), .ct-skills__item:contains("Cook's Utensils")`
+        },
+        "newRoll": '$1+1d6',
+      }
+    },
+    "type": "feat",
+  },
+  "Mark of Making":{
+    "multiOptions": {
+      "d4": {
+        "tohit": "0",
+        "dmg": "0",
+        "save": "0",
+        "check": "0",
+        "replace": /(.)$/gi,//last character
+        "replaceType": {
+          "check": `.ct-skills__item:contains("Arcana"), .ct-skills__item:contains("Artisan's Tools")` 
+        },
+        "newRoll": '$1+1d4',
+      },
+      "d6": {
+        "tohit": "0",
+        "dmg": "0",
+        "save": "0",
+        "check": "0",
+        "replace": /(.)$/gi,//last character
+        "replaceType": {
+          "check": `.ct-skills__item:contains("Arcana"), .ct-skills__item:contains("Artisan's Tools")`
+        },
+        "newRoll": '$1+1d6',
+      }
+    },
+    "type": "feat",
+  },
+  "Mark of Passage":{
+    "multiOptions": {
+      "d4": {
+        "tohit": "0",
+        "dmg": "0",
+        "save": "0",
+        "check": "0",
+        "replace": /(.)$/gi,//last character
+        "replaceType": {
+          "check": `.ct-skills__item:contains("Athletics"), .ct-skills__item:contains("Acrobatics")` 
+        },
+        "newRoll": '$1+1d4',
+      },
+      "d6": {
+        "tohit": "0",
+        "dmg": "0",
+        "save": "0",
+        "check": "0",
+        "replace": /(.)$/gi,//last character
+        "replaceType": {
+          "check": `.ct-skills__item:contains("Athletics"), .ct-skills__item:contains("Acrobatics")`
+        },
+        "newRoll": '$1+1d6',
+      }
+    },
+    "type": "feat",
+  },
+  "Mark of Scribing":{
+    "multiOptions": {
+      "d4": {
+        "tohit": "0",
+        "dmg": "0",
+        "save": "0",
+        "check": "0",
+        "replace": /(.)$/gi,//last character
+        "replaceType": {
+          "check": `.ct-skills__item:contains("Intelligence"), .ct-skills__item:contains("Calligrapher's Supplies")` 
+        },
+        "newRoll": '$1+1d4',
+      },
+      "d6": {
+        "tohit": "0",
+        "dmg": "0",
+        "save": "0",
+        "check": "0",
+        "replace": /(.)$/gi,//last character
+        "replaceType": {
+          "check": `.ct-skills__item:contains("Intelligence"), .ct-skills__item:contains("Calligrapher's Supplies")`
+        },
+        "newRoll": '$1+1d6',
+      }
+    },
+    "type": "feat",
+  },
+  "Mark of Sentinel":{
+    "multiOptions": {
+      "d4": {
+        "tohit": "0",
+        "dmg": "0",
+        "save": "0",
+        "check": "0",
+        "replace": /(.)$/gi,//last character
+        "replaceType": {
+          "check": `.ct-skills__item:contains("Insight"), .ct-skills__item:contains("Perception")` 
+        },
+        "newRoll": '$1+1d4',
+      },
+      "d6": {
+        "tohit": "0",
+        "dmg": "0",
+        "save": "0",
+        "check": "0",
+        "replace": /(.)$/gi,//last character
+        "replaceType": {
+          "check": `.ct-skills__item:contains("Insight"), .ct-skills__item:contains("Perception")`
+        },
+        "newRoll": '$1+1d6',
+      }
+    },
+    "type": "feat",
+  },
+  "Mark of Shadow":{
+    "multiOptions": {
+      "d4": {
+        "tohit": "0",
+        "dmg": "0",
+        "save": "0",
+        "check": "0",
+        "replace": /(.)$/gi,//last character
+        "replaceType": {
+          "check": `.ct-skills__item:contains("Stealth"), .ct-skills__item:contains("Performance")` 
+        },
+        "newRoll": '$1+1d4',
+      },
+      "d6": {
+        "tohit": "0",
+        "dmg": "0",
+        "save": "0",
+        "check": "0",
+        "replace": /(.)$/gi,//last character
+        "replaceType": {
+          "check": `.ct-skills__item:contains("Stealth"), .ct-skills__item:contains("Performance")`
+        },
+        "newRoll": '$1+1d6',
+      }
+    },
+    "type": "feat",
+  },
+  "Mark of Storm":{
+    "multiOptions": {
+      "d4": {
+        "tohit": "0",
+        "dmg": "0",
+        "save": "0",
+        "check": "0",
+        "replace": /(.)$/gi,//last character
+        "replaceType": {
+          "check": `.ct-skills__item:contains("Acrobatics"), .ct-skills__item:contains("Navigator's Tools")` 
+        },
+        "newRoll": '$1+1d4',
+      },
+      "d6": {
+        "tohit": "0",
+        "dmg": "0",
+        "save": "0",
+        "check": "0",
+        "replace": /(.)$/gi,//last character
+        "replaceType": {
+          "check": `.ct-skills__item:contains("Acrobatics"), .ct-skills__item:contains("Navigator's Tools")`
+        },
+        "newRoll": '$1+1d6',
+      }
+    },
+    "type": "feat",
+  },
+  "Mark of Warding":{
+    "multiOptions": {
+      "d4": {
+        "tohit": "0",
+        "dmg": "0",
+        "save": "0",
+        "check": "0",
+        "replace": /(.)$/gi,//last character
+        "replaceType": {
+          "check": `.ct-skills__item:contains("Investigation"), .ct-skills__item:contains("Thieves' Tools")` 
+        },
+        "newRoll": '$1+1d4',
+      },
+      "d6": {
+        "tohit": "0",
+        "dmg": "0", 
+        "save": "0",
+        "check": "0",
+        "replace": /(.)$/gi,//last character
+        "replaceType": {
+          "check": `.ct-skills__item:contains("Investigation"), .ct-skills__item:contains("Thieves' Tools")`
+        },
+        "newRoll": '$1+1d6',
+      }
+    },
+    "type": "feat",
+  },
+  "Great Weapon Fighting": {
+    "multiOptions": {
+      "2024": { 
+        "tohit": "0",
+        "dmg": "0",
+        "save": "0",
+        "check": "0",
+        "replace": /^(\d+d\d+)/gi,//find first roll
+        "replaceType": {
+          "dmg": 'button:has(.ddbc-damage--versatile), .ddbc-combat-item-attack--melee:has(.ddbc-note-components__component:contains("Two-Handed"))' //looks for versatile 2 hand button or two-handed trait in item note
+        },
+        "newRoll": '$1min3',//replace with original roll with minimum roll of 3
+      },
+      "Legacy": {
+        "tohit": "0",
+        "dmg": "0",
+        "save": "0",
+        "check": "0",
+        "replace": /^(\d+d\d+)/gi,//find first roll
+        "replaceType": {
+            "dmg": 'button:has(.ddbc-damage--versatile), .ddbc-combat-item-attack--melee:has(.ddbc-note-components__component:contains("Two-Handed"))' //looks for versatile 2 hand button or two-handed trait in item note
+        },
+        "newRoll": '$1ro<3',//reroll 1 & 2
+      },
+    },
+    "type": "feat",
+  },  
+}
+var rollBuffFavorites = [];
+var rollBuffContext = [];
+var rollBuffPins = [];
+
+function register_buff_row_context_menu() {
+  $.contextMenu({
+    selector: ".dropdown-check-list li",
+    build: function(element, e) {
+
+      let menuItems = {};
+
+      let rowHtml = $(element);
+      let rowBuff = rowHtml.find('[data-buff]').attr('data-buff');
+
+      menuItems["favorite"] = {
+        name: rollBuffFavorites.includes(rowBuff) ? "Remove From Favorites" : "Move to Favorites",
+        callback: function(itemKey, opt, originalEvent) {
+            if(rollBuffFavorites.includes(rowBuff)){
+              rollBuffFavorites = rollBuffFavorites.filter(d=> d != rowBuff)
+            }
+            else{
+              rollBuffFavorites.push(rowBuff)
+            }
+            localStorage.setItem('rollFavoriteBuffs' + window.PLAYER_ID, JSON.stringify(rollBuffFavorites));
+            rebuild_all_buff_dropdowns();
+
+        }
+      };
+      menuItems["pin"] = {
+        name: rollBuffPins.includes(rowBuff) ? "Unpin" : "Pin",
+        callback: function(itemKey, opt, originalEvent) {
+            if(rollBuffPins.includes(rowBuff)){
+              rollBuffPins = rollBuffPins.filter(d=> d != rowBuff)
+            }
+            else{
+              rollBuffPins.push(rowBuff)
+            }
+            localStorage.setItem('rollBuffPins' + window.PLAYER_ID, JSON.stringify(rollBuffPins));
+            rebuild_all_buff_dropdowns();
+
+        }
+      };
+      /**** To do: Allow select menus to be added to roll context menus for this to work. Checkbox inputs can just be added as list items ****/
+      /*
+      menuItems["addToContext"] = {
+        name: rollBuffContext.includes(rowBuff) ? "Remove from Roll Context Menu" : "Add to Roll Context Menu",
+        callback: function(itemKey, opt, originalEvent) {
+          if(rollBuffContext.includes(rowBuff)){
+            rollBuffContext = rollBuffContext.filter(d=> d != rowBuff)
+          }
+          else{
+            rollBuffContext.push(rowBuff)
+          }
+          rebuild_buffs();
+        }
+      };
+      */
+      return { items: menuItems };
+    }
+
+  })
+}
+/** Every buff dropdown currently in the DOM, so favorite/pin changes can refresh all of them. */
+window.avttBuffDropdowns = window.avttBuffDropdowns || [];
+
+function rebuild_all_buff_dropdowns(){
+  window.avttBuffDropdowns = window.avttBuffDropdowns.filter(entry => entry.element.closest("html").length > 0);
+  window.avttBuffDropdowns.forEach(entry => build_buff_dropdown(entry.scope, false));
+}
+
+function get_buff_token(tokenId){
+  return window.TOKEN_OBJECTS?.[tokenId] || window.all_token_objects?.[tokenId];
+}
+
+/** Token ids contain slashes, so they can't be used in an id attribute or selector as-is. */
+function buff_dropdown_element_id(scope){
+  if(scope?.type !== 'token') return 'avtt-buff-options';
+  return `avtt-buff-options-${`${scope.tokenId}`.replace(/[^a-z0-9_-]/gi, '_')}`;
+}
+
+/** Storage and condition plumbing, which differs between the character sheet and a token stat block. */
+function buff_scope_accessor(scope){
+  const elementId = buff_dropdown_element_id(scope);
+  if(scope?.type === 'token'){
+    const tokenId = scope.tokenId;
+    return {
+      elementId,
+      canEdit: function(){
+        const token = get_buff_token(tokenId);
+        return token != undefined && (window.DM == true || token.options.player_owned == true);
+      },
+      read: function(){
+        return [...(get_buff_token(tokenId)?.options?.rollbuffs || [])];
+      },
+      write: function(buffs){
+        if(window.all_token_objects?.[tokenId] != undefined){
+          window.all_token_objects[tokenId].options.rollbuffs = buffs;
+        }
+        const token = window.TOKEN_OBJECTS?.[tokenId];
+        if(token == undefined) return;
+        token.options.rollbuffs = buffs;
+        token.place_sync_persist();
+      },
+      setPins: function(pins){
+        const token = window.TOKEN_OBJECTS?.[tokenId];
+        if(token == undefined) return;
+        token.options.rollbuffpins = pins;
+        token.place_sync_persist();
+      },
+      setFavorites: function(favorites){
+        const token = window.TOKEN_OBJECTS?.[tokenId];
+        if(token == undefined) return;
+        token.options.rollbufffavorites = favorites;
+        token.place_sync_persist();
+      },
+      getPins: function(){
+        const token = window.TOKEN_OBJECTS?.[tokenId];
+        if(token == undefined) return [];
+        return token.options.rollbuffpins || [];
+      },
+      getFavorites: function(){
+        const token = window.TOKEN_OBJECTS?.[tokenId];
+        if(token == undefined) return [];
+        return token.options.rollbufffavorites || [];
+      },
+      setCondition: function(condition, value){
+        const token = window.TOKEN_OBJECTS?.[tokenId];
+        if(token == undefined) return;
+        token[(value !== false && value !== '0') ? 'addCondition' : 'removeCondition'](condition);
+        token.place_sync_persist();
+      }
+    };
+  }
+  return {
+    elementId,
+    canEdit: function(){ return true; },
+    read: function(){
+      return JSON.parse(localStorage.getItem('rollBuffs' + window.PLAYER_ID)) || [];
+    },
+    write: function(buffs){
+      window.rollBuffs = buffs;
+      localStorage.setItem('rollBuffs' + window.PLAYER_ID, JSON.stringify(buffs));
+    },
+    setCondition: function(condition, value, context = {}){
+      const turnOn = value !== false && value !== '0';
+      const additionalCSS = context.menuOpen ? `.dropdown-check-list .avttBuffItems {
+              display: block !important;
+              position: absolute !important;
+              background: var(--theme-background-solid) !important;
+              z-index: 200 !important;
+          }` : '';
+      if(STANDARD_CONDITIONS.includes(condition)){
+        click_condition(condition, value, context.menuOpen ? context.onDone : undefined, additionalCSS);
+      } else if (is_abovevtt_page()) {
+        const pc = find_pc_by_player_id(window.PLAYER_ID, false);
+        if (!pc) return;
+        const token = window.all_token_objects[pc.sheet];
+        if (!token) return;
+        token[turnOn ? 'addCondition' : 'removeCondition'](condition);
+        token.place_sync_persist();
+      } else {
+        tabCommunicationChannel.postMessage({
+          msgType: turnOn ? 'addCondition' : 'removeCondition',
+          characterId: window.PLAYER_ID,
+          text: condition,
+          sendTo: window.sendToTab
+        })
+      }
+    }
+  };
+}
+
+function rebuild_buffs(fullBuild = false){
+  return build_buff_dropdown({ type: 'character' }, fullBuild);
+}
+
+/** @param scope {{type: 'character'}|{type: 'token', tokenId: string}} whose buffs this dropdown edits */
+function build_buff_dropdown(scope = { type: 'character' }, fullBuild = false){
+  const accessor = buff_scope_accessor(scope);
+  const isCharacterScope = scope?.type !== 'token';
+  const elementId = accessor.elementId;
+  const idPrefix = isCharacterScope ? '' : `${elementId}_`;
+  const editable = accessor.canEdit();
+
+  const buffDebuffKeys = Object.keys(buffsDebuffs);
+  let selectedBuffs = accessor.read();
+  const originalLength = selectedBuffs.length;
+  selectedBuffs = selectedBuffs.filter(buff =>
+    Array.isArray(buff) ? buffDebuffKeys.includes(buff[0]) : buffDebuffKeys.includes(buff)
+  );
+  if(selectedBuffs.length !== originalLength && editable){
+    accessor.write(selectedBuffs);
+    
+  }
+    
+  if(isCharacterScope){
+    window.rollBuffs = selectedBuffs;
+    rollBuffFavorites = JSON.parse(localStorage.getItem('rollFavoriteBuffs' + window.PLAYER_ID)) || [];
+    rollBuffPins = JSON.parse(localStorage.getItem('rollBuffPins' + window.PLAYER_ID)) || [];
+  }else{
+    rollBuffFavorites = accessor.getFavorites();
+    rollBuffPins = accessor.getPins();
+  }
+  
+  let avttBuffSelect;
+  const innerBuffHtml = `
+    <ul id='${idPrefix}favoriteBuffs' data-group='favorite'><li>Favorite</li></ul>
+    <ul data-group='class'><li>Class</li>
+      <ul data-group='barbarian'><li>Barbarian</li></ul>
+      <ul data-group='bard'><li>Bard</li></ul>
+      <ul data-group='cleric'><li>Cleric</li></ul>
+      <ul data-group='druid'><li>Druid</li></ul>
+      <ul data-group='fighter'><li>Fighter</li></ul>
+      <ul data-group='monk'><li>Monk</li></ul>
+      <ul data-group='paladin'><li>Paladin</li></ul>
+      <ul data-group='ranger'><li>Ranger</li></ul>
+      <ul data-group='rogue'><li>Rogue</li></ul>
+      <ul data-group='sorcerer'><li>Sorcerer</li></ul>
+      <ul data-group='warlock'><li>Warlock</li></ul>
+      <ul data-group='wizard'><li>Wizard</li></ul>
+    </ul>
+    <ul data-group='species'><li>Species</li>
+      <ul data-group='halfling'><li>Halfling</li></ul>
+    </ul>      
+    <ul data-group='spell'><li>Spells</li></ul>
+    <ul data-group='feat'><li>Feats</li></ul>
+    <ul data-group='2024condition'><li>Conditions</li></ul>
+  `
+  if(fullBuild){
+    avttBuffSelect = $(`<div id="${elementId}" class="dropdown-check-list${editable ? '' : ' readonly'}">
+      <span class="clickHandle">Roll Buff/Debuffs</span>
+      <ul class="avttBuffItems">
+        ${innerBuffHtml}      
+      </ul>
+    </div>`)
+  }
+  else{
+    // the registry keeps a handle on dropdowns living in popout documents, which $('#id') can't reach
+    const registered = window.avttBuffDropdowns.find(entry => entry.id === elementId);
+    avttBuffSelect = registered?.element?.closest('html').length > 0 ? registered.element : $(`#${elementId}`);
+    if(avttBuffSelect.length === 0) return undefined;
+    avttBuffSelect.toggleClass('readonly', !editable);
+    avttBuffSelect.find('.avttBuffItems').html(innerBuffHtml)
+  }
+  const toggleBuffMenuVisiblity = function(){
+    avttBuffSelect.toggleClass('visible')
+    if(avttBuffSelect.hasClass('visible')){
+      //set a timeout here to allow other automated clicks such as clicking the gamelog after setting a condition to finish before adding the close event
+      setTimeout(function(){
+        $(document).on('click.blurHandle', function(e){
+          if($(e.target).closest(`#${elementId}, .context-menu-list`).length == 0){
+            avttBuffSelect.toggleClass('visible', false)
+            $(document).off('click.blurHandle');
+          }
+        })
+      }, 250)
+    }
+  }
+  const avttBuffItems = avttBuffSelect.find('.avttBuffItems')
+  avttBuffSelect.off('click.clickHandle').on('click.clickHandle', '.clickHandle', function(){
+    toggleBuffMenuVisiblity();
+  })
+  avttBuffSelect.off('click.headers').on('click.headers', 'ul>ul', function(e){
+    e.stopPropagation();
+    if($(e.target).is('li:first-of-type'))
+      $(e.target).closest('ul').toggleClass('collapsed');
+  })
+
+  /** Persists a buff selection and mirrors any condition the buff carries. */
+  const applyBuffChange = function(buffName, value, updatedBuffs){
+    accessor.write(updatedBuffs);
+    if(buffsDebuffs[buffName].condition == undefined) return;
+    accessor.setCondition(buffsDebuffs[buffName].condition, value, {
+      menuOpen: avttBuffSelect.hasClass('visible'),
+      onDone: toggleBuffMenuVisiblity
+    });
+  }
+
+  const sortedBuffs = Object.keys(buffsDebuffs).sort().reduce(
+    (obj, key) => { 
+      obj[key] = buffsDebuffs[key]; 
+      return obj;
+    }, 
+    {}
+  );
+  const pinWrapper = $(`<div id='${idPrefix}avttBuffSheetPins' class='avttBuffSheetPins'></div>`);
+  $(`#${idPrefix}avttBuffSheetPins`).remove()
+ 
+  for(let i in sortedBuffs){
+    const groupName = buffsDebuffs[i].type == 'class' ? buffsDebuffs[i].class : buffsDebuffs[i].type == 'species' ? buffsDebuffs[i].species : buffsDebuffs[i].type;
+    const headerRow = avttBuffItems.find(`ul[data-group='${groupName}']`);
+    const replacedName = i.replace("'", '');
+    const addToFavorite = rollBuffFavorites.includes(replacedName);
+    const addToPins = rollBuffPins.includes(replacedName);
+    const pinnedId = `${idPrefix}pin_buff_${replacedName}`;
+
+    if(buffsDebuffs[i]['multiOptions'] != undefined){
+      const row = $(`<li>
+        <select id='${idPrefix}buff_${replacedName}' data-buff='${replacedName}'/>
+          <option value='0'></option>
+        </select>
+        <label for='${idPrefix}buff_${replacedName}'>${i}</label>
+        <div class='iconButtons'>
+          <span title='Pin' class="material-symbols-outlined pinToSheet ${rollBuffPins.includes(replacedName) ? 'enabled' : ''}"> </span>
+          <span title='Favorite' class="material-symbols-outlined favorite ${rollBuffFavorites.includes(replacedName) ? 'enabled' : ''}"> </span>
+        </div>
+      </li>`)
+      const select = row.find('select');
+      const currentSelected = selectedBuffs.find(d => d.includes(i));
+
+      for(let j in buffsDebuffs[i]['multiOptions']){
+        const option = $(`<option value='${j}'>${j}</option>`);
+        select.append(option)
+      }
+      if(currentSelected != undefined){
+        select.val(currentSelected[1])
+      }
+      select.prop('disabled', !editable);
+      row.find('select').off('change.setRollBuff').on('change.setRollBuff', function(e){
+        e.stopPropagation(); // the stat block window delegates input events for its own trackers
+        const value = $(this).val();
+        let updated = accessor.read().filter(d => !d.includes(i));
+        if(value != '0'){
+          updated.push([i, value])
+        }
+        $(this).blur();
+        applyBuffChange(i, value, updated);
+      })
+      row.find('span.favorite').off('click.favorite').on('click.favorite', function(e){
+        e.preventDefault();
+        e.stopPropagation();
+        if(rollBuffFavorites.includes(replacedName)){
+          rollBuffFavorites = rollBuffFavorites.filter(d=> d != replacedName)
+        }
+        else{
+          rollBuffFavorites.push(replacedName)
+        }
+        if(!isCharacterScope)
+           accessor.setFavorites(rollBuffFavorites);
+        else
+          localStorage.setItem('rollFavoriteBuffs' + window.PLAYER_ID, JSON.stringify(rollBuffFavorites));
+        rebuild_all_buff_dropdowns();
+      })
+      row.find('span.pinToSheet').off('click.pinToSheet').on('click.pinToSheet', function(e){
+        e.preventDefault();
+        e.stopPropagation();
+        if(rollBuffPins.includes(replacedName)){
+          rollBuffPins = rollBuffPins.filter(d=> d != replacedName)
+        }
+        else{
+          rollBuffPins.push(replacedName)
+        }
+        if(!isCharacterScope)
+          accessor.setPins(rollBuffPins);
+        else
+          localStorage.setItem('rollBuffPins' + window.PLAYER_ID, JSON.stringify(rollBuffPins));
+        rebuild_all_buff_dropdowns();
+      })
+      if(addToFavorite)
+        avttBuffItems.find(`ul[data-group='favorite']`).append(row);  
+      else    
+        headerRow.append(row);
+
+      if(addToPins){
+        const cloneRow = row.clone(true, true);
+        const cloneSelect = cloneRow.find('select');
+        cloneSelect.attr('id', pinnedId);
+        cloneRow.find('label').attr('for', pinnedId);
+        if(currentSelected != undefined){
+          cloneSelect.val(currentSelected[1])
+        }
+        cloneSelect.off('change.syncRollBuff').on('change.syncRollBuff', function(e){
+          row.find('select').val($(this).val())
+        })
+        select.off('change.syncRollBuff').on('change.syncRollBuff', function(e){
+          cloneRow.find('select').val($(this).val());
+        })
+        pinWrapper.append(cloneRow);
+      }
+    } else{
+      const row = $(`<li>
+        <input type="checkbox" id='${idPrefix}buff_${replacedName}' data-buff='${replacedName}'/>
+        <label for='${idPrefix}buff_${replacedName}'>${i}</label>
+        <div class='iconButtons'>
+          <span title='Pin' class="material-symbols-outlined pinToSheet ${rollBuffPins.includes(replacedName) ? 'enabled' : ''}"> </span>
+          <span title='Favorite' class="material-symbols-outlined favorite ${rollBuffFavorites.includes(replacedName) ? 'enabled' : ''}"> </span>
+        </div>
+      </li>`)
+      if(selectedBuffs.includes(i))
+        row.find('input').prop('checked', true);
+      row.find('input').prop('disabled', !editable);
+      row.find('input').off('change.setRollBuff').on('change.setRollBuff', function(e){
+        e.stopPropagation(); // the stat block window delegates input events for its own trackers
+        const checked = $(this).is(':checked');
+        let updated = accessor.read().filter(d => d != i);
+        if(checked){
+          updated.push(i)
+        }
+        $(this).blur();
+        applyBuffChange(i, checked, updated);
+      })
+      row.find('span.favorite').off('click.favorite').on('click.favorite', function(e){
+        e.preventDefault();
+        e.stopPropagation();
+        if(rollBuffFavorites.includes(replacedName)){
+          rollBuffFavorites = rollBuffFavorites.filter(d=> d != replacedName)
+        }
+        else{
+          rollBuffFavorites.push(replacedName)
+        }
+        if(!isCharacterScope){
+          accessor.setFavorites(rollBuffFavorites);
+        }
+        localStorage.setItem('rollFavoriteBuffs' + window.PLAYER_ID, JSON.stringify(rollBuffFavorites));
+        rebuild_all_buff_dropdowns();
+      })
+      row.find('span.pinToSheet').off('click.pinToSheet').on('click.pinToSheet', function(e){
+        e.preventDefault();
+        e.stopPropagation();
+        if(rollBuffPins.includes(replacedName)){
+          rollBuffPins = rollBuffPins.filter(d=> d != replacedName)
+        }
+        else{
+          rollBuffPins.push(replacedName)
+        }
+        if(!isCharacterScope){
+          accessor.setPins(rollBuffPins);
+        } else{
+          localStorage.setItem('rollBuffPins' + window.PLAYER_ID, JSON.stringify(rollBuffPins));
+        }
+        
+        rebuild_all_buff_dropdowns();
+      })
+      if(addToFavorite)
+        avttBuffItems.find(`ul[data-group='favorite']`).append(row);
+      else   
+        headerRow.append(row);
+
+      if(addToPins){
+        const cloneRow = row.clone(true, true);
+         cloneRow.find('input').attr('id', pinnedId);
+         cloneRow.find('label').attr('for', pinnedId);
+         cloneRow.find('input').off('change.syncRollBuff').on('change.syncRollBuff', function(e){
+            row.find('input').prop('checked', $(this).is(':checked'));
+         })
+         row.find('input').off('change.syncRollBuff').on('change.syncRollBuff', function(e){
+            cloneRow.find('input').prop('checked', $(this).is(':checked'));
+         })
+        pinWrapper.append(cloneRow);
+      }
+    }
+
+  }
+  avttBuffItems.find(`ul>ul`).each(function(){
+    if($(this).find('li').length < 2)
+      $(this).hide();
+  })
+
+  if(fullBuild){
+    if(isCharacterScope)
+      $('.ct-primary-box__tab--actions .ct-actions h2, .ct-actions-mobile .ct-actions h2, .ct-actions-tablet .ct-tablet-box__header').after(avttBuffSelect)
+    window.avttBuffDropdowns = window.avttBuffDropdowns.filter(entry => entry.id !== elementId);
+    window.avttBuffDropdowns.push({ id: elementId, scope, element: avttBuffSelect });
+  }
+
+  if(isCharacterScope){
+    const tabContent = $(`#${elementId}~[class*='styles_tabFilter']>[class*='styles_content'], #${elementId}~.ct-tablet-box__content [class*='styles_tabFilter']>[class*='styles_content']`);
+    tabContent.prepend(pinWrapper);
+  } else {
+    avttBuffSelect.append(pinWrapper);
+  }
+  register_buff_row_context_menu();
+  return avttBuffSelect;
+}
