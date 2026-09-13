@@ -3881,6 +3881,7 @@ function drawing_mousedown(e) {
 	window.wallTop = data.wall_top_height;
 	window.wallBottom = data.wall_base_height;
 	window.mapElev = data.elev_height
+	context.save();
 
 	if(window.DRAWTYPE == 'dot'){
 		context.setLineDash([data.draw_line_width, 3*data.draw_line_width])
@@ -3891,7 +3892,7 @@ function drawing_mousedown(e) {
 	else{
 		context.setLineDash([])
 	}
-	
+
 
 	window.DRAWDAYLIGHT = (data.from == 'vision_menu' && $('#daylight').hasClass('button-enabled'));
 
@@ -3958,6 +3959,8 @@ function drawing_mousedown(e) {
 		let minHeight = Math.min(...elevColorArr);
 		maxHeight = Math.max(Math.abs(minHeight), maxHeight);
 		window.DRAWCOLOR = numToColor(window.mapElev, 0.8, maxHeight);
+		window.DRAWTYPE = "filled"
+		context.globalAlpha = 0.5;
 	}
 	
 	if ($(".context-menu-list.context-menu-root ~ .context-menu-list.context-menu-root:visible, .body-rpgcharacter-sheet .context-menu-list.context-menu-root").length>0){
@@ -4229,7 +4232,7 @@ function drawing_mousemove(e) {
 
 		if (window.DRAWSHAPE == "rect") {
 			if(window.DRAWFUNCTION == "draw_text")
-			{
+			{	
 				drawRect(window.temp_context,
 					Math.round(((window.BEGIN_MOUSEX - window.VTTMargin + window.scrollX))) * (1.0 / window.ZOOM),
 					Math.round(((window.BEGIN_MOUSEY - window.VTTMargin + window.scrollY))) * (1.0 / window.ZOOM),
@@ -5474,6 +5477,7 @@ function drawing_mouseup(e) {
 		WaypointManager.fadeoutMeasuring(window.PLAYER_ID)
 	}
 	window.BRUSHPOINTS = null;
+	window.temp_context.restore();
 }
 
 function drawing_contextmenu(e) {
