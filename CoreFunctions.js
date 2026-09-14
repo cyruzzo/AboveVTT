@@ -3808,6 +3808,27 @@ function close_and_cleanup_generic_draggable_window(id) {
   container.find('.popout-button').off('click');
   container.remove();
 } 
+/** Buffs whose `replaceType` selectors only exist on the character sheet, remapped onto the
+ * `data-actiontype` of stat block roll buttons.  */
+const TOKEN_BUFF_TARGETS = Object.freeze({
+    'Invisible': { 'check': ['initiative'] },
+    'Restrained': { 'save': ['dex'] },
+    'Rage': { 'check': ['str', 'athletics'], 'save': ['str'] },
+    'Pass Without a Trace': { 'check': ['stealth'] },
+    'Mark of Detection': { 'check': ['investigation', 'insight'] },
+    'Mark of Finding': { 'check': ['perception', 'survival'] },
+    'Mark of Handling': { 'check': ['nature', 'animal handling'] },
+    'Mark of Healing': { 'check': ['medicine', 'herbalism kit'] },
+    'Mark of Hospitality': { 'check': ['persuasion', "brewer's supplies", "cook's utensils"] },
+    'Mark of Making': { 'check': ['arcana', "artisan's tools"] },
+    'Mark of Passage': { 'check': ['athletics', 'acrobatics'] },
+    'Mark of Scribing': { 'check': ['history', "calligrapher's supplies"] },
+    'Mark of Sentinel': { 'check': ['insight', 'perception'] },
+    'Mark of Shadow': { 'check': ['stealth', 'performance'] },
+    'Mark of Storm': { 'check': ['acrobatics', "navigator's tools"] },
+    'Mark of Warding': { 'check': ['investigation', "thieves' tools"] }
+});
+
 const buffsDebuffs = {
   "Bane": {
       "tohit": "-d4",
@@ -4696,7 +4717,7 @@ const buffsDebuffs = {
         "check": "0",
         "replace": /(.)$/gi,//last character
         "replaceType": {
-          "check": `.ct-skills__item:contains("Intelligence"), .ct-skills__item:contains("Calligrapher's Supplies")` 
+          "check": `.ct-skills__item:contains("History"), .ct-skills__item:contains("Calligrapher's Supplies")` 
         },
         "newRoll": '$1+1d4',
       },
@@ -4707,7 +4728,7 @@ const buffsDebuffs = {
         "check": "0",
         "replace": /(.)$/gi,//last character
         "replaceType": {
-          "check": `.ct-skills__item:contains("Intelligence"), .ct-skills__item:contains("Calligrapher's Supplies")`
+          "check": `.ct-skills__item:contains("History"), .ct-skills__item:contains("Calligrapher's Supplies")`
         },
         "newRoll": '$1+1d6',
       }
@@ -4912,7 +4933,7 @@ function register_buff_row_context_menu() {
 
   })
 }
-/** Every buff dropdown currently in the DOM, so favorite/pin changes can refresh all of them. */
+
 window.avttBuffDropdowns = window.avttBuffDropdowns || [];
 
 function rebuild_all_buff_dropdowns(){
