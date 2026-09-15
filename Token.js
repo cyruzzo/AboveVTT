@@ -4391,8 +4391,8 @@ function setTokenAuras (token, options) {
 		// use sizeWidth and sizeHeight???
 		
 		const auraRadius = innerAuraSize ? (innerAuraSize + (options.size/window.CURRENT_SCENE_DATA.scale_factor / 2)) : 0;
-		const totalAura = auraRadius + outerAuraSize;
-		const auraBg = `radial-gradient(${options.aura1.color} ${auraRadius}px, ${options.aura2.color} ${auraRadius}px ${totalAura}px);`;
+		const totalAura = auraRadius + outerAuraSize + (innerAuraSize ? 0 : (options.size/window.CURRENT_SCENE_DATA.scale_factor / 2));
+		const auraBg = `radial-gradient(${innerAuraSize == 0 ? 'transparent' : options.aura1.color} ${auraRadius}px, ${outerAuraSize == 0 ? 'transparent' : options.aura2.color} ${auraRadius}px ${totalAura}px);`;
 		const totalSize = (2 * totalAura);
 		const absPosOffset = (options.size/window.CURRENT_SCENE_DATA.scale_factor - totalSize) / 2;
 		
@@ -4415,8 +4415,8 @@ function setTokenAuras (token, options) {
 							display:${showAura};
 							--color1: ${color1Values};
 							--color2: ${color2Values};	
-							--opacity1: ${opacity1Value};
-							--opacity2: ${opacity2Value};
+							--opacity1: ${innerAuraSize == 0 ? 0 : opacity1Value};
+							--opacity2: ${outerAuraSize == 0 ? 0 : opacity2Value};
 							--gradient: ${auraBg};
 							--animation-width: ${totalSize < 150 ? `${totalSize * 3}px, ${totalSize * 3}px` : `cover`};
 							--radius1: ${auraRadius}px;
@@ -4530,7 +4530,7 @@ function setTokenLight (token, options) {
 		
 		const lightRadius = innerlightSize ? (innerlightSize + (optionsSize / 2)) : 0;
 		const totallight = innerlightSize ? lightRadius + outerlightSize : outerlightSize ? outerlightSize + (optionsSize / 2) : 0;
-		const lightBg = `radial-gradient(${options.light1.daylight ? 'var(--daylight-color)' : options.light1.color} ${lightRadius}px, ${options.light2.daylight ? 'var(--daylight-color)' : options.light2.color} ${lightRadius}px ${totallight}px);`;
+		const lightBg = `radial-gradient(${innerlightSize == 0 ? 'transparent' : (options.light1.daylight ? 'var(--daylight-color)' : options.light1.color)} ${lightRadius}px, ${outerlightSize == 0 ? 'transparent' : (options.light2.daylight ? 'var(--daylight-color)' : options.light2.color)} ${lightRadius}px ${totallight}px);`;
 		const totalSize = (totallight == 0) ? 0 : (2 * totallight);
 		const absPosOffset = (optionsSize - totalSize) / 2;
 		
@@ -4551,8 +4551,8 @@ function setTokenLight (token, options) {
 							top:${optionsTop+ absPosOffset}px;
 							--color1: ${options.light1.daylight ? daylightValues : color1Values};
 							--color2: ${options.light2.daylight ? daylightValues : color2Values};
-							--opacity1: ${options.light1.daylight ? daylightOpacityValue : opacity1Value};
-							--opacity2: ${options.light2.daylight ? daylightOpacityValue : opacity2Value};
+							--opacity1: ${innerlightSize == 0 ? 0 : (options.light1.daylight ? daylightOpacityValue : opacity1Value)};
+							--opacity2: ${outerlightSize == 0 ? 0 : (options.light2.daylight ? daylightOpacityValue : opacity2Value)};
 							--gradient: ${lightBg};
 							--animation-width: ${totalSize < 150 ? `${totalSize * 3}px, ${totalSize * 3}px` : `cover`};
 							--radius1: ${lightRadius}px;
