@@ -2327,7 +2327,10 @@ function add_tooltip_aoe_buttons(html, tokenId){
 
 function display_tooltip(tooltipJson, container, hoverEvent, tokenId=undefined) {
     if (typeof tooltipJson?.Tooltip === "string") {
-        remove_tooltip(0, false);
+        // Cloned popout handlers execute in the opener, but the target belongs
+        // to the child document. Keep the flyout in that same document.
+        const tooltipDocument = hoverEvent.currentTarget?.ownerDocument || document;
+        remove_tooltip(0, false, tooltipDocument);
 
         noisy_log("container", container)
         const tooltipHtmlString = tooltipJson.Tooltip.replaceAll(/<script>[\S\s]+<\/script>/gi, '');
@@ -2336,18 +2339,18 @@ function display_tooltip(tooltipJson, container, hoverEvent, tokenId=undefined) 
         build_and_display_sidebar_flyout(hoverEvent.clientY, function (flyout) {
             setup_tooltip_flyout(flyout, tooltipHtmlString, ['tooltip-flyout'], hoverEvent, {id: tokenId, container, isRitual: tooltipJson.isRitual, componentText: tooltipJson.componentText});
             flyout.css("background-color", "#fff");
-        });
+        }, tooltipDocument);
     }
 }
 
-var removeToolTipTimer = undefined;
-function remove_tooltip(delay = 0, removeHoverNote = true) {
-    clearTimeout(removeToolTipTimer);
+function remove_tooltip(delay = 0, removeHoverNote = true, tooltipDocument = document) {
+    const tooltipWindow = tooltipDocument.defaultView || window;
+    clearTimeout(tooltipWindow.removeToolTipTimer);
     if (delay > 0) {
-      removeToolTipTimer = setTimeout(function(){remove_sidebar_flyout(removeHoverNote)}, delay);
+      tooltipWindow.removeToolTipTimer = setTimeout(function(){remove_sidebar_flyout(removeHoverNote, tooltipDocument)}, delay);
     } else {
-      removeToolTipTimer = undefined;
-      remove_sidebar_flyout(removeHoverNote);
+      tooltipWindow.removeToolTipTimer = undefined;
+      remove_sidebar_flyout(removeHoverNote, tooltipDocument);
     }
 }
 
@@ -2358,13 +2361,14 @@ function add_stat_block_hover(statBlockContainer, tokenId) {
         if(hoverEvent.target.tagName == 'INPUT')
           return;
         let currentTarget = $(hoverEvent.currentTarget);
+        const tooltipWindow = hoverEvent.currentTarget.ownerDocument.defaultView || window;
         let cursorOffset = {
           left : 10,
           top  : -10
         }
         if (hoverEvent.type === "mouseenter") {
-          clearTimeout(window.tooltipHoverTimeout);
-          window.tooltipHoverTimeout = setTimeout(function(){
+          clearTimeout(tooltipWindow.tooltipHoverTimeout);
+          tooltipWindow.tooltipHoverTimeout = setTimeout(function(){
             currentTarget.css({
               '--cursor-offsetX': `${(hoverEvent.clientX + cursorOffset.left)}px`,
               '--cursor-offsetY': `${(hoverEvent.clientY + cursorOffset.top)}px`
@@ -2386,6 +2390,9 @@ function add_stat_block_hover(statBlockContainer, tokenId) {
                 }
                 if (container.length === 0) {
                     container = currentTarget.closest(".sidebar-modal");
+                }
+                if (container.length === 0) {
+                    container = currentTarget.closest(".avtt-stat-block-container");
                 }
                 if (container.length === 0) {
                     container = is_characters_page() ? $(".ct-sidebar__inner [class*='styles_content']") : $(".sidebar__pane-content");
@@ -2428,12 +2435,12 @@ function add_stat_block_hover(statBlockContainer, tokenId) {
         } else if (hoverEvent.type === "mousemove") {
 
           currentTarget.css({
-            '--cursor-offsetX': `${(e.clientX + cursorOffset.left)}px`,
-            '--cursor-offsetY': `${(e.clientY + cursorOffset.top)}px`
+            '--cursor-offsetX': `${(hoverEvent.clientX + cursorOffset.left)}px`,
+            '--cursor-offsetY': `${(hoverEvent.clientY + cursorOffset.top)}px`
           })
         } else if (hoverEvent.type === "mouseleave") {
-            clearTimeout(window.tooltipHoverTimeout); 
-            remove_tooltip(500);
+            clearTimeout(tooltipWindow.tooltipHoverTimeout);
+            remove_tooltip(500, true, hoverEvent.currentTarget.ownerDocument);
             currentTarget.toggleClass('loading-tooltip', false);
             currentTarget.off('mousemove.cursor');
         }

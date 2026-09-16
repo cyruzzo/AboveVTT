@@ -3675,9 +3675,10 @@ function delete_folder_and_move_children_up_one_level(listItem) {
   }
 }
 
-function build_and_display_sidebar_flyout(clientY, buildFunction) {
+function build_and_display_sidebar_flyout(clientY, buildFunction, targetDocument = document) {
+  const targetWindow = targetDocument.defaultView || window;
   let flyout = $(`<div class='sidebar-flyout'></div>`);
-  $("body").append(flyout);
+  $(targetDocument.body).append(flyout);
 
   buildFunction(flyout); // we want this built here so we can position the flyout based on the height of it
 
@@ -3686,8 +3687,8 @@ function build_and_display_sidebar_flyout(clientY, buildFunction) {
   let top = clientY - halfHeight;
   if (top < 30) { // make sure it's always below the main UI buttons
     top = 30;
-  } else if (clientY + halfHeight > window.innerHeight - 30) {
-    top = window.innerHeight - height - 30;
+  } else if (clientY + halfHeight > targetWindow.innerHeight - 30) {
+    top = targetWindow.innerHeight - height - 30;
   }
 
   flyout.css({
@@ -3702,6 +3703,7 @@ async function setup_tooltip_flyout(flyout, tooltipHtmlString, classes = [], eve
   }
   let container = options.container;
   let currentTarget = $(event.currentTarget);
+  const targetWindow = event.currentTarget?.ownerDocument?.defaultView || window;
   currentTarget.toggleClass('loading-tooltip', true);
   if(container == undefined){
 
@@ -3785,15 +3787,15 @@ async function setup_tooltip_flyout(flyout, tooltipHtmlString, classes = [], eve
   buttonFooter.append(sendToGamelogButton);
   if(options.container == undefined){
       let flyoutLeft = event.clientX+20
-        if(flyoutLeft + 400 > window.innerWidth){
-          flyoutLeft = window.innerWidth - 420
+        if(flyoutLeft + 400 > targetWindow.innerWidth){
+          flyoutLeft = targetWindow.innerWidth - 420
         }
       flyout.css({
         left: flyoutLeft,
         width: '400px'
       })
   }else{
-    const didResize = position_flyout_on_best_side_of(container, flyout, false, event);
+    const didResize = position_flyout_on_best_side_of(container, flyout, false, event, targetWindow);
     if (didResize) {
         // only mess with the html that DDB gave us if we absolutely have to
         tooltipHtml.css({
@@ -3808,26 +3810,26 @@ async function setup_tooltip_flyout(flyout, tooltipHtmlString, classes = [], eve
   let flyoutHeight = flyout.height() + 25;
   let bottom = (event.clientY + flyoutHeight);
   
-  if (bottom > window.innerHeight) {
-    flyoutTop = flyoutTop - (bottom - window.innerHeight) - 25;
+  if (bottom > targetWindow.innerHeight) {
+    flyoutTop = flyoutTop - (bottom - targetWindow.innerHeight) - 25;
   }
   flyout.css('top', flyoutTop);
 
   flyout.hover(function (hoverEvent) {
-      remove_tooltip(500);
+      remove_tooltip(500, true, flyout[0].ownerDocument);
   });
   flyout.css("background-color", "#fff");
   currentTarget.toggleClass('loading-tooltip', false);
 }
 
-function position_flyout_on_best_side_of(container, flyout, resizeFlyoutToFit = true, event) {
+function position_flyout_on_best_side_of(container, flyout, resizeFlyoutToFit = true, event, targetWindow = window) {
   let didResize = false;
   if (!container || container.length === 0 || !flyout || flyout.length === 0) {
     console.warn("position_flyout_on_best_side_of received an empty object", container, flyout);
     return didResize;
   }
   const distanceFromLeft = container[0].getBoundingClientRect().left;
-  const distanceFromRight = window.innerWidth - distanceFromLeft - container.width();
+  const distanceFromRight = targetWindow.innerWidth - distanceFromLeft - container.width();
   if (distanceFromLeft > distanceFromRight) {
     if (resizeFlyoutToFit && (flyout.width() > distanceFromLeft)) {
       flyout.css({
@@ -3836,7 +3838,7 @@ function position_flyout_on_best_side_of(container, flyout, resizeFlyoutToFit = 
       });
       didResize = true;
     }
-    position_flyout_left_of(container, flyout, event);
+    position_flyout_left_of(container, flyout, event, targetWindow);
   } else {
     if (resizeFlyoutToFit && (flyout.width() > distanceFromRight)) {
       flyout.css({
@@ -3845,43 +3847,43 @@ function position_flyout_on_best_side_of(container, flyout, resizeFlyoutToFit = 
       });
       didResize = true;
     }
-    position_flyout_right_of(container, flyout, event);
+    position_flyout_right_of(container, flyout, event, targetWindow);
   }
   return didResize;
 }
 
-function position_flyout_left_of(container, flyout, event) {
+function position_flyout_left_of(container, flyout, event, targetWindow = window) {
   if (!container || container.length === 0 || !flyout || flyout.length === 0) {
     console.warn("position_flyout_left_of received an empty object", container, flyout);
     return;
   }
   const minLeft = event?.clientX != undefined ? Math.max(event.clientX - flyout.width(), 5) : 5;
-  flyout.css("left",  clamp(container[0].getBoundingClientRect().left - flyout.width(), minLeft, window.innerWidth - flyout.width()-5));
+  flyout.css("left",  clamp(container[0].getBoundingClientRect().left - flyout.width(), minLeft, targetWindow.innerWidth - flyout.width()-5));
 }
 
-function position_flyout_right_of(container, flyout, event) {
+function position_flyout_right_of(container, flyout, event, targetWindow = window) {
   if (!container || container.length === 0 || !flyout || flyout.length === 0) {
     console.warn("position_flyout_right_of received an empty object", container, flyout);
     return;
   }
-  const maxLeft = event?.clientX != undefined ? Math.min(event.clientX + 50, window.innerWidth - flyout.width() - 5) : window.innerWidth - flyout.width() - 5;
+  const maxLeft = event?.clientX != undefined ? Math.min(event.clientX + 50, targetWindow.innerWidth - flyout.width() - 5) : targetWindow.innerWidth - flyout.width() - 5;
   flyout.css("left", clamp(container[0].getBoundingClientRect().left + container.width(), 5, maxLeft));
 }
 
-function remove_sidebar_flyout(removeHoverNote) {
+function remove_sidebar_flyout(removeHoverNote, targetDocument = document) {
   noisy_log("remove_sidebar_flyout");
-  let flyouts = $(`.sidebar-flyout`)
+  let flyouts = $(targetDocument).find(`.sidebar-flyout`)
   
   if(removeHoverNote == false){
-    flyouts = $(`.sidebar-flyout:not('.note-flyout')`)
+    flyouts = $(targetDocument).find(`.sidebar-flyout:not('.note-flyout')`)
   }
   flyouts.each(function(i, flyout) {
     const parentsData = $(flyout).attr("data-parents-id");
     const dataId = $(flyout).attr("data-id");
     const flyoutParentsIdArray = parentsData ? JSON.parse(parentsData) : [];
     const hovered = (flyoutParentsIdArray.length == 0 
-                      ? $(`.sidebar-flyout:hover`).length>0 
-                      : $(flyout).is(":hover")) || $(`.sidebar-flyout[data-parents-id*="${dataId}"]:hover`).length>0;
+                      ? $(targetDocument).find(`.sidebar-flyout:hover`).length>0
+                      : $(flyout).is(":hover")) || $(targetDocument).find(`.sidebar-flyout[data-parents-id*="${dataId}"]:hover`).length>0;
     
     if(!hovered)
       $(flyout).remove();
