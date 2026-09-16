@@ -193,7 +193,7 @@ class DiceContextMenu {
         return this;
     }
 
-    build() {
+    build(targetDocument = document) {
         let html = $(`
         	<div role="presentation" class="dcm-backdrop">
                 <div class="dcm-container">
@@ -202,7 +202,11 @@ class DiceContextMenu {
 	        </div>
         `);
         html.off('pointerdown').on("pointerdown", function (clickEvent) {
-            $(".dcm-backdrop").remove();
+            // Only the transparent backdrop dismisses the menu. Controls inside
+            // the menu may be in a popout document, so do not rely on their
+            // handlers stopping this event before it bubbles here.
+            if (clickEvent.target !== clickEvent.currentTarget) return;
+            $(targetDocument).find(".dcm-backdrop").remove();
         });
         html.off('contextmenu').on('contextmenu', function(e) {
             e.preventDefault();
@@ -210,7 +214,7 @@ class DiceContextMenu {
         let sectionList = html.find("ul");
         this.sections.forEach(s => {
             let li = $(`<li></li>`);
-            li.append(s.build());
+            li.append(s.build(targetDocument));
             sectionList.append(li);
             sectionList.append(`<hr class="dcm-hr">`);
         });
@@ -218,31 +222,33 @@ class DiceContextMenu {
         let rollButton = $(`<button class="dcm-roll-button" tabIndex="0" type="button">Roll</button>`);
         rollButton.off("pointerdown.click touchstart.click").on("pointerdown.click touchstart.click", function(rollButtonClick) {
             rollButtonClick.preventDefault();
-            window.dcm.rollDice();
+            (targetDocument.defaultView || window).dcm.rollDice();
+            $(targetDocument).find(".dcm-backdrop").remove();
         });
         sectionList.after(rollButton)
         return html;
     }
 
-    present(top, left) {
-        $(".dcm-backdrop").remove();
-        let html = this.build(top, left);
-        $("body").append(html);
+    present(top, left, targetDocument = document) {
+        const targetWindow = targetDocument.defaultView || window;
+        $(targetDocument).find(".dcm-backdrop").remove();
+        let html = this.build(targetDocument);
+        $(targetDocument.body).append(html);
 
         let container = html.find(".dcm-container");
         if (top < 0) {
             top = 0;
-        } else if (top >= (window.innerHeight - container.height())) {
-            top = (window.innerHeight - container.height());
+        } else if (top >= (targetWindow.innerHeight - container.height())) {
+            top = (targetWindow.innerHeight - container.height());
         }
         if (left < 0) {
             left = 0;
-        } else if (left >= (window.innerWidth - container.width())) {
-            left = (window.innerWidth - container.width());
+        } else if (left >= (targetWindow.innerWidth - container.width())) {
+            left = (targetWindow.innerWidth - container.width());
         }
         html.find(".dcm-container").css({ top: top, left: left });
 
-        window.dcm = this;
+        targetWindow.dcm = this;
     }
 
     didClickRow(sectionIndex, rowIndex) {
@@ -280,7 +286,7 @@ class DiceContextMenuSection {
     expressionRow(rowTitle, expression, inputCallback=()=>{}){
        
         const row = {
-            build: function(){
+            build: function(targetDocument = document){
                 let rowInput = $(`<input type='text' class='dcmExpressionRow' value='${expression}'></input>`);
                 rowInput.on('pointerdown touchstart', function(e){
                     e.stopPropagation();
@@ -288,7 +294,7 @@ class DiceContextMenuSection {
                 rowInput.on("change blur input keydown", function(e) {
                     inputCallback($(this).val());
                     if (e.key === "Enter") {      
-                        $('.dcm-roll-button').trigger('pointerdown');
+                        $(targetDocument).find('.dcm-roll-button').trigger('pointerdown');
                     }
                 });
                 let rowHtml = $(`
@@ -405,13 +411,13 @@ class DiceContextMenuSection {
 
     }
 
-    build() {
+    build(targetDocument = document) {
         let sectionHtml = $(`
             <ul class="dcm-section" data-index="${this.index}">
                 <li class="dcm-section-header">${this.title}</li>
             </ul>
         `);
-        this.rows.forEach(r => sectionHtml.append(r.build()))
+        this.rows.forEach(r => sectionHtml.append(r.build(targetDocument)))
         return sectionHtml;
     }
     didClickRow(index) {
@@ -435,7 +441,7 @@ class DiceContextMenuRow {
         this.sectionIndex = sectionIndex;
         this.index = index;
     }
-    build() {
+    build(targetDocument = document) {
         let rowHtml = $(`
             <div class="dcm-row" role="button" tabIndex="0" data-index="${this.index}" data-section-index="${this.sectionIndex}">
                 <div class="dcm-row-icon">
@@ -459,7 +465,7 @@ class DiceContextMenuRow {
             let clickedSectionIndex = clickedRow.attr("data-section-index");
             clickedRow.parent().find(".dcm-checkmark").css("visibility", "hidden");
             clickedRow.find(".dcm-checkmark").css("visibility", "visible");   
-            window.dcm.didClickRow(clickedSectionIndex, clickedRowIndex);
+            (targetDocument.defaultView || window).dcm.didClickRow(clickedSectionIndex, clickedRowIndex);
         });
         return rowHtml;
     }
