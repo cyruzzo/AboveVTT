@@ -2325,11 +2325,25 @@ function add_tooltip_aoe_buttons(html, tokenId){
   }  
 }
 
+function get_tooltip_display_document(hoverEvent) {
+    const targetDocument = hoverEvent.currentTarget?.ownerDocument || document;
+    const targetWindow = targetDocument.defaultView;
+    try {
+        // A popout is its own top-level window, while an iframe should keep
+        // using the main AboveVTT window for its tooltip.
+        return targetWindow && targetWindow !== targetWindow.top ? targetWindow.top.document : targetDocument;
+    } catch (error) {
+        // Cross-origin frames cannot be inspected; retain the main document.
+        return document;
+    }
+}
+
 function display_tooltip(tooltipJson, container, hoverEvent, tokenId=undefined) {
     if (typeof tooltipJson?.Tooltip === "string") {
         // Cloned popout handlers execute in the opener, but the target belongs
-        // to the child document. Keep the flyout in that same document.
-        const tooltipDocument = hoverEvent.currentTarget?.ownerDocument || document;
+        // to the child document. Keep the flyout in that same document, unless
+        // the target is in an iframe, which displays its tooltip in the main UI.
+        const tooltipDocument = get_tooltip_display_document(hoverEvent);
         remove_tooltip(0, false, tooltipDocument);
 
         noisy_log("container", container)
@@ -2361,7 +2375,8 @@ function add_stat_block_hover(statBlockContainer, tokenId) {
         if(hoverEvent.target.tagName == 'INPUT')
           return;
         let currentTarget = $(hoverEvent.currentTarget);
-        const tooltipWindow = hoverEvent.currentTarget.ownerDocument.defaultView || window;
+        const tooltipDocument = get_tooltip_display_document(hoverEvent);
+        const tooltipWindow = tooltipDocument.defaultView || window;
         let cursorOffset = {
           left : 10,
           top  : -10
@@ -2440,7 +2455,7 @@ function add_stat_block_hover(statBlockContainer, tokenId) {
           })
         } else if (hoverEvent.type === "mouseleave") {
             clearTimeout(tooltipWindow.tooltipHoverTimeout);
-            remove_tooltip(500, true, hoverEvent.currentTarget.ownerDocument);
+            remove_tooltip(500, true, tooltipDocument);
             currentTarget.toggleClass('loading-tooltip', false);
             currentTarget.off('mousemove.cursor');
         }
