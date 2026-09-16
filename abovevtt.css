@@ -13906,14 +13906,20 @@ p.monster-header+p {
         position:fixed;
         top: 3px;
     }
+    .avtt-statblock-buffs .dropdown-check-list ul.avttBuffItems{
+        position:fixed;
+        top: 19px;
+    }
     .avtt-statblock-buffs .dropdown-check-list .clickHandle {
         max-width: min(240px, calc(100% - 60px));
     }
     .upload_button ~ .avtt-stat-block-container {
-        .avtt-statblock-buffs .clickHandle {
+        .avtt-statblock-buffs .clickHandle,
+        .avtt-statblock-buffs .dropdown-check-list ul.avttBuffItems {
             left:70px;
         }
-        .avtt-statblock-buffs .dropdown-check-list .clickHandle {
+        .avtt-statblock-buffs .dropdown-check-list .clickHandle,
+        .avtt-statblock-buffs .dropdown-check-list ul.avttBuffItems {
             max-width: min(240px, calc(100% - 120px));
         }
     }
