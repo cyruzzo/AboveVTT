@@ -491,15 +491,16 @@ function roll_button_contextmenu_handler(contextmenuEvent, displayName, imgUrl, 
 	const actionType = pressedButton.attr('data-actiontype');
 	const damageType = pressedButton.attr('data-damagetype');
 	const save = pressedButton.attr('data-save');
+	const targetDocument = contextmenuEvent.currentTarget.ownerDocument;
 
 
 
 	if (rollType === "damage" || (expression !== "1d20" && !/^1d20/gi.test(expression))) {
 		damage_dice_context_menu(adjustRollWithRollBuffs(`${expression}${modifier}`, rollType, pressedButton), modifier, actionType, rollType, displayName, imgUrl, entityType, entityId, damageType, save)
-			.present(contextmenuEvent.clientY, contextmenuEvent.clientX) // TODO: convert from iframe to main window
+			.present(contextmenuEvent.clientY, contextmenuEvent.clientX, targetDocument)
 	} else {
 		standard_dice_context_menu(adjustRollWithRollBuffs(`${expression}${modifier}`, rollType, pressedButton), modifier, actionType, rollType, displayName, imgUrl, entityType, entityId)
-			.present(contextmenuEvent.clientY, contextmenuEvent.clientX) // TODO: convert from iframe to main window
+			.present(contextmenuEvent.clientY, contextmenuEvent.clientX, targetDocument)
 	}
 }
 

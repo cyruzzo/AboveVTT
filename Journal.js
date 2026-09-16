@@ -2327,7 +2327,8 @@ class JournalManager{
 					match: normalize(spell.definition.name),
 					matchAlphanumeric: removeSpecial(spell.definition.name),
 					matchCondensed: removeSpecial(spell.definition.name).replace(/\s+/g, ''),
-					isLegacy: spell.definition.isLegacy
+					isLegacy: spell.definition.isLegacy,
+					raw: spell.definition
 				})));
 		}
 		const seen = new Set();
@@ -2412,16 +2413,22 @@ class JournalManager{
 			raw: item
 		}));
 	}
-	
-	buildItemTooltipLinkHtml(item){
+	/**
+	 * Builds the HTML for a tooltip link for the given item.
+	 * @param {Object} item - The item for which to build the tooltip link. From window.ITEMS_CACHE or window.SPELLS_CACHE.
+	 * @returns {string} The HTML string for the tooltip link.
+	 */
+	buildTooltipLinkHtml(item){
 		if(!item)
 			return '';
-		const text = item.name;
-		const itemId = `${item.id}-${text.replace(/[\s\/\\]/g, '-')}`;
-		const filterType = (item.filterType || '').toLowerCase();
-		const path = item.magic ? 'magic-items' : filterType == 'armor' ? 'armor' : filterType == 'weapon' ? 'weapons' : 'equipment';
+
+		const rawItem = item.raw || item;
+		const text = rawItem.name;
+		const itemId = `${rawItem.id}-${text.replace(/[\s\/\\]/g, '-')}`;
+		const filterType = (rawItem.filterType || '').toLowerCase();
+		const path = item.type == 'Spell' ? 'spells' : rawItem.magic ? 'magic-items' : filterType == 'armor' ? 'armor' : filterType == 'weapon' ? 'weapons' : 'equipment';
 		const href = `https://www.dndbeyond.com/${path}/${itemId}`;
-		return `<a class="tooltip-hover no-border ignore-abovevtt-formating" href="${href}">${text}</a>`;
+		return `<a class="tooltip-hover no-border ignore-abovevtt-formating ${item.type == 'Spell' ? 'spell' : rawItem.magic  ? 'magic-item' : 'item'}-tooltip" href="${href}">${text}</a>`;
 	}
 	removeDndSheetCellSuggestions(ownerDocument = document){
 		$('.dnd-sheet-cell-suggestions', ownerDocument).remove();
@@ -2705,23 +2712,13 @@ class JournalManager{
 				event.preventDefault();
 				event.stopPropagation();
 				if(randomMatch){
-					if(insertOptions.asLink){
-						this.replaceDndSheetCellRangeHtml(cell, randomMatch.model, randomMatch.start, randomMatch.end, this.buildItemTooltipLinkHtml(suggestion.raw));
-					} else {
-						const replacementText = insertOptions.wrapTag ? `[${insertOptions.wrapTag}]${suggestion.name}[/${insertOptions.wrapTag}]` : suggestion.name;
-						this.replaceDndSheetCellRange(cell, randomMatch.model, randomMatch.start, randomMatch.end, replacementText);
-					}
+					this.replaceDndSheetCellRangeHtml(cell, randomMatch.model, randomMatch.start, randomMatch.end, this.buildTooltipLinkHtml(suggestion));	
 				} else if(useSegmentedMatch){
 					const segment = segmentInfo.segments[segmentInfo.index];
-					const leadingWhitespace = segment.text.match(/^\s*/)[0];
-					const trailingSuffix = segment.text.slice(leadingWhitespace.length).match(/[^a-zA-Z0-9)']*$/)[0];
-					const replacementText = `${leadingWhitespace}${suggestion.name}${trailingSuffix}`;
-					this.replaceDndSheetCellRange(cell, segmentInfo.model, segment.start, segment.end, replacementText);
-				} else if(insertOptions.asLink){
-					target.html(this.buildItemTooltipLinkHtml(suggestion.raw));
-				} else {
-					target.text(suggestion.name);
-				}
+					this.replaceDndSheetCellRangeHtml(cell, segmentInfo.model, segment.start, segment.end, this.buildTooltipLinkHtml(suggestion));
+				} else{
+					target.html(this.buildTooltipLinkHtml(suggestion));
+				} 
 				this.removeDndSheetCellSuggestions(hostDocument);
 				onSelect?.();
 				cell.focus();
@@ -2768,7 +2765,7 @@ class JournalManager{
 			return undefined;
 		const lootCell = $(anchor).closest('.party-item-table td.item-link-cell')[0];
 		if(lootCell)
-			return { cell: lootCell, suggestionType: 'equipment', insertOptions: { asLink: true } };
+			return { cell: lootCell, suggestionType: 'equipment', insertOptions:  {} };
 		const block = $(anchor).closest('p, li, td, div, h1, h2, h3, h4, h5, h6')[0];
 		if(!block)
 			return undefined;
