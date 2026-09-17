@@ -5060,7 +5060,7 @@ function build_note_roll_settings(noteId){
   if(!window.JOURNAL?.notes?.[noteId]) return undefined;
   return build_roll_settings(
     get_note_roll_settings(noteId),
-    window.DM === true,
+    true,
     settings => save_note_roll_settings(noteId, settings),
     'Note'
   );
