@@ -113,7 +113,9 @@ var longDebounceLightChecks = mydebounce((darknessMoved = false) => {
 		debounceAudioChecks();
 }, 300);
 
-
+function get_token_by_id(tokenId){
+  return window.TOKEN_OBJECTS?.[tokenId] || window.all_token_objects?.[tokenId];
+}
 function random_token_color() {
 	const randomColorIndex = getRandomInt(0, TOKEN_COLORS.length);
 	return "#" + TOKEN_COLORS[randomColorIndex];

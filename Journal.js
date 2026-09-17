@@ -1954,7 +1954,7 @@ class JournalManager{
 		const avttImages = closestNote.find('img[data-src*="above-bucket-not-a-url"]');
 		avttImages.attr('src', '');
 		avttImages.attr('href', '');
-		closestNote.find('a:empty, button:empty, .add-table-row, .table-row-drag-handle, .header-spacer, .dnd-sheet-block-copy-button, .dnd-sheet-block-delete-button, .dnd-sheet-block-drag-handle, .injected-input, .added-input-desc, .avtt-statblock-buffs, .spell-tooltip>svg.ritual-icon-svg').remove();
+		closestNote.find('a:empty, button:empty, .add-table-row, .table-row-drag-handle, .header-spacer, .dnd-sheet-block-copy-button, .dnd-sheet-block-delete-button, .dnd-sheet-block-drag-handle, .injected-input, .added-input-desc, .avtt-statblock-buffs, .avtt-note-roll-buff-pins, .spell-tooltip>svg.ritual-icon-svg').remove();
 		closestNote.find('.avtt-dnd-sheet-block').removeClass('avtt-dnd-sheet-block');
 		closestNote.find('[data-avtt-block-positioned]').each(function(){
 			this.style.removeProperty('position');
@@ -3549,6 +3549,7 @@ class JournalManager{
 			const popoutNote = popoutBody.find(`div.note[data-id='${id}']`);
 			const popoutNoteText = popoutNote.find('.note-text').first();
 			self.bindDisplayedNoteEvents(id, popoutNote, popoutNoteText, popoutBody);
+			self.injectDisplayedNoteRollControls(id, popoutNoteText, popoutBody);
 			popoutBody.css('overflow', 'auto');
 			$(event.currentTarget).closest('.resize_drag_window').hide();
 		})
@@ -3611,6 +3612,7 @@ class JournalManager{
 		note_text[0].scrollTop = scrollTop;
 		if(note_text.find('.dnd-sheet').length>0){
 			self.bindDndSheetTemplateEvents(id, note_text, note_container, {showControls: $(note_container).find('.title_bar').length > 0});
+			self.injectDisplayedNoteRollControls(id, note_text, note_container);
 		}
 	}
 	async updateNotePopout(id, scrollTop = 0){
@@ -3923,9 +3925,42 @@ class JournalManager{
 			if(note_text.find('.dnd-sheet').length>0){
 				this.ensureEnclosingZWSP(note_text[0]);
 				self.bindDndSheetTemplateEvents(id, note_text, note_container, {showControls: true});
+				self.injectDisplayedNoteRollControls(id, note_text, note_container);
 			}
 		});	
 		
+	}
+	injectDisplayedNoteRollControls(id, note_text, note_container){
+		const titleBar = $(note_container).find('.title_bar').first();
+		const noteText = $(note_text);
+		titleBar.find('.avtt-note-roll-controls').remove();
+		noteText.children('.avtt-note-roll-controls').remove();
+		noteText.children('.avtt-note-roll-buff-pins').remove();
+		if(noteText.find('.dnd-sheet').length === 0 || typeof build_buff_dropdown !== 'function')
+			return;
+
+		const dropdown = build_buff_dropdown({type: 'note', noteId: id}, true);
+		const rollSettings = typeof build_note_roll_settings === 'function' ? build_note_roll_settings(id) : undefined;
+		if(!dropdown && !rollSettings)
+			return;
+
+		const controls = $(`<div class="avtt-note-roll-controls${titleBar.length === 0 ? ' avtt-statblock-buffs' : ''}"></div>`).append(dropdown, rollSettings);
+		const uploadButton = titleBar.find('.upload_button').first();
+		if(uploadButton.length > 0)
+			uploadButton.after(controls);
+		else if(titleBar.length > 0)
+			titleBar.append(controls);
+		else
+			noteText.prepend(controls);
+
+		const pinDisplay = $('<div class="avtt-note-roll-buff-pins"></div>').append(dropdown.find('.avttBuffSheetPins').detach());
+		if(titleBar.length > 0)
+			noteText.prepend(pinDisplay);
+		else
+			controls.after(pinDisplay);
+		const dropdownEntry = window.avttBuffDropdowns?.find(entry => entry.id === dropdown.attr('id'));
+		if(dropdownEntry)
+			dropdownEntry.pinContainer = pinDisplay;
 	}
 	add_journal_tooltip_targets(target){
 		const monsterIds = [];
