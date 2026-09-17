@@ -2946,7 +2946,7 @@ class JournalManager{
 			$(document).off(`pointerdown.${dismissNamespace} mousedown.${dismissNamespace}`);
 		});
 	}
-	/** Makes PC-template blocks editable, copyable, and draggable inside TinyMCE as well. */
+	/** Makes PC-template blocks editable, copyable, and draggable inside TinyMCE.*/
 	bindTinyMceDndSheetBlockEvents(editor){
 		let draggedBlock = null;
 		const iconSvg = {
@@ -2965,7 +2965,7 @@ class JournalManager{
 					block.attr('data-avtt-block-positioned', 'true');
 					block[0].style.setProperty('position', 'relative', 'important');
 					if(block.children('.dnd-sheet-block-drag-handle').length === 0){
-						block.append($(`<button type="button" class="dnd-sheet-block-drag-handle" contenteditable="false" data-mce-bogus="all" aria-label="Drag block" title="Drag block" draggable="true" style="${controlStyle}right:52px;cursor:grab;">${iconSvg.drag}</button>`));
+						block.append($(`<button type="button" class="dnd-sheet-block-drag-handle" contenteditable="false" data-mce-bogus="all" aria-label="Drag block" title="Drag block" style="${controlStyle}right:52px;cursor:grab;">${iconSvg.drag}</button>`));
 					}
 					if(block.children('.dnd-sheet-block-copy-button').length === 0){
 						block.append($(`<button type="button" class="dnd-sheet-block-copy-button" contenteditable="false" data-mce-bogus="all" aria-label="Copy block" title="Copy block" style="${controlStyle}right:28px;">${iconSvg.copy}</button>`));
@@ -3003,34 +3003,52 @@ class JournalManager{
 			});
 			editor.fire('change');
 		});
-		editor.on('dragstart', function(e){
-			const handle = $(e.target).closest('.dnd-sheet-block-drag-handle');
-			const block = handle.parent();
-			if(block.length === 0 || !block.hasClass('avtt-dnd-sheet-block')) return;
-			draggedBlock = block;
-			block.addClass('dnd-sheet-block-dragging');
-		});
-		editor.on('dragover', function(e){
-			if(!draggedBlock) return;
-			const columns = $(e.target).closest('.dnd-sheet').find('.avtt-dnd-sheet-block').parent().get().filter(function(){
-				const bounds = this.getBoundingClientRect();
-				return e.clientX >= bounds.left && e.clientX <= bounds.right && e.clientY >= bounds.top && e.clientY <= bounds.bottom;
+		const moveDraggedBlock = (event) => {
+			if(!draggedBlock) return false;
+			const targetSheet = $(event.target).closest('.dnd-sheet');
+			const sheet = targetSheet.length > 0 ? targetSheet : draggedBlock.closest('.dnd-sheet');
+			const columns = sheet.find('.avtt-dnd-sheet-block').parent().get().filter((column) => {
+				if(!column || typeof column.getBoundingClientRect !== 'function') return false;
+				const bounds = column.getBoundingClientRect();
+				return event.clientX >= bounds.left && event.clientX <= bounds.right && event.clientY >= bounds.top && event.clientY <= bounds.bottom;
 			}).sort((a, b) => (a.offsetWidth * a.offsetHeight) - (b.offsetWidth * b.offsetHeight));
 			const column = $(columns[0]);
-			if(column.length === 0) return;
-			e.preventDefault();
+			if(column.length === 0) return false;
 			const sibling = column.children('.avtt-dnd-sheet-block').not(draggedBlock).filter(function(){
 				const bounds = this.getBoundingClientRect();
-				return e.clientY < bounds.top + bounds.height / 2;
+				return event.clientY < bounds.top + bounds.height / 2;
 			}).first();
 			if(sibling.length > 0) sibling.before(draggedBlock);
 			else column.append(draggedBlock);
-		});
-		editor.on('dragend', function(){
-			if(!draggedBlock) return;
-			draggedBlock.removeClass('dnd-sheet-block-dragging');
-			draggedBlock = null;
-			editor.fire('change');
+			return true;
+		};
+		editor.on('init', function(){
+			const body = editor.getBody();
+			if(!body || body.dataset.avttBlockDragBound) return;
+			body.dataset.avttBlockDragBound = 'true';
+			const ownerDocument = body.ownerDocument;
+			let activePointerId;
+			ownerDocument.addEventListener('pointerdown', (event) => {
+				const handle = event.target.closest('.dnd-sheet-block-drag-handle');
+				const block = handle?.parentElement;
+				if(!block?.classList.contains('avtt-dnd-sheet-block')) return;
+				event.preventDefault();
+				activePointerId = event.pointerId;
+				draggedBlock = $(block).addClass('dnd-sheet-block-dragging');
+				handle.setPointerCapture?.(activePointerId);
+			});
+			ownerDocument.addEventListener('pointermove', (event) => {
+				if(!draggedBlock || event.pointerId !== activePointerId) return;
+				event.preventDefault();
+				moveDraggedBlock(event);
+			});
+			ownerDocument.addEventListener('pointerup', (event) => {
+				if(!draggedBlock || event.pointerId !== activePointerId) return;
+				draggedBlock.removeClass('dnd-sheet-block-dragging');
+				draggedBlock = null;
+				activePointerId = undefined;
+				editor.fire('change');
+			});
 		});
 	}
 	/** Adds a "+" element under every table while editing in tinyMCE, for quickly appending a row.
