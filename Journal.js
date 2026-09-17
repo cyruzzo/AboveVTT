@@ -1954,7 +1954,12 @@ class JournalManager{
 		const avttImages = closestNote.find('img[data-src*="above-bucket-not-a-url"]');
 		avttImages.attr('src', '');
 		avttImages.attr('href', '');
-		closestNote.find('a:empty, button:empty, .add-table-row, .table-row-drag-handle, .header-spacer, .injected-input, .added-input-desc, .avtt-statblock-buffs, .spell-tooltip>svg.ritual-icon-svg').remove();
+		closestNote.find('a:empty, button:empty, .add-table-row, .table-row-drag-handle, .header-spacer, .dnd-sheet-block-copy-button, .dnd-sheet-block-delete-button, .dnd-sheet-block-drag-handle, .injected-input, .added-input-desc, .avtt-statblock-buffs, .spell-tooltip>svg.ritual-icon-svg').remove();
+		closestNote.find('.avtt-dnd-sheet-block').removeClass('avtt-dnd-sheet-block');
+		closestNote.find('[data-avtt-block-positioned]').each(function(){
+			this.style.removeProperty('position');
+			this.removeAttribute('data-avtt-block-positioned');
+		});
 		closestNote.find('.dnd-sheet [contenteditable] div:not([class]):not([id]):empty').remove();
 		const noteButtons = closestNote.find('button');
 		noteButtons.replaceWith((i, innerHTML)=>{
@@ -1989,6 +1994,7 @@ class JournalManager{
 		closestNote.find('[style=""]').removeAttr('style');
   		closestNote.find('[class=""]').removeAttr('class');
 		closestNote.find('[data-avtt-suggestion-type]').removeAttr('data-avtt-suggestion-type');
+		closestNote.find('[data-avtt-block-sort-group]').removeAttr('data-avtt-block-sort-group');
 		let sanitizedHTML = basic_sanitize_html(closestNote[0].innerHTML).replaceAll(/\[(\/)?spell\]/gi, `[$1spell]`).replaceAll(/\[(\/)?magicitem\]/gi, `[$1magicItem]`)
 		const changes = forceSave || $(sanitizedHTML).text().replace(/[\s\n\r]/gi, '') != $(this.notes[id].text).text().replace(/[\s\n\r]/gi, '');
 		if(changes){
@@ -2063,6 +2069,102 @@ class JournalManager{
 			</script>
 			${html[0].outerHTML}			
 			<script>
+				function setupTemplateBlocks(){
+					let draggedBlock = null;
+					const iconSvg = {
+						drag: '<svg viewBox="0 0 24 24" style="width:16px;height:16px;fill:currentColor" aria-hidden="true"><circle cx="9" cy="5" r="1.5"/><circle cx="15" cy="5" r="1.5"/><circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/><circle cx="9" cy="19" r="1.5"/><circle cx="15" cy="19" r="1.5"/></svg>',
+						copy: '<svg viewBox="0 0 24 24" style="width:16px;height:16px;fill:currentColor" aria-hidden="true"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>',
+						delete: '<svg viewBox="0 0 24 24" style="width:16px;height:16px;fill:currentColor" aria-hidden="true"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM8 9h8v10H8V9zm7.5-5-1-1h-5l-1 1H5v2h14V4z"/></svg>'
+					};
+					const controlStyle = 'display:none !important;position:absolute !important;top:3px;z-index:10;width:20px;height:20px;box-sizing:border-box;overflow:hidden;padding:1px;border:1px solid #ddd;border-radius:3px;background:#222;color:#fff;line-height:16px;';
+					const setup = () => {
+						document.querySelectorAll('.dnd-sheet .section-title').forEach(title => {
+							title.contentEditable = 'true';
+							title.parentElement.classList.add('avtt-dnd-sheet-block');
+						});
+						document.querySelectorAll('.dnd-sheet .hp-box').forEach(block => block.classList.add('avtt-dnd-sheet-block'));
+						const columns = [...new Set(Array.from(document.querySelectorAll('.dnd-sheet .avtt-dnd-sheet-block')).map(block => block.parentElement))];
+						columns.forEach(column => {
+							Array.from(column.children).filter(block => block.matches('.avtt-dnd-sheet-block')).forEach(block => {
+								block.style.position = 'relative';
+								if (!block.dataset.avttBlockControlsBound) {
+									block.dataset.avttBlockControlsBound = 'true';
+									block.addEventListener('mouseenter', () => block.querySelectorAll(':scope > .dnd-sheet-block-drag-handle, :scope > .dnd-sheet-block-copy-button, :scope > .dnd-sheet-block-delete-button').forEach(control => control.style.setProperty('display', 'inline-flex', 'important')));
+									block.addEventListener('mouseleave', () => block.querySelectorAll(':scope > .dnd-sheet-block-drag-handle, :scope > .dnd-sheet-block-copy-button, :scope > .dnd-sheet-block-delete-button').forEach(control => control.style.setProperty('display', 'none', 'important')));
+								}
+								if (!block.querySelector(':scope > .dnd-sheet-block-drag-handle')) {
+									const dragHandle = document.createElement('button');
+									dragHandle.type = 'button';
+									dragHandle.className = 'dnd-sheet-block-drag-handle';
+									dragHandle.contentEditable = 'false';
+									dragHandle.draggable = true;
+									dragHandle.title = 'Drag block';
+									dragHandle.setAttribute('aria-label', 'Drag block');
+									dragHandle.style.cssText = controlStyle + 'right:52px;cursor:grab;';
+									dragHandle.innerHTML = iconSvg.drag;
+									block.append(dragHandle);
+								}
+								if (!block.querySelector(':scope > .dnd-sheet-block-copy-button')) {
+									const copyButton = document.createElement('button');
+									copyButton.type = 'button';
+									copyButton.className = 'dnd-sheet-block-copy-button';
+									copyButton.contentEditable = 'false';
+									copyButton.title = 'Copy block';
+									copyButton.setAttribute('aria-label', 'Copy block');
+									copyButton.style.cssText = controlStyle + 'right:28px;';
+									copyButton.innerHTML = iconSvg.copy;
+									copyButton.addEventListener('click', () => {
+										const copy = block.cloneNode(true);
+									copy.querySelector(':scope > .dnd-sheet-block-copy-button')?.remove();
+									copy.querySelector(':scope > .dnd-sheet-block-delete-button')?.remove();
+									copy.querySelector(':scope > .dnd-sheet-block-drag-handle')?.remove();
+										block.after(copy);
+										setup();
+									});
+									block.append(copyButton);
+								}
+								if (!block.querySelector(':scope > .dnd-sheet-block-delete-button')) {
+									const deleteButton = document.createElement('button');
+									deleteButton.type = 'button';
+									deleteButton.className = 'dnd-sheet-block-delete-button';
+									deleteButton.contentEditable = 'false';
+									deleteButton.title = 'Delete block';
+									deleteButton.setAttribute('aria-label', 'Delete block');
+									deleteButton.style.cssText = controlStyle + 'right:4px;';
+									deleteButton.innerHTML = iconSvg.delete;
+									deleteButton.addEventListener('click', () => {
+										if (window.confirm('Delete this block?')) block.remove();
+									});
+									block.append(deleteButton);
+								}
+							});
+							if (!column.dataset.avttBlockDropBound) {
+								column.dataset.avttBlockDropBound = 'true';
+								column.addEventListener('dragover', event => {
+									if (!draggedBlock) return;
+									event.preventDefault();
+									const sibling = Array.from(column.children).filter(block => block.matches('.avtt-dnd-sheet-block') && block !== draggedBlock)
+										.find(block => event.clientY < block.getBoundingClientRect().top + block.offsetHeight / 2);
+									column.insertBefore(draggedBlock, sibling || null);
+								});
+							}
+						});
+					};
+					document.addEventListener('dragstart', event => {
+						const handle = event.target.closest?.('.dnd-sheet-block-drag-handle');
+						const block = handle?.parentElement;
+						if (!block?.matches('.avtt-dnd-sheet-block')) return;
+						draggedBlock = block;
+						block.classList.add('dnd-sheet-block-dragging');
+						event.dataTransfer.effectAllowed = 'move';
+					});
+					document.addEventListener('dragend', () => {
+						draggedBlock?.classList.remove('dnd-sheet-block-dragging');
+						draggedBlock = null;
+					});
+					setup();
+				}
+				setupTemplateBlocks();
 				function setupDraggableTableRows(table){
 					const tbody = table.querySelector('tbody');
 					const rowsContainer = tbody ? tbody : table;
@@ -2844,6 +2946,93 @@ class JournalManager{
 			$(document).off(`pointerdown.${dismissNamespace} mousedown.${dismissNamespace}`);
 		});
 	}
+	/** Makes PC-template blocks editable, copyable, and draggable inside TinyMCE as well. */
+	bindTinyMceDndSheetBlockEvents(editor){
+		let draggedBlock = null;
+		const iconSvg = {
+			drag: '<svg viewBox="0 0 24 24" style="width:16px;height:16px;fill:currentColor" aria-hidden="true"><circle cx="9" cy="5" r="1.5"/><circle cx="15" cy="5" r="1.5"/><circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/><circle cx="9" cy="19" r="1.5"/><circle cx="15" cy="19" r="1.5"/></svg>',
+			copy: '<svg viewBox="0 0 24 24" style="width:16px;height:16px;fill:currentColor" aria-hidden="true"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>',
+			delete: '<svg viewBox="0 0 24 24" style="width:16px;height:16px;fill:currentColor" aria-hidden="true"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM8 9h8v10H8V9zm7.5-5-1-1h-5l-1 1H5v2h14V4z"/></svg>'
+		};
+		const controlStyle = 'display:none !important;position:absolute !important;top:3px;z-index:10;width:20px;height:20px;box-sizing:border-box;overflow:hidden;padding:1px;border:1px solid #ddd;border-radius:3px;background:#222;color:#fff;line-height:16px;';
+		const setup = () => {
+			const body = editor.getBody();
+			if(!body) return;
+			$(body).find('.dnd-sheet .section-title').attr('contenteditable', 'true').parent().addClass('avtt-dnd-sheet-block');
+			$(body).find('.dnd-sheet .hp-box').addClass('avtt-dnd-sheet-block');
+			$(body).find('.dnd-sheet .avtt-dnd-sheet-block').each(function(){
+					const block = $(this);
+					block.attr('data-avtt-block-positioned', 'true');
+					block[0].style.setProperty('position', 'relative', 'important');
+					if(block.children('.dnd-sheet-block-drag-handle').length === 0){
+						block.append($(`<button type="button" class="dnd-sheet-block-drag-handle" contenteditable="false" data-mce-bogus="all" aria-label="Drag block" title="Drag block" draggable="true" style="${controlStyle}right:52px;cursor:grab;">${iconSvg.drag}</button>`));
+					}
+					if(block.children('.dnd-sheet-block-copy-button').length === 0){
+						block.append($(`<button type="button" class="dnd-sheet-block-copy-button" contenteditable="false" data-mce-bogus="all" aria-label="Copy block" title="Copy block" style="${controlStyle}right:28px;">${iconSvg.copy}</button>`));
+					}
+					if(block.children('.dnd-sheet-block-delete-button').length === 0){
+						block.append($(`<button type="button" class="dnd-sheet-block-delete-button" contenteditable="false" data-mce-bogus="all" aria-label="Delete block" title="Delete block" style="${controlStyle}right:4px;">${iconSvg.delete}</button>`));
+					}
+			});
+		};
+		editor.on('init SetContent NodeChange Undo Redo', setup);
+		editor.on('mouseover mouseout', function(e){
+			const block = $(e.target).closest('.avtt-dnd-sheet-block');
+			if(block.length === 0 || (e.type === 'mouseout' && e.relatedTarget && block[0].contains(e.relatedTarget))) return;
+			block.children('.dnd-sheet-block-drag-handle, .dnd-sheet-block-copy-button, .dnd-sheet-block-delete-button').each(function(){
+				this.style.setProperty('display', e.type === 'mouseover' ? 'inline-flex' : 'none', 'important');
+			});
+		});
+		editor.on('click', function(e){
+			const button = $(e.target).closest('.dnd-sheet-block-copy-button, .dnd-sheet-block-delete-button');
+			if(button.length === 0) return;
+			e.preventDefault();
+			if(button.hasClass('dnd-sheet-block-delete-button') && !window.confirm('Delete this block?')) return;
+			editor.undoManager.transact(() => {
+				const block = button.parent();
+				if(button.hasClass('dnd-sheet-block-delete-button')){
+					block.remove();
+					return;
+				}
+				const copy = block.clone(false, false);
+				copy.find('.dnd-sheet-block-copy-button').remove();
+				copy.find('.dnd-sheet-block-delete-button').remove();
+				copy.find('.dnd-sheet-block-drag-handle').remove();
+				block.after(copy);
+				setup();
+			});
+			editor.fire('change');
+		});
+		editor.on('dragstart', function(e){
+			const handle = $(e.target).closest('.dnd-sheet-block-drag-handle');
+			const block = handle.parent();
+			if(block.length === 0 || !block.hasClass('avtt-dnd-sheet-block')) return;
+			draggedBlock = block;
+			block.addClass('dnd-sheet-block-dragging');
+		});
+		editor.on('dragover', function(e){
+			if(!draggedBlock) return;
+			const columns = $(e.target).closest('.dnd-sheet').find('.avtt-dnd-sheet-block').parent().get().filter(function(){
+				const bounds = this.getBoundingClientRect();
+				return e.clientX >= bounds.left && e.clientX <= bounds.right && e.clientY >= bounds.top && e.clientY <= bounds.bottom;
+			}).sort((a, b) => (a.offsetWidth * a.offsetHeight) - (b.offsetWidth * b.offsetHeight));
+			const column = $(columns[0]);
+			if(column.length === 0) return;
+			e.preventDefault();
+			const sibling = column.children('.avtt-dnd-sheet-block').not(draggedBlock).filter(function(){
+				const bounds = this.getBoundingClientRect();
+				return e.clientY < bounds.top + bounds.height / 2;
+			}).first();
+			if(sibling.length > 0) sibling.before(draggedBlock);
+			else column.append(draggedBlock);
+		});
+		editor.on('dragend', function(){
+			if(!draggedBlock) return;
+			draggedBlock.removeClass('dnd-sheet-block-dragging');
+			draggedBlock = null;
+			editor.fire('change');
+		});
+	}
 	/** Adds a "+" element under every table while editing in tinyMCE, for quickly appending a row.
 	 * marked data-mce-bogus="all" so tinyMCE excludes it when saving*/
 	bindTinyMceTableRowButtons(editor){
@@ -2995,6 +3184,40 @@ class JournalManager{
 			console.warn('Failed to initialize sortable in popout document', error);
 		});
 	}
+	/** Adds copy controls and connected column sorting to PC-template blocks. */
+	setupDndSheetBlockSorting(noteText, ownerDocument, persistCurrentNoteText, sortGroup){
+		const initializeSortable = (sortableJquery) => {
+			const columns = sortableJquery(noteText).find('.dnd-sheet .avtt-dnd-sheet-block').parent();
+			columns.attr('data-avtt-block-sort-group', sortGroup);
+			columns.each(function(){
+				const column = sortableJquery(this);
+				if(column.data('ui-sortable'))
+					column.sortable('destroy');
+				column.sortable({
+					items: '> .avtt-dnd-sheet-block',
+					handle: '.dnd-sheet-block-drag-handle',
+					cancel: 'input, textarea, select, option, [contenteditable="true"]',
+					connectWith: `[data-avtt-block-sort-group="${sortGroup}"]`,
+					placeholder: 'dnd-sheet-block-placeholder',
+					forcePlaceholderSize: true,
+					tolerance: 'pointer',
+					start: function(event, ui){
+						ui.placeholder.height(ui.item.outerHeight());
+					},
+					update: function(){
+						persistCurrentNoteText({forceSave: true, rescanStatBlock: false});
+					}
+				});
+			});
+		};
+		if(ownerDocument === document){
+			initializeSortable($);
+			return;
+		}
+		this.getSortableJquery(ownerDocument).then(initializeSortable).catch((error) => {
+			console.warn('Failed to initialize PC-template block sorting in popout document', error);
+		});
+	}
 	bindDndSheetTemplateEvents(id, note_text, note_container, options = {}){
 		const self = this;
 		const container = $(note_container);
@@ -3017,14 +3240,66 @@ class JournalManager{
 		let suppressNextSuggestionFocusin = false;
 		const setLockState = () => {
 			const currentNoteText = getCurrentNoteText();
+			currentNoteText.find('.dnd-sheet').toggleClass('avtt-dnd-sheet-controls-unlocked', !!window.unlockTemplateStatBlocks);
 			if(!window.unlockTemplateStatBlocks){
 				currentNoteText.find('.dnd-sheet button').attr("contenteditable", "false");
+				currentNoteText.find('.dnd-sheet-block-drag-handle, .dnd-sheet-block-copy-button, .dnd-sheet-block-delete-button').each(function(){
+					this.style.setProperty('display', 'none', 'important');
+				});
 			} else{
-				currentNoteText.find('.dnd-sheet [contenteditable]:not(.table-row-drag-handle):not(.add-table-row):not(.injected-input):not(.added-input-desc)').attr("contenteditable", "true");
+				currentNoteText.find('.dnd-sheet [contenteditable]:not(.table-row-drag-handle):not(.add-table-row):not(.dnd-sheet-block-copy-button):not(.dnd-sheet-block-delete-button):not(.dnd-sheet-block-drag-handle):not(.injected-input):not(.added-input-desc)').attr("contenteditable", "true");
 			}
 		};
 
 		getCurrentNoteText().find('a').attr('contenteditable', 'false');
+		const sortGroup = `dnd-sheet-block-sort-${id}`;
+		const setupBlockControls = () => {
+			const currentNoteText = getCurrentNoteText();
+			currentNoteText.find('.dnd-sheet .section-title').attr('contenteditable', 'true');
+			currentNoteText.find('.dnd-sheet .section-title').parent().addClass('avtt-dnd-sheet-block');
+			currentNoteText.find('.dnd-sheet .hp-box').addClass('avtt-dnd-sheet-block');
+			currentNoteText.find('.dnd-sheet .avtt-dnd-sheet-block').each(function(){
+				const block = $(this);
+				block.attr('data-avtt-block-positioned', 'true');
+				block[0].style.setProperty('position', 'relative', 'important');
+				const controlStyle = 'display:none !important;position:absolute !important;top:3px;z-index:10;width:20px;height:20px;box-sizing:border-box;overflow:hidden;padding:1px;border:1px solid #ddd;border-radius:3px;background:#222;color:#fff;line-height:16px;';
+				if(block.children('.dnd-sheet-block-drag-handle').length === 0){
+					block.append($(`<button type="button" class="dnd-sheet-block-drag-handle" contenteditable="false" aria-label="Drag block" title="Drag block" style="${controlStyle}right:52px;cursor:grab;"><span class="material-symbols-outlined">drag_indicator</span></button>`));
+				}
+				if(block.children('.dnd-sheet-block-copy-button').length === 0){
+					block.append($(`<button type="button" class="dnd-sheet-block-copy-button" contenteditable="false" aria-label="Copy block" title="Copy block" style="${controlStyle}right:28px;"><span class="material-symbols-outlined">content_copy</span></button>`));
+				}
+				if(block.children('.dnd-sheet-block-delete-button').length === 0){
+					block.append($(`<button type="button" class="dnd-sheet-block-delete-button" contenteditable="false" aria-label="Delete block" title="Delete block" style="${controlStyle}right:4px;"><span class="material-symbols-outlined">delete</span></button>`));
+				}
+			});
+			self.setupDndSheetBlockSorting(currentNoteText, ownerDocument, persistCurrentNoteText, sortGroup);
+		};
+		setupBlockControls();
+		container.off('mouseenter.dndSheetBlockControls mouseleave.dndSheetBlockControls').on('mouseenter.dndSheetBlockControls mouseleave.dndSheetBlockControls', '.dnd-sheet .avtt-dnd-sheet-block', function(e){
+			if(!window.unlockTemplateStatBlocks) return;
+			$(this).children('.dnd-sheet-block-drag-handle, .dnd-sheet-block-copy-button, .dnd-sheet-block-delete-button').each(function(){
+				this.style.setProperty('display', e.type === 'mouseenter' ? 'inline-flex' : 'none', 'important');
+			});
+		});
+		container.off('pointerdown.dndSheetBlockCopy, touchstart.dndSheetBlockCopy').on('pointerdown.dndSheetBlockCopy, touchstart.dndSheetBlockCopy', '.dnd-sheet-block-copy-button', (e) => {
+			e.preventDefault();
+			e.stopImmediatePropagation();
+			const block = $(e.currentTarget).parent();
+			const copy = block.clone(false, false);
+			copy.find('.dnd-sheet-block-copy-button').remove();
+			copy.find('.dnd-sheet-block-delete-button').remove();
+			block.after(copy);
+			setupBlockControls();
+			persistCurrentNoteText({forceSave: true, rescanStatBlock: false});
+		});
+		container.off('pointerdown.dndSheetBlockDelete, touchstart.dndSheetBlockDelete').on('pointerdown.dndSheetBlockDelete, touchstart.dndSheetBlockDelete', '.dnd-sheet-block-delete-button', (e) => {
+			e.preventDefault();
+			e.stopImmediatePropagation();
+			if(!ownerWindow.confirm('Delete this block?')) return;
+			$(e.currentTarget).parent().remove();
+			persistCurrentNoteText({forceSave: true, rescanStatBlock: false});
+		});
 		container.off('focusout.editable').on('focusout.editable', '.dnd-sheet [contenteditable="true"]', (e)=>{
 			e.preventDefault();
 			e.stopPropagation();
@@ -3045,6 +3320,7 @@ class JournalManager{
 			}, 10);
 		});
 		container.off('pointerdown.nonEditable, touchstart.nonEditable').on('pointerdown.nonEditable, touchstart.nonEditable', '.dnd-sheet :not([contenteditable=true])', (e)=>{
+			if($(e.target).closest('.dnd-sheet-block-drag-handle, .dnd-sheet-block-copy-button, .dnd-sheet-block-delete-button').length > 0) return;
 			if($(e.target).closest('[contenteditable=true]').length > 0) return;
 			e.preventDefault();
 			e.stopPropagation();
@@ -5973,6 +6249,74 @@ class JournalManager{
 					border-radius: 2px;
 					text-transform: uppercase;
 					letter-spacing: 0.5px;
+					position: relative;
+					cursor: text;
+				}
+				.dnd-sheet-block-copy-button,
+				.dnd-sheet-block-delete-button,
+				.dnd-sheet-block-drag-handle {
+					display: none !important;
+					position: absolute !important;
+					top: 3px;
+					right: 28px;
+					z-index: 2;
+					border: 0;
+					border-radius: 3px;
+					width: 20px;
+					height: 20px;
+					box-sizing: border-box;
+					overflow: hidden;
+					padding: 1px;
+					border: 1px solid #ddd;
+					background: var(--pc-template-border-color, #222);
+					color: #fff;
+					line-height: 18px;
+					cursor: pointer;
+				}
+				.dnd-sheet-block-copy-button .material-symbols-outlined,
+				.dnd-sheet-block-delete-button .material-symbols-outlined,
+				.dnd-sheet-block-drag-handle .material-symbols-outlined {
+					display: block;
+					width: 16px;
+					height: 16px;
+					font-size: 14px !important;
+					line-height: 16px !important;
+					overflow: hidden;
+				}
+				.dnd-sheet-block-copy-button svg,
+				.dnd-sheet-block-delete-button svg,
+				.dnd-sheet-block-drag-handle svg {
+					display: block;
+					width: 100% !important;
+					height: 100% !important;
+					max-width: 100%;
+					max-height: 100%;
+					fill: currentColor;
+				}
+				.dnd-sheet-block-delete-button {
+					right: 4px;
+				}
+				.dnd-sheet-block-drag-handle {
+					right: 52px;
+					cursor: grab;
+				}
+				.dnd-sheet-block-drag-handle:active {
+					cursor: grabbing;
+				}
+				.dnd-sheet-block-delete-button:hover {
+					background: #9d2a2a;
+				}
+				.dnd-sheet.avtt-dnd-sheet-controls-unlocked .avtt-dnd-sheet-block:hover > .dnd-sheet-block-copy-button,
+				.dnd-sheet.avtt-dnd-sheet-controls-unlocked .avtt-dnd-sheet-block:hover > .dnd-sheet-block-delete-button,
+				.dnd-sheet.avtt-dnd-sheet-controls-unlocked .avtt-dnd-sheet-block:hover > .dnd-sheet-block-drag-handle {
+					display: inline-flex !important;
+					align-items: center;
+					justify-content: center;
+				}
+				.dnd-sheet-block-placeholder {
+					border: 1px dashed var(--pc-template-border-color, #222);
+					background: var(--pc-template-box-bg, #fdfdfd);
+					visibility: visible !important;
 				}
 				.heroic-inspiration{
 					display: flex;
@@ -6224,7 +6568,11 @@ class JournalManager{
 					background: var(--pc-template-sheet-bg, #fff);
 					box-sizing: border-box;
 					display: flex;
-        			flex-direction: column;
+					flex-direction: column;
+					position: relative;
+				}
+				.avtt-dnd-sheet-block {
+					position: relative;
 				}
 				.bio-appearance { min-height: 90px; height: auto; border: 1px solid var(--pc-template-border-color, #444); padding: 4px; background: var(--pc-template-box-bg, var(--pc-template-box-bg, #fdfdfd)); border-radius: 3px; box-sizing: border-box; overflow-wrap: break-word; color: var(--pc-template-text-color, #111);}
 				.bio-backstory { min-height: 140px; height: auto; border: 1px solid var(--pc-template-border-color, #444); padding: 4px; background: var(--pc-template-box-bg, #fdfdfd); border-radius: 3px; box-sizing: border-box; overflow-wrap: break-word; color: var(--pc-template-text-color, #111);}
@@ -6487,6 +6835,11 @@ class JournalManager{
 				const avttImages = body.find('img[data-src*="above-bucket-not-a-url"]');
 				avttImages.attr('src', '');
 				avttImages.attr('href', '');
+				body.find('.avtt-dnd-sheet-block').removeClass('avtt-dnd-sheet-block');
+				body.find('[data-avtt-block-positioned]').each(function(){
+					this.style.removeProperty('position');
+					this.removeAttribute('data-avtt-block-positioned');
+				});
 				self.notes[id].text = basic_sanitize_html(body.html()); 
 		    	self.notes[id].plain = editor.getContent({ format: 'text' });
 		    	self.notes[id].statBlock = statBlock;
@@ -8898,6 +9251,7 @@ class JournalManager{
 			setup: function (editor) { 
 				self.bindTinyMceSuggestionEvents(editor);
 				self.bindTinyMceTableRowButtons(editor);
+				self.bindTinyMceDndSheetBlockEvents(editor);
 				editor.on('PreInit', function() {
 					const iframeWin = editor.getWin();
 					if (iframeWin && iframeWin.addEventListener) {
