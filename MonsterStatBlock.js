@@ -203,7 +203,8 @@ async function display_stat_block_in_container(statBlock, container, tokenId, cu
         
 
  
-          window.diceRoller.roll(diceRoll, true, undefined, get_avtt_setting_value('monsterCritType'), undefined, data.damageType);
+          const rollSettings = typeof get_token_roll_settings === 'function' ? get_token_roll_settings(tokenId) : {};
+          window.diceRoller.roll(diceRoll, true, rollSettings.critRange || 20, rollSettings.crit ?? get_avtt_setting_value('monsterCritType'), undefined, data.damageType);
 
         }
       }
@@ -238,8 +239,9 @@ function inject_statblock_buff_dropdown(container, tokenId) {
   $(container).find(".avtt-statblock-buffs").remove();
 
   const dropdown = build_buff_dropdown({ type: "token", tokenId }, true);
-  if (!dropdown) return;
-  statBlock.prepend($(`<div class="avtt-statblock-buffs"></div>`).append(dropdown));
+  const rollSettings = typeof build_token_roll_settings === 'function' ? build_token_roll_settings(tokenId) : undefined;
+  if (!dropdown && !rollSettings) return;
+  statBlock.prepend($(`<div class="avtt-statblock-buffs"></div>`).append(dropdown, rollSettings));
 }
 
 function import_open_template(id){
@@ -392,7 +394,8 @@ const debounceRescanStatBlock = mydebounce(async (container, noteId, tokenId, cu
         
 
 
-          window.diceRoller.roll(diceRoll, true, undefined, get_avtt_setting_value('monsterCritType'), undefined, data.damageType);
+          const rollSettings = typeof get_token_roll_settings === 'function' ? get_token_roll_settings(tokenId) : {};
+          window.diceRoller.roll(diceRoll, true, rollSettings.critRange || 20, rollSettings.crit ?? get_avtt_setting_value('monsterCritType'), undefined, data.damageType);
 
         }
       }

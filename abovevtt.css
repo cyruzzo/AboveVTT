@@ -13355,6 +13355,7 @@ p.monster-header+p {
 .dnd-sheet-cell-suggestion.is-active{
     background: color-mix(in srgb, var(--text-color, #111) 12%, transparent 88%);
 }
+
 	
 .dnd-sheet {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
@@ -13950,12 +13951,102 @@ p.monster-header+p {
   font-size: 12px;
   padding: 3px;
 }
-#resizeDragMon{
+#resizeDragMon,
+.moveableWindow:has(.dnd-sheet){
     contain: strict;
+
+    .avtt-token-roll-settings {
+        display: inline-block;
+        position: relative;
+        margin-left: 4px;
+        vertical-align: middle;
+    }
+    .avtt-statblock-buffs {
+        position: relative;
+    }
+    .avtt-statblock-buffs .dropdown-check-list .clickHandle {
+        padding-right: 26px;
+    }
+    .avtt-statblock-buffs > .avtt-token-roll-settings {
+        position:fixed;
+        top: 19px;
+        margin:0;
+        width: 100%;
+        left:0;
+    }
+    .avtt-statblock-buffs > .avtt-token-roll-settings .avtt-token-roll-settings-toggle {
+        position: fixed;
+        z-index: 21;
+        top: 2px;
+        left: 0px;
+    }
+    .avtt-token-roll-settings-toggle {
+        width: 18px;
+        height: 18px;
+        padding: 0;
+        border: 0;
+        background: transparent;
+        color: inherit;
+        cursor: pointer;
+    }
+    .avtt-token-roll-settings-toggle .material-symbols-outlined { 
+        font-size: 20px; 
+        line-height: 20px; 
+        color: var(--font-color, #ddd);
+    }
+    .avtt-token-roll-settings-fields {
+        display: none;
+        position: absolute;
+        z-index: 20;
+        top: 22px;
+        right: 0;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 3px 8px;
+        min-width: 235px;
+        padding: 6px;
+        border: 1px solid #aaa;
+        border-radius: 3px;
+        background: var(--theme-background-solid, #fff);
+        box-shadow: 0 2px 5px rgba(0, 0, 0, .25);
+    }
+    .avtt-statblock-buffs > .avtt-token-roll-settings .avtt-token-roll-settings-fields {
+        top: 10px;
+        left: 0;
+        min-width: 0;
+        width: min(235px, calc(100% - 12px));
+        max-width: calc(100% - 12px);
+    }
+    .avtt-token-roll-settings.visible .avtt-token-roll-settings-fields {
+        display: flex;
+        flex-direction: column;
+    }
+    .avtt-token-roll-settings-fields label {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 4px;
+        font-size:11px;
+    }
+    .avtt-token-roll-settings-fields input,
+    .avtt-token-roll-settings-fields select {
+        min-width: 0;
+        max-width: 90px;
+        font-size: 11px;
+    }
+    .avtt-token-roll-settings-info {
+        grid-column: 1 / -1;
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        margin-top: 3px;
+        padding-top: 4px;
+        border-top: 1px solid #ddd;
+        font-size: 10px;
+        line-height: 1.2;
+    }
     .avtt-statblock-buffs:has(.avttBuffSheetPins:empty) {
         height: 0;
     }
-
     .avtt-stat-block-container .avtt-statblock-buffs .clickHandle {
         position:fixed;
         top: 3px;
@@ -13965,12 +14056,15 @@ p.monster-header+p {
         top: 19px;
     }
     .avtt-statblock-buffs .dropdown-check-list .clickHandle {
-        max-width: min(240px, calc(100% - 60px));
+        max-width: min(240px, calc(100% - 80px));
     }
     .upload_button ~ .avtt-stat-block-container {
+        .avtt-statblock-buffs > .avtt-token-roll-settings .avtt-token-roll-settings-toggle {
+            left: 65px;
+        }
         .avtt-statblock-buffs .clickHandle,
         .avtt-statblock-buffs .dropdown-check-list ul.avttBuffItems {
-            left:70px;
+            left:75px;
         }
         .avtt-statblock-buffs .dropdown-check-list .clickHandle,
         .avtt-statblock-buffs .dropdown-check-list ul.avttBuffItems {
@@ -14130,6 +14224,7 @@ ul.avttBuffItems select,
   box-sizing: border-box;
   background: var(--theme-background-solid, #fff);
   max-width: 240px;
+  margin-left:14px;
 }
 
 .avtt-statblock-buffs .dropdown-check-list.readonly .clickHandle {
@@ -14152,6 +14247,212 @@ ul.avttBuffItems select,
   font-size: 11px;
   padding: 0px;
   text-wrap: nowrap;
+}
+
+
+.title_bar .avtt-note-roll-controls {
+  display: block;
+  position: relative;
+  width: 260px;
+  height: 20px;
+  margin-left: 4px;
+  color: #fff;
+  text-shadow: none;
+}
+
+.moveableWindow:has(.dnd-sheet) .title_bar .avtt-note-roll-controls .dropdown-check-list {
+  position: absolute;
+  top: 0;
+  left: 20px;
+  width: calc(100% - 10px);
+  color: #fff;
+}
+
+.title_bar .avtt-note-roll-controls .dropdown-check-list .clickHandle {
+  display: block;
+  padding: 0 26px 0 10px;
+  line-height: 16px;
+  border-radius: 3px;
+  white-space: nowrap;
+  width: calc(100% - 20px);
+}
+
+.title_bar .avtt-note-roll-controls .dropdown-check-list ul.avttBuffItems {
+  position: absolute;
+  top: 23px;
+  right: 0;
+  left: auto;
+  z-index: 100;
+  color: var(--theme-contrast, #242528);
+  text-shadow: none;
+}
+
+.moveableWindow:has(.dnd-sheet) .title_bar .avtt-note-roll-controls .avtt-token-roll-settings {
+  position: absolute;
+  top: 0;
+  left: 0;
+  margin: 0 !important;
+}
+
+.title_bar .avtt-note-roll-controls .avtt-token-roll-settings-toggle .material-symbols-outlined {
+  color: var(--font-color, #ddd);
+}
+
+.title_bar .avtt-note-roll-controls .avtt-token-roll-settings-fields {
+  top: 23px;
+  right: 0;
+  color: var(--theme-contrast, #242528);
+  text-shadow: none;
+}
+
+.avtt-token-roll-settings {
+  display: inline-block;
+  position: relative;
+  margin-left: 4px;
+  vertical-align: middle;
+}
+
+.avtt-token-roll-settings-toggle {
+  width: 18px;
+  height: 18px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+}
+
+.avtt-token-roll-settings-toggle .material-symbols-outlined {
+  font-size: 20px;
+  line-height: 20px;
+}
+
+.avtt-token-roll-settings-fields {
+  display: none;
+  position: absolute;
+  z-index: 20;
+  top: 22px;
+  right: 0;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 3px 8px;
+  min-width: 235px;
+  padding: 6px;
+  border: 1px solid #aaa;
+  border-radius: 3px;
+  background: var(--theme-background-solid, #fff);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, .25);
+}
+
+.avtt-token-roll-settings.visible .avtt-token-roll-settings-fields {
+  display: flex;
+  flex-direction: column;
+}
+
+.avtt-token-roll-settings-fields label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
+}
+
+.avtt-token-roll-settings-fields input,
+.avtt-token-roll-settings-fields select {
+  min-width: 0;
+  max-width: 90px;
+  font-size: 11px;
+}
+
+.avtt-token-roll-settings-info {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-top: 3px;
+  padding-top: 4px;
+  border-top: 1px solid #ddd;
+  font-size: 10px;
+  line-height: 1.2;
+}
+
+
+.avtt-statblock-buffs > .avtt-token-roll-settings {
+  position: absolute;
+  margin: 0;
+  left:0;
+}
+
+.avtt-statblock-buffs > .avtt-token-roll-settings .avtt-token-roll-settings-fields {
+  top: 22px;
+  right: auto;
+  left: 0;
+  width: min(235px, calc(100% - 12px));
+  max-width: calc(100% - 12px);
+}
+
+.avtt-note-roll-controls.avtt-statblock-buffs {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.avtt-note-roll-controls.avtt-statblock-buffs .dropdown-check-list {
+  flex: 0 1 auto;
+  width:100%;
+}
+
+.avtt-note-roll-controls.avtt-statblock-buffs > .avtt-token-roll-settings {
+  flex: 0 0 18px;
+}
+
+.avtt-statblock-buffs:not(.avtt-note-roll-controls) > .avtt-token-roll-settings .avtt-token-roll-settings-toggle {
+  position: absolute;
+  z-index: 21;
+  top: 2px;
+  left: 0;
+}
+
+.avtt-statblock-buffs:not(.avtt-note-roll-controls) > .dropdown-check-list .clickHandle {
+  width: calc(100% - 20px);
+}
+
+
+.avtt-note-roll-buff-pins {
+  padding: 3px 6px;
+  border-bottom: 1px solid #ddd;
+  background: var(--theme-background-solid, #fff);
+}
+
+.avtt-note-roll-buff-pins:has(.avttBuffSheetPins:empty) {
+  display: none;
+}
+
+.avtt-note-roll-buff-pins .avttBuffSheetPins {
+  margin: 0;
+}
+
+
+.note-text .dropdown-check-list ul.avttBuffItems,
+.note-text .dropdown-check-list ul.avttBuffItems ul {
+  padding-inline-start: 0;
+  padding-left: 0;
+}
+
+
+.avtt-token-roll-settings-fields input,
+.avtt-token-roll-settings-fields select {
+  height: 20px !important;
+  min-height: 20px;
+  box-sizing: border-box;
+}
+
+.moveableWindow:has(.dnd-sheet) .title_bar .avtt-note-roll-controls .avtt-token-roll-settings {
+  position: static;
+}
+
+.moveableWindow:has(.dnd-sheet) .title_bar .avtt-note-roll-controls .avtt-token-roll-settings-fields {
+  top: 23px;
+  right: auto;
+  left: 0;
 }
 
 

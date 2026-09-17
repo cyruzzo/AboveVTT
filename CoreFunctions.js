@@ -3751,7 +3751,7 @@ function find_or_create_generic_draggable_window(id, titleBarText, addLoadingInd
     stop: function(event, ui) {
       $('.iframeResizeCover').remove();
     },
-    cancel: cancelClasses ? `${cancelClasses}, select, .avtt-statblock-buffs` : 'input, textarea, button, select, option, .avtt-statblock-buffs'
+    cancel: cancelClasses ? `${cancelClasses}, select, .avtt-statblock-buffs, .avtt-note-roll-controls` : 'input, textarea, button, select, option, .avtt-statblock-buffs, .avtt-note-roll-controls'
   });
   if(alwaysDisplayTitle)
     titleBar.prepend(`<div class="title_bar_text">${titleBarText}</div>`);
@@ -4941,17 +4941,139 @@ function rebuild_all_buff_dropdowns(){
   window.avttBuffDropdowns.forEach(entry => build_buff_dropdown(entry.scope, false));
 }
 
-function get_buff_token(tokenId){
-  return window.TOKEN_OBJECTS?.[tokenId] || window.all_token_objects?.[tokenId];
+const TOKEN_ROLL_SETTING_DEFAULTS = Object.freeze({
+  critRange: '20',
+  hitRoll: '',
+  damageRoll: '',
+  checkRoll: '',
+  saveRoll: ''
+});
+
+function get_token_roll_settings(tokenId){
+  return {
+    ...TOKEN_ROLL_SETTING_DEFAULTS,
+    ...(get_token_by_id(tokenId)?.options?.rollSettings || {})
+  };
+}
+
+function save_token_roll_settings(tokenId, settings){
+  const savedSettings = {...TOKEN_ROLL_SETTING_DEFAULTS, ...settings};
+  const storedToken = window.all_token_objects?.[tokenId];
+  if(storedToken) storedToken.options.rollSettings = savedSettings;
+  const token = window.TOKEN_OBJECTS?.[tokenId];
+  if(token){
+    token.options.rollSettings = savedSettings;
+    token.place_sync_persist();
+  } else {
+    storedToken?.sync?.();
+  }
+}
+
+function get_note_roll_settings(noteId){
+  return {
+    ...TOKEN_ROLL_SETTING_DEFAULTS,
+    ...(window.JOURNAL?.notes?.[noteId]?.rollSettings || {})
+  };
+}
+
+function save_note_roll_settings(noteId, settings){
+  const note = window.JOURNAL?.notes?.[noteId];
+  if(!note) return;
+  note.rollSettings = {...TOKEN_ROLL_SETTING_DEFAULTS, ...settings};
+  debounceSendNote(noteId, note);
+}
+
+
+function build_roll_settings(settings, editable, saveSettings, scopeLabel){
+  if(settings.crit == undefined) settings.crit = `${get_avtt_setting_value('monsterCritType') ?? '0'}`;
+  const fields = [
+    ['critRange', 'Crit Range', 'number', {min: 1, max: 20, step: 1}],
+    ['crit', 'Crit Type', 'select', {options: [['0', 'Double damage dice'], ['1', 'Perfect Crits'], ['3', 'Double total damage'], ['2', 'Manual']]}],
+    ['hitRoll', 'Add to Attacks', 'text'],
+    ['damageRoll', 'Add to Damage', 'text'],
+    ['checkRoll', 'Add to Checks', 'text'],
+    ['saveRoll', 'Add to Saves', 'text']
+  ];
+  const panel = $(`<span class="avtt-token-roll-settings">
+    <button type="button" class="avtt-token-roll-settings-toggle" title="${scopeLabel} Roll Settings" aria-label="${scopeLabel} Roll Settings"><span class="material-symbols-outlined">settings</span></button>
+    <span class="avtt-token-roll-settings-fields">
+      <span class="avtt-token-roll-settings-info">
+        <span>• These settings apply to rolls made from this ${scopeLabel.toLowerCase()}'s statblock.</span>
+        <span>• Perfect Crits is a normal roll + max roll on crit dice.</span>
+        <span>• Double Damage Total is 2 × (damage dice + modifier).</span>
+        <span>• Hold Shift/Ctrl for ADV/DIS; Alt + Shift/Ctrl for Super ADV/DIS.</span>
+      </span>
+    </span>
+  </span>`);
+  const fieldContainer = panel.find('.avtt-token-roll-settings-fields');
+  fields.forEach(([key, label, type, options = {}]) => {
+    const row = $('<label></label>').text(`${label}: `);
+    let input;
+    if(type === 'select'){
+      input = $(`<select data-roll-setting="${key}"></select>`);
+      options.options.forEach(([value, text]) => input.append($('<option></option>').val(value).text(text)));
+    } else {
+      input = $(`<input type="${type}" data-roll-setting="${key}">`);
+      if(options.min != undefined) input.attr('min', options.min);
+      if(options.max != undefined) input.attr('max', options.max);
+      if(options.step != undefined) input.attr('step', options.step);
+    }
+    input.val(settings[key]).prop('disabled', !editable);
+    input.on('change', function(){
+      const updated = {...settings, [key]: $(this).val()};
+      saveSettings(updated);
+      Object.assign(settings, updated);
+    });
+    row.append(input);
+    fieldContainer.find('.avtt-token-roll-settings-info').before(row);
+  });
+  panel.find('.avtt-token-roll-settings-toggle').on('click', function(event){
+    event.preventDefault();
+    event.stopPropagation();
+    const ownerDocument = panel[0].ownerDocument;
+    const willOpen = !panel.hasClass('visible');
+    $(ownerDocument).find('.avtt-token-roll-settings.visible').not(panel).removeClass('visible');
+    panel.toggleClass('visible', willOpen);
+    $(ownerDocument).off('click.avttRollSettings').on('click.avttRollSettings', function(clickEvent){
+      if($(clickEvent.target).closest('.avtt-token-roll-settings').length === 0)
+        $(ownerDocument).find('.avtt-token-roll-settings.visible').removeClass('visible');
+    });
+  });
+  panel.on('click', '.avtt-token-roll-settings-fields', event => event.stopPropagation());
+  return panel;
+}
+
+
+function build_token_roll_settings(tokenId){
+  const token = get_token_by_id(tokenId);
+  if(!token) return undefined;
+  return build_roll_settings(
+    get_token_roll_settings(tokenId),
+    window.DM === true || token.options.player_owned === true,
+    settings => save_token_roll_settings(tokenId, settings),
+    'Token'
+  );
+}
+
+/** Compact, note-persisted roll settings for displayed PC templates. */
+function build_note_roll_settings(noteId){
+  if(!window.JOURNAL?.notes?.[noteId]) return undefined;
+  return build_roll_settings(
+    get_note_roll_settings(noteId),
+    window.DM === true,
+    settings => save_note_roll_settings(noteId, settings),
+    'Note'
+  );
 }
 
 /** Token ids contain slashes, so they can't be used in an id attribute or selector as-is. */
 function buff_dropdown_element_id(scope){
-  if(scope?.type !== 'token') return 'avtt-buff-options';
-  return `avtt-buff-options-${`${scope.tokenId}`.replace(/[^a-z0-9_-]/gi, '_')}`;
+  if(scope?.type === 'token') return `avtt-buff-options-${`${scope.tokenId}`.replace(/[^a-z0-9_-]/gi, '_')}`;
+  if(scope?.type === 'note') return `avtt-buff-options-note-${`${scope.noteId}`.replace(/[^a-z0-9_-]/gi, '_')}`;
+  return 'avtt-buff-options';
 }
 
-/** Storage and condition plumbing, which differs between the character sheet and a token stat block. */
+/** Storage and condition plumbing, which differs between character, token, and note stat blocks. */
 function buff_scope_accessor(scope){
   const elementId = buff_dropdown_element_id(scope);
   if(scope?.type === 'token'){
@@ -4959,23 +5081,20 @@ function buff_scope_accessor(scope){
     return {
       elementId,
       canEdit: function(){
-        const token = get_buff_token(tokenId);
+        const token = get_token_by_id(tokenId);
         return token != undefined && (window.DM == true || token.options.player_owned == true);
       },
       read: function(){
-        return [...(get_buff_token(tokenId)?.options?.rollbuffs || [])];
+        return [...(get_token_by_id(tokenId)?.options?.rollbuffs || [])];
       },
       write: function(buffs){
-        if(window.all_token_objects?.[tokenId] != undefined){
-          window.all_token_objects[tokenId].options.rollbuffs = buffs;
-        }
-        const token = window.TOKEN_OBJECTS?.[tokenId];
+        const token = get_token_by_id(tokenId);
         if(token == undefined) return;
         token.options.rollbuffs = buffs;
         token.place_sync_persist();
       },
       setPins: function(pins){
-        const token = window.TOKEN_OBJECTS?.[tokenId];
+        const token = get_token_by_id(tokenId);
         if(token == undefined) return;
         token.options.rollbuffpins = pins;
         token.place_sync_persist();
@@ -4987,21 +5106,55 @@ function buff_scope_accessor(scope){
         token.place_sync_persist();
       },
       getPins: function(){
-        const token = window.TOKEN_OBJECTS?.[tokenId];
+        const token = get_token_by_id(tokenId);
         if(token == undefined) return [];
         return token.options.rollbuffpins || [];
       },
       getFavorites: function(){
-        const token = window.TOKEN_OBJECTS?.[tokenId];
+        const token = get_token_by_id(tokenId);
         if(token == undefined) return [];
         return token.options.rollbufffavorites || [];
       },
       setCondition: function(condition, value){
-        const token = window.TOKEN_OBJECTS?.[tokenId];
+        const token = get_token_by_id(tokenId);
         if(token == undefined) return;
         token[(value !== false && value !== '0') ? 'addCondition' : 'removeCondition'](condition);
         token.place_sync_persist();
       }
+    };
+  }
+  if(scope?.type === 'note'){
+    const noteId = scope.noteId;
+    const getNote = () => window.JOURNAL?.notes?.[noteId];
+    const saveNote = () => {
+      const note = getNote();
+      if(note) debounceSendNote(noteId, note);
+    };
+    return {
+      elementId,
+      canEdit: function(){ return getNote() != undefined; },
+      read: function(){ return [...(getNote()?.rollbuffs || [])]; },
+      write: function(buffs){
+        const note = getNote();
+        if(!note) return;
+        note.rollbuffs = buffs;
+        saveNote();
+      },
+      setPins: function(pins){
+        const note = getNote();
+        if(!note) return;
+        note.rollbuffpins = pins;
+        saveNote();
+      },
+      setFavorites: function(favorites){
+        const note = getNote();
+        if(!note) return;
+        note.rollbufffavorites = favorites;
+        saveNote();
+      },
+      getPins: function(){ return getNote()?.rollbuffpins || []; },
+      getFavorites: function(){ return getNote()?.rollbufffavorites || []; },
+      setCondition: function(){}
     };
   }
   return {
@@ -5047,13 +5200,14 @@ function rebuild_buffs(fullBuild = false){
   return build_buff_dropdown({ type: 'character' }, fullBuild);
 }
 
-/** @param scope {{type: 'character'}|{type: 'token', tokenId: string}} whose buffs this dropdown edits */
+/** @param scope {{type: 'character'}|{type: 'token', tokenId: string}|{type: 'note', noteId: string}} whose buffs this dropdown edits */
 function build_buff_dropdown(scope = { type: 'character' }, fullBuild = false){
   const accessor = buff_scope_accessor(scope);
-  const isCharacterScope = scope?.type !== 'token';
+  const isCharacterScope = scope?.type === 'character' || scope == undefined;
   const elementId = accessor.elementId;
   const idPrefix = isCharacterScope ? '' : `${elementId}_`;
   const editable = accessor.canEdit();
+  const registeredDropdown = window.avttBuffDropdowns.find(entry => entry.id === elementId);
 
   const buffDebuffKeys = Object.keys(buffsDebuffs);
   let selectedBuffs = accessor.read();
@@ -5109,8 +5263,7 @@ function build_buff_dropdown(scope = { type: 'character' }, fullBuild = false){
   }
   else{
     // the registry keeps a handle on dropdowns living in popout documents, which $('#id') can't reach
-    const registered = window.avttBuffDropdowns.find(entry => entry.id === elementId);
-    avttBuffSelect = registered?.element?.closest('html').length > 0 ? registered.element : $(`#${elementId}`);
+    avttBuffSelect = registeredDropdown?.element?.closest('html').length > 0 ? registeredDropdown.element : $(`#${elementId}`);
     if(avttBuffSelect.length === 0) return undefined;
     avttBuffSelect.toggleClass('readonly', !editable);
     avttBuffSelect.find('.avttBuffItems').html(innerBuffHtml)
@@ -5157,7 +5310,7 @@ function build_buff_dropdown(scope = { type: 'character' }, fullBuild = false){
     {}
   );
   const pinWrapper = $(`<div id='${idPrefix}avttBuffSheetPins' class='avttBuffSheetPins'></div>`);
-  $(`#${idPrefix}avttBuffSheetPins`).remove()
+  avttBuffSelect.find(`#${idPrefix}avttBuffSheetPins`).remove()
  
   for(let i in sortedBuffs){
     const groupName = buffsDebuffs[i].type == 'class' ? buffsDebuffs[i].class : buffsDebuffs[i].type == 'species' ? buffsDebuffs[i].species : buffsDebuffs[i].type;
@@ -5281,10 +5434,10 @@ function build_buff_dropdown(scope = { type: 'character' }, fullBuild = false){
         else{
           rollBuffFavorites.push(replacedName)
         }
-        if(!isCharacterScope){
+        if(!isCharacterScope)
           accessor.setFavorites(rollBuffFavorites);
-        }
-        localStorage.setItem('rollFavoriteBuffs' + window.PLAYER_ID, JSON.stringify(rollBuffFavorites));
+        else
+          localStorage.setItem('rollFavoriteBuffs' + window.PLAYER_ID, JSON.stringify(rollBuffFavorites));
         rebuild_all_buff_dropdowns();
       })
       row.find('span.pinToSheet').off('click.pinToSheet').on('click.pinToSheet', function(e){
@@ -5339,6 +5492,8 @@ function build_buff_dropdown(scope = { type: 'character' }, fullBuild = false){
   if(isCharacterScope){
     const tabContent = $(`#${elementId}~[class*='styles_tabFilter']>[class*='styles_content'], #${elementId}~.ct-tablet-box__content [class*='styles_tabFilter']>[class*='styles_content']`);
     tabContent.prepend(pinWrapper);
+  } else if(scope?.type === 'note' && registeredDropdown?.pinContainer?.closest('html').length > 0) {
+    registeredDropdown.pinContainer.empty().append(pinWrapper);
   } else {
     avttBuffSelect.append(pinWrapper);
   }

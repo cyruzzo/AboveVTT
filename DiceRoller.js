@@ -527,17 +527,30 @@ function adjustRollWithRollBuffs(expression, rollType, $rollButton){
 
     const onCharacterSheet = $rollButton.closest('.ct-character-sheet__inner').length > 0;
     const $statBlock = onCharacterSheet ? $() : $rollButton.closest('.avtt-stat-block-container[data-token-id]');
-    const token = (onCharacterSheet || typeof get_buff_token !== 'function')
+    const $note = onCharacterSheet ? $() : $rollButton.closest('.note[data-id]');
+    const noteId = $note.attr('data-id');
+    const onDisplayedNoteSheet = !onCharacterSheet && $statBlock.length === 0 &&
+        $note.length > 0 && $rollButton.closest('.dnd-sheet').length > 0 &&
+        window.JOURNAL?.notes?.[noteId] != undefined;
+    const token = (onCharacterSheet || onDisplayedNoteSheet || typeof get_token_by_id !== 'function')
         ? undefined
-        : get_buff_token($statBlock.attr('data-token-id'));
-    if (!onCharacterSheet && token == undefined)
+        : get_token_by_id($statBlock.attr('data-token-id'));
+    if (!onCharacterSheet && !onDisplayedNoteSheet && token == undefined)
         return expression;
 
-    const rollBuffs = onCharacterSheet ? window.rollBuffs : token.options.rollbuffs;
+    const rollBuffs = onCharacterSheet
+        ? window.rollBuffs
+        : (onDisplayedNoteSheet ? window.JOURNAL.notes[noteId].rollbuffs : token.options.rollbuffs);
+    const rollSettings = onCharacterSheet
+        ? window.CHARACTER_AVTT_SETTINGS
+        : (onDisplayedNoteSheet
+            ? (typeof get_note_roll_settings === 'function' ? get_note_roll_settings(noteId) : window.JOURNAL.notes[noteId].rollSettings)
+            : (typeof get_token_roll_settings === 'function' ? get_token_roll_settings($statBlock.attr('data-token-id')) : token.options.rollSettings));
     const charRollKey = rollTypeKeys[normalizedRollType]?.char;
     const rollBuffKey = rollTypeKeys[normalizedRollType]?.buff || normalizedRollType;
-    if(onCharacterSheet && charRollKey != undefined ){
-        const addToRoll = window.CHARACTER_AVTT_SETTINGS?.[charRollKey]?.replace('PB', getPB());// used to check for custom entered numbers in character roll settings
+    if(charRollKey != undefined ){
+        const proficiencyBonus = onCharacterSheet ? getPB() : get_statblock_pb(onDisplayedNoteSheet ? $note : $statBlock);
+        const addToRoll = rollSettings?.[charRollKey]?.replace('PB', proficiencyBonus);
         const addToRollValid = (addToRoll?.match(validExpressionRegex));
         if(addToRollValid)
             expression = `${expression}${addToRoll.match(/^[+-]/g) ? '' : '+'}${addToRoll}`;
@@ -551,6 +564,8 @@ function adjustRollWithRollBuffs(expression, rollType, $rollButton){
         if (selectorMap == undefined) return true;
         if (onCharacterSheet)
             return selectorMap[rollBuffKey] != undefined && $rollButton.closest(selectorMap[rollBuffKey]).length > 0;
+        if (onDisplayedNoteSheet)
+            return selectorMap[rollBuffKey] != undefined;
         const targets = TOKEN_BUFF_TARGETS[buffName];
         if (targets == undefined) return selectorMap[rollBuffKey] != undefined;
         const allowed = targets[rollBuffKey];
