@@ -13453,6 +13453,60 @@ p.monster-header+p {
         text-transform: uppercase;
         letter-spacing: 0.5px;
     }
+    .avtt-dnd-sheet-block {
+        position: relative;
+    }
+    .dnd-sheet-block-copy-button,
+    .dnd-sheet-block-delete-button,
+    .dnd-sheet-block-drag-handle {
+        display: none !important;
+        position: absolute !important;
+        top: 3px;
+        z-index: 10;
+        width: 20px;
+        height: 20px;
+        box-sizing: border-box;
+        overflow: hidden;
+        padding: 1px;
+        border: 1px solid #ddd;
+        border-radius: 3px;
+        background: #222;
+        color: #fff;
+        line-height: 16px;
+        cursor: pointer;
+    }
+    .dnd-sheet-block-drag-handle { right: 52px; cursor: grab; }
+    .dnd-sheet-block-copy-button { right: 28px; }
+    .dnd-sheet-block-delete-button { right: 4px; }
+    .dnd-sheet-block-drag-handle:active { cursor: grabbing; }
+    .dnd-sheet-block-delete-button:hover { background: #9d2a2a; }
+    .dnd-sheet-block-copy-button .material-symbols-outlined,
+    .dnd-sheet-block-delete-button .material-symbols-outlined,
+    .dnd-sheet-block-drag-handle .material-symbols-outlined {
+        display: block;
+        width: 16px;
+        height: 16px;
+        overflow: hidden;
+        font-size: 14px !important;
+        line-height: 16px !important;
+    }
+    .dnd-sheet-block-copy-button svg,
+    .dnd-sheet-block-delete-button svg,
+    .dnd-sheet-block-drag-handle svg {
+        display: block;
+        width: 100% !important;
+        height: 100% !important;
+        max-width: 100%;
+        max-height: 100%;
+        fill: currentColor;
+    }
+    &.avtt-dnd-sheet-controls-unlocked .avtt-dnd-sheet-block:hover > .dnd-sheet-block-copy-button,
+    &.avtt-dnd-sheet-controls-unlocked .avtt-dnd-sheet-block:hover > .dnd-sheet-block-delete-button,
+    &.avtt-dnd-sheet-controls-unlocked .avtt-dnd-sheet-block:hover > .dnd-sheet-block-drag-handle {
+        display: inline-flex !important;
+        align-items: center;
+        justify-content: center;
+    }
     .heroic-inspiration{
         display: flex;
         align-items: center;
