@@ -1995,6 +1995,7 @@ class JournalManager{
   		closestNote.find('[class=""]').removeAttr('class');
 		closestNote.find('[data-avtt-suggestion-type]').removeAttr('data-avtt-suggestion-type');
 		closestNote.find('[data-avtt-block-sort-group]').removeAttr('data-avtt-block-sort-group');
+		closestNote.find('[data-avtt-equipment-sort-group]').removeAttr('data-avtt-equipment-sort-group');
 		let sanitizedHTML = basic_sanitize_html(closestNote[0].innerHTML).replaceAll(/\[(\/)?spell\]/gi, `[$1spell]`).replaceAll(/\[(\/)?magicitem\]/gi, `[$1magicItem]`)
 		const changes = forceSave || $(sanitizedHTML).text().replace(/[\s\n\r]/gi, '') != $(this.notes[id].text).text().replace(/[\s\n\r]/gi, '');
 		if(changes){
@@ -2069,6 +2070,9 @@ class JournalManager{
 			</script>
 			${html[0].outerHTML}			
 			<script>
+				let draggedTableRow = null;
+				let draggedTable = null;
+				let draggedEquipmentField = null;
 				function setupTemplateBlocks(){
 					let draggedBlock = null;
 					const iconSvg = {
@@ -2169,8 +2173,10 @@ class JournalManager{
 					const tbody = table.querySelector('tbody');
 					const rowsContainer = tbody ? tbody : table;
 					const directRows = rowsContainer.querySelectorAll(':scope > tr');
+					const equipmentField = table.closest('.equipment-field');
+					const isEquipmentTable = equipmentField !== null;
 
-					if (directRows.length > 1) {
+					if (directRows.length > 1 || isEquipmentTable) {
 						directRows.forEach(row => {
 							if (!row.querySelector(':scope > .table-row-drag-handle')) {
 								const handleCell = document.createElement('td');
@@ -2193,13 +2199,12 @@ class JournalManager{
 								}
 							});
 						}
-						let draggedRow = null;
-
 						rowsContainer.querySelectorAll(':scope > tr').forEach(row => {
 							row.setAttribute('draggable', 'false');
 
 							const handle = row.querySelector(':scope > .table-row-drag-handle');
-							if (handle) {
+							if (handle && !handle.dataset.avttRowHandleBound) {
+								handle.dataset.avttRowHandleBound = 'true';
 							handle.style.cursor = 'grab';
 							
 							handle.addEventListener('mousedown', () => {
@@ -2211,32 +2216,38 @@ class JournalManager{
 							});
 							}
 
+							if (row.dataset.avttRowDragBound) return;
+							row.dataset.avttRowDragBound = 'true';
 							row.addEventListener('dragstart', (e) => {
-							draggedRow = row;
+							draggedTableRow = row;
+							draggedTable = table;
+							draggedEquipmentField = equipmentField;
 							e.dataTransfer.effectAllowed = 'move';
 							});
 
 							row.addEventListener('dragend', () => {
 							row.setAttribute('draggable', 'false');
-							rowsContainer.querySelectorAll(':scope > tr').forEach(r => r.style.borderTop = '');
-							draggedRow = null;
-							});
-
-							row.addEventListener('dragover', (e) => {
-							e.preventDefault();
-							e.dataTransfer.dropEffect = 'move';
-							if (!draggedRow || draggedRow === row) return;
-
-							const rect = row.getBoundingClientRect();
-							const midpoint = rect.top + rect.height / 2;
-
-							if (e.clientY < midpoint) {
-								rowsContainer.insertBefore(draggedRow, row);
-							} else {
-								rowsContainer.insertBefore(draggedRow, row.nextSibling);
-							}
+							draggedTableRow = null;
+							draggedTable = null;
+							draggedEquipmentField = null;
 							});
 						});
+						if (!rowsContainer.dataset.avttRowDropBound) {
+							rowsContainer.dataset.avttRowDropBound = 'true';
+							rowsContainer.addEventListener('dragover', (e) => {
+								if (!draggedTableRow) return;
+								if (draggedEquipmentField ? !isEquipmentTable : draggedTable !== table) return;
+								e.preventDefault();
+								e.dataTransfer.dropEffect = 'move';
+								const targetRow = e.target.closest('tr');
+								if (!targetRow || targetRow.parentElement !== rowsContainer || draggedTableRow === targetRow) {
+									if (!targetRow) rowsContainer.appendChild(draggedTableRow);
+									return;
+								}
+								const rect = targetRow.getBoundingClientRect();
+								rowsContainer.insertBefore(draggedTableRow, e.clientY < rect.top + rect.height / 2 ? targetRow : targetRow.nextSibling);
+							});
+						}
 					}
 				}			
 				document.addEventListener('paste', (e) => {
@@ -3137,13 +3148,17 @@ class JournalManager{
 			ownerDocument.head.appendChild(script);
 		});
 	}
-	setupDndSheetTableSortable(table, ownerDocument, persistCurrentNoteText){
+	setupDndSheetTableSortable(table, ownerDocument, persistCurrentNoteText, equipmentSortGroup){
 		const initializeSortable = (sortableJquery) => {
 			const $table = sortableJquery(table);
 			const rowsContainer = $table.find('tbody').length > 0 ? $table.find('tbody') : $table;
-			if (rowsContainer.find('> tr').length <= 1) {
+			const isEquipmentTable = $table.closest('.equipment-field').length > 0;
+			const rowCount = rowsContainer.find('> tr').length;
+			if (!isEquipmentTable && rowCount <= 1) {
 				return;
 			}
+			if(isEquipmentTable && equipmentSortGroup)
+				$table.attr('data-avtt-equipment-sort-group', equipmentSortGroup);
 			rowsContainer.find('> tr').each(function() {
 				const $row = sortableJquery(this);
 				if ($row.find('> .table-row-drag-handle').length === 0) {
@@ -3160,6 +3175,7 @@ class JournalManager{
 			$table.sortable({
 				items: '> tbody > tr, > tr',
 				handle: '.table-row-drag-handle',
+				connectWith: isEquipmentTable && equipmentSortGroup ? `table[data-avtt-equipment-sort-group="${equipmentSortGroup}"]` : false,
 				placeholder: 'ui-sortable-placeholder',
 				scroll: false,
 				helper: function(e, ui) {
@@ -3271,6 +3287,7 @@ class JournalManager{
 
 		getCurrentNoteText().find('a').attr('contenteditable', 'false');
 		const sortGroup = `dnd-sheet-block-sort-${id}`;
+		const equipmentSortGroup = `dnd-sheet-equipment-sort-${id}`;
 		const setupBlockControls = () => {
 			const currentNoteText = getCurrentNoteText();
 			currentNoteText.find('.dnd-sheet .section-title').attr('contenteditable', 'true');
@@ -3459,7 +3476,7 @@ class JournalManager{
 		});
 
 		getCurrentNoteText().find('.dnd-sheet table').each(function() {
-			self.setupDndSheetTableSortable(this, ownerDocument, persistCurrentNoteText);
+			self.setupDndSheetTableSortable(this, ownerDocument, persistCurrentNoteText, equipmentSortGroup);
 			const $table = $(this);
 			const header = $table.find('th').first().parent().parent();
 			header.find('> tr').each(function() {
