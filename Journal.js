@@ -2122,8 +2122,16 @@ class JournalManager{
 									copy.querySelector(':scope > .dnd-sheet-block-copy-button')?.remove();
 									copy.querySelector(':scope > .dnd-sheet-block-delete-button')?.remove();
 									copy.querySelector(':scope > .dnd-sheet-block-drag-handle')?.remove();
-										block.after(copy);
-										setup();
+									[copy, ...copy.querySelectorAll('[data-avtt-block-controls-bound], [data-avtt-block-drop-bound], [data-avtt-row-handle-bound], [data-avtt-row-drag-bound], [data-avtt-row-drop-bound]')].forEach(element => {
+										element.removeAttribute('data-avtt-block-controls-bound');
+										element.removeAttribute('data-avtt-block-drop-bound');
+										element.removeAttribute('data-avtt-row-handle-bound');
+										element.removeAttribute('data-avtt-row-drag-bound');
+										element.removeAttribute('data-avtt-row-drop-bound');
+									});
+									block.after(copy);
+									setup();
+									document.querySelectorAll('.dnd-sheet .equipment-field table').forEach(setupDraggableTableRows);
 									});
 									block.append(copyButton);
 								}
@@ -3288,6 +3296,11 @@ class JournalManager{
 		getCurrentNoteText().find('a').attr('contenteditable', 'false');
 		const sortGroup = `dnd-sheet-block-sort-${id}`;
 		const equipmentSortGroup = `dnd-sheet-equipment-sort-${id}`;
+		const setupEquipmentTableSorting = () => {
+			getCurrentNoteText().find('.dnd-sheet .equipment-field table').each(function() {
+				self.setupDndSheetTableSortable(this, ownerDocument, persistCurrentNoteText, equipmentSortGroup);
+			});
+		};
 		const setupBlockControls = () => {
 			const currentNoteText = getCurrentNoteText();
 			currentNoteText.find('.dnd-sheet .section-title').attr('contenteditable', 'true');
@@ -3326,6 +3339,7 @@ class JournalManager{
 			copy.find('.dnd-sheet-block-delete-button').remove();
 			block.after(copy);
 			setupBlockControls();
+			setupEquipmentTableSorting();
 			persistCurrentNoteText({forceSave: true, rescanStatBlock: false});
 		});
 		container.off('pointerdown.dndSheetBlockDelete, touchstart.dndSheetBlockDelete').on('pointerdown.dndSheetBlockDelete, touchstart.dndSheetBlockDelete', '.dnd-sheet-block-delete-button', (e) => {
