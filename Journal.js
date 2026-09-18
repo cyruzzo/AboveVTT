@@ -2513,13 +2513,15 @@ class JournalManager{
 			.slice(0, 8);
 	}
 
-	getRandomItemSuggestions(rarity){
+	getRandomItemSuggestions(rarity, itemType){
 		if(window.ITEMS_CACHE == undefined)
 			return [];
 		const isLegacy = !get_avtt_setting_value('2024Tooltips');
 		const normalizedRarity = rarity ? rarity.toLowerCase().trim() : undefined;
+		const normalizedItemType = itemType ? itemType.toLowerCase().trim() : undefined;
 		const pool = window.ITEMS_CACHE.filter(item => ((isLegacy || item.isLegacy == isLegacy) || item.isHomebrew)
-			&& (!normalizedRarity || item.rarity?.toLowerCase().trim() == normalizedRarity));
+			&& (!normalizedRarity || item.rarity?.toLowerCase().trim() == normalizedRarity)
+			&& (!normalizedItemType || (item.filterType || '').toLowerCase().trim() == normalizedItemType));
 		const shuffled = [...pool];
 		for(let i=shuffled.length-1; i>0; i--){
 			const j = Math.floor(Math.random() * (i + 1));
@@ -2697,13 +2699,21 @@ class JournalManager{
 		if(lineEnd === -1)
 			lineEnd = text.length;
 		const lineText = text.slice(lineStart, lineEnd);
-		const randomRegex = /\[random\s?(common|uncommon|rare|very rare|legendary|artifact)?\]/gi;
+		const itemTypes = ["potion", "wondrous item", "wondrous", "weapon", "armor", "ring", "wand", "rod", "staff", "scroll", "other gear", "other"];
+		const rarityOptions = ["common", "uncommon", "rare", "very rare", "legendary", "artifact"];
+        const combinedOptions = [...rarityOptions, ...itemTypes];
+		
+		const randomRegex = new RegExp(`\\[random\\s?(${combinedOptions.join('|')})?\\s?(${combinedOptions.join('|')})?\\]`, 'gi');
+		// const randomRegex = /\[random\s?(common|uncommon|rare|very rare|legendary|artifact)\s?\]/gi;
 		let match;
 		while((match = randomRegex.exec(lineText)) != null){
 			const start = lineStart + match.index;
 			const end = start + match[0].length;
+			const rarityMatch = rarityOptions.includes(match[1]?.toLowerCase().trim()) ? match[1] : rarityOptions.includes(match[2]?.toLowerCase().trim()) ? match[2] : undefined;
+			let itemTypeMatch = itemTypes.includes(match[1]?.toLowerCase().trim()) ? match[1] : itemTypes.includes(match[2]?.toLowerCase().trim()) ? match[2] : undefined;
+			itemTypeMatch = itemTypeMatch?.toLowerCase().trim() == 'wondrous' ? 'wondrous item' : itemTypeMatch?.toLowerCase().trim() == 'other' ? 'other gear' : itemTypeMatch;
 			if(caretOffset >= start && caretOffset <= end)
-				return { model, start, end, rarity: match[1] };
+				return { model, start, end, rarity: rarityMatch, itemType: itemTypeMatch };
 		}
 		return undefined;
 	}
@@ -2810,7 +2820,7 @@ class JournalManager{
 		const effectiveSuggestionType = randomMatch ? 'random' : (useSegmentedMatch ? 'spellcasting' : suggestionType);
 		const searchText = randomMatch ? '' : (useSegmentedMatch ? segmentInfo.segments[segmentInfo.index].text.trim() : target.text().trim());
 		const suggestions = randomMatch
-			? this.getRandomItemSuggestions(randomMatch.rarity)
+			? this.getRandomItemSuggestions(randomMatch.rarity, randomMatch.itemType)
 			: this.getDndSheetCellSuggestionItems(effectiveSuggestionType, searchText);
 		this.removeDndSheetCellSuggestions(hostDocument);
 		if(suggestions.length === 0)
@@ -2824,7 +2834,14 @@ class JournalManager{
 				<span class="dnd-sheet-cell-suggestion-type"></span>
 				
 			</button>`);
-			option.find('.dnd-sheet-cell-suggestion-name').text(suggestion.name);
+			const suggestionName = option.find('.dnd-sheet-cell-suggestion-name');
+			suggestionName.text(suggestion.name);
+			const tooltipTemplate = $(this.buildTooltipLinkHtml(suggestion));
+			if(tooltipTemplate.length > 0){
+				suggestionName
+					.addClass(tooltipTemplate.attr('class'))
+					.attr('href', tooltipTemplate.attr('href'));
+			}
 			option.find('.dnd-sheet-cell-suggestion-type').text(suggestion.type);
 			option.on('mouseenter', () => {
 				this.setActiveDndSheetCellSuggestion(hostDocument, index);
@@ -2844,11 +2861,12 @@ class JournalManager{
 				onSelect?.();
 				cell.focus();
 			});
-			const suggestionName = option.find('.dnd-sheet-cell-suggestion-name')[0];
-			suggestionName.style.setProperty('--dnd-sheet-suggestion-color', suggestion.color);
-			suggestionName.style.setProperty('color', 'var(--dnd-sheet-suggestion-color)');
+			suggestionName[0].style.setProperty('--dnd-sheet-suggestion-color', suggestion.color);
+			suggestionName[0].style.setProperty('color', 'var(--dnd-sheet-suggestion-color)');
 			suggestionBox.append(option);
 		});
+		this.add_journal_tooltip_targets(suggestionBox);
+		add_stat_block_hover(suggestionBox);
 		$(hostDocument.body).append(suggestionBox);
 		const rect = cell.getBoundingClientRect();
 		const anchorRect = this.getDndSheetSuggestionAnchorRect(cell);
