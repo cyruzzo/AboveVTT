@@ -1315,7 +1315,6 @@ class MessageBroker {
 					}
 					catch{
 						console.log('non-UVTT file found for map')
-						data.UVTTFile = 0;
 						if (window.DM && data.dm_map && data.dm_map != "" && data.dm_map_usable == '1'){
 							loadMap = data.dm_map;
 						}

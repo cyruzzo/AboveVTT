@@ -532,15 +532,7 @@ async function load_scenemap(url, is_video = false, width = null, height = null,
 		$("#scene_map_container").toggleClass('video', false);
 
 		let newmap;
-
-		
-
-		if(UVTTFile && width != null){		
-			newmap = $(`<img id='scene_map' src='${url}' style='position:absolute;top:0;left:0;z-index:10'>`);		
-			newmap.width(width);
-			newmap.height(height);		
-		}
-		else if(url.startsWith('above-bucket-not-a-url')){
+		if(url.startsWith('above-bucket-not-a-url')){
 			url = await getAvttStorageUrl(url, true);
 			newmap = $(`<img id='scene_map' src='${url}' style='position:absolute;top:0;left:0;z-index:10'>`);
 
@@ -548,6 +540,13 @@ async function load_scenemap(url, is_video = false, width = null, height = null,
 		else{
 			url = await getGoogleDriveAPILink(url)
 			newmap = $(`<img id='scene_map' src='${url}' style='position:absolute;top:0;left:0;z-index:10'>`);
+		}
+		
+
+		if(UVTTFile && width != null){		
+			newmap = $(`<img id='scene_map' src='${url}' style='position:absolute;top:0;left:0;z-index:10'>`);		
+			newmap.width(width);
+			newmap.height(height);		
 		}
 
 
