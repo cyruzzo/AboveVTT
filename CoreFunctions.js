@@ -18,6 +18,18 @@ const CUSTOM_CONDITIONS = ["Concentration(Reminder)", 'Reaction Used',"Flying", 
 							"#1A6AFF", "#FF7433", "#FF4D4D", "#FFD433", "#884DFF", "#86FF66", "#33ffe3", "#c333ff", "#1e0066", "#656565"];
 
 $(function() {
+  
+  /*Sets up these jquery events as passive so we don't get spam in the console about it from warnings */
+  for (const type of ['touchstart', 'touchmove', 'wheel', 'mousewheel']) {
+    $.event.special[type] = {
+        setup: function (data, namespaces, eventHandle) {
+            this.addEventListener(type, eventHandle, { passive: false });
+        },
+        teardown: function (namespaces, eventHandle) {
+            this.removeEventListener(type, eventHandle);
+        }
+    };
+  }
 
   window.EXPERIMENTAL_SETTINGS = {};
   window.EXTENSION_PATH = $("#extensionpath").attr('data-path');
