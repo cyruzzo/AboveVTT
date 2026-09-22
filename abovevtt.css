@@ -2929,7 +2929,7 @@ body .sidebar__pane-content{
     max-width: 600px !important;
     width: var(--sidebar-width, 340px) !important;
 }
-body:not(.encounter-builder-page) .sidebar__pane-content {
+body:not(.encounter-builder-page, .body-rpgcampaign-details) .sidebar__pane-content {
     position: absolute;
     right: 0;
     top: 28px;

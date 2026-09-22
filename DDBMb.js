@@ -20,10 +20,62 @@ function showDDBDisconnectWarning(){
     $(document.body).append(container);
 
     $("#reconnect-button").on("click", function(){
+        window.ddbMbEventsAttached = new Set();
         forceDdbWsReconnect();
         container.remove();
     });
 }
+let ensureTimeout;
+//This ensures our events get attached if the message broker loads before this does for some reason
+const hasAllEvents = () => ['message', 'close', 'error', 'open'].every(val => window.ddbMbEventsAttached.has(val));
+function ensureDDBMessageEvents() {
+    window.ensuringDDBEvents = true;
+    const waitForMessageBroker = new Promise((resolve) => {
+        
+
+        const ensureMessageEvents = () => {
+            clearTimeout(ensureTimeout);
+            const key = Symbol.for('@dndbeyond/message-broker-lib');
+            if (key) {
+                DDB_WS_OBJ = window[key];
+            }
+
+            if ((DDB_WS_OBJ && DDB_WS_OBJ.status == 'open')){
+                ensureTimeout = setTimeout(() => {
+                    if(!hasAllEvents()){
+                        resolve(DDB_WS_OBJ);
+                        return;
+                    }
+                    resolve(false);
+                }, 5000);
+            } else {
+                ensureTimeout = setTimeout(ensureMessageEvents, 1000);
+            }
+        };
+        clearTimeout(ensureTimeout);
+        ensureTimeout = setTimeout(() =>{
+            if(!hasAllEvents()){
+                ensureMessageEvents();
+                return;
+            } 
+            resolve(false);
+        }, 10000);
+        
+    });
+    //waitForMessageBroker returns false if all events are already attached
+    waitForMessageBroker.then((messageBroker) => {
+        window.ensuringDDBEvents = false;
+        if(!messageBroker) {
+            console.log("DDB Message broker connected with all events", window.ddbMbEventsAttached)
+            return;
+        }
+        console.warn("DDB Message broker missing event listeners. Connected Events:", window.ddbMbEventsAttached)
+        window.ddbMbEventsAttached = new Set();
+        messageBroker.reset();
+        messageBroker.connect();
+    });
+}
+
 /**
  * Attempts to force DDBs WebSocket to re-connect.
  * @returns Bool false - wasn't able to force / no need
@@ -48,20 +100,23 @@ function forceDdbWsReconnect() {
             DDB_WS_OBJ = window[key];
         }
 
+        console.assert(window.ensuringDDBEvents || hasAllEvents(), 'Not all DDB message broker events are attached.\n• MB Status:', DDB_WS_OBJ.status, "\n• Attached Events:", window.ddbMbEventsAttached);
+        
         if ((DDB_WS_OBJ && DDB_WS_OBJ.status == 'disconnected')) {
+            window.ddbMbEventsAttached = new Set();
             DDB_WS_OBJ.reset();
             DDB_WS_OBJ.connect();
-
+            DDB_WS_FORCE_RECONNECT_LOCK = false;
             return true;
         }
         DDB_WS_FORCE_RECONNECT_LOCK = false;
-
         return false;
     } catch(e) {
         console.log("forceDdbWsReconnect error: " + e);
         DDB_WS_FORCE_RECONNECT_LOCK = false;
     }
 }
+
 
 (function() {
     function noisy_log(...message) {
@@ -105,16 +160,17 @@ function forceDdbWsReconnect() {
         window.ActiveWorkers[scriptURL] = worker;
         return worker;
     };
-    window.eventsAttached ||= new Set();
+    window.ddbMbEventsAttached ||= new Set();
     //for listening to the game log websocket and intercepting messages for the DDB onmessage function
     const originalAddEventListener = WebSocket.prototype.addEventListener;
+
     WebSocket.prototype.addEventListener = function (type, listener, options) {
-        window.eventsAttached ||= new Set();
+        window.ddbMbEventsAttached ||= new Set();
         const url = this.url || '';
         const isGameLog = url && url.toLowerCase().includes('game-log-api-live');
         if(isGameLog){
             if (type === 'message') {
-                window.eventsAttached.add(type);
+                window.ddbMbEventsAttached.add(type);
                 const interceptor = (event) => {
                     if (event.data && event.data !== 'pong') {
                         try {
@@ -130,7 +186,7 @@ function forceDdbWsReconnect() {
                 originalAddEventListener.call(this, type, interceptor, options);
             }
             else if((type === 'close' || type === 'error')) {
-                window.eventsAttached.add(type);
+                window.ddbMbEventsAttached.add(type);
                 const interceptor = (event) => {
                     DDB_WS_FORCE_RECONNECT_LOCK = false;
                     if(DDB_RETRY_TIMEOUT != undefined){
@@ -145,6 +201,7 @@ function forceDdbWsReconnect() {
                     }	
                     else{
                         DDB_RETRY_TIMEOUT = setTimeout(function() {
+                            window.ddbMbEventsAttached = new Set();
                             forceDdbWsReconnect();
                         }, Math.min(10000,2**DDB_WS_RETRIES*250));
                     }
@@ -152,14 +209,18 @@ function forceDdbWsReconnect() {
                 
                 originalAddEventListener.call(this, type, interceptor, options);
             } else if((type == 'open')){
-                window.eventsAttached.add('open');
+                window.ddbMbEventsAttached.add('open');
                 console.log('DDB websocket connected')
+                ensureDDBMessageEvents();
             }
         }
         
 
         return originalAddEventListener.call(this, type, listener, options);
     };
+
+
+
     function interceptRollEvent(e) {
         if(e.button == 2) return;
         const target = $(e.target);
@@ -195,34 +256,7 @@ function forceDdbWsReconnect() {
         writable: false,
         value: window.fbq
     });
-    
-    //This ensures our events get attached if the message broker loads before this does for some reason
-    const waitForMessageBroker = new Promise((resolve) => {
-        const ensureMessageEvents = () => {
-            const key = Symbol.for('@dndbeyond/message-broker-lib');
-            if (key) {
-                DDB_WS_OBJ = window[key];
-            }
 
-            if ((DDB_WS_OBJ && DDB_WS_OBJ.status == 'open')){
-                resolve(DDB_WS_OBJ);
-            } else {
-                setTimeout(ensureMessageEvents, 1000);
-            }
-        };
-        setTimeout(() =>{
-            if(!['message', 'close', 'error', 'open'].every(val => window.eventsAttached.has(val))){
-                ensureMessageEvents();
-                return;
-            } 
-            resolve(false);
-        }, 5000);
-        
-    });
-    waitForMessageBroker.then((messageBroker) => {
-        delete window.eventsAttached;
-        if(!messageBroker) return;
-        messageBroker.reset();
-        messageBroker.connect();
-    });
+
+    ensureDDBMessageEvents();
 })()

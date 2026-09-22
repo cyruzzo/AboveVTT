@@ -543,8 +543,7 @@ async function load_scenemap(url, is_video = false, width = null, height = null,
 		}
 		
 
-		if(UVTTFile && width != null){		
-			newmap = $(`<img id='scene_map' src='${url}' style='position:absolute;top:0;left:0;z-index:10'>`);		
+		if(UVTTFile && width != null){			
 			newmap.width(width);
 			newmap.height(height);		
 		}
