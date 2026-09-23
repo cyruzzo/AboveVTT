@@ -5185,6 +5185,7 @@ function buff_scope_accessor(scope){
               display: block !important;
               position: absolute !important;
               background: var(--theme-background-solid) !important;
+              color: var(--theme-contrast, #242528);
               z-index: 200 !important;
           }` : '';
       if(STANDARD_CONDITIONS.includes(condition)){
