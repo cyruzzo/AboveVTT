@@ -1,7 +1,7 @@
 var DDB_WS_OBJ = null;
 var DDB_WS_FORCE_RECONNECT_LOCK = false; // Best effort (not atomic) - ensure function is called only once at a time
 var DDB_WS_RETRIES = 0;
-var DDB_MAX_RETRIES = 5;
+var DDB_MAX_RETRIES = 10;
 var DDB_RETRY_TIMEOUT;
 
 function showDDBDisconnectWarning(){
@@ -20,7 +20,6 @@ function showDDBDisconnectWarning(){
     $(document.body).append(container);
 
     $("#reconnect-button").on("click", function(){
-        window.ddbMbEventsAttached = new Set();
         forceDdbWsReconnect();
         container.remove();
     });
@@ -196,12 +195,11 @@ function forceDdbWsReconnect() {
                     console.log('Attempting reconnect to DDB Websocket');
   
                     DDB_WS_RETRIES++;
-                    if(DDB_WS_RETRIES > DDB_MAX_RETRIES && !get_avtt_setting_value('autoReconnect')){
+                    if(DDB_WS_RETRIES >= DDB_MAX_RETRIES && !get_avtt_setting_value('autoReconnect')){
                         self.showDDBDisconnectWarning();
                     }	
                     else{
                         DDB_RETRY_TIMEOUT = setTimeout(function() {
-                            window.ddbMbEventsAttached = new Set();
                             forceDdbWsReconnect();
                         }, Math.min(10000,2**DDB_WS_RETRIES*250));
                     }
