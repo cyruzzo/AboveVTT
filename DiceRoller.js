@@ -605,7 +605,7 @@ function adjustRollWithRollBuffs(expression, rollType, $rollButton){
             expression = `${expression.replace(singleReplaceRegex, newRoll)}` 
         }
     }
-    const PB = onCharacterSheet ? getPB() : get_statblock_pb($statBlock);
+    const PB = onCharacterSheet ? getPB() : get_statblock_pb(onDisplayedNoteSheet ? $note : $statBlock);
     return expression.replaceAll('PB', PB); 
 }
 class DiceRoller {
