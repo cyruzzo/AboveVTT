@@ -12995,6 +12995,7 @@ div#playlistFields {
 
 #chat-language option {
     background: var(--theme-background-solid, #fff);
+    color: var(--theme-contrast, #242528);
     font-size:12px;
 }
 
@@ -13936,6 +13937,7 @@ p.monster-header+p {
   display: block;
   position: absolute;
   background: var(--theme-background-solid, #fff);
+  color: var(--theme-contrast, #242528);
   z-index: 200;
 }
 
@@ -14007,6 +14009,7 @@ p.monster-header+p {
         border: 1px solid #aaa;
         border-radius: 3px;
         background: var(--theme-background-solid, #fff);
+        color: var(--theme-contrast, #242528);
         box-shadow: 0 2px 5px rgba(0, 0, 0, .25);
     }
     .avtt-statblock-buffs > .avtt-token-roll-settings .avtt-token-roll-settings-fields {
@@ -14209,6 +14212,7 @@ ul.avttBuffItems select,
     z-index: 5;
     padding: 2px 6px;
     background: var(--theme-background-solid, #fff);
+    color: var(--theme-contrast, #242528);
     border-bottom: 1px solid #ddd;
 }
 
@@ -14228,6 +14232,7 @@ ul.avttBuffItems select,
   width: 100%;
   box-sizing: border-box;
   background: var(--theme-background-solid, #fff);
+  color: var(--theme-contrast, #242528);
   max-width: 240px;
   margin-left:14px;
 }
@@ -14345,6 +14350,7 @@ ul.avttBuffItems select,
   border: 1px solid #aaa;
   border-radius: 3px;
   background: var(--theme-background-solid, #fff);
+  color: var(--theme-contrast, #242528);
   box-shadow: 0 2px 5px rgba(0, 0, 0, .25);
 }
 
@@ -14429,6 +14435,7 @@ ul.avttBuffItems select,
   padding: 3px 6px;
   border-bottom: 1px solid #ddd;
   background: var(--theme-background-solid, #fff);
+  color: var(--theme-contrast, #242528);
 }
 
 .avtt-note-roll-buff-pins:has(.avttBuffSheetPins:empty) {

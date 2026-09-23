@@ -1250,10 +1250,10 @@ function observe_character_sheet_changes(documentToObserve) {
               top: 50%;
               transform: translate(-50%, -50%);
               background: var(--theme-background-solid);
+              color: var(--theme-contrast, #242528);
               box-shadow: 0px 0px 4px var(--theme-contrast);
               border-radius: 15px;
               border: 1px solid var(--theme-contrast);
-              color: var(--theme-contrast);
               overflow:hidden;'>  
               </div>`)
         let optionsContents = $(`<div style='overflow: auto; max-height:100%;'></div>`);
@@ -1545,6 +1545,7 @@ function observe_character_sheet_changes(documentToObserve) {
                 display: block;
                 position: absolute;
                 background: var(--theme-background-solid, #fff);
+                color: var(--theme-contrast, #242528);
                 z-index: 200;
               }
 
@@ -1692,6 +1693,7 @@ function observe_character_sheet_changes(documentToObserve) {
                 z-index: 5;
                 padding: 2px 6px;
                 background: var(--theme-background-solid, #fff);
+                color: var(--theme-contrast, #242528);
                 border-bottom: 1px solid #ddd;
               }
 
@@ -1712,6 +1714,7 @@ function observe_character_sheet_changes(documentToObserve) {
                 max-width:240px; 
                 box-sizing: border-box;
                 background: var(--theme-background-solid, #fff);
+                color: var(--theme-contrast, #242528);
               }
 
               .avtt-statblock-buffs .dropdown-check-list.readonly .clickHandle {
