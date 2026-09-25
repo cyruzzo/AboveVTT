@@ -8390,26 +8390,14 @@ function buildActiveRays(particle, walls, limit, visionAngle, rotation = 0, incl
 
 	const featureAngles = collectFeatureAnglesForWalls(particle.pos, walls, limit);
 	if(includeMovementRays){
-		if(visionWidth < 360 || lightAngle < 360){
-			// Keep the center circle smooth even when dragging uses sparse base rays.
-			for(let angle = 0; angle < 360; angle += 5){
+		for(const width of [visionWidth, lightAngle]){
+			if(width >= 360) continue;
+			for(const edge of [centerAngle - width / 2, centerAngle + width / 2]){
+				const angle = normalizeAngleDegrees(edge);
 				const rounded = featureAngleRounded(angle);
 				if(used.has(rounded)) continue;
 				used.add(rounded);
 				combined.push({ angle, ray: new Ray(particle.pos, degreeToRadian(angle)) });
-			}
-		}
-		// Sample both sides of each cone edge, including its transition to the center circle.
-		for(const width of [visionWidth, lightAngle]){
-			if(width >= 360) continue;
-			for(const edge of [centerAngle - width / 2, centerAngle + width / 2]){
-				for(const offset of [-0.1, 0, 0.1]){
-					const angle = normalizeAngleDegrees(edge + offset);
-					const rounded = featureAngleRounded(angle);
-					if(used.has(rounded)) continue;
-					used.add(rounded);
-					combined.push({ angle, ray: new Ray(particle.pos, degreeToRadian(angle)) });
-				}
 			}
 		}
 	}
@@ -9004,6 +8992,7 @@ function redraw_light(darknessMoved = false, limitActiveRays = 0) {
 		const hasDevilOrTruesight = (tokenObject.options.truesight.feet > 0 || tokenObject.options.devilsight.feet > 0);
 		if (window.lineOfSightPolygons[auraId] !== undefined &&
 			window.lineOfSightPolygons[auraId].wallClippath !== undefined &&
+			window.lineOfSightPolygons[auraId].wallVision !== undefined &&
 			window.lineOfSightPolygons[auraId].x === tokenPos.x &&
 			window.lineOfSightPolygons[auraId].y === tokenPos.y &&
 			window.lineOfSightPolygons[auraId].numberofwalls === allWalls.length &&
@@ -9012,13 +9001,12 @@ function redraw_light(darknessMoved = false, limitActiveRays = 0) {
 			window.lineOfSightPolygons[auraId].elev === tokenObject.options.elev &&
 			window.lineOfSightPolygons[auraId].visionAngle === tokenObject.options.visionAngle &&
 			window.lineOfSightPolygons[auraId].lightAngle === tokenObject.options.lightAngle &&
-			window.lineOfSightPolygons[auraId].tokenWidth === tokenObject.sizeWidth() &&
-			window.lineOfSightPolygons[auraId].tokenHeight === tokenObject.sizeHeight() &&
 			window.lineOfSightPolygons[auraId].rotation === tokenObject.options.rotation &&
 			darknessMoved !== true) {
 
 			window.lightPolygon = window.lineOfSightPolygons[auraId].polygon;
 			window.emittedLightPolygon = window.lineOfSightPolygons[auraId].emittedLight;
+			window.wallVisionPolygon = window.lineOfSightPolygons[auraId].wallVision;
 			window.movePolygon = window.lineOfSightPolygons[auraId].move;
 			window.noDarknessPolygon = window.lineOfSightPolygons[auraId].noDarkness;
 
@@ -9055,10 +9043,9 @@ function redraw_light(darknessMoved = false, limitActiveRays = 0) {
 				emittedLight: window.emittedLightPolygon,
 				lightClippath: lightPath,
 				wallClippath: wallPath,
+				wallVision: window.wallVisionPolygon,
 				wallDevilsightClip: wallNoDarknessPath,
 				lightAngle: tokenObject.options.lightAngle,
-				tokenWidth: tokenObject.sizeWidth(),
-				tokenHeight: tokenObject.sizeHeight(),
 				move: window.movePolygon,
 				noDarkness: window.noDarknessPolygon,
 				x: tokenPos.x,
@@ -9121,6 +9108,9 @@ function redraw_light(darknessMoved = false, limitActiveRays = 0) {
 				});
 			
 				drawPolygon(offscreenContext, window.lightPolygon, 'rgba(255, 255, 255, 1)', true, 0, undefined, undefined, undefined, true, true); //draw to offscreen canvas so we don't have to render every draw and use this for a mask	
+				if(Number.parseFloat(tokenObject.options.visionAngle) < 360 && window.wallVisionPolygon.length >= 3){
+					clip_circle_with_polygon(offscreenContext, tokenPos.x * adjustScale, tokenPos.y * adjustScale, 3 * adjustScale, '#fff', window.wallVisionPolygon, { squareLight: false });
+				}
 				drawPolygon(moveOffscreenCanvasMaskContext, window.movePolygon, 'rgba(255, 255, 255, 1)', true, 0, undefined, undefined, undefined, true, true); //draw to offscreen canvas so we don't have to render every draw and use this for a mask
 				if(window.lightAuraClipPolygon[auraId] != undefined){
 					if (window.lightAuraClipPolygon[auraId].darkvision > 0) {
@@ -9320,10 +9310,9 @@ function getTokenVision(tokenId, darknessMoved){
 		emittedLight: window.emittedLightPolygon,
 		lightClippath: window.emittedLightPolygon.map(p => `${p.x / adjustScale}px ${p.y / adjustScale}px`).join(', '),
 		wallClippath: window.wallVisionPolygon.map(p => `${p.x / adjustScale}px ${p.y / adjustScale}px`).join(', '),
+		wallVision: window.wallVisionPolygon,
 		wallDevilsightClip: window.wallNoDarknessPolygon.map(p => `${p.x / adjustScale}px ${p.y / adjustScale}px`).join(', '),
 		lightAngle: window.TOKEN_OBJECTS[tokenId].options.lightAngle,
-		tokenWidth: window.TOKEN_OBJECTS[tokenId].sizeWidth(),
-		tokenHeight: window.TOKEN_OBJECTS[tokenId].sizeHeight(),
 		move: window.movePolygon,
 		noDarkness: window.noDarknessPolygon,
 		x: tokenPos.x,
