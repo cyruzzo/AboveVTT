@@ -1286,7 +1286,8 @@ class Token {
 		const tokenHpAuraColor = token_health_aura(this.hpPercentage, this.options.healthauratype);
 		let paddingX = 0;
 		let paddingY = 0;
-		
+		const paddingBaseX = token.is('.example-token') ? window.CURRENT_SCENE_DATA.hpps : 0;
+		const paddingBaseY = token.is('.example-token') ? window.CURRENT_SCENE_DATA.vpps : 0;
 		if(this.options.tokenStyleSelect == "undefined")// I believe this only happens in the sidepanel
 			delete this.options.tokenStyleSelect;
 			
@@ -1298,8 +1299,8 @@ class Token {
 		} 
 		else {
 			if(tokenStyle === "circle" || tokenStyle === "square"){
-				paddingX += window.CURRENT_SCENE_DATA.hpps/10;
-				paddingY += window.CURRENT_SCENE_DATA.vpps/10;
+				paddingX += paddingBaseX/10;
+				paddingY += paddingBaseY/10;
 			}
 			token.css('--token-hp-aura-color', tokenHpAuraColor);
 			if(this.tempHp) {
@@ -1314,8 +1315,8 @@ class Token {
 		} 
 		else {
 			if(tokenStyle === "circle" || tokenStyle === "square"){
-				paddingX += Math.min(1, window.CURRENT_SCENE_DATA.hpps/40);
-				paddingY += Math.min(1, window.CURRENT_SCENE_DATA.vpps/40);
+				paddingX += Math.min(1, paddingBaseX/40);
+				paddingY += Math.min(1, paddingBaseY/40);
 			}
 			token.css('--token-border-color', this.options.color);
 			$("#combat_area tr[data-target='" + this.options.id + "'] img[class*='Avatar']").css("border-color", this.options.color);
@@ -1325,8 +1326,8 @@ class Token {
 		}
 		else {
 			if(tokenStyle === "circle" || tokenStyle === "square"){
-				paddingX += window.CURRENT_SCENE_DATA.hpps/10;
-				paddingY += window.CURRENT_SCENE_DATA.vpps/10;
+				paddingX += paddingBaseX/10;
+				paddingY += paddingBaseY/10;
 			}
 			token.css('--token-hpbar-aura-color', tokenHpAuraColor);
 			if(this.tempHp) {

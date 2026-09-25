@@ -2479,7 +2479,8 @@ const debounce_pc_token_update = mydebounce(() => {
     if (token) {
       let currentImage = token.options.imgsrc;
       const newImage = (token.options.alternativeImages == undefined || token.options.alternativeImages?.length == 0) ? pc.image : currentImage;
-      const options = $.extend(true, {}, token.options, pc, { imgsrc: newImage });
+      const tokenName = token.options.name ?? pc.name;
+      const options = $.extend(true, {}, token.options, pc, { imgsrc: newImage, name: tokenName });
       options.conditions = pc.conditions || [];
       removeUnusedPlayerData(options);
       token.hp = pc.hitPointInfo.current; // triggers concentration checks
