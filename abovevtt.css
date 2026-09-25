@@ -1944,11 +1944,17 @@ div#scene_properties form > div{
 [class*='styles_mobileNav'].visibleMobileNav>div>button[class*='styles_navToggle']{
     display: flex;
 }
-#adjustments-flyout>div>button.token-wall-poly-button{
+#adjustments-flyout>div>button.token-wall-poly-button,
+#adjustments-flyout>div>button.token-roof-poly-button{
     display:none;
 }
-#adjustments-flyout>div>button.token-wall-poly-button.visible{
+#adjustments-flyout>div>button.token-wall-poly-button.visible,
+#adjustments-flyout>div>button.token-roof-poly-button.visible{
     display:block;
+}
+.roof-hidden {
+    visibility: hidden !important;
+    pointer-events: none !important;
 }
 .hasTooltip::after,
 .door-button[data-name]::after {
@@ -2034,7 +2040,9 @@ div#scene_properties form > div{
 .definitelyNotAToken.ui-draggable-disabled>.token-image{
     cursor: default !important;
 }
-
+.token.roof{
+    filter: drop-shadow(0px 4px 7px black);
+}
 .token>.token-image{
   -webkit-user-drag: none;
   -khtml-user-drag: none;

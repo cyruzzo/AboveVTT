@@ -873,15 +873,29 @@ function in_fog_or_dark_image_data(tokenid, imageData) {
 	if (imageData == undefined) {
 		return false;
 	}
-
-	const centerX = (window.TOKEN_OBJECTS[tokenid].options.left.replace('px', '') / window.CURRENT_SCENE_DATA.scale_factor) + (window.TOKEN_OBJECTS[tokenid].sizeWidth() / 2 / window.CURRENT_SCENE_DATA.scale_factor)
-	const centerY = (window.TOKEN_OBJECTS[tokenid].options.top.replace('px', '') / window.CURRENT_SCENE_DATA.scale_factor) + (window.TOKEN_OBJECTS[tokenid].sizeHeight() / 2 / window.CURRENT_SCENE_DATA.scale_factor)
-	let pixeldata = getPixelFromImageData(imageData, centerX, centerY);
-
-	if (pixeldata[1] > 4 || pixeldata[0] > 4 || pixeldata[2] > 4) {
-		return false;
+	const token = window.TOKEN_OBJECTS[tokenid];
+	const sceneScale = window.CURRENT_SCENE_DATA.scale_factor;
+	const centerX = Math.round((parseFloat(token.options.left) + token.sizeWidth() / 2) / sceneScale);
+	const centerY = Math.round((parseFloat(token.options.top) + token.sizeHeight() / 2) / sceneScale);
+	if (centerX >= 0 && centerX < imageData.width && centerY >= 0 && centerY < imageData.height) {
+		const pixel = getPixelFromImageData(imageData, centerX, centerY);
+		if (pixel[0] > 4 || pixel[1] > 4 || pixel[2] > 4) return false;
 	}
-
+	if (token.options.tokenStyleSelect === 'roof') {
+		// Sample the hide area's edges at pixel spacing in the visibility canvas.
+		const points = roof_area_points(token).map(point => ({x: point.x / sceneScale, y: point.y / sceneScale}));
+		for (let i = 0; i < points.length; i++) {
+			const a = points[i], b = points[(i + 1) % points.length];
+			const steps = Math.max(1, Math.ceil(Math.max(Math.abs(b.x - a.x), Math.abs(b.y - a.y))));
+			for (let step = 0; step <= steps; step++) {
+				const x = Math.round(a.x + (b.x - a.x) * step / steps);
+				const y = Math.round(a.y + (b.y - a.y) * step / steps);
+				if (x < 0 || x >= imageData.width || y < 0 || y >= imageData.height) continue;
+				const index = (x + y * imageData.width) * 4;
+				if (imageData.data[index] > 4 || imageData.data[index + 1] > 4 || imageData.data[index + 2] > 4) return false;
+			}
+		}
+	}
 	return true;
 }
 
@@ -1094,10 +1108,74 @@ function getPixelFromImageData(imageData, x, y){
 	]
 
 }
+// Areas follow the roof's position, image scale, size, and rotation.
+function roof_area_points(token) {
+	const options = token.options;
+	const width = token.sizeWidth();
+	const height = token.sizeHeight();
+	const cx = parseFloat(options.left) + width / 2;
+	const cy = parseFloat(options.top) + height / 2;
+	const area = options.roofPoly;
+	const imageScale = options.imageSize ?? 1;
+	if(area?.relativePoints?.length >= 3){
+		const sizeScale = area.origSize ? options.size / area.origSize : 1;
+		const scale = imageScale / (area.origImageSize || 1);
+		const rotation = ((options.rotation ?? 0) - (area.origRot ?? 0)) * Math.PI / 180;
+		return area.relativePoints.map(point => rotatePoint(
+			cx + (point.x * sizeScale - width / 2) * scale,
+			cy + (point.y * sizeScale - height / 2) * scale, cx, cy, rotation));
+	}
+	const halfWidth = width * imageScale / 2, halfHeight = height * imageScale / 2;
+	const rotation = (options.rotation ?? 0) * Math.PI / 180;
+	return [
+		{x: cx - halfWidth, y: cy - halfHeight},
+		{x: cx + halfWidth, y: cy - halfHeight},
+		{x: cx + halfWidth, y: cy + halfHeight},
+		{x: cx - halfWidth, y: cy + halfHeight}
+	].map(point => rotatePoint(point.x, point.y, cx, cy, rotation));
+}
+
 function do_check_token_visibility() {
 	noisy_log("do_check_token_visibility");
 	if(window.LOADING)
 		return;
+
+	// Hide roofs containing a token whose vision is active.
+	const tokens = Object.values(window.TOKEN_OBJECTS);
+	const playerTokenId = document.querySelector(`.token[data-id*='${window.PLAYER_ID}']`)?.getAttribute('data-id');
+	const visionTokens = tokens.filter(token => {
+		const options = token.options;
+		if(!options.auraislight || options.tokenStyleSelect === 'roof' || options.type != undefined || options.combatGroupToken) return false;
+		if(window.SelectedTokenVision && window.CURRENTLY_SELECTED_TOKENS.length > 0) {
+			if(!window.CURRENTLY_SELECTED_TOKENS.includes(options.id)) return false;
+		}
+		return window.DM || options.id === playerTokenId || options.share_vision === true ||
+			options.share_vision === window.myUser || (options.share_vision && is_spectator_page()) ||
+			(playerTokenId === undefined && options.itemType === 'pc');
+	});
+	for(const token of tokens){
+		let hidden = false;
+		if (token.options.tokenStyleSelect === 'roof') {
+			const points = roof_area_points(token);
+			hidden = visionTokens.some(visionToken => {
+				const x = parseFloat(visionToken.options.left) + visionToken.sizeWidth() / 2;
+				const y = parseFloat(visionToken.options.top) + visionToken.sizeHeight() / 2;
+				let inside = false;
+				for (let i = 0, j = points.length - 1; i < points.length; j = i++) {
+					const a = points[j], b = points[i];
+					const cross = (x - a.x) * (b.y - a.y) - (y - a.y) * (b.x - a.x);
+					if (Math.abs(cross) < 0.000001 && x >= Math.min(a.x, b.x) && x <= Math.max(a.x, b.x) && y >= Math.min(a.y, b.y) && y <= Math.max(a.y, b.y)) return true;
+					if ((a.y > y) !== (b.y > y) && x < (b.x - a.x) * (y - a.y) / (b.y - a.y) + a.x) inside = !inside;
+				}
+				return inside;
+			});
+		}
+		const elements = window.ON_SCREEN_TOKENS?.[token.options.id];
+		elements?.onScreenToken?.toggleClass('roof-hidden', hidden);
+		elements?.onScreenAura?.toggleClass('roof-hidden', hidden);
+		elements?.onScreenDarknessToken?.toggleClass('roof-hidden', hidden);
+	}
+
 	let isAoeTokenSelected = false;
 	const noSelectedTokensWithVision = window.DM && forSelTokens((token)=>{
 		isAoeTokenSelected = isAoeTokenSelected || token.isAoe();
@@ -1146,8 +1224,6 @@ function do_check_token_visibility() {
 	let lightContext = window.lightInLosContext;
 
 	
-	const playerTokenEl = document.querySelector(`.token[data-id*='${window.PLAYER_ID}']`);
-	const playerTokenId = playerTokenEl?.getAttribute('data-id');
 	
 	let playerTokenHasVision;
 	const tokenObjectValues = Object.values(window.TOKEN_OBJECTS);
@@ -6607,7 +6683,7 @@ function savePolygon(e) {
 				y: point.y - parseFloat(top)
 			};
 		});
-		token.options.tokenWallPoly = {
+		token.options[window.drawingTokenPolygonOption ?? 'tokenWallPoly'] = {
 			origImageSize: token.options.imageSize ?? 1,
 			origRot: token.options.rotation ?? 0,
 			origScale: window.CURRENT_SCENE_DATA.scale_factor ?? 1,
@@ -6618,6 +6694,8 @@ function savePolygon(e) {
 		token.place_sync_persist();
 		delete window.drawingTokenWallTokenId
 		delete window.drawTokenWallPolygon
+		delete window.drawingTokenPolygonOption;
+		do_check_token_visibility();
 	}
 	else{
 		data = [
@@ -8279,7 +8357,7 @@ function collectFeatureAnglesForWalls(origin, walls, limit) {
 	return angles;
 }
 
-function buildActiveRays(particle, walls, limit, visionAngle, rotation = 0) {
+function buildActiveRays(particle, walls, limit, visionAngle, rotation = 0, includeMovementRays = false) {
 	if(!particle)
 		return [];
 	const combined = [];
@@ -8295,7 +8373,7 @@ function buildActiveRays(particle, walls, limit, visionAngle, rotation = 0) {
 	for(let i = 0; i < baseRays.length; i++){
 		const baseAngle = baseAngles[i] !== undefined ? baseAngles[i] : i * (particle.divisor || 1);
 		const normAngle = normalizeAngleDegrees(baseAngle);
-		if(!isInVision(normAngle))
+		if(!includeMovementRays && !isInVision(normAngle))
 			continue;
 		combined.push({ angle: normAngle, ray: baseRays[i] });
 		used.add(featureAngleRounded(normAngle));
@@ -8316,7 +8394,7 @@ function buildActiveRays(particle, walls, limit, visionAngle, rotation = 0) {
 			particle.featureRayCache = {};
 		for(let i = 0; i < featureAngles.length; i++){
 			const angleDeg = featureAngles[i];
-			if(!isInVision(angleDeg))
+			if(!includeMovementRays && !isInVision(angleDeg))
 				continue;
 			const angleRounded = featureAngleRounded(angleDeg);
 			if(used.has(angleRounded))
@@ -8329,7 +8407,10 @@ function buildActiveRays(particle, walls, limit, visionAngle, rotation = 0) {
 	combined.sort(function(a, b){
 		return visionWidth === 360 ? a.angle - b.angle : normalizeAngleDegrees(a.angle - startAngle) - normalizeAngleDegrees(b.angle - startAngle);
 	});
-	return combined.map(function(entry){ return entry.ray; });
+	// Movement needs the full circle.
+	return combined.map(function(entry){
+		return includeMovementRays ? { ray: entry.ray, inVision: isInVision(entry.angle) } : entry.ray;
+	});
 }
 
 function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogType=0, draw=true, islight=false, auraId=undefined, blur=0, activeRayLimit=0, wallsCache) {
@@ -8368,10 +8449,10 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
 
 	const diffNeedForTerrainWalls = 100;
     
-    let notBlockVision = [1, 3, 6, 7, 12, 13, '1', '3', '6', '7', '12', '13'];
-    let notBlockMove = [8, 9, 10, 11, 12, 13, '8', '9', '10', '11', '12', '13'];
-	const activeRays = buildActiveRays(window.PARTICLE, walls, activeRayLimit, visionAngle, tokenOptions?.rotation);
+
+	const activeRays = buildActiveRays(window.PARTICLE, walls, activeRayLimit, visionAngle, tokenOptions?.rotation, true);
 	const lastRayIndex = activeRays.length - 1;
+	const lastVisionRayIndex = activeRays.reduce((last, entry, index) => entry.inVision ? index : last, -1);
 	const squaredRadius = lightRadius ** 2;
 
 	const sceneId = window.CURRENT_SCENE_DATA.id;
@@ -8381,7 +8462,6 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
 	// Close partial vision polygons through the token, rather than across the cone's outer edges.
 	if(visionAngle < 360){
 		lightPolygon.push({ x: particlePosX * scaleFactor, y: particlePosY * scaleFactor });
-		movePolygon.push({ x: particlePosX * scaleFactor, y: particlePosY * scaleFactor });
 		if(canSeeDarkness)
 			noDarknessPolygon.push({ x: particlePosX * scaleFactor, y: particlePosY * scaleFactor });
 	}
@@ -8390,7 +8470,7 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
 	
 
 	for (let i = 0; i < activeRays.length; i++) {
-	    const ray = activeRays[i];
+	    const { ray, inVision } = activeRays[i];
 	    let pt;
 	    let closestLight = null;
 	    let closestMove = null;
@@ -8576,7 +8656,11 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
 	 	}
 
 		
-		if (closestLight !== null && ((closestWall?.terrainWall && (secondClosestWall != null || secondRecordLight == squaredRadius)) || closestWall != prevClosestWall || i === lastRayIndex || closestWall?.radius !== undefined)) {
+		if(!inVision){
+			closestLight = null;
+			closestNoDarkness = null;
+		}
+		if (closestLight !== null && ((closestWall?.terrainWall && (secondClosestWall != null || secondRecordLight == squaredRadius)) || closestWall != prevClosestWall || i === lastVisionRayIndex || closestWall?.radius !== undefined)) {
 			if (closestWall !== prevClosestWall && prevClosestWall !== null && prevClosestPoint !== null) {
 				lightPolygon.push({ x: prevClosestPoint.x * scaleFactor, y: prevClosestPoint.y * scaleFactor })
 			}
@@ -8602,7 +8686,7 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
 		}
 
 		if (canSeeDarkness) {
-			if (closestNoDarkness !== null && ((closestNoDarknessWall?.terrainWall && (secondClosestNoDarkness != null || secondRecordNoDarkness == squaredRadius)) || (closestNoDarknessWall !== prevClosestNoDarkness || i === lastRayIndex || closestNoDarknessWall?.radius !== undefined))) {
+			if (closestNoDarkness !== null && ((closestNoDarknessWall?.terrainWall && (secondClosestNoDarkness != null || secondRecordNoDarkness == squaredRadius)) || (closestNoDarknessWall !== prevClosestNoDarkness || i === lastVisionRayIndex || closestNoDarknessWall?.radius !== undefined))) {
 				if (closestNoDarknessWall !== prevClosestNoDarkness && prevClosestNoDarkness !== null && prevClosestNoDarknessPoint !== null) {
 					noDarknessPolygon.push({ x: prevClosestNoDarknessPoint.x * scaleFactor, y: prevClosestNoDarknessPoint.y * scaleFactor })
 				}

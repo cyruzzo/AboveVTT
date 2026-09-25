@@ -1841,6 +1841,10 @@ class MessageBroker {
 				delete window.TOKEN_OBJECTS[data.id].options.tokenWallPoly;
 				delete window.all_token_objects[data.id].options.tokenWallPoly;
 			}
+			if(data.roofPoly == undefined){
+				delete window.TOKEN_OBJECTS[data.id].options.roofPoly;
+				delete window.all_token_objects[data.id].options.roofPoly;
+			}
 			if(window.visionBlockingTokenCache?.[data.id] != undefined){
 				
 				const wallType = window.TOKEN_OBJECTS[data.id]?.options?.tokenWall;
