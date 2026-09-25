@@ -723,6 +723,10 @@ class Token {
 		tokenElement.css("--token-flip-x", tokenFlipX(this));		
 		tokenElement.find(".token-image").css("transform", imageTransform);
 		$(`.aura-element-container-clip[id='${this.options.id}'] .aura-element, .aura-element[data-id='${this.options.id}']`).css('--rotation', newRotation%360 + "deg");
+		if (this.options.visionAngle < 360 && window.EXPERIMENTAL_SETTINGS.dragLight == true){
+			throttleLight();
+		}
+
 	}
 	moveUp()        { this.moveDirection(-1,  0); }
 	moveDown()      { this.moveDirection( 1,  0); }
@@ -4546,7 +4550,8 @@ function setTokenLight (token, options) {
 
 		let clippath = window.lineOfSightPolygons?.[options.id]?.clippath !== undefined ? `polygon(${window.lineOfSightPolygons[options.id]?.clippath})` : undefined;
 		let devilsightClip = window.lineOfSightPolygons?.[options.id]?.devilsightClip !== undefined ? `polygon(${window.lineOfSightPolygons[options.id]?.devilsightClip})` : undefined;
-
+		const visionDeg = options?.visionAngle ?? 360;
+		
 		const lightStyles = `width:${totalSize }px;
 							height:${totalSize }px;
 							background-image:${lightBg};

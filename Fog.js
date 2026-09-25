@@ -8279,18 +8279,35 @@ function collectFeatureAnglesForWalls(origin, walls, limit) {
 	return angles;
 }
 
-function buildActiveRays(particle, walls, limit) {
+function buildActiveRays(particle, walls, limit, visionAngle, rotation = 0) {
 	if(!particle)
 		return [];
 	const combined = [];
 	const used = new Set();
 	const baseAngles = particle.baseAngles || [];
 	const baseRays = particle.rays || [];
+	const parsedVisionAngle = Number.parseFloat(visionAngle);
+	const visionWidth = Number.isFinite(parsedVisionAngle) ? Math.max(0, Math.min(360, parsedVisionAngle)) : 360;
+	const parsedRotation = Number.parseFloat(rotation);
+	const centerAngle = 90 + (Number.isFinite(parsedRotation) ? parsedRotation : 0);
+	const startAngle = normalizeAngleDegrees(centerAngle - visionWidth / 2);
+	const isInVision = angle => visionWidth === 360 || normalizeAngleDegrees(angle - startAngle) <= visionWidth;
 	for(let i = 0; i < baseRays.length; i++){
 		const baseAngle = baseAngles[i] !== undefined ? baseAngles[i] : i * (particle.divisor || 1);
 		const normAngle = normalizeAngleDegrees(baseAngle);
+		if(!isInVision(normAngle))
+			continue;
 		combined.push({ angle: normAngle, ray: baseRays[i] });
 		used.add(featureAngleRounded(normAngle));
+	}
+	if(visionWidth < 360){
+		for(const angle of [startAngle, normalizeAngleDegrees(centerAngle + visionWidth / 2)]){
+			const roundedAngle = featureAngleRounded(angle);
+			if(used.has(roundedAngle))
+				continue;
+			used.add(roundedAngle);
+			combined.push({ angle, ray: new Ray(particle.pos, degreeToRadian(angle)) });
+		}
 	}
 
 	const featureAngles = collectFeatureAnglesForWalls(particle.pos, walls, limit);
@@ -8299,15 +8316,19 @@ function buildActiveRays(particle, walls, limit) {
 			particle.featureRayCache = {};
 		for(let i = 0; i < featureAngles.length; i++){
 			const angleDeg = featureAngles[i];
+			if(!isInVision(angleDeg))
+				continue;
 			const angleRounded = featureAngleRounded(angleDeg);
 			if(used.has(angleRounded))
 				continue;
 			used.add(angleRounded);
-			ray = new Ray(particle.pos, degreeToRadian(angleDeg));
+			const ray = new Ray(particle.pos, degreeToRadian(angleDeg));
 			combined.push({ angle: angleDeg, ray: ray });
 		}
 	}
-	combined.sort(function(a, b){ return a.angle - b.angle; });
+	combined.sort(function(a, b){
+		return visionWidth === 360 ? a.angle - b.angle : normalizeAngleDegrees(a.angle - startAngle) - normalizeAngleDegrees(b.angle - startAngle);
+	});
 	return combined.map(function(entry){ return entry.ray; });
 }
 
@@ -8324,6 +8345,10 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
 
 	if(auraId !== undefined && window.TOKEN_OBJECTS[auraId].options.mapElev !== undefined)
 		tokenElev += parseInt(window.TOKEN_OBJECTS[auraId].options.mapElev)
+
+	const tokenOptions = window.TOKEN_OBJECTS[auraId]?.options;
+	const parsedVisionAngle = Number.parseFloat(tokenOptions?.visionAngle);
+	const visionAngle = Number.isFinite(parsedVisionAngle) ? Math.max(0, Math.min(360, parsedVisionAngle)) : 360;
 
 	let prevClosestWall = null;
     let prevClosestPoint = null;
@@ -8345,7 +8370,7 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
     
     let notBlockVision = [1, 3, 6, 7, 12, 13, '1', '3', '6', '7', '12', '13'];
     let notBlockMove = [8, 9, 10, 11, 12, 13, '8', '9', '10', '11', '12', '13'];
-	const activeRays = buildActiveRays(window.PARTICLE, walls, activeRayLimit);
+	const activeRays = buildActiveRays(window.PARTICLE, walls, activeRayLimit, visionAngle, tokenOptions?.rotation);
 	const lastRayIndex = activeRays.length - 1;
 	const squaredRadius = lightRadius ** 2;
 
@@ -8353,6 +8378,13 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
 	const scaleFactor = window.CURRENT_SCENE_DATA.scale_factor;
 	const particlePosX = window.PARTICLE.pos.x;
 	const particlePosY = window.PARTICLE.pos.y;
+	// Close partial vision polygons through the token, rather than across the cone's outer edges.
+	if(visionAngle < 360){
+		lightPolygon.push({ x: particlePosX * scaleFactor, y: particlePosY * scaleFactor });
+		movePolygon.push({ x: particlePosX * scaleFactor, y: particlePosY * scaleFactor });
+		if(canSeeDarkness)
+			noDarknessPolygon.push({ x: particlePosX * scaleFactor, y: particlePosY * scaleFactor });
+	}
 
 	const wallCache = wallsCache ?? buildWallCache(walls);
 	
@@ -8833,6 +8865,8 @@ function redraw_light(darknessMoved = false, limitActiveRays = 0) {
 			window.lineOfSightPolygons[auraId].visionType === hasDevilOrTruesight &&
 			window.lineOfSightPolygons[auraId].scaleCreated === tokenObject.options.scaleCreated &&
 			window.lineOfSightPolygons[auraId].elev === tokenObject.options.elev &&
+			window.lineOfSightPolygons[auraId].visionAngle === tokenObject.options.visionAngle &&
+			window.lineOfSightPolygons[auraId].rotation === tokenObject.options.rotation &&
 			darknessMoved !== true) {
 
 			lightPolygon = window.lineOfSightPolygons[auraId].polygon;  // if the token hasn't moved and walls haven't changed don't look for a new poly.
@@ -8873,7 +8907,9 @@ function redraw_light(darknessMoved = false, limitActiveRays = 0) {
 				clippath: visionPath,
 				visionType: hasDevilOrTruesight,
 				scaleCreated: tokenObject.options.scaleCreated,
-				elev: tokenObject.options.elev
+				elev: tokenObject.options.elev,
+				visionAngle: tokenObject.options.visionAngle,
+				rotation: tokenObject.options.rotation
 			}
 
 			if (auraClipContainers.length) {
@@ -9130,7 +9166,9 @@ function getTokenVision(tokenId, darknessMoved){
 		devilsightClip: noDarknessVisionPath,
 		visionType: window.TOKEN_OBJECTS[tokenId].options.sight,
 		scaleCreated: window.TOKEN_OBJECTS[tokenId].options.scaleCreated,
-		elev: window.TOKEN_OBJECTS[tokenId].options.elev
+		elev: window.TOKEN_OBJECTS[tokenId].options.elev,
+		visionAngle: window.TOKEN_OBJECTS[tokenId].options.visionAngle,
+		rotation: window.TOKEN_OBJECTS[tokenId].options.rotation
 	}
 	
 
