@@ -12380,11 +12380,42 @@ div#addAuraPreset{
 
 
 
+#edit_preset_light_dialog,
+#edit_preset_aura_dialog,
+#edit_preset_animation_dialog {
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+    border: 1px solid gray;
+}
+#edit_preset_light_dialog .preset-scroll-container,
+#edit_preset_aura_dialog .preset-scroll-container,
+#edit_preset_animation_dialog .preset-scroll-container {
+    flex: 1 1 auto;
+    min-height: 0;
+    max-height: calc(100vh - 300px);
+    overflow: auto;
+    background: #fff;
+}
+
 table#light_presets_properties th,
-table#aura_presets_properties th {
-    position:sticky;
-    top:10px;
-    z-index:1;
+table#aura_presets_properties th,
+table#animation_presets_properties th {
+    background: transparent;
+}
+table#light_presets_properties tr.light_preset_title_row,
+table#aura_presets_properties tr.aura_preset_title_row,
+table#animation_presets_properties tr.animation_preset_title_row {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    background: #fff;
+    border-bottom: 1px solid #ddd;
+}
+table#light_presets_properties,
+table#aura_presets_properties,
+table#animation_presets_properties {
+    width: 100%;
 }
 table#light_presets_properties tr,
 table#aura_presets_properties tr{
@@ -12398,8 +12429,12 @@ table#aura_presets_properties :is(td, th) {
 table#light_presets_properties,
 table#aura_presets_properties  {
    display:table;
-    border-collapse: unset;
-    border-spacing: 10px;    
+    border-collapse: collapse;
+    border-spacing: 10px 0;
+}
+table#light_presets_properties :is(td, th),
+table#aura_presets_properties :is(td, th) {
+    padding: 5px 0;
 }
 table#light_presets_properties :is(td, th):has(.token-image-modal-footer-title) {
     width: 120px;
@@ -12441,15 +12476,6 @@ table#animation_presets_properties th:nth-of-type(3){
    width:8%;
 }
 
-#animation_presets_properties{
-    margin:10px 0px;
-}
-#edit_preset_light_dialog,
-#edit_preset_animation_dialog,
-#edit_preset_aura_dialog{
-    height: 100%;
-    overflow-y: scroll;
-}
 button#editPresets,
 button#editAnimations,
 button#editAuras  {

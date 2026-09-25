@@ -7666,19 +7666,17 @@ function init_elev_menu(buttons){
 
 function init_vision_menu(buttons){
 	function create_los_light_presets_edit() {
-		let dialog = $('#edit_preset_light_dialog')
-
-		dialog.remove();
-		dialog = $(`<div id='edit_preset_light_dialog'></div>`);
-
-
+		const dialog = find_or_create_generic_draggable_window('edit_preset_light_dialog', 'Light Presets', false, false, undefined, 'fit-content', 'fit-content', '10%', '10%', false, 'input, button, select, .removePreset');
+		dialog.find('.preset-scroll-container').remove();
+		const scrollContainer = $(`<div class='preset-scroll-container'></div>`);
+		dialog.append(scrollContainer);
 
 		let upsq = 'ft';
 		if (window.CURRENT_SCENE_DATA.upsq !== undefined && window.CURRENT_SCENE_DATA.upsq.length > 0) {
 			upsq = window.CURRENT_SCENE_DATA.upsq;
 		}
 		let light_presets = $('<table id="light_presets_properties"/>');
-		dialog.append(light_presets);
+		scrollContainer.append(light_presets);
 
 		let titleRow = $(`
 		<tr class='light_preset_title_row'>
@@ -7794,8 +7792,6 @@ function init_vision_menu(buttons){
 			setPresetSelectOptions();
 		});
 		light_presets.append(addButton);
-
-		adjust_create_import_edit_container(dialog, undefined, undefined, 975);
 	}
 	let vision_menu = $("<div id='vision_menu' class='top_menu'></div>");
 
