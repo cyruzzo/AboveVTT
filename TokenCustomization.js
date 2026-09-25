@@ -543,7 +543,7 @@ class TokenCustomization {
         let n;
         if (this.tokenType === ItemType.PC) {
             let pc = window.pcs.find(pc => pc.sheet === this.id);
-            n = pc?.name;
+            n = this.tokenOptions?.name ?? pc?.name;
             if (!n) {
                 console.warn("Failed to find pc name for token customization. This might happen if this pc is not part of this campaign", pc, this);
             }
