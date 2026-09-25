@@ -2418,8 +2418,29 @@ function build_token_light_inputs(tokenIds, door=false) {
 	`);
 
 
+	let tokensVisionAngle = tokens.map(t => t.options.visionAngle);
+	let uniqueVisionAngle = [...new Set(tokensVisionAngle)];
+	uniqueVisionAngle = uniqueVisionAngle.length === 1 ? uniqueVisionAngle[0] : null;
+	
+	const visionRadiusInput = build_token_vision_radius_input(uniqueVisionAngle, function(newDeg){
+		tokens.forEach(token => {
+			token.options.visionAngle = newDeg;
+			token.place_sync_persist();
+		});
+	});
+	
 
+	wrapper.find(".menu-vision-aura").first().before(visionRadiusInput);
 
+	const lightAngles = [...new Set(tokens.map(t => t.options.lightAngle ?? 360))];
+	const lightAngleInput = build_token_vision_radius_input(lightAngles.length === 1 ? lightAngles[0] : null, function(newDeg){
+		tokens.forEach(token => {
+			token.options.lightAngle = newDeg;
+			token.place_sync_persist();
+		});
+	}, 'Token Light Angle');
+	wrapper.find(".menu-inner-aura").first().before(lightAngleInput);
+	
 	if(localStorage.getItem('LIGHT_PRESETS') == null){
 		window.LIGHT_PRESETS = [
 			{
@@ -2642,25 +2663,8 @@ function build_token_light_inputs(tokenIds, door=false) {
 			token.place_sync_persist();
 		});
 	});
-	let tokensVisionAngle = tokens.map(t => t.options.visionAngle);
-	let uniqueVisionAngle = [...new Set(tokensVisionAngle)];
-	uniqueVisionAngle = uniqueVisionAngle.length === 1 ? uniqueVisionAngle[0] : null;
-	
-	const visionRadiusInput = build_token_vision_radius_input(uniqueVisionAngle, function(newDeg){
-		tokens.forEach(token => {
-			token.options.visionAngle = newDeg;
-			token.place_sync_persist();
-		});
-	});
-	
-	const lightAngles = [...new Set(tokens.map(t => t.options.lightAngle ?? 360))];
-	const lightAngleInput = build_token_vision_radius_input(lightAngles.length === 1 ? lightAngles[0] : null, function(newDeg){
-		tokens.forEach(token => {
-			token.options.lightAngle = newDeg;
-			token.place_sync_persist();
-		});
-	}, 'Token Light Angle');
-	wrapper.find(".token-config-aura-wrapper").prepend(visionRadiusInput, lightAngleInput, squareLightInput, revealVisionInput);
+
+	wrapper.find(".token-config-aura-wrapper").prepend(squareLightInput, revealVisionInput);
 	
 
 	wrapper.find("h3.token-image-modal-footer-title").after(enabledLightInput);
@@ -4552,8 +4556,6 @@ function build_token_vision_radius_input(startingDeg, didUpdate, label = 'Token 
 	if (isNaN(startingDeg)) {
 		startingDeg = 360;
 	}
-
-
 
 	let imageDegInput = $(`<input class="token-angle-input-number" type="number" max="360" min="0" step="1" title="${label}" placeholder="360" name="${label}">`);
 	let imageDegInputRange = $(`<input class="token-angle-input-range" type="range" value="360" min="0" max="360" step="1" title="${label}"/>`);
