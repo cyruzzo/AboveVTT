@@ -3427,6 +3427,20 @@ function display_aoe_token_configuration_modal(listItem, placedToken = undefined
 
     inputWrapper.append(lightInputs);
 
+    const visionAngleInput = build_token_vision_radius_input(targetOptions.visionAngle ?? 360, function (newDeg, persist = false) {
+        customization.setTokenOption("visionAngle", newDeg);
+        if (persist)
+            persist_token_customization(customization);
+    }, 'Token Vision Angle', 'visionAngle');
+    inputWrapper.find(".token-config-aura-wrapper.light .menu-vision-aura").first().before(visionAngleInput);
+
+    const lightAngleInput = build_token_vision_radius_input(targetOptions.lightAngle ?? 360, function (newDeg, persist = false) {
+        customization.setTokenOption("lightAngle", newDeg);
+        if (persist)
+            persist_token_customization(customization);
+    }, 'Token Light Angle', 'lightAngle');
+    inputWrapper.find(".token-config-aura-wrapper.light .menu-inner-aura").first().before(lightAngleInput);
+
 
 
     const revealvisionOption = {

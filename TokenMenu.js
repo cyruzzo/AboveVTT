@@ -2427,7 +2427,7 @@ function build_token_light_inputs(tokenIds, door=false) {
 			token.options.visionAngle = newDeg;
 			token.place_sync_persist();
 		});
-	});
+	}, 'Token Vision Angle', 'visionAngle');
 	
 
 	wrapper.find(".menu-vision-aura").first().before(visionRadiusInput);
@@ -2438,9 +2438,9 @@ function build_token_light_inputs(tokenIds, door=false) {
 			token.options.lightAngle = newDeg;
 			token.place_sync_persist();
 		});
-	}, 'Token Light Angle');
+	}, 'Token Light Angle', 'lightAngle');
 	wrapper.find(".menu-inner-aura").first().before(lightAngleInput);
-	
+
 	if(localStorage.getItem('LIGHT_PRESETS') == null){
 		window.LIGHT_PRESETS = [
 			{
@@ -2787,8 +2787,11 @@ function build_token_light_inputs(tokenIds, door=false) {
 			wrapper.find("input[name='light2Color']").spectrum("set", selectedPreset.light2.color);
 		}
 
-		if(selectedPreset.light2.color){
-			wrapper.find("input[name='light2Color']").spectrum("set", selectedPreset.light2.color);
+		if(selectedPreset.visionAngle !== undefined && selectedPreset.visionAngle !== ''){
+			wrapper.find("input[name='visionAngle'], input[name='visionAngleRange']").val(selectedPreset.visionAngle);
+		}
+		if(selectedPreset.lightAngle !== undefined && selectedPreset.lightAngle !== ''){
+			wrapper.find("input[name='lightAngle'], input[name='lightAngleRange']").val(selectedPreset.lightAngle);
 		}
 		
 		 	
@@ -2813,6 +2816,12 @@ function build_token_light_inputs(tokenIds, door=false) {
 			token.options.light2.feet = (selectedPreset.light2.feet) ? selectedPreset.light2.feet : token.options.light2.feet;
 			token.options.light1.color = (selectedPreset.light1.color) ? selectedPreset.light1.color : token.options.light1.color;
 			token.options.light2.color = (selectedPreset.light2.color) ? selectedPreset.light2.color : token.options.light2.color;
+			if(selectedPreset.visionAngle !== undefined && selectedPreset.visionAngle !== ''){
+				token.options.visionAngle = selectedPreset.visionAngle;
+			}
+			if(selectedPreset.lightAngle !== undefined && selectedPreset.lightAngle !== ''){
+				token.options.lightAngle = selectedPreset.lightAngle;
+			}
 			if(changeAnimation){
 				if(customPreset == false){
 					token.options.animation= {
@@ -2896,19 +2905,17 @@ function build_token_light_inputs(tokenIds, door=false) {
 	return body;
 }
 function create_aura_presets_edit(animationPresets){
-	let dialog = $('#edit_preset_aura_dialog')
-
-	dialog.remove();
-	dialog = $(`<div id='edit_preset_aura_dialog'></div>`);
-	
-		
+	const dialog = find_or_create_generic_draggable_window('edit_preset_aura_dialog', 'Aura Presets', false, false, undefined, 'fit-content', 'fit-content', '10%', '10%', false, 'input, button, select, .removePreset');
+	dialog.find('.preset-scroll-container').remove();
+	const scrollContainer = $(`<div class='preset-scroll-container'></div>`);
+	dialog.append(scrollContainer);
 
 	let upsq = 'ft';
 	if (window.CURRENT_SCENE_DATA.upsq !== undefined && window.CURRENT_SCENE_DATA.upsq.length > 0) {
 		upsq = window.CURRENT_SCENE_DATA.upsq;
 	}
 	let aura_presets = $('<table id="aura_presets_properties"/>');
-	dialog.append(aura_presets);
+	scrollContainer.append(aura_presets);
 
 	let titleRow = $(`
 		<tr class='aura_preset_title_row'>
@@ -3036,23 +3043,19 @@ function create_aura_presets_edit(animationPresets){
 		create_aura_presets_edit(animationPresets);
 	});
 	aura_presets.append(addButton);
-
-	adjust_create_import_edit_container(dialog, undefined, undefined, 975);
 }
 function create_light_presets_edit(animationPresets){
-	let dialog = $('#edit_preset_light_dialog')
-
-	dialog.remove();
-	dialog = $(`<div id='edit_preset_light_dialog'></div>`);
-	
-		
+	const dialog = find_or_create_generic_draggable_window('edit_preset_light_dialog', 'Light Presets', false, false, undefined, 'fit-content', 'fit-content', '10%', '5%', false, 'input, button, select, .removePreset');
+	dialog.find('.preset-scroll-container').remove();
+	const scrollContainer = $(`<div class='preset-scroll-container'></div>`);
+	dialog.append(scrollContainer);
 
 	let upsq = 'ft';
 	if (window.CURRENT_SCENE_DATA.upsq !== undefined && window.CURRENT_SCENE_DATA.upsq.length > 0) {
 		upsq = window.CURRENT_SCENE_DATA.upsq;
 	}
 	let light_presets = $('<table id="light_presets_properties"/>');
-	dialog.append(light_presets);
+	scrollContainer.append(light_presets);
 
 	let titleRow = $(`
 		<tr class='light_preset_title_row'>
@@ -3069,10 +3072,16 @@ function create_light_presets_edit(animationPresets){
 					Truesight		
 				</th>
 				<th>
+					Vision Angle
+				</th>
+				<th>
 					Inner Light			
 				</th>
 				<th>
 					Outer Light
+				</th>
+				<th>
+					Light Angle
 				</th>
 				<th>
 					Animation
@@ -3118,6 +3127,12 @@ function create_light_presets_edit(animationPresets){
 						<input class="spectrum" name="truesightColor" value="${(window.LIGHT_PRESETS[i].truesight?.color) ? window.LIGHT_PRESETS[i].truesight.color : `rgba(0, 0, 0, 0)`}" >
 					</div>
 				</td>
+				<td class="menu-vision-angle">
+					<div class="token-image-modal-footer-select-wrapper" style="padding-left: 2px">
+						<div class="token-image-modal-footer-title">Angle (°)</div>
+						<input class="preset-angle" name="visionAngle" type="number" min="0" max="360" step="1" placeholder="360" value="${(window.LIGHT_PRESETS[i].visionAngle !== undefined) ? window.LIGHT_PRESETS[i].visionAngle : ``}" style="width: 3rem" />
+					</div>
+				</td>
 				<td class="menu-inner-aura">
 					<div class="token-image-modal-footer-select-wrapper" style="padding-left: 2px">
 						<div class="token-image-modal-footer-title">Radius (${upsq})</div>
@@ -3136,6 +3151,12 @@ function create_light_presets_edit(animationPresets){
 					<div class="token-image-modal-footer-select-wrapper" style="padding-left: 2px">
 						<div class="token-image-modal-footer-title">Color</div>
 						<input class="spectrum" name="light2Color" value="${(window.LIGHT_PRESETS[i].light2?.color) ? window.LIGHT_PRESETS[i].light2.color : `rgba(0, 0, 0, 0)`}" >
+					</div>
+				</td>
+				<td class="menu-light-angle">
+					<div class="token-image-modal-footer-select-wrapper" style="padding-left: 2px">
+						<div class="token-image-modal-footer-title">Angle (°)</div>
+						<input class="preset-angle" name="lightAngle" type="number" min="0" max="360" step="1" placeholder="360" value="${(window.LIGHT_PRESETS[i].lightAngle !== undefined) ? window.LIGHT_PRESETS[i].lightAngle : ``}" style="width: 3rem" />
 					</div>
 				</td>
 				<td class="animation-aura">
@@ -3173,6 +3194,17 @@ function create_light_presets_edit(animationPresets){
 		row.find('input[class*="radius"]').off('change.radius').on('change.radius', function(){
 			let lightname = $(this).attr('name');
 			window.LIGHT_PRESETS[i][lightname].feet = $(this).val();
+			localStorage.setItem('LIGHT_PRESETS', JSON.stringify(window.LIGHT_PRESETS));
+		})
+		row.find('input.preset-angle').off('change.angle').on('change.angle', function(){
+			const angleName = $(this).attr('name');
+			const value = $(this).val();
+			if(value === ''){
+				delete window.LIGHT_PRESETS[i][angleName];
+			} else {
+				window.LIGHT_PRESETS[i][angleName] = Math.max(0, Math.min(360, parseInt(value)));
+				$(this).val(window.LIGHT_PRESETS[i][angleName]);
+			}
 			localStorage.setItem('LIGHT_PRESETS', JSON.stringify(window.LIGHT_PRESETS));
 		})
 		row.find('.removePreset').off('click.removePreset').on('click.removePreset', function(){
@@ -3224,23 +3256,19 @@ function create_light_presets_edit(animationPresets){
 		create_light_presets_edit(animationPresets);
 	});
 	light_presets.append(addButton);
-
-	adjust_create_import_edit_container(dialog, undefined, undefined, 975);
 }
 function create_animation_presets_edit(isVision = false){
-	let dialog = $('#edit_preset_animation_dialog')
-
-	dialog.remove();
-	dialog = $(`<div id='edit_preset_animation_dialog'></div>`);
-	
-		
+	const dialog = find_or_create_generic_draggable_window('edit_preset_animation_dialog', 'Animation Presets', false, false, undefined, 'fit-content', 'fit-content', '10%', '10%', false, 'input, button, select, .removePreset');
+	dialog.find('.preset-scroll-container').remove();
+	const scrollContainer = $(`<div class='preset-scroll-container'></div>`);
+	dialog.append(scrollContainer);
 
 	let upsq = 'ft';
 	if (window.CURRENT_SCENE_DATA.upsq !== undefined && window.CURRENT_SCENE_DATA.upsq.length > 0) {
 		upsq = window.CURRENT_SCENE_DATA.upsq;
 	}
 	let animation_presets = $('<table id="animation_presets_properties"/>');
-	dialog.append(animation_presets);
+	scrollContainer.append(animation_presets);
 
 	let titleRow = $(`
 		<tr class='animation_preset_title_row'>
@@ -3318,8 +3346,6 @@ function create_animation_presets_edit(isVision = false){
 		create_animation_presets_edit(isVision);
 	});
 	animation_presets.append(addButton);
-
-	adjust_create_import_edit_container(dialog, undefined, undefined, 975);
 }
 function calculate_hp(inputValue, currentValue) {
 	const sanitizedString = inputValue.replaceAll(/[^\d+-/*().]/gi, '');
@@ -4552,13 +4578,13 @@ function build_token_image_scale_input(startingScale, tokens, didUpdate) {
 	imageSizeWrapper.append(imageSizeInputRange); // input below label
 	return imageSizeWrapper;
 }
-function build_token_vision_radius_input(startingDeg, didUpdate, label = 'Token Vision Angle') {
+function build_token_vision_radius_input(startingDeg, didUpdate, label = 'Token Vision Angle', fieldName = 'visionAngle') {
 	if (isNaN(startingDeg)) {
 		startingDeg = 360;
 	}
 
-	let imageDegInput = $(`<input class="token-angle-input-number" type="number" max="360" min="0" step="1" title="${label}" placeholder="360" name="${label}">`);
-	let imageDegInputRange = $(`<input class="token-angle-input-range" type="range" value="360" min="0" max="360" step="1" title="${label}"/>`);
+	let imageDegInput = $(`<input class="token-angle-input-number" type="number" max="360" min="0" step="1" title="${label}" placeholder="360" name="${fieldName}">`);
+	let imageDegInputRange = $(`<input class="token-angle-input-range" type="range" value="360" min="0" max="360" step="1" title="${label}" name="${fieldName}Range"/>`);
 	imageDegInput.val(startingDeg ?? 360);
 	imageDegInputRange.val(startingDeg ?? 360);
 	imageDegInput.on('keyup', function(event) {
