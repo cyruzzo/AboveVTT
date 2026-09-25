@@ -12,8 +12,8 @@ function token_setting_options() {
 				{ value: "noConstraint", label: "No Constraint", description: `The token will show up as it is naturally largest side being equal to token size, we set "Ignore Aspect Ratio" to false and "Square to true. Borders and Health Aura are drawn as a drop shadow to fit the shape of the token.` },
 				{ value: "definitelyNotAToken", label: "Definitely Not a Token", description: `This token will have the shape of no contraints and be made to appear as a object tile` },
 				{ value: "labelToken", label: "Map Pin Token", description: `This token will have the settings of Definitely Not a Token and have it's name always displayed` },
-				{ value: "inPersonMini", dmOnly: true, label: "TV Table Mini - Hidden from Players", description: `This token will not be displayed to players on the scene but they will still see it in the combat tracker.` }
-				
+				{ value: "inPersonMini", dmOnly: true, label: "TV Table Mini - Hidden from Players", description: `This token will not be displayed to players on the scene but they will still see it in the combat tracker.` },
+				{ value: "roof", label: "Roof", description: `This token represents a roof and will be hidden when a token with vision is underneath it or the selected area.` }
 			],
 			defaultValue: "circle",
 			menuPosition: '1',

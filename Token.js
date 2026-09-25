@@ -4780,11 +4780,11 @@ function setTokenBase(token, options) {
 		token.children(".token-image").removeClass("preserve-aspect-ratio");
 		token.toggleClass("square", true);
 	}
-	else if(options.tokenStyleSelect === "noConstraint" || options.tokenStyleSelect === "definitelyNotAToken" || options.tokenStyleSelect === "labelToken" ) {
+	else if(options.tokenStyleSelect === "noConstraint" || options.tokenStyleSelect === "definitelyNotAToken" || options.tokenStyleSelect === "labelToken" || options.tokenStyleSelect === "roof") {
 		//Freeform
 		options.square = true;
 		options.legacyaspectratio = false;
-		if(options.tokenStyleSelect === "definitelyNotAToken" || options.tokenStyleSelect === "labelToken"){
+		if(options.tokenStyleSelect === "definitelyNotAToken" || options.tokenStyleSelect === "labelToken" || options.tokenStyleSelect === "roof"){
 			options.disablestat = true;
 			options.disableborder = true;
 			options.disableaura = true;
@@ -4793,10 +4793,12 @@ function setTokenBase(token, options) {
 				token.toggleClass('definitelyNotAToken', true);
 				options.underDarkness = true;
 			}
-			else{
+			else if(options.tokenStyleSelect === "labelToken"){
 				token.toggleClass('labelToken', true);
 				options.revealname = true;
 				options.alwaysshowname = true;
+			} else if(options.tokenStyleSelect === "roof"){
+				token.toggleClass('roof', true);
 			}
 		}
 

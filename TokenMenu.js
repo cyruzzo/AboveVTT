@@ -4257,6 +4257,7 @@ function build_adjustments_flyout_menu(tokenIds) {
 					token.place_sync_persist();
 				});
 				if(setting.name =='tokenStyleSelect'){		
+					$('.token-roof-poly-button').toggleClass('visible', newValue === 'roof');
 					for(let j=0; j<token_settings.length; j++){
 						let setting = token_settings[j];
 						if(setting.type === "toggle"){
@@ -4290,6 +4291,27 @@ function build_adjustments_flyout_menu(tokenIds) {
 			else{
 				body.append(inputWrapper);
 			}
+			if(setting.name === 'tokenStyleSelect' && tokens.length === 1){
+				const token = tokens[0];
+				const roofButton = $(`<button class="token-roof-poly-button ${currentValue === 'roof' ? 'visible' : ''}" title="Draw a polygon; click its first point to finish. Delete it to use token bounds.">${token.options.roofPoly ? 'Delete' : 'Draw'} Roof Area</button>`);
+				roofButton.on('click', function(){
+					if(token.options.roofPoly){
+						delete token.options.roofPoly;
+						token.place_sync_persist();
+						$(this).text('Draw Roof Area');
+						do_check_token_visibility();
+					} else {
+						window.drawingTokenWallTokenId = token.options.id;
+						window.drawingTokenPolygonOption = 'roofPoly';
+						window.drawTokenWallPolygon = true;
+						window.BEGIN_MOUSEX = [];
+						window.BEGIN_MOUSEY = [];
+						$('#capture_mouse').css('z-index', '50');
+						close_token_context_menu();
+					}
+				});
+				inputWrapper.after(roofButton);
+			}
 			if(setting.name =='tokenWall'){
 				const tokenId = tokenIds[0];
 				const polyButton = $(`<button class="token-wall-poly-button material-icons ${typeof currentValue === 'string' && currentValue.includes('poly') ? 'visible' : ''}" title="Edit Token Wall Polygon">${!window.TOKEN_OBJECTS[tokenId].options.tokenWallPoly ? "Draw" : "Delete"} Token Wall Polygon</button>`);
@@ -4299,6 +4321,7 @@ function build_adjustments_flyout_menu(tokenIds) {
 						delete window.visionBlockingTokenCache[tokenId];
 					if (window.TOKEN_OBJECTS[tokenId].options.tokenWallPoly == undefined) {
 						window.drawingTokenWallTokenId = tokenId;
+						window.drawingTokenPolygonOption = 'tokenWallPoly';
 						window.drawTokenWallPolygon = true;
 						$("#capture_mouse").css("z-index", "50");
 						close_token_context_menu();
