@@ -8747,6 +8747,7 @@ button span.onedrive-btn-status{
 }
 #aoe_feet_height,
 .image-scale-input-number,
+.token-angle-input-number,
 .image-input-number {
     float: right;
     padding-left: 5px !important;
@@ -8788,6 +8789,7 @@ button span.onedrive-btn-status{
     float:left;
 }
 .image-scale-input-range,
+.token-angle-input-range,
 .image-input-range{
     width: 100%;
 }

@@ -21,6 +21,41 @@ const availableToAoe = [
 //reused transform definition
 const imageTransform = 'scale(var(--token-scale)) rotate(calc(var(--token-rotation) + var(--token-heading))) scaleX(var(--token-flip-x, 1))';
 function tokenFlipX(token) { return ((token.options.tokenFlip || 0) & 1) ? -1 : 1; }
+
+// Local cone clips travel with the aura; the parent retains the stationary wall clip.
+function tokenConeClipPath(width, height, angle, rotation = 0) {
+	const parsedAngle = Number.parseFloat(angle);
+	if(!Number.isFinite(parsedAngle) || parsedAngle >= 360) return 'none';
+	const coneWidth = Math.max(0, parsedAngle);
+	const center = 90 + (Number.parseFloat(rotation) || 0);
+	const start = center - coneWidth / 2;
+	const outerRadius = Math.hypot(width, height) / 2 + 1;
+	const centerRadius = Math.min(3, outerRadius);
+	const angles = [];
+	for(let offset = 0; offset < 360; offset += 5) angles.push(offset);
+	angles.push(coneWidth);
+	const points = [];
+	const addPoint = (offset, radius) => {
+		const radians = (start + offset) * Math.PI / 180;
+		points.push(`${width / 2 + Math.cos(radians) * radius}px ${height / 2 + Math.sin(radians) * radius}px`);
+	};
+	if(coneWidth > 0) addPoint(0, centerRadius);
+	for(const offset of [...new Set(angles)].sort((a, b) => a - b)){
+		addPoint(offset, coneWidth > 0 && offset <= coneWidth ? outerRadius : centerRadius);
+		if(coneWidth > 0 && offset === coneWidth) addPoint(offset, centerRadius);
+	}
+	return `polygon(${points.join(', ')})`;
+}
+
+function updateTokenConeClips(options) {
+	document.querySelectorAll(`.aura-element-container-clip[id='${options.id}'] .aura-element`).forEach(element => {
+		const angle = element.parentElement.classList.contains('light') ? options.lightAngle : options.visionAngle;
+		// Round auras already rotate in CSS; square auras explicitly disable that rotation.
+		const cssRotation = Number.parseFloat(getComputedStyle(element).rotate) || 0;
+		const localRotation = (Number.parseFloat(options.rotation) || 0) - cssRotation;
+		element.style.clipPath = tokenConeClipPath(parseFloat(element.style.width), parseFloat(element.style.height), angle, localRotation);
+	});
+}
 let lightFrameQueued = false;
 let pendingLightDarknessMoved = false;
 const throttleLight = throttle((darknessMoved = false) => {
@@ -723,7 +758,8 @@ class Token {
 		tokenElement.css("--token-flip-x", tokenFlipX(this));		
 		tokenElement.find(".token-image").css("transform", imageTransform);
 		$(`.aura-element-container-clip[id='${this.options.id}'] .aura-element, .aura-element[data-id='${this.options.id}']`).css('--rotation', newRotation%360 + "deg");
-		if (this.options.visionAngle < 360 && window.EXPERIMENTAL_SETTINGS.dragLight == true){
+		updateTokenConeClips(this.options);
+		if (window.EXPERIMENTAL_SETTINGS.dragLight == true && (this.options.visionAngle < 360 || this.options.lightAngle < 360)){
 			throttleLight();
 		}
 
@@ -2260,7 +2296,7 @@ class Token {
 			notATokenEls.forEach((selEl) => {
 				selEl.style.left = `${parseFloat(token.options.left) / window.CURRENT_SCENE_DATA.scale_factor}px`,
 				selEl.style.top = `${parseFloat(token.options.top) / window.CURRENT_SCENE_DATA.scale_factor}px`
-			})	
+			})
 			return canMove;
 		} catch(error){
 			showError(error);
@@ -3251,6 +3287,9 @@ class Token {
 						if(darknessMoved){
 							redraw_drawn_light(darknessMoved);
 							redraw_light(darknessMoved);
+						}
+						else {
+							debounceLightChecks();
 						}
 						//remove cover for smooth drag
 						$('.iframeResizeCover').remove();
@@ -4548,9 +4587,9 @@ function setTokenLight (token, options) {
 		const opacity2Value = options?.light2?.color ? options.light2.color.replace(/[a-zA-Z\(\)\s]/g, '').split(',').splice(3, 1) : 1;
 		const daylightOpacityValue = window.CURRENT_SCENE_DATA?.daylight ? window.CURRENT_SCENE_DATA.daylight.replace(/[a-zA-Z\(\)\s]/g, '').split(',').splice(3, 1) : 1;
 
-		let clippath = window.lineOfSightPolygons?.[options.id]?.clippath !== undefined ? `polygon(${window.lineOfSightPolygons[options.id]?.clippath})` : undefined;
-		let devilsightClip = window.lineOfSightPolygons?.[options.id]?.devilsightClip !== undefined ? `polygon(${window.lineOfSightPolygons[options.id]?.devilsightClip})` : undefined;
-		const visionDeg = options?.visionAngle ?? 360;
+		let clippath = window.lineOfSightPolygons?.[options.id]?.wallClippath !== undefined ? `polygon(${window.lineOfSightPolygons[options.id].wallClippath})` : undefined;
+		let devilsightClip = window.lineOfSightPolygons?.[options.id]?.wallDevilsightClip !== undefined ? `polygon(${window.lineOfSightPolygons[options.id].wallDevilsightClip})` : undefined;
+		const lightClippath = clippath;
 		
 		const lightStyles = `width:${totalSize }px;
 							height:${totalSize }px;
@@ -4626,7 +4665,7 @@ function setTokenLight (token, options) {
 
 		const lightElement = $(`
 			<div class='aura-clip-container'>
-				<div class='aura-element-container-clip light' style='clip-path: ${clippath};' id='${options.id}'>
+				<div class='aura-element-container-clip light' style='clip-path: ${lightClippath};' id='${options.id}'>
 					<div class='aura-element ${options.squareLight ? 'square-aura-element' : ''}' id="light_${tokenId}" data-id='${options.id}' style='${lightStyles}'></div>
 				</div>
 				
@@ -4715,6 +4754,7 @@ function setTokenLight (token, options) {
 
 	tokenVisionLightContainer = tokenGrandparent.find(".aura-element-container-clip[id='" + options.id +"']");
 		
+	updateTokenConeClips(options);
 	if (!window.DM && playerNoVision){
 		tokenVisionLightContainer.find('[id^="vision_"]').toggleClass("notVisible", true);
 	}		
