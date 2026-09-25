@@ -2574,7 +2574,7 @@ class Token {
 				let zindexdiff=(typeof this.options.zindexdiff == 'number') ? this.options.zindexdiff : Math.round(17/(this.sizeWidth()/window.CURRENT_SCENE_DATA.hpps));
 				this.options.zindexdiff = Math.max(zindexdiff, -5000);
 				let zConstant = this.options.underDarkness || this.options.tokenStyleSelect == 'definitelyNotAToken' ? 5000 : 10000;
-				old.css("z-index", `calc(${zConstant} + var(--z-index-diff))`);
+				old.css("z-index", this.options.tokenStyleSelect == 'roof' ? 2147483647 : `calc(${zConstant} + var(--z-index-diff))`);
 				old.css("--z-index-diff", zindexdiff);
 
 				this.update_opacity(old);
@@ -3192,7 +3192,7 @@ class Token {
 				}
 
 				const zConstant = this.options.underDarkness || this.options.tokenStyleSelect == 'definitelyNotAToken'  ? 5000 : 10000;
-				tok.css("z-index", `calc(${zConstant} + var(--z-index-diff))`);
+				tok.css("z-index", this.options.tokenStyleSelect == 'roof' ? 2147483647 : `calc(${zConstant} + var(--z-index-diff))`);
 
 
 				if (typeof this.options.monster !== "undefined")
@@ -4838,6 +4838,7 @@ function setTokenBase(token, options) {
 				options.revealname = true;
 				options.alwaysshowname = true;
 			} else if(options.tokenStyleSelect === "roof"){
+				options.underDarkness = false;
 				token.toggleClass('roof', true);
 			}
 		}

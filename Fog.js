@@ -1146,7 +1146,7 @@ function do_check_token_visibility() {
 	const visionTokens = tokens.filter(token => {
 		const options = token.options;
 		if(!options.auraislight || options.tokenStyleSelect === 'roof' || options.type != undefined || options.combatGroupToken) return false;
-		if(window.SelectedTokenVision && window.CURRENTLY_SELECTED_TOKENS.length > 0) {
+		if(!window.DM && window.SelectedTokenVision && window.CURRENTLY_SELECTED_TOKENS.length > 0) {
 			if(!window.CURRENTLY_SELECTED_TOKENS.includes(options.id)) return false;
 		}
 		return window.DM || options.id === playerTokenId || options.share_vision === true ||
@@ -1154,22 +1154,26 @@ function do_check_token_visibility() {
 			(playerTokenId === undefined && options.itemType === 'pc');
 	});
 	for(const token of tokens){
-		let hidden = false;
-		if (token.options.tokenStyleSelect === 'roof') {
-			const points = roof_area_points(token);
-			hidden = visionTokens.some(visionToken => {
-				const x = parseFloat(visionToken.options.left) + visionToken.sizeWidth() / 2;
-				const y = parseFloat(visionToken.options.top) + visionToken.sizeHeight() / 2;
-				let inside = false;
-				for (let i = 0, j = points.length - 1; i < points.length; j = i++) {
-					const a = points[j], b = points[i];
-					const cross = (x - a.x) * (b.y - a.y) - (y - a.y) * (b.x - a.x);
-					if (Math.abs(cross) < 0.000001 && x >= Math.min(a.x, b.x) && x <= Math.max(a.x, b.x) && y >= Math.min(a.y, b.y) && y <= Math.max(a.y, b.y)) return true;
-					if ((a.y > y) !== (b.y > y) && x < (b.x - a.x) * (y - a.y) / (b.y - a.y) + a.x) inside = !inside;
-				}
-				return inside;
-			});
+		if (token.options.tokenStyleSelect !== 'roof') {
+			const elements = window.ON_SCREEN_TOKENS?.[token.options.id];
+			elements?.onScreenToken?.toggleClass('roof-hidden', false);
+			elements?.onScreenAura?.toggleClass('roof-hidden', false);
+			elements?.onScreenDarknessToken?.toggleClass('roof-hidden', false);
+			continue;
 		}
+		const points = roof_area_points(token);
+		const hidden = visionTokens.some(visionToken => {
+			const x = parseFloat(visionToken.options.left) + visionToken.sizeWidth() / 2;
+			const y = parseFloat(visionToken.options.top) + visionToken.sizeHeight() / 2;
+			let inside = false;
+			for (let i = 0, j = points.length - 1; i < points.length; j = i++) {
+				const a = points[j], b = points[i];
+				const cross = (x - a.x) * (b.y - a.y) - (y - a.y) * (b.x - a.x);
+				if (Math.abs(cross) < 0.000001 && x >= Math.min(a.x, b.x) && x <= Math.max(a.x, b.x) && y >= Math.min(a.y, b.y) && y <= Math.max(a.y, b.y)) return true;
+				if ((a.y > y) !== (b.y > y) && x < (b.x - a.x) * (y - a.y) / (b.y - a.y) + a.x) inside = !inside;
+			}
+			return inside;
+		});
 		const elements = window.ON_SCREEN_TOKENS?.[token.options.id];
 		elements?.onScreenToken?.toggleClass('roof-hidden', hidden);
 		elements?.onScreenAura?.toggleClass('roof-hidden', hidden);
@@ -9234,6 +9238,9 @@ function redraw_light(darknessMoved = false, limitActiveRays = 0) {
 	
 	if(!window.DM || window.SelectedTokenVision){
 		throttleTokenCheck();	
+	}
+	else if(Object.values(window.TOKEN_OBJECTS).some(t => t.options.tokenStyleSelect === 'roof')){
+		throttleTokenCheck();
 	}
 
 	if(window.CURRENTLY_SELECTED_TOKENS.length > 0){
