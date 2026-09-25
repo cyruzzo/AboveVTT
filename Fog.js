@@ -8357,7 +8357,7 @@ function collectFeatureAnglesForWalls(origin, walls, limit) {
 	return angles;
 }
 
-function buildActiveRays(particle, walls, limit, visionAngle, rotation = 0, includeMovementRays = false) {
+function buildActiveRays(particle, walls, limit, visionAngle, rotation = 0, includeMovementRays = false, lightAngle = 360) {
 	if(!particle)
 		return [];
 	const combined = [];
@@ -8389,6 +8389,18 @@ function buildActiveRays(particle, walls, limit, visionAngle, rotation = 0, incl
 	}
 
 	const featureAngles = collectFeatureAnglesForWalls(particle.pos, walls, limit);
+	if(includeMovementRays){
+		for(const width of [visionWidth, lightAngle]){
+			if(width >= 360) continue;
+			for(const edge of [centerAngle - width / 2, centerAngle + width / 2]){
+				const angle = normalizeAngleDegrees(edge);
+				const rounded = featureAngleRounded(angle);
+				if(used.has(rounded)) continue;
+				used.add(rounded);
+				combined.push({ angle, ray: new Ray(particle.pos, degreeToRadian(angle)) });
+			}
+		}
+	}
 	if(featureAngles.length > 0){
 		if(particle.featureRayCache === undefined)
 			particle.featureRayCache = {};
@@ -8430,6 +8442,31 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
 	const tokenOptions = window.TOKEN_OBJECTS[auraId]?.options;
 	const parsedVisionAngle = Number.parseFloat(tokenOptions?.visionAngle);
 	const visionAngle = Number.isFinite(parsedVisionAngle) ? Math.max(0, Math.min(360, parsedVisionAngle)) : 360;
+	const parsedLightAngle = Number.parseFloat(tokenOptions?.lightAngle);
+	const lightAngle = Number.isFinite(parsedLightAngle) ? Math.max(0, Math.min(360, parsedLightAngle)) : 360;
+	const parsedRotation = Number.parseFloat(tokenOptions?.rotation);
+	const facingAngle = 90 + (Number.isFinite(parsedRotation) ? parsedRotation : 0);
+	const tokenObject = window.TOKEN_OBJECTS[auraId];
+	// Leave a few pixels around the center visible after the one-pixel wall inset.
+	const centerRadius = tokenObject ? 4 : 0;
+	const visionPoints = [];
+	const noDarknessPoints = [];
+	const emittedLightPoints = [];
+	const wallVisionPoints = [];
+	const wallNoDarknessPoints = [];
+	const conePoint = (point, ray, width) => {
+		if(!point) return null;
+		if(width === 360)
+			return { x: point.x * window.CURRENT_SCENE_DATA.scale_factor, y: point.y * window.CURRENT_SCENE_DATA.scale_factor };
+		const angle = radianToDegree(Math.atan2(ray.dir.y, ray.dir.x));
+		const inCone = Math.abs(normalizeAngleDegrees(angle - facingAngle + 180) - 180) <= width / 2 + 1e-8;
+		const distance = Math.hypot(point.x - window.PARTICLE.pos.x, point.y - window.PARTICLE.pos.y);
+		const ratio = !inCone && distance > centerRadius ? centerRadius / distance : 1;
+		return {
+			x: (window.PARTICLE.pos.x + (point.x - window.PARTICLE.pos.x) * ratio) * window.CURRENT_SCENE_DATA.scale_factor,
+			y: (window.PARTICLE.pos.y + (point.y - window.PARTICLE.pos.y) * ratio) * window.CURRENT_SCENE_DATA.scale_factor
+		};
+	};
 
 	let prevClosestWall = null;
     let prevClosestPoint = null;
@@ -8450,7 +8487,7 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
 	const diffNeedForTerrainWalls = 100;
     
 
-	const activeRays = buildActiveRays(window.PARTICLE, walls, activeRayLimit, visionAngle, tokenOptions?.rotation, true);
+	const activeRays = buildActiveRays(window.PARTICLE, walls, activeRayLimit, visionAngle, tokenOptions?.rotation, true, lightAngle);
 	const lastRayIndex = activeRays.length - 1;
 	const lastVisionRayIndex = activeRays.reduce((last, entry, index) => entry.inVision ? index : last, -1);
 	const squaredRadius = lightRadius ** 2;
@@ -8459,13 +8496,6 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
 	const scaleFactor = window.CURRENT_SCENE_DATA.scale_factor;
 	const particlePosX = window.PARTICLE.pos.x;
 	const particlePosY = window.PARTICLE.pos.y;
-	// Close partial vision polygons through the token, rather than across the cone's outer edges.
-	if(visionAngle < 360){
-		lightPolygon.push({ x: particlePosX * scaleFactor, y: particlePosY * scaleFactor });
-		if(canSeeDarkness)
-			noDarknessPolygon.push({ x: particlePosX * scaleFactor, y: particlePosY * scaleFactor });
-	}
-
 	const wallCache = wallsCache ?? buildWallCache(walls);
 	
 
@@ -8656,6 +8686,17 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
 	 	}
 
 		
+		if(closestLight){
+			wallVisionPoints.push({ x: closestLight.x * scaleFactor, y: closestLight.y * scaleFactor });
+			if(visionAngle < 360)
+				visionPoints.push(conePoint(closestLight, ray, visionAngle));
+			emittedLightPoints.push(conePoint(closestLight, ray, lightAngle));
+		}
+		if(canSeeDarkness && closestNoDarkness){
+			wallNoDarknessPoints.push({ x: closestNoDarkness.x * scaleFactor, y: closestNoDarkness.y * scaleFactor });
+			if(visionAngle < 360)
+				noDarknessPoints.push(conePoint(closestNoDarkness, ray, visionAngle));
+		}
 		if(!inVision){
 			closestLight = null;
 			closestNoDarkness = null;
@@ -8718,7 +8759,11 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
 	   
 
 	}
-  	if(draw === true){	
+	if(visionAngle < 360){
+		lightPolygon = visionPoints;
+		noDarknessPolygon = noDarknessPoints;
+	}
+	if(draw === true){
 		//used for fog and other non-light drawings only now
 		if(fogType === 0){
 			clearPolygon(ctx, lightPolygon);
@@ -8730,6 +8775,9 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
 	//inset polygon by wall width so light doesn't seep through walls or reveal doors outside of los.
 	const wallWidth = window.CURRENT_SCENE_DATA.scale_factor || 1;
 	window.lightPolygon = insetPolygonVertices(lightPolygon, wallWidth);
+	window.emittedLightPolygon = insetPolygonVertices(emittedLightPoints, wallWidth);
+	window.wallVisionPolygon = insetPolygonVertices(wallVisionPoints, wallWidth);
+	window.wallNoDarknessPolygon = insetPolygonVertices(wallNoDarknessPoints, wallWidth);
 	window.movePolygon = movePolygon;
 	window.noDarknessPolygon = insetPolygonVertices(noDarknessPolygon, wallWidth);
 };
@@ -8943,6 +8991,8 @@ function redraw_light(darknessMoved = false, limitActiveRays = 0) {
 		}
 		const hasDevilOrTruesight = (tokenObject.options.truesight.feet > 0 || tokenObject.options.devilsight.feet > 0);
 		if (window.lineOfSightPolygons[auraId] !== undefined &&
+			window.lineOfSightPolygons[auraId].wallClippath !== undefined &&
+			window.lineOfSightPolygons[auraId].wallVision !== undefined &&
 			window.lineOfSightPolygons[auraId].x === tokenPos.x &&
 			window.lineOfSightPolygons[auraId].y === tokenPos.y &&
 			window.lineOfSightPolygons[auraId].numberofwalls === allWalls.length &&
@@ -8950,12 +9000,15 @@ function redraw_light(darknessMoved = false, limitActiveRays = 0) {
 			window.lineOfSightPolygons[auraId].scaleCreated === tokenObject.options.scaleCreated &&
 			window.lineOfSightPolygons[auraId].elev === tokenObject.options.elev &&
 			window.lineOfSightPolygons[auraId].visionAngle === tokenObject.options.visionAngle &&
+			window.lineOfSightPolygons[auraId].lightAngle === tokenObject.options.lightAngle &&
 			window.lineOfSightPolygons[auraId].rotation === tokenObject.options.rotation &&
 			darknessMoved !== true) {
 
-			lightPolygon = window.lineOfSightPolygons[auraId].polygon;  // if the token hasn't moved and walls haven't changed don't look for a new poly.
-			movePolygon = window.lineOfSightPolygons[auraId].move;  // if the token hasn't moved and walls haven't changed don't look for a new poly.
-			noDarknessPolygon = window.lineOfSightPolygons[auraId].noDarkness;
+			window.lightPolygon = window.lineOfSightPolygons[auraId].polygon;
+			window.emittedLightPolygon = window.lineOfSightPolygons[auraId].emittedLight;
+			window.wallVisionPolygon = window.lineOfSightPolygons[auraId].wallVision;
+			window.movePolygon = window.lineOfSightPolygons[auraId].move;
+			window.noDarknessPolygon = window.lineOfSightPolygons[auraId].noDarkness;
 
 			if(window.lightAuraClipPolygon?.[auraId] == undefined 
 				|| window.lightAuraClipPolygon[auraId].light1.feet !== parseFloat(tokenObject.options.light1?.feet) 
@@ -8980,9 +9033,19 @@ function redraw_light(darknessMoved = false, limitActiveRays = 0) {
 			let visionPath = window.lightPolygon
 				.map(p => `${p.x / adjustScale}px ${p.y / adjustScale}px`)
 				.join(', ');
+			const lightPath = window.emittedLightPolygon
+				.map(p => `${p.x / adjustScale}px ${p.y / adjustScale}px`).join(', ');
+			const wallPath = window.wallVisionPolygon.map(p => `${p.x / adjustScale}px ${p.y / adjustScale}px`).join(', ');
+			const wallNoDarknessPath = window.wallNoDarknessPolygon.map(p => `${p.x / adjustScale}px ${p.y / adjustScale}px`).join(', ');
 			
 			window.lineOfSightPolygons[auraId] = {
 				polygon: window.lightPolygon,
+				emittedLight: window.emittedLightPolygon,
+				lightClippath: lightPath,
+				wallClippath: wallPath,
+				wallVision: window.wallVisionPolygon,
+				wallDevilsightClip: wallNoDarknessPath,
+				lightAngle: tokenObject.options.lightAngle,
 				move: window.movePolygon,
 				noDarkness: window.noDarknessPolygon,
 				x: tokenPos.x,
@@ -8998,8 +9061,8 @@ function redraw_light(darknessMoved = false, limitActiveRays = 0) {
 
 			if (auraClipContainers.length) {
 				auraClipContainers.forEach(container => {
-					if (container.classList.contains('devilsight') || container.classList.contains('truesight') || container.style.clipPath == visionPath) return;
-					container.style.clipPath = `polygon(${visionPath})`;
+					if (container.classList.contains('devilsight') || container.classList.contains('truesight')) return;
+					container.style.clipPath = `polygon(${wallPath})`;
 				});
 			}
 
@@ -9010,8 +9073,8 @@ function redraw_light(darknessMoved = false, limitActiveRays = 0) {
 					window.lineOfSightPolygons[auraId].devilsightClip = noDarknessVisionPath;
 				if (auraClipContainers.length) {
 					auraClipContainers.forEach(container => {
-						if (!container.classList.contains('devilsight') && !container.classList.contains('truesight') || container.style.clipPath == noDarknessVisionPath ) return;
-						container.style.clipPath = `polygon(${noDarknessVisionPath})`;
+						if (!container.classList.contains('devilsight') && !container.classList.contains('truesight')) return;
+						container.style.clipPath = `polygon(${wallNoDarknessPath})`;
 					});
 				}
 
@@ -9028,8 +9091,8 @@ function redraw_light(darknessMoved = false, limitActiveRays = 0) {
 		}
 		lightInLosContext.globalCompositeOperation='lighten';
 		if (window.lightAuraClipPolygon[auraId]?.light !== undefined) {
-			clip_circle_with_polygon(lightInLosContext, window.lightAuraClipPolygon[auraId].middle.x, window.lightAuraClipPolygon[auraId].middle.y, window.lightAuraClipPolygon[auraId].light2.range, window.lightAuraClipPolygon[auraId].light2.color, window.lightPolygon, tokenObject.options);
-			clip_circle_with_polygon(lightInLosContext, window.lightAuraClipPolygon[auraId].middle.x, window.lightAuraClipPolygon[auraId].middle.y, window.lightAuraClipPolygon[auraId].light1.range, window.lightAuraClipPolygon[auraId].light1.color, window.lightPolygon, tokenObject.options);
+			clip_circle_with_polygon(lightInLosContext, window.lightAuraClipPolygon[auraId].middle.x, window.lightAuraClipPolygon[auraId].middle.y, window.lightAuraClipPolygon[auraId].light2.range, window.lightAuraClipPolygon[auraId].light2.color, window.emittedLightPolygon, tokenObject.options);
+			clip_circle_with_polygon(lightInLosContext, window.lightAuraClipPolygon[auraId].middle.x, window.lightAuraClipPolygon[auraId].middle.y, window.lightAuraClipPolygon[auraId].light1.range, window.lightAuraClipPolygon[auraId].light1.color, window.emittedLightPolygon, tokenObject.options);
 		}
 		if ((selectedIds.length === 0 && selectedTokens.length === 0) || found || (window.SelectedTokenVision !== true && !window.DM)) {
 
@@ -9045,6 +9108,9 @@ function redraw_light(darknessMoved = false, limitActiveRays = 0) {
 				});
 			
 				drawPolygon(offscreenContext, window.lightPolygon, 'rgba(255, 255, 255, 1)', true, 0, undefined, undefined, undefined, true, true); //draw to offscreen canvas so we don't have to render every draw and use this for a mask	
+				if(Number.parseFloat(tokenObject.options.visionAngle) < 360 && window.wallVisionPolygon.length >= 3){
+					clip_circle_with_polygon(offscreenContext, tokenPos.x * adjustScale, tokenPos.y * adjustScale, 3 * adjustScale, '#fff', window.wallVisionPolygon, { squareLight: false });
+				}
 				drawPolygon(moveOffscreenCanvasMaskContext, window.movePolygon, 'rgba(255, 255, 255, 1)', true, 0, undefined, undefined, undefined, true, true); //draw to offscreen canvas so we don't have to render every draw and use this for a mask
 				if(window.lightAuraClipPolygon[auraId] != undefined){
 					if (window.lightAuraClipPolygon[auraId].darkvision > 0) {
@@ -9241,6 +9307,12 @@ function getTokenVision(tokenId, darknessMoved){
 		.join(', ');
 	window.lineOfSightPolygons[tokenId] = {
 		polygon: window.lightPolygon,
+		emittedLight: window.emittedLightPolygon,
+		lightClippath: window.emittedLightPolygon.map(p => `${p.x / adjustScale}px ${p.y / adjustScale}px`).join(', '),
+		wallClippath: window.wallVisionPolygon.map(p => `${p.x / adjustScale}px ${p.y / adjustScale}px`).join(', '),
+		wallVision: window.wallVisionPolygon,
+		wallDevilsightClip: window.wallNoDarknessPolygon.map(p => `${p.x / adjustScale}px ${p.y / adjustScale}px`).join(', '),
+		lightAngle: window.TOKEN_OBJECTS[tokenId].options.lightAngle,
 		move: window.movePolygon,
 		noDarkness: window.noDarknessPolygon,
 		x: tokenPos.x,

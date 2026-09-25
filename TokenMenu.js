@@ -2653,7 +2653,14 @@ function build_token_light_inputs(tokenIds, door=false) {
 		});
 	});
 	
-	wrapper.find(".token-config-aura-wrapper").prepend(visionRadiusInput, squareLightInput, revealVisionInput);
+	const lightAngles = [...new Set(tokens.map(t => t.options.lightAngle ?? 360))];
+	const lightAngleInput = build_token_vision_radius_input(lightAngles.length === 1 ? lightAngles[0] : null, function(newDeg){
+		tokens.forEach(token => {
+			token.options.lightAngle = newDeg;
+			token.place_sync_persist();
+		});
+	}, 'Token Light Angle');
+	wrapper.find(".token-config-aura-wrapper").prepend(visionRadiusInput, lightAngleInput, squareLightInput, revealVisionInput);
 	
 
 	wrapper.find("h3.token-image-modal-footer-title").after(enabledLightInput);
@@ -4541,15 +4548,15 @@ function build_token_image_scale_input(startingScale, tokens, didUpdate) {
 	imageSizeWrapper.append(imageSizeInputRange); // input below label
 	return imageSizeWrapper;
 }
-function build_token_vision_radius_input(startingDeg, didUpdate) {
+function build_token_vision_radius_input(startingDeg, didUpdate, label = 'Token Vision Angle') {
 	if (isNaN(startingDeg)) {
 		startingDeg = 360;
 	}
 
 
 
-	let imageDegInput = $(`<input class="image-scale-input-number" type="number" max="360" min="0" step="1" title="Token Image Scale" placeholder="360" name="Image Scale">`);
-	let imageDegInputRange = $(`<input class="image-scale-input-range" type="range" value="360" min="0" max="360" step="1"/>`);
+	let imageDegInput = $(`<input class="token-angle-input-number" type="number" max="360" min="0" step="1" title="${label}" placeholder="360" name="${label}">`);
+	let imageDegInputRange = $(`<input class="token-angle-input-range" type="range" value="360" min="0" max="360" step="1" title="${label}"/>`);
 	imageDegInput.val(startingDeg ?? 360);
 	imageDegInputRange.val(startingDeg ?? 360);
 	imageDegInput.on('keyup', function(event) {
@@ -4590,7 +4597,7 @@ function build_token_vision_radius_input(startingDeg, didUpdate) {
 	});
 	let imageDegWrapper = $(`
 		<div class="token-image-modal-url-label-wrapper image-size-wrapper">
-			<div class="token-image-modal-footer-title image-size-title">Token Vision Angle</div>
+			<div class="token-image-modal-footer-title image-size-title">${label}</div>
 		</div>
 	`);
 	imageDegWrapper.append(imageDegInput); // Beside Label
