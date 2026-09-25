@@ -2642,9 +2642,18 @@ function build_token_light_inputs(tokenIds, door=false) {
 			token.place_sync_persist();
 		});
 	});
-
+	let tokensVisionAngle = tokens.map(t => t.options.visionAngle);
+	let uniqueVisionAngle = [...new Set(tokensVisionAngle)];
+	uniqueVisionAngle = uniqueVisionAngle.length === 1 ? uniqueVisionAngle[0] : null;
 	
-	wrapper.find(".token-config-aura-wrapper").prepend(squareLightInput, revealVisionInput);
+	const visionRadiusInput = build_token_vision_radius_input(uniqueVisionAngle, function(newDeg){
+		tokens.forEach(token => {
+			token.options.visionAngle = newDeg;
+			token.place_sync_persist();
+		});
+	});
+	
+	wrapper.find(".token-config-aura-wrapper").prepend(visionRadiusInput, squareLightInput, revealVisionInput);
 	
 
 	wrapper.find("h3.token-image-modal-footer-title").after(enabledLightInput);
@@ -4509,7 +4518,62 @@ function build_token_image_scale_input(startingScale, tokens, didUpdate) {
 	imageSizeWrapper.append(imageSizeInputRange); // input below label
 	return imageSizeWrapper;
 }
+function build_token_vision_radius_input(startingDeg, didUpdate) {
+	if (isNaN(startingDeg)) {
+		startingDeg = 360;
+	}
 
+
+
+	let imageDegInput = $(`<input class="image-scale-input-number" type="number" max="360" min="0" step="1" title="Token Image Scale" placeholder="360" name="Image Scale">`);
+	let imageDegInputRange = $(`<input class="image-scale-input-range" type="range" value="360" min="0" max="360" step="1"/>`);
+	imageDegInput.val(startingDeg ?? 360);
+	imageDegInputRange.val(startingDeg ?? 360);
+	imageDegInput.on('keyup', function(event) {
+		const newDeg = event.target.value > 360 ? event.target.value % 360 : event.target.value;
+
+		if (event.key === "Enter") {
+
+			imageDegInput.val(newDeg);
+			imageDegInputRange.val(newDeg);
+			didUpdate(newDeg, true);
+		} else if (event.key === "Escape") {
+			$(event.target).blur();
+		}
+		imageDegInputRange.val(imageDegInput.val());
+	});
+	imageDegInput.on('focusout', function(event) {
+		const newDeg = event.target.value > 360 ? event.target.value % 360 : event.target.value;		
+
+		imageDegInput.val(newDeg);	
+		imageDegInputRange.val(newDeg);
+		didUpdate(newDeg, true);
+
+		imageDegInputRange.val(imageDegInput.val());
+	});
+	imageDegInput.on(' input change', function(event){
+		const newDeg = event.target.value > 360 ? event.target.value % 360 : event.target.value;
+		imageDegInputRange.val(newDeg);
+		didUpdate(newDeg);
+	});
+	imageDegInputRange.on(' input change', function(event){
+		const newDeg = event.target.value > 360 ? event.target.value % 360 : event.target.value;
+		imageDegInput.val(newDeg);
+		didUpdate(newDeg);
+	});
+	imageDegInputRange.on('mouseup', function(event){
+		const newDeg = event.target.value > 360 ? event.target.value % 360 : event.target.value;
+		didUpdate(newDeg, true);
+	});
+	let imageDegWrapper = $(`
+		<div class="token-image-modal-url-label-wrapper image-size-wrapper">
+			<div class="token-image-modal-footer-title image-size-title">Token Vision Angle</div>
+		</div>
+	`);
+	imageDegWrapper.append(imageDegInput); // Beside Label
+	imageDegWrapper.append(imageDegInputRange); // input below label
+	return imageDegWrapper;
+}
 function build_token_scale_input(startingScale, tokens, name, min=0.1, max=10, step=0.1, didUpdate) {
 	let imageInput = $(`<input class="image-input-number" type="number" max="${max}" min="${min}" step="${step}" title="Token Image Scale" placeholder="1.0" name="Image Scale">`);
 	let imageInputRange = $(`<input class="image-input-range" type="range" value="1" min="${min}" max="${max}" step="${step}"/>`);
