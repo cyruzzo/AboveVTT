@@ -869,20 +869,11 @@ function is_token_under_fog(tokenid, fogContext=undefined){
 		return false;
 }
 
-function in_fog_or_dark_image_data(tokenid, imageData) {
-	if (imageData == undefined) {
-		return false;
-	}
+function in_fog_or_dark_image_data(tokenid, imageData, fogImageData) {
 	const token = window.TOKEN_OBJECTS[tokenid];
 	const sceneScale = window.CURRENT_SCENE_DATA.scale_factor;
-	const centerX = Math.round((parseFloat(token.options.left) + token.sizeWidth() / 2) / sceneScale);
-	const centerY = Math.round((parseFloat(token.options.top) + token.sizeHeight() / 2) / sceneScale);
-	if (centerX >= 0 && centerX < imageData.width && centerY >= 0 && centerY < imageData.height) {
-		const pixel = getPixelFromImageData(imageData, centerX, centerY);
-		if (pixel[0] > 4 || pixel[1] > 4 || pixel[2] > 4) return false;
-	}
 	if (token.options.tokenStyleSelect === 'roof') {
-		// Sample the hide area's edges at pixel spacing in the visibility canvas.
+		if (!fogImageData) return true;
 		const points = roof_area_points(token).map(point => ({x: point.x / sceneScale, y: point.y / sceneScale}));
 		for (let i = 0; i < points.length; i++) {
 			const a = points[i], b = points[(i + 1) % points.length];
@@ -890,11 +881,21 @@ function in_fog_or_dark_image_data(tokenid, imageData) {
 			for (let step = 0; step <= steps; step++) {
 				const x = Math.round(a.x + (b.x - a.x) * step / steps);
 				const y = Math.round(a.y + (b.y - a.y) * step / steps);
-				if (x < 0 || x >= imageData.width || y < 0 || y >= imageData.height) continue;
-				const index = (x + y * imageData.width) * 4;
-				if (imageData.data[index] > 4 || imageData.data[index + 1] > 4 || imageData.data[index + 2] > 4) return false;
+				if (x < 0 || x >= fogImageData.width || y < 0 || y >= fogImageData.height) continue;
+				const index = (x + y * fogImageData.width) * 4;
+				if (fogImageData.data[index + 3] < 100) return false;
 			}
 		}
+		return true;
+	}
+	if (imageData == undefined) {
+		return false;
+	}
+	const centerX = Math.round((parseFloat(token.options.left) + token.sizeWidth() / 2) / sceneScale);
+	const centerY = Math.round((parseFloat(token.options.top) + token.sizeHeight() / 2) / sceneScale);
+	if (centerX >= 0 && centerX < imageData.width && centerY >= 0 && centerY < imageData.height) {
+		const pixel = getPixelFromImageData(imageData, centerX, centerY);
+		if (pixel[0] > 4 || pixel[1] > 4 || pixel[2] > 4) return false;
 	}
 	return true;
 }
@@ -1045,14 +1046,16 @@ function check_single_token_visibility(id){
 	offScreenCtx.drawImage(fogCanvas, 0, 0);
 	
 	const offscreenImageData = offScreenCtx.getImageData(0, 0, offScreenCanvas.width, offScreenCanvas.height);
+	const fogImageData = window.TOKEN_OBJECTS[id].options.tokenStyleSelect === 'roof'
+		? fogCanvas.getContext('2d').getImageData(0, 0, fogCanvas.width, fogCanvas.height) : undefined;
 
 	const isSelected = window.CURRENTLY_SELECTED_TOKENS.includes(id);
 
 	const sharedVision = (playerTokenId == id || window.TOKEN_OBJECTS[id].options.share_vision == true || window.TOKEN_OBJECTS[id].options.share_vision == window.myUser || (window.TOKEN_OBJECTS[id].options.share_vision && is_spectator_page()));
 
-	const hideThisTokenInFogOrDarkness = (window.TOKEN_OBJECTS[id].options.revealInFog !== true); //we want to hide this token in fog or darkness
+	const hideThisTokenInFogOrDarkness = window.TOKEN_OBJECTS[id].options.tokenStyleSelect === 'roof' || window.TOKEN_OBJECTS[id].options.revealInFog !== true; //we want to hide this token in fog or darkness
 	
-	const inVisibleLight = (sharedVision && (!window.SelectedTokenVision || window.CURRENTLY_SELECTED_TOKENS.length == 0 || isSelected)) || in_fog_or_dark_image_data(id, offscreenImageData) === false; // this token is not in fog or darkness and not the players token
+	const inVisibleLight = (window.TOKEN_OBJECTS[id].options.tokenStyleSelect !== 'roof' && sharedVision && (!window.SelectedTokenVision || window.CURRENTLY_SELECTED_TOKENS.length == 0 || isSelected)) || in_fog_or_dark_image_data(id, offscreenImageData, fogImageData) === false; // this token is not in fog or darkness and not the players token
 	const dmSelected = window.DM === true && isSelected;
 
 	const showThisPlayerToken = window.TOKEN_OBJECTS[id].options.itemType === 'pc' && window.DM !== true && playerTokenId === undefined //show this token when logged in as a player without your own token
@@ -1140,13 +1143,12 @@ function do_check_token_visibility() {
 	if(window.LOADING)
 		return;
 
-	// Hide roofs containing a token whose vision is active.
 	const tokens = Object.values(window.TOKEN_OBJECTS);
 	const playerTokenId = document.querySelector(`.token[data-id*='${window.PLAYER_ID}']`)?.getAttribute('data-id');
 	const visionTokens = tokens.filter(token => {
 		const options = token.options;
 		if(!options.auraislight || options.tokenStyleSelect === 'roof' || options.type != undefined || options.combatGroupToken) return false;
-		if(!window.DM && window.SelectedTokenVision && window.CURRENTLY_SELECTED_TOKENS.length > 0) {
+		if(window.SelectedTokenVision && window.CURRENTLY_SELECTED_TOKENS.length > 0) {
 			if(!window.CURRENTLY_SELECTED_TOKENS.includes(options.id)) return false;
 		}
 		return window.DM || options.id === playerTokenId || options.share_vision === true ||
@@ -1269,6 +1271,8 @@ function do_check_token_visibility() {
 	offScreenCtx.drawImage(fogCanvas, 0, 0);
 
 	const offscreenImageData = offScreenCtx.getImageData(0, 0, offScreenCanvas.width, offScreenCanvas.height);
+	const fogImageData = tokens.some(token => token.options.tokenStyleSelect === 'roof')
+		? fogContext.getImageData(0, 0, fogCanvas.width, fogCanvas.height) : undefined;
 
 	for (let id in window.TOKEN_OBJECTS) {
 		if(window.TOKEN_OBJECTS[id].options.combatGroupToken || window.TOKEN_OBJECTS[id].options.type != undefined)
@@ -1282,9 +1286,9 @@ function do_check_token_visibility() {
 
 		const sharedVision = (playerTokenId == id ||  window.TOKEN_OBJECTS[id].options.share_vision == true || window.TOKEN_OBJECTS[id].options.share_vision == window.myUser);
 
-		const hideThisTokenInFogOrDarkness = (window.TOKEN_OBJECTS[id].options.revealInFog !== true); //we want to hide this token in fog or darkness
+		const hideThisTokenInFogOrDarkness = window.TOKEN_OBJECTS[id].options.tokenStyleSelect === 'roof' || window.TOKEN_OBJECTS[id].options.revealInFog !== true; //we want to hide this token in fog or darkness
 		
-		const inVisibleLight = (sharedVision && (!window.SelectedTokenVision || window.CURRENTLY_SELECTED_TOKENS.length == 0 || isSelected)) || in_fog_or_dark_image_data(id, offscreenImageData) === false; // this token is not in fog or darkness and not the players token
+		const inVisibleLight = (window.TOKEN_OBJECTS[id].options.tokenStyleSelect !== 'roof' && sharedVision && (!window.SelectedTokenVision || window.CURRENTLY_SELECTED_TOKENS.length == 0 || isSelected)) || in_fog_or_dark_image_data(id, offscreenImageData, fogImageData) === false; // this token is not in fog or darkness and not the players token
 
 		const dmSelected = window.DM === true && isSelected;
 
