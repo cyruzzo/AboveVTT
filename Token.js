@@ -1326,8 +1326,8 @@ class Token {
 		const tokenHpAuraColor = token_health_aura(this.hpPercentage, this.options.healthauratype);
 		let paddingX = 0;
 		let paddingY = 0;
-		const paddingBaseX = token.is('.example-token') ? window.CURRENT_SCENE_DATA.hpps : 0;
-		const paddingBaseY = token.is('.example-token') ? window.CURRENT_SCENE_DATA.vpps : 0;
+		const paddingBaseX = !token.is('.example-token, [data-id^="exampleToken"]') ? window.CURRENT_SCENE_DATA.hpps : token.width();
+		const paddingBaseY = !token.is('.example-token, [data-id^="exampleToken"]') ? window.CURRENT_SCENE_DATA.vpps : token.height();
 		if(this.options.tokenStyleSelect == "undefined")// I believe this only happens in the sidepanel
 			delete this.options.tokenStyleSelect;
 			
