@@ -121,16 +121,16 @@ canvas.dice-rolling-panel__container,
   pointer-events:none;
 }
 svg[src$='assets/folder.svg']>g>path:nth-of-type(2){
-    transform: scale(0.9, 2.1) translate(0px, 130px);
-    transform-origin: bottom center;
+    transform: scale(0.9, 2.1);
+    transform-origin: center 60px;
 }
 .folder > :is(.sidebar-list-item-row-item, .row-chapter) svg[src$='assets/folder.svg']>g>path:nth-of-type(odd){ 
     filter: drop-shadow(0px -1px 0px #0000009c);
 }
 
 .folder:not(.collapsed) > :is(.sidebar-list-item-row-item, .row-chapter) svg[src$='assets/folder.svg']>g>path:nth-of-type(3){
-    transform: scale(1, 0.6) translate(0px, -25px);
-    transform-origin: bottom center;
+    transform: scale(1, 0.6);
+    transform-origin: center bottom;
     filter: drop-shadow(0px -11px 5px #0000009c);
 }
 
