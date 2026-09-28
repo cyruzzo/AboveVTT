@@ -118,6 +118,10 @@ canvas.dice-rolling-panel__container,
   top: -5px;
   font-variation-settings: 'FILL' 1;
   text-shadow: 0px 0px 1px #000, 0px 0px 1px #000, 0px 0px 1px #000, 0px 0px 1px #000;
+  pointer-events:none;
+}
+#scenes-panel .favorite:has(#note):after {
+  top: 13px;
 }
 #scenes-panel *{
     user-select: none;
