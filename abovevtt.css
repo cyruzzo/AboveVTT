@@ -3474,7 +3474,8 @@ button.roll-button-mod.adv {
     position: relative;
 }
 .moveableWindow.resize_drag_window:has(>.note){
-    overflow:clip;
+    overflow: clip;
+    overflow-clip-margin: 4px;
 }
 .body-rpgcharacter-sheet .moveableWindow .note > .note-text {
     height: calc(100% - 25px);
@@ -7801,15 +7802,30 @@ div#tokenOptionsContainer .remove-from-ct>button{
     right: -7px;
     bottom: -10px;
 }
-.resize_drag_window .ui-resizable-e,
-.resize_drag_window .ui-resizable-w,
-#resizeDragMon .ui-resizable-e,
-#resizeDragMon .ui-resizable-w,
-#sheet .ui-resizable-e,
-#sheet .ui-resizable-w   {
-    height: calc(100% + 4px);  
+:is(.resize_drag_window, #resizeDragMon, #sheet) .ui-resizable-e,
+:is(.resize_drag_window, #resizeDragMon, #sheet) .ui-resizable-w   {
+    height: calc(100% + 4px) !important;  
+    width: 4px !important;
+    top:-2px;
 }
-
+:is(.resize_drag_window, #resizeDragMon, #sheet) .ui-resizable-n,
+:is(.resize_drag_window, #resizeDragMon, #sheet) .ui-resizable-s {
+    width: calc(100% + 4px) !important;  
+    height: 4px !important;
+    left: -2px;
+}
+:is(.resize_drag_window, #resizeDragMon, #sheet) .ui-resizable-e{
+    right:-4px;
+}
+:is(.resize_drag_window, #resizeDragMon, #sheet) .ui-resizable-w {
+    left:-4px;
+}
+:is(.resize_drag_window, #resizeDragMon, #sheet) .ui-resizable-n{
+    top:-4px;
+}
+:is(.resize_drag_window, #resizeDragMon, #sheet) .ui-resizable-s{
+    bottom:-4px;
+}
 /*Resizable Handle Test code */
 /*[class*="ui-resizable"]{
     border:  1px dotted #ddd;
@@ -14023,8 +14039,8 @@ p.monster-header+p {
 }
 #resizeDragMon,
 .moveableWindow:has(.dnd-sheet){
-    contain: strict;
-
+    contain: layout;
+    
     .avtt-token-roll-settings {
         display: inline-block;
         position: relative;
@@ -14557,7 +14573,6 @@ ul.avttBuffItems select,
   position: relative !important;
   top: auto !important;
   left: 0 !important;
-  width: auto !important;
 }
 
 .moveableWindow:has(.note .dnd-sheet) .avtt-note-roll-controls .dropdown-check-list .clickHandle,
@@ -14571,7 +14586,6 @@ ul.avttBuffItems select,
 .moveableWindow:has(.note .dnd-sheet) .avtt-note-roll-controls .dropdown-check-list ul.avttBuffItems,
 .note .avtt-note-roll-controls .dropdown-check-list ul.avttBuffItems {
   box-sizing: border-box !important;
-  margin: 0 !important;
   padding: 2px !important;
   padding-inline-start: 2px !important;
   color: var(--theme-contrast, #242528) !important;

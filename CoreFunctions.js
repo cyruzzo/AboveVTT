@@ -4950,8 +4950,14 @@ function register_buff_row_context_menu() {
 window.avttBuffDropdowns = window.avttBuffDropdowns || [];
 
 function rebuild_all_buff_dropdowns(){
-  window.avttBuffDropdowns = window.avttBuffDropdowns.filter(entry => entry.element.closest("html").length > 0);
-  window.avttBuffDropdowns.forEach(entry => build_buff_dropdown(entry.scope, false));
+  const openPopouts = Object.values(window.childWindows || {}).filter(popout => popout && !popout.closed);
+  window.avttBuffDropdowns = window.avttBuffDropdowns.filter(entry => {
+    const copies = new Set(openPopouts.flatMap(popout => [...popout.document.querySelectorAll(`[id="${entry.id}"]`)]));
+    if(entry.element.closest("html").length > 0)
+      copies.add(entry.element[0]);
+    copies.forEach(element => build_buff_dropdown(entry.scope, false, $(element)));
+    return copies.size > 0;
+  });
 }
 
 const TOKEN_ROLL_SETTING_DEFAULTS = Object.freeze({
@@ -5089,6 +5095,7 @@ function buff_dropdown_element_id(scope){
 /** Storage and condition plumbing, which differs between character, token, and note stat blocks. */
 function buff_scope_accessor(scope){
   const elementId = buff_dropdown_element_id(scope);
+  const listKey = listType => listType === 'favorite' ? 'rollbufffavorites' : 'rollbuffpins';
   if(scope?.type === 'token'){
     const tokenId = scope.tokenId;
     return {
@@ -5106,27 +5113,14 @@ function buff_scope_accessor(scope){
         token.options.rollbuffs = buffs;
         token.place_sync_persist();
       },
-      setPins: function(pins){
+      getList: function(listType){
+        return [...(get_token_by_id(tokenId)?.options?.[listKey(listType)] || [])];
+      },
+      setList: function(listType, list){
         const token = get_token_by_id(tokenId);
         if(token == undefined) return;
-        token.options.rollbuffpins = pins;
+        token.options[listKey(listType)] = list;
         token.place_sync_persist();
-      },
-      setFavorites: function(favorites){
-        const token = window.TOKEN_OBJECTS?.[tokenId];
-        if(token == undefined) return;
-        token.options.rollbufffavorites = favorites;
-        token.place_sync_persist();
-      },
-      getPins: function(){
-        const token = get_token_by_id(tokenId);
-        if(token == undefined) return [];
-        return token.options.rollbuffpins || [];
-      },
-      getFavorites: function(){
-        const token = get_token_by_id(tokenId);
-        if(token == undefined) return [];
-        return token.options.rollbufffavorites || [];
       },
       setCondition: function(condition, value){
         const token = get_token_by_id(tokenId);
@@ -5153,26 +5147,22 @@ function buff_scope_accessor(scope){
         note.rollbuffs = buffs;
         saveNote();
       },
-      setPins: function(pins){
+      getList: function(listType){ return [...(getNote()?.[listKey(listType)] || [])]; },
+      setList: function(listType, list){
         const note = getNote();
         if(!note) return;
-        note.rollbuffpins = pins;
+        note[listKey(listType)] = list;
         saveNote();
       },
-      setFavorites: function(favorites){
-        const note = getNote();
-        if(!note) return;
-        note.rollbufffavorites = favorites;
-        saveNote();
-      },
-      getPins: function(){ return getNote()?.rollbuffpins || []; },
-      getFavorites: function(){ return getNote()?.rollbufffavorites || []; },
       setCondition: function(){}
     };
   }
+  const storageKey = listType => (listType === 'favorite' ? 'rollFavoriteBuffs' : 'rollBuffPins') + window.PLAYER_ID;
   return {
     elementId,
     canEdit: function(){ return true; },
+    getList: function(listType){ return JSON.parse(localStorage.getItem(storageKey(listType))) || []; },
+    setList: function(listType, list){ localStorage.setItem(storageKey(listType), JSON.stringify(list)); },
     read: function(){
       return JSON.parse(localStorage.getItem('rollBuffs' + window.PLAYER_ID)) || [];
     },
@@ -5215,7 +5205,7 @@ function rebuild_buffs(fullBuild = false){
 }
 
 /** @param scope {{type: 'character'}|{type: 'token', tokenId: string}|{type: 'note', noteId: string}} whose buffs this dropdown edits */
-function build_buff_dropdown(scope = { type: 'character' }, fullBuild = false){
+function build_buff_dropdown(scope = { type: 'character' }, fullBuild = false, targetElement = undefined){
   const accessor = buff_scope_accessor(scope);
   const isCharacterScope = scope?.type === 'character' || scope == undefined;
   const elementId = accessor.elementId;
@@ -5234,14 +5224,10 @@ function build_buff_dropdown(scope = { type: 'character' }, fullBuild = false){
     
   }
     
-  if(isCharacterScope){
+  if(isCharacterScope)
     window.rollBuffs = selectedBuffs;
-    rollBuffFavorites = JSON.parse(localStorage.getItem('rollFavoriteBuffs' + window.PLAYER_ID)) || [];
-    rollBuffPins = JSON.parse(localStorage.getItem('rollBuffPins' + window.PLAYER_ID)) || [];
-  }else{
-    rollBuffFavorites = accessor.getFavorites();
-    rollBuffPins = accessor.getPins();
-  }
+  rollBuffFavorites = accessor.getList('favorite');
+  rollBuffPins = accessor.getList('pin');
   
   let avttBuffSelect;
   const innerBuffHtml = `
@@ -5277,10 +5263,10 @@ function build_buff_dropdown(scope = { type: 'character' }, fullBuild = false){
   }
   else{
     // the registry keeps a handle on dropdowns living in popout documents, which $('#id') can't reach
-    avttBuffSelect = registeredDropdown?.element?.closest('html').length > 0 ? registeredDropdown.element : $(`#${elementId}`);
+    avttBuffSelect = targetElement ?? (registeredDropdown?.element?.closest('html').length > 0 ? registeredDropdown.element : $(`#${elementId}`));
     if(avttBuffSelect.length === 0) return undefined;
     avttBuffSelect.toggleClass('readonly', !editable);
-    avttBuffSelect.find('.avttBuffItems').html(innerBuffHtml)
+    avttBuffSelect[0].querySelector('.avttBuffItems').innerHTML = innerBuffHtml;
   }
   const toggleBuffMenuVisiblity = function(){
     avttBuffSelect.toggleClass('visible')
@@ -5296,10 +5282,21 @@ function build_buff_dropdown(scope = { type: 'character' }, fullBuild = false){
       }, 250)
     }
   }
-  const avttBuffItems = avttBuffSelect.find('.avttBuffItems')
+
+  const avttBuffItems = $(avttBuffSelect[0].querySelector('.avttBuffItems'));
+  const findInItems = selector => $(avttBuffItems[0].querySelectorAll(selector));
   avttBuffSelect.off('click.clickHandle').on('click.clickHandle', '.clickHandle', function(){
     toggleBuffMenuVisiblity();
   })
+
+  
+ 
+  const toggleListEntry = function(listType, buffName){
+    const list = accessor.getList(listType);
+    accessor.setList(listType, list.includes(buffName) ? list.filter(d => d != buffName) : [...list, buffName]);
+    rebuild_all_buff_dropdowns();
+  }
+
   avttBuffSelect.off('click.headers').on('click.headers', 'ul>ul', function(e){
     e.stopPropagation();
     if($(e.target).is('li:first-of-type'))
@@ -5323,12 +5320,13 @@ function build_buff_dropdown(scope = { type: 'character' }, fullBuild = false){
     }, 
     {}
   );
+  const ownerDocument = avttBuffSelect[0].ownerDocument;
   const pinWrapper = $(`<div id='${idPrefix}avttBuffSheetPins' class='avttBuffSheetPins'></div>`);
-  avttBuffSelect.find(`#${idPrefix}avttBuffSheetPins`).remove()
+  $(ownerDocument.querySelectorAll(`[id="${idPrefix}avttBuffSheetPins"]`)).remove()
  
   for(let i in sortedBuffs){
     const groupName = buffsDebuffs[i].type == 'class' ? buffsDebuffs[i].class : buffsDebuffs[i].type == 'species' ? buffsDebuffs[i].species : buffsDebuffs[i].type;
-    const headerRow = avttBuffItems.find(`ul[data-group='${groupName}']`);
+    const headerRow = findInItems(`ul[data-group='${groupName}']`);
     const replacedName = i.replace("'", '');
     const addToFavorite = rollBuffFavorites.includes(replacedName);
     const addToPins = rollBuffPins.includes(replacedName);
@@ -5369,35 +5367,15 @@ function build_buff_dropdown(scope = { type: 'character' }, fullBuild = false){
       row.find('span.favorite').off('click.favorite').on('click.favorite', function(e){
         e.preventDefault();
         e.stopPropagation();
-        if(rollBuffFavorites.includes(replacedName)){
-          rollBuffFavorites = rollBuffFavorites.filter(d=> d != replacedName)
-        }
-        else{
-          rollBuffFavorites.push(replacedName)
-        }
-        if(!isCharacterScope)
-           accessor.setFavorites(rollBuffFavorites);
-        else
-          localStorage.setItem('rollFavoriteBuffs' + window.PLAYER_ID, JSON.stringify(rollBuffFavorites));
-        rebuild_all_buff_dropdowns();
+        toggleListEntry('favorite', replacedName);
       })
       row.find('span.pinToSheet').off('click.pinToSheet').on('click.pinToSheet', function(e){
         e.preventDefault();
         e.stopPropagation();
-        if(rollBuffPins.includes(replacedName)){
-          rollBuffPins = rollBuffPins.filter(d=> d != replacedName)
-        }
-        else{
-          rollBuffPins.push(replacedName)
-        }
-        if(!isCharacterScope)
-          accessor.setPins(rollBuffPins);
-        else
-          localStorage.setItem('rollBuffPins' + window.PLAYER_ID, JSON.stringify(rollBuffPins));
-        rebuild_all_buff_dropdowns();
+        toggleListEntry('pin', replacedName);
       })
       if(addToFavorite)
-        avttBuffItems.find(`ul[data-group='favorite']`).append(row);  
+        findInItems(`ul[data-group='favorite']`).append(row);  
       else    
         headerRow.append(row);
 
@@ -5442,37 +5420,15 @@ function build_buff_dropdown(scope = { type: 'character' }, fullBuild = false){
       row.find('span.favorite').off('click.favorite').on('click.favorite', function(e){
         e.preventDefault();
         e.stopPropagation();
-        if(rollBuffFavorites.includes(replacedName)){
-          rollBuffFavorites = rollBuffFavorites.filter(d=> d != replacedName)
-        }
-        else{
-          rollBuffFavorites.push(replacedName)
-        }
-        if(!isCharacterScope)
-          accessor.setFavorites(rollBuffFavorites);
-        else
-          localStorage.setItem('rollFavoriteBuffs' + window.PLAYER_ID, JSON.stringify(rollBuffFavorites));
-        rebuild_all_buff_dropdowns();
+        toggleListEntry('favorite', replacedName);
       })
       row.find('span.pinToSheet').off('click.pinToSheet').on('click.pinToSheet', function(e){
         e.preventDefault();
         e.stopPropagation();
-        if(rollBuffPins.includes(replacedName)){
-          rollBuffPins = rollBuffPins.filter(d=> d != replacedName)
-        }
-        else{
-          rollBuffPins.push(replacedName)
-        }
-        if(!isCharacterScope){
-          accessor.setPins(rollBuffPins);
-        } else{
-          localStorage.setItem('rollBuffPins' + window.PLAYER_ID, JSON.stringify(rollBuffPins));
-        }
-        
-        rebuild_all_buff_dropdowns();
+        toggleListEntry('pin', replacedName);
       })
       if(addToFavorite)
-        avttBuffItems.find(`ul[data-group='favorite']`).append(row);
+        findInItems(`ul[data-group='favorite']`).append(row);
       else   
         headerRow.append(row);
 
@@ -5491,8 +5447,8 @@ function build_buff_dropdown(scope = { type: 'character' }, fullBuild = false){
     }
 
   }
-  avttBuffItems.find(`ul>ul`).each(function(){
-    if($(this).find('li').length < 2)
+  findInItems(':scope ul > ul').each(function(){
+    if(this.querySelectorAll('li').length < 2)
       $(this).hide();
   })
 
@@ -5503,11 +5459,14 @@ function build_buff_dropdown(scope = { type: 'character' }, fullBuild = false){
     window.avttBuffDropdowns.push({ id: elementId, scope, element: avttBuffSelect });
   }
 
+  const notePinContainer = targetElement && targetElement[0] !== registeredDropdown?.element?.[0]
+    ? $(targetElement[0].closest('.resize_drag_window, body')?.querySelector('.avtt-note-roll-buff-pins') ?? [])
+    : registeredDropdown?.pinContainer;
   if(isCharacterScope){
-    const tabContent = $(`#${elementId}~[class*='styles_tabFilter']>[class*='styles_content'], #${elementId}~.ct-tablet-box__content [class*='styles_tabFilter']>[class*='styles_content']`);
+    const tabContent = $(ownerDocument.querySelectorAll(`[id="${elementId}"]~[class*='styles_tabFilter']>[class*='styles_content'], [id="${elementId}"]~.ct-tablet-box__content [class*='styles_tabFilter']>[class*='styles_content']`));
     tabContent.prepend(pinWrapper);
-  } else if(scope?.type === 'note' && registeredDropdown?.pinContainer?.closest('html').length > 0) {
-    registeredDropdown.pinContainer.empty().append(pinWrapper);
+  } else if(scope?.type === 'note' && notePinContainer?.closest('html').length > 0) {
+    notePinContainer.empty().append(pinWrapper);
   } else {
     avttBuffSelect.append(pinWrapper);
   }
