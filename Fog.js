@@ -1064,7 +1064,7 @@ function check_single_token_visibility(id){
 
 	
 	let inTruesight = false;
-	if(window.TOKEN_OBJECTS[id].conditions.includes('Invisible') && $(`.aura-element-container-clip.truesight`).length>0 ){
+	if(window.TOKEN_OBJECTS[id].options.hidden !== true && window.TOKEN_OBJECTS[id].conditions.includes('Invisible') && $(`.aura-element-container-clip.truesight`).length>0 ){
 		const truesightContext = window.truesightCanvas.getContext('2d');
 		const truesightData = truesightContext.getImageData(0, 0, window.truesightCanvas.width, window.truesightCanvas.height);
 		inTruesight = is_token_under_truesight_aura(id, truesightData);
@@ -1298,7 +1298,7 @@ function do_check_token_visibility() {
 
 
 		let inTruesight = false;
-		if(window.TOKEN_OBJECTS[id].conditions.includes('Invisible') && truesightAuraExists){
+		if(window.TOKEN_OBJECTS[id].options.hidden !== true && window.TOKEN_OBJECTS[id].conditions.includes('Invisible') && truesightAuraExists){
 			inTruesight = is_token_under_truesight_aura(id, truesightData);
 		}
 
