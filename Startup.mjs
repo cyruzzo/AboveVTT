@@ -85,14 +85,25 @@ $(function() {
         startup_step("Fetching PCs")
         await rebuild_window_pcs();
         startup_step("Fetching Party Inventory/Items/Spells")
+        let inventoryTimeout;
         try{
-          await Promise.all([
-            DDBApi.debounceGetPartyInventory(),
-            DDBApi.fetchSpellsJsonWithToken(),
-            DDBApi.fetchItemsJsonWithToken()
+          await Promise.race([
+            Promise.all([
+              DDBApi.debounceGetPartyInventory(),
+              DDBApi.fetchSpellsJsonWithToken(),
+              DDBApi.fetchItemsJsonWithToken()
+            ]),
+            new Promise((resolve) => {
+              inventoryTimeout = setTimeout(() => {
+                showError(new Error("Timed out fetching party inventory/items/spells after 30 seconds"));
+                resolve();
+              }, 60000);
+            })
           ]);
         } catch (error) {
           console.warn(`Failed to fetch party inventory/items/spells`, error)
+        } finally {
+          clearTimeout(inventoryTimeout);
         }
         const isDmPage = is_encounters_page();
         const isSpectator = is_spectator_page();
