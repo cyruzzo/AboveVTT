@@ -119,6 +119,9 @@ canvas.dice-rolling-panel__container,
   font-variation-settings: 'FILL' 1;
   text-shadow: 0px 0px 1px #000, 0px 0px 1px #000, 0px 0px 1px #000, 0px 0px 1px #000;
 }
+#scenes-panel *{
+    user-select: none;
+}
 #hidden-scenes-message,
 .abovevttTempMessage{
     display:block;
