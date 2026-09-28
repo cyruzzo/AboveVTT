@@ -2559,6 +2559,59 @@ class JournalManager{
 		const href = `https://www.dndbeyond.com/${path}/${itemId}`;
 		return `<a class="tooltip-hover no-border ignore-abovevtt-formating ${item.type == 'Spell' ? 'spell' : rawItem.magic  ? 'magic-item' : 'item'}-tooltip" href="${href}">${text}</a>`;
 	}
+	populateDndSheetSuggestionDetails(cell, suggestion){
+		const rawItem = suggestion.raw || suggestion;
+		const row = $(cell).closest('tr');
+		if(row.length === 0)
+			return;
+
+		const isSpell = suggestion.type == 'Spell';
+		const isEquipment = $(cell).closest('.equipment-block').length > 0;
+		const isAttack = $(cell).closest('.attacks-field').length > 0;
+		const isEmpty = targetCell => targetCell.text().replace(/[\u200B-\u200D\uFEFF]/g, '').trim() == '';
+		if(isEquipment && !isSpell){
+			const weightCell = $(cell).next('td');
+			const quantityCell = weightCell.next('td');
+			const costCell = quantityCell.next('td');
+			const noteCell = costCell.next('td');
+			if(isEmpty(weightCell) && rawItem.weight != undefined)
+				weightCell.text(`${rawItem.weight} lb`);
+			if(isEmpty(quantityCell) && rawItem.bundleSize != undefined)
+				quantityCell.text(`${rawItem.bundleSize}`);
+			if(isEmpty(costCell) && rawItem.cost != undefined)
+				costCell.text(`${rawItem.cost}`);
+			this.populateDndSheetItemNotes(noteCell, rawItem);
+		} else if(isAttack){
+			this.populateDndSheetItemNotes(row.find('td:last-of-type'), rawItem, isSpell);
+		}
+	}
+	populateDndSheetItemNotes(noteCell, rawItem, isSpell = false){
+		const noteText = noteCell.text().replace(/[\u200B-\u200D\uFEFF]/g, '').trim();
+		if(noteCell.length === 0 || noteText != '')
+			return;
+		const rawProperties = rawItem.properties ?? rawItem.weaponProperties ?? rawItem.definition?.properties;
+		if(!isSpell && rawProperties != undefined){
+			const properties = Array.isArray(rawProperties) ? rawProperties : `${rawProperties}`.split(',').map(name => ({name: name.trim()}));
+			const propertyNames = properties.map(property => {
+				const propertyName = typeof property === 'string' ? property : property.name ?? property.definition?.name;
+				if(!propertyName)
+					return '';
+				const propertyUrl = propertyName.replace(/\s/g, '-');
+				const propertyLink = `<a class="tooltip-hover wprop-tooltip" href="https://www.dndbeyond.com/weapon-properties/${propertyUrl}" aria-haspopup="true" target="_blank">${propertyName}</a>`;
+				return `${propertyLink}${propertyName.toLowerCase() == 'thrown' || propertyName.toLowerCase() == 'range' ? ` (${rawItem.range}${rawItem.longRange ? `/${rawItem.longRange}` : ''})` : ''}`;
+			}).filter(Boolean).join(', ');
+			if(propertyNames)
+				noteCell.html(propertyNames);
+		} else if(isSpell && (rawItem.range ?? rawItem.rangeDescription) != undefined){
+			const range = rawItem.range ?? rawItem.rangeDescription;
+			if(typeof range === 'string'){
+				noteCell.text(`Range ${range}`);
+				return;
+			}
+			const aoeText = range.aoeValue && range.aoeType ? `${range.aoeValue}-foot${range.aoeType == 'Sphere' ? '-radius' : ''} ${range.aoeType}` : '';
+			noteCell.text(`Range ${range.rangeValue > 0 ? `${range.rangeValue} ft.` : `${range.origin}`}${aoeText != '' ? `, ${aoeText}` : ''}`);
+		}
+	}
 	removeDndSheetCellSuggestions(ownerDocument = document){
 		$('.dnd-sheet-cell-suggestions', ownerDocument).remove();
 	}
@@ -2863,6 +2916,7 @@ class JournalManager{
 				} else{
 					target.html(this.buildTooltipLinkHtml(suggestion));
 				} 
+				this.populateDndSheetSuggestionDetails(cell, suggestion);
 				this.removeDndSheetCellSuggestions(hostDocument);
 				onSelect?.();
 				cell.focus();
@@ -4562,34 +4616,13 @@ class JournalManager{
 					
 					const itemId = `${item[0].id}-${text.replace(/[\s\/\\]/g, '-')}`;
 					const isMagic = item[0].magic;
-					const {cost, weight, bundleSize, properties, range, longRange, filterType } = item[0];
+					const {filterType } = item[0];
 					
 					const dataTooltipHref = `www.dndbeyond.com/${isMagic ? 'magic-items' : filterType.toLowerCase() == 'armor' ? 'armor' : filterType.toLowerCase() == 'weapon' ? 'weapons' : 'adventuring-gear'}/${itemId}-tooltip?disable-webm=1`;
 					const href = `/${isMagic ? 'magic-items' : 'equipment'}/${itemId}`;
 					const link = `<a class="tooltip-hover ${isMagic ? 'magic-item-tooltip' : 'item-tooltip adventuring-gear-tooltip'}" href="${href}" data-tooltip-href="${dataTooltipHref}">${text}</a>`;
 					cell.html(link);
-					const weightCell = cell.next('td');
-					const quantityCell = weightCell.next('td');
-					const costCell = quantityCell.next('td');
-					const noteCell = costCell.next('td');
-					if(weightCell.text().trim() == '' && weight != undefined){
-						weightCell.text(`${weight} lb`);
-					}
-					if(quantityCell.text().trim() == '' && bundleSize != undefined){
-						quantityCell.text(`${bundleSize}`);
-					}
-					if(costCell.text().trim() == '' && cost != undefined){
-						costCell.text(`${cost}`);
-					}
-					if(noteCell.text().trim() == '' && properties != undefined){
-						const propertyNames = properties.map(p => {
-							if(ddbConfigJson.weaponProperties.filter(d => d.id == p.id).length > 0){
-								return `[wprop]${p.name}[/wprop]${p.name.toLowerCase() == 'thrown' || p.name.toLowerCase() == 'range' ? ` (${range}${longRange ? `/${longRange}` : ''})` : ''}`;
-							}
-							return p.name; s
-						}).join(', ');
-						noteCell.text(`${propertyNames}`);
-					}
+					this.populateDndSheetSuggestionDetails(cell, {type: isMagic ? 'Magic Item' : filterType || 'Item', raw: item[0]});
 						
 
 					
@@ -4598,7 +4631,7 @@ class JournalManager{
 			}
 			
 			const attacksBlock = target.find('.dnd-sheet .attacks-field');
-			if(attacksBlock.length > 0 && window.SPELLS_CACHE != undefined){
+			if(attacksBlock.length > 0){
 				const firstCells = attacksBlock.find('table tbody tr td:is(:first-child:not(.table-row-drag-handle), .table-row-drag-handle+td)');
 				for(let i=0; i<firstCells.length; i++){
 
@@ -4614,9 +4647,9 @@ class JournalManager{
 						item = window.ITEMS_CACHE.filter(d => d.name.toLowerCase() == text.toLowerCase())
 					}
 					if(!item.length){
-						item = window.SPELLS_CACHE.filter(d => d.definition.name.toLowerCase() == text.toLowerCase() && (isLegacy || d.definition.isLegacy == isLegacy))
+						item = window.SPELLS_CACHE?.filter(d => d.definition.name.toLowerCase() == text.toLowerCase() && (isLegacy || d.definition.isLegacy == isLegacy)) || []
 						if(!item.length){
-							item = window.SPELLS_CACHE.filter(d => d.definition.name.toLowerCase() == text.toLowerCase())
+							item = window.SPELLS_CACHE?.filter(d => d.definition.name.toLowerCase() == text.toLowerCase()) || []
 						}
 						if(!item.length){
 							noisy_log(3, `item/spell not found`, text);
@@ -4626,31 +4659,15 @@ class JournalManager{
 					}
 					
 					const itemId = `${type == 'spell' ? item[0].definition.id : item[0].id}-${text.replace(/[\s\/\\]/g, '-')}`;
-					const isMagic = item[0].magic;
-					const { properties, range, longRange, filterType } = item[0];
+					const rawItem = type == 'spell' ? item[0].definition : item[0];
+					const isMagic = type != 'spell' && rawItem.magic;
+					const { filterType } = rawItem;
 					
-					const dataTooltipHref = `www.dndbeyond.com/${type == 'spell' ? 'spells' : isMagic ? 'magic-items' : filterType.toLowerCase() == 'armor' ? 'armor' : 'adventuring-gear'}/${itemId}-tooltip?disable-webm=1`;
+					const dataTooltipHref = `www.dndbeyond.com/${type == 'spell' ? 'spells' : isMagic ? 'magic-items' : filterType?.toLowerCase() == 'armor' ? 'armor' : filterType?.toLowerCase() == 'weapon' ? 'weapons' : 'adventuring-gear'}/${itemId}-tooltip?disable-webm=1`;
 					const href = `/${type == 'spell' ? 'spells' : isMagic ? 'magic-items' : 'equipment'}/${itemId}`;
 					const link = `<a class="tooltip-hover ${type == 'spell' ? 'spell-tooltip' : isMagic ? 'magic-item-tooltip' : 'item-tooltip adventuring-gear-tooltip'}" href="${href}" data-tooltip-href="${dataTooltipHref}">${text}</a>`;
 					cell.html(link);
-					const noteCell = cell.siblings('td:last-of-type');
-					if(noteCell.text().trim() == '' && properties != undefined){
-						let propertyNames = properties.map(p => {
-							if(ddbConfigJson.weaponProperties.filter(d => d.id == p.id).length > 0){
-								return `[wprop]${p.name}[/wprop]${p.name.toLowerCase() == 'thrown' || p.name.toLowerCase() == 'range' ? ` (${range}${longRange ? `/${longRange}` : ''})` : ''}`;
-							}
-							return p.name; 
-						}).join(', ');
-						
-						noteCell.text(`${propertyNames}`);
-					} else if(type == 'spell' && range != undefined && noteCell.text().trim() == ''){
-						const aoeValue = range.aoeValue;
-						const aoeType = range.aoeType;
-						const aoeText = aoeValue && aoeType ? `${aoeValue}-foot${aoeType == 'Sphere' ? '-radius' : ''} ${aoeType}` : '';
-							
-						noteCell.text(`Range ${range.rangeValue > 0 ? `${range.rangeValue} ft.` : `${range.origin}`}${aoeText != '' ? `, ${aoeText}` : ''}`);
-						
-					}
+					this.populateDndSheetSuggestionDetails(cell, {type: type == 'spell' ? 'Spell' : isMagic ? 'Magic Item' : filterType || 'Item', raw: rawItem});
 				}
 			}
 		}
