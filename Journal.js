@@ -979,7 +979,13 @@ class JournalManager{
 						self.build_journal(searchText);
 					}
 				});
-				let folderIcon = $(`<div class="sidebar-list-item-row-img"><img src="${window.EXTENSION_PATH}assets/folder.svg" class="token-image"></div>`)
+				let folderIcon = $(`<div class="sidebar-list-item-row-img"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" x="0px" y="0px" viewBox="0 0 309.267 309.267" style="enable-background:new 0 0 309.267 309.267;" src="${window.EXTENSION_PATH}assets/folder.svg" xml:space="preserve">
+						<g>
+						<path style="fill:#F4B459;" d="M260.944,43.491H125.64c0,0-18.324-28.994-28.994-28.994H48.323c-10.67,0-19.329,8.65-19.329,19.329   v222.286c0,10.67,8.659,19.329,19.329,19.329h212.621c10.67,0,19.329-8.659,19.329-19.329V62.82   C280.273,52.15,271.614,43.491,260.944,43.491z"/>
+						<path style="fill:#E4E7E7;" d="M28.994,72.484h251.279v77.317H28.994V72.484z"/>
+						<path style="fill:#F4B459;" d="M19.329,91.814h270.609c10.67,0,19.329,8.65,19.329,19.329l-19.329,164.298   c0,10.67-8.659,19.329-19.329,19.329H38.658c-10.67,0-19.329-8.659-19.329-19.329L0,111.143C0,100.463,8.659,91.814,19.329,91.814z   "/>
+						</g>
+					</svg></div>`)
 					
 				let row_chapter_title=$("<div class='row-chapter'></div>");
 				
