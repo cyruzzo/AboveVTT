@@ -2124,6 +2124,11 @@ function build_sidebar_list_row(listItem) {
     rowItem.append(settingsButton);
     settingsButton.on("click", did_click_row_gear);
   }
+ if(listItem.isTypeScene){
+  const scene = window.ScenesHandler.scenes.find(s => s.id === listItem.id);
+  if(scene?.favorite == 1)
+    row.addClass('favorite');
+ }
 
   return row;
 }

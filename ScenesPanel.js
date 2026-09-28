@@ -1940,6 +1940,18 @@ function init_scenes_panel() {
 
 	scenesPanel.updateHeader("Scenes");
 	add_expand_collapse_buttons_to_header(scenesPanel);
+	let favoriteButton = $(`<button class="token-row-button favorites-button ${window.FAVORITE_SCENE_FILTER == 1 ? 'active' : ''}" title="Display Favorites"><span class="material-icons"><span class="material-symbols-outlined">star</span></span></button>`);
+	favoriteButton.on("click", function (clickEvent) {
+		favoriteButton.toggleClass("active");
+		if (favoriteButton.hasClass("active")) {
+			window.FAVORITE_SCENE_FILTER = 1;
+		} else {
+			window.FAVORITE_SCENE_FILTER = 0;
+		}
+		scenesPanel.body.find(".sidebar-list-item-row:not(.favorite):not(:has(.favorite))").css("display", window.FAVORITE_SCENE_FILTER == 1 ? "none" : "");
+		scenesPanel.body.find(".sidebar-list-item-row.favorite.folder .sidebar-list-item-row").css("display", "");
+	});
+	scenesPanel.header.find('.expand-collapse-wrapper').prepend(favoriteButton);
 	let hideMapFromPlayers = $(`<button class="token-row-button hide-button ${window.AVTT_CAMPAIGN_INFO?.hidePlayersScene == 1 ? 'active' : ''}" title="Hide Scene from Players"><span class="material-icons"><span class="material-symbols-outlined">group_off</span></span></button>`);
 	hideMapFromPlayers.on("click", function (clickEvent) {
 		const data = { ...window.AVTT_CAMPAIGN_INFO };
@@ -2325,6 +2337,10 @@ async function redraw_scene_list(searchTerm) {
 	}
 	if($('.scenes-panel-add-buttons-wrapper button.reorder-button.active').length>0)
        enable_draggable_change_folder(ItemType.Scene)
+
+	scenesPanel.body.find(".sidebar-list-item-row:not(.favorite):not(:has(.favorite))").css("display", window.FAVORITE_SCENE_FILTER == 1 ? "none" : "");
+	scenesPanel.body.find(".sidebar-list-item-row.favorite.folder > .sidebar-list-item-row").css("display", "");
+	
 }
 
 async function create_scene_inside(parentId, fullPath = RootFolder.Scenes.path, sceneName = "New Scene", mapUrl = "", sceneArray = undefined) {
@@ -2718,7 +2734,17 @@ function rename_scene_folder(item, newName, alertUser) {
 	// return undefined;
 	return folder_path_of_scene(window.ScenesHandler.scenes[folderIndex]);
 }
-
+function favorite_scene(item, value) {
+	noisy_log(`favorite_scene`, item);
+	const sceneIndex = window.ScenesHandler.scenes.findIndex(s => s.id === item.id);
+	if (sceneIndex < 0) {
+		const warningMessage = `Could not find a scene with id: ${item.id}`
+		console.warn('favorite_scene', warningMessage, item);
+		return;
+	}
+	window.ScenesHandler.scenes[sceneIndex].favorite = value ?? !window.ScenesHandler.scenes[sceneIndex].favorite;
+	window.ScenesHandler.persist_scene(sceneIndex);
+}
 function register_scene_row_context_menu() {
 	$.contextMenu({
 		selector: "#scenes-panel .sidebar-list-item-row",
@@ -2749,6 +2775,30 @@ function register_scene_row_context_menu() {
 					}
 				};
 			}
+			
+			const scene = window.ScenesHandler.scenes.find(s => s.id === rowItem.id);
+			menuItems["favorite"] = {
+				name: scene?.favorite == 1 ? "Unfavorite" : "Favorite",
+				callback: async function(itemKey, opt, originalEvent) {
+					const selectedItems = $('#scenes-panel .selected');
+					if (!selectedItems.length) {
+						build_import_loading_indicator('Updating Scene');
+						let itemToEdit = find_sidebar_list_item(opt.$trigger);
+						favorite_scene(itemToEdit);
+					} else {
+						build_import_loading_indicator('Updating Scenes');
+						let favorite = scene?.favorite == 1 ? 0 : 1;
+						for (let i = 0; i < selectedItems.length; i++) {
+							let selectedRow = $(selectedItems[i]);
+							let selectedItem = find_sidebar_list_item(selectedRow);
+							favorite_scene(selectedItem, favorite);
+						}
+					}
+					did_update_scenes();
+					$(".import-loading-indicator").remove();
+				}
+			}
+			
 			if (rowItem.isTypeScene()){
 				menuItems["duplicate"] = {
 					name: "Duplicate",
@@ -2836,6 +2886,8 @@ function register_scene_row_context_menu() {
 						}
 					}
 				};
+				
+
 				if (!selectedClicked && window.JOURNAL.notes[rowItem.id]) {
 					menuItems["openSceneNote"] = {
 						name: "Open Scene Note",

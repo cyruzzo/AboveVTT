@@ -104,9 +104,20 @@ canvas.dice-rolling-panel__container,
     z-index: 160000 !important;
     visibility: visible;
 }
-.hide-button.active{
+#scenes-panel :is(.hide-button, .favorites-button).active{
     color: #fff;
     background-color: #c53131;
+}
+#scenes-panel .favorite:after {
+  content: "\e838";
+  font-family: 'Material Symbols Outlined';
+  position: absolute;
+  left: -2px;
+  font-size: 16px;
+  color: #ffd900;
+  top: -5px;
+  font-variation-settings: 'FILL' 1;
+  text-shadow: 0px 0px 1px #000, 0px 0px 1px #000, 0px 0px 1px #000, 0px 0px 1px #000;
 }
 #hidden-scenes-message,
 .abovevttTempMessage{
