@@ -14573,7 +14573,6 @@ ul.avttBuffItems select,
   position: relative !important;
   top: auto !important;
   left: 0 !important;
-  width: auto !important;
 }
 
 .moveableWindow:has(.note .dnd-sheet) .avtt-note-roll-controls .dropdown-check-list .clickHandle,
@@ -14587,7 +14586,6 @@ ul.avttBuffItems select,
 .moveableWindow:has(.note .dnd-sheet) .avtt-note-roll-controls .dropdown-check-list ul.avttBuffItems,
 .note .avtt-note-roll-controls .dropdown-check-list ul.avttBuffItems {
   box-sizing: border-box !important;
-  margin: 0 !important;
   padding: 2px !important;
   padding-inline-start: 2px !important;
   color: var(--theme-contrast, #242528) !important;
