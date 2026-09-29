@@ -4,6 +4,7 @@ var DDB_WS_RETRIES = 0;
 var DDB_MAX_RETRIES = 10;
 var DDB_RETRY_TIMEOUT;
 
+
 function showDDBDisconnectWarning(){
     let container = $("#above-vtt-error-message");
     container.remove();
@@ -28,7 +29,7 @@ let ensureTimeout;
 let ensureDDBEventsPromise;
 const DDB_EVENTS_TIMEOUT = 60000;
 //This ensures our events get attached if the message broker loads before this does for some reason
-const hasAllEvents = () => ['message', 'close', 'error', 'open'].every(val => window.ddbMbEventsAttached.has(val));
+
 function ensureDDBMessageEvents() {
     if (ensureDDBEventsPromise) {
         return ensureDDBEventsPromise;
@@ -47,7 +48,7 @@ function ensureDDBMessageEvents() {
             DDB_WS_OBJ = window[key];
 
             if (DDB_WS_OBJ?.status == 'open') {
-                if (hasAllEvents()) {
+                if (window.ddbMbEventsAttached === true) {
                     finish({ status: 'ready' });
                     return;
                 }
@@ -59,7 +60,7 @@ function ensureDDBMessageEvents() {
                 }
 
                 ensureTimeout = setTimeout(() => {
-                    finish(hasAllEvents()
+                    finish(window.ddbMbEventsAttached === true
                         ? { status: 'ready' }
                         : { status: 'reconnecting', messageBroker: DDB_WS_OBJ });
                 }, Math.min(5000, remainingTime));
@@ -83,7 +84,7 @@ function ensureDDBMessageEvents() {
             console.log("DDB Message broker connected with all events", window.ddbMbEventsAttached);
         } else if (result.status == 'reconnecting') {
             console.warn("DDB Message broker missing event listeners. Connected Events:", window.ddbMbEventsAttached);
-            window.ddbMbEventsAttached = new Set();
+            window.ddbMbEventsAttached = false;
             result.messageBroker.reset();
             result.messageBroker.connect();
         } else {
@@ -123,10 +124,10 @@ function forceDdbWsReconnect() {
             DDB_WS_OBJ = window[key];
         }
 
-        console.assert(window.ensuringDDBEvents || hasAllEvents(), 'Not all DDB message broker events are attached.\n• MB Status:', DDB_WS_OBJ.status, "\n• Attached Events:", window.ddbMbEventsAttached);
+        console.assert(window.ensuringDDBEvents || window.ddbMbEventsAttached === true, 'Not all DDB message broker events are attached.\n• MB Status:', DDB_WS_OBJ.status);
         
         if ((DDB_WS_OBJ && DDB_WS_OBJ.status == 'disconnected')) {
-            window.ddbMbEventsAttached = new Set();
+            window.ddbMbEventsAttached = false;
             DDB_WS_OBJ.reset();
             DDB_WS_OBJ.connect();
             DDB_WS_FORCE_RECONNECT_LOCK = false;
@@ -183,34 +184,51 @@ function forceDdbWsReconnect() {
         window.ActiveWorkers[scriptURL] = worker;
         return worker;
     };
-    window.ddbMbEventsAttached ||= new Set();
+    window.ddbMbEventsAttached ||= false;
     //for listening to the game log websocket and intercepting messages for the DDB onmessage function
     const originalAddEventListener = WebSocket.prototype.addEventListener;
+    const ddbSocketStates = new WeakMap();
 
     WebSocket.prototype.addEventListener = function (type, listener, options) {
-        window.ddbMbEventsAttached ||= new Set();
+        window.ddbMbEventsAttached ||= false;
         const url = this.url || '';
         const isGameLog = url && url.toLowerCase().includes('game-log-api-live');
         if(isGameLog){
-            if (type === 'message') {
-                window.ddbMbEventsAttached.add(type);
-                const interceptor = (event) => {
-                    if (event.data && event.data !== 'pong') {
-                        try {
-                            if (window.diceRoller && typeof window.diceRoller.ddbonmessage === 'function') {
-                                window.diceRoller.ddbonmessage(event);
-                            }
-                        } catch (err) {
-                            console.error('Error in WS interceptor:', err);
-                        }
+            if(type == 'open' && !ddbSocketStates.has(this)){
+                window.ddbMbEventsAttached = true;
+
+                const previousSocket = window.currentDdbWs;
+                if (previousSocket && previousSocket !== this) {
+                    ddbSocketStates.get(previousSocket)?.cleanup();
+                }
+
+                window.currentDdbWs = this;
+                const socket = this;
+                
+                let disconnected = false;
+                let pingInterval;
+                let pongTimeout;
+
+                const cleanup = function() {
+                    socket.removeEventListener("close", closeHandler);
+                    socket.removeEventListener("error", errorHandler);
+                    socket.removeEventListener("message", messageHandler);
+                    clearInterval(pingInterval);
+                    clearTimeout(pongTimeout);
+                    ddbSocketStates.delete(socket);
+
+                    if (window.currentDdbWs === socket) {
+                        window.currentDdbWs = undefined;
+                        window.pingDdbMB = undefined;
                     }
                 };
 
-                originalAddEventListener.call(this, type, interceptor, options);
-            }
-            else if((type === 'close' || type === 'error')) {
-                window.ddbMbEventsAttached.add(type);
-                const interceptor = (event) => {
+                const closeHandler = function() {    
+                    if (disconnected) return;
+                    disconnected = true; 
+
+                    cleanup();
+
                     DDB_WS_FORCE_RECONNECT_LOCK = false;
                     if(DDB_RETRY_TIMEOUT != undefined){
                         clearTimeout(DDB_RETRY_TIMEOUT);
@@ -220,24 +238,61 @@ function forceDdbWsReconnect() {
   
                     DDB_WS_RETRIES++;
                     if(DDB_WS_RETRIES >= DDB_MAX_RETRIES && !get_avtt_setting_value('autoReconnect')){
-                        self.showDDBDisconnectWarning();
+                        showDDBDisconnectWarning();
                     }	
                     else{
                         DDB_RETRY_TIMEOUT = setTimeout(function() {
-                            forceDdbWsReconnect();
-                        }, Math.min(10000,2**DDB_WS_RETRIES*250));
+                                forceDdbWsReconnect();
+                            }, Math.min(10000, 2**DDB_WS_RETRIES*250+Math.random()*100)
+                        );
+                    }
+                };
+
+                const errorHandler = (event) => {
+                    console.warn("DDB WebSocket error", event);
+                };
+
+                const messageHandler = function(event) {
+                    if (event.data === "pong") {
+                        clearTimeout(pongTimeout);
+                        pongTimeout = undefined;
+                        return;
+                    }
+                    if (event.data) {
+                        try {   
+                            if (window.diceRoller && typeof window.diceRoller.ddbonmessage === 'function') {
+                                window.diceRoller.ddbonmessage(event);
+                            }
+                        } catch (err) {
+                            console.error('Error in WS interceptor:', err);
+                        }
                     }
                 };
                 
-                originalAddEventListener.call(this, type, interceptor, options);
-            } else if((type == 'open')){
-                window.ddbMbEventsAttached.add('open');
+                
+                socket.addEventListener('close', closeHandler);
+                socket.addEventListener('error', errorHandler);
+                socket.addEventListener('message', messageHandler);
+               
+                clearInterval(window.pingDdbMB);
+                pingInterval = setInterval(() => {
+                    if (socket.readyState === WebSocket.OPEN) {
+                        socket.send(JSON.stringify({ data: "ping" }));
+                        clearTimeout(pongTimeout);
+                        pongTimeout = setTimeout(() => {
+                            if (socket.readyState === WebSocket.OPEN) {
+                                socket.close();
+                            }
+                        }, document.visibilityState === "hidden" ? 60000 : 5000);
+                    } 
+                }, 240000);
+                window.pingDdbMB = pingInterval;
+                
+                ddbSocketStates.set(socket, { cleanup });
                 console.log('DDB websocket connected')
                 ensureDDBMessageEvents();
             }
         }
-        
-
         return originalAddEventListener.call(this, type, listener, options);
     };
 
