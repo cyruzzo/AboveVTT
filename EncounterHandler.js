@@ -100,7 +100,7 @@ async function fetch_monsters(monsterIds, callback, open5e=false) {
 	   			   let treasureLinks = treasure.find('a');
 	   			   treasureLinks.addClass('tooltip-hover');
 	   			   treasureLinks.attr('data-moreinfo', function(){
-	   			   	return this.href;
+	   			   	return this.href.replace(/[']/gi, "");
 	   			   })
 	   			   treasure = treasure.html();
 	   			   let gear = $(moreInfo)?.find('.mon-stat-block-2024__tidbit-label:contains("Gear")').siblings('.mon-stat-block-2024__tidbit-data').html();
