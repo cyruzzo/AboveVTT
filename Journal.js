@@ -4142,7 +4142,7 @@ class JournalManager{
 				window.JOURNAL.addTokenDragToMonsterLink(self);
 			}
 			if($self.attr('href')?.match(/\/spells\/[0-9]|\/magic-items\/[0-9]|\/monsters\/[0-9]|\/sources\//gi)){
-				$self.attr('data-moreinfo', `${$self.attr('href')}`);
+				$self.attr('data-moreinfo', `${$self.attr('href').replace(/[']/gi, "")}`);
 			}
 			if(!$self.hasClass('monster-tooltip')){
 				window.JOURNAL.getDataTooltip($self.attr('href'), function(url, typeClass, isRitual){
@@ -4156,7 +4156,7 @@ class JournalManager{
 						const newUrl = `${newHref.replace(/(\d+-)?([^/]*)(-tooltip)?(\?.*)?$/i, `${tooltipId}-$2`)}`;
 						$self.attr('href', newUrl);
 						if($self.attr('href')?.match(/\/spells\/[0-9]|\/magic-items\/[0-9]|\/monsters\/[0-9]|\/sources\//gi)){
-							$self.attr('data-moreinfo', `${newUrl}`);
+							$self.attr('data-moreinfo', `${newUrl.replace(/[']/gi, "")}`);
 						}
 					}
 					$self.attr('data-tooltip-href', url);
