@@ -1960,7 +1960,7 @@ class JournalManager{
 		const avttImages = closestNote.find('img[data-src*="above-bucket-not-a-url"]');
 		avttImages.attr('src', '');
 		avttImages.attr('href', '');
-		closestNote.find('a:empty, button:empty, .add-table-row, .table-row-drag-handle, .header-spacer, .dnd-sheet-block-copy-button, .dnd-sheet-block-delete-button, .dnd-sheet-block-drag-handle, .injected-input, .added-input-desc, .avtt-statblock-buffs, .avtt-note-roll-buff-pins, .spell-tooltip>svg.ritual-icon-svg').remove();
+		closestNote.find('a:empty, button:empty, .add-table-row, .table-row-drag-handle, .header-spacer, .avtt-equipment-weight-total, .dnd-sheet-block-copy-button, .dnd-sheet-block-delete-button, .dnd-sheet-block-drag-handle, .injected-input, .added-input-desc, .avtt-statblock-buffs, .avtt-note-roll-buff-pins, .spell-tooltip>svg.ritual-icon-svg').remove();
 		closestNote.find('.avtt-dnd-sheet-block').removeClass('avtt-dnd-sheet-block');
 		closestNote.find('[data-avtt-block-positioned]').each(function(){
 			this.style.removeProperty('position');
@@ -2036,7 +2036,7 @@ class JournalManager{
 		if(token){
 			sync_pc_template(token, html);
 		}
-		html.find('.injected-input, .added-input-desc').remove();
+		html.find('.injected-input, .added-input-desc, .avtt-equipment-weight-total').remove();
 		html.find('.add-input:not(.avtt-custom-tracker)').replaceWith((i, innerHtml) => {
 			return innerHtml;
 		})
@@ -2303,6 +2303,32 @@ class JournalManager{
 					addTableRowButton.textContent = '+';
 					table.insertAdjacentElement('afterend', addTableRowButton);
 					setupDraggableTableRows(table);	
+				});
+
+				function updateEquipmentWeightTotals(){
+					document.querySelectorAll('.equipment-field table').forEach((table) => {
+						const headers = Array.from(table.querySelectorAll('thead th')).filter((th) => !th.classList.contains('header-spacer'));
+						const weightIndex = headers.findIndex((th) => th.textContent.trim().toLowerCase().startsWith('weight'));
+						if (weightIndex === -1) return;
+						let total = 0;
+						table.querySelectorAll('tbody tr').forEach((row) => {
+							const cells = Array.from(row.children).filter((cell) => cell.tagName === 'TD' && !cell.classList.contains('table-row-drag-handle'));
+							const weight = parseFloat((cells[weightIndex]?.textContent || '').replace(/[^0-9.\-]/g, ''));
+							if (!isNaN(weight)) total += weight;
+						});
+						const header = headers[weightIndex];
+						header.querySelector('.avtt-equipment-weight-total')?.remove();
+						const totalSpan = document.createElement('span');
+						totalSpan.className = 'avtt-equipment-weight-total';
+						totalSpan.contentEditable = 'false';
+						totalSpan.textContent = ' ' + (Math.round(total * 100) / 100) + ' lb';
+						header.append(totalSpan);
+					});
+				}
+				updateEquipmentWeightTotals();
+				document.addEventListener('input', (e) => {
+					if (!e.target?.closest?.('.equipment-field')) return;
+					updateEquipmentWeightTotals();
 				});
 
 				document.addEventListener('click', (e) => {
@@ -3234,6 +3260,29 @@ class JournalManager{
 			ownerDocument.head.appendChild(script);
 		});
 	}
+	/** Sums the Weight column of every equipment table and shows the running total in that column's header. */
+	updateEquipmentWeightTotals(target){
+		$(target).find('.equipment-field table').each(function(){
+			const table = $(this);
+			const headers = table.find('thead th').not('.header-spacer');
+			let weightIndex = -1;
+			headers.each(function(index){
+				if(weightIndex === -1 && $(this).text().trim().toLowerCase().startsWith('weight'))
+					weightIndex = index;
+			});
+			if(weightIndex === -1)
+				return;
+			let total = 0;
+			table.find('tbody tr').each(function(){
+				const weight = parseFloat($(this).children('td').not('.table-row-drag-handle').eq(weightIndex).text().replace(/[^0-9.\-]/g, ''));
+				if(!isNaN(weight))
+					total += weight;
+			});
+			const header = headers.eq(weightIndex);
+			header.find('.avtt-equipment-weight-total').remove();
+			header.append(`<span class="avtt-equipment-weight-total" contenteditable="false"> ${Math.round(total * 100) / 100} lb</span>`);
+		});
+	}
 	setupDndSheetTableSortable(table, ownerDocument, persistCurrentNoteText, equipmentSortGroup){
 		const initializeSortable = (sortableJquery) => {
 			const $table = sortableJquery(table);
@@ -3418,6 +3467,7 @@ class JournalManager{
 			block.after(copy);
 			setupBlockControls();
 			setupEquipmentTableSorting();
+			self.updateEquipmentWeightTotals(getCurrentNoteText());
 			persistCurrentNoteText({forceSave: true, rescanStatBlock: false});
 		});
 		container.off('pointerdown.dndSheetBlockDelete, touchstart.dndSheetBlockDelete').on('pointerdown.dndSheetBlockDelete, touchstart.dndSheetBlockDelete', '.dnd-sheet-block-delete-button', (e) => {
@@ -3597,6 +3647,10 @@ class JournalManager{
 			persistCurrentNoteText({forceSave: false, rescanStatBlock: false});
 		});
 		setLockState();
+		self.updateEquipmentWeightTotals(getCurrentNoteText());
+		container.off('input.equipmentWeightTotal').on('input.equipmentWeightTotal', '.dnd-sheet .equipment-field', function(){
+			self.updateEquipmentWeightTotals(getCurrentNoteText());
+		});
 
 		if(options.showControls !== true)
 			return;
@@ -6283,6 +6337,12 @@ class JournalManager{
 				}
 				.table-row-drag-handle:active {
 					cursor: grabbing;
+				}
+				.avtt-equipment-weight-total {
+					text-transform: none;
+					white-space: nowrap;
+					font-weight: bold;
+					font-size: 10px;
 				}
 				svg.ritual-icon-svg {
 					width: 10px;
