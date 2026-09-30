@@ -1647,6 +1647,12 @@ function display_chapters(selectedChapter, notOwned = false) {
 	const chapterSelectMenu = ddb_style_chapter_select(source_name, window.ScenesHandler.sources[source_name].chapters);
 	$("#importer_toggles").append(chapterSelectMenu);
 	$("#chapter_select").hide();
+	if (notOwned) {
+		const area = $("#importer_area");
+		area.empty();
+		area.append($(`<div>Source not available. You may not own this book or it is not shared with you.</div>`));
+		return;
+	}
 	if (selectedChapter) {
 		$(".quick-menu-item-link").each((idx, el) => {
 			const chapterLink = $(el);
@@ -1665,20 +1671,12 @@ function display_chapters(selectedChapter, notOwned = false) {
 	}
 }
 
-function display_scenes(notOwned = false) {
+function display_scenes() {
 
 
 
 	let source_name = $("#source_select").val();
 	let chapter_name = $("#chapter_select").val();
-	if(notOwned){
-		let area = $("#importer_area");
-		area.empty();
-		area.css("opacity", "0");
-		area.animate({ opacity: "1" }, 300);
-		area.append($(`<div>Chapter not available. You may not own it or it is not fully released yet. You can check if you have access to the chapter here here: <a target="_blank" id='check_chapter_access' href='/sources/dnd/${source_name}/${chapter_name}'>https://www.dndbeyond.com/sources/dnd/${source_name}/${chapter_name}</a></div> `)) 
-		return;
-	}
 	fill_importer(window.ScenesHandler.sources[source_name].chapters[chapter_name].scenes, 0);
 	noisy_log(window.ScenesHandler.sources[source_name].chapters[chapter_name].scenes);
 	noisy_log("mostrati...");
@@ -1764,8 +1762,8 @@ function init_ddb_importer(target, selectedSource, selectedChapter) {
 		$("#scenes_select").empty();
 		$("#import_button").attr('disabled', 'disabled');
 		let source_name = $("#source_select").val()
-		window.ScenesHandler.build_chapters(source_name, function () {
-			display_chapters(selectedChapter);
+		window.ScenesHandler.build_chapters(source_name, function (notOwned = false) {
+			display_chapters(selectedChapter, notOwned);
 			$('#sources-import-content-container').find(".sidebar-panel-loading-indicator").remove();
 		});
 	});

@@ -480,9 +480,11 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 				let title = $(this).html();
 				let url = $(this).attr("href");
 				let keyword = url.replaceAll(/https:\/\/www\.dndbeyond\.com|^\/?sources\/|/gi, '');
+				let owned = source_card_is_owned($(this));
 
 				if (keyword in self.sources){ // OBJECT ALREADY EXISTS... evito di riscrivere per non perdere i dati
 					scraped_sources[keyword]=self.sources[keyword];
+					scraped_sources[keyword].owned = owned;
 					return;
 				}
 				scraped_sources[keyword] = {
@@ -490,6 +492,7 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 					ddbtype:ddbtype,
 					title: title,
 					url: url,
+					owned: owned,
 					chapters: {},
 				};
 			});
@@ -516,15 +519,21 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 		});
 	}
 
-	build_chapters(keyword, callback) {
+	async build_chapters(keyword, callback) {
 		let self = this;
 		noisy_log('scansiono ' + keyword);
 		//let target_list = $("#" + $(event.target).attr('data-target'));
 		//let adventure_url = 'https://www.dndbeyond.com/sources/' + keyword;
-		let adventure_url="https://www.dndbeyond.com/"+self.sources[keyword].url;
+		let adventure_url="https://www.dndbeyond.com/"+self.sources[keyword].url.replace(/^\/?/, '');
 
 		if (self.sources[keyword].type != 'dnb') {
 			callback();
+			return;
+		}
+
+		if (self.sources[keyword].owned === false) {
+			noisy_log('library page shows ' + keyword + ' as not purchased or shared');
+			callback(true);
 			return;
 		}
 
@@ -535,27 +544,45 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 			return;
 		}
 
+		let iframe_url = adventure_url;
+		try {
+			const resolvedUrl = new URL(await resolve_redirect_url(adventure_url));
+			resolvedUrl.hostname = "www.dndbeyond.com";
+			if (resolvedUrl.pathname.startsWith(new URL(adventure_url).pathname.replace(/\/$/, '') + '/'))
+				iframe_url = resolvedUrl.href; // single chapter book (no contents page)
+			else
+				noisy_log(adventure_url + ' redirected outside the book to ' + resolvedUrl.href);
+		} catch (e) {
+			noisy_log('unable to resolve ' + adventure_url, e);
+		}
+
 		//if($(event.target).attr('data-status')==0){
-		let f = $("<iframe name='scraper' src='" + adventure_url + "'></iframe>");
+		let f = $("<iframe name='scraper' src='" + iframe_url + "'></iframe>");
 		f.hide();
 		$("#site").append(f);
 
-
 		f.on("load", function(event) {
 			let iframe = $(event.target);
-			noisy_log('caricato ' + window.frames['scraper'].location.href);
+			let frameUrl;
+			try {
+				frameUrl = iframe[0].contentWindow.location.href;
+			} catch (e) {
+				noisy_log('scraper iframe ended up cross-origin, cannot read ' + iframe_url, e);
+				iframe.remove();
+				callback();
+				return;
+			}
+			noisy_log('caricato ' + frameUrl);
 
-			if (window.frames['scraper'].location.href != adventure_url) {
+			if (frameUrl != adventure_url) {
 				noisy_log('rilevato cambio url');
-				let title = "Single Chapter";
-				let url = window.frames['scraper'].location.href;
-				let ch_keyword = url.replace('https://www.dndbeyond.com', '').replace('/sources/' + keyword + "/", '').replace('/sources/' + keyword.replace('dnd/', '') + "/", '')
+				let ch_keyword = frameUrl.replace('https://www.dndbeyond.com', '').replace('/sources/' + keyword + "/", '').replace('/sources/' + keyword.replace('dnd/', '') + "/", '')
 				self.sources[keyword].chapters[ch_keyword] = {
 					type: 'dnb',
-					title: title,
-					url: url,
+					title: "Single Chapter",
+					url: frameUrl,
 					scenes: [],
-				}
+				};
 			}
 			else {
 				//chapter, subchapter (eg icewind), chapter, handouts and maps (eg. Curse of Strahd)
@@ -638,13 +665,22 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 		$("#site").append(f);
 
 
+		const loadTimeout = setTimeout(function() {
+			f.off("load");
+			f.remove();
+			noisy_log('chapter never finished loading: ' + chapter_url);
+			callback();
+		}, 30000);
+
 		f.on("load", function(event) {
+			clearTimeout(loadTimeout);
 			let iframe = $(event.target);
-			if(iframe.contents().length == 0){
-				let notOwned = true;
+			const frameDocument = iframe[0].contentDocument;
+			
+			if(!frameDocument || frameDocument.URL === 'about:blank'){
 				iframe.remove();
-				noisy_log('Book failed to load - probably do not own it');
-				callback(notOwned);
+				noisy_log('chapter failed to load: ' + chapter_url);
+				callback();
 				return;
 			}
 
@@ -981,6 +1017,41 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 		this.scenes = [];
 		this.current_scene_id = null;
 	}
+}
+
+// the library page only offers a store link for books you do not own, check for shared text as well
+function source_card_is_owned(sourceTitleElement) {
+	let card = sourceTitleElement.parent();
+	while (card.length > 0 && card.find("[class*='SourceCard_sourceTitle']").length <= 1) {
+		if (card.find("[class*='SourceCard_sourceSubtitle']").text().replace(/[\u200B-\u200D\uFEFF]/g, '').trim().length > 0)
+			return true;
+		if (card.closest('li').find("a[href*='marketplace.dndbeyond.com']").length > 0) {
+			noisy_log('source card for ' + sourceTitleElement.attr('href') + ' has a store link, treating as not owned');
+			return false;
+		}
+		card = card.parent();
+	}
+	noisy_log('could not find the source card for ' + sourceTitleElement.attr('href') + ', assuming it is owned, it will hang on loading rather then display unowned message');
+	return true;
+}
+
+function resolve_redirect_url(url) {
+	return new Promise((resolve, reject) => {
+		const id = uuid();
+		const handler = (event) => {
+			if (event.source !== window || event.data?.type !== 'avtt-resolve-url-result' || event.data.id !== id) return;
+			clearTimeout(timeout);
+			window.removeEventListener('message', handler);
+			event.data.url ? resolve(event.data.url) : reject(new Error(event.data.error));
+		};
+		
+		const timeout = setTimeout(() => {
+			window.removeEventListener('message', handler);
+			reject(new Error('timed out resolving ' + url));
+		}, 5000);
+		window.addEventListener('message', handler);
+		window.postMessage({ type: 'avtt-resolve-url', id, url }, window.location.origin);
+	});
 }
 
 function folder_path_of_scene(scene) {

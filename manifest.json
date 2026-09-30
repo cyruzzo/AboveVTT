@@ -33,6 +33,10 @@
 	"host_permissions": [
 		"*://*.dndbeyond.com/*"
 	],
+	"background": {
+		"service_worker": "background.js",
+		"scripts": ["background.js"]
+	},
 	"icons": {
 		"128": "icon.png"
 	},
