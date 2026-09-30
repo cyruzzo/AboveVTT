@@ -13455,6 +13455,12 @@ p.monster-header+p {
     b{
         font-weight: 600;
     }
+    .avtt-equipment-weight-total {
+        text-transform: none;
+        white-space: nowrap;
+        font-weight: bold;
+        font-size: 10px;
+    }
     .dnd-page {
         border: 2px solid #222;
         padding: 15px;

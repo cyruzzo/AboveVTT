@@ -25,6 +25,15 @@
             console.log("⛔  AVTT: no extension loading here.")
             return; //don't load anything
         }
+        // due to DDB redirecting between with and without www, we need to resolve URLs through the background script
+        window.addEventListener('message', (event) => {
+            if (event.source !== window || event.data?.type !== 'avtt-resolve-url') return;
+            const { id, url } = event.data;
+            runtime.sendMessage({ type: 'avtt-resolve-url', url }, (response) => {
+                const error = runtime.lastError?.message;
+                window.postMessage({ type: 'avtt-resolve-url-result', id, ...(response || { error: error || 'no response' }) }, window.location.origin);
+            });
+        });
     } 
         
 
