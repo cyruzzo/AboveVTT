@@ -1661,8 +1661,8 @@ async function add_new_dice(){
     canvas2.style.width = `${width}px`;
     canvas2.style.height = `${height}px`;
 
-    document.documentElement.style.setProperty('--sidebar-width', `${visibleSidebarWidth}px`);
-
+    canvas.style.setProperty('--sidebar-width', `${visibleSidebarWidth}px`);
+    canvas2.style.setProperty('--sidebar-width', `${visibleSidebarWidth}px`);
     
     physicsWorker.postMessage({
         "type": "resize",
