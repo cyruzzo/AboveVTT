@@ -512,7 +512,7 @@ Other Commands:
         <input class="roll-input-mod" type='number' value='0' step='1'></input>
         <button class="roll-button-mod plus">+</button>
         <button class="roll-button-mod adv roll_mods_button icon-advantage markers-icon"></button>
-        <select id='contextSelect' class="roll-button" style="width:20px; left:unset; right:0px; border-radius:0px 10px 10px 0px; background-color:buttonface;"></select>
+        <button id='contextSelect' type="button" aria-label="Roll options" class="roll-button" style="width:20px; left:unset; right:0px; border-radius:0px 10px 10px 0px; background-color:buttonface;"></button>
       </div>`)
     modInput.append(rollButton);
 

@@ -16,7 +16,7 @@ function gamelog_send_to_text() {
     return "Self"
 }
 
-function standard_dice_context_menu(expression, modifierString = "", action = undefined, rollType = undefined, name = undefined, avatarUrl = undefined, entityType = undefined, entityId = undefined) {
+function standard_dice_context_menu(expression, modifierString = "", action = undefined, rollType = undefined, name = undefined, avatarUrl = undefined, entityType = undefined, entityId = undefined, rollOptions = undefined) {
     if (typeof modifierString !== "string") {
         modifierString = "";
     }
@@ -80,15 +80,19 @@ function standard_dice_context_menu(expression, modifierString = "", action = un
         diceRoll.sendToOverride = dcm.checkedRow(0)?.title?.replace(/\s+/g, "");
      
         window.diceRoller.roll(diceRoll);
-        $(".roll-mod-container").removeClass("show");
-        $(".dice-roller > div img[data-count]").removeAttr("data-count");
-        $(".dice-roller > div span").remove();
+        if (rollOptions?.onRollComplete) {
+            rollOptions.onRollComplete();
+        } else {
+            $(".roll-mod-container").removeClass("show");
+            $(".dice-roller > div img[data-count]").removeAttr("data-count");
+            $(".dice-roller > div span").remove();
+        }
     });
 
     return menu;
 }
 
-function damage_dice_context_menu(diceExpression, modifierString = "", action = undefined, rollType = undefined, name = undefined, avatarUrl = undefined, entityType = undefined, entityId = undefined, damageType = undefined, spellSave = undefined) {
+function damage_dice_context_menu(diceExpression, modifierString = "", action = undefined, rollType = undefined, name = undefined, avatarUrl = undefined, entityType = undefined, entityId = undefined, damageType = undefined, spellSave = undefined, rollOptions = undefined) {
     if (typeof modifierString !== "string") {
         modifierString = "";
     }
@@ -155,10 +159,14 @@ function damage_dice_context_menu(diceExpression, modifierString = "", action = 
 
             const doubleDamage = rollAsIndex === 2 ? 3 : undefined;
 
-            window.diceRoller.roll(diceRoll, undefined, rollAsIndex == 2 ? 3 : undefined, undefined, spellSave, damageType, doubleDamage);
-            $(".roll-mod-container").removeClass("show");
-            $(".dice-roller > div img[data-count]").removeAttr("data-count");
-            $(".dice-roller > div span").remove();
+            window.diceRoller.roll(diceRoll, undefined, doubleDamage, undefined, spellSave, damageType, doubleDamage);
+            if (rollOptions?.onRollComplete) {
+                rollOptions.onRollComplete();
+            } else {
+                $(".roll-mod-container").removeClass("show");
+                $(".dice-roller > div img[data-count]").removeAttr("data-count");
+                $(".dice-roller > div span").remove();
+            }
         });
 
     return menu;
