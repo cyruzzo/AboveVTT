@@ -3822,13 +3822,15 @@ function addGamelogPopoutButton(){
 	let windowTarget = `https://dndbeyond.com/campaigns/${window.find_game_id()}?id=${window.PLAYER_ID}&player_name=${window.PLAYER_NAME}&popoutgamelog=true`
 
 	gamelog_popout.off().on("click",function(){
+		const existingPopout = childWindows["Gamelog"];
+		if (existingPopout && !existingPopout.closed) {
+			existingPopout.focus();
+			return;
+		}
 		popoutWindow("Gamelog", $("<div/>"), 400, 800, windowTarget);
-		// this seems to never go away for me so I just disabled it for now
-		// let beholderIndicator = build_combat_tracker_loading_indicator("One moment while we load the gamelog");
-		// setTimeout(function() {
-		// 	$(childWindows["Gamelog"].document).find("body").append(beholderIndicator);
-		// }, 1000)
-		childWindows["Gamelog"].addEventListener('load', popoutGamelogCleanup)
+		childWindows["Gamelog"].addEventListener('load', function() {
+			waitForGamelogPopout(this);
+		});
 		childWindows["Gamelog"].pcs = window.pcs;
 		childWindows["Gamelog"].TOKEN_OBJECTS = window.TOKEN_OBJECTS;
 		childWindows["Gamelog"].ddbConfigJson = window.ddbConfigJson
@@ -3863,13 +3865,55 @@ width=${width},height=${height},left=100,top=100`;
 
 	checkTitle();
 
-	$(childWindows[name].document).find('body, head').empty();
-	$(childWindows[name].document).find('body').append(cloneSelector.clone(true,true));
-	$(childWindows[name].document).find('head').append($('link, style').clone());
-	$(childWindows[name].document).find('a[href^="/"]').each(function() {
-        this.href = `https://dndbeyond.com${this.getAttribute("href")}`;
-	});
+	if (!windowTarget) {
+		$(childWindows[name].document).find('body, head').empty();
+		$(childWindows[name].document).find('body').append(cloneSelector.clone(true,true));
+		$(childWindows[name].document).find('head').append($('link, style').clone());
+		$(childWindows[name].document).find('a[href^="/"]').each(function() {
+	        this.href = `https://dndbeyond.com${this.getAttribute("href")}`;
+		});
+	}
 	return childWindows[name];
+}
+function waitForGamelogPopout(popout) {
+	const popoutDocument = popout.document;
+	let openedGamelog = false;
+	let finished = false;
+	const stopWaiting = function() {
+		finished = true;
+		observer.disconnect();
+		clearInterval(readinessCheck);
+		clearTimeout(timeout);
+		popout.removeEventListener("pagehide", stopWaiting);
+	};
+	const checkReady = function() {
+		if (finished) return;
+		if (popout.closed || childWindows["Gamelog"] !== popout) {
+			stopWaiting();
+			return;
+		}
+		const gamelogButton = popoutDocument.querySelector(".gamelog-button, button[class*='gamelog-button']");
+		if (!openedGamelog && gamelogButton) {
+			openedGamelog = true;
+			gamelogButton.click();
+		}
+		if (popout.MB &&
+			popoutDocument.querySelector("body > div > .sidebar .glc-game-log #chat-text") &&
+			$(".dice-roller").length > 0 &&
+			$(".roll-mod-container").length > 0) {
+			stopWaiting();
+			popoutGamelogCleanup();
+		}
+	};
+	const observer = new MutationObserver(checkReady);
+	observer.observe(popoutDocument.documentElement, { childList: true, subtree: true });
+	const readinessCheck = setInterval(checkReady, 250);
+	const timeout = setTimeout(function() {
+		stopWaiting();
+		showError(new Error("Timed out waiting for the gamelog popout to initialize"), "Failed to set up gamelog popout");
+	}, 60000);
+	popout.addEventListener("pagehide", stopWaiting, { once: true });
+	checkReady();
 }
 function popoutGamelogCleanup(){
 	$(childWindows["Gamelog"].document).find("#popoutGamelogCleanup").remove();
@@ -3907,30 +3951,299 @@ function popoutGamelogCleanup(){
 		    top: 0 !important;
 		    height: 100% !important;
 		}
-		.body-rpgcampaign:not(.encounter-builder) select#chat-language {
-	    bottom:0px;
-	    right: 20px;
+		.glc-game-log .popout-chat-text-wrapper select#chat-language {
+		    position: relative !important;
+		    inset: auto !important;
+		    float: none !important;
+		    flex: 0 0 24px;
+		    width: 24px !important;
+		    height: 30px !important;
+		    margin: 0 0 0 -24px !important;
+		    font-size: 0 !important;
+		    appearance: auto !important;
+		    -webkit-appearance: auto !important;
+		}
+		.glc-game-log .popout-chat-text-wrapper {
+		    display: flex;
+		    align-items: center;
+		    position: relative;
+		    box-sizing: border-box;
+		    width: 100%;
+		    padding: 0 20px !important;
+		}
+		.popout-chat-text-wrapper #chat-text {
+		    box-sizing: border-box;
+		    flex: 1 1 auto;
+		    min-width: 0;
+		    width: 100%;
+		    padding-right: 28px;
+		}
+		.popout-dice-controls {
+		    display: flex;
+		    align-items: center;
+		    flex-wrap: nowrap;
+		    box-sizing: border-box;
+		    width: 100%;
+		    min-width: 0;
+		    overflow: clip;
+			padding: 0px 20px;
+		}
+		.popout-dice-controls > .dice-roller {
+		    flex: 1 1 auto;
+		    min-width: 0;
+			max-width:290px;
+		    width: auto !important;
+		    justify-content: space-between;
+		    overflow: visible;
+		}
+		.popout-dice-controls > .dice-roller > div {
+		    flex: 0 1 34px;
+		    min-width: 0;
+		    width: 34px;
+		    height: 40px;
+		    overflow: visible;
+		}
+		.popout-dice-controls > .dice-roller > div img {
+		    top: 3px;
+		    width: 34px !important;
+		    height: 34px !important;
+		}
+		.popout-dice-controls .dice-badge {
+		    z-index: 12;
+		    width: auto;
+		    min-width: 22px;
+		    height: 22px;
+		    padding: 0 3px;
+		    box-sizing: border-box;
+		    overflow: visible;
+		    text-overflow: clip;
+		    font-size: 13px;
+		    transform: scale(.8);
+		}
+		.popout-roll-mod-container.roll-mod-container.show {
+		    position: relative !important;
+		    inset: auto !important;
+		    display: block !important;
+		    flex: 0 0 60px;
+		    width: 60px !important;
+		    height: 60px !important;
+		    min-width: 60px;
+		    margin: 0 5px 0 24px !important;
+		    padding: 0 !important;
+		    opacity: 1 !important;
+		}
+		.popout-roll-mod-container #sendRoll.roll-button {
+		    top: 0 !important;
+		    bottom: auto !important;
+		    left: 0 !important;
+		    width: 40px !important;
+		    height: 30px !important;
+		    margin: 0 !important;
+		    padding: 0 !important;
+		}
+		.gamelogcontainer{
+			position:fixed;
+		}
+		body .gamelogcontainer .sidebar__pane-content{
+			height: 100% !important;	
+		}
+		.popout-roll-mod-container #contextSelect {
+		    top: 0 !important;
+		    right: auto !important;
+		    bottom: auto !important;
+		    left: 40px !important;
+		    width: 20px !important;
+		    height: 30px !important;
+		    margin: 0 !important;
+		    padding: 0 !important;
+		    border-radius: 0 10px 10px 0 !important;
+		    --roll-arrow-width: 8px;
+		    --roll-arrow-height: 5px;
+		}
+		.popout-roll-mod-container button.roll-button-mod {
+		    position: absolute !important;
+		    top: 34px !important;
+		    bottom: auto !important;
+		    height: 20px !important;
+		    min-height: 20px !important;
+		    padding: 0 !important;
+		    color: #222;
+		    font-size: 14px !important;
+		    line-height: 20px !important;
+		    transform: none !important;
+		}
+		.popout-roll-mod-container button.roll-button-mod.dis {
+		    top: 20px !important;
+		    left: -24px !important;
+		    width: 20px !important;
+		}
+		.popout-roll-mod-container button.roll-button-mod.adv {
+		    top: 0 !important;
+		    left: -24px !important;
+		    width: 20px !important;
+		}
+		.popout-roll-mod-container button.roll-button-mod.minus {
+		    left: 0 !important;
+		    width: 18px !important;
+		}
+		.popout-roll-mod-container input.roll-input-mod {
+		    position: absolute !important;
+		    top: 34px !important;
+		    left: 18px !important;
+		    width: 24px !important;
+		    height: 20px !important;
+		    min-height: 20px !important;
+		    box-sizing: border-box !important;
+		    padding: 0 !important;
+		    color: #222;
+		    font-size: 12px !important;
+		    line-height: 20px !important;
+		}
+		.popout-roll-mod-container button.roll-button-mod.plus {
+		    left: 42px !important;
+		    width: 18px !important;
 		}
 	</style>`);
-	$(childWindows["Gamelog"].document).find(".gamelog-button, button[class*='gamelog-button']").click();
 	$(childWindows["Gamelog"].document).find(".sidebar__control-group--lock button").click();
 	removeFromPopoutWindow("Gamelog", ".dice-roller");
 	removeFromPopoutWindow("Gamelog", ".sidebar-panel-content:not('.glc-game-log')");
 	removeFromPopoutWindow("Gamelog", ".chat-text-wrapper");
+	removeFromPopoutWindow("Gamelog", "#chat-language");
 	removeFromPopoutWindow("Gamelog", ".avtt-sidebar-controls");
 	removeFromPopoutWindow("Gamelog", ".sidebar__control");
+	removeFromPopoutWindow("Gamelog", ".clear-dice");
 	$(childWindows["Gamelog"].document).find("body>div>.sidebar").parent().toggleClass("gamelogcontainer", true);
 	let gamelogMessageBroker = $(childWindows["Gamelog"].document).find(".ddb-campaigns-detail-gamelog").clone(true, true)
 	removeFromPopoutWindow("Gamelog", "body>*:not(.gamelogcontainer):not(.sidebar-panel-loading-indicator)");
-	removeFromPopoutWindow("Gamelog", ".chat-text-wrapper");
 	removeFromPopoutWindow("Gamelog", "iframe");
 	$(childWindows["Gamelog"].document).find("body").append(gamelogMessageBroker);
-	$(childWindows["Gamelog"].document).find(".glc-game-log").append($(".chat-text-wrapper").clone(true, true));
-	$(childWindows["Gamelog"].document).find(".glc-game-log").append($("#chat-language").clone(true, true));
-
-	$(childWindows["Gamelog"].document).find("#chat-language").off('change.value').on('change.value', function(){
+	const popoutChatWrapper = $(".chat-text-wrapper").clone(true, true).addClass("popout-chat-text-wrapper");
+	popoutChatWrapper.find("#chat-language").remove();
+	const popoutChatLanguage = $("#chat-language").clone(true, true);
+	popoutChatLanguage.each(function() {
+		this.style.removeProperty("appearance");
+		this.style.removeProperty("-webkit-appearance");
+		this.style.removeProperty("-moz-appearance");
+	});
+	popoutChatWrapper.append(popoutChatLanguage);
+	$(childWindows["Gamelog"].document).find(".glc-game-log").append(popoutChatWrapper);
+	popoutChatLanguage.off('change.value').on('change.value', function(){
 		$("#chat-language").val($(this).val());
 	})
+	const popoutDocument = childWindows["Gamelog"].document;
+	const diceControls = $('<div class="popout-dice-controls"></div>');
+	const diceRoller = $(".dice-roller").first().clone(false);
+	const popoutDice = diceRoller.find("> div img");
+	popoutDice.removeAttr("data-count").each(function() {
+		$(this).parent().find(".dice-badge").remove();
+	});
+
+	const rollModifiers = $(".roll-mod-container").first().clone(false)
+		.addClass("show popout-roll-mod-container");
+	const modifierInput = rollModifiers.find(".roll-input-mod").val(0);
+
+	let popoutAdvDis;
+	const clearPopoutDice = function() {
+		popoutDice.removeAttr("data-count");
+		popoutDice.parent().find(".dice-badge").remove();
+		modifierInput.val(0);
+	};
+	const getPopoutExpression = function() {
+		const positiveTerms = [];
+		const negativeTerms = [];
+		popoutDice.each(function() {
+			const count = parseInt($(this).attr("data-count"));
+			if (Number.isNaN(count) || count === 0) {
+				return;
+			}
+			const term = `${Math.abs(count)}${$(this).attr("alt")}`;
+			(count < 0 ? negativeTerms : positiveTerms).push(term);
+		});
+
+		let expression = positiveTerms.join("+");
+		negativeTerms.forEach(term => {
+			expression = expression ? `${expression}-${term}` : `0-${term}`;
+		});
+		if (!expression) {
+			expression = "1d20";
+		}
+		const modifier = parseInt(modifierInput.val()) || 0;
+		expression += modifier < 0 ? `${modifier}` : `+${modifier}`;
+		if (popoutAdvDis !== undefined) {
+			expression = `{${expression},${expression}}${popoutAdvDis}1`;
+		}
+		popoutAdvDis = undefined;
+		return expression;
+	};
+	const rollOptions = {
+		onRollComplete: clearPopoutDice
+	};
+	const showPopoutContextMenu = function(e) {
+		const expression = getPopoutExpression();
+		if (!/^1d20/i.test(expression)) {
+			damage_dice_context_menu(expression, "", undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, rollOptions)
+				.present(e.clientY - 15, e.clientX + 45, popoutDocument);
+		} else {
+			standard_dice_context_menu(expression, "", undefined, undefined, undefined, undefined, undefined, undefined, rollOptions)
+				.present(e.clientY - 15, e.clientX + 48, popoutDocument);
+		}
+	};
+	const popoutRollButton = rollModifiers.find("button#sendRoll");
+	popoutRollButton.on("pointerdown.popoutRoll", function(e) {
+		if (e.button === 2) return;
+		e.preventDefault();
+		e.stopPropagation();
+		e.stopImmediatePropagation();
+		window.diceRoller.roll(new DiceRoll(getPopoutExpression()));
+		clearPopoutDice();
+	}).on("contextmenu.popoutRoll", function(e) {
+		e.preventDefault();
+		showPopoutContextMenu(e);
+	});
+
+	rollModifiers.find("button.roll-button-mod").on("pointerdown.popoutRoll", function(e) {
+		if (e.button === 2) return;
+		e.preventDefault();
+		e.stopPropagation();
+		e.stopImmediatePropagation();
+		const $button = $(this);
+		if ($button.hasClass("minus")) {
+			modifierInput.val((parseInt(modifierInput.val()) || 0) - 1);
+		} else if ($button.hasClass("plus")) {
+			modifierInput.val((parseInt(modifierInput.val()) || 0) + 1);
+		} else if ($button.hasClass("adv")) {
+			popoutAdvDis = "kh";
+			popoutRollButton.trigger("pointerdown", { button: 0 });
+		} else if ($button.hasClass("dis")) {
+			popoutAdvDis = "kl";
+			popoutRollButton.trigger("pointerdown", { button: 0 });
+		}
+	});
+
+	rollModifiers.find("#contextSelect").on("click.popoutRoll contextmenu.popoutRoll", function(e) {
+		e.preventDefault();
+		e.stopPropagation();
+		e.stopImmediatePropagation();
+	}).on("pointerdown.popoutRoll", function(e) {
+		e.preventDefault();
+		e.stopPropagation();
+		e.stopImmediatePropagation();
+		showPopoutContextMenu(e);
+	});
+
+	popoutDice.on("click.popoutRoll", function() {
+		const $die = $(this);
+		const nextCount = parseInt($die.attr("data-count")) || 0;
+		update_dice_badge($die, nextCount + 1);
+	}).on("contextmenu.popoutRoll", function(e) {
+		e.preventDefault();
+		const $die = $(this);
+		const currentCount = parseInt($die.attr("data-count")) || 0;
+		update_dice_badge($die, currentCount - 1);
+	});
+
+	diceControls.append(rollModifiers, diceRoller);
+	$(popoutDocument).find(".glc-game-log").append(diceControls);
 	setTimeout(function(){removeFromPopoutWindow("Gamelog", "body>.sidebar-panel-loading-indicator")}, 200);
 }
 function updatePopoutWindow(name, cloneSelector){
@@ -4033,4 +4346,3 @@ function adjust_site_bar() {
 		});
 	}
 }
-
