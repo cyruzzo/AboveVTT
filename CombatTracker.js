@@ -576,10 +576,14 @@ function init_carousel_combat_tracker(){
       #combat_carousel_container.tracker-list.sidebarClosed{
     		left: 50%;
       }
-     #combat_carousel_container tr {
-          display: flex;
-  				min-height:105px !important;
-      }
+	#combat_carousel_container tr{
+		display: flex;
+		min-height:85px !important;
+	}
+	#combat_carousel_container tr[data-current="1"] {
+		display: flex;
+		min-height:105px !important;
+	}
       #combat_carousel_container tr :is(img, video) {
           width:80px;
           height: 80px;   
@@ -614,13 +618,11 @@ function init_carousel_combat_tracker(){
       #combat_carousel_container .selected-token td:first-of-type:before {
           width:78px;
           height: 78px;
-          top: 3px;
           left: 3px;
       }
       #combat_carousel_container .selected-token[data-current='1'] td:first-of-type:before {
           width:98px;
           height: 98px;
-          top: 3px;
           left: 3px;
       }
       #combat_carousel_container #combat_area_carousel tr[data-current]{

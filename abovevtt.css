@@ -6685,6 +6685,7 @@ span.exhaustion-pip.last{
 #edit_scene_form .sidebar-hovertext:hover:before{
     max-width: 300px;
     width: max-content;
+    pointer-events:none;
 }
 .ct-sidebar{
     inset: 0px 0px 0px auto !important;
@@ -7968,13 +7969,13 @@ div#tokenOptionsContainer .remove-from-ct>button{
     vertical-align: bottom;
 }
 
-:is(#combat_area, #combat_area_carousel) tr td{
-    vertical-align: middle
-}
+
 :is(#combat_area, #combat_area_carousel) tr td{
     vertical-align: bottom
 }
-
+:is(#combat_area, #combat_area_carousel) tr td:first-of-type{
+    vertical-align: middle
+}
 #round_number_label button{
     margin-left: 6px;
 }
@@ -8006,7 +8007,8 @@ div#tokenOptionsContainer .remove-from-ct>button{
     content:'';
     width:35px;
     height:35px;
-    top:2px;
+    top:50%;
+    transform: translateY(-50%);
     left:2px;
     border:2px solid #0000;
     position:absolute;
