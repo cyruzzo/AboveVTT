@@ -3355,11 +3355,16 @@ class JournalManager{
 	}
 	/** Adds copy controls and connected column sorting to PC-template blocks. */
 	setupDndSheetBlockSorting(noteText, ownerDocument, persistCurrentNoteText, sortGroup){
+		const ownerWindow = ownerDocument.defaultView || window;
 		const initializeSortable = (sortableJquery) => {
 			const columns = sortableJquery(noteText).find('.dnd-sheet .avtt-dnd-sheet-block').parent();
 			columns.attr('data-avtt-block-sort-group', sortGroup);
 			columns.each(function(){
 				const column = sortableJquery(this);
+				let scrollPopoutViewport = false;
+				let viewportScrollStyle;
+				let previousOverflowAnchor;
+				let previousOverflowAnchorPriority;
 				if(column.data('ui-sortable'))
 					column.sortable('destroy');
 				column.sortable({
@@ -3371,7 +3376,46 @@ class JournalManager{
 					forcePlaceholderSize: true,
 					tolerance: 'pointer',
 					start: function(event, ui){
+						const sortable = column.sortable('instance');
+						const scrollParent = sortable.scrollParent[0];
+						scrollPopoutViewport = ownerDocument !== document &&
+							(scrollParent === ownerDocument || scrollParent === ownerDocument.documentElement ||
+								(scrollParent === ownerDocument.body &&
+									ownerWindow.getComputedStyle(ownerDocument.documentElement).overflow === 'visible'));
+						column.sortable('option', 'scroll', !scrollPopoutViewport);
+						if(scrollPopoutViewport){
+							viewportScrollStyle = (ownerDocument.scrollingElement || ownerDocument.documentElement).style;
+							previousOverflowAnchor = viewportScrollStyle.getPropertyValue('overflow-anchor');
+							previousOverflowAnchorPriority = viewportScrollStyle.getPropertyPriority('overflow-anchor');
+							// Moving the placeholder must not make the browser anchor-scroll the page.
+							viewportScrollStyle.setProperty('overflow-anchor', 'none');
+						}
 						ui.placeholder.height(ui.item.outerHeight());
+					},
+					sort: function(event){
+						if(!scrollPopoutViewport)
+							return;
+						// about:blank popouts can report content dimensions as jQuery's window size.
+						const sensitivity = column.sortable('option', 'scrollSensitivity');
+						const speed = column.sortable('option', 'scrollSpeed');
+						const deltaY = event.clientY < sensitivity ? -speed :
+							ownerWindow.innerHeight - event.clientY < sensitivity ? speed : 0;
+						const deltaX = event.clientX < sensitivity ? -speed :
+							ownerWindow.innerWidth - event.clientX < sensitivity ? speed : 0;
+						const previousX = ownerWindow.scrollX;
+						const previousY = ownerWindow.scrollY;
+						if(deltaX || deltaY){
+							ownerWindow.scrollBy(deltaX, deltaY);
+							if(ownerWindow.scrollX !== previousX || ownerWindow.scrollY !== previousY)
+								column.sortable('refreshPositions');
+						}
+					},
+					stop: function(){
+						if(viewportScrollStyle){
+							viewportScrollStyle.setProperty('overflow-anchor', previousOverflowAnchor, previousOverflowAnchorPriority);
+							viewportScrollStyle = undefined;
+						}
+						scrollPopoutViewport = false;
 					},
 					update: function(){
 						persistCurrentNoteText({forceSave: true, rescanStatBlock: false});
