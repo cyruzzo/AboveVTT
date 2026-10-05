@@ -4559,6 +4559,7 @@ body.color-blind-avtt {
 }
 .lineAoe{
     pointer-events:none;
+    overflow:clip;
 }
 .lineAoe *{
     pointer-events:auto;
@@ -14185,6 +14186,25 @@ p.monster-header+p {
     }
 
     
+}
+
+.avtt-popout-stat-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    min-height: 28px;
+}
+
+.avtt-popout-stat-controls {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-left: auto;
+    flex-shrink: 0;
+}
+
+.avtt-popout-stat-controls .material-symbols-outlined {
+    color: var(--font-color, var(--theme-contrast, #333));
 }
 
 .dropdown-check-list ul.avttBuffItems > ul > li:first-of-type:after,

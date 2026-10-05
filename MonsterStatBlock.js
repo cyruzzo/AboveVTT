@@ -229,19 +229,22 @@ async function display_stat_block_in_container(statBlock, container, tokenId, cu
 /** Adds the roll buff dropdown to the top of a token's stat block and tags the block with its token
  * id so roll buttons inside it can find the token's buffs. It lives inside the stat block container
  * so popouts (which clone that container) get it too; `persistStatBlockContent` strips it back out
- * before saving. */
+ * before saving.*/
 function inject_statblock_buff_dropdown(container, tokenId) {
   if (tokenId == undefined || typeof build_buff_dropdown !== "function") return;
   const statBlock = $(container).find(".avtt-stat-block-container").first();
   if (statBlock.length === 0 || statBlock.find("#noAccessToContent").length > 0) return;
 
   statBlock.attr("data-token-id", tokenId);
+  const popoutStatControls = $(container).find(".avtt-popout-stat-controls").detach();
   $(container).find(".avtt-statblock-buffs").remove();
 
   const dropdown = build_buff_dropdown({ type: "token", tokenId }, true);
   const rollSettings = typeof build_token_roll_settings === 'function' ? build_token_roll_settings(tokenId) : undefined;
-  if (!dropdown && !rollSettings) return;
-  statBlock.prepend($(`<div class="avtt-statblock-buffs"></div>`).append(dropdown, rollSettings));
+  if (!dropdown && !rollSettings && popoutStatControls.length === 0) return;
+  statBlock.prepend($(`<div class="avtt-statblock-buffs"></div>`)
+    .toggleClass('avtt-popout-stat-toolbar', popoutStatControls.length > 0)
+    .append(dropdown, rollSettings, popoutStatControls));
 }
 
 function import_open_template(id){
@@ -276,7 +279,10 @@ function import_pc_template_html(files, parentEle, customStatId, tokenId) {
       }
       window.JOURNAL.notes[customStatId].text = sanitizedHTML.replaceAll(/\[(\/)?spell\]/gi, `[$1spell]`).replaceAll(/\[(\/)?magicitem\]/gi, `[$1magicItem]`).replaceAll(/\[(\/)?item\]/gi, `[$1item]`); 
       window.JOURNAL.notes[customStatId].plain = '';
-      const currContainer = parentEle.closest('.resize_drag_window, .moveableWindow');
+      let currContainer = parentEle.closest('.resize_drag_window, .moveableWindow');
+      if(currContainer.length === 0){
+        currContainer = $(parentEle[0].ownerDocument.body);
+      }
       debounceRescanStatBlock(currContainer, customStatId, tokenId);
       window.JOURNAL.setPersistTimeout();
       debounceSendNote(customStatId, window.JOURNAL.notes[customStatId], tokenId, currContainer);
@@ -424,7 +430,11 @@ const debounceRescanStatBlock = mydebounce(async (container, noteId, tokenId, cu
   }
   window.JOURNAL.bindDndSheetTemplateEvents(noteId, targetRescan, container, {tokenId, showControls: false});
   window.JOURNAL.ensureEnclosingZWSP(targetRescan[0]);
-  inject_statblock_buff_dropdown(container, tokenId);
+  if(tokenId == undefined && targetRescan[0].ownerDocument !== document){
+    window.JOURNAL.injectDisplayedNoteRollControls(noteId, targetRescan, container);
+  } else{
+    inject_statblock_buff_dropdown(container, tokenId);
+  }
   $(container).find('.avtt-stat-block-container, .note-text')[0].scrollTop = currScroll;
 }, 1000);
 
