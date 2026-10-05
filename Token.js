@@ -1089,7 +1089,7 @@ class Token {
 				const underdarknessDeadCross = underdarknessToken.find('.dead')
 				underdarknessDeadCross.attr("style", `transform:scale(${this.get_token_scale()});--size: ${parseInt(this.options.size) / window.CURRENT_SCENE_DATA.scale_factor / 10}px;`)
 				// check token death
-				if (this.hp > 0) {
+				if (this.baseHp > 0) {
 					underdarknessDeadCross.hide()
 				} else {
 					underdarknessDeadCross.show()
@@ -1098,7 +1098,7 @@ class Token {
 			else{
 				deadCross.attr("style", `transform:scale(${this.get_token_scale()});--size: ${parseInt(this.options.size) / 10}px;`)
 				// check token death
-				if (this.hp > 0) {
+				if (this.baseHp > 0) {
 					deadCross.hide()
 				} else {
 					deadCross.show()
