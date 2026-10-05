@@ -3198,6 +3198,9 @@ class JournalManager{
 			body.find('table').each(function(){
 				const table = this;
 				const $table = $(table);
+				if(!$table.parent().is('.table-overflow-wrapper')){
+					$table.wrap('<div class="table-overflow-wrapper"></div>');
+				}
 				let button = $table.next('.avtt-tinymce-add-row');
 				if(button.length === 0){
 					button = $(`<div class="avtt-tinymce-add-row" contenteditable="false" data-mce-bogus="all">+</div>`);
@@ -3208,6 +3211,7 @@ class JournalManager{
 					observeTableResize(table, button[0]);
 					$table.data('avttRowButtonObserved', true);
 				}
+
 			});
 		};
 		editor.on('init SetContent NodeChange Undo Redo', syncAddRowButtons);
