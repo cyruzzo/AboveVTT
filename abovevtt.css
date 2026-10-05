@@ -14519,7 +14519,9 @@ ul.avttBuffItems select,
   margin: 0;
   left:0;
 }
-
+.avtt-stat-block-container > .avtt-statblock-buffs > .avtt-token-roll-settings {
+  top:0px;
+}
 .avtt-statblock-buffs > .avtt-token-roll-settings .avtt-token-roll-settings-fields {
   top: 22px;
   right: auto;

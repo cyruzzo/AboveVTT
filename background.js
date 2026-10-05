@@ -1,5 +1,6 @@
 //This is needed to resolve redirects that DDB has going through dndbeyond.com instead of www.dndbeyond.com for importing scenes. 
-//Otherwise it gets blocked due to cross origin redirects.
+//Otherwise it gets blocked due to cross origin redirects. 
+// This currently only affects 1 or 2 books and may by a mistaken redirect link on DDBs end
 const avttRuntime = (typeof browser != 'undefined' ? browser : chrome).runtime;
 
 avttRuntime.onMessage.addListener((msg, sender, sendResponse) => {
