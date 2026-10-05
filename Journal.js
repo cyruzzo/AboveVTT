@@ -3444,7 +3444,7 @@ class JournalManager{
 			$(ownerDocument).off('keydown.pcTemplateTabKey').on('keydown.pcTemplateTabKey', pcTemplateTabKey);
 		}
 		const tokenId = options.tokenId;
-		const downloadToken = options.downloadToken;
+		const downloadToken = options.downloadToken ?? (ownerDocument !== document ? (window.TOKEN_OBJECTS[tokenId] || window.all_token_objects?.[tokenId]) : undefined);
 		const uploadId = options.uploadId ?? (tokenId ?? id);
 		const getCurrentNoteText = () => self.getDisplayedNoteText(container, initialNoteText);
 		const persistCurrentNoteText = (persistOptions) => {
@@ -3696,12 +3696,25 @@ class JournalManager{
 			self.updateEquipmentWeightTotals(getCurrentNoteText());
 		});
 
-		if(options.showControls !== true)
+		const popoutControls = ownerDocument !== document;
+		if(options.showControls !== true && !popoutControls)
 			return;
 		const titleBar = container.find('.title_bar').first();
-		const controlContainer = options.controlContainer ? $(options.controlContainer) : (titleBar.length > 0 ? titleBar : container);
+		let controlContainer = options.controlContainer ? $(options.controlContainer) : (titleBar.length > 0 ? titleBar : container);
+		if(popoutControls){
+			const currentNoteText = getCurrentNoteText();
+			let toolbar = currentNoteText.children('.avtt-statblock-buffs').first();
+			if(toolbar.length === 0){
+				toolbar = $('<div class="avtt-statblock-buffs"></div>');
+				currentNoteText.prepend(toolbar);
+			}
+			toolbar.addClass('avtt-popout-stat-toolbar');
+			toolbar.find('.avtt-popout-stat-controls').remove();
+			controlContainer = $('<div class="avtt-popout-stat-controls" contenteditable="false"></div>');
+			toolbar.append(controlContainer);
+		}
 		controlContainer.find('.lockStatButton, .download_button, .upload_button').remove();
-		const absoluteControls = titleBar.length === 0;
+		const absoluteControls = titleBar.length === 0 && !popoutControls;
 		const controlStyle = absoluteControls ? "cursor: pointer; position: absolute; top: 3px; width: 20px; height: 20px; color: #ddd;" : "cursor: pointer; position: relative; display:inline-block; color: #ddd;";
 		const spanStyle = absoluteControls ? "font-size:20px;" : "font-size: 20px; position: relative; top: 4px;";
 		const lockStatButton = $(`<div class='lockStatButton' style="${controlStyle}${absoluteControls ? 'left: 2px;' : ''}">
@@ -3736,7 +3749,7 @@ class JournalManager{
 		uploadStat.find('input[type="file"]').change(function(e) {
 			import_pc_template_html(e.target.files, getCurrentNoteText(), id, tokenId);
 		});
-		if(titleBar.length > 0){
+		if(titleBar.length > 0 && !popoutControls){
 			container.find('.title_bar_text').css('display', 'inline-block');
 			titleBar.prepend(lockStatButton, downloadStat, uploadStat);
 			titleBar.css({
@@ -4140,18 +4153,21 @@ class JournalManager{
 	injectDisplayedNoteRollControls(id, note_text, note_container){
 		const titleBar = $(note_container).find('.title_bar').first();
 		const noteText = $(note_text);
+		const popoutStatControls = noteText.find('.avtt-popout-stat-controls').detach();
 		titleBar.find('.avtt-note-roll-controls').remove();
-		noteText.children('.avtt-note-roll-controls').remove();
+		noteText.children('.avtt-note-roll-controls, .avtt-popout-stat-toolbar').remove();
 		noteText.children('.avtt-note-roll-buff-pins').remove();
 		if(noteText.find('.dnd-sheet').length === 0 || typeof build_buff_dropdown !== 'function')
 			return;
 
 		const dropdown = build_buff_dropdown({type: 'note', noteId: id}, true);
 		const rollSettings = typeof build_note_roll_settings === 'function' ? build_note_roll_settings(id) : undefined;
-		if(!dropdown && !rollSettings)
+		if(!dropdown && !rollSettings && popoutStatControls.length === 0)
 			return;
 
-		const controls = $(`<div class="avtt-note-roll-controls${titleBar.length === 0 ? ' avtt-statblock-buffs' : ''}"></div>`).append(dropdown, rollSettings);
+		const controls = $(`<div class="avtt-note-roll-controls${titleBar.length === 0 ? ' avtt-statblock-buffs' : ''}"></div>`)
+			.toggleClass('avtt-popout-stat-toolbar', popoutStatControls.length > 0)
+			.append(dropdown, rollSettings, popoutStatControls);
 		const uploadButton = titleBar.find('.upload_button').first();
 		if(uploadButton.length > 0)
 			uploadButton.after(controls);
@@ -4160,12 +4176,12 @@ class JournalManager{
 		else
 			noteText.prepend(controls);
 
-		const pinDisplay = $('<div class="avtt-note-roll-buff-pins"></div>').append(dropdown.find('.avttBuffSheetPins').detach());
+		const pinDisplay = $('<div class="avtt-note-roll-buff-pins"></div>').append($(dropdown).find('.avttBuffSheetPins').detach());
 		if(titleBar.length > 0)
 			noteText.prepend(pinDisplay);
 		else
 			controls.after(pinDisplay);
-		const dropdownEntry = window.avttBuffDropdowns?.find(entry => entry.id === dropdown.attr('id'));
+		const dropdownEntry = window.avttBuffDropdowns?.find(entry => entry.id === $(dropdown).attr('id'));
 		if(dropdownEntry)
 			dropdownEntry.pinContainer = pinDisplay;
 	}
