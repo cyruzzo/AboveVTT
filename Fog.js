@@ -1191,7 +1191,7 @@ function do_check_token_visibility() {
 
 		document.querySelectorAll('.token').forEach(el => el.classList.remove('notVisible'));
 		document.querySelectorAll('.door-button').forEach(el => el.classList.remove('notVisible'));
-		if(noSelectedTokensWithVision && window.CURRENTLY_SELECTED_TOKENS.length>0 && !isAoeTokenSelected){
+		if(window.SelectedTokenVision == true && noSelectedTokensWithVision && window.CURRENTLY_SELECTED_TOKENS.length>0 && !isAoeTokenSelected){
 			document.querySelectorAll('.vision>.aura-element').forEach(el => el.classList.add('notVisible'));
 			document.querySelectorAll('.aura-element.islight').forEach(el => el.classList.remove('notVisible'));
 		} else{
