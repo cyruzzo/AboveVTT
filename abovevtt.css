@@ -1031,7 +1031,7 @@ select#doorTypeSelectUVTT{
   transform: scale(var(--scene-scale));
   pointer-events: none;
   z-index: 20;
-  contain: strict;
+  isolation: isolate
 }
 .ruler-svg-line,
 .ruler-svg-line,
@@ -1041,7 +1041,7 @@ select#doorTypeSelectUVTT{
 #text_div,
 #capture_mouse,
 #peerCursorPosition{
-    contain:strict;
+    isolation: isolate
 }
 #rotDragbox{
     z-index: 45;

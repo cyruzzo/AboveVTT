@@ -264,6 +264,13 @@ class JournalManager{
 		});
 
 		Promise.all([loadJournalPromise, loadChaptersPromise, loadStatBlocksPromise]).then(() => {
+			const notes = this.notes;
+			for(let i =0; i<notes.length; i++){
+				const text = notes[i].text;
+				if(!text)
+					continue;
+				text = basic_sanitize_html(text);
+			}
 			if(is_abovevtt_page()){
 				this.build_journal();
 			}
