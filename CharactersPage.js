@@ -606,8 +606,8 @@ function init_character_list_page_without_avtt() {
           });
           $('#combat_carousel_container').remove();
           setTimeout(function(){
-            $(".builder-sections-sheet-icon").off().on("click", function(){
-              window.location.href = `https://www.dndbeyond.com${$(".builder-sections-sheet-icon").attr("href")}?abovevtt=true`;
+            $(".builder-sections-sheet-icon, [class*=\"styles_characterSheetIcon\"][href*=\"?abovevtt=true\"]").off().on("click", function(){
+              window.location.href = `https://www.dndbeyond.com${$(".builder-sections-sheet-icon, [class*=\"styles_characterSheetIcon\"][href*=\"?abovevtt=true\"]").attr("href")}?abovevtt=true`;
             });
           }, 1000)
         }

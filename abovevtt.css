@@ -1031,6 +1031,12 @@ select#doorTypeSelectUVTT{
   transform: scale(var(--scene-scale));
   pointer-events: none;
   z-index: 20;
+  contain: strict;
+}
+.ruler-svg-line,
+.ruler-svg-line,
+.ruler-svg-bobbles{
+    contain:strict;
 }
 #rotDragbox{
     z-index: 45;
