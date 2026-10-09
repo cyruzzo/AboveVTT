@@ -1035,7 +1035,12 @@ select#doorTypeSelectUVTT{
 }
 .ruler-svg-line,
 .ruler-svg-line,
-.ruler-svg-bobbles{
+.ruler-svg-bobbles,
+#peer_overlay,
+#grid_svg_overlay_container,
+#text_div,
+#capture_mouse,
+#peerCursorPosition{
     contain:strict;
 }
 #rotDragbox{
