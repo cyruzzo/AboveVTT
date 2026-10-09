@@ -5397,9 +5397,10 @@ class JournalManager{
     }
 	getCustomCR(statBlock){
 		if(statBlock == undefined) return 0;
-       
+		
 		statBlock.find('style').remove();
-		statBlock=statBlock[0].innerHTML;
+		statBlock = statBlock[0].innerHTML;
+		statBlock = `<div>${statBlock}</div>`;
 		let crText = $(statBlock).find('.custom-challenge-rating.custom-stat').text();
 		if(crText == '' || crText == undefined){
 			let searchText = statBlock.replaceAll('mon-stat-block-2024', '').replaceAll(/\&nbsp\;/g,' ')

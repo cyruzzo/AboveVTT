@@ -558,7 +558,7 @@ class Token {
 			return {};
 		}
 		const customStatBlock = window.JOURNAL.notes[this.options.statBlock]?.text;
-		const pcURL = customStatBlock != undefined ? $(customStatBlock).find('.custom-pc-sheet.custom-stat').text() : undefined;
+		const pcURL = customStatBlock != undefined ? $(`<div>${customStatBlock}</div>`).find('.custom-pc-sheet.custom-stat').text() : undefined;
 		return {customStatBlock, pcURL};
 	}
 	size(newSize, linewidth=false) {
