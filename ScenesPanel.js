@@ -827,7 +827,7 @@ function edit_scene_vision_settings(scene_id){
 		let darknessFilterRangeValue = parseInt(darknessFilterRange.val());
    	 	let darknessPercent = 100 - darknessFilterRangeValue;
    	 	if(window.CURRENT_SCENE_DATA.id == window.ScenesHandler.scenes[scene_id].id) {
-	   	 	$('#VTT').css('--darkness-filter', darknessPercent + "%");
+			set_darkness_background(darknessPercent);
    		}
    		setTimeout(function(){
    			$("#darkness_layer").toggleClass("smooth-transition", false);
@@ -898,7 +898,7 @@ function edit_scene_vision_settings(scene_id){
 		let darknessFilterRangeValue = parseInt(darknessFilterRange.val());
    	 	let darknessPercent = 100 - darknessFilterRangeValue;
    	 	if(window.CURRENT_SCENE_DATA.id == window.ScenesHandler.scenes[scene_id].id) {
-	   	 	$('#VTT').css('--darkness-filter', darknessPercent + "%");
+			set_darkness_background(darknessPercent);
    		}
    		setTimeout(function(){
    			$("#darkness_layer").toggleClass("smooth-transition", false);
@@ -1195,7 +1195,7 @@ function edit_scene_dialog(scene_id) {
 		let darknessFilterRangeValue = parseInt(darknessFilterRange.val());
    	 	let darknessPercent = 100 - darknessFilterRangeValue;
    	 	if(window.CURRENT_SCENE_DATA.id == scene.id) {
-	   	 	$('#VTT').css('--darkness-filter', darknessPercent + "%");
+			set_darkness_background(darknessPercent);
    		}
    		setTimeout(function(){
    			$("#darkness_layer").toggleClass("smooth-transition", false);
@@ -1209,7 +1209,7 @@ function edit_scene_dialog(scene_id) {
 		let darknessFilterRangeValue = parseInt(darknessFilterRange.val());
    	 	let darknessPercent = 100 - darknessFilterRangeValue;
 		if (window.CURRENT_SCENE_DATA.id == scene.id) {
-	   	 	$('#VTT').css('--darkness-filter', darknessPercent + "%");
+			set_darkness_background(darknessPercent);
    		}
    		setTimeout(function(){
    			$("#darkness_layer").toggleClass("smooth-transition", false);
