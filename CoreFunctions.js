@@ -1485,6 +1485,8 @@ function general_statblock_formating(input){
 }
 
 function process_monitored_logs() {
+  console.concerningLogs ??= [];
+  console.otherLogs ??= [];
   const logs = [...console.concerningLogs, ...console.otherLogs].sort((a, b) => a.timeStamp < b.timeStamp ? 1 : -1);
   let processedLogs = [];
   logs.forEach(log => {
@@ -2581,7 +2583,7 @@ async function harvest_game_id() {
     const characterId = window.location.pathname.split("/").pop();
     window.characterData = await DDBApi.fetchCharacter(characterId);
     if (!window.characterData?.campaign){
-      return false;
+      throw new Error('Unable to find campaign linked to character. Character may be disabled in the campaign. Otherwise there may be a temporary outage.')
     }
     return window.characterData?.campaign?.id?.toString();
   }
