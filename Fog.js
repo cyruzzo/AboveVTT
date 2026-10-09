@@ -1777,6 +1777,12 @@ function ctxScale(canvasid,  w, h, doNotScale=false){
 	return canvas;
 }
 
+
+function set_darkness_background(brightnessPercent) {
+	const channel = Math.max(0, Math.min(100, brightnessPercent));
+	$('#VTT').css('--darkness-color', `rgb(${channel}%, ${channel}%, ${channel}%)`);
+}
+
 function reset_canvas(apply_zoom=true) {
 	const sceneMapWidth = $("#scene_map").width();
 	const sceneMapHeight = $("#scene_map").height();
@@ -1889,7 +1895,7 @@ function check_darkness_value(){
 
 		if ((window.SelectedTokenVision === true && tokenHasSharedVision && window.CURRENT_SCENE_DATA.disableSceneVision != 1)){
 			if(window.CURRENT_SCENE_DATA.darkness_filter > 0){
-				$('#VTT').css('--darkness-filter', `${100 - window.CURRENT_SCENE_DATA.darkness_filter}%`)
+				set_darkness_background(100 - window.CURRENT_SCENE_DATA.darkness_filter);
 			}
 			if(selectedTokensWithLight == 0){
 				rayCanvas.css('opacity', '0');
@@ -1917,7 +1923,7 @@ function check_darkness_value(){
 			else if (window.CURRENT_SCENE_DATA.disableSceneVision == 1) {
 				rayCanvas.css('opacity', '0');
 			}
-  			$('#VTT').css('--darkness-filter', darknessPercent + "%");
+			set_darkness_background(darknessPercent);
   		   	if(window.DM){
   		   		$("#light_container [id^='light_']").css('visibility', "visible");
 				$(`.token`).toggleClass('notVisible', false);
@@ -1962,7 +1968,7 @@ function check_darkness_value(){
 				'opacity': ''
 			});
 		}
-		$('#VTT').css('--darkness-filter', darknessPercent + "%");
+		set_darkness_background(darknessPercent);
 		if(!parseInt(window.CURRENT_SCENE_DATA.darkness_filter) && window.walls?.length>4){
 			lightContainer.css({'opacity': '0.3'});
 		}
