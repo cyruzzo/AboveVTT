@@ -3259,6 +3259,7 @@ function redraw_light_walls(options = {clearCanvas: true, editingWallPoints: fal
 								
 							if(tokenObject?.options?.teleporterCoords?.linkedPortalId != undefined && tokenObject.options.teleporterCoords.sceneId != window.CURRENT_SCENE_DATA.id){
 								copy_selected_tokens(tokenObject.options.teleporterCoords.linkedPortalId);
+								
 								forSelTokens((token,id) => {
 									token.selected = true;
 									token.options.deleteableByPlayers = true;
@@ -3268,35 +3269,85 @@ function redraw_light_walls(options = {clearCanvas: true, editingWallPoints: fal
 								window.MB.sendMessage('custom/myVTT/highlight', {
 									id: tokenObject.options.id
 								});
-								if(!window.DM){
-									async function teleportScene(tokenObject){
-										let currentScene = await AboveApi.getCurrentScene(true);
-										let sceneIds = {}
-										let playerId = window.PLAYER_ID;
-										if(currentScene.playerscene && currentScene.playerscene.players){
-											sceneIds = {
-												...currentScene.playerscene,         
-											};
-											sceneIds[playerId] = tokenObject.options.teleporterCoords.sceneId
+								
+								async function teleportScene(tokenObject){
+
+									let currentScene = await AboveApi.getCurrentScene(true);
+									
+									let playersOnCurrentScene = [];
+									
+									if(currentScene.playerscene && currentScene.playerscene.players){
+										const playersNotOnScene =[];
+										for(let i in currentScene.playerscene){
+											if(currentScene.playerscene[i] != window.CURRENT_SCENE_DATA.id){
+												playersNotOnScene.push(i);
+											}
+											else if(currentScene.playerscene[i] == window.CURRENT_SCENE_DATA.id){
+												for(let pc of window.pcs){
+													if(i == 'players' && playersNotOnScene.includes(pc.characterId))
+														continue;
+													playersOnCurrentScene.push({id: pc.characterId, user: pc.userId});
+												}
+											}
+											
 										}
-										else if(typeof currentScene.playerscene == 'string'){
-											sceneIds = {
-												players: currentScene.playerscene,
-											};
-											sceneIds[playerId] = tokenObject.options.teleporterCoords.sceneId
+										
+									}
+									else if(typeof currentScene.playerscene == 'string' && currentScene.playerscene == window.CURRENT_SCENE_DATA.id){
+										for(let pc of window.pcs){
+											playersOnCurrentScene.push({id: pc.characterId, user: pc.userId});
 										}
-										window.splitPlayerScenes = sceneIds;
-										window.MB.sendMessage("custom/myVTT/switch_scene", { sceneId: sceneIds});
+									}
+									playersOnCurrentScene = [...new Set(playersOnCurrentScene)];
+									let movedPlayerIds = [];
+									if(shiftHeld && window.TELEPORTER_PASTE_BUFFER.tokens){
+										for(let token of Object.values(window.TELEPORTER_PASTE_BUFFER.tokens)){
+											for(let player of playersOnCurrentScene){
+												if(token.options.sheet != undefined){
+													const splitId = token.options.id.split('/');
+													const playerId = splitId[splitId.length - 1].split('?')[0];
+													if(playerId == player.id)
+														movedPlayerIds.push(player.id)
+												}
+												if(token.options.shared_vision == true || token.options.shared_vision == player.user){
+													movedPlayerIds.push(player.id)
+												}
+											}
+										};
+									}
+									if(!window.DM){
+										movedPlayerIds.push(window.PLAYER_ID);
+									}
+									movedPlayerIds = [...new Set(movedPlayerIds)]
+									
+									if(currentScene.playerscene && currentScene.playerscene.players){
+										sceneIds = {
+											...currentScene.playerscene,         
+										};
+										for(let playerID of movedPlayerIds){
+											sceneIds[playerID] = tokenObject.options.teleporterCoords.sceneId;
+										}
+										
+									}
+									else if(typeof currentScene.playerscene == 'string'){
+										sceneIds = {
+											players: currentScene.playerscene,
+										};
+										for(let playerID of movedPlayerIds){
+											sceneIds[playerID] = tokenObject.options.teleporterCoords.sceneId;
+										}
+									}
+									window.splitPlayerScenes = sceneIds;
+									window.MB.sendMessage("custom/myVTT/switch_scene", { sceneId: sceneIds});
+									if(window.DM){
+										window.MB.sendMessage("custom/myVTT/switch_scene", { sceneId: tokenObject.options.teleporterCoords.sceneId, switch_dm: true });
+										$("#scenes-panel .dm_scenes_button.selected-scene").removeClass("selected-scene");
+										$(`#scenes-panel [data-scene-id="${tokenObject.options.teleporterCoords.sceneId}"] .dm_scenes_button`).addClass("selected-scene");
+									} else{
 										window.MB.sendMessage("custom/myVTT/update_dm_player_scenes", {splitPlayerScenes: window.splitPlayerScenes});
 									}
-									teleportScene(tokenObject);
-									
 								}
-								else{
-									window.MB.sendMessage("custom/myVTT/switch_scene", { sceneId: tokenObject.options.teleporterCoords.sceneId, switch_dm: true });
-									$("#scenes-panel .dm_scenes_button.selected-scene").removeClass("selected-scene");
-									$(`#scenes-panel [data-scene-id="${tokenObject.options.teleporterCoords.sceneId}"] .dm_scenes_button`).addClass("selected-scene");
-								}
+								teleportScene(tokenObject);
 							}
 							else if(tokenObject?.options?.teleporterCoords != undefined){
 								let coords = tokenObject.options.teleporterCoords;

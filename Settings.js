@@ -534,17 +534,11 @@ function avtt_settings(campaignSettings = false) {
 								delete window.TOKEN_SETTINGS[name];
 							}
 						}, function() {
-							const devilsightInput = $("input[name='devilsightColor']").spectrum("get");
-							const truesightInput = $("input[name='truesightColor']").spectrum("get");
-							const visionInput = $("input[name='visionColor']").spectrum("get");
-			   				const light1Input = $("input[name='light1Color']").spectrum("get");
-			    			const light2Input = $("input[name='light2Color']").spectrum("get");
-
-			        		window.TOKEN_SETTINGS.devilsight.color= `rgba(${devilsightInput._r}, ${devilsightInput._g}, ${devilsightInput._b}, ${devilsightInput._a})`;
-							window.TOKEN_SETTINGS.truesight.color= `rgba(${truesightInput._r}, ${truesightInput._g}, ${truesightInput._b}, ${truesightInput._a})`;
-			        		window.TOKEN_SETTINGS.vision.color= `rgba(${visionInput._r}, ${visionInput._g}, ${visionInput._b}, ${visionInput._a})`;
-			   				window.TOKEN_SETTINGS.light1.color = `rgba(${light1Input._r}, ${light1Input._g}, ${light1Input._b}, ${light1Input._a})`;
-			    			window.TOKEN_SETTINGS.light2.color = `rgba(${light2Input._r}, ${light2Input._g}, ${light2Input._b}, ${light2Input._a})`;
+							for (const name of ['devilsight', 'truesight', 'vision', 'light1', 'light2']) {
+								const color = flyout.find(`input[name='${name}Color']`).spectrum("get");
+								window.TOKEN_SETTINGS[name] ??= {};
+								window.TOKEN_SETTINGS[name].color = `rgba(${color._r}, ${color._g}, ${color._b}, ${color._a})`;
+							}
 
 							persist_token_settings(window.TOKEN_SETTINGS);
 							redraw_settings_panel_token_examples();
