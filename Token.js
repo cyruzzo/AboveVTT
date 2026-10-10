@@ -3232,6 +3232,13 @@ class Token {
 
 
 				setTokenBase(tok, this.options);
+				if (!this.options.id.includes('exampleToken')) {
+					const dragHandle = $('<div class="token-drag-handle" title="Drag to move token" aria-label="Drag to move token"><span class="material-symbols-outlined" aria-hidden="true">open_with</span></div>');
+					dragHandle.on('click dblclick', function(event) {
+						event.stopPropagation();
+					});
+					tok.append(dragHandle);
+				}
 				let click = {
 					x: 0,
 					y: 0
@@ -3601,7 +3608,7 @@ class Token {
 
 				let classToClick = null;
 				if(this.isLineAoe()){
-					tok.draggable( "option", "handle", "[data-img]" );
+					tok.draggable( "option", "handle", "[data-img], .token-drag-handle" );
 					classToClick = "[data-img]"
 				}
 				
@@ -4994,7 +5001,17 @@ const debounceDrawSelectedToken = mydebounce(() => {
 		do_draw_selected_token_bounding_box();
 	}, 100);
 
+function update_token_drag_handles() {
+	const tokens = Array.from(document.querySelectorAll('#tokens .token.tokenselected'));
+	const sizes = tokens.map(token => {
+		const rect = token.getBoundingClientRect();
+		return rect.width > 0 && rect.height > 0 && Math.max(rect.width, rect.height) < 6;
+	});
+	tokens.forEach((token, index) => token.classList.toggle('token-small-drag-target', sizes[index]));
+}
+
 function draw_selected_token_bounding_box(){
+	update_token_drag_handles();
 	debounceDrawSelectedToken();
 }
 
