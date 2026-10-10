@@ -1058,7 +1058,6 @@ function apply_avtt_roll_button_markup(html){
   const damageRollRegex = new RegExp(`\\s*([:\\s>]|^)(${rollFormula})([\\.\\):\\s<,]|\$)`, 'gi');
   const hitRollRegexBracket = /\s*(?<![0-9]+d[0-9]+)(\()([+-]\s?[0-9]+)(\))/gi
   const hitRollRegex = /\s*(?<!(?:[0-9]+d)?[0-9]+)([:\s>]|^)([+-]\s?[0-9]+)([:\s<,]|$)/gi
-  const dRollRegex = /\s*([\s>]|^)(\s?d[0-9]+)([^+-])/gi
   const rechargeRegEx = /\s*(Recharge [0-6]?\s?[—–-]?\s?[0-6])/gi
   const actionType = "roll"
 
@@ -1072,7 +1071,6 @@ function apply_avtt_roll_button_markup(html){
     .replaceAll(damageRollRegex, ` $1<button data-exp='$2' data-mod='' data-rolltype='damage' data-actiontype='${actionType}' class='avtt-roll-button' title='${actionType}'>$2</button>$3`)
     .replaceAll(hitRollRegexBracket, ` <button data-exp='1d20' data-mod='$2' data-rolltype='to hit' data-actiontype=${actionType} class='avtt-roll-button' title='${actionType}'>$1$2$3</button>`)
     .replaceAll(hitRollRegex, ` $1<button data-exp='1d20' data-mod='$2' data-rolltype='to hit' data-actiontype=${actionType} class='avtt-roll-button' title='${actionType}'>$2</button>$3`)
-    .replaceAll(dRollRegex, `$1<button data-exp='1$2' data-mod='' data-rolltype='to hit' data-actiontype=${actionType} class='avtt-roll-button' title='${actionType}'>$2</button>$3`)
     .replaceAll(rechargeRegEx, `<button data-exp='1d6' data-mod='' data-rolltype='recharge' data-actiontype='Recharge' class='avtt-roll-button' title='${actionType}'>$1</button>`)
 
   return add_aoe_to_statblock(updated);
