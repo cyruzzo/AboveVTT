@@ -875,7 +875,7 @@ function add_aoe_to_statblock(html){
 
   const aoeRegEx = /(([\d]+)-foot(?:(?:-long(?:,)? ([\d]+)-foot-wide)|(?:-radius(?:, ([\d]+)-foot-high)?))?\s+([a-zA-Z]+))((?:(?!\d+-foot)(?![^<]*>)[^<])*)/gi;
 
-  return html.replaceAll(aoeRegEx, function(m, m1, m2, m3, m4, m5, m6, m7) {
+  return html.replaceAll(aoeRegEx, function(m, m1, m2, m3, m4, m5, m6, offset, source) {
     const shape = m5.toLowerCase();
 
     // Guard clause for unsupported shapes
@@ -887,26 +887,38 @@ function add_aoe_to_statblock(html){
       return `${m}`;
     }
 
-    let sentencePart = 'default';
-
+    let aoeType = 'default';
+    const availableStyles = get_available_styles().map(s => s.toLowerCase().trim());
     if (m6 !== undefined) {
-
       const words = m6.toLowerCase().trim().split(/[^\d\w]+/gi).filter(Boolean);
-      const availableStyles = get_available_styles().map(s => s.toLowerCase().trim());
-
+      
       for (let i = 0; i < words.length; i++) {
         const candidate = words.slice(0, words.length -i).join('-');
         if (availableStyles.includes(candidate)) {
-          sentencePart = candidate;
+          aoeType = candidate;
           break;
         }
+      }
+    }
+    if (aoeType === 'default') {
+      const followingHtml = source.slice(offset + m1.length);
+      const sameParagraph = followingHtml.split(/<\/p\s*>/i)[0];
+      const template = document.createElement('template');
+      template.innerHTML = sameParagraph;
+
+      const damageType = template.content.textContent.match(
+        /\b([a-zA-Z]+)\s+damage\b/i
+      );
+
+      if (damageType) {
+        aoeType = availableStyles.includes(damageType[1].toLowerCase()) ? damageType[1].toLowerCase() : sentencePart;
       }
     }
     const lineWidthAttr = shape === 'line' 
       ? ` data-line-width=${m3 !== undefined ? `'${m3}'`: '5'}` 
       : '';
 
-    return `<button class='avtt-aoe-button' border-width='1px' title='Place area of effect token' data-shape='${shape}' data-style='${sentencePart}' data-size='${m2}' data-name='${m5} AoE'${lineWidthAttr}>${m1}</button>${m6 !== undefined ? m6 : ''}`;
+    return `<button class='avtt-aoe-button' border-width='1px' title='Place area of effect token' data-shape='${shape}' data-style='${aoeType}' data-size='${m2}' data-name='${m5} AoE'${lineWidthAttr}>${m1}</button>${m6 !== undefined ? m6 : ''}`;
   });
 }
 async function embedDDBSection(target){
@@ -3498,7 +3510,7 @@ function basic_sanitize_html(html){
   const template = document.createElement('template');
   template.innerHTML = sanitized;
   Array.from(template.content.childNodes).forEach(node => {
-    if (node.nodeType === Node.TEXT_NODE) {
+    if (node.nodeType === Node.TEXT_NODE && node.textContent.replace(/[\u200B-\u200D\uFEFF]/g, '').trim()) {
       const paragraph = document.createElement('p');
       node.replaceWith(paragraph);
       paragraph.appendChild(node);
