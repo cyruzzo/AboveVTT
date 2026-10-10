@@ -3261,6 +3261,10 @@ function init_help_menu() {
 							<dd>Paste Selected Tokens/Walls</dd>
 						</dl>
 						<dl>
+						<dt>${getModKeyName()}+${getShiftKeyName()}+V</dt>
+							<dd>Paste clipboard text as token note on scene</dd>
+						</dl>
+						<dl>
 							<dt>${getShiftKeyName()}+L</dt>
 							<dd>Enable/Disable locked token interation (DM only)</dd>
 						</dl>

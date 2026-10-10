@@ -9985,7 +9985,6 @@ function render_source_chapter_in_iframe(url) {
 	let iframe = $(`#${iframeId}`);
 	if (iframe.length > 0) {
 
-		// TODO: any clean up tasks before redirecting?
 
 		if (chapterHash) {
 			iframe.attr("data-chapter-hash", chapterHash);
@@ -10040,6 +10039,8 @@ function render_source_chapter_in_iframe(url) {
 			// because we want everything that matches tagName and above
 			// for example, if tagName is H3, we want our boundaryTags to include H3, H2, and H1
 			switch (tagName) {
+				case "H6": boundaryTags.push("H6");
+				case "H5": boundaryTags.push("H5");
 				case "H4": boundaryTags.push("H4");
 				case "H3": boundaryTags.push("H3");
 				case "H2": boundaryTags.push("H2");
@@ -10058,8 +10059,6 @@ function render_source_chapter_in_iframe(url) {
 		}
 
 		setTimeout(()=>{
-
-			
 			if(this.src.includes('dndbeyond.com/sources')){
 				const iframeContentContainer = iframeContents.find('#content.main.content-container>section.primary-content');
 				if(iframeContentContainer.length > 0){
@@ -10067,7 +10066,28 @@ function render_source_chapter_in_iframe(url) {
 					window.JOURNAL.add_journal_tooltip_targets(iframeContentContainer);
 					add_stat_block_hover(iframeContentContainer);
 				}
-					
+				const urlSrc = this.src;
+				const headers = iframeContents.find(':is(h1, h2, h3, h4, h5, h6)[id]');
+				for(let header of headers){
+					const curr = $(header);
+					const addNote = $('<span class="material-symbols-outlined" style="z-index: 1000; position: relative; cursor: pointer;">add_notes</span>');
+					const title = curr.text();
+					const tokenId = uuid();
+					const options = {id: tokenId};
+					const anchorTag = curr.attr('id');
+					addNote.off('pointerup.droptoken').on('pointerup.droptoken',function(event){
+						const listItem = window.tokenListItems.find(d=> d.id == "_AboveVTT_Tokens_Letters_____Exclamation_Mark");
+						window.JOURNAL.notes[tokenId] = {
+							title: title,
+							text: `<p><span class="journal-ddb-section-embed">${urlSrc.split('?')[0]}#${anchorTag}</span></p>`,
+							plain: '',
+							player: true
+						}
+						window.JOURNAL.persist();
+						create_and_place_token(listItem, event.shiftKey, undefined, undefined, undefined, undefined, title, undefined, options);
+					})
+					curr.append(addNote);
+				}
 				iframeContents.find('#content.main.content-container>section.secondary-content .sidebar-menu~.sidebar-menu').remove();
 				window.JOURNAL.block_send_to_buttons(iframeContentContainer);
 				$('.lightbox, .lightboxOverlay').remove(); //if added to main window remove

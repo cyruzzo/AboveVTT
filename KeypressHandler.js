@@ -561,6 +561,23 @@ Mousetrap.bind('shift+p', function(e) {
         return;
     open_portal_config();
 });
+Mousetrap.bind('shift+mod+v', async function(e) {
+    if($('#temp_overlay:hover, #capture_mouse:hover').length==0)
+        return;
+    const tokenId = uuid();
+    const text = basic_sanitize_html(await navigator.clipboard.readText());     
+    const listItem = window.tokenListItems.find(d=> d.id == "_AboveVTT_Tokens_Letters_____Exclamation_Mark");
+    const options = {id: tokenId};
+    window.JOURNAL.notes[tokenId] = {
+        title: '',
+        text: `<p>${text}</p>`,
+        plain: '',
+        player: true
+    }
+    window.JOURNAL.persist();
+    create_and_place_token(listItem, true, undefined, window.cursor_x, window.cursor_y, undefined, undefined, undefined, options);
+    
+})
 
 Mousetrap.bind('mod+v', async function(e) {
     if (await avttHandleFilePickerPaste(e)) {
