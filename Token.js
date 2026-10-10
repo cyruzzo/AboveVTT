@@ -3849,6 +3849,8 @@ class Token {
  * @param token jquery selected div with the class token
  */
 function toggle_player_selectable(tokenInstance, token){
+	if(!tokenInstance)
+		return;
 	const tokenImage = token?.find("img, [data-img]")
 	if (tokenInstance.options.locked && !window.DM){
 		tokenImage?.css("cursor","default");
