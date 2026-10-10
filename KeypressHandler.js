@@ -612,7 +612,23 @@ Mousetrap.bind('shift+mod+v', async function(e) {
     });
     const firstLine = plainContent.textContent.replace(/[\u200B-\u200D\uFEFF]/g, '')
         .split(/\r?\n/).map(line => line.trim()).find(Boolean) || '';
-    const listItem = window.tokenListItems.find(d=> d.id == "_AboveVTT_Tokens_Letters_____Exclamation_Mark");
+
+    let number = null;
+    const startMatch = firstLine.match(/^(?:\p{L}+)?(\d{1,2})\b/u);
+    if (startMatch) {
+        number = startMatch[1];
+    } else{
+        const endMatch = firstLine.match(/(?:\p{L}+)?(\d{1,2})[^\p{L}]*$/u);
+        if (endMatch) {
+            number = endMatch[1];
+        }
+    }
+    const findId = number 
+        ? `_AboveVTT_Tokens_Numbers_${number.length>1 ? number : `0${number}`}` 
+        : "_AboveVTT_Tokens_Letters_____Exclamation_Mark";
+    
+    const listItem = window.tokenListItems.find(d=> d.id == findId);
+    
     const options = {id: tokenId, name: firstLine};
 
     window.JOURNAL.notes[tokenId] = {

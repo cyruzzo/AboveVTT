@@ -10071,12 +10071,26 @@ function render_source_chapter_in_iframe(url) {
 				for(let header of headers){
 					const curr = $(header);
 					const addNote = $('<span class="material-symbols-outlined" style="z-index: 1000; position: relative; cursor: pointer;">add_notes</span>');
-					const title = curr.text();
+					const title = curr.text().trim();
 					const tokenId = uuid();
 					const options = {id: tokenId, name:title};
 					const anchorTag = curr.attr('id');
 					addNote.off('pointerup.droptoken').on('pointerup.droptoken',function(event){
-						const listItem = window.tokenListItems.find(d=> d.id == "_AboveVTT_Tokens_Letters_____Exclamation_Mark");
+						let number = null;
+						const startMatch = title.match(/^(?:\p{L}+)?(\d{1,2})\b/u);
+						if (startMatch) {
+							number = startMatch[1];
+						} else{
+							const endMatch = title.match(/(?:\p{L}+)?(\d{1,2})[^\p{L}]*$/u);
+							if (endMatch) {
+								number = endMatch[1];
+							}
+						}
+						
+						const findId = number 
+							? `_AboveVTT_Tokens_Numbers_${number.length>1 ? number : `0${number}`}` 
+							: "_AboveVTT_Tokens_Letters_____Exclamation_Mark";
+						const listItem = window.tokenListItems.find(d=> d.id == findId);
 						window.JOURNAL.notes[tokenId] = {
 							title: title,
 							text: `<p><span class="journal-ddb-section-embed">${urlSrc.split('?')[0]}#${anchorTag}</span></p>`,
