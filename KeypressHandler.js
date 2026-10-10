@@ -618,7 +618,7 @@ Mousetrap.bind('shift+mod+v', async function(e) {
     if (startMatch) {
         number = startMatch[1];
     } else{
-        const endMatch = firstLine.match(/\b(\d{1,2})(?:\D+)?$/u);
+        const endMatch = firstLine.match(/(?:\p{L}+)?(\d{1,2})[^\p{L}]*$/u);
         if (endMatch) {
             number = endMatch[1];
         }

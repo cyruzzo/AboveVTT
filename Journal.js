@@ -10071,7 +10071,7 @@ function render_source_chapter_in_iframe(url) {
 				for(let header of headers){
 					const curr = $(header);
 					const addNote = $('<span class="material-symbols-outlined" style="z-index: 1000; position: relative; cursor: pointer;">add_notes</span>');
-					const title = curr.text();
+					const title = curr.text().trim();
 					const tokenId = uuid();
 					const options = {id: tokenId, name:title};
 					const anchorTag = curr.attr('id');
@@ -10081,7 +10081,7 @@ function render_source_chapter_in_iframe(url) {
 						if (startMatch) {
 							number = startMatch[1];
 						} else{
-							const endMatch = title.match(/\b(\d{1,2})(?:\D+)?$/u);
+							const endMatch = title.match(/(?:\p{L}+)?(\d{1,2})[^\p{L}]*$/u);
 							if (endMatch) {
 								number = endMatch[1];
 							}
