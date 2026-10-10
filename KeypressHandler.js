@@ -562,6 +562,8 @@ Mousetrap.bind('shift+p', function(e) {
     open_portal_config();
 });
 Mousetrap.bind('shift+mod+v', async function(e) {
+    if(!window.DM)
+        return;
     if($('#temp_overlay:hover, #capture_mouse:hover').length==0)
         return;
     const tokenId = uuid();
