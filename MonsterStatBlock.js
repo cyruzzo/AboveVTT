@@ -212,6 +212,10 @@ async function display_stat_block_in_container(statBlock, container, tokenId, cu
     let abilities= container.find("p>em>strong, p>strong>em, div>strong>em, div>em>strong, p>span>em>strong, p>span>strong>em");
 
     for(let i = 0; i<abilities.length; i++){
+      if (!abilities[i].textContent.replace(/[\u200B-\u200D\uFEFF]/g, '').trim()) {
+        $(abilities[i]).removeClass('avtt-ability-roll-button');
+        continue;
+      }
       if($(abilities[i]).closest('em:has(strong), strong:has(em)').nextUntil('em:has(strong), strong:has(em)').is('.avtt-roll-button, :has(.avtt-roll-button)')){
         $(abilities[i]).toggleClass('avtt-ability-roll-button', true);
       }
@@ -409,6 +413,10 @@ const debounceRescanStatBlock = mydebounce(async (container, noteId, tokenId, cu
     let abilities= container.find("p>em>strong, p>strong>em, div>strong>em, div>em>strong, p>span>em>strong, p>span>strong>em");
 
     for(let i = 0; i<abilities.length; i++){
+      if (!abilities[i].textContent.replace(/[\u200B-\u200D\uFEFF]/g, '').trim()) {
+        $(abilities[i]).removeClass('avtt-ability-roll-button');
+        continue;
+      }
       if($(abilities[i]).closest('em:has(strong), strong:has(em)').nextUntil('em:has(strong), strong:has(em)').is('.avtt-roll-button, :has(.avtt-roll-button)')){
         $(abilities[i]).toggleClass('avtt-ability-roll-button', true);
       }

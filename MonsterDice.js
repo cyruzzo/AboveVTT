@@ -194,7 +194,8 @@ function rebuild_ability_trackers(target, tokenId){
  * @returns 
  */
 function createCountTracker(token, key, remaining, foundDescription, descriptionPostfix, callback, noteId) {
-	const input = $(`<input class="injected-input" contenteditable="false" data-token-id="${token?.options?.id}" data-tracker-key="${key}" type="number" value="${remaining}"></input><span class='added-input-desc' contenteditable="false"> ${foundDescription} ${descriptionPostfix}</span>`);
+	const input = $(`<input class="injected-input" contenteditable="false" data-token-id="${token?.options?.id}" type="number" value="${remaining}"></input><span class='added-input-desc' contenteditable="false"> ${foundDescription} ${descriptionPostfix}</span>`);
+	input.filter('input').attr('data-tracker-key', key);
 	input.off('input').on('input', function(){
 		resizeInput(input[0]);
 	})
@@ -238,7 +239,8 @@ function add_ability_tracker_inputs(target, tokenId) {
 				let numberFound = parseInt(foundMatches[1]);
 				if (!isNaN(numberFound)) {
 					const foundDescription = includeMatchingDescription ? foundMatches.input.substring(0, foundMatches.index) : ''; // `1st level `, `2nd level `, etc.
-					const key = foundDescription != '' ? foundDescription.replace(/\s/g, "") : /day/i.test(foundMatches[0]) ? `spellPerDay${numberFound}` : ''; // `1stlevel`, `2ndlevel`, etc.
+					const descriptionText = $('<div>').html(foundDescription).text();
+					const key = descriptionText.trim() != '' ? descriptionText.replace(/\s/g, "") : /day/i.test(foundMatches[0]) ? `spellPerDay${numberFound}` : ''; // `1stlevel`, `2ndlevel`, etc.
 					// token already has this ability tracked, update the input
 					if (token.options.abilityTracker?.[key] >= 0){
 						numberFound = token.options.abilityTracker[key]
@@ -462,6 +464,10 @@ function scan_player_creature_pane(target) {
   let abilities= container.find("p>em>strong, p>strong>em, div>strong>em, div>em>strong, p>span>em>strong, p>span>strong>em");
 
   for(let i = 0; i<abilities.length; i++){
+    if (!abilities[i].textContent.replace(/[\u200B-\u200D\uFEFF]/g, '').trim()) {
+      $(abilities[i]).removeClass('avtt-ability-roll-button');
+      continue;
+    }
     if($(abilities[i]).closest('em:has(strong), strong:has(em)').nextUntil('em:has(strong), strong:has(em)').is('.avtt-roll-button, :has(.avtt-roll-button)')){
       $(abilities[i]).toggleClass('avtt-ability-roll-button', true);
     }

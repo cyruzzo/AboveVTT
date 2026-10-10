@@ -875,7 +875,7 @@ function add_aoe_to_statblock(html){
 
   const aoeRegEx = /(([\d]+)-foot(?:(?:-long(?:,)? ([\d]+)-foot-wide)|(?:-radius(?:, ([\d]+)-foot-high)?))?\s+([a-zA-Z]+))((?:(?!\d+-foot)(?![^<]*>)[^<])*)/gi;
 
-  return html.replaceAll(aoeRegEx, function(m, m1, m2, m3, m4, m5, m6, m7) {
+  return html.replaceAll(aoeRegEx, function(m, m1, m2, m3, m4, m5, m6, offset, source) {
     const shape = m5.toLowerCase();
 
     // Guard clause for unsupported shapes
@@ -887,26 +887,38 @@ function add_aoe_to_statblock(html){
       return `${m}`;
     }
 
-    let sentencePart = 'default';
-
+    let aoeType = 'default';
+    const availableStyles = get_available_styles().map(s => s.toLowerCase().trim());
     if (m6 !== undefined) {
-
       const words = m6.toLowerCase().trim().split(/[^\d\w]+/gi).filter(Boolean);
-      const availableStyles = get_available_styles().map(s => s.toLowerCase().trim());
-
+      
       for (let i = 0; i < words.length; i++) {
         const candidate = words.slice(0, words.length -i).join('-');
         if (availableStyles.includes(candidate)) {
-          sentencePart = candidate;
+          aoeType = candidate;
           break;
         }
+      }
+    }
+    if (aoeType === 'default') {
+      const followingHtml = source.slice(offset + m1.length);
+      const sameParagraph = followingHtml.split(/<\/p\s*>/i)[0];
+      const template = document.createElement('template');
+      template.innerHTML = sameParagraph;
+
+      const damageType = template.content.textContent.match(
+        /\b([a-zA-Z]+)\s+damage\b/i
+      );
+
+      if (damageType) {
+        aoeType = availableStyles.includes(damageType[1].toLowerCase()) ? damageType[1].toLowerCase() : sentencePart;
       }
     }
     const lineWidthAttr = shape === 'line' 
       ? ` data-line-width=${m3 !== undefined ? `'${m3}'`: '5'}` 
       : '';
 
-    return `<button class='avtt-aoe-button' border-width='1px' title='Place area of effect token' data-shape='${shape}' data-style='${sentencePart}' data-size='${m2}' data-name='${m5} AoE'${lineWidthAttr}>${m1}</button>${m6 !== undefined ? m6 : ''}`;
+    return `<button class='avtt-aoe-button' border-width='1px' title='Place area of effect token' data-shape='${shape}' data-style='${aoeType}' data-size='${m2}' data-name='${m5} AoE'${lineWidthAttr}>${m1}</button>${m6 !== undefined ? m6 : ''}`;
   });
 }
 async function embedDDBSection(target){
@@ -1046,7 +1058,6 @@ function apply_avtt_roll_button_markup(html){
   const damageRollRegex = new RegExp(`\\s*([:\\s>]|^)(${rollFormula})([\\.\\):\\s<,]|\$)`, 'gi');
   const hitRollRegexBracket = /\s*(?<![0-9]+d[0-9]+)(\()([+-]\s?[0-9]+)(\))/gi
   const hitRollRegex = /\s*(?<!(?:[0-9]+d)?[0-9]+)([:\s>]|^)([+-]\s?[0-9]+)([:\s<,]|$)/gi
-  const dRollRegex = /\s*([\s>]|^)(\s?d[0-9]+)([^+-])/gi
   const rechargeRegEx = /\s*(Recharge [0-6]?\s?[—–-]?\s?[0-6])/gi
   const actionType = "roll"
 
@@ -1060,7 +1071,6 @@ function apply_avtt_roll_button_markup(html){
     .replaceAll(damageRollRegex, ` $1<button data-exp='$2' data-mod='' data-rolltype='damage' data-actiontype='${actionType}' class='avtt-roll-button' title='${actionType}'>$2</button>$3`)
     .replaceAll(hitRollRegexBracket, ` <button data-exp='1d20' data-mod='$2' data-rolltype='to hit' data-actiontype=${actionType} class='avtt-roll-button' title='${actionType}'>$1$2$3</button>`)
     .replaceAll(hitRollRegex, ` $1<button data-exp='1d20' data-mod='$2' data-rolltype='to hit' data-actiontype=${actionType} class='avtt-roll-button' title='${actionType}'>$2</button>$3`)
-    .replaceAll(dRollRegex, `$1<button data-exp='1$2' data-mod='' data-rolltype='to hit' data-actiontype=${actionType} class='avtt-roll-button' title='${actionType}'>$2</button>$3`)
     .replaceAll(rechargeRegEx, `<button data-exp='1d6' data-mod='' data-rolltype='recharge' data-actiontype='Recharge' class='avtt-roll-button' title='${actionType}'>$1</button>`)
 
   return add_aoe_to_statblock(updated);
@@ -1445,8 +1455,6 @@ function init_my_dice_details(){
 function general_statblock_formating(input){
   input = input.replace(/&nbsp;/g,' ')
 
-  input = input.replace(/^((\s+?)?<(strong|em)>(<(strong|em)>)?([a-z0-9\s\.\(\)]+)(<\/(strong|em)>)?<\/(strong|em)>)/gi, '$6');
-
   //bold top of statblock info
   input = input.replace(/^(Senses|Gear|Skills|Damage Resistances|Resistances|Immunities|Damage Immunities|Damage Vulnerabilities|Condition Immunities|Languages|Proficiency Bonus|Saving Throws)/gi, `<strong>$1</strong>`)
   input = input.replace(/^(Speed|Hit Points|HP|AC|Armor Class|Challenge|CR)([\s<][\d\()<])/gi, `<strong>$1</strong>$2`)
@@ -1457,8 +1465,19 @@ function general_statblock_formating(input){
   input = input.replace(/'/g, '’');
   // e.g. Divine Touch. Melee Spell Attack:
   input = input.replace(
-      /^(<span.+?>)?(([a-z0-9]+[\s]?){1,7})(\([^\)]+\))?(\.)([\s]+)?((Melee|Ranged|Melee or Ranged) (Weapon Attack:|Spell Attack:|Attack Roll:))?/gi,
-        '$1<em><strong>$2$5</strong></em><em>$4$6$7</em>'
+      /^(\s*(?:<[a-z][\w:-]*\b[^>]*>\s*)*)(([a-z0-9]+[\s]?){1,7})(\([^\)]+\))?(\.)([\s]+)?((Melee|Ranged|Melee or Ranged) (Weapon Attack:|Spell Attack:|Attack Roll:))?/gi,
+      function(match, prefix, name, word, qualifier, period, spacing, attack) {
+        const hasBold = /<(?:strong|b)\b/i.test(prefix);
+        const hasItalic = /<(?:em|i)\b/i.test(prefix);
+        if (hasBold && hasItalic) return match;
+
+        let heading = `${name}${period}`;
+        if (!hasBold) heading = `<strong>${heading}</strong>`;
+        if (!hasItalic) heading = `<em>${heading}</em>`;
+        let detail = `${qualifier || ''}${spacing || ''}${attack || ''}`;
+        if (detail.replace(/[\u200B-\u200D\uFEFF]/g, '').trim() && !hasItalic) detail = `<em>${detail}</em>`;
+        return `${prefix}${heading}${detail}`;
+      }
   ).replace(/[\s]+\./gi, '.').replace(/<em><\/em>/gi, '');
 
   // Find actions requiring saving throws
@@ -1485,6 +1504,8 @@ function general_statblock_formating(input){
 }
 
 function process_monitored_logs() {
+  console.concerningLogs ??= [];
+  console.otherLogs ??= [];
   const logs = [...console.concerningLogs, ...console.otherLogs].sort((a, b) => a.timeStamp < b.timeStamp ? 1 : -1);
   let processedLogs = [];
   logs.forEach(log => {
@@ -2581,7 +2602,7 @@ async function harvest_game_id() {
     const characterId = window.location.pathname.split("/").pop();
     window.characterData = await DDBApi.fetchCharacter(characterId);
     if (!window.characterData?.campaign){
-      return false;
+      throw new Error('Unable to find campaign linked to character. Character may be disabled in the campaign. Otherwise there may be a temporary outage.')
     }
     return window.characterData?.campaign?.id?.toString();
   }
@@ -3496,7 +3517,7 @@ function basic_sanitize_html(html){
   const template = document.createElement('template');
   template.innerHTML = sanitized;
   Array.from(template.content.childNodes).forEach(node => {
-    if (node.nodeType === Node.TEXT_NODE) {
+    if (node.nodeType === Node.TEXT_NODE && node.textContent.replace(/[\u200B-\u200D\uFEFF]/g, '').trim()) {
       const paragraph = document.createElement('p');
       node.replaceWith(paragraph);
       paragraph.appendChild(node);
