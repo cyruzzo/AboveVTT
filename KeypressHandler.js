@@ -567,20 +567,20 @@ Mousetrap.bind('shift+mod+v', async function(e) {
     const tokenId = uuid();
     const items = await navigator.clipboard.read();
     const parts = await Promise.all(items.map(async item => {
-    const type = item.types.includes('text/html')
-        ? 'text/html'
-        : item.types.includes('text/plain') ? 'text/plain' : null;
+        const type = item.types.includes('text/html')
+            ? 'text/html'
+            : item.types.includes('text/plain') ? 'text/plain' : null;
 
-    if (!type) return '';
+        if (!type) return '';
 
-    const content = await (await item.getType(type)).text();
-    if (type === 'text/html') return content;
+        const content = await (await item.getType(type)).text();
+        if (type === 'text/html') return content;
 
-    return content
-        .replaceAll('&', '&amp;')
-        .replaceAll('<', '&lt;')
-        .replaceAll('>', '&gt;')
-        .replace(/\r?\n/g, '<br>');
+        return content
+            .replaceAll('&', '&amp;')
+            .replaceAll('<', '&lt;')
+            .replaceAll('>', '&gt;')
+            .replace(/\r?\n/g, '<br>');
     }));
 
     const template = document.createElement('template');
@@ -602,11 +602,21 @@ Mousetrap.bind('shift+mod+v', async function(e) {
             element.remove();
         }
     });
+
     const text = template.innerHTML;
+    const plainContent = template.content.cloneNode(true);
+    plainContent.querySelectorAll('br').forEach(element => element.replaceWith('\n'));
+    plainContent.querySelectorAll('p, div, h1, h2, h3, h4, h5, h6, li, tr, aside').forEach(element => {
+        element.prepend('\n');
+        element.append('\n');
+    });
+    const firstLine = plainContent.textContent.replace(/[\u200B-\u200D\uFEFF]/g, '')
+        .split(/\r?\n/).map(line => line.trim()).find(Boolean) || '';
     const listItem = window.tokenListItems.find(d=> d.id == "_AboveVTT_Tokens_Letters_____Exclamation_Mark");
-    const options = {id: tokenId};
+    const options = {id: tokenId, name: firstLine};
+
     window.JOURNAL.notes[tokenId] = {
-        title: '',
+        title: firstLine,
         text: `<p>${text}</p>`,
         plain: '',
         player: true

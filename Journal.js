@@ -10073,7 +10073,7 @@ function render_source_chapter_in_iframe(url) {
 					const addNote = $('<span class="material-symbols-outlined" style="z-index: 1000; position: relative; cursor: pointer;">add_notes</span>');
 					const title = curr.text();
 					const tokenId = uuid();
-					const options = {id: tokenId};
+					const options = {id: tokenId, name:title};
 					const anchorTag = curr.attr('id');
 					addNote.off('pointerup.droptoken').on('pointerup.droptoken',function(event){
 						const listItem = window.tokenListItems.find(d=> d.id == "_AboveVTT_Tokens_Letters_____Exclamation_Mark");
