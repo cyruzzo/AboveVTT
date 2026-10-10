@@ -868,7 +868,7 @@ function get_available_styles(){
       }
       return styles;
 }
-function add_aoe_to_statblock(html){
+function add_aoe_to_statblock(html, followingText = ''){
 
   html = html.replaceAll(/&shy;|­/gi, '')
     .replace(/(?:[^\S\r\n]*\r?\n){2,}[^\S\r\n]*/g, ' ') // heals the blank line runs left behind by previously injected buttons
@@ -906,12 +906,13 @@ function add_aoe_to_statblock(html){
       const template = document.createElement('template');
       template.innerHTML = sameParagraph;
 
-      const damageType = template.content.textContent.match(
-        /\b([a-zA-Z]+)\s+damage\b/i
-      );
-
-      if (damageType) {
-        aoeType = availableStyles.includes(damageType[1].toLowerCase()) ? damageType[1].toLowerCase() : sentencePart;
+      const damageText = (template.content.textContent + followingText).split(/\b\d+-foot\b/i)[0];
+      for (const damageType of damageText.matchAll(/\b([a-zA-Z]+)\s+damage\b/gi)) {
+        const candidate = damageType[1].toLowerCase();
+        if (availableStyles.includes(candidate)) {
+          aoeType = candidate;
+          break;
+        }
       }
     }
     const lineWidthAttr = shape === 'line' 
@@ -1040,7 +1041,7 @@ function noisy_log(...message) {
 
 
 /** Runs the dice notation/aoe replacements over an html string. */
-function apply_avtt_roll_button_markup(html){
+function apply_avtt_roll_button_markup(html, followingText = ''){
   const dashToMinus = /([\s>])−(\d)/gi
 
   // apply most specific regex first matching all possible ways to write a dice notation
@@ -1073,7 +1074,7 @@ function apply_avtt_roll_button_markup(html){
     .replaceAll(hitRollRegex, ` $1<button data-exp='1d20' data-mod='$2' data-rolltype='to hit' data-actiontype=${actionType} class='avtt-roll-button' title='${actionType}'>$2</button>$3`)
     .replaceAll(rechargeRegEx, `<button data-exp='1d6' data-mod='' data-rolltype='recharge' data-actiontype='Recharge' class='avtt-roll-button' title='${actionType}'>$1</button>`)
 
-  return add_aoe_to_statblock(updated);
+  return add_aoe_to_statblock(updated, followingText);
 }
 
 
@@ -1133,7 +1134,15 @@ function add_roll_buttons_to_text(sheetElement){
     if (!should_roll_scan_text(textNode)) continue;
 
     const escaped = textNode.nodeValue.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;');
-    const updated = apply_avtt_roll_button_markup(escaped);
+    let followingText = '';
+    const paragraph = textNode.parentElement.closest('p');
+    if (paragraph && sheetElement.contains(paragraph)) {
+      const range = ownerDocument.createRange();
+      range.setStartAfter(textNode);
+      range.setEnd(paragraph, paragraph.childNodes.length);
+      followingText = range.cloneContents().textContent;
+    }
+    const updated = apply_avtt_roll_button_markup(escaped, followingText);
     if (updated === escaped) continue;
 
     const parsed = ownerDocument.createElement('template');
