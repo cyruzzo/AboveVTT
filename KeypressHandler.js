@@ -585,6 +585,7 @@ Mousetrap.bind('shift+mod+v', async function(e) {
 
     const template = document.createElement('template');
     template.innerHTML = basic_sanitize_html(parts.join('<br>'));
+    template.content.querySelectorAll('.block-send-to-game-log, .add-monster, .add-token-note').forEach(element => element.remove());
     template.content.querySelectorAll('[style]').forEach(element => {
         element.style.removeProperty('color');
         element.style.removeProperty('-webkit-text-fill-color');
@@ -593,6 +594,14 @@ Mousetrap.bind('shift+mod+v', async function(e) {
                 element.style.removeProperty(property);
             }
         });
+        if (!element.matches('img, video, svg, svg *, input')) {
+            ['width', 'min-width', 'max-width', 'inline-size', 'min-inline-size', 'max-inline-size'].forEach(property => {
+                const value = element.style.getPropertyValue(property).trim();
+                if (value && !/^(?:\d*\.?\d+%|auto|none|min-content|max-content|fit-content|inherit|initial|unset|revert|revert-layer)$/i.test(value)) {
+                    element.style.removeProperty(property);
+                }
+            });
+        }
         if (!element.style.cssText) element.removeAttribute('style');
     });
     const preservedEmptyElements = 'area, base, br, col, embed, hr, img, input, link, meta, param, source, track, wbr, video, path, polygon, rect, circle';
@@ -610,6 +619,8 @@ Mousetrap.bind('shift+mod+v', async function(e) {
         element.prepend('\n');
         element.append('\n');
     });
+
+
     const firstLine = plainContent.textContent.replace(/[\u200B-\u200D\uFEFF]/g, '')
         .split(/\r?\n/).map(line => line.trim()).find(Boolean) || '';
 

@@ -14881,7 +14881,9 @@ ul.avttBuffItems select,
     white-space: initial;
     overflow: initial
 }
-
+.tooltip-header{
+    overflow:clip;
+}
 .tooltip-header-title{
     text-transform: capitalize;
 }

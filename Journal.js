@@ -4306,7 +4306,7 @@ class JournalManager{
 		const monsterId = $target.attr('data-monsterid');
 		if (monsterId) {
 			const defaultSize = window.CURRENT_SCENE_DATA.hpps / 1 / window.ZOOM;
-			const tokenIcon = $(`<span class="material-symbols-outlined" style="user-select: none;display: inline-block;cursor: pointer;font-size: 91%;margin-left: 1px;padding-bottom: 3px;vertical-align: middle;">person_add</span>`)
+			const tokenIcon = $(`<span class="material-symbols-outlined add-monster" style="user-select: none;display: inline-block;cursor: pointer;font-size: 91%;margin-left: 1px;padding-bottom: 3px;vertical-align: middle;">person_add</span>`)
 			$target.after(tokenIcon);
 			let tokenImgSrc;
 			tokenIcon.off('pointerup.droptoken').on('pointerup.droptoken',function(event){
@@ -10070,7 +10070,7 @@ function render_source_chapter_in_iframe(url) {
 				const headers = iframeContents.find(':is(h1, h2, h3, h4, h5, h6)[id]');
 				for(let header of headers){
 					const curr = $(header);
-					const addNote = $('<span class="material-symbols-outlined" style="z-index: 1000; position: relative; cursor: pointer;">add_notes</span>');
+					const addNote = $('<span class="material-symbols-outlined add-token-note" style="z-index: 1000; position: relative; cursor: pointer;">add_notes</span>');
 					const title = curr.text().trim();
 					const tokenId = uuid();
 					const options = {id: tokenId, name:title};
