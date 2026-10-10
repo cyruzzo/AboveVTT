@@ -144,6 +144,7 @@ function change_zoom(newZoom, x, y, reset = false) {
 	})
 	debounce_font_change();	
 	set_default_vttwrapper_size();
+	requestAnimationFrame(update_token_drag_handles);
 	if(reset != true){
 		$(window).scrollLeft(pageX);
 		$(window).scrollTop(pageY);	

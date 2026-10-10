@@ -2730,6 +2730,39 @@ padding-top:10px;
     pointer-events: auto;
 }
 
+.token-drag-handle {
+    display: none;
+    position: absolute;
+    left: 100%;
+    top: 100%;
+    width: 20px;
+    height: 20px;
+    box-sizing: border-box;
+    align-items: center;
+    justify-content: center;
+    background: #000d;
+    color: #ddd;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    transform: scale(calc(1 / var(--window-zoom, 1)));
+    transform-origin: top left;
+
+    pointer-events: auto;
+    touch-action: none;
+    z-index: 1;
+}
+
+.token.tokenselected.token-small-drag-target:not(.ui-draggable-disabled) > .token-drag-handle {
+    display: flex;
+}
+
+.token-drag-handle .material-symbols-outlined {
+    font-size: 18px;
+    pointer-events: none;
+}
+
+
+
 .tokenselected::before {
     content: "";
     position: absolute;
