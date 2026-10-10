@@ -1455,8 +1455,6 @@ function init_my_dice_details(){
 function general_statblock_formating(input){
   input = input.replace(/&nbsp;/g,' ')
 
-  input = input.replace(/^((\s+?)?<(strong|em)>(<(strong|em)>)?([a-z0-9\s\.\(\)]+)(<\/(strong|em)>)?<\/(strong|em)>)/gi, '$6');
-
   //bold top of statblock info
   input = input.replace(/^(Senses|Gear|Skills|Damage Resistances|Resistances|Immunities|Damage Immunities|Damage Vulnerabilities|Condition Immunities|Languages|Proficiency Bonus|Saving Throws)/gi, `<strong>$1</strong>`)
   input = input.replace(/^(Speed|Hit Points|HP|AC|Armor Class|Challenge|CR)([\s<][\d\()<])/gi, `<strong>$1</strong>$2`)
@@ -1467,8 +1465,19 @@ function general_statblock_formating(input){
   input = input.replace(/'/g, '’');
   // e.g. Divine Touch. Melee Spell Attack:
   input = input.replace(
-      /^(<span.+?>)?(([a-z0-9]+[\s]?){1,7})(\([^\)]+\))?(\.)([\s]+)?((Melee|Ranged|Melee or Ranged) (Weapon Attack:|Spell Attack:|Attack Roll:))?/gi,
-        '$1<em><strong>$2$5</strong></em><em>$4$6$7</em>'
+      /^(\s*(?:<[a-z][\w:-]*\b[^>]*>\s*)*)(([a-z0-9]+[\s]?){1,7})(\([^\)]+\))?(\.)([\s]+)?((Melee|Ranged|Melee or Ranged) (Weapon Attack:|Spell Attack:|Attack Roll:))?/gi,
+      function(match, prefix, name, word, qualifier, period, spacing, attack) {
+        const hasBold = /<(?:strong|b)\b/i.test(prefix);
+        const hasItalic = /<(?:em|i)\b/i.test(prefix);
+        if (hasBold && hasItalic) return match;
+
+        let heading = `${name}${period}`;
+        if (!hasBold) heading = `<strong>${heading}</strong>`;
+        if (!hasItalic) heading = `<em>${heading}</em>`;
+        let detail = `${qualifier || ''}${spacing || ''}${attack || ''}`;
+        if (detail.replace(/[\u200B-\u200D\uFEFF]/g, '').trim() && !hasItalic) detail = `<em>${detail}</em>`;
+        return `${prefix}${heading}${detail}`;
+      }
   ).replace(/[\s]+\./gi, '.').replace(/<em><\/em>/gi, '');
 
   // Find actions requiring saving throws
