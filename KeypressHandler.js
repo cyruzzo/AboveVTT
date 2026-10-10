@@ -565,7 +565,44 @@ Mousetrap.bind('shift+mod+v', async function(e) {
     if($('#temp_overlay:hover, #capture_mouse:hover').length==0)
         return;
     const tokenId = uuid();
-    const text = basic_sanitize_html(await navigator.clipboard.readText());     
+    const items = await navigator.clipboard.read();
+    const parts = await Promise.all(items.map(async item => {
+    const type = item.types.includes('text/html')
+        ? 'text/html'
+        : item.types.includes('text/plain') ? 'text/plain' : null;
+
+    if (!type) return '';
+
+    const content = await (await item.getType(type)).text();
+    if (type === 'text/html') return content;
+
+    return content
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replace(/\r?\n/g, '<br>');
+    }));
+
+    const template = document.createElement('template');
+    template.innerHTML = basic_sanitize_html(parts.join('<br>'));
+    template.content.querySelectorAll('[style]').forEach(element => {
+        element.style.removeProperty('color');
+        element.style.removeProperty('-webkit-text-fill-color');
+        Array.from(element.style).forEach(property => {
+            if (property === 'background' || property.startsWith('background-')) {
+                element.style.removeProperty(property);
+            }
+        });
+        if (!element.style.cssText) element.removeAttribute('style');
+    });
+    const preservedEmptyElements = 'area, base, br, col, embed, hr, img, input, link, meta, param, source, track, wbr, video, path, polygon, rect, circle';
+    Array.from(template.content.querySelectorAll('*')).reverse().forEach(element => {
+        if (element.matches(preservedEmptyElements)) return;
+        if (element.children.length === 0 && !element.textContent.replace(/[\u200B-\u200D\uFEFF]/g, '').trim()) {
+            element.remove();
+        }
+    });
+    const text = template.innerHTML;
     const listItem = window.tokenListItems.find(d=> d.id == "_AboveVTT_Tokens_Letters_____Exclamation_Mark");
     const options = {id: tokenId};
     window.JOURNAL.notes[tokenId] = {
@@ -576,7 +613,6 @@ Mousetrap.bind('shift+mod+v', async function(e) {
     }
     window.JOURNAL.persist();
     create_and_place_token(listItem, true, undefined, window.cursor_x, window.cursor_y, undefined, undefined, undefined, options);
-    
 })
 
 Mousetrap.bind('mod+v', async function(e) {
