@@ -246,6 +246,22 @@ function list_item_from_player_id(playerId) {
 }
 
 function list_item_from_token(placedToken) {
+    const itemType = placedToken.options.itemType;
+    const itemId = placedToken.options.itemId;
+    if (itemType !== undefined && itemId !== undefined) {
+        const listItems = [
+            ...(window.tokenListItems || []),
+            ...(window.monsterListItems || []),
+            ...(window.open5eListItems || []),
+            ...Object.values(cached_monster_items || {}),
+            ...Object.values(cached_open5e_items || {})
+        ];
+        const matchingItem = listItems.find(item => item.type === itemType && `${item.id}` === `${itemId}`);
+        if (matchingItem !== undefined) {
+            return matchingItem;
+        }
+    }
+
     let listItemPath = placedToken.options.listItemPath;
     if (listItemPath !== undefined && listItemPath.length > 0) {
         // this token was placed after we unified tokens

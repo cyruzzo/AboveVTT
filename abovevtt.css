@@ -2733,7 +2733,7 @@ padding-top:10px;
 .token-drag-handle {
     display: none;
     position: absolute;
-    left: 100%;
+    right: 100%;
     top: 100%;
     width: 20px;
     height: 20px;
@@ -2746,7 +2746,6 @@ padding-top:10px;
     border-radius: 5px;
     transform: scale(calc(1 / var(--window-zoom, 1)));
     transform-origin: top left;
-
     pointer-events: auto;
     touch-action: none;
     z-index: 1;

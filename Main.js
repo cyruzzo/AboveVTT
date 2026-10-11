@@ -109,7 +109,12 @@ const throttleRedrawAfterZoom = throttle((sceneContainer = $('#scene_map_contain
 
 }, 150)
 
-
+function update_token_drag_handles() {
+	forSelTokens((token, id) => {
+		const sceneToken = $(`div.token[data-id='${id}']`);
+		sceneToken.toggleClass('token-small-drag-target', token.options.size * window.ZOOM < 6);
+	})
+}
 /**
  * Changes the zoom level.
  * @param {Number} newZoom new zoom value
