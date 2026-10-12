@@ -264,19 +264,23 @@ class JournalManager{
 		});
 
 		Promise.all([loadJournalPromise, loadChaptersPromise, loadStatBlocksPromise]).then(() => {
+			
+			// The following through this.persist is to update issues between 1.60 and 1.61 where note text was causing syntax errors
 			const notes = this.notes;
-			for(let i =0; i<notes.length; i++){
-				const text = notes[i].text;
+			for(let noteId in notes){
+				const text = notes[noteId].text;
 				if(!text)
 					continue;
-				text = basic_sanitize_html(text);
+				notes[noteId].text = basic_sanitize_html(text);
 			}
+			this.persist();
+
 			if(is_abovevtt_page()){
 				this.build_journal();
 			}
 			if(window.DM && !is_gamelog_popout() && is_abovevtt_page()){
 				// also sync the journal
-				window.JOURNAL?.sync();
+				this.sync();
 			}
 		});
 	}
