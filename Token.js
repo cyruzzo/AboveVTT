@@ -3331,9 +3331,7 @@ class Token {
 							//$("#VTT").css('--grid-overlay-on-tmp', '1'); commented out as it's not consistent and is confusing can reasses if we enable other options for grid over
 							window.disable_window_mouse_handlers();
 							pauseCursorEventListener = true; // we're going to send events from drag, so we don't need the eventListener sending events, too
-							if (get_avtt_setting_value("allowTokenMeasurement")) {
-								$("#capture_mouse").css("z-index", "50");
-							}
+
 							window.DRAWFUNCTION = "select"
 							window.DRAGGING = true;
 							clearTimeout(contextMenuLongPressTimer);
