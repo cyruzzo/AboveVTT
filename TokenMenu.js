@@ -4421,9 +4421,76 @@ function build_adjustments_flyout_menu(tokenIds) {
 		$(".ageMenuInput").on('focus', function(event){
 			event.target.select();
 		});
+		if (tokens.length === 1) {
+			const listItem = list_item_from_token(tokens[0]);
+			const rootId = listItem && RootFolder.allValues().find(d => listItem.folderPath.includes(d.path) && d.name != '')?.id;
+			if (listItem && rootId) {
+				let syncToListItem = $(`<button class='token-image-modal-remove-all-button' style="width:100%;min-height:24px;padding:4px;margin:5px 0px;display:flex;align-items:center;justify-content:center;">Sync Token Settings to List Item</button>`);
+				syncToListItem.on("click", function () {
+					const customization = find_or_create_token_customization(listItem.type, listItem.id, listItem.parentId, rootId);
+					const tokenOptions = tokens[0].options;
+						if (!listItem.isTypeBuiltinToken() && !listItem.isTypeDDBToken()) {
+							const defaultImage = tokenOptions.imgsrc && !tokenOptions.imgsrc.startsWith('data:')
+								? parse_img(tokenOptions.imgsrc)
+								: undefined;
+							if (defaultImage) {
+								customization.tokenOptions.defaultImage = defaultImage;
+							}
+							if (Array.isArray(tokenOptions.alternativeImages)) {
+								customization.tokenOptions.alternativeImages = $.extend(true, [], tokenOptions.alternativeImages);
+							}
+					}
+					const modalOptionNames = [
+						'name', 'tokenSize', 'imageSize', 'offset', 'imageZoom', 'tokenFlip', 'imageOpacity', 'imageHeading',
+						'color', 'playerThemeBorder', 'auraislight', 'vision', 'devilsight', 'truesight', 'light1', 'light2',
+						'visionAngle', 'lightAngle', 'share_vision', 'auraVisible', 'aura1', 'aura2', 'includeDDB', 'videoToken'
+					];
+					const syncableOptionNames = new Set([
+						...token_setting_options()
+							.filter(setting => !setting.globalSettingOnly || setting.name === 'auraislight')
+							.filter(setting => !allTokensAreAoe || availableToAoe.includes(setting.name))
+							.map(setting => setting.name),
+						...modalOptionNames
+					]);
+					if (listItem.type === ItemType.PC) {
+						syncableOptionNames.delete('player_owned');
+					}
+					syncableOptionNames.forEach(optionName => {
+						let optionValue = tokenOptions[optionName];
+						if (optionName === 'name' && typeof optionValue === 'string' && typeof listItem.name === 'string') {
+							const personalitySuffix = ` ${listItem.name}`;
+							if (tokenOptions.placeType === 'personality' && optionValue.endsWith(personalitySuffix)) {
+								optionValue = listItem.name;
+							} else if (tokenOptions.placeType !== 'none' && optionValue.startsWith(`${listItem.name} `)) {
+								const generatedSuffix = optionValue.slice(listItem.name.length + 1);
+								if (/^\d+$/.test(generatedSuffix)) {
+									optionValue = listItem.name;
+								}
+							}
+						}
+						if (optionValue === undefined) {
+							delete customization.tokenOptions[optionName];
+						} else {
+							customization.tokenOptions[optionName] = typeof optionValue === 'object'
+								? $.extend(true, {}, { value: optionValue }).value
+								: optionValue;
+						}
+					});
+					syncToListItem.prop("disabled", true);
+					persist_token_customization(customization, function (success) {
+						syncToListItem.prop("disabled", false);
+						if (success && window.DM) {
+							did_change_mytokens_items();
+						}
+						showTempMessage(success ? 'Token options synced to list item' : 'Failed to sync token options');
+					});
+				});
+				body.append(syncToListItem);
+			}
+		}
 	}
 
-
+	
 
 	return body;
 }

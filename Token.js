@@ -3331,9 +3331,7 @@ class Token {
 							//$("#VTT").css('--grid-overlay-on-tmp', '1'); commented out as it's not consistent and is confusing can reasses if we enable other options for grid over
 							window.disable_window_mouse_handlers();
 							pauseCursorEventListener = true; // we're going to send events from drag, so we don't need the eventListener sending events, too
-							if (get_avtt_setting_value("allowTokenMeasurement")) {
-								$("#capture_mouse").css("z-index", "50");
-							}
+
 							window.DRAWFUNCTION = "select"
 							window.DRAGGING = true;
 							clearTimeout(contextMenuLongPressTimer);
@@ -4278,7 +4276,7 @@ function select_all_tokens() {
 
 function deselect_all_tokens(ignoreVisionUpdate = false) {
 	forSelTokens((token) => (token.selected = false));
-	$(`.token`).toggleClass('tokenselected', false);
+	$(`.token`).toggleClass(['tokenselected', 'token-small-drag-target'], false);
 	$(`:is(#combat_area, #combat_area_carousel) tr`).toggleClass('selected-token', false);
 	remove_selected_token_bounding_box();
 	window.CURRENTLY_SELECTED_TOKENS = [];
@@ -5001,17 +4999,9 @@ const debounceDrawSelectedToken = mydebounce(() => {
 		do_draw_selected_token_bounding_box();
 	}, 100);
 
-function update_token_drag_handles() {
-	const tokens = Array.from(document.querySelectorAll('#tokens .token.tokenselected'));
-	const sizes = tokens.map(token => {
-		const rect = token.getBoundingClientRect();
-		return rect.width > 0 && rect.height > 0 && Math.max(rect.width, rect.height) < 6;
-	});
-	tokens.forEach((token, index) => token.classList.toggle('token-small-drag-target', sizes[index]));
-}
+
 
 function draw_selected_token_bounding_box(){
-	update_token_drag_handles();
 	debounceDrawSelectedToken();
 }
 
@@ -5161,16 +5151,22 @@ async function do_draw_selected_token_bounding_box() {
 			let left = undefined;
 
 			forSelTokens((token, id) => {
+				const sceneToken = $(`div.token[data-id='${id}']`);
+				if ((!window.DM || token.options.lockRestrictDrop == "declutter") && sceneToken.css('display') == 'none') return;
 
-				if ((!window.DM || token.options.lockRestrictDrop == "declutter") && $(`div.token[data-id='${id}']`).css('display') == 'none') return;
+			
+				sceneToken.toggleClass('token-small-drag-target', token.options.size * window.ZOOM < 6);
+				
 
-				let tokenImageClientPosition = $(`div.token[data-id='${id}']>.token-image`)[0].getBoundingClientRect();
-				let tokenImagePosition = $(`div.token[data-id='${id}']>.token-image`).position();
+				const tokenPosition = sceneToken.position();
+				const tokenImage = $(`div.token[data-id='${id}']>.token-image`);
+				let tokenImageClientPosition = tokenImage[0].getBoundingClientRect();
+				let tokenImagePosition = tokenImage.position();
 				let tokenImageWidth = (tokenImageClientPosition.width) / (window.ZOOM);
 				let tokenImageHeight = (tokenImageClientPosition.height) / (window.ZOOM);
-				let tokenTop = ($(`div.token[data-id='${id}']`).position().top + tokenImagePosition.top) / (window.ZOOM);
+				let tokenTop = (tokenPosition.top + tokenImagePosition.top) / (window.ZOOM);
 				let tokenBottom = tokenTop + tokenImageHeight;
-				let tokenLeft = ($(`div.token[data-id='${id}']`).position().left  + tokenImagePosition.left) / (window.ZOOM);
+				let tokenLeft = (tokenPosition.left  + tokenImagePosition.left) / (window.ZOOM);
 				let tokenRight = tokenLeft + tokenImageWidth;
 				if (top == undefined) {
 					top = tokenTop;
