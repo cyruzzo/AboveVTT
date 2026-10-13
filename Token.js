@@ -5446,7 +5446,7 @@ function paste_selected_walls(x, y) {
 				top: `${parseFloat(midY) - 25}px`,
 				id: doorTokenId
 			};
-			window.ScenesHandler.create_update_token(options, noScale=true)
+			create_update_token(options, noScale=true)
 		}
 		window.selectedWalls.push({pt1: pt1, pt2: pt2, wall: wall, tokenId: doorTokenId, drawIndex: drawIndex})
 	}
@@ -5544,7 +5544,7 @@ function paste_selected_tokens(x, y, teleporter = undefined) {
 
 			options.top = `${mapView.y + top*window.CURRENT_SCENE_DATA.vpps}px`;
 			options.left = `${mapView.x + left*window.CURRENT_SCENE_DATA.hpps}px`;
-			window.ScenesHandler.create_update_token(options);
+			create_update_token(options);
 			// deselect the old and select the new so the user can easily move the new tokens around after pasting them
 			if(typeof window.TOKEN_OBJECTS[id] !== "undefined"){
 				window.TOKEN_OBJECTS[id].selected = false;
@@ -5628,7 +5628,7 @@ function undo_delete_tokens() {
 	if (!window.DM) return;
 	for (let id in window.TOKEN_OBJECTS_RECENTLY_DELETED) {
 		let options = window.TOKEN_OBJECTS_RECENTLY_DELETED[id];
-		window.ScenesHandler.create_update_token(options);
+		create_update_token(options);
 	}
 	window.TOKEN_OBJECTS_RECENTLY_DELETED = {};
 }

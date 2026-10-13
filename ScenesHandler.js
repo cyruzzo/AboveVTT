@@ -895,33 +895,7 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 		});
 	}
 
-	create_update_token(options, noScale = false ) {
-		noisy_log("create_update_token");
-		let self = this;
-		let id = options.id;
-		if(!noScale)
-			options.scaleCreated = window.CURRENT_SCENE_DATA.scale_factor;
-		this.scene.tokens[id]=options;
 
-		if (!(id in window.TOKEN_OBJECTS)) {
-			window.TOKEN_OBJECTS[id] = new Token(options);
-		}
-
-		if(options.repositionAoe != undefined){
-			window.TOKEN_OBJECTS[id].place(0);
-			let origin, dx, dy;		
-			origin = getOrigin(window.TOKEN_OBJECTS[id]);
-			dx = origin.x - options.repositionAoe.x;
-			dy = origin.y - options.repositionAoe.y;				
-			options.left = `${parseFloat(options.left) - dx}px`;
-			options.top = `${parseFloat(options.top) - dy}px`;
-			delete options.repositionAoe;
-		}
-		
-		window.TOKEN_OBJECTS[id].place(0);
-		window.TOKEN_OBJECTS[id].sync();
-
-	}
 
 
 	async persist_scene(scene_index,isnew=false){ // CLOUD ONLY FUNCTION
