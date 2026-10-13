@@ -3980,6 +3980,36 @@ function convert_point_from_map_to_view(mapX, mapY) {
 	let pageY = mapY / (1 / window.ZOOM) + window.VTTMargin;
 	return { x: pageX, y: pageY };
 }
+function create_update_token(options, save = true) {
+  noisy_log("create_update_token");
+  let self = this;
+  let id = options.id;
+  options.scaleCreated = window.CURRENT_SCENE_DATA.scale_factor;
+
+  if (!(id in window.TOKEN_OBJECTS)) {
+    window.TOKEN_OBJECTS[id] = new Token(options);
+  } else {
+    window.TOKEN_OBJECTS[id].options = options;
+  }
+
+  if(options.repositionAoe != undefined){
+    window.TOKEN_OBJECTS[id].place(0);
+    let origin, dx, dy;   
+    origin = getOrigin(window.TOKEN_OBJECTS[id]);
+    dx = origin.x - options.repositionAoe.x;
+    dy = origin.y - options.repositionAoe.y;        
+    options.left = `${parseFloat(options.left) - dx}px`;
+    options.top = `${parseFloat(options.top) - dy}px`;
+    delete options.repositionAoe;
+  }
+  
+  window.TOKEN_OBJECTS[id].place(0);
+  window.TOKEN_OBJECTS[id].sync();
+  if(window.all_token_objects[id] == undefined){
+    window.all_token_objects[id] = window.TOKEN_OBJECTS[id]	
+  }
+
+}
 
 function place_token_in_center_of_view(tokenObject) {
 	let center = center_of_view();

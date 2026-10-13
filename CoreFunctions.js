@@ -989,36 +989,7 @@ function add_aoe_statblock_click(target, tokenId = undefined){
     }
   })
 }
-function create_update_token(options, save = true) {
-  noisy_log("create_update_token");
-  let self = this;
-  let id = options.id;
-  options.scaleCreated = window.CURRENT_SCENE_DATA.scale_factor;
 
-  if (!(id in window.TOKEN_OBJECTS)) {
-    window.TOKEN_OBJECTS[id] = new Token(options);
-  } else {
-    window.TOKEN_OBJECTS[id].options = options;
-  }
-
-  if(options.repositionAoe != undefined){
-    window.TOKEN_OBJECTS[id].place(0);
-    let origin, dx, dy;   
-    origin = getOrigin(window.TOKEN_OBJECTS[id]);
-    dx = origin.x - options.repositionAoe.x;
-    dy = origin.y - options.repositionAoe.y;        
-    options.left = `${parseFloat(options.left) - dx}px`;
-    options.top = `${parseFloat(options.top) - dy}px`;
-    delete options.repositionAoe;
-  }
-  
-  window.TOKEN_OBJECTS[id].place(0);
-  window.TOKEN_OBJECTS[id].sync();
-  if(window.all_token_objects[id] == undefined){
-    window.all_token_objects[id] = window.TOKEN_OBJECTS[id]	
-  }
-
-}
 
 /** Logs that are super noisy should be sent through here.
  * This allows us to enable these logs on the fly when we need to debug things that would otherwise flood the console 
