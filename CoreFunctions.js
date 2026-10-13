@@ -997,6 +997,8 @@ function create_update_token(options, save = true) {
 
   if (!(id in window.TOKEN_OBJECTS)) {
     window.TOKEN_OBJECTS[id] = new Token(options);
+  } else {
+    window.TOKEN_OBJECTS[id].options = options;
   }
 
   if(options.repositionAoe != undefined){
@@ -1017,6 +1019,7 @@ function create_update_token(options, save = true) {
   }
 
 }
+
 /** Logs that are super noisy should be sent through here.
  * This allows us to enable these logs on the fly when we need to debug things that would otherwise flood the console 
  * @param message the args of the console log 

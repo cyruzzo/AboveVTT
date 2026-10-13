@@ -254,7 +254,7 @@ function token_context_menu_expanded(tokenIds, e, crossScenePortalData) {
 						alwaysshowname: window.TOKEN_SETTINGS.alwaysshowname != undefined ? window.TOKEN_SETTINGS.alwaysshowname : false
 					};
 
-					window.ScenesHandler.create_update_token(options)
+					create_update_token(options)
 					tokens = [window.TOKEN_OBJECTS[options.id]]
 				}
 				if(!isTeleporter){
@@ -464,34 +464,38 @@ function token_context_menu_expanded(tokenIds, e, crossScenePortalData) {
 									(doors[0][10] != undefined ? doors[0][10] : ""),
 									(doors[0][11] != undefined ? doors[0][11] : "")
 							]
-							window.DRAWINGS.push(data);
-							pushWallUndo({
-								undo: [[...data]],
-							})
+							const wallExists = window.DRAWINGS.find(d => d[1] == 'wall' && d[3] == data[3] && d[4] == data[4] && d[5] == data[5] && d[6] == data[6]);
+			
+							if(!wallExists){
+								window.DRAWINGS.push(data);
+								pushWallUndo({
+									undo: [[...data]],
+								})
+							}
 							let clonePortalId = `${mouseX-5}${mouseY}${mouseX+5}${mouseY}${window.CURRENT_SCENE_DATA.id}`.replaceAll('.','') 
 				
-							if(window.TOKEN_OBJECTS[clonePortalId] == undefined){
-								let options = {
-									...default_options(),
-									left: `${mouseX-25}px`,
-									top: `${mouseY-25}px`,
-									id: clonePortalId,
-									vision:{
-										feet: 0,
-										color: `rgba(0, 0, 0, 0)`
-									},
-									imgsrc: `data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=`,
-									type: 'door',
-									size: 50,
-									scaleCreated: window.CURRENT_SCENE_DATA.scale_factor,
-									teleporterCoords: {
-										'left': originX,
-										'top': originY,
-										'scale': window.CURRENT_SCENE_DATA.scale_factor != undefined ? window.CURRENT_SCENE_DATA.scale_factor : 1
-									}
-								};
-								window.ScenesHandler.create_update_token(options)
-							}
+							
+							let options = {
+								...default_options(),
+								left: `${mouseX-25}px`,
+								top: `${mouseY-25}px`,
+								id: clonePortalId,
+								vision:{
+									feet: 0,
+									color: `rgba(0, 0, 0, 0)`
+								},
+								imgsrc: `data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=`,
+								type: 'door',
+								size: 50,
+								scaleCreated: window.CURRENT_SCENE_DATA.scale_factor,
+								teleporterCoords: {
+									'left': originX,
+									'top': originY,
+									'scale': window.CURRENT_SCENE_DATA.scale_factor != undefined ? window.CURRENT_SCENE_DATA.scale_factor : 1
+								}
+							};
+							create_update_token(options)
+							
 							redraw_light_walls();
 							sync_drawings();
 							window.TOKEN_OBJECTS[tokenIds].options.teleporterCoords = {'left': mouseX, 'top': mouseY, 'scale': window.CURRENT_SCENE_DATA.scale_factor != undefined ? window.CURRENT_SCENE_DATA.scale_factor : 1}

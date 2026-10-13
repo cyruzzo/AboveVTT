@@ -2667,10 +2667,13 @@ function open_portal_config(){
 						'', 
 						''
 			]
-			window.DRAWINGS.push(data);
-			pushWallUndo({
-				undo: [[...data]],
-			})
+			const wallExists = window.DRAWINGS.find(d => d[1] == 'wall' && d[3] == data[3] && d[4] == data[4] && d[5] == data[5] && d[6] == data[6]);
+			if(!wallExists){
+				window.DRAWINGS.push(data);
+				pushWallUndo({
+					undo: [[...data]],
+				})
+			}
 			let newPortalId = `${mouseX-5}${mouseY}${mouseX+5}${mouseY}${window.CURRENT_SCENE_DATA.id}`.replaceAll('.','') 
 
 			
@@ -2698,13 +2701,9 @@ function open_portal_config(){
 				auraislight: false,
 				alwaysshowname: window.TOKEN_SETTINGS.alwaysshowname != undefined ? window.TOKEN_SETTINGS.alwaysshowname : false
 			};
-			if(window.TOKEN_OBJECTS[newPortalId] == undefined){
-				window.ScenesHandler.create_update_token(options);
-			}else {
-				window.TOKEN_OBJECTS[newPortalId] = options;
-			}
-			window.TOKEN_OBJECTS[newPortalId].place(0);
-			window.TOKEN_OBJECTS[newPortalId].sync();
+			
+			create_update_token(options);
+			
 			redraw_light_walls();
 			sync_drawings();
 			open_portal_config();
@@ -2749,7 +2748,7 @@ function open_portal_config(){
 					auraislight: false,
 					alwaysshowname: window.TOKEN_SETTINGS.alwaysshowname != undefined ? window.TOKEN_SETTINGS.alwaysshowname : false
 				};
-				window.ScenesHandler.create_update_token(options);
+				create_update_token(options);
 			}
 			if(window.all_token_objects[portalId] == undefined){
 				window.all_token_objects[portalId] = window.TOKEN_OBJECTS[portalId]	
@@ -2897,10 +2896,14 @@ function open_portal_config(){
 						(wall[10] != undefined ? wall[10] : ""),
 						(wall[11] != undefined ? wall[11] : "")
 			]
-			window.DRAWINGS.push(data);
-			pushWallUndo({
-				undo: [[...data]],
-			})
+			const wallExists = window.DRAWINGS.find(d => d[1] == 'wall' && d[3] == data[3] && d[4] == data[4] && d[5] == data[5] && d[6] == data[6]);
+			if(!wallExists){
+				window.DRAWINGS.push(data);
+				pushWallUndo({
+					undo: [[...data]],
+				})
+			}
+			
 			let clonePortalId = `${mouseX-5}${mouseY}${mouseX+5}${mouseY}${window.CURRENT_SCENE_DATA.id}`.replaceAll('.','') 
 			let teleporterCoords;
 			if(window.CURRENT_SCENE_DATA.id != portal.sceneId){
@@ -2950,13 +2953,9 @@ function open_portal_config(){
 				alwaysshowname: window.TOKEN_SETTINGS.alwaysshowname != undefined ? window.TOKEN_SETTINGS.alwaysshowname : false,
 				teleporterCoords
 			};
-			if(window.TOKEN_OBJECTS[clonePortalId] == undefined){
-				window.ScenesHandler.create_update_token(options);
-			}else {
-				window.TOKEN_OBJECTS[clonePortalId] = options;
-			}
-			window.TOKEN_OBJECTS[clonePortalId].place(0);
-			window.TOKEN_OBJECTS[clonePortalId].sync();
+			
+			create_update_token(options);
+			
 			redraw_light_walls();
 			sync_drawings();
 			open_portal_config();
@@ -5547,7 +5546,7 @@ function drawing_mouseup(e) {
 						top: `${parseFloat(midY) - 25}px`,
 						id: newId
 					};
-					window.ScenesHandler.create_update_token(options, noScale=true)
+					create_update_token(options, noScale=true)
 					window.TOKEN_OBJECTS[tokenId].delete();
 					window.selectedWalls[i].tokenId = newId;
 				}
