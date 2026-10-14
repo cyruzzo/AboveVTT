@@ -5658,7 +5658,10 @@ function add_to_quick_roll_menu(token, autoRollAfterAoe = false) {
 	
 	if(token.isPlayer()){
 		hp_input.prop("disabled", true);
-		hp_input.css('color', 'gray')
+		hp_input.css({
+			'color': '#000000',
+			'opacity': '0.75'
+		})
 	}
 	hp_input.val(token.hp);
 
@@ -5676,7 +5679,10 @@ function add_to_quick_roll_menu(token, autoRollAfterAoe = false) {
 
 	if(token.isPlayer()){
 		maxhp_input.prop("disabled", true);
-		maxhp_input.css('color', 'gray')
+		maxhp_input.css({
+			'color': '#000000',
+			'opacity': '0.75'
+		})
 	}
 	maxhp_input.val(token.maxHp);
 
@@ -5796,42 +5802,26 @@ function add_to_quick_roll_menu(token, autoRollAfterAoe = false) {
 		}
 	);
 	qrm_entry_buttons.append(remove_from_list);
-	
+	let stat_block = $('<button title="Open Stat Block" class="qrm_buttons_bar" style="display:inline-flex;"><svg class="statSVG" xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><g><rect fill="none" height="24" width="24"/><g><path d="M19,5v14H5V5H19 M19,3H5C3.9,3,3,3.9,3,5v14c0,1.1,0.9,2,2,2h14c1.1,0,2-0.9,2-2V5C21,3.9,20.1,3,19,3L19,3z"/></g><path d="M14,17H7v-2h7V17z M17,13H7v-2h10V13z M17,9H7V7h10V9z"/></g></svg></button>');
 	if(token.options.statBlock){
-		stat_block=$('<button title="Open Monster Stat Block" class="qrm_buttons_bar" style="display:inline-flex;"><svg class="statSVG" xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><g><rect fill="none" height="24" width="24"/><g><path d="M19,5v14H5V5H19 M19,3H5C3.9,3,3,3.9,3,5v14c0,1.1,0.9,2,2,2h14c1.1,0,2-0.9,2-2V5C21,3.9,20.1,3,19,3L19,3z"/></g><path d="M14,17H7v-2h7V17z M17,13H7v-2h10V13z M17,9H7V7h10V9z"/></g></svg></button>');
-		
 		stat_block.click(function(){
 			window.JOURNAL.display_note(token.options.statBlock);
 		});
-		if(!token.isMonster()){
-			stat_block.css("visibility", "hidden");
-		}
-	}
-	else if(token.isMonster() == true){
-		stat_block=$('<button title="Open Monster Stat Block" class="qrm_buttons_bar" style="display:inline-flex;"><svg class="statSVG" xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><g><rect fill="none" height="24" width="24"/><g><path d="M19,5v14H5V5H19 M19,3H5C3.9,3,3,3.9,3,5v14c0,1.1,0.9,2,2,2h14c1.1,0,2-0.9,2-2V5C21,3.9,20.1,3,19,3L19,3z"/></g><path d="M14,17H7v-2h7V17z M17,13H7v-2h10V13z M17,9H7V7h10V9z"/></g></svg></button>');
-		
+	} else if(token.isMonster() == true){
+		stat_block.attr('title', 'Open Monster Stat Block');
 		stat_block.click(function(){
 			load_monster_stat(token.options.monster, token.options.id);
 		});
-		if(!token.isMonster()){
-				stat_block.css("visibility", "hidden");
-		}
-	}	
-	else if (token.isPlayer() == true) {
-		stat_block=$('<button title="Open Player Stat Block" class="qrm_buttons_bar" style="display:inline-flex;"><svg class="statSVG" xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><g><rect fill="none" height="24" width="24"/><g><path d="M19,5v14H5V5H19 M19,3H5C3.9,3,3,3.9,3,5v14c0,1.1,0.9,2,2,2h14c1.1,0,2-0.9,2-2V5C21,3.9,20.1,3,19,3L19,3z"/></g><path d="M14,17H7v-2h7V17z M17,13H7v-2h10V13z M17,9H7V7h10V9z"/></g></svg></button>');
+	} else if (token.isPlayer() == true) {
+		stat_block.attr('title', 'Open Player Stat Block');	
 		stat_block.click(function(){
 			open_player_sheet(token.options.id, undefined, token.options.name);
 		});
-	}
-	else{
-		stat_block=$('<button title="No Stat Block for custom tokens" disabled="true" class="qrm_buttons_bar" style="display:inline-flex;"><svg class="statSVG" xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><g><rect fill="none" height="24" width="24"/><g><path d="M19,5v14H5V5H19 M19,3H5C3.9,3,3,3.9,3,5v14c0,1.1,0.9,2,2,2h14c1.1,0,2-0.9,2-2V5C21,3.9,20.1,3,19,3L19,3z"/></g><path d="M14,17H7v-2h7V17z M17,13H7v-2h10V13z M17,9H7V7h10V9z"/></g></svg></button>');
-		//can add the below if people don't like the disabled button
-		//stat_block.click(function(){
-		//	alert('Sorry, this appears to be a custom token, there was no stat block to fetch.');
-		//});
+	} else{
+		stat_block.css("visibility", "hidden");
 	}
 	qrm_entry_buttons.append(stat_block)
-	//stat_block.tooltip({show: { duration: 1000 }})
+
 
 	qrm_entry_name.append(name_line);
 	
