@@ -6470,7 +6470,7 @@ function bucketFill(ctx, mouseX, mouseY, fogStyle = 'rgba(0,0,0,0)', fogType = 0
 	if(window.PARTICLE == undefined){
 		initParticle(new Vector(200, 200), 1);
 	}
-
+	ctx.save();
 	let fog = true;
   	particleUpdate(mouseX, mouseY); // moves particle
 	
@@ -6541,9 +6541,9 @@ function bucketFill(ctx, mouseX, mouseY, fogStyle = 'rgba(0,0,0,0)', fogType = 0
 		}
 	}
 
-	ctx.globalCompositeOperation = 'lighten';
+	ctx.globalCompositeOperation = 'source-over';
 	ctx.drawImage(window.offScreenCombine, 0, 0);
-
+	ctx.restore();
 
 }
 

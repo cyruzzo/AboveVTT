@@ -200,6 +200,7 @@ async function initiateVideoUI() {
             document.querySelector('select#audioSource').appendChild(option);
         }
     };
+    getMediaDevice();
   } catch (err) {
     console.error("Error accessing media devices, check your browser permissions:", err);
   }
