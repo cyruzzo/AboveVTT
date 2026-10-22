@@ -1308,8 +1308,11 @@ function add_journal_roll_buttons(target, tokenId=undefined, specificImage=undef
   currentElement = null;
 
   $currTarget.find(".avtt-roll-button").off('pointerdown.click touchstart.click').on('pointerdown.click touchstart.click', clickHandler);
-  $currTarget.find(".avtt-roll-button").on("contextmenu", rightClickHandler);
-
+  $currTarget.find(".avtt-roll-button").off('contextmenu').on('contextmenu', rightClickHandler);
+  $currTarget.find(".avtt-roll-button").off('click.prevent').on('click.prevent', function(e){
+    e.preventDefault();
+    e.stopPropagation();
+  });
   $currTarget.find("button.avtt-roll-formula-button").off('pointerdown.avttRoll touchstart.avttRoll').on('pointerdown.avttRoll touchstart.avttRoll', function(clickEvent) {
     if (clickEvent.button === 2) return;
     clickEvent.preventDefault();
