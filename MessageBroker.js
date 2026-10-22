@@ -1448,8 +1448,7 @@ class MessageBroker {
 						$('.import-loading-indicator .percentageLoaded').css('width', `10%`);	
 						window.CURRENT_SCENE_DATA.width = mapWidth;
 						window.CURRENT_SCENE_DATA.height = mapHeight;
-						if(window.CURRENT_SCENE_DATA.gridType == 2 || window.CURRENT_SCENE_DATA.gridType == 3){
-						}else{
+						if(window.CURRENT_SCENE_DATA.gridType != 2 && window.CURRENT_SCENE_DATA.gridType != 3){
 							delete window.CURRENT_SCENE_DATA.scaleAdjustment;
 						}
 
@@ -1559,6 +1558,10 @@ class MessageBroker {
 						if($('#portal_config_window').length>0)
 							open_portal_config();
 						$('#loadingStyles').remove();
+						//we have these stored in window.TOKEN_OBJECTS, window.REVEALED, and window.DRAWINGS for the current scene. Clear from memory.
+						window.CURRENT_SCENE_DATA.tokens = {};
+						window.CURRENT_SCENE_DATA.reveals = [];
+						window.CURRENT_SCENE_DATA.drawings = [];
 
 						console.groupEnd()	
 						window.MB.loadNextScene();	
@@ -1784,7 +1787,7 @@ class MessageBroker {
 						data[property] = window.all_token_objects[data.id].options[property];
 					}
 					else if(property in data){
-					 window.all_token_objects[data.id].options[property] = data[property]; 
+					 	window.all_token_objects[data.id].options[property] = data[property]; 
 					}
 				}
 

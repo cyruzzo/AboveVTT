@@ -1921,9 +1921,13 @@ function export_current_scene(){
 		hpps: window.CURRENT_SCENE_DATA.hpps/(window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion),
 		vpps: window.CURRENT_SCENE_DATA.vpps/(window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion),
 		offsetx: window.CURRENT_SCENE_DATA.offsetx/(window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion),
-		offsety: window.CURRENT_SCENE_DATA.offsety/(window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion)
+		offsety: window.CURRENT_SCENE_DATA.offsety/(window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion),	
+		drawings: [...window.DRAWINGS],
+		reveals: [...window.REVEALED],
 	} 
 	
+
+
 	let DataFile = {
 		version: 2,
 		scenes: [currentSceneData],
@@ -1934,6 +1938,8 @@ function export_current_scene(){
 	};
 	delete DataFile.scenes[0].map;
 	for(tokenID in window.TOKEN_OBJECTS){
+		currentSceneData.tokens[tokenID] = window.TOKEN_OBJECTS[tokenID].options;
+
 		let statBlockID = window.TOKEN_OBJECTS[tokenID].options.statBlock
 		if(statBlockID != undefined && window.JOURNAL.notes[statBlockID] != undefined){
 			DataFile.notes[statBlockID] = window.JOURNAL.notes[statBlockID];
