@@ -95,7 +95,7 @@ $(function() {
             ]),
             new Promise((resolve) => {
               inventoryTimeout = setTimeout(() => {
-                showError(new Error("Timed out fetching party inventory/items/spells after 30 seconds"));
+                console.warn("Timed out fetching party inventory/items/spells after 60 seconds. May be down or slow to load.");
                 resolve();
               }, 60000);
             })
