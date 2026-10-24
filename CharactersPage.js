@@ -668,9 +668,9 @@ function inject_dice_roll(element, clear=true) {
     noisy_log("inject_dice_roll updatedInnerHtml", updatedInnerHtml);
     element.append(updatedInnerHtml);
   }
+  const allRollButtons = element.find(".integrated-dice__container, .ddb-note-roll");
 
-
-  element.find(".integrated-dice__container, .ddb-note-roll").off('pointerdown.avttRoll touchstart.avttRoll').on('pointerdown.avttRoll touchstart.avttRoll', function(clickEvent) {
+  allRollButtons.off('pointerdown.avttRoll touchstart.avttRoll').on('pointerdown.avttRoll touchstart.avttRoll', function(clickEvent) {
     if (clickEvent.button === 2) return;
     clickEvent.preventDefault();
     clickEvent.stopPropagation();
@@ -688,7 +688,13 @@ function inject_dice_roll(element, clear=true) {
     }
    
   });
-  element.find(`.integrated-dice__container, .ddb-note-roll`).off('contextmenu.rpg-roller').on('contextmenu.rpg-roller', function(e){
+  allRollButtons.off('click.prevent').on('click.prevent', function(clickEvent) {
+    if (clickEvent.button === 2) return;
+    clickEvent.preventDefault();
+    clickEvent.stopPropagation();
+    clickEvent.stopImmediatePropagation();
+  });
+  allRollButtons.off('contextmenu.rpg-roller').on('contextmenu.rpg-roller', function(e){
       e.stopPropagation();
       e.preventDefault();
       let rollData = {}

@@ -3250,7 +3250,8 @@ function redraw_light_walls(options = {clearCanvas: true, editingWallPoints: fal
 				openCloseDoorButton.off('click.doors').on('click.doors', function(){
 
 						if(doorType == `teleporter`){
-							
+							if(window.TELEPORTER_PASTE_BUFFER != undefined)
+								return;
 
 							let alreadyHighlighted = false;
 							let tokenObject = window.TOKEN_OBJECTS[`${x}${y}${width}${height}${window.CURRENT_SCENE_DATA.id}`.replaceAll('.','')]

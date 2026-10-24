@@ -1509,14 +1509,23 @@ class MessageBroker {
 						if (window.TELEPORTER_PASTE_BUFFER != undefined) {
 							try {
 								const teleporterTokenId = window.TELEPORTER_PASTE_BUFFER.targetToken
+								if(!teleporterTokenId){
+									window.TELEPORTER_PASTE_BUFFER = undefined;
+									console.warn("Teleporter target not assigned.");
+								}
 								const targetPortal = window.TOKEN_OBJECTS[teleporterTokenId];
+								if(!targetPortal){
+									window.TELEPORTER_PASTE_BUFFER = undefined;
+									console.warn("Teleporter target not found.");
+								}
 								const top = (parseInt(targetPortal.options.top) + 25) * (window.CURRENT_SCENE_DATA.scale_factor / targetPortal.options.scaleCreated);
 								const left = (parseInt(targetPortal.options.left) + 25) * (window.CURRENT_SCENE_DATA.scale_factor / targetPortal.options.scaleCreated);
 								const isTeleporter = true;
 								await paste_selected_tokens(left, top, isTeleporter);
 								window.TOKEN_OBJECTS[teleporterTokenId].highlight();
 							}
-							catch {
+							catch(error) {
+								console.warn("Failed to paste teleporter tokens.", error);
 								window.TELEPORTER_PASTE_BUFFER = undefined;
 							}
 						}
