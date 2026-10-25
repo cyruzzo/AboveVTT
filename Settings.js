@@ -2068,10 +2068,10 @@ async function export_scenes_folder_context(folderId){
 async function export_main_scenes_folder_backup(){
 	build_import_loading_indicator('Preparing Export File');  
 
-	let folderId = "scenesFolder"
+
 	let ids = [];
-	const getIds = function(folderId){
-		let scenesInFolder = window.ScenesHandler.scenes.filter(d => d.parentId == folderId);
+	const getIds = function(folderId = "scenesFolder"){
+		let scenesInFolder = window.ScenesHandler.scenes.filter(d => d.parentId == folderId || (folderId == "scenesFolder" && !d.parentId));
 
 		for(let scene=0; scene<scenesInFolder.length; scene++){
 			ids.push(scenesInFolder[scene].id)
@@ -2081,7 +2081,7 @@ async function export_main_scenes_folder_backup(){
 		}
 	}
 
-	getIds(folderId);
+	getIds();
 	let scenes = []
 		
 	for(let id=0; id<ids.length; id++){
