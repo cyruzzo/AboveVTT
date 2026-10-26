@@ -17,8 +17,8 @@ function scan_monster(target, stats, tokenId) {
 	target.find("#footer").remove();
 	target.find(".integrated-dice__container").hide();
 	// attempt to the tokens name first, failing tha
-	const displayName = window.TOKEN_OBJECTS[tokenId] ? window.TOKEN_OBJECTS[tokenId].options?.revealname == true ? window.TOKEN_OBJECTS[tokenId].options.name : `` : target.find(".mon-stat-block__name-link").text(); // Wolf, Owl, etc
-	const creatureAvatar = window.TOKEN_OBJECTS[tokenId]?.options.imgsrc || stats.data.avatarUrl;
+	const displayName = window.all_token_objects[tokenId] ? window.all_token_objects[tokenId].options?.revealname == true ? window.all_token_objects[tokenId].options.name : `` : target.find(".mon-stat-block__name-link").text(); // Wolf, Owl, etc
+	const creatureAvatar = window.all_token_objects[tokenId]?.options.imgsrc || stats.data.avatarUrl;
 
 	function clickHandler(clickEvent) {
 		if(clickEvent.button === 2) return;

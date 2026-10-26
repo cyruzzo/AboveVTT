@@ -372,8 +372,8 @@ const debounceRescanStatBlock = mydebounce(async (container, noteId, tokenId, cu
       
 
 
-      const displayName = window.TOKEN_OBJECTS[tokenId] ? window.TOKEN_OBJECTS[tokenId].options?.revealname == true ? window.TOKEN_OBJECTS[tokenId].options.name : `` : target.find(".mon-stat-block__name-link").text(); // Wolf, Owl, etc
-      const creatureAvatar = window.TOKEN_OBJECTS[tokenId]?.options.imgsrc || statBlock?.data?.avatarUrl;
+      const displayName = window.all_token_objects[tokenId] ? window.all_token_objects[tokenId].options?.revealname == true ? window.all_token_objects[tokenId].options.name : `` : target.find(".mon-stat-block__name-link").text(); // Wolf, Owl, etc
+      const creatureAvatar = window.all_token_objects[tokenId]?.options.imgsrc || statBlock?.data?.avatarUrl;
       $(e.target.closest('p, div')).find('.avtt-aoe-button')?.click();
       for(let i = 0; i<rollButtons.length; i++){      
         let data = getRollData(rollButtons[i]);
