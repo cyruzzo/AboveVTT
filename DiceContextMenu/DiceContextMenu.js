@@ -1,4 +1,14 @@
 
+if (typeof DiceRoll === 'undefined') {
+    window.DiceRoll = class {
+        constructor(expression) {
+            this.expression = expression;
+            this.action = 'custom';
+            this.rollType = 'roll';
+        }
+    };
+}
+
 function gamelog_send_to_text() {
     // TODO: track characters page in window.sendTo so we know what they have set even if the gamelog is not on the screen
     let expectedButtonText = $(".glc-game-log [class*='-SendToLabel']").parent().find("button").text();
@@ -10,7 +20,7 @@ function gamelog_send_to_text() {
     if (lastSendToDefault != null) {
         return lastSendToDefault;
     }
-    if (is_characters_page()) {
+    if (typeof is_characters_page === 'function' && is_characters_page()) {
         return "Everyone"
     }
     return "Self"
@@ -79,7 +89,28 @@ function standard_dice_context_menu(expression, modifierString = "", action = un
         diceRoll.entityId = entityId;
         diceRoll.sendToOverride = dcm.checkedRow(0)?.title?.replace(/\s+/g, "");
      
-        window.diceRoller.roll(diceRoll);
+        const targetDoc = dcm.targetDocument || document;
+        if (!window.diceRoller || targetDoc !== document) {
+            const targetWin = targetDoc.defaultView || window;
+            const BC = (targetWin && targetWin.BroadcastChannel) ? targetWin.BroadcastChannel : BroadcastChannel;
+            const bridge = new BC('abovevtt_statblock_bridge');
+            bridge.postMessage({
+                type: 'roll',
+                rollData: {
+                    expression: diceRoll.expression,
+                    action: diceRoll.action,
+                    rollType: diceRoll.rollType,
+                    displayName: diceRoll.name,
+                    imgUrl: diceRoll.avatarUrl,
+                    entityType: diceRoll.entityType,
+                    entityId: diceRoll.entityId,
+                    sendToOverride: diceRoll.sendToOverride
+                }
+            });
+            bridge.close();
+        } else {
+            window.diceRoller.roll(diceRoll);
+        }
         if (rollOptions?.onRollComplete) {
             rollOptions.onRollComplete();
         } else {
@@ -159,7 +190,32 @@ function damage_dice_context_menu(diceExpression, modifierString = "", action = 
 
             const doubleDamage = rollAsIndex === 2 ? 3 : undefined;
 
-            window.diceRoller.roll(diceRoll, undefined, doubleDamage, undefined, spellSave, damageType, doubleDamage);
+            const targetDoc = dcm.targetDocument || document;
+            if (!window.diceRoller || targetDoc !== document) {
+                const targetWin = targetDoc.defaultView || window;
+                const BC = (targetWin && targetWin.BroadcastChannel) ? targetWin.BroadcastChannel : BroadcastChannel;
+                const bridge = new BC('abovevtt_statblock_bridge');
+                bridge.postMessage({
+                    type: 'roll',
+                    rollData: {
+                        expression: diceRoll.expression,
+                        action: diceRoll.action,
+                        rollType: diceRoll.rollType,
+                        displayName: diceRoll.name,
+                        imgUrl: diceRoll.avatarUrl,
+                        entityType: diceRoll.entityType,
+                        entityId: diceRoll.entityId,
+                        sendToOverride: diceRoll.sendToOverride
+                    },
+                    critType: doubleDamage,
+                    save: spellSave,
+                    damageType: damageType,
+                    forceCritType: doubleDamage
+                });
+                bridge.close();
+            } else {
+                window.diceRoller.roll(diceRoll, undefined, doubleDamage, undefined, spellSave, damageType, doubleDamage);
+            }
             if (rollOptions?.onRollComplete) {
                 rollOptions.onRollComplete();
             } else {
@@ -202,6 +258,7 @@ class DiceContextMenu {
     }
 
     build(targetDocument = document) {
+        this.targetDocument = targetDocument;
         let html = $(`
         	<div role="presentation" class="dcm-backdrop">
                 <div class="dcm-container">

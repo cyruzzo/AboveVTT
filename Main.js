@@ -812,7 +812,8 @@ async function popout_all_selected_token_stat(){
 			const windowName = `${token.options.name}_${token.options.id}`.replaceAll(/(\r\n|\n|\r)/gi, "").trim();
 			const isPcTempalate = container.find('.dnd-sheet');
 			const width = isPcTempalate.length > 0 ? 800 : undefined;
-			popoutWindow(windowName, container.find(".avtt-stat-block-container"), width);
+			const popoutWin = popoutWindow(windowName, container.find(".avtt-stat-block-container"), width);
+			if (popoutWin) popoutWin.isStatBlock = true;
 			const popoutBody = $(window.childWindows[windowName].document).find("body");
 			const popoutStatBlock = popoutBody.find(".avtt-stat-block-container").first();
 			popoutStatBlock.find("span.hideme").parent().parent().hide();
@@ -832,6 +833,7 @@ async function popout_all_selected_token_stat(){
 					popoutContext.css("top", maxTop)
 				}
 				$(window.childWindows[windowName].document).find("div[role='presentation']").on("click", function (clickEvent) {
+					if (clickEvent.target !== clickEvent.currentTarget) return;
 					$(window.childWindows[windowName].document).find("div[role='presentation']").remove();
 				});
 				$(".dcm-backdrop").remove();
@@ -1067,7 +1069,8 @@ function build_draggable_monster_window(tokenId, bringToFront=true) {
 	popoutButton.off('click.popout').on('click.popout', function() {
 		let name = $("#resizeDragMon .avtt-stat-block-container .mon-stat-block__name-link").text();
 		const windowName = `${token?.options?.name ? token.options.name : name}_${tokenId ? tokenId : ''}`.replaceAll(/(\r\n|\n|\r)/gi, "").trim();	
-		popoutWindow(windowName, $("#resizeDragMon .avtt-stat-block-container"), $("#resizeDragMon").width(), $("#resizeDragMon").height());
+		const popoutWin = popoutWindow(windowName, $("#resizeDragMon .avtt-stat-block-container"), $("#resizeDragMon").width(), $("#resizeDragMon").height());
+		if (popoutWin) popoutWin.isStatBlock = true;
 		const popoutBody = $(window.childWindows[windowName].document).find("body");
 		const popoutStatBlock = popoutBody.find(".avtt-stat-block-container").first();
 		// the clone's handlers still point at the original window's element, so build a fresh one
@@ -1088,6 +1091,7 @@ function build_draggable_monster_window(tokenId, bringToFront=true) {
 				popoutContext.css("top", maxTop)
 			}
 			$(window.childWindows[windowName].document).find("div[role='presentation']").on("click", function (clickEvent) {
+				if (clickEvent.target !== clickEvent.currentTarget) return;
 				$(window.childWindows[windowName].document).find("div[role='presentation']").remove();
 			});
 			$(".dcm-backdrop").remove();
@@ -3872,8 +3876,47 @@ width=${width},height=${height},left=100,top=100`;
 		$(childWindows[name].document).find('a[href^="/"]').each(function() {
 	        this.href = `https://dndbeyond.com${this.getAttribute("href")}`;
 		});
+		if (cloneSelector.hasClass('avtt-stat-block-container') || cloneSelector.find('.avtt-stat-block-container, .mon-stat-block, .dnd-sheet').length > 0) {
+			childWindows[name].isStatBlock = true;
+			inject_popout_statblock_bridge_script(childWindows[name]);
+		}
 	}
 	return childWindows[name];
+}
+
+function inject_popout_statblock_bridge_script(childWindow) {
+	try {
+		const doc = childWindow?.document;
+		if (!doc || doc.getElementById('abovevtt-statblock-bridge-script')) return;
+		let extPath = window.EXTENSION_PATH || $("#extensionpath").attr('data-path') || '';
+		if (extPath && !extPath.endsWith('/')) extPath += '/';
+		childWindow.EXTENSION_PATH = extPath;
+
+		if (!doc.querySelector('link[href*="DiceContextMenu.css"]')) {
+			const link = doc.createElement('link');
+			link.rel = 'stylesheet';
+			link.href = `${extPath}DiceContextMenu/DiceContextMenu.css`;
+			(doc.head || doc.documentElement).appendChild(link);
+		}
+
+		const jqScript = doc.createElement('script');
+		jqScript.async = false;
+		jqScript.src = `${extPath}jquery-3.6.0.min.js`;
+		(doc.head || doc.documentElement).appendChild(jqScript);
+
+		const dcmScript = doc.createElement('script');
+		dcmScript.async = false;
+		dcmScript.src = `${extPath}DiceContextMenu/DiceContextMenu.js`;
+		(doc.head || doc.documentElement).appendChild(dcmScript);
+
+		const script = doc.createElement('script');
+		script.id = 'abovevtt-statblock-bridge-script';
+		script.async = false;
+		script.src = `${extPath}DiceContextMenu/StatblockBridge.js`;
+		(doc.head || doc.documentElement).appendChild(script);
+	} catch (err) {
+		console.warn('Failed to inject statblock bridge script into popout', err);
+	}
 }
 function waitForGamelogPopout(popout) {
 	const popoutDocument = popout.document;
@@ -4270,6 +4313,30 @@ function closePopout(name){
 		delete childWindows[name];
 	}
 }
+function close_statblock_popouts(){
+	try {
+		const bridge = new BroadcastChannel('abovevtt_statblock_bridge');
+		bridge.postMessage({ type: 'close' });
+		bridge.close();
+	} catch (e) {
+		console.warn('Failed to broadcast close to statblock popouts', e);
+	}
+	if(!window.childWindows) return;
+	for(const name in window.childWindows){
+		const win = window.childWindows[name];
+		if(!win || win.closed) continue;
+		const isStatBlock = win.isStatBlock || (
+			!["Gamelog", "Combat Tracker", "Players", "Quick Roll Menu"].includes(name) &&
+			!name.startsWith("Note_") &&
+			$(win.document).find('.avtt-stat-block-container, .mon-stat-block').length > 0 &&
+			$(win.document).find('.note:not(.dnd-sheet)').length === 0
+		);
+		if(isStatBlock){
+			closePopout(name);
+		}
+	}
+}
+window.close_statblock_popouts = close_statblock_popouts;
 /**
  * This will hide the sidebar regardless of which page we are playing on.
  * It will also adjust the position of the character sheet .

@@ -156,6 +156,88 @@ $(function() {
         $('body').toggleClass('color-blind-avtt', (window.EXPERIMENTAL_SETTINGS['colorBlindText'] == true));
 
 
+        let lastBridgeRollTime = 0;
+        let lastBridgeRollKey = '';
+        const statblockBridge = new BroadcastChannel('abovevtt_statblock_bridge');
+        statblockBridge.addEventListener('message', (event) => {
+          if (event.data?.type === 'roll' && window.diceRoller) {
+            const { rollData, multiroll, critRange, critType, save, damageType, forceCritType } = event.data;
+            const rollKey = `${rollData.expression}_${rollData.action}_${rollData.displayName}_${rollData.entityId}`;
+            const now = Date.now();
+            if (rollKey === lastBridgeRollKey && (now - lastBridgeRollTime) < 300) {
+              return;
+            }
+            lastBridgeRollKey = rollKey;
+            lastBridgeRollTime = now;
+            const tokenId = rollData.entityId;
+            const token = tokenId ? (window.all_token_objects?.[tokenId] || window.TOKEN_OBJECTS?.[tokenId]) : null;
+            const resolvedImg = token?.options?.imgsrc || (rollData.imgUrl && !rollData.imgUrl.includes('header-bar.svg') ? rollData.imgUrl : undefined) || window.PLAYER_IMG;
+            const resolvedName = (token && (token.options?.revealname || token.options?.player_owned || window.DM)) ? token.options.name : (rollData.displayName || window.PLAYER_NAME);
+            window.diceRoller.roll(
+              new DiceRoll(
+                rollData.expression,
+                rollData.action,
+                rollData.rollType,
+                resolvedName,
+                resolvedImg,
+                rollData.entityType,
+                rollData.entityId,
+                rollData.sendToOverride,
+                damageType,
+                save
+              ),
+              multiroll,
+              critRange,
+              critType,
+              save,
+              damageType,
+              forceCritType
+            );
+          } else if (event.data?.type === 'multiroll' && window.diceRoller && Array.isArray(event.data.rolls)) {
+            const { rolls, critRange, critType, forceCritType } = event.data;
+            const rollKey = `multi_${rolls.map(r => r.expression).join('_')}_${rolls[0]?.action}_${rolls[0]?.displayName}`;
+            const now = Date.now();
+            if (rollKey === lastBridgeRollKey && (now - lastBridgeRollTime) < 300) {
+              return;
+            }
+            lastBridgeRollKey = rollKey;
+            lastBridgeRollTime = now;
+            const tokenId = rolls[0]?.entityId;
+            const token = tokenId ? (window.all_token_objects?.[tokenId] || window.TOKEN_OBJECTS?.[tokenId]) : null;
+            const tokenImage = token?.options?.imgsrc;
+            const tokenName = (token && (token.options?.revealname || token.options?.player_owned || window.DM)) ? token.options.name : undefined;
+            const rollSettings = (tokenId && typeof get_token_roll_settings === 'function') ? get_token_roll_settings(tokenId) : {};
+            const resolvedCritRange = critRange || rollSettings.critRange || 20;
+            const resolvedCritType = critType ?? rollSettings.crit ?? (typeof get_avtt_setting_value === 'function' ? get_avtt_setting_value('monsterCritType') : 2);
+            for (const r of rolls) {
+              const resolvedImg = tokenImage || (r.imgUrl && !r.imgUrl.includes('header-bar.svg') ? r.imgUrl : undefined) || window.PLAYER_IMG;
+              const resolvedName = tokenName || r.displayName || window.PLAYER_NAME;
+              window.diceRoller.roll(
+                new DiceRoll(
+                  r.expression,
+                  r.action,
+                  r.rollType,
+                  resolvedName,
+                  resolvedImg,
+                  r.entityType,
+                  r.entityId,
+                  r.sendToOverride,
+                  r.damageType,
+                  r.save
+                ),
+                true,
+                resolvedCritRange,
+                resolvedCritType,
+                r.save,
+                r.damageType,
+                forceCritType
+              );
+            }
+          } else if (event.data?.type === 'slashCommand' && window.chatObserver) {
+            window.chatObserver.handleUserText(event.data.command);
+          }
+        });
+
         tabCommunicationChannel.addEventListener ('message', (event) => {
           if((event.data.msgType == 'addCondition' || event.data.msgType == 'removeCondition') && event.data.sendTo == window.PLAYER_ID){ // Sets a player token's condition on and off
             const tokenId = Object.keys(window.all_token_objects).find(key => key.includes(event.data.characterId));

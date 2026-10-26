@@ -543,6 +543,30 @@ function roll_button_clicked(clickEvent, displayName, imgUrl, entityType = undef
 	// applied after the advantage/disadvantage rewrite so a buff's ^1d20 replacement can't undo it
 	const buffedExpression = adjustRollWithRollBuffs(`${expression}${modifier}`, rollType, $(clickEvent.currentTarget));
 
+	const targetDocument = clickEvent?.currentTarget?.ownerDocument || document;
+	if (targetDocument !== document) {
+		const targetWindow = targetDocument.defaultView || window;
+		const BC = (targetWindow && targetWindow.BroadcastChannel) ? targetWindow.BroadcastChannel : BroadcastChannel;
+		const bridge = new BC('abovevtt_statblock_bridge');
+		bridge.postMessage({
+			type: 'roll',
+			rollData: {
+				expression: buffedExpression,
+				action,
+				rollType,
+				displayName,
+				imgUrl,
+				entityType,
+				entityId
+			},
+			save,
+			damageType
+		});
+		bridge.close();
+		pressedButton = null;
+		return;
+	}
+
 	window.diceRoller.roll(new DiceRoll(
 		buffedExpression,
 		action,

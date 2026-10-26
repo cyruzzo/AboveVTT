@@ -157,6 +157,9 @@ function notify_gamelog() {
 }
 function startup_step(stepDescription) {
   console.log(`startup_step ${stepDescription}`);
+  if (typeof stepDescription === 'string' && stepDescription.startsWith("Start up complete")) {
+    window.STARTUP_COMPLETE = true;
+  }
   $("#loading-overlay-beholder > .sidebar-panel-loading-indicator > .loading-status-indicator__subtext").text(stepDescription);
 }
 
