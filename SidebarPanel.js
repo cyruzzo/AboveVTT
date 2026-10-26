@@ -2073,7 +2073,6 @@ function build_sidebar_list_row(listItem) {
       }
       switch_dm.on("click", function(clickEvent) {
         clickEvent.stopPropagation();
-        if (typeof close_statblock_popouts === 'function') close_statblock_popouts();
         $("#scenes-panel .dm_scenes_button.selected-scene").removeClass("selected-scene");
         $(clickEvent.currentTarget).addClass("selected-scene");
         window.MB.sendMessage("custom/myVTT/switch_scene", { sceneId: listItem.id, switch_dm: true });
@@ -2085,7 +2084,6 @@ function build_sidebar_list_row(listItem) {
       }
       switch_players.on("click", function(clickEvent) {
         clickEvent.stopPropagation();
-        if (typeof close_statblock_popouts === 'function') close_statblock_popouts();
         window.PLAYER_SCENE_ID = listItem.id;
         $("#scenes-panel .player_scenes_button.selected-scene").removeClass("selected-scene");
         $(clickEvent.currentTarget).addClass("selected-scene");

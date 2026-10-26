@@ -1201,8 +1201,7 @@ class MessageBroker {
 			
 			const isSameTokenLight = window.CURRENT_SCENE_DATA.disableSceneVision == msg.data.disableSceneVision;																		
 			
-			if(window.STARTUP_COMPLETE && !isCurrentScene){
-				if (typeof close_statblock_popouts === 'function') close_statblock_popouts();
+			if(!isCurrentScene){
 				add_zoom_to_storage();
 			}
 

@@ -68,9 +68,29 @@ function build_stat_block_for_copy(listItem, options, open5e = false){
   }  
 }
 
+function get_statblock_ability_roll_buttons(abilityBtn) {
+  const abilityContainer = (abilityBtn && abilityBtn.closest) ? (abilityBtn.closest('em, strong') || abilityBtn) : abilityBtn;
+  const parent = (abilityContainer && abilityContainer.closest) ? abilityContainer.closest('p, div, section') : null;
+  if (!parent) return [];
+  const allRollButtons = Array.from(
+    parent.querySelectorAll('.avtt-roll-button:not([data-rolltype="recharge"]), .avtt-roll-formula-button')
+  );
+  if (allRollButtons.length === 0) return [];
+  const allAbilities = Array.from(
+    parent.querySelectorAll('.avtt-ability-roll-button, em > strong, strong > em')
+  ).filter(el => el === abilityBtn || el.classList?.contains('avtt-ability-roll-button'));
+  const thisIndex = allAbilities.indexOf(abilityBtn);
+  const nextAbility = thisIndex >= 0 && thisIndex < allAbilities.length - 1 ? allAbilities[thisIndex + 1] : null;
+  return allRollButtons.filter(btn => {
+    const isAfter = (abilityContainer.compareDocumentPosition(btn) & Node.DOCUMENT_POSITION_FOLLOWING) !== 0;
+    const isBeforeNext = !nextAbility || ((btn.compareDocumentPosition(nextAbility) & Node.DOCUMENT_POSITION_FOLLOWING) !== 0);
+    return isAfter && isBeforeNext;
+  });
+}
+
 async function display_stat_block_in_container(statBlock, container, tokenId, customStatBlock = undefined) {
-    const token = window.TOKEN_OBJECTS[tokenId];
-    let $html = (customStatBlock) ? $(`<div class="container avtt-stat-block-container custom-stat-block" data-stat-id="${window.TOKEN_OBJECTS[tokenId].options.statBlock}" data-token-id="${tokenId}">${customStatBlock}</div>`) : $(await build_monster_stat_block(statBlock, token));
+    const token = window.TOKEN_OBJECTS?.[tokenId] || window.all_token_objects?.[tokenId];
+    let $html = (customStatBlock) ? $(`<div class="container avtt-stat-block-container custom-stat-block" data-stat-id="${token?.options?.statBlock}" data-token-id="${tokenId}">${customStatBlock}</div>`) : $(await build_monster_stat_block(statBlock, token));
     container.find("#noAccessToContent").remove(); // in case we're re-rendering with better data
     container.find(".avtt-stat-block-container").remove(); // in case we're re-rendering with better data
     container.append($html);
@@ -166,60 +186,62 @@ async function display_stat_block_in_container(statBlock, container, tokenId, cu
       e.stopImmediatePropagation();
       if($(e.target).text().includes('Recharge'))
         return;
-      let rollButtons = $(e.currentTarget).closest('em:has(strong), strong:has(em)').nextUntil(':has(.avtt-ability-roll-button)')
-      rollButtons = rollButtons.add(rollButtons.find('.avtt-roll-button:not([data-rolltype="recharge"]), .avtt-roll-formula-button')).closest('.avtt-roll-button:not([data-rolltype="recharge"]), .avtt-roll-formula-button');
-      
+      const rollButtons = get_statblock_ability_roll_buttons(e.currentTarget);
+      const effectiveButtons = rollButtons.length > 0
+        ? rollButtons
+        : $(e.currentTarget).closest('em:has(strong), strong:has(em)').nextUntil(':has(.avtt-ability-roll-button)').filter('.avtt-roll-button:not([data-rolltype="recharge"]), .avtt-roll-formula-button').toArray();
 
-
-      const displayName = window.TOKEN_OBJECTS[tokenId] ? window.TOKEN_OBJECTS[tokenId].options?.revealname == true ? window.TOKEN_OBJECTS[tokenId].options.name : `` : target.find(".mon-stat-block__name-link").text(); // Wolf, Owl, etc
-      const creatureAvatar = window.TOKEN_OBJECTS[tokenId]?.options.imgsrc || statBlock?.data?.avatarUrl;
+      const currentToken = window.TOKEN_OBJECTS?.[tokenId] || window.all_token_objects?.[tokenId];
+      const displayName = (currentToken && (currentToken.options?.revealname || currentToken.options?.player_owned || window.DM))
+        ? currentToken.options.name
+        : (container.find(".mon-stat-block__name-link").text() || window.PLAYER_NAME);
+      const creatureAvatar = currentToken?.options?.imgsrc || (statBlock?.data?.avatarUrl && !statBlock.data.avatarUrl.includes("header-bar.svg") ? statBlock.data.avatarUrl : undefined) || window.PLAYER_IMG;
       $(e.target.closest('p, div')).find('.avtt-aoe-button')?.click();
-      for(let i = 0; i<rollButtons.length; i++){      
-        let data = getRollData(rollButtons[i]);
+      for(let i = 0; i < effectiveButtons.length; i++){      
+        let data = getRollData(effectiveButtons[i]);
         let diceRoll;
 
         if(data.expression != undefined){
           if (/^1d20[+-]([0-9]+)/g.test(data.expression)) {
              if(e.altKey){
                 if(e.shiftKey){
-                  diceRoll = new DiceRoll(`3d20kh1${data.modifier}`, data.rollTitle, data.rollType, displayName, creatureAvatar, "monster");
+                  diceRoll = new DiceRoll(`3d20kh1${data.modifier}`, data.rollTitle, data.rollType, displayName, creatureAvatar, "monster", tokenId);
                  }
                  else if((!isMac() && e.ctrlKey) || e.metaKey){
-                  diceRoll = new DiceRoll(`3d20kl1${data.modifier}`, data.rollTitle, data.rollType, displayName, creatureAvatar, "monster");
+                  diceRoll = new DiceRoll(`3d20kl1${data.modifier}`, data.rollTitle, data.rollType, displayName, creatureAvatar, "monster", tokenId);
                  }
              }
              else if(e.shiftKey){
-              diceRoll = new DiceRoll(`2d20kh1${data.modifier}`, data.rollTitle, data.rollType, displayName, creatureAvatar, "monster");
+              diceRoll = new DiceRoll(`2d20kh1${data.modifier}`, data.rollTitle, data.rollType, displayName, creatureAvatar, "monster", tokenId);
              }
              else if((!isMac() && e.ctrlKey) || e.metaKey){
-              diceRoll = new DiceRoll(`2d20kl1${data.modifier}`, data.rollTitle, data.rollType, displayName, creatureAvatar, "monster");
+              diceRoll = new DiceRoll(`2d20kl1${data.modifier}`, data.rollTitle, data.rollType, displayName, creatureAvatar, "monster", tokenId);
              }else{
-              diceRoll = new DiceRoll(data.expression, data.rollTitle, data.rollType, displayName, creatureAvatar, "monster")
+              diceRoll = new DiceRoll(data.expression, data.rollTitle, data.rollType, displayName, creatureAvatar, "monster", tokenId);
              }
           }
           else{
-            diceRoll = new DiceRoll(data.expression, data.rollTitle, data.rollType, displayName, creatureAvatar, "monster")
+            diceRoll = new DiceRoll(data.expression, data.rollTitle, data.rollType, displayName, creatureAvatar, "monster", tokenId);
           }
-        
 
- 
           const rollSettings = typeof get_token_roll_settings === 'function' ? get_token_roll_settings(tokenId) : {};
-          window.diceRoller.roll(diceRoll, true, rollSettings.critRange || 20, rollSettings.crit ?? get_avtt_setting_value('monsterCritType'), undefined, data.damageType);
-
+          window.diceRoller.roll(diceRoll, true, rollSettings.critRange || 20, rollSettings.crit ?? (typeof get_avtt_setting_value === 'function' ? get_avtt_setting_value('monsterCritType') : 2), undefined, data.damageType);
         }
       }
     })
     let abilities= container.find("p>em>strong, p>strong>em, div>strong>em, div>em>strong, p>span>em>strong, p>span>strong>em");
 
     for(let i = 0; i<abilities.length; i++){
-      if($(abilities[i]).closest('em:has(strong), strong:has(em)').nextUntil('em:has(strong), strong:has(em)').is('.avtt-roll-button, :has(.avtt-roll-button)')){
+      const hasRolls = get_statblock_ability_roll_buttons(abilities[i]).length > 0
+        || $(abilities[i]).closest('em:has(strong), strong:has(em)').nextUntil('em:has(strong), strong:has(em)').is('.avtt-roll-button, :has(.avtt-roll-button)');
+      if(hasRolls){
         $(abilities[i]).toggleClass('avtt-ability-roll-button', true);
       }
     }
     $("span.hideme").parent().parent().hide();
     container.find('.lockStatButton, .download_button, .upload_button, .add-table-row, .table-row-drag-handle, .header-spacer').remove();
     if(customStatBlock && container.find('.dnd-sheet').length>0){
-			const customStatId = window.TOKEN_OBJECTS[tokenId]?.options?.statBlock;
+			const customStatId = (window.TOKEN_OBJECTS?.[tokenId] || window.all_token_objects?.[tokenId])?.options?.statBlock;
 			window.JOURNAL.bindDndSheetTemplateEvents(customStatId, $html, container, {tokenId, showControls: true, uploadId: tokenId, downloadToken: token});
       window.JOURNAL.ensureEnclosingZWSP($html[0]);
     }
@@ -296,7 +318,7 @@ function import_pc_template_html(files, parentEle, customStatId, tokenId) {
 	reader.readAsText(file);
 }
 const debounceRescanStatBlock = mydebounce(async (container, noteId, tokenId, currScroll, force = false) => {
-  const token = window.TOKEN_OBJECTS[tokenId];
+  const token = window.TOKEN_OBJECTS?.[tokenId] || window.all_token_objects?.[tokenId];
   let targetRescan = $(container).find('.avtt-stat-block-container, .note-text').first();
   targetRescan.find('[style=""]').removeAttr('style');
   targetRescan.find('[class=""]').removeAttr('class');

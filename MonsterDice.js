@@ -17,8 +17,11 @@ function scan_monster(target, stats, tokenId) {
 	target.find("#footer").remove();
 	target.find(".integrated-dice__container").hide();
 	// attempt to the tokens name first, failing tha
-	const displayName = window.TOKEN_OBJECTS[tokenId] ? window.TOKEN_OBJECTS[tokenId].options?.revealname == true ? window.TOKEN_OBJECTS[tokenId].options.name : `` : target.find(".mon-stat-block__name-link").text(); // Wolf, Owl, etc
-	const creatureAvatar = window.TOKEN_OBJECTS[tokenId]?.options.imgsrc || stats.data.avatarUrl;
+	const token = window.TOKEN_OBJECTS?.[tokenId] || window.all_token_objects?.[tokenId];
+	const displayName = (token && (token.options?.revealname || token.options?.player_owned || window.DM))
+		? token.options.name
+		: (target.find(".mon-stat-block__name-link").text() || window.PLAYER_NAME);
+	const creatureAvatar = token?.options?.imgsrc || (stats.data?.avatarUrl && !stats.data.avatarUrl.includes("header-bar.svg") ? stats.data.avatarUrl : undefined) || window.PLAYER_IMG;
 
 	function clickHandler(clickEvent) {
 		if(clickEvent.button === 2) return;
@@ -102,7 +105,7 @@ function scan_monster(target, stats, tokenId) {
  * @param {string} tokenId 
  */
 function add_ability_tracker_inputs_on_each(target, tokenId){
-	const token = window.TOKEN_OBJECTS[tokenId];
+	const token = window.TOKEN_OBJECTS?.[tokenId] || window.all_token_objects?.[tokenId];
 	if(target.find('.add-input').length)
 		return;
 	if(target.find('strong:first-of-type').text().match(/\/day each/gi)){

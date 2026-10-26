@@ -4313,30 +4313,6 @@ function closePopout(name){
 		delete childWindows[name];
 	}
 }
-function close_statblock_popouts(){
-	try {
-		const bridge = new BroadcastChannel('abovevtt_statblock_bridge');
-		bridge.postMessage({ type: 'close' });
-		bridge.close();
-	} catch (e) {
-		console.warn('Failed to broadcast close to statblock popouts', e);
-	}
-	if(!window.childWindows) return;
-	for(const name in window.childWindows){
-		const win = window.childWindows[name];
-		if(!win || win.closed) continue;
-		const isStatBlock = win.isStatBlock || (
-			!["Gamelog", "Combat Tracker", "Players", "Quick Roll Menu"].includes(name) &&
-			!name.startsWith("Note_") &&
-			$(win.document).find('.avtt-stat-block-container, .mon-stat-block').length > 0 &&
-			$(win.document).find('.note:not(.dnd-sheet)').length === 0
-		);
-		if(isStatBlock){
-			closePopout(name);
-		}
-	}
-}
-window.close_statblock_popouts = close_statblock_popouts;
 /**
  * This will hide the sidebar regardless of which page we are playing on.
  * It will also adjust the position of the character sheet .

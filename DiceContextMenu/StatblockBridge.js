@@ -4,12 +4,6 @@
 
 	const bridge = new BroadcastChannel('abovevtt_statblock_bridge');
 
-	bridge.addEventListener('message', function (event) {
-		if (event.data?.type === 'close') {
-			window.close();
-		}
-	});
-
 	let lastRollTime = 0;
 	let lastButton = null;
 
