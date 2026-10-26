@@ -69,8 +69,8 @@ function build_stat_block_for_copy(listItem, options, open5e = false){
 }
 
 async function display_stat_block_in_container(statBlock, container, tokenId, customStatBlock = undefined) {
-    const token = window.TOKEN_OBJECTS[tokenId];
-    let $html = (customStatBlock) ? $(`<div class="container avtt-stat-block-container custom-stat-block" data-stat-id="${window.TOKEN_OBJECTS[tokenId].options.statBlock}" data-token-id="${tokenId}">${customStatBlock}</div>`) : $(await build_monster_stat_block(statBlock, token));
+    const token = window.all_token_objects[tokenId];
+    let $html = (customStatBlock) ? $(`<div class="container avtt-stat-block-container custom-stat-block" data-stat-id="${token.options.statBlock}" data-token-id="${tokenId}">${customStatBlock}</div>`) : $(await build_monster_stat_block(statBlock, token));
     container.find("#noAccessToContent").remove(); // in case we're re-rendering with better data
     container.find(".avtt-stat-block-container").remove(); // in case we're re-rendering with better data
     container.append($html);
