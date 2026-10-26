@@ -904,7 +904,11 @@ function bind_popout_stat_block_events(windowName, tokenId){
 				popoutContext.css("left", maxLeft);
 			if(parseInt(popoutContext.css("top")) > maxTop)
 				popoutContext.css("top", maxTop);
-			$(popoutDocument).find("div[role='presentation']").on("click", function(){
+			$(popoutDocument).find("div[role='presentation']").on("click", function(clickEvent){
+				if (clickEvent.target !== clickEvent.currentTarget) return;
+				$(popoutDocument).find("div[role='presentation']").remove();
+			});
+			$(popoutDocument).find(".dcm-roll-button").on("click", function(){
 				$(popoutDocument).find("div[role='presentation']").remove();
 			});
 			$(".dcm-backdrop").remove();
