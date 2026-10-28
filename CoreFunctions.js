@@ -4061,6 +4061,12 @@ const buffsDebuffs = {
         "save": "0",
         "check": "0",
       },
+      "+3d6": {
+        "tohit": "0",
+        "dmg": "+3d6",
+        "save": "0",
+        "check": "0",
+      },
       "+4d6": {
         "tohit": "0",
         "dmg": "+4d6",

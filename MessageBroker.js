@@ -361,19 +361,15 @@ class MessageBroker {
 
 		this.abovews.onopen = function() {
 			self.loadingAboveWS = false;
-			let recovered = false;
-			if (self.callbackAboveQueue.length > 1) {
-				recovered = true;
-			}
 			let cb;
 			noisy_log('Empting callback queue list');
 			while (cb = self.callbackAboveQueue.shift()) {
 				cb();
 			};
-			if (recovered && (!window.DM)) {
-				noisy_log('asking the DM for recovery!');
+			if (!window.DM) {
 				debounceSyncMeUp();
-	 		}
+			}
+			
 			setupMBIntervals();
 		};
 
@@ -774,7 +770,6 @@ class MessageBroker {
 					window.splitPlayerScenes = msg.data.splitPlayerScenes;
 					did_update_scenes();
 				}
-				
 			} else if (msg.eventType == "custom/myVTT/scene") {
 				self.handleScene(msg);
 			} else if (msg.eventType == "custom/myVTT/syncmeup") {
@@ -1927,7 +1922,7 @@ class MessageBroker {
 
 	
 
-	handleSyncMeUp(msg) {
+	handleSyncMeUp = mydebounce((msg) =>{
 		if (DM) {
 			ct_persist(); // force refresh of combat tracker for late users
 			if (window.CURRENT_SOUNDPAD) {
@@ -1964,7 +1959,7 @@ class MessageBroker {
 				paused: $('#pause_players').hasClass('paused')
 			});
 		}
-	}
+	}, 2000);
 
 	handleAudioPlayingSync(msg){
 		if(window.DM){
