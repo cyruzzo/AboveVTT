@@ -1456,6 +1456,12 @@ async function create_and_place_token(listItem, hidden = undefined, specificImag
                 case 'roll':
                     hpVal = new rpgDiceRoller.DiceRoll(listItem.monsterData.hitPointDice.diceString).total;
                     break;
+                case 'adv':
+                    hpVal = new rpgDiceRoller.DiceRoll(`{${listItem.monsterData.hitPointDice.diceString}, ${listItem.monsterData.hitPointDice.diceString}}kh1`).total;
+                    break;
+                case 'dis':
+                    hpVal = new rpgDiceRoller.DiceRoll(`{${listItem.monsterData.hitPointDice.diceString}, ${listItem.monsterData.hitPointDice.diceString}}kl1`).total;
+                    break;
                 case 'average':
                 default:
                     hpVal = listItem.monsterData.averageHitPoints;
@@ -1542,6 +1548,12 @@ async function create_and_place_token(listItem, hidden = undefined, specificImag
                     break;
                 case 'roll':
                     hpVal = new rpgDiceRoller.DiceRoll(listItem.monsterData.hitPointDice.diceString).total;
+                    break;
+                case 'adv':
+                    hpVal = new rpgDiceRoller.DiceRoll(`{${listItem.monsterData.hitPointDice.diceString}, ${listItem.monsterData.hitPointDice.diceString}}kh1`).total;
+                    break;
+                case 'dis':
+                    hpVal = new rpgDiceRoller.DiceRoll(`{${listItem.monsterData.hitPointDice.diceString}, ${listItem.monsterData.hitPointDice.diceString}}kl1`).total;
                     break;
                 case 'average':
                 default:
@@ -1689,6 +1701,20 @@ async function create_and_place_token(listItem, hidden = undefined, specificImag
             case 'roll':
                 if(hitDiceData && hitDiceData != ''){
                     hpVal = new rpgDiceRoller.DiceRoll(hitDiceData).total;
+                }else if(averageHP && averageHP != ''){
+                    hpVal = averageHP;          
+                }
+                break;
+            case 'adv':
+                if(hitDiceData && hitDiceData != ''){
+                    hpVal = new rpgDiceRoller.DiceRoll(`{${hitDiceData}, ${hitDiceData}}kh1`).total;
+                }else if(averageHP && averageHP != ''){l
+                    hpVal = averageHP;          
+                }
+                break;
+            case 'dis':
+                if(hitDiceData && hitDiceData != ''){
+                    hpVal = new rpgDiceRoller.DiceRoll(`{${hitDiceData}, ${hitDiceData}}kl1`).total;
                 }else if(averageHP && averageHP != ''){
                     hpVal = averageHP;          
                 }
