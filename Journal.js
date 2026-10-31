@@ -1951,6 +1951,11 @@ class JournalManager{
 					'mouseout': function(e){
 						clearTimeout(hoverNoteTimer)
 						remove_tooltip(500);
+					},
+					'dblclick': function(e){
+						if(window.JOURNAL.notes[noteId] != undefined){
+							window.JOURNAL.display_note(noteId);
+						}
 					}
 			
 			    });
