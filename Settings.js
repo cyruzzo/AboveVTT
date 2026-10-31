@@ -241,6 +241,8 @@ function token_setting_options() {
 			options: [
 				{ value: "average", label: "Average", description: "Monster Max HP will be set to the average value." },
 				{ value: "roll", label: "Roll", description: "Monster Max HP will be individually rolled." },
+				{ value: "dis", label: "Disadvantage", description: "Monster Max HP will be rolled twice and set as the lower value." },
+				{ value: "adv", label: "Advantage", description: "Monster Max HP will be rolled twice and set as the higher value." },
 				{ value: "max", label: "Max", description: "Monster Max HP will be set to the maximum value." }
 			],
 			defaultValue: "average"
