@@ -177,6 +177,7 @@ function refresh_aoe_style_menu() {
 }
 
 function place_aoe_token_at_token(options, token){
+    if(!token) return;
     const sc = parseFloat(window.CURRENT_SCENE_DATA.hpps);
     const half = sc * token.options.gridSquares/2;
     let x = parseInt(token.options.left.slice(0,-2)) + half;

@@ -776,10 +776,10 @@ function should_use_iframes_for_monsters() {
 
 
 
-async function popout_all_selected_token_stat(){
+async function popout_all_selected_token_stat(selectedTokens) {
 	const fetchMonsters =[];
 	const tokens = [];
-	forSelTokens((token) => {
+	const getTokensToFetch = (token) => {
 		if (token.options.statBlock) {
 			const {pcURL} = token.getCustomPcUrl();
 			if (pcURL) return;
@@ -789,7 +789,17 @@ async function popout_all_selected_token_stat(){
 		}
 		tokens.push(token);
 
-	})
+	};
+	if(!selectedTokens){
+		forSelTokens((token) =>{
+			getTokensToFetch(token)
+		});
+	} else{
+		Object.values(selectedTokens).forEach((token) => {
+			getTokensToFetch(token)
+		});
+	}
+
 	const promiseMonsters = new Promise((resolve) => {
 		fetch_and_cache_monsters(fetchMonsters, function () {
 			resolve();
@@ -819,33 +829,126 @@ async function popout_all_selected_token_stat(){
 			const isPcTempalate = container.find('.dnd-sheet');
 			const width = isPcTempalate.length > 0 ? 800 : undefined;
 			popoutWindow(windowName, container.find(".avtt-stat-block-container"), width);
-			const popoutBody = $(window.childWindows[windowName].document).find("body");
-			const popoutStatBlock = popoutBody.find(".avtt-stat-block-container").first();
-			popoutStatBlock.find("span.hideme").parent().parent().hide();
-			if(popoutStatBlock.find('.dnd-sheet').length > 0){
-				const noteId = popoutStatBlock.attr('data-stat-id') || token.options.statBlock;
-				window.JOURNAL.bindDndSheetTemplateEvents(noteId, popoutStatBlock, popoutBody, {tokenId: token.options.id, showControls: false});
-			}
-			$(window.childWindows[windowName].document).find(".avtt-roll-button").on("contextmenu", function (contextmenuEvent) {
-				$(window.childWindows[windowName].document).find("body").append($("div[role='presentation']").clone(true, true));
-				let popoutContext = $(window.childWindows[windowName].document).find(".dcm-container");
-				let maxLeft = window.childWindows[windowName].innerWidth - popoutContext.width();
-				let maxTop = window.childWindows[windowName].innerHeight - popoutContext.height();
-				if (parseInt(popoutContext.css("left")) > maxLeft) {
-					popoutContext.css("left", maxLeft)
-				}
-				if (parseInt(popoutContext.css("top")) > maxTop) {
-					popoutContext.css("top", maxTop)
-				}
-				$(window.childWindows[windowName].document).find("div[role='presentation']").on("click", function (clickEvent) {
-					$(window.childWindows[windowName].document).find("div[role='presentation']").remove();
-				});
-				$(".dcm-backdrop").remove();
-			});
+			store_popout_stat_block(windowName, token);
+			bind_popout_stat_block_events(windowName, token.options.id);
 			close_player_monster_stat_block();
 		});
 	});
 
+}
+
+function store_popout_stat_block(windowName, token){
+	const currentPopouts = JSON.parse(localStorage.getItem('popout_stat_blocks')) || {};
+	currentPopouts[windowName] = token;
+	localStorage.setItem('popout_stat_blocks', JSON.stringify(currentPopouts));
+}
+
+function clear_popout_stat_block(windowName){
+	const currentPopouts = JSON.parse(localStorage.getItem('popout_stat_blocks')) || {};
+	delete currentPopouts[windowName];
+	localStorage.setItem('popout_stat_blocks', JSON.stringify(currentPopouts));
+}
+
+function clear_all_popout_stat_blocks(){
+	localStorage.removeItem('popout_stat_blocks');
+}
+
+function bind_popout_stat_block_events(windowName, tokenId){
+	const popoutWindow = window.childWindows[windowName];
+	if(!popoutWindow || popoutWindow.closed)
+		return;
+
+	const popoutBody = $(popoutWindow.document).find("body");
+	const popoutStatBlock = popoutBody.find(".avtt-stat-block-container").first();
+	if(popoutStatBlock.length === 0)
+		return;
+
+	popoutStatBlock.find("span.hideme").parent().parent().hide();
+	if(window.TOKEN_OBJECTS?.[tokenId] || window.all_token_objects?.[tokenId])
+		inject_statblock_buff_dropdown(popoutBody, tokenId);
+
+	if(popoutStatBlock.find('.dnd-sheet').length > 0){
+		const token = window.TOKEN_OBJECTS?.[tokenId] || window.all_token_objects?.[tokenId];
+		const noteId = popoutStatBlock.attr('data-stat-id') || token?.options?.statBlock;
+		window.JOURNAL.bindDndSheetTemplateEvents(noteId, popoutStatBlock, popoutBody, {tokenId, showControls: false});
+	}
+
+	const getRollContext = () => {
+		const token = window.TOKEN_OBJECTS?.[tokenId] || window.all_token_objects?.[tokenId];
+		return {
+			displayName: token ? (token.options?.revealname === true ? token.options.name : '') : popoutStatBlock.find(".mon-stat-block__name-link").text(),
+			creatureAvatar: token?.options?.imgsrc
+		};
+	};
+	const rollButtons = popoutBody.find(".avtt-roll-button");
+	rollButtons.off('pointerdown.click touchstart.click').on('pointerdown.click touchstart.click', function(clickEvent){
+		if(clickEvent.button === 2) return;
+		clickEvent.preventDefault();
+		clickEvent.stopPropagation();
+		clickEvent.stopImmediatePropagation();
+		const {displayName, creatureAvatar} = getRollContext();
+		roll_button_clicked(clickEvent, displayName, creatureAvatar, "monster", tokenId);
+	});
+	rollButtons.off("contextmenu")
+		.on("contextmenu", function(contextmenuEvent){
+			const {displayName, creatureAvatar} = getRollContext();
+			roll_button_contextmenu_handler(contextmenuEvent, displayName, creatureAvatar, "monster", tokenId);
+		})
+		.on("contextmenu.popoutMenu", function(){
+			const popoutDocument = popoutWindow.document;
+			$(popoutDocument).find("body").append($("div[role='presentation']").clone(true, true));
+			const popoutContext = $(popoutDocument).find(".dcm-container");
+			const maxLeft = popoutWindow.innerWidth - popoutContext.width();
+			const maxTop = popoutWindow.innerHeight - popoutContext.height();
+			if(parseInt(popoutContext.css("left")) > maxLeft)
+				popoutContext.css("left", maxLeft);
+			if(parseInt(popoutContext.css("top")) > maxTop)
+				popoutContext.css("top", maxTop);
+			$(popoutDocument).find("div[role='presentation']").on("click", function(clickEvent){
+				if (clickEvent.target !== clickEvent.currentTarget) return;
+				$(popoutDocument).find("div[role='presentation']").remove();
+			});
+			$(popoutDocument).find(".dcm-roll-button").on("click", function(){
+				$(popoutDocument).find("div[role='presentation']").remove();
+			});
+			$(".dcm-backdrop").remove();
+		});
+	return;
+}
+function restore_popout_stat_blocks(){
+	const storedPopouts = JSON.parse(localStorage.getItem('popout_stat_blocks') || '{}');
+	const newTokens = [];
+	for(const [windowName, storedToken] of Object.entries(storedPopouts)){
+		const popoutWindow = window.open('', windowName);
+		if(!popoutWindow || popoutWindow.closed){
+			clear_popout_stat_block(windowName);
+			continue;
+		}
+
+		const popoutStatBlock = $(popoutWindow.document).find(".avtt-stat-block-container").first();
+		if(popoutWindow.document.title !== windowName && popoutStatBlock.length === 0){
+			popoutWindow.close();
+			clear_popout_stat_block(windowName);
+			continue;
+		}
+
+		const tokenOptions = storedToken?.options || storedToken;
+		if(!tokenOptions || typeof tokenOptions !== 'object' || !tokenOptions.id){
+			popoutWindow.close();
+			clear_popout_stat_block(windowName);
+			continue;
+		}
+
+		window.childWindows[windowName] = popoutWindow;
+		popoutWindow.onbeforeunload = function(){
+			closePopout(windowName);
+		};
+		const token = new Token(JSON.parse(JSON.stringify(tokenOptions)));
+		newTokens.push(token);
+		window.all_token_objects = window.all_token_objects || {};
+		window.all_token_objects[token.options.id] = token;	
+	}
+	popout_all_selected_token_stat(newTokens);
 }
 function open_selected_token_stat() {
 	const selectedTokens = window.CURRENTLY_SELECTED_TOKENS;
@@ -1074,30 +1177,8 @@ function build_draggable_monster_window(tokenId, bringToFront=true) {
 		let name = $("#resizeDragMon .avtt-stat-block-container .mon-stat-block__name-link").text();
 		const windowName = `${token?.options?.name ? token.options.name : name}_${tokenId ? tokenId : ''}`.replaceAll(/(\r\n|\n|\r)/gi, "").trim();	
 		popoutWindow(windowName, $("#resizeDragMon .avtt-stat-block-container"), $("#resizeDragMon").width(), $("#resizeDragMon").height());
-		const popoutBody = $(window.childWindows[windowName].document).find("body");
-		const popoutStatBlock = popoutBody.find(".avtt-stat-block-container").first();
-		// the clone's handlers still point at the original window's element, so build a fresh one
-		inject_statblock_buff_dropdown(popoutBody, tokenId);
-		if(popoutStatBlock.find('.dnd-sheet').length > 0){
-			const noteId = popoutStatBlock.attr('data-stat-id') || token?.options?.statBlock;
-			window.JOURNAL.bindDndSheetTemplateEvents(noteId, popoutStatBlock, popoutBody, {tokenId, showControls: false});
-		}
-		$(window.childWindows[windowName].document).find(".avtt-roll-button").on("contextmenu", function (contextmenuEvent) {
-			$(window.childWindows[windowName].document).find("body").append($("div[role='presentation']").clone(true, true));
-			let popoutContext = $(window.childWindows[windowName].document).find(".dcm-container");
-			let maxLeft = window.childWindows[windowName].innerWidth - popoutContext.width();
-			let maxTop = window.childWindows[windowName].innerHeight - popoutContext.height();
-			if(parseInt(popoutContext.css("left")) > maxLeft){
-				popoutContext.css("left", maxLeft)
-			}
-			if(parseInt(popoutContext.css("top")) > maxTop){
-				popoutContext.css("top", maxTop)
-			}
-			$(window.childWindows[windowName].document).find("div[role='presentation']").on("click", function (clickEvent) {
-				$(window.childWindows[windowName].document).find("div[role='presentation']").remove();
-			});
-			$(".dcm-backdrop").remove();
-		});
+		store_popout_stat_block(windowName, token);
+		bind_popout_stat_block_events(windowName, tokenId);
 		monster_close_title_button.click();
 	});
 	container.addClass("moveableWindow");
@@ -4275,6 +4356,7 @@ function removeFromPopoutWindow(name, selector){
 	return childWindows[name];
 }
 function closePopout(name){
+	clear_popout_stat_block(name);
 	if(childWindows[name]){
 		childWindows[name].close();
 		delete childWindows[name];
