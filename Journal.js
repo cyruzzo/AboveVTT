@@ -1468,6 +1468,7 @@ class JournalManager{
 			chapterImport.append($(`<option value='/magic-items'>Magic Items</option>`));
 			chapterImport.append($(`<option value='/feats'>Feats</option>`));
 			chapterImport.append($(`<option value='/spells'>Spells</option>`));
+			chapterImport.append($(`<option value='/search'>Search</option>`));
 			const sortedSources = window.ddbConfigJson.sources.sort((a, b) => a.description.localeCompare(b.description, 'en'));
 			for(let source=0; source<sortedSources.length; source++){
 				const currentSource = sortedSources[source]
@@ -1484,7 +1485,7 @@ class JournalManager{
 				let source = this.value;
 				journalPanel.display_sidebar_loading_indicator('Loading Chapters');
 				try{
-					if (source == '/magic-items' || source == '/feats' || source == '/spells'){
+					if (source == '/magic-items' || source == '/feats' || source == '/spells' || source == '/search'){
 						let new_noteid=uuid();
 						let new_note_title = source.replaceAll(/-/g, ' ')
 												.replaceAll(/\//g, '')
@@ -9961,14 +9962,15 @@ function init_journal(gameid){
 	window.JOURNAL=new JournalManager(gameid);	
 	
 }
-
+ 
 function render_source_chapter_in_iframe(url) {
 	url = url.replace('https://dndbeyond', 'https://www.dndbeyond');
 	const sourceChapter = url.startsWith('https://www.dndbeyond.com/sources/') || url.startsWith('/sources/');
 	const compendiumChapter = url.startsWith('https://www.dndbeyond.com/compendium/') || url.startsWith('/compendium/');
 	const attachmentChapter = url.startsWith('https://www.dndbeyond.com/attachments/') || url.startsWith('/attachments/');
-	const rulesChapter = url.startsWith('https://www.dndbeyond.com/magic-items') || url.startsWith('https://www.dndbeyond.com/feats') || url.startsWith('https://www.dndbeyond.com/spells')
-	if (typeof url !== "string" ||  (!sourceChapter && !compendiumChapter && !attachmentChapter && !rulesChapter)) {
+	const rulesChapter = url.startsWith('https://www.dndbeyond.com/magic-items') || url.startsWith('https://www.dndbeyond.com/feats') || url.startsWith('https://www.dndbeyond.com/spells');
+	const searchChapter = url.match(/^https:\/\/www.dndbeyond.com(\/[^\/]+)?\/search/gi);
+	if (typeof url !== "string" || (!searchChapter && !sourceChapter && !compendiumChapter && !attachmentChapter && !rulesChapter)) {
 		console.error(`render_source_chapter_in_iframe was given an invalid url`, url);
 		showError(new Error(`Unable to render a DDB chapter. This url does not appear to be a valid DDB chapter ${url}`));
 	}
@@ -10026,11 +10028,20 @@ function render_source_chapter_in_iframe(url) {
 		$(event.target).contents().find("body[class*='marketplace']").replaceWith($("<div id='noAccessToContent' style='height: 100%;text-align: center;width: 100%;padding: 10px;font-weight: bold;color: #944;'>You do not have access to this content on DndBeyond.</div>"));
 		const iframeContents = $(event.target).contents();
 
-		iframeContents.find(".site-bar").hide();
+		iframeContents.find("head").append(`
+			<style id='ddbSourceStyles'>
+				#mega-menu-target, 
+				.ad-container, 
+				#site > footer, 
+				.site-bar,
+				[class*="layout_overflowContainer"]>:is(header, footer) {
+					display: none !important;
+				}
+				
+			</style>
+		`)
 
-		iframeContents.find("#mega-menu-target").hide();
-		iframeContents.find(".ad-container").hide();
-		iframeContents.find("#site > footer").hide();
+		
 
 		const hash = $(event.target).attr('data-chapter-hash');
 		if (hash) {
@@ -10063,13 +10074,14 @@ function render_source_chapter_in_iframe(url) {
 		}
 
 		setTimeout(()=>{
+			
+			const iframeContentContainer = iframeContents.find('#content.main.content-container>section.primary-content');
+			if(iframeContentContainer.length > 0){
+				add_journal_roll_buttons(iframeContentContainer);
+				window.JOURNAL.add_journal_tooltip_targets(iframeContentContainer);
+				add_stat_block_hover(iframeContentContainer);
+			}
 			if(this.src.includes('dndbeyond.com/sources')){
-				const iframeContentContainer = iframeContents.find('#content.main.content-container>section.primary-content');
-				if(iframeContentContainer.length > 0){
-					add_journal_roll_buttons(iframeContentContainer);
-					window.JOURNAL.add_journal_tooltip_targets(iframeContentContainer);
-					add_stat_block_hover(iframeContentContainer);
-				}
 				const urlSrc = this.src;
 				const headers = iframeContents.find(':is(h1, h2, h3, h4, h5, h6)[id]');
 				for(let header of headers){
@@ -10107,10 +10119,10 @@ function render_source_chapter_in_iframe(url) {
 					curr.append(addNote);
 				}
 				iframeContents.find('#content.main.content-container>section.secondary-content .sidebar-menu~.sidebar-menu').remove();
-				window.JOURNAL.block_send_to_buttons(iframeContentContainer);
 				$('.lightbox, .lightboxOverlay').remove(); //if added to main window remove
 				$('.p-article-content>.nav-select ~ .nav-select', iframeContents).remove(); 
 			}
+			window.JOURNAL.block_send_to_buttons(iframeContentContainer);
 		}, 2000)
 
 		iframeContents.find("head").append('<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons"></link>');
