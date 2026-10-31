@@ -8918,6 +8918,7 @@ button span.onedrive-btn-status{
     margin: 3px;
 }
 .menu-input-label{
+    width:20%;
     text-align: center;
     background: none;
     font-size: 10px;
@@ -8938,6 +8939,7 @@ button span.onedrive-btn-status{
     flex-wrap: nowrap;
     flex-direction: row;
     margin-bottom: 15px;
+    justify-content: flex-end;
 }
 
 

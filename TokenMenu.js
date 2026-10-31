@@ -587,10 +587,20 @@ function token_context_menu_expanded(tokenIds, e, crossScenePortalData) {
 					body.append(lightRow);		
 				}
 		
-
-
-
-
+				body.append(build_menu_stat_inputs(tokenIds));
+				$(".hpMenuInput").on('focus', function(event){
+					event.target.select();
+				});
+				$(".maxHpMenuInput").on('focus', function(event){
+					event.target.select();
+				});
+				$(".tempHpMenuInput").on('focus', function(event){
+					event.target.select();
+				});
+				$(".acMenuInput").on('focus', function(event){
+					event.target.select();
+				});
+				$("#menuStatDiv>.menu-input-label:first-of-type").empty();
 				
 				let tokenName = window.TOKEN_OBJECTS[tokenIds].options.name;
 				let nameInput = $(`<input title="Token Name" placeholder="Name" name="name" type="text" />`);
