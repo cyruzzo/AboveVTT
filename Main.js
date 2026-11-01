@@ -157,7 +157,11 @@ function change_zoom(newZoom, x, y, reset = false) {
 	else {
 		//this was changed from scrollIntoView to calculate the center and scrollTo as if loaded in an iframe it would scroll the parent window in firefox
 		const sceneMap = $("#scene_map")[0];
-
+		if(!sceneMap){
+			noisy_log(0, "sceneMap not found, skipping zoom reset");
+			console.groupEnd();
+			return;
+		}
 		const rect = sceneMap.getBoundingClientRect();
 		const sceneMapCenterX = Math.round(rect.left + rect.width / 2 + window.scrollX);
 		const sceneMapCenterY = Math.round(rect.top + rect.height / 2 + window.scrollY);
@@ -167,7 +171,6 @@ function change_zoom(newZoom, x, y, reset = false) {
 			scrollX += get_sidebar_width() / 2 // offset by half the sidebar width so the scene centers in the visible area
 		window.scrollTo({ left: scrollX, top: scrollY, behavior: 'auto' });			
 	}
-
 
 	$(".peerCursorPosition").css("transform", "scale(" + 1/window.ZOOM + ")");
 	if($('#projector_zoom_lock.enabled > [class*="is-active"]').length>0 && window.DM)
