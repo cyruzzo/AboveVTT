@@ -277,7 +277,9 @@ class JournalManager{
 
 			if(is_abovevtt_page()){
 				this.build_journal();
+				this.restore_popout_notes();
 			}
+			
 			if(window.DM && !is_gamelog_popout() && is_abovevtt_page()){
 				// also sync the journal
 				this.sync();
@@ -3786,6 +3788,7 @@ class JournalManager{
 		note_container.find('.popout-button').off('click.popout').on('click.popout', function(event){
 			const windowName = self.getNotePopoutName(id);
 			popoutWindow(windowName, note_container.find(`div.note[data-id='${id}']`), note_container.width(), note_container.height());
+			self.store_popout_note(windowName, id);
 			const popoutBody = $(childWindows[windowName].document).find('body');
 			const popoutNote = popoutBody.find(`div.note[data-id='${id}']`);
 			const popoutNoteText = popoutNote.find('.note-text').first();
@@ -3793,7 +3796,46 @@ class JournalManager{
 			self.injectDisplayedNoteRollControls(id, popoutNoteText, popoutBody);
 			popoutBody.css('overflow', 'auto');
 			$(event.currentTarget).closest('.resize_drag_window').hide();
+
 		})
+	}
+	store_popout_note(windowName, noteId){
+		if(!windowName || !noteId)
+			return;
+		const currentPopouts = JSON.parse(localStorage.getItem('avtt_popout_notes')) || {};
+		currentPopouts[windowName] = noteId;
+		localStorage.setItem('avtt_popout_notes', JSON.stringify(currentPopouts));
+	}
+	restore_popout_notes(){
+		const currentPopouts = JSON.parse(localStorage.getItem('avtt_popout_notes')) || {};
+		for(const windowName in currentPopouts){
+			const noteId = currentPopouts[windowName];
+			if(!this.notes[noteId]){
+				this.clear_popout_note(windowName);
+				continue;
+			}
+			const popoutWindow = window.open('', windowName);
+			if(!popoutWindow || popoutWindow.closed){
+				this.clear_popout_note(windowName);
+				continue;
+			}
+			const popoutNote = $(popoutWindow.document).find(`div.note[data-id='${noteId}']`);
+			if(popoutWindow.document.title !== windowName && popoutNote.length === 0){
+				popoutWindow.close();
+				this.clear_popout_note(windowName);
+				continue;
+			}
+			window.childWindows[windowName] = popoutWindow;
+			popoutWindow.onbeforeunload = function(){
+				closePopout(windowName);
+			};
+			this.updateNotePopout(noteId);
+		}
+	}
+	clear_popout_note(windowName){
+		const currentPopouts = JSON.parse(localStorage.getItem('avtt_popout_notes')) || {};
+		delete currentPopouts[windowName];
+		localStorage.setItem('avtt_popout_notes', JSON.stringify(currentPopouts));
 	}
 	findNotePopoutWindow(id){
 		for(const name in childWindows){
