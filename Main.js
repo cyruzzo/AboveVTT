@@ -4357,6 +4357,7 @@ function removeFromPopoutWindow(name, selector){
 }
 function closePopout(name){
 	clear_popout_stat_block(name);
+	window.JOURNAL?.clear_popout_note(name);
 	if(childWindows[name]){
 		childWindows[name].close();
 		delete childWindows[name];
