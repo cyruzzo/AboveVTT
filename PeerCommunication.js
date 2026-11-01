@@ -236,6 +236,39 @@ let _rebuildAttempts = 0;
 const _maxRebuildAttempts = 3;
 const _rebuildBaseDelay = 2000;
 let _rebuildTimerId = undefined;
+let _resetRebuildTimerId = undefined;
+const startResetRebuildTimer = function(){
+  clearTimeout(_resetRebuildTimerId);
+  _resetRebuildTimerId = setTimeout(() => {
+    _rebuildAttempts = 0;
+  }, 60 * 10 * 1000); // reset after 10 minutes of uptime. This is a compromise between avoiding spam and allowing for recovery from temporary network issues.
+} 
+
+function peer_reconnect_limit_reached() {
+  console.warn(`peer_reconnect_limit_reached: ${_rebuildAttempts} rebuild attempts in this session. Not attempting further rebuilds until page reload.`);
+    let container = $("#above-vtt-error-message");
+    container.remove();
+    container = $(`
+        <div id="above-vtt-error-message" class="small-error">
+        <h2>Peer to Peer Connection Lost</h2>
+        <div id="error-message-details"><p>Peer to peer ruler and cursor connection lost.</p><p>Automatic reconnect attempt limit reached.</p><p>It could be a temporary outage of the peer to peer connection servers.</p><p>Otherwise this could be caused by poor connection quality, a VPN, anti-tracker, adblocker, firewall, school/work network settings, or other similar extension/program.</p></div>
+        <div class="error-message-buttons">
+            <button id="reconnect-button">Retry</button>
+            <button id="close-error-message-button">Close</button>
+        </div>
+        </div>
+    `)
+    
+    $(document.body).append(container);
+
+    $("#reconnect-button").on("click", function(){
+        _rebuildAttempts = 0;
+        rebuild_peerManager();
+    });
+    $("#close-error-message-button").on("click", function(){
+        container.remove();
+    });
+};
 
 /** When we receive catastrophic errors, we tear down and rebuild PeerManager.
  * Uses exponential backoff (2s, 4s, 8s) with a per-session retry limit to avoid
@@ -246,10 +279,11 @@ function rebuild_peerManager() {
     return;
   }
   if (_rebuildAttempts >= _maxRebuildAttempts) {
-    console.warn(`rebuild_peerManager giving up after ${_maxRebuildAttempts} attempts. Cursors/rulers may not work until page refresh.`);
+    peer_reconnect_limit_reached();
+    clearTimeout(_resetRebuildTimerId);
     return;
   }
-
+  startResetRebuildTimer();
   _rebuildAttempts++;
   const delay = Math.min(_rebuildBaseDelay * Math.pow(2, _rebuildAttempts - 1), 10000);
   console.warn(`rebuild_peerManager scheduling attempt ${_rebuildAttempts}/${_maxRebuildAttempts} in ${delay}ms`);

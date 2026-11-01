@@ -683,7 +683,7 @@ function monitor_console_logs() {
         }
 
         if (get_avtt_setting_value("aggressiveErrorMessages") && !log.value?.some(v => typeof v == 'object' && v.doNotRelog == true)) {
-          showError(new Error(`${log.type} ${log.message}`), ...log.value);
+          showError(new Error(`${log.type} ${log.value?.[0]}`), ...log.value);
         }
       } else {
         console.otherLogs.unshift(log);
