@@ -28,20 +28,33 @@ $(function() {
             window.PLAYER_ID = urlParams.get('id');
             window.DM = window.PLAYER_ID == 'false';
             window.PLAYER_NAME = urlParams.get('player_name');
+            // Periodically rehydrate while DDB asynchronously fetches and renders historical gamelog entries
+            const rehydrateTimer = setInterval(() => {
+              window.MB?.rehydrate_persisted_chats?.();
+            }, 500);
+            setTimeout(() => clearInterval(rehydrateTimer), 6000);
             if (!window.ddbConfigJson){
               DDBApi.fetchConfigJson().then(config => {
                 window.ddbConfigJson = config;
                 inject_chat_buttons();
                 setTimeout(function(){
                   $('body').find(".sidebar-panel-loading-indicator").remove();
+                  window.MB?.rehydrate_persisted_chats?.();
                 }, 500);
+                setTimeout(function(){
+                  window.MB?.rehydrate_persisted_chats?.();
+                }, 1500);
               });
             }
             else{
               inject_chat_buttons();
               setTimeout(function () {
                 $('body').find(".sidebar-panel-loading-indicator").remove();
+                window.MB?.rehydrate_persisted_chats?.();
               }, 500);
+              setTimeout(function () {
+                window.MB?.rehydrate_persisted_chats?.();
+              }, 1500);
             }
             
           } else {

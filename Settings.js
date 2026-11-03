@@ -448,7 +448,19 @@ function avtt_settings(campaignSettings = false) {
 			],
 			defaultValue: false,
 			class: 'stream'
-	})
+	});
+	settings.push({
+			name: "persistChatToDDB",
+			label: "Persist Chat to D&D Beyond Gamelog",
+			type: "toggle",
+			options: [
+				{ value: true, label: "Persist", description: `AboveVTT chat, whispers, and messages are saved to the D&D Beyond campaign log so they persist across reloads and session history.` },
+				{ value: false, label: "Ephemeral", description: `Default behavior. AboveVTT chat is broadcast live via websocket to active clients but not saved to D&D Beyond's database.` }
+			],
+			defaultValue: false,
+			global: 1,
+			class: 'stream'
+	});
 	if(!campaignSettings){
 		settings.push({	
 			name: "gridZoomConversion",
@@ -1066,6 +1078,15 @@ function get_avtt_setting_value(name) {
 			setValue = window.EXPERIMENTAL_SETTINGS[name];
 			if (setValue !== undefined) {
 				return setValue;
+			}
+			if (get_avtt_setting_is_global(name)) {
+				try {
+					const glob = JSON.parse(localStorage.getItem("ExperimentalSettingsGlobal") || "{}");
+					if (glob[name] !== undefined) {
+						window.EXPERIMENTAL_SETTINGS[name] = glob[name];
+						return glob[name];
+					}
+				} catch (e) {}
 			}
 			return get_avtt_setting_default_value(name);
 	}

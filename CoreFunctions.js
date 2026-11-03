@@ -32,6 +32,15 @@ $(function() {
   }
 
   window.EXPERIMENTAL_SETTINGS = {};
+  if (typeof localStorage !== "undefined") {
+    try {
+      const gMatch = window.location.pathname.match(/\/campaigns\/([0-9]+)/i);
+      const gid = gMatch ? gMatch[1] : "";
+      const glob = JSON.parse(localStorage.getItem("ExperimentalSettingsGlobal") || "{}");
+      const camp = gid ? JSON.parse(localStorage.getItem("ExperimentalSettings" + gid) || "{}") : {};
+      window.EXPERIMENTAL_SETTINGS = $.extend({}, glob, camp);
+    } catch (e) {}
+  }
   window.EXTENSION_PATH = $("#extensionpath").attr('data-path');
   window.AVTT_VERSION = $("#avttversion").attr('data-version');
   $("head").append('<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons"></link>');
@@ -264,6 +273,9 @@ function get_active_worker_keys() {
  * @returns
  */
 function inject_chat_buttons() {
+  if (window.MB && typeof window.MB.rehydrate_persisted_chats === 'function') {
+    window.MB.rehydrate_persisted_chats();
+  }
   const gameLog = $(".glc-game-log");
   if (gameLog.find("#chat-text").length > 0) {
     // make sure we only ever inject these once. This gets called a lot on the character sheet which is intentional, but just in case we accidentally call it too many times, let's log it, and return
@@ -438,7 +450,12 @@ Other Commands:
 
   if (window.diceResultsObserver)
     window.diceResultsObserver.disconnect();
+  const debounceRehydrateChats = typeof mydebounce === 'function' 
+    ? mydebounce(() => window.MB?.rehydrate_persisted_chats?.(), 100)
+    : () => window.MB?.rehydrate_persisted_chats?.();
+
   window.diceResultsObserver = new MutationObserver(function (mutations) {
+    debounceRehydrateChats();
     mutations.every((mutation) => {
       const added = $(mutation.addedNodes);
       const notationNode = added.is('[class*="-Line-Notation"]') ? added : added.find('[class*="-Line-Notation"]');
@@ -2824,6 +2841,12 @@ function find_game_id() {
   noisy_log("find_game_id found:", window.gameId);
   return window.gameId;
 }
+
+function validateUrl(value) {
+  const urlRegex = /^(?:(?:(?:https?|ftp):)?\/\/)(?:\S+(?::\S*)?@)?(?:(?!(?:10|127)(?:\.\d{1,3}){3})(?!(?:169\.254|192\.168)(?:\.\d{1,3}){2})(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)(?:\.(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)*(?:\.(?:[a-z\u00a1-\uffff]{2,})))(?::\d{2,5})?(?:[/?#]\S*)?$/i;
+  return urlRegex.test(value);
+}
+
 function parse_img(url) {
 	if (typeof url !== "string") {
 		noisy_log("parse_img is converting", url, "to an empty string");
@@ -2856,6 +2879,10 @@ function parse_img(url) {
 	}
 	if (retval.includes("discordapp.com")) {
 		return update_old_discord_link(retval);
+	}
+	const nextcloudMatch = retval.match(/^(https?:\/\/[^\/]+)\/s\/([a-zA-Z0-9]+)(?:\/(?:download|preview))?\/?(\?.*)?$/i);
+	if (nextcloudMatch) {
+		return `${nextcloudMatch[1]}/s/${nextcloudMatch[2]}/preview${nextcloudMatch[3] || ""}`;
 	}
 
 	return retval;	

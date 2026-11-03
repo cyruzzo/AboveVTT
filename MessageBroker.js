@@ -17,7 +17,7 @@ const debounceHandleInjected = mydebounce(() => {
 
 		let found=false;
 		$(self.diceMessageSelector).each(async function(){
-			if($(this).text()==injection_id){
+			if($(this).text().trim().toLowerCase() == (injection_id || "").toLowerCase()){
 				found=true;
 				let li = $(this).closest("li");
 				let oldheight=li.height();
@@ -28,6 +28,7 @@ const debounceHandleInjected = mydebounce(() => {
 				} 
 				
 			 	li.html(newlihtml);
+				li.addClass("avtt-chat-hydrated");
 				if(window.JOURNAL){
 					await window.JOURNAL.translateHtmlAndBlocks(li);
 					add_journal_roll_buttons(li);
@@ -138,8 +139,12 @@ const debounceHandleInjected = mydebounce(() => {
 				let img = li.find(".magnify");
 				for (let i = 0; i < img.length; i++) {
 					if ($(img[i]).is('img')) {
-						$(img[i]).magnificPopup({ type: 'image', closeOnContentClick: true });
-						img[i].onload = () => {
+						if (typeof $(img[i]).magnificPopup === 'function') {
+							try {
+								$(img[i]).magnificPopup({ type: 'image', closeOnContentClick: true });
+							} catch (e) {}
+						}
+						const showImg = () => {
 							if (img[i].naturalWidth > 0) {
 								$(img[i]).css({
 									'display': 'block',
@@ -149,7 +154,12 @@ const debounceHandleInjected = mydebounce(() => {
 							}
 							$(img[i]).attr('href', img[i].src);
 							newheight = li.find('>[class*="MessageContainer-Flex"]').height();
-							li.height(newheight);
+							if (newheight) li.height(newheight);
+						};
+						img[i].onload = showImg;
+						img[i].addEventListener('load', showImg);
+						if (img[i].complete && img[i].naturalWidth > 0) {
+							showImg();
 						}
 						$(img[i]).off('error').on("error", function (e) {
 							let el = $(e.target)
@@ -407,7 +417,152 @@ class MessageBroker {
 		for (let i = 0; i < window.MB.chat_message_history.length; i++) {
 			window.MB.chat_pending_messages.push(window.MB.chat_message_history[i]);
 		}
-		window.MB.handle_injected_data(window.MB.chat_pending_messages[0], false);
+		if (window.MB.chat_pending_messages.length > 0) {
+			window.MB.handle_injected_data(window.MB.chat_pending_messages[0], false);
+		}
+		this.rehydrate_persisted_chats();
+	}
+
+	async rehydrate_persisted_chats() {
+		const self = this;
+		const items = $("ol[class*='GameLog'] > li:not(.avtt-chat-hydrated), ol > li[class*='GameLogEntry']:not(.avtt-chat-hydrated), .glc-game-log ol > li:not(.avtt-chat-hydrated), [class*='GameLog'] li:not(.avtt-chat-hydrated)");
+		if (!items.length) return;
+
+		for (let i = 0; i < items.length; i++) {
+			const li = $(items[i]);
+			if (li.hasClass("avtt-chat-hydrated")) {
+				continue;
+			}
+			let headerText = "";
+			const getRaw = (el) => (el[0]?.textContent || el.text() || "").trim();
+			const isChatOrWhisper = (s) => /^\[chat\]/i.test(s) || /^\[whisper/i.test(s);
+
+			// Target the specific title span first to avoid DDB's trailing colon separator
+			let headerEl = li.find(".aboveDiceOutput, [class*='-Heading'], [class*='-Action'], [class*='-Line-Title-'] span:first-child, [class*='Line-Title'] span:first-child").first();
+			if (headerEl.length > 0) {
+				headerText = getRaw(headerEl);
+			}
+			if (!headerText || !isChatOrWhisper(headerText)) {
+				headerEl = li.find("[class*='-Heading'], [class*='-Action'], [class*='Line-Title'], [class*='-RollTitle']").first();
+				if (headerEl.length > 0) {
+					headerText = getRaw(headerEl);
+				}
+			}
+			if (!headerText || !isChatOrWhisper(headerText)) {
+				li.find("span, h2, h3, h4, div").each(function () {
+					const t = getRaw($(this));
+					if (isChatOrWhisper(t)) {
+						headerText = t;
+						headerEl = $(this);
+						return false;
+					}
+				});
+			}
+
+			if (!isChatOrWhisper(headerText)) {
+				continue;
+			}
+
+			li.addClass("avtt-chat-hydrated");
+
+			let whisper = "";
+			let messageText = "";
+			if (/^\[chat\]/i.test(headerText)) {
+				messageText = headerText.replace(/^\[chat\]\s*/i, "").trim();
+			} else if (/^\[whisper/i.test(headerText)) {
+				const match = headerText.match(/^\[whisper(?:\s+to\s+([^\]]+))?\]\s*(.*)$/i);
+				if (match) {
+					whisper = match[1] || "DM";
+					messageText = match[2] || "";
+				} else {
+					messageText = headerText;
+				}
+			}
+
+			// Clean DDB delimiter artifacts: trailing UUIDs and trailing colon
+			messageText = messageText.replace(/\s*:\s*[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}[0-9]?.*$/i, "");
+			messageText = messageText.replace(/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}[0-9]?$/i, "");
+			messageText = messageText.replace(/[:\s]+$/, "").trim();
+
+			const senderEl = li.find("[class*='-Sender'], [class*='Sender']").first();
+			const player = senderEl.text().trim() || "AboveVTT";
+			const avatarImg = li.find("p[role='img'] img, [class*='-Avatar'] img, [class*='Avatar'] img").first();
+			let img = avatarImg.attr("src") || window.PLAYER_IMG || "";
+
+			let renderedText = messageText;
+			if (typeof validateUrl === "function" && validateUrl(messageText)) {
+				const mediaUrl = typeof parse_img === "function" ? await parse_img(messageText) : messageText;
+				renderedText = `
+					<a class='chat-link' href='${messageText}' target='_blank' rel='noopener noreferrer'>${messageText}</a>
+					<img width=100% class='magnify' src='${mediaUrl}' href='${mediaUrl}' alt='Chat Image' style='display: none'/>
+					<video width=100% class='magnify' autoplay muted loop src='${mediaUrl}' href='${mediaUrl}' alt='Chat Video' style='display: none'/>
+				`;
+			} else {
+				renderedText = `<div class="custom-gamelog-message">${messageText}</div>`;
+			}
+
+			const chatData = {
+				player: player,
+				img: img,
+				text: renderedText,
+				whisper: whisper
+			};
+
+			const isLocal = player === window.PLAYER_NAME;
+			const newLi = self.convertChat(chatData, isLocal);
+			if (newLi.html() === "") {
+				li.css("display", "none");
+			} else {
+				li.html(newLi.html());
+			}
+
+			const magnifyEls = li.find(".magnify");
+			for (let m = 0; m < magnifyEls.length; m++) {
+				const el = $(magnifyEls[m]);
+				if (el.is("img")) {
+					if (typeof el.magnificPopup === "function") {
+						try {
+							el.magnificPopup({ type: "image", closeOnContentClick: true });
+						} catch (e) {}
+					}
+					const imgDom = magnifyEls[m];
+					const showImg = () => {
+						if (imgDom.naturalWidth > 0) {
+							el.css({ display: "block", width: "100%" });
+							li.find(".chat-link").css("display", "none");
+						}
+						el.attr("href", el.attr("src"));
+						const newHeight = li.find('>[class*="MessageContainer-Flex"]').height();
+						if (newHeight) li.height(newHeight);
+					};
+					imgDom.onload = showImg;
+					imgDom.addEventListener("load", showImg);
+					if (imgDom.complete && imgDom.naturalWidth > 0) {
+						showImg();
+					}
+				} else if (el.is("video")) {
+					if (typeof el.magnificPopup === "function") {
+						try {
+							el.magnificPopup({
+								type: "iframe",
+								closeOnContentClick: true,
+								callbacks: {
+									elementParse: function (item) {
+										item.src = `${window.EXTENSION_PATH}iframe.html?src=${encodeURIComponent(item.src).replace(/'/g, "%27")}`;
+									}
+								}
+							});
+						} catch (e) {}
+					}
+					magnifyEls[m].addEventListener("loadeddata", function () {
+						if (magnifyEls[m].videoWidth > 0) {
+							el.css({ display: "block", width: "100%" });
+							li.find(".chat-link").css("display", "none");
+						}
+					});
+				}
+			}
+		}
 	}
 
 	// we keep a list of the 100 most recent messages so we can re-inject them when DDB re-injects the gamelog on the characters page.
@@ -1676,13 +1831,25 @@ class MessageBroker {
 
 
 		const isChatEnabled = is_encounters_page() || is_characters_page() || is_campaign_page();
-		const imageUrl = new URL(data.img);
-		const decodedPath = decodeURIComponent(imageUrl.pathname);
-		imageUrl.pathname = encodeURI(decodedPath);
+		let imgString = "";
+		try {
+			const imageUrl = new URL(data.img);
+			const decodedPath = decodeURIComponent(imageUrl.pathname);
+			imageUrl.pathname = encodeURI(decodedPath);
+			imgString = imageUrl.toString();
+		} catch (e) {
+			imgString = data.img || "";
+		}
 
 		//Security logic to prevent content being sent which can execute JavaScript.
-		let image = `<img class="${isChatEnabled ? 'tss-1e4a2a1-AvatarPortrait' : 'Avatar_AvatarPortrait__3cq6B'}" src="${imageUrl.toString()}" alt="">`;
-		let player = `<span class="tss-1tj70tb-Sender" title="${data.player}">${data.player}</span>`;
+		let image = `<img class="${isChatEnabled ? 'tss-1e4a2a1-AvatarPortrait' : 'Avatar_AvatarPortrait__3cq6B'}" src="${imgString}" alt="">`;
+		let whisperBadge = "";
+		if (data.whisper) {
+			const toSelf = (data.whisper === window.PLAYER_NAME || data.whisper === window.myUser) && data.player === window.PLAYER_NAME;
+			const targetText = toSelf ? "Self" : data.whisper;
+			whisperBadge = ` <span class="above-vtt-roll-whisper" style="color: #9c27b0; font-size: 11px; margin-left: 6px; font-weight: normal;">(Whisper to ${targetText})</span>`;
+		}
+		let player = `<span class="tss-1tj70tb-Sender" title="${data.player}">${data.player}${whisperBadge}</span>`;
 
 		player = DOMPurify.sanitize( player,{ALLOWED_TAGS: ['span']});
 		image = DOMPurify.sanitize( image,{ALLOWED_TAGS: ['img']});
@@ -1978,10 +2145,25 @@ class MessageBroker {
 
 	async inject_chat(injected_data) {
 		let msgid = this.chat_id + this.chat_counter++;
+
+		// Generate a clean plaintext preview for unaugmented D&D Beyond log readers
+		let preview = "";
+		if (injected_data?.text) {
+			const tempDiv = document.createElement("div");
+			tempDiv.innerHTML = injected_data.text;
+			preview = (tempDiv.textContent || tempDiv.innerText || "").trim();
+			if (preview.length > 4000) {
+				preview = preview.slice(0, 3997) + "...";
+			}
+		}
+		const actionTitle = injected_data?.whisper 
+			? `[Whisper to ${injected_data.whisper}] ${preview}`
+			: (preview ? `[Chat] ${preview}` : "ABOVETT");
+
 		let data = {
 			player_name: window.PLAYER_NAME,
 			injected_data: injected_data,
-			"action": "ABOVETT",
+			"action": actionTitle,
 			"rolls": [
 				{
 					"diceNotation": {
@@ -2005,12 +2187,13 @@ class MessageBroker {
 		};
 		let eventType = "dice/roll/pending";
 		const targetSelf = injected_data.whisper == window.PLAYER_NAME;
+		const shouldPersist = (typeof get_avtt_setting_value === "function" && get_avtt_setting_value("persistChatToDDB") === true);
 		let message = {
 			id: uuid(),
 			source: "web",
 			gameId: this.gameid,
 			userId: this.userid,
-			persist: false, // INTERESSANTE PER RILEGGERLI, per ora non facciamogli casini
+			persist: shouldPersist,
 			messageScope: targetSelf ? "userId": "gameId", 
 			messageTarget: targetSelf ? window.MB.userid : window.MB.gameid,
 			eventType: eventType,

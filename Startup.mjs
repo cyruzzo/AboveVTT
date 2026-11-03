@@ -637,6 +637,7 @@ async function start_above_vtt_for_dm() {
   $(window).off('scroll.projectorMode').on("scroll.projectorMode", projector_scroll_event);
   inject_chat_buttons();
   inject_dm_roll_default_menu();
+  window.MB?.rehydrate_persisted_chats?.();
   
 }
 async function start_above_vtt_for_spectator() {
@@ -681,6 +682,7 @@ async function start_above_vtt_for_spectator() {
   }
   inject_chat_buttons();
   inject_dm_roll_default_menu();
+  window.MB?.rehydrate_persisted_chats?.();
   startup_step("Fetching scene from AboveVTT server");
   const currentSceneData = await AboveApi.getCurrentScene();
   if (currentSceneData.playerscene) {
@@ -1174,6 +1176,7 @@ async function start_above_vtt_for_players() {
   reposition_player_sheet();
   hide_player_sheet();
   $("#loading_overlay").css("z-index", 0); // Allow them to see their character sheets, etc even if the DM isn't online yet
+  window.MB?.rehydrate_persisted_chats?.();
   
   
   $(window).off("resize").on("resize", function() {

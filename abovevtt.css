@@ -311,6 +311,8 @@ body > div {
     font-size: 14px;
     font-family: Roboto,Helvetica,sans-serif;
     font-weight: 400;
+    white-space: pre-wrap;
+    word-break: break-word;
 }
 button.gamelog-to-everyone-button,
 button.set-conditions-button,
