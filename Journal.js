@@ -279,7 +279,7 @@ class JournalManager{
 				this.build_journal();
 				this.restore_popout_notes();
 			}
-			
+
 			if(window.DM && !is_gamelog_popout() && is_abovevtt_page()){
 				// also sync the journal
 				this.sync();
@@ -10165,10 +10165,12 @@ function render_source_chapter_in_iframe(url) {
 					})
 					curr.append(addNote);
 				}
-				iframeContents.find('#content.main.content-container>section.secondary-content .sidebar-menu~.sidebar-menu').remove();
-				$('.lightbox, .lightboxOverlay').remove(); //if added to main window remove
-				$('.p-article-content>.nav-select ~ .nav-select', iframeContents).remove(); 
 			}
+			iframeContents.find('#content.main.content-container>section.secondary-content .sidebar-menu~.sidebar-menu').remove();
+			$('.lightbox, .lightboxOverlay').remove(); //if added to main window remove
+			$('.lightbox ~ .lightbox, .lightboxOverlay ~ .lightboxOverlay', iframeContents).remove(); //if doubled up in iframe remove
+			$('.p-article-content>.nav-select ~ .nav-select', iframeContents).remove(); 
+			
 			window.JOURNAL.block_send_to_buttons(iframeContentContainer);
 		}, 2000)
 
