@@ -1958,8 +1958,10 @@ function showErrorMessage(error, ...extraInfo) {
       extraInfo.push('<br/><b>The scene you are trying to load does not exist. You may have deleted it - try setting the DM scene to an existing map.</b>')
     }
   }
-  const messageOnly = extraInfo.shift() == 'messageOnly';
-
+  const messageOnly = extraInfo[0] == 'messageOnly';
+  if(messageOnly){
+    extraInfo.shift();
+  }
   const extraStrings = extraInfo.map(ei => {
     if (typeof ei === "object") {
       return JSON.stringify(ei)
