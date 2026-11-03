@@ -3857,7 +3857,9 @@ const TOKEN_BUFF_TARGETS = Object.freeze({
     'Mark of Sentinel': { 'check': ['insight', 'perception'] },
     'Mark of Shadow': { 'check': ['stealth', 'performance'] },
     'Mark of Storm': { 'check': ['acrobatics', "navigator's tools"] },
-    'Mark of Warding': { 'check': ['investigation', "thieves' tools"] }
+    'Mark of Warding': { 'check': ['investigation', "thieves' tools"] },
+    'Arcane Eloquence': { 'check': ['deception', 'intimidation', 'persuasion'] },
+    'Arcane Undertaker': { 'check': ['history', 'medicine'] },
 });
 
 const buffsDebuffs = {
@@ -4880,6 +4882,33 @@ const buffsDebuffs = {
     },
     "type": "feat",
   },
+  "Arcane Eloquence":{
+      "tohit": "0",
+      "dmg": "0",
+      "save": "0",
+      "check": "0",
+      "replace": /(.)$/gi,//last character
+      "replaceType": {
+        "check": `.ct-skills__item:contains("Persuasion"), .ct-skills__item:contains("Intimidation"), .ct-skills__item:contains("Deception")` 
+      },
+      "newRoll": '$1+1d4',
+        
+      "type": "feat",
+  },
+  "Arcane Undertaker":{
+      "tohit": "0",
+      "dmg": "0",
+      "save": "0",
+      "check": "0",
+      "replace": /(.)$/gi,//last character
+      "replaceType": {
+        "check": `.ct-skills__item:contains("History"), .ct-skills__item:contains("Medicine")` 
+      },
+      "newRoll": '$1+1d4',
+        
+      "type": "feat",
+  },
+
   "Great Weapon Fighting": {
     "multiOptions": {
       "2024": { 
