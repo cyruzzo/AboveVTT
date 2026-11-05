@@ -641,11 +641,11 @@ Mousetrap.bind('shift+mod+v', async function(e) {
         : "_AboveVTT_Tokens_Letters_____Exclamation_Mark";
     
     const listItem = window.tokenListItems.find(d=> d.id == findId);
-    
-    const options = {id: tokenId, name: firstLine};
+    const shortenedFirstLine = firstLine.slice(0, 50);
+    const options = {id: tokenId, name: shortenedFirstLine};
 
     window.JOURNAL.notes[tokenId] = {
-        title: firstLine,
+        title: shortenedFirstLine,
         text: `<p>${text}</p>`,
         plain: '',
         player: true
