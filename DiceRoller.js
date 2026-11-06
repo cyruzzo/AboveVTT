@@ -672,6 +672,9 @@ class DiceRoller {
                     return;
                 } else if (msg.eventType == "dice/roll/fulfilled") {
                     notify_gamelog();
+                    if (typeof relay_roll_to_discord === "function") {
+                        relay_roll_to_discord(msg);
+                    }
                     const gamelogItem = $(`ol[class*='-GameLogEntries'] li`).first();
 
 
@@ -897,9 +900,19 @@ class DiceRoller {
                                             resendMessage.id = uuid();
                                             resendMessage.data.rollId = uuid();
                                             resendMessage.messageScope = "gameId";
+                                            if (resendMessage.data?.context) {
+                                                resendMessage.data.context.messageScope = "gameId";
+                                            }
+                                            if (resendMessage.data) {
+                                                resendMessage.data.sendTo = "everyone";
+                                            }
                                             resendMessage.messageTarget = find_game_id();
                                             resendMessage.dateTime = Date.now();
+                                            resendMessage.isRevealed = true;
                                             window.diceRoller.ddbDispatch(resendMessage);
+                                            if (typeof relay_roll_to_discord === "function") {
+                                                relay_roll_to_discord(resendMessage);
+                                            }
                                         });
                                         target.find("time").before(sendToEveryone);
                                     }

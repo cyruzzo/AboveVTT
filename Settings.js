@@ -448,7 +448,72 @@ function avtt_settings(campaignSettings = false) {
 			],
 			defaultValue: false,
 			class: 'stream'
-	})
+	});
+	settings.push({
+			name: "discordConfig",
+			label: "Discord Integration",
+			type: "flyoutButton",
+			description: "Relay dice rolls, character actions, and chat to Discord channels via webhooks (#player-log and #dm-log).",
+			options: [
+				{
+					name: "discordUseGlobal",
+					label: "Use Across All Campaigns",
+					type: "toggle",
+					options: [
+						{ value: true, label: "Global", description: "Use these webhook settings across all of your campaigns." },
+						{ value: false, label: "This Campaign", description: "Use custom webhook settings only for this campaign." }
+					],
+					defaultValue: true
+				},
+				{
+					name: "discordWebhookUrl",
+					label: "Player Log Webhook URL (#player-log)",
+					type: "text",
+					defaultValue: "",
+					description: "Discord webhook for the public player channel (e.g. #player-log). Receives public rolls and public chat. Never receives secret DM rolls or whispers."
+				},
+				{
+					name: "discordDmWebhookUrl",
+					label: "DM Log Webhook URL (#dm-log)",
+					type: "text",
+					defaultValue: "",
+					description: "Discord webhook for your private DM channel (e.g. #dm-log). Receives secret rolls ('To Self' / 'To DM') and private whispers."
+				},
+				{
+					name: "discordRelayRolls",
+					label: "Relay Rolls to Discord",
+					type: "toggle",
+					options: [
+						{ value: true, label: "Enabled", description: "Relay dice rolls, attacks, and checks to Discord." },
+						{ value: false, label: "Disabled", description: "Do not relay dice rolls to Discord." }
+					],
+					defaultValue: true
+				},
+				{
+					name: "discordRelayChat",
+					label: "Relay Chat to Discord",
+					type: "toggle",
+					options: [
+						{ value: true, label: "Enabled", description: "Relay in-character chatter and AboveVTT messages to Discord." },
+						{ value: false, label: "Disabled", description: "Do not relay chat messages to Discord." }
+					],
+					defaultValue: true
+				},
+				{
+					name: "discordDmMirrorPublic",
+					label: "Mirror Player Log to DM Channel",
+					type: "toggle",
+					options: [
+						{ value: true, label: "Enabled", description: "Also mirror public player rolls and chat to #dm-log for a complete master archive." },
+						{ value: false, label: "Disabled", description: "Send only private rolls and whispers to #dm-log." }
+					],
+					defaultValue: true
+				}
+			],
+			defaultValue: {},
+			dmOnly: true,
+			class: 'stream'
+	});
 	if(!campaignSettings){
 		settings.push({	
 			name: "gridZoomConversion",
@@ -1047,7 +1112,14 @@ function get_custom_scene_settings(){
 }
 
 function get_avtt_setting_default_value(name) {
-	return avtt_settings().find(s => s.name === name)?.defaultValue;
+	for (const s of avtt_settings()) {
+		if (s.name === name) return s.defaultValue;
+		if (s.options && Array.isArray(s.options)) {
+			const nested = s.options.find(opt => opt.name === name);
+			if (nested) return nested.defaultValue;
+		}
+	}
+	return undefined;
 }
 function get_avtt_setting_value(name) {
 	if (name === "aggressiveErrorMessages" && is_release_build()) {
@@ -1058,6 +1130,53 @@ function get_avtt_setting_value(name) {
 		case "iframeStatBlocks": return should_use_iframes_for_monsters();
 		case "campaignDefaults":
 			setValue = $.extend({}, window.EXPERIMENTAL_SETTINGS[name], window.AVTT_CAMPAIGN_INFO.campaignSettings);
+			if (setValue !== undefined) {
+				return setValue;
+			}
+			return get_avtt_setting_default_value(name);
+		case "discordConfig":
+			let campaignDiscCfg = window.EXPERIMENTAL_SETTINGS.discordConfig;
+			let globalDiscCfg = null;
+			try {
+				const rawGlobal = localStorage.getItem("AboveVTT_Discord_Global");
+				if (rawGlobal) globalDiscCfg = JSON.parse(rawGlobal);
+			} catch (e) {}
+
+			// Seed global storage if not yet initialized and campaign config exists
+			if (!globalDiscCfg && campaignDiscCfg && typeof campaignDiscCfg === "object" && campaignDiscCfg.discordUseGlobal !== false) {
+				try {
+					localStorage.setItem("AboveVTT_Discord_Global", JSON.stringify(campaignDiscCfg));
+					globalDiscCfg = campaignDiscCfg;
+				} catch (e) {}
+			}
+
+			if (campaignDiscCfg && typeof campaignDiscCfg === "object") {
+				// If explicitly marked as campaign-only (discordUseGlobal === false), use campaign config
+				if (campaignDiscCfg.discordUseGlobal === false) {
+					return campaignDiscCfg;
+				}
+				// If marked global (or not specified) and globalDiscCfg exists, use globalDiscCfg
+				if (globalDiscCfg) {
+					return globalDiscCfg;
+				}
+				return campaignDiscCfg;
+			}
+			// If no campaign config exists yet, fall back to global if available
+			if (globalDiscCfg) {
+				return globalDiscCfg;
+			}
+			return get_avtt_setting_default_value("discordConfig") || {};
+		case "discordUseGlobal":
+		case "discordWebhookUrl":
+		case "discordDmWebhookUrl":
+		case "discordRelayRolls":
+		case "discordRelayChat":
+		case "discordDmMirrorPublic":
+			const discCfg = get_avtt_setting_value("discordConfig");
+			if (discCfg && typeof discCfg === "object" && discCfg[name] !== undefined) {
+				return discCfg[name];
+			}
+			setValue = window.EXPERIMENTAL_SETTINGS[name];
 			if (setValue !== undefined) {
 				return setValue;
 			}
@@ -1082,6 +1201,15 @@ function set_avtt_setting_value(name, newValue) {
 
 	// take action based on the newly changed setting
 	switch (name) {
+		case "discordConfig":
+			if (newValue && typeof newValue === "object") {
+				if (newValue.discordUseGlobal !== false) {
+					try {
+						localStorage.setItem("AboveVTT_Discord_Global", JSON.stringify(newValue));
+					} catch (e) {}
+				}
+			}
+			break;
 		case "iframeStatBlocks":
 			// TODO: change this to use window.EXPERIMENTAL_SETTINGS[name] instead of using special logic
 			if (newValue === true) {
