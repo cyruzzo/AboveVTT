@@ -67,6 +67,7 @@ const tabCommunicationChannel = new BroadcastChannel('aboveVttTabCommunication')
 
 window.isDiscordRelayLeader = true;
 const relayedDiscordRollKeys = new Set();
+const relayedDiscordChatKeys = new Set();
 
 function init_discord_relay_lock() {
   const gameId = (typeof find_game_id === 'function' && find_game_id()) || 'global';
@@ -93,38 +94,33 @@ $(function() {
   init_discord_relay_lock();
 });
 
-function relay_chat_to_discord(msg) {
-  if (!window.DM || !window.isDiscordRelayLeader) return;
-  if (typeof get_avtt_setting_value !== 'function') return;
-  if (get_avtt_setting_value('discordRelayChat') === false) return;
+function decode_base64_chat_text(str) {
+  if (typeof str !== 'string' || !str.startsWith('base64')) return str;
+  const b64 = str.replace(/^base64/, '');
+  try {
+    if (typeof window.MB?.decode_message_text === 'function') {
+      return window.MB.decode_message_text(str);
+    }
+    if (typeof b64DecodeUnicode === 'function') {
+      return b64DecodeUnicode(b64);
+    }
+    return decodeURIComponent(atob(b64).split('').map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join(''));
+  } catch (e) {
+    try {
+      return atob(b64);
+    } catch (e2) {
+      return str;
+    }
+  }
+}
 
+function send_discord_webhook_payload(payload, isPrivate) {
   const playerWebhook = get_avtt_setting_value('discordWebhookUrl');
   const dmWebhook = get_avtt_setting_value('discordDmWebhookUrl');
   const mirrorToDm = get_avtt_setting_value('discordDmMirrorPublic') !== false;
 
-  const inj = msg.data?.injected_data || msg;
-  const isWhisper = Boolean(inj.whisper || inj.whisper_to || inj.is_whisper);
-
-  const player = inj.player || msg.data?.player_name || 'AboveVTT';
-  const rawText = inj.text || '';
-  const div = document.createElement('div');
-  div.innerHTML = rawText;
-  const cleanText = (div.textContent || div.innerText || '').trim();
-  if (!cleanText) return;
-
-  const payload = {
-    username: player,
-    content: isWhisper ? `🔒 *[Whisper to ${inj.whisper}]* ${cleanText}` : cleanText
-  };
-  let avatar = inj.img || msg.data?.player_img;
-  if (avatar && typeof avatar === 'string' && !avatar.startsWith('above-bucket-not-a-url')) {
-    if (avatar.startsWith('//')) avatar = 'https:' + avatar;
-    payload.avatar_url = avatar;
-  }
-
-  // Routing: Whispers ONLY go to DM channel, public chat goes to player channel
   const destinations = [];
-  if (isWhisper) {
+  if (isPrivate) {
     if (dmWebhook && typeof dmWebhook === 'string' && dmWebhook.startsWith('https://')) {
       destinations.push(dmWebhook);
     }
@@ -142,18 +138,325 @@ function relay_chat_to_discord(msg) {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
-    }).catch(err => console.debug('[Discord Relay] Error posting chat:', err));
+    }).catch(err => console.debug('[Discord Relay] Error posting webhook:', err));
   }
+}
+
+function convert_html_card_to_discord_markdown(html) {
+  if (!html) return { title: '', subtitle: '', body: '', mediaUrl: '' };
+  const $temp = $('<div>').html(html);
+
+  // Extract media
+  const imgEl = $temp.find('img.monster-image, img.magnify, img').first();
+  const videoEl = $temp.find('video').first();
+  let mediaUrl = imgEl.attr('src') || imgEl.attr('href') || videoEl.attr('src') || videoEl.find('source').attr('src') || '';
+  if (mediaUrl && typeof mediaUrl === 'string') {
+    if (mediaUrl.startsWith('//')) mediaUrl = 'https:' + mediaUrl;
+    if (mediaUrl.startsWith('above-bucket-not-a-url')) mediaUrl = '';
+  } else {
+    mediaUrl = '';
+  }
+
+  // Extract title
+  let title = '';
+  const titleSelectors = [
+    '.ct-sidebar__heading-title',
+    '.ct-sidebar__heading',
+    '[class*="heading-title"]',
+    '.mon-stat-block__name',
+    '.tooltip-header',
+    'h1',
+    'h2',
+    'h3'
+  ];
+  for (const sel of titleSelectors) {
+    const el = $temp.find(sel).first();
+    if (el.length && el.text().trim()) {
+      title = el.text().trim();
+      el.remove();
+      break;
+    }
+  }
+  if (!title) {
+    const featureEl = $temp.find('p > em > strong, p > strong > em, p > strong, div > strong').first();
+    if (featureEl.length && featureEl.text().trim()) {
+      title = featureEl.text().replace(/[.:\s]+$/, '').trim();
+      featureEl.remove();
+    }
+  }
+
+  // Extract subtitle (e.g. 3rd-level evocation)
+  let subtitle = '';
+  const subEl = $temp.find('.ct-spell-detail__level-school, .ct-sidebar__header-secondary, [class*="level-school"]').first();
+  if (subEl.length && subEl.text().trim()) {
+    subtitle = subEl.text().trim();
+    subEl.remove();
+  }
+
+  // Format property labels (e.g. Casting Time:, Range:)
+  $temp.find('[class*="item-label"], [class*="__label"]').each(function() {
+    const lbl = $(this).text().trim();
+    if (lbl) {
+      $(this).replaceWith(`**${lbl}** `);
+    }
+  });
+
+  // Remove non-content elements
+  $temp.find('script, style, button, svg, [class*="styles_button"], .damageButtonsContainer').remove();
+  $temp.find('img, video').remove();
+
+  // Links
+  $temp.find('a').each(function() {
+    const href = $(this).attr('href');
+    const text = $(this).text().trim();
+    if (href && text && href !== text) {
+      $(this).replaceWith(`[${text}](${href})`);
+    } else if (href) {
+      $(this).replaceWith(href);
+    }
+  });
+
+  // Headers
+  $temp.find('h1, h2, h3, h4').each(function() {
+    const text = $(this).text().trim();
+    if (text) $(this).replaceWith(`\n**${text}**\n`);
+  });
+
+  // Bold & Italic
+  $temp.find('strong, b').each(function() {
+    const t = $(this).text().trim();
+    if (t) $(this).replaceWith(`**${t}**`);
+  });
+  $temp.find('em, i').each(function() {
+    const t = $(this).text().trim();
+    if (t) $(this).replaceWith(`*${t}*`);
+  });
+
+  // List items
+  $temp.find('li').each(function() {
+    const t = $(this).text().trim();
+    if (t) $(this).replaceWith(`\n• ${t}`);
+  });
+
+  // Paragraphs and line breaks
+  $temp.find('br').replaceWith('\n');
+  $temp.find('p, div, tr').each(function() {
+    $(this).prepend('\n').append('\n');
+  });
+
+  let body = ($temp.text() || '')
+    .replace(/[ \t]+/g, ' ')
+    .replace(/\n\s*\n\s*\n+/g, '\n\n')
+    .trim();
+
+  return { title, subtitle, body, mediaUrl };
+}
+
+function relay_chat_to_discord(msg) {
+  if (!window.DM || !window.isDiscordRelayLeader) return;
+  if (typeof get_avtt_setting_value !== 'function') return;
+  if (get_avtt_setting_value('discordRelayChat') === false) return;
+
+  const data = msg.data || {};
+  const inj = data.injected_data || msg;
+  const isWhisper = Boolean(
+    inj.whisper || 
+    inj.whisper_to || 
+    inj.is_whisper || 
+    inj.sendToOverride === 'DungeonMaster' || 
+    inj.sendToOverride === 'DM' || 
+    inj.sendToOverride === 'Self' ||
+    msg.messageScope === 'userId' || 
+    data.context?.messageScope === 'userId' || 
+    data.sendTo === 'self' || 
+    data.sendTo === 'dungeonmaster'
+  );
+
+  const rollId = data.rollId || msg.id;
+  const chatId = rollId || inj.chat_id || (inj.player + '_' + (inj.text || '').slice(0, 80));
+  const dedupeKey = `${chatId}_${isWhisper ? 'priv' : 'pub'}`;
+  if (relayedDiscordChatKeys.has(dedupeKey) || (rollId && relayedDiscordRollKeys.has(dedupeKey))) {
+    return;
+  }
+  relayedDiscordChatKeys.add(dedupeKey);
+  if (relayedDiscordChatKeys.size > 200) {
+    const first = relayedDiscordChatKeys.values().next().value;
+    relayedDiscordChatKeys.delete(first);
+  }
+
+  const player = inj.player || data.player_name || 'AboveVTT';
+  let avatar = inj.img || data.player_img || data.avatarUrl || data.context?.avatarUrl;
+  if (avatar && typeof avatar === 'string' && !avatar.startsWith('above-bucket-not-a-url')) {
+    if (avatar.startsWith('//')) avatar = 'https:' + avatar;
+  } else {
+    avatar = null;
+  }
+
+  let rawText = decode_base64_chat_text(inj.text || '');
+
+  // 1. Check if this is an injected roll card (e.g. Disabled DDB dice roll)
+  const isRollCard = Boolean(
+    inj.disableDDBDice || 
+    (typeof rawText === 'string' && rawText.includes('abovevtt-roll-container')) || 
+    (inj.rollTitle && inj.result !== undefined && typeof rawText === 'string' && rawText.includes('tss-'))
+  );
+
+  if (isRollCard) {
+    if (get_avtt_setting_value('discordRelayRolls') === false) return;
+
+    const $rollDiv = $('<div>').html(rawText);
+    const container = $rollDiv.find('.abovevtt-roll-container');
+
+    const rollTitle = inj.rollTitle || $rollDiv.find('.aboveDiceOutput').text().trim() || 'Dice Roll';
+    const rollType = inj.rollType || $rollDiv.find('[class*="abovevtt-roll-"]').text().trim() || 'Roll';
+    const total = inj.result !== undefined ? inj.result : ($rollDiv.find('.aboveDiceTotal').text().trim() || '0');
+
+    let breakdown = '';
+    const titleAttr = container.attr('title') || '';
+    if (titleAttr) {
+      const parts = titleAttr.split(/<br\s*\/?>/i);
+      const formula = parts[0]?.trim();
+      const calc = parts[1]?.trim();
+      if (calc && calc !== String(total)) {
+        breakdown = calc;
+      } else if (formula && formula !== String(total)) {
+        breakdown = formula;
+      }
+    }
+
+    const isCrit = container.hasClass('crit-success') || (breakdown && breakdown.includes('(20)'));
+    const isFumble = container.hasClass('crit-fail') || (breakdown && breakdown.includes('(1)'));
+    const damageType = inj.damageType;
+    const spellSave = inj.spellSave || $rollDiv.find('.custom-spell-save-text').text().trim();
+
+    let color = isWhisper ? 0x9B59B6 : 0x5865F2;
+    if (isCrit) color = 0x2ECC71;
+    if (isFumble) color = 0xE74C3C;
+
+    let titlePrefix = isWhisper ? '🔒 [Secret DM Roll] ' : '';
+    let rollDesc = `**${damageType ? `${damageType} ` : ''}${rollType}:** ${total}`;
+    if (breakdown) {
+      rollDesc += ` \`[${breakdown}]\``;
+    }
+    if (spellSave) {
+      rollDesc += `\n*${spellSave}*`;
+    }
+
+    const embed = {
+      title: `${titlePrefix}${rollTitle}`,
+      description: rollDesc,
+      color: color,
+      footer: { text: isWhisper ? 'AboveVTT DM Game Log' : 'AboveVTT Game Log' }
+    };
+    if (player) {
+      embed.author = { name: player };
+      if (avatar) embed.author.icon_url = avatar;
+    }
+    if (avatar) {
+      embed.thumbnail = { url: avatar };
+    }
+
+    const payload = {
+      username: player,
+      embeds: [embed]
+    };
+    if (avatar) payload.avatar_url = avatar;
+
+    send_discord_webhook_payload(payload, isWhisper);
+    return;
+  }
+
+  // 2. Check if this is a rich card, send to gamelog, or image
+  const isCardOrMedia = Boolean(
+    (typeof inj.text === 'string' && inj.text.startsWith('base64')) ||
+    (typeof rawText === 'string' && (
+      rawText.includes('<img') ||
+      rawText.includes('<video') ||
+      rawText.includes('ct-sidebar') ||
+      rawText.includes('ddbc-html-content') ||
+      rawText.includes('mon-stat-block') ||
+      rawText.includes('tooltip') ||
+      rawText.includes('<table') ||
+      rawText.includes('<h1>') ||
+      rawText.includes('<h2>') ||
+      rawText.includes('<h3>')
+    ))
+  );
+
+  if (isCardOrMedia) {
+    const card = convert_html_card_to_discord_markdown(rawText);
+    let cardTitle = card.title;
+    if (!cardTitle) {
+      cardTitle = card.mediaUrl ? (player ? `${player}` : 'Shared Image') : (inj.action || 'AboveVTT Game Log');
+    }
+    let titlePrefix = isWhisper ? '🔒 ' : '';
+    let fullTitle = `${titlePrefix}${cardTitle}`;
+    if (fullTitle.length > 250) fullTitle = fullTitle.slice(0, 247) + '...';
+
+    let description = '';
+    if (card.subtitle) {
+      description += `*${card.subtitle}*\n\n`;
+    }
+    if (card.body) {
+      description += card.body;
+    }
+    if (description.length > 4000) {
+      description = description.slice(0, 3997) + '...';
+    }
+
+    if (!description && !card.mediaUrl) {
+      return; // Nothing to post
+    }
+
+    const embed = {
+      title: fullTitle,
+      color: isWhisper ? 0x9B59B6 : 0x5865F2,
+      footer: { text: isWhisper ? 'AboveVTT DM Game Log' : 'AboveVTT Game Log' }
+    };
+    if (description) embed.description = description;
+    if (card.mediaUrl) embed.image = { url: card.mediaUrl };
+    if (player) {
+      embed.author = { name: player };
+      if (avatar) embed.author.icon_url = avatar;
+    }
+    if (avatar && !card.mediaUrl) {
+      embed.thumbnail = { url: avatar };
+    }
+
+    const payload = {
+      username: player,
+      embeds: [embed]
+    };
+    if (avatar) payload.avatar_url = avatar;
+
+    send_discord_webhook_payload(payload, isWhisper);
+    return;
+  }
+
+  // 3. Simple Chat Message
+  const $simpleDiv = $('<div>').html(rawText);
+  $simpleDiv.find('[class*="whisper"], span:has(> b:contains("To:"))').remove();
+  let cleanText = ($simpleDiv.text() || '').trim();
+  cleanText = cleanText.replace(/^To:\s*[^\s]+\s*/i, '');
+  if (!cleanText) return;
+
+  if (cleanText.length > 1950) {
+    cleanText = cleanText.slice(0, 1947) + '...';
+  }
+
+  const payload = {
+    username: player,
+    content: isWhisper ? `🔒 *[Whisper to ${inj.whisper || 'DM'}]* ${cleanText}` : cleanText
+  };
+  if (avatar) payload.avatar_url = avatar;
+
+  send_discord_webhook_payload(payload, isWhisper);
 }
 
 function relay_roll_to_discord(msg) {
   if (!window.DM || !window.isDiscordRelayLeader) return;
   if (typeof get_avtt_setting_value !== 'function') return;
   if (get_avtt_setting_value('discordRelayRolls') === false) return;
-
-  const playerWebhook = get_avtt_setting_value('discordWebhookUrl');
-  const dmWebhook = get_avtt_setting_value('discordDmWebhookUrl');
-  const mirrorToDm = get_avtt_setting_value('discordDmMirrorPublic') !== false;
 
   const data = msg.data || {};
   const context = data.context || {};
@@ -247,27 +550,7 @@ function relay_roll_to_discord(msg) {
   }
 
   // Routing: Secret rolls ONLY go to DM channel, public rolls go to player channel
-  const destinations = [];
-  if (isPrivate) {
-    if (dmWebhook && typeof dmWebhook === 'string' && dmWebhook.startsWith('https://')) {
-      destinations.push(dmWebhook);
-    }
-  } else {
-    if (playerWebhook && typeof playerWebhook === 'string' && playerWebhook.startsWith('https://')) {
-      destinations.push(playerWebhook);
-    }
-    if (mirrorToDm && dmWebhook && typeof dmWebhook === 'string' && dmWebhook.startsWith('https://') && dmWebhook !== playerWebhook) {
-      destinations.push(dmWebhook);
-    }
-  }
-
-  for (const url of destinations) {
-    fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    }).catch(err => console.debug('[Discord Relay] Error posting roll:', err));
-  }
+  send_discord_webhook_payload(payload, isPrivate);
 }
 
 function isIOS() {
