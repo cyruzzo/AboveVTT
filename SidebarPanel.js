@@ -486,6 +486,19 @@ function build_flyout_input(settingOption, currentValue, changeHandler){
     flyoutButton.on("click", function (clickEvent) {
         build_and_display_sidebar_flyout(clickEvent.clientY, function (flyout) {
             let currentValue = get_avtt_setting_value(settingOption.name);
+            if (!currentValue || typeof currentValue !== 'object') {
+                currentValue = {};
+            }
+            if (settingOption.options && Array.isArray(settingOption.options)) {
+                for (let opt of settingOption.options) {
+                    if (currentValue[opt.name] === undefined) {
+                        const legacyVal = get_avtt_setting_value(opt.name);
+                        if (legacyVal !== undefined) {
+                            currentValue[opt.name] = legacyVal;
+                        }
+                    }
+                }
+            }
 
             let optionsContainer = build_sidebar_token_options_flyout(settingOption.options, currentValue, function(name, value) {
                 currentValue[name] = value;
@@ -530,8 +543,8 @@ function build_text_input(settingOption, currentValue, changeHandler) {
      </div>
   `);
   const input = $(`<input class='flyout-text-input' type="text" name="${settingOption.name}" value="${currentValue != undefined ? currentValue : settingOption.defaultValue}" size="30"/>`);
-  input.on('blur',function() { 
-    changeHandler(settingOption.name, $(this).val()) 
+  input.on('blur change input', function() { 
+    changeHandler(settingOption.name, $(this).val()); 
   });
   wrapper.append(input);
   return wrapper;

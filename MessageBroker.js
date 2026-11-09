@@ -430,6 +430,9 @@ class MessageBroker {
 
 		if (trackHistory) {
 			window.MB.track_message_history(data);
+			if (typeof relay_chat_to_discord === 'function') {
+				relay_chat_to_discord(data);
+			}
 		}
 
 
