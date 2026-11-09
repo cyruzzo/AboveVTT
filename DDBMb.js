@@ -298,9 +298,23 @@ function forceDdbWsReconnect() {
 
 
 
-    function interceptRollEvent(e) {
+    let pendingTouchRoll;
+    function interceptRollEvent(e, isDeferredTouch = false, targetElement = e.target) {
+        if (e.pointerType === 'touch' && !isDeferredTouch) {
+            if (pendingTouchRoll) {
+                clearTimeout(pendingTouchRoll.longPressTimer);
+            }
+            const touchRoll = { pointerId: e.pointerId, target: e.target, longPressTriggered: false };
+            pendingTouchRoll = touchRoll;
+            touchRoll.longPressTimer = setTimeout(() => {
+                if (pendingTouchRoll === touchRoll) {
+                    touchRoll.longPressTriggered = true;
+                }
+            }, 500);
+            return;
+        }
         if(e.button == 2) return;
-        const target = $(e.target);
+        const target = $(targetElement);
         // allow hit dice and death saves roll to go through ddb for auto heals - maybe setup our own message by put to https://character-service.dndbeyond.com/character/v5/life/hp/damage-taken later
         if (target.closest('.ct-reset-pane__hitdie-manager-dice').length>0 || target.closest('[class*="styles_heading__"]').find('>h2').text().trim().match(/^death saves$/gi))
             return;
@@ -313,6 +327,27 @@ function forceDdbWsReconnect() {
     }
 
     window.addEventListener('pointerdown', interceptRollEvent, true);
+    window.addEventListener('contextmenu', (e) => {
+        if (pendingTouchRoll && (pendingTouchRoll.target.contains(e.target) || e.target.contains(pendingTouchRoll.target))) {
+            pendingTouchRoll.longPressTriggered = true;
+        }
+    }, true);
+    window.addEventListener('pointerup', (e) => {
+        if (!pendingTouchRoll || pendingTouchRoll.pointerId !== e.pointerId) return;
+        const touchRoll = pendingTouchRoll;
+        pendingTouchRoll = undefined;
+        clearTimeout(touchRoll.longPressTimer);
+        if (!touchRoll.longPressTriggered) {
+            interceptRollEvent(e, true, touchRoll.target);
+        }
+    }, true);
+    window.addEventListener('pointercancel', (e) => {
+        if (pendingTouchRoll && pendingTouchRoll.pointerId === e.pointerId) {
+            clearTimeout(pendingTouchRoll.longPressTimer);
+            pendingTouchRoll = undefined;
+        }
+    }, true);
+
     
     //for suggesting the browser use dedicated gpu over integrated gpu
     window.__gpuKeepAlive = (function() {
