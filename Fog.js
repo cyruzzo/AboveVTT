@@ -1838,7 +1838,6 @@ function reset_canvas(apply_zoom=true) {
 	redraw_light_walls();
 	redraw_drawings();
 	redraw_drawn_light();
-	redraw_light();
 	redraw_fog();
 	redraw_elev();
 	set_weather_size(sceneMapWidth, sceneMapHeight);
