@@ -4052,8 +4052,7 @@ function drawing_mousedown(e) {
 		window.DRAWCOLOR = "rgba(0, 0, 0, 0.5)"
 		window.DRAWTYPE = "filled"
 	}
-	else if(window.DRAWFUNCTION === "wall"){
-		// semi transparent black
+	else if(window.DRAWFUNCTION === "wall" || window.DRAWFUNCTION === "wall-type-convert"){
 		window.DRAWCOLOR = "rgba(0, 255, 0, 1)"
 		if(data.object_wall !== undefined)
 			window.DRAWCOLOR = "rgba(0, 180, 80, 1)"
@@ -4063,8 +4062,6 @@ function drawing_mousedown(e) {
 		window.LINEWIDTH = 6;
 	}
 	else if(window.DRAWFUNCTION === "wall-door-convert" || window.DRAWFUNCTION === "wall-door" || window.DRAWFUNCTION === "door-door-convert"){
-		// semi transparent black
-
 		window.HIDDENICONDOOR = data.hidden_icon
 		window.DRAWCOLOR = doorColors[$('#door_types').val()].closed
 		window.DRAWTYPE = (window.DRAWFUNCTION === "door-door-convert") ? 'border' : "filled"
@@ -4393,7 +4390,7 @@ function drawing_mousemove(e) {
 						3,
 						true);
 			}
-			else if(window.DRAWFUNCTION === "wall-eraser" || window.DRAWFUNCTION === "wall-height-convert" || window.DRAWFUNCTION === "wall-door-convert"  || window.DRAWFUNCTION == "wall-eraser-one" || window.DRAWFUNCTION === "door-door-convert"){
+			else if(window.DRAWFUNCTION === "wall-eraser" || window.DRAWFUNCTION === "wall-height-convert" || window.DRAWFUNCTION === "wall-type-convert" || window.DRAWFUNCTION === "wall-door-convert"  || window.DRAWFUNCTION == "wall-eraser-one" || window.DRAWFUNCTION === "door-door-convert"){
 				drawRect(window.temp_context,
 						window.BEGIN_MOUSEX,
 						window.BEGIN_MOUSEY,
@@ -5083,7 +5080,7 @@ function drawing_mouseup(e) {
 		sync_drawings();
 
 	}		
-	else if (window.DRAWFUNCTION === "wall-eraser" || window.DRAWFUNCTION === "wall-height-convert" || window.DRAWFUNCTION === "wall-door-convert"  || window.DRAWFUNCTION == "wall-eraser-one" || window.DRAWFUNCTION === "door-door-convert"){
+	else if (window.DRAWFUNCTION === "wall-eraser" || window.DRAWFUNCTION === "wall-height-convert" || window.DRAWFUNCTION === "wall-type-convert" || window.DRAWFUNCTION === "wall-door-convert"  || window.DRAWFUNCTION == "wall-eraser-one" || window.DRAWFUNCTION === "door-door-convert"){
 		let walls = window.DRAWINGS.filter(d => (d[1] == "wall" && d[0].includes("line")));
 		let rectLine = {
 			rx: window.BEGIN_MOUSEX,
@@ -5097,6 +5094,8 @@ function drawing_mouseup(e) {
 		let redoArray = [];
 		for(let i=0; i<walls.length; i++){
 			if(!doorColorsArray.includes(walls[i][2]) && window.DRAWFUNCTION === "door-door-convert")
+				continue;
+			if(doorColorsArray.includes(walls[i][2]) && window.DRAWFUNCTION === "wall-type-convert")
 				continue;
 			let wallInitialScale = walls[i][8];
 			let scale_factor = window.CURRENT_SCENE_DATA.scale_factor != undefined ? window.CURRENT_SCENE_DATA.scale_factor : 1;
@@ -5178,7 +5177,7 @@ function drawing_mouseup(e) {
 
 
 			if(fullyInside || (!onePixel && (left != false || right != false || top != false || bottom != false))){
-				if(window.DRAWFUNCTION == "wall-eraser-one" || window.DRAWFUNCTION === "door-door-convert" || window.DRAWFUNCTION == 'wall-height-convert'){
+				if(window.DRAWFUNCTION == "wall-eraser-one" || window.DRAWFUNCTION === "door-door-convert" || window.DRAWFUNCTION == 'wall-height-convert' || window.DRAWFUNCTION == 'wall-type-convert'){
 					fullyInside = true;
 				}
 				let wallColor;
@@ -5209,6 +5208,11 @@ function drawing_mouseup(e) {
 							redoArray.push([...window.DRAWINGS[j]]);
 							window.DRAWINGS[j][10] = window.wallBottom;
 							window.DRAWINGS[j][11] = window.wallTop;
+							undoArray.push([...window.DRAWINGS[j]]);
+							break;
+						} else if(window.DRAWFUNCTION == 'wall-type-convert'){
+							redoArray.push([...window.DRAWINGS[j]]);
+							window.DRAWINGS[j][2] = window.DRAWCOLOR;
 							undoArray.push([...window.DRAWINGS[j]]);
 							break;
 						}
@@ -7380,7 +7384,14 @@ function init_walls_menu(buttons){
 				 	Height Convert
 			</button>
 		</div>`);
-			const wallBaseDesc = `Sets the elevation of the base of the wall. 
+	const wallTypeConvertDesc = `Changes the type of all regular walls in a selected area to be standard or object walls based on if the object wall toggle is enabled.`
+	wall_menu.append(
+		`<div class='ddbc-tab-options--layout-pill menu-option' data-desc="${wallTypeConvertDesc}">
+			<button id='draw_height_convert' class='drawbutton menu-option  ddbc-tab-options__header-heading'
+				data-shape='rect' data-function="wall-type-convert" data-unique-with="draw">
+					Object/Std Conv
+		</div>`);
+	const wallBaseDesc = `Sets the elevation of the base of the wall. 
 Any token with elevation below this height will be able to see under the wall.
 When left blank it is treated as negative infinity, preventing tokens from seeing under the wall.`
 	wall_menu.append(`<div class='wall-input menu-subtitle' data-desc='${wallBaseDesc}'>Wall Base</div>`);
