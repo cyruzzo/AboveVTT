@@ -1676,10 +1676,6 @@ function redraw_grid(hpps=null, vpps=null, offsetX=null, offsetY=null, color=nul
 
 function draw_select_box(x0, y0, w, h, inside=false, selbox=false, group=false, aoeRotate=false) {
 	const sf = window.CURRENT_SCENE_DATA.scale_factor || 1.0;
-	$("#VTT").css({'--selbox-x': `${x0}`,
-		       '--selbox-y': `${y0}`,
-		       '--selbox-w': `${w}`,
-		       '--selbox-h': `${h}`});
 	
 	const rg1 = document.getElementById('rot-grab');
 	const rg2 = document.getElementById('group-rot-grab');

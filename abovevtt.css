@@ -1031,6 +1031,7 @@ select#doorTypeSelectUVTT{
   transform: scale(var(--scene-scale));
   pointer-events: none;
   z-index: 20;
+  backdrop-filter: blur(0px); /*fixes a chrome rendering bug where the scene gets clipped when scaling the select box*/
 }
 
 
