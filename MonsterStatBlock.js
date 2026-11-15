@@ -81,8 +81,8 @@ async function display_stat_block_in_container(statBlock, container, tokenId, cu
       })
       await window.JOURNAL.translateHtmlAndBlocks($html);
       add_journal_roll_buttons($html, tokenId);
-     
-      $(container).find('.add-input').each(function(){window.JOURNAL.addTrackedInputs($(this), {token})});
+      if(token != undefined)
+        $(container).find('.add-input').each(function(){window.JOURNAL.addTrackedInputs($(this), {token})});
     }
     window.JOURNAL.add_journal_tooltip_targets($html);
     if(customStatBlock){
