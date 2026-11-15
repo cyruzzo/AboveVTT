@@ -963,6 +963,11 @@ function open_selected_token_stat() {
 	const allowedToOpen = window.DM || isPlayerToken || token.options.player_owned;
 	if(!allowedToOpen)
 		return;
+	const currentlyOpen = $(`#resizeDragMon:not(.hideMon) .avtt-stat-block-container[data-token-id="${token.options.id}"], #sheet iframe[data-sheet_url="${token.options.sheet}"]`);
+	if(currentlyOpen.length > 0){
+		currentlyOpen.closest('.moveableWindow').find('#monster_close_title_button, #player_close_title_button, .title_bar_close_button').click();
+		return;
+	};
 	if (isPlayerToken) {
 		open_player_sheet(token.options.sheet, undefined, token.options.name);
 	}
