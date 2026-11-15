@@ -4686,6 +4686,14 @@ const buffsDebuffs = {
     "type": "feat",
  
   },
+  "Elixir of Boldness": {
+    "tohit": "+d4",
+    "dmg": "0",
+    "save": "+d4",
+    "check": "0",
+    "type": "class",
+    "class": "artificer",
+  },
   "Call the Hunt": {
     "tohit": "0",
     "dmg": "+d6",
@@ -5774,6 +5782,7 @@ function build_buff_dropdown(scope = { type: 'character' }, fullBuild = false, t
   const innerBuffHtml = `
     <ul id='${idPrefix}favoriteBuffs' data-group='favorite'><li>Favorite</li></ul>
     <ul data-group='class'><li>Class</li>
+      <ul data-group='artificer'><li>Artificer</li></ul>
       <ul data-group='barbarian'><li>Barbarian</li></ul>
       <ul data-group='bard'><li>Bard</li></ul>
       <ul data-group='cleric'><li>Cleric</li></ul>
