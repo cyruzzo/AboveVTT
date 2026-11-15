@@ -3176,6 +3176,7 @@ function init_help_menu() {
 						<li><a href="#tab10">Quick Start</a></li>
 						<li><a href="#tab11">In-person tools</a></li>
 						<li><a href="#tab12">Performance Suggestions</a></li>
+						<li><a href="#tab13">Discord Integration</a></li>
 						<!-- some unused numbers here for more tabs -->
 						<li><a href="#tab21">Get Help</a></li>		
 						<li><a href="#tab22">Compatible Tools</a></li>
@@ -3472,6 +3473,28 @@ function init_help_menu() {
 						<iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/videoseries?list=PLW0tvNe3gIM00xQCReTWi8CPrXBJyDQmG&rel=0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
 					</div> 
 					-->
+					<div id="tab13" style="padding: 10px 15px; line-height: 1.6;">
+						<h3>Discord Webhook Integration</h3>
+						<p>AboveVTT can automatically relay dice rolls, character actions, and tabletop chat to your Discord server using standard incoming webhooks.</p>
+
+						<h4>Channel Routing</h4>
+						<ul>
+							<li><strong>Player Log (#player-log):</strong> Receives public player rolls, public DM rolls, and in-character chat. Secret DM rolls and private whispers are <em>never</em> sent here.</li>
+							<li><strong>DM Log (#dm-log):</strong> A private channel for the DM. Receives secret rolls ("To Self" / "To DM"), private whispers (<code>/w</code>), and optional mirrored public rolls for a complete session ledger.</li>
+							<li><strong>Send To Everyone:</strong> If you roll a secret roll as the DM, clicking <em>"Send To Everyone"</em> in the game log will broadcast it to <code>#player-log</code> with a <code>📢 [Revealed]</code> tag!</li>
+						</ul>
+
+						<h4>How to Create Webhooks in Discord (3 Steps)</h4>
+						<ol>
+							<li>In your Discord server, hover over your channel (e.g. <code>#player-log</code>) and click the <strong>Gear icon (Edit Channel)</strong>.</li>
+							<li>Click <strong>Integrations</strong> on the left, then click <strong>Webhooks</strong> &rarr; <strong>New Webhook</strong>.</li>
+							<li>Give it a name (e.g. <em>AboveVTT Game Log</em>), click <strong>Copy Webhook URL</strong>, and paste it into AboveVTT settings under <strong>Discord Integration &rarr; Edit</strong>. Repeat for <code>#dm-log</code>!</li>
+						</ol>
+						<p>For more details, see the official <a href="https://support.discord.com/hc/en-us/articles/228383668-Intro-to-Webhooks" target="_blank" style="text-decoration: underline; color: -webkit-link;">Discord Intro to Webhooks Guide</a>.</p>
+
+						<h4>Campaign vs Global Settings</h4>
+						<p>By default, <strong>Use Across All Campaigns</strong> is set to <em>Global</em>, allowing all your campaigns to share the same Discord webhook configuration. If you run multiple campaigns with distinct Discord servers or channels, switch this toggle to <strong>This Campaign</strong> to store independent webhook settings for each campaign.</p>
+					</div>
 					<div id="tab21">
 						AboveVTT is an open source project. The developers build it in their free time, and rely on users to report and troubleshoot bugs. If you're experiencing a bug, here are a few options: 
 						<ul id="help-error-container">
