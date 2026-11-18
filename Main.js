@@ -3524,6 +3524,17 @@ function init_help_menu() {
 							</a>
 							<span class='compatible-tool-desc'>An AI-powered map-making application that enables you to make high-quality content fast! Export maps as a UVTT file to import maps, light and walls into AboveVTT.</span>
 						</div>
+						<div class='help-compatible-tool'>
+							<a href='https://maps.wrpgmaps.com/' target="_blank">
+								<img class='compatible-tool-icon wrpg-icon' src='https://cdn.shopify.com/s/files/1/0823/8691/1561/files/Black_counture2_x320.png?v=1762448203'/>
+								<span class='compatible-tool-title'>WRPG Maps</span>
+							</a>
+							<span class='compatible-tool-desc'>WRPG Maps keeps your battle maps ready for your virtual tabletop.
+								<br><br>• Upload a map picture, or a Universal VTT file (.dd2vtt, .uvtt, .df2vtt) with its walls.
+								<br>• Draw walls, doors, windows and lights in the free editor. With a WRPG membership, the walling assistant can draw them for you.
+								<br>• Download an importable '.abovevtt' file for scenes hosted on WRPG MAPS, or as Universal VTT files.
+							</span>
+						</div>
 					</div>
 
 				</section>
