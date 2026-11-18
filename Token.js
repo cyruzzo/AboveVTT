@@ -1154,7 +1154,7 @@ class Token {
 			token.css('--temp-hp-percentage', `${this.tempHpPercentage}%`);
 			token.css('--total-percentage', `${this.tempHpPercentage + this.hpPercentage}%`)
 		}
-		if(bossHealthBar){
+		if(bossHealthBar && !this.options.hidden){
 			
 			const body = $(`body`);
 			const visibleSidebarWidth = is_sidebar_visible() ? get_sidebar_width() : 0;
@@ -1321,6 +1321,10 @@ class Token {
 			}
 			animateBossHealthBar();
 		}else{
+			if (this.bossAnimation) {
+				cancelAnimationFrame(this.bossAnimation);
+				this.bossAnimation = null;
+			}
 			$(`.boss-hp-bar[data-id='${this.options.id}']`).remove();
 		}
 		const tokenHpAuraColor = token_health_aura(this.hpPercentage, this.options.healthauratype);
