@@ -15,6 +15,10 @@ jobs:
         run: |
           echo "$GITHUB_CONTEXT"
       - name: find labels to remove and/or add
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           find_label() {
             local lowercase_title=$(echo "$1" | tr "[:upper:]" "[:lower:]") 
@@ -38,14 +42,14 @@ jobs:
             echo $label_to_output
           }
 
-          label_to_add=$(find_label "${{ github.event.pull_request.title }}")
+          label_to_add=$(find_label "$PR_TITLE")
           echo "label_to_add: ${label_to_add}"
           
           if [[ ! -z "$label_to_add" ]]
           then
-            add_url="https://api.github.com/repos/${GITHUB_REPOSITORY}/issues/${{github.event.pull_request.number}}/labels"
+            add_url="https://api.github.com/repos/${GITHUB_REPOSITORY}/issues/${PR_NUMBER}/labels"
             echo "add_url=${add_url}"
             add_body="{\"labels\":[\"${label_to_add}\"]}"
             echo "add_body=${add_body}"
-            curl --request POST --url "${add_url}" --header "Authorization: Bearer ${{secrets.GITHUB_TOKEN}}" --header 'Content-Type: application/json' -d "${add_body}"
+            curl --request POST --url "${add_url}" --header "Authorization: Bearer ${GITHUB_TOKEN}" --header 'Content-Type: application/json' -d "${add_body}"
           fi
