@@ -8932,6 +8932,8 @@ function clip_circle_with_polygon(ctx, x, y, radius, color, polygon, tokenOption
 }
 
 function redraw_light(darknessMoved = false, limitActiveRays = 0) {
+	if(window.LOADING)
+		return;
 	const canvasWidth = getSceneMapSize().sceneWidth;
 	const canvasHeight = getSceneMapSize().sceneHeight;
     if(window.rayContext == undefined){

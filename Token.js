@@ -112,7 +112,7 @@ const debounceStoreExplored = mydebounce((exploredCanvas, sceneId) => {
 	};
 }, 5000)
 var debounceLightChecks = mydebounce((darknessMoved = false) => {		
-		if(window.DRAGGING)
+		if(window.DRAGGING || window.LOADING)
 			return;
 		
 		requestAnimationFrame(()=>{
@@ -134,7 +134,7 @@ var debounceAudioChecks = mydebounce(() => {
 }, 20)
 
 var longDebounceLightChecks = mydebounce((darknessMoved = false) => {		
-		if(window.DRAGGING)
+		if(window.DRAGGING || window.LOADING)
 			return;
 
 		requestAnimationFrame(()=>{
@@ -4356,6 +4356,9 @@ function setTokenAudio(tokenOnMap, token){
 }
 
 function checkAudioVolume(){
+	if(window.LOADING){
+		return;
+	}
 	let audioTokens = $('.audio-token');
 	let tokensToCheck = [];
 	if(window.TokenAudioLevels === undefined){
