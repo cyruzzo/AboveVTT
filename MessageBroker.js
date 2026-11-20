@@ -1454,23 +1454,21 @@ class MessageBroker {
 						$("#VTT").css("--scene-scale", scaleFactor)
 						$("#VTT").css("--scene-scale-conversion", window.CURRENT_SCENE_DATA.conversion)
 						$('#loadingStyles').remove(); // incase 2nd load
-						if(!window.DM){
-							$('body').append($(`<style id='loadingStyles'>
-								.token,
-								.door-button,
-								.aura-element-container-clip{
-									display: none !important;
-								}
-								.token[data-id*='${window.PLAYER_ID}']{
-									display: flex !important;
-								}
-								
-								.aura-element-container-clip[id*='${window.PLAYER_ID}']{
-									display:unset !important;
-								}
-							</style>`))
-						}
-
+						
+						$('body').append($(`<style id='loadingStyles'>
+							.token,
+							.door-button,
+							.aura-element-container-clip{
+								display: none !important;
+							}
+							.token[data-id*='${window.PLAYER_ID}']{
+								display: flex !important;
+							}
+							
+							.aura-element-container-clip[id*='${window.PLAYER_ID}']{
+								display:unset !important;
+							}
+						</style>`))
 
 						const continueLoading = await reset_canvas();
 						if(!continueLoading){
