@@ -742,7 +742,7 @@ class MessageBroker {
 				display_url_embeded(url);
 			} else if (msg.eventType === "custom/myVTT/fetchscene") {
 
-				if(msg.data.sceneid.players){
+				if(msg.data?.sceneid?.players){
 					if(msg.data.sceneid[window.PLAYER_ID] !== undefined)
 						msg.data.sceneid = msg.data.sceneid[window.PLAYER_ID];
 					else
