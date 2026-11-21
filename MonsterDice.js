@@ -105,79 +105,100 @@ function add_ability_tracker_inputs_on_each(target, tokenId){
 	const token = window.TOKEN_OBJECTS[tokenId];
 	if(target.find('.add-input').length)
 		return;
-	if(target.find('strong:first-of-type').text().match(/\/day each/gi)){
-		target.find('strong').each(function(){
-			let currentElement = $(this).nextUntil('strong').addBack();
-			if (currentElement.find(".injected-input").length == 0) {
-				const matchForEachSlot = currentElement.text().match(/([0-9]+)\/Day each:/gi)
 
-				if (matchForEachSlot){
-					let numberFound = parseInt(matchForEachSlot[0]);
-					$(this).nextUntil('strong').each(function (indexInArray, valueOfElement) { 
-						let spellName = $(valueOfElement).clone().text().replace(/\s/g, "")
-						if(spellName == '')
-							return;
-						// token already has this ability tracked
-						if (token.options.abilityTracker?.[spellName] >= 0){
-							numberFound = token.options.abilityTracker[spellName]
-						}else{
-							token.track_ability(spellName, numberFound)
-						}
-						$(valueOfElement).after(
-							createCountTracker(
-								token,
-								spellName, 
-								numberFound,
-								 "",
-								 ""
-							)
-						)
-						spellName = null
-					});			
-				}
-				
-			}
-			// terminate the clones reference, overkill but rather be safe when it comes to memory
-			currentElement = null
-		})
-	}
-	else{
-		target.find(".mon-stat-block__description-block-content > p").each(function() {
-			let currentElement = $(this).clone();
-			if (currentElement.find(".injected-input").length == 0) {
-				const matchForEachSlot = currentElement.text().match(/([0-9]+)\/Day each:/i)
-				if (matchForEachSlot){
-					let numberFound = parseInt(matchForEachSlot[1]);
-					$(this).children().each(function (indexInArray, valueOfElement) { 
-						const $element = $(valueOfElement);
-						if($element.is('button'))
-							return;
-						let spellName =  $element.clone().text().replace(/\s/g, "")
-						// token already has this ability tracked
-						if (token.options.abilityTracker?.[spellName] >= 0){
-							numberFound = token.options.abilityTracker[spellName]
-						}else{
-							token.track_ability(spellName, numberFound)
-						}
-						 $element.after(
-							createCountTracker(
-								token,
-								spellName, 
-								numberFound,
-								 "",
-								 ""
-							)
-						)
-						spellName = null
-					});			
-				}
-				
-			}
-			// terminate the clones reference, overkill but rather be safe when it comes to memory
-			currentElement = null
+	target.find('p, td, li, div').each(function() {
+		const $container = $(this);
+		if ($container.find('.injected-input').length)
+			return;
+		if ($container.find('br').length)
+			return;
+		if ($container.find('strong, em').filter(function() {
+			return /([0-9]+)\s*\/\s*Day\s+Each\s*:/i.test($(this).text());
+		}).length)
+			return;
+
+		const markerMatch = $container.text().match(/^\s*([0-9]+)\s*\/\s*Day\s+Each\s*:/i);
+		if (!markerMatch)
+			return;
+
+		const numberFound = parseInt(markerMatch[1]);
+		$container.find('a').each(function() {
+			const $spell = $(this);
+			const spellName = $spell.text().trim().replace(/\s/g, '');
+			if (!spellName || $spell.next('.injected-input').length)
+				return;
+
+			let remaining = numberFound;
+			if (token.options.abilityTracker?.[spellName] >= 0)
+				remaining = token.options.abilityTracker[spellName];
+			else
+				token.track_ability(spellName, remaining);
+
+			$spell.after(createCountTracker(token, spellName, remaining, "", ""));
 		});
-	}
-		
+	});
+
+	const processedMarkerRoots = new Set();
+	target.find('strong, em').each(function() {
+		const markerElement = $(this);
+		let markerRoot = this;
+		const outerEm = markerElement.closest('em')[0];
+		if (outerEm)
+			markerRoot = outerEm;
+
+		if (processedMarkerRoots.has(markerRoot))
+			return;
+		processedMarkerRoots.add(markerRoot);
+
+		const markerMatch = $(markerRoot).text().match(/([0-9]+)\s*\/\s*Day\s+Each\s*:/i);
+		if (!markerMatch)
+			return;
+
+		const numberFound = parseInt(markerMatch[1]);
+		const markerContainer = $(markerRoot).closest('p, td, li, div')[0] || target[0];
+		let boundary = null;
+		$(markerContainer).find('br, strong, em').each(function() {
+			if (this === markerRoot || boundary)
+				return;
+			if (!(markerRoot.compareDocumentPosition(this) & Node.DOCUMENT_POSITION_FOLLOWING))
+				return;
+			if (this.nodeName === 'BR') {
+				boundary = this;
+				return;
+			}
+
+			let candidateRoot = this;
+			const outer = $(this).closest('em')[0];
+			if (outer)
+				candidateRoot = outer;
+			if (candidateRoot !== markerRoot && /([0-9]+)\s*\/\s*Day\s+Each\s*:/i.test($(candidateRoot).text()))
+				boundary = candidateRoot;
+		});
+
+		const isBeforeBoundary = element => {
+			if (!boundary)
+				return !!(markerRoot.compareDocumentPosition(element) & Node.DOCUMENT_POSITION_FOLLOWING);
+			return !!(markerRoot.compareDocumentPosition(element) & Node.DOCUMENT_POSITION_FOLLOWING)
+				&& !!(element.compareDocumentPosition(boundary) & Node.DOCUMENT_POSITION_FOLLOWING);
+		};
+
+		$(markerContainer).find('a').filter(function() {
+			return isBeforeBoundary(this);
+		}).each(function() {
+			const $spell = $(this);
+			const spellName = $spell.clone().children().remove().end().text().trim().replace(/\s/g, '');
+			if (!spellName || $spell.next('.injected-input').length)
+				return;
+
+			let remaining = numberFound;
+			if (token.options.abilityTracker?.[spellName] >= 0)
+				remaining = token.options.abilityTracker[spellName];
+			else
+				token.track_ability(spellName, remaining);
+
+			$spell.after(createCountTracker(token, spellName, remaining, "", ""));
+		});
+	});
 }
 
 function rebuild_ability_trackers(target, tokenId){
