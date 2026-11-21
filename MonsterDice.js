@@ -530,24 +530,25 @@ function roll_button_clicked(clickEvent, displayName, imgUrl, entityType = undef
 
 	
   if (/^1d20/g.test(expression)) {
+	 const restOfExpression = expression.replace(/^1d20((kh|kl)(\d))?/g, '');
      if(clickEvent.altKey){
         if(clickEvent.shiftKey){
-          expression = `3d20kh1`;
+          	expression = `3d20kh1${restOfExpression}`;
          }
          else if((!isMac() && clickEvent.ctrlKey) || clickEvent.metaKey){
-          expression = `3d20kl1`;
+			expression = `3d20kl1${restOfExpression}`;
          }
      }
      else if(clickEvent.shiftKey){
-      expression = `2d20kh1`;
+      	expression = `2d20kh1${restOfExpression}`;
      }
      else if((!isMac() && clickEvent.ctrlKey) || clickEvent.metaKey){
-      expression = `2d20kl1`;
+		expression = `2d20kl1${restOfExpression	}`;
      }
   }
  
 	// applied after the advantage/disadvantage rewrite so a buff's ^1d20 replacement can't undo it
-	const buffedExpression = adjustRollWithRollBuffs(`${expression}${modifier}`, rollType, $(clickEvent.currentTarget));
+	const buffedExpression = adjustRollWithRollBuffs(`${expression}`, rollType, $(clickEvent.currentTarget));
 
 	window.diceRoller.roll(new DiceRoll(
 		buffedExpression,
