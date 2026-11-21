@@ -16857,10 +16857,13 @@ button#displayedDiceFormulaExit:hover {
   height: 100%;  
   background-repeat: repeat;
 }
-#VTT.hide-players *{
+#VTT.hide-players *,
+#VTT.hide-players *:before,
+#VTT.hide-players *:after {
     visibility:hidden !important;
     pointer-events:none !important;
 }
+
 
 /***** Icon UI *****/
 
