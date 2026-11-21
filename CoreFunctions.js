@@ -1794,14 +1794,16 @@ function add_journal_roll_buttons(target, tokenId=undefined, specificImage=undef
 
   // terminate the clones reference, overkill but rather be safe when it comes to memory
   currentElement = null;
-
-  $currTarget.find(".avtt-roll-button").off('pointerdown.click touchstart.click').on('pointerdown.click touchstart.click', clickHandler);
-  $currTarget.find(".avtt-roll-button").off('contextmenu').on('contextmenu', rightClickHandler);
-  $currTarget.find(".avtt-roll-button").off('click.prevent').on('click.prevent', function(e){
+  const avttRollButtons = $currTarget.find(".avtt-roll-button");
+  avttRollButtons.off('pointerdown.click touchstart.click').on('pointerdown.click touchstart.click', clickHandler);
+  avttRollButtons.off('contextmenu').on('contextmenu', rightClickHandler);
+  avttRollButtons.off('click.prevent').on('click.prevent', function(e){
     e.preventDefault();
     e.stopPropagation();
   });
-  $currTarget.find("button.avtt-roll-formula-button").off('pointerdown.avttRoll touchstart.avttRoll').on('pointerdown.avttRoll touchstart.avttRoll', function(clickEvent) {
+
+  const avttRollFormulaButtons = $currTarget.find(".avtt-roll-formula-button");
+  avttRollFormulaButtons.off('pointerdown.avttRoll touchstart.avttRoll').on('pointerdown.avttRoll touchstart.avttRoll', function(clickEvent) {
     if (clickEvent.button === 2) return;
     clickEvent.preventDefault();
     clickEvent.stopPropagation();
@@ -1812,7 +1814,7 @@ function add_journal_roll_buttons(target, tokenId=undefined, specificImage=undef
     const diceRoll = DiceRoll.fromSlashCommand(slashCommand, tokenName, tokenImage, entityType, tokenId, damageType); // TODO: add gamelog_send_to_text() once that's available on the characters page without avtt running
     window.diceRoller.roll(diceRoll, undefined, undefined, undefined, undefined, damageType);
   });
-  $currTarget.find(`button.avtt-roll-formula-button`).off('contextmenu.rpg-roller').on('contextmenu.rpg-roller', function(e){
+  avttRollFormulaButtons.off('contextmenu.rpg-roller').on('contextmenu.rpg-roller', function(e){
     e.stopPropagation();
     e.preventDefault();
     let rollData = {}
@@ -1834,6 +1836,67 @@ function add_journal_roll_buttons(target, tokenId=undefined, specificImage=undef
         .present(e.clientY, e.clientX, e.currentTarget.ownerDocument)
     }
   })
+  const snippetContainer = $currTarget.closest('.ct-feature-snippet, [class*="styles_snippet"]')
+  if(is_characters_page() && snippetContainer.length > 0 && (snippetContainer.find('.avtt-roll-formula-button').length > 0 || snippetContainer.find('.avtt-roll-button').length > 0)){
+    const snippetTitle = snippetContainer.find('>.ct-feature-snippet__heading, >[class*="styles_heading"]');
+    snippetTitle.off("pointerdown.roll touchstart.roll").on("pointerdown.roll touchstart.roll", function (e) {
+      if (e.button === 2) return;
+      e.preventDefault();
+      e.stopPropagation();
+      e.stopImmediatePropagation();
+      if($(e.target).text().includes('Recharge'))
+        return;
+      let rollButtons = $(e.currentTarget).closest('.ct-feature-snippet, [class*="styles_snippet"]').find('.avtt-roll-button:not([data-rolltype="recharge"]), .avtt-roll-formula-button');
+      
+
+
+      const displayName = specificName 
+        ? specificName 
+          : window.PLAYER_NAME || "THE DM";
+      const creatureAvatar = specificImage || window.PLAYER_IMG;
+      $(e.currentTarget).closest('.ct-feature-snippet, [class*="styles_snippet"]').find('.avtt-aoe-button')?.click();
+      for(let i = 0; i<rollButtons.length; i++){      
+        let data = getRollData(rollButtons[i]);
+        let diceRoll;
+
+       
+        if(data.expression != undefined){
+          const buffedExpression = adjustRollWithRollBuffs(`${data.expression}${data.modifier}`, data.rollType, $(e.currentTarget));
+          
+          if (/^1d20[+-]([0-9]+)/g.test(data.expression)) {
+
+             if(e.altKey){
+                if(e.shiftKey){
+                  diceRoll = new DiceRoll(`3d20kh1${data.modifier}`, data.rollTitle, data.rollType, displayName, creatureAvatar, "monster");
+                 }
+                 else if((!isMac() && e.ctrlKey) || e.metaKey){
+                  diceRoll = new DiceRoll(`3d20kl1${data.modifier}`, data.rollTitle, data.rollType, displayName, creatureAvatar, "monster");
+                 }
+             }
+             else if(e.shiftKey){
+              diceRoll = new DiceRoll(`2d20kh1${data.modifier}`, data.rollTitle, data.rollType, displayName, creatureAvatar, "monster");
+             }
+             else if((!isMac() && e.ctrlKey) || e.metaKey){
+              diceRoll = new DiceRoll(`2d20kl1${data.modifier}`, data.rollTitle, data.rollType, displayName, creatureAvatar, "monster");
+             }else{
+              diceRoll = new DiceRoll(buffedExpression, data.rollTitle, data.rollType, displayName, creatureAvatar, "monster")
+             }
+          }
+          else{
+            diceRoll = new DiceRoll(buffedExpression, data.rollTitle, data.rollType, displayName, creatureAvatar, "monster")
+          }
+
+          window.diceRoller.roll(diceRoll, true, window.CHARACTER_AVTT_SETTINGS.critRange ? window.CHARACTER_AVTT_SETTINGS.critRange : 20, window.CHARACTER_AVTT_SETTINGS.crit ? window.CHARACTER_AVTT_SETTINGS.crit : 2, data.spellSave, data.damageType);
+        }
+      }
+    })
+    snippetTitle.off("click.prevent").on("click.prevent", function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      e.stopImmediatePropagation();
+    });
+    snippetTitle.addClass('rollable-snippet-title');
+  }
 
   console.groupEnd()
 }
