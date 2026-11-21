@@ -519,14 +519,14 @@ function roll_button_contextmenu_handler(contextmenuEvent, displayName, imgUrl, 
  * @param entityId {string|undefined} the id of the entity associated with this roll. If {entityType} is "character" this should be the id for that character. If {entityType} is "monster" this should be the id for that monster. If {entityType} is "user" this should be the id for that user.
  */
 function roll_button_clicked(clickEvent, displayName, imgUrl, entityType = undefined, entityId = undefined) {
-	let pressedButton = $(clickEvent.currentTarget).clone();
-	let expression = pressedButton.attr('data-exp');
-	let modifier = pressedButton.attr('data-mod')?.replaceAll("(", "")?.replaceAll(")", "");
-	let rollType = pressedButton.attr('data-rolltype');
-	const action = pressedButton.attr('data-actiontype');
-	const save = pressedButton.attr('data-save');
-	const damageType = pressedButton.attr('data-damagetype');
-	modifier = modifier == 0 && modifier != '' ? '+0' : modifier;
+	const data = getRollData($(clickEvent.currentTarget)[0]);
+	let expression = data.expression;
+	let modifier = data.modifier;
+	let rollType = data.rollType;
+	const action = data.rollTitle;
+	const save = data.spellSave;
+	const damageType = data.damageType;
+	modifier = data.modifier;
 
 	
   if (/^1d20/g.test(expression)) {
@@ -559,7 +559,6 @@ function roll_button_clicked(clickEvent, displayName, imgUrl, entityType = undef
 		entityId
 	), undefined, undefined, undefined, save, damageType);
 	
-	pressedButton = null
 }
 
 

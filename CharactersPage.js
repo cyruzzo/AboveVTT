@@ -1852,7 +1852,8 @@ function observe_character_sheet_changes(documentToObserve) {
               .ct-character-sheet__inner button.avtt-roll-button,
               .ct-sidebar__inner .integrated-dice__container,
               .ct-sidebar__inner .avtt-roll-button,
-              .ct-sidebar__inner .avtt-aoe-button{
+              .ct-sidebar__inner .avtt-aoe-button,
+              .ct-character-sheet__inner .rollable-snippet-title{
                   /* lifted from DDB encounter stat blocks  */
                   color: var(--theme-contrast, #b43c35) !important;
                   background: transparent !important;
@@ -1863,6 +1864,10 @@ function observe_character_sheet_changes(documentToObserve) {
                   font-family: Roboto Condensed,Open Sans,Helvetica,sans-serif;
                   letter-spacing: 1px;
                   padding: 1px 4px 0;  
+              }
+              .rollable-snippet-title {
+                  width: fit-content;
+                  margin-left: 1px;
               }
               .ct-sidebar__inner [class*="GameLogEntries"] [class*="Message-Collapsed-Other-Flex"] .avtt-roll-button{
                 color: #3f3f3f !important;

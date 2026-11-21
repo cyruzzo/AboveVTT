@@ -463,7 +463,9 @@ function getRollData(rollButton){
         rollTitle = $rollButton.closest(`.ddbc-combat-action-attack-general`).find('.ddbc-action-name, [class*="styles_actionName"]').text();
       }
     }
-    
+
+    rollTitle = $rollButton.closest('.ct-feature-snippet, [class*="styles_snippet"]').find('>.ct-feature-snippet__heading, >[class*="styles_heading"]').clone().find('[class*="styles_metaItem"]').remove().end().text().trim() || rollTitle;
+
     expression = adjustRollWithRollBuffs(expression, rollType, $rollButton);
 
     let roll = new rpgDiceRoller.DiceRoll(expression); 
@@ -1048,8 +1050,10 @@ class DiceRoller {
         let damageTypeTitle = $(button).find('.ddbc-tooltip[data-original-title]');
         if(damageTypeTitle.length > 0){
           damageTypeText = damageTypeTitle.attr('data-original-title')
-        }
+        } 
       }
+
+
       if(damageTypeText != undefined)
         window.diceRoller.setPendingDamageType(damageTypeText);
       return damageTypeText;
