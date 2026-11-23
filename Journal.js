@@ -7070,7 +7070,7 @@ class JournalManager{
 			}
 		`
 	}
-	edit_note(id, statBlock = false){
+	edit_note(id, statBlock = false, {listItem, customization} = {}) {
 		$(`.ui-dialog:not(.resize_drag_window) div.note[data-id='${id}']`)?.dialog("close");
 		$(`.resize_drag_window[id="${id}"]`).remove();
 		this.close_all_notes();
@@ -7192,7 +7192,9 @@ class JournalManager{
 			      { title: 'HP Roll', inline: 'b', classes: 'custom-hp-roll custom-stat' },
 			      { title: 'Initiative', inline: 'b', classes: 'custom-initiative custom-stat' },
 			      { title: 'CR', inline: 'b', classes: 'custom-challenge-rating custom-stat' },
-			      { title: 'Custom PC Sheet Link', inline: 'b', classes: 'custom-pc-sheet custom-stat' },
+			      { title: 'Name', inline: 'b', classes: 'custom-name custom-stat'},
+				  { title: 'Default Image', inline: 'b', classes: 'custom-image custom-stat'},
+				  { title: 'Custom PC Sheet Link', inline: 'b', classes: 'custom-pc-sheet custom-stat' },
 			      { title: 'AboveVTT Slash Command Roll Button', inline: 'span', classes: 'abovevtt-slash-command-journal custom-stat' }
 			   	]}
 			],
@@ -9945,6 +9947,29 @@ class JournalManager{
 				let html = parser.parseFromString(tinymce.activeEditor.getContent(), 'text/html');
 				const body = $(html).find('body')// we do this to get rid of style tags used in templates that aren't needed to be stored - it was causing notes to be too large from message size limits
 				const avttImages = body.find('img[data-src*="above-bucket-not-a-url"]');
+				const customStatName = body.find('.custom-stat.custom-name');
+				const customStatImage = body.find('.custom-stat.custom-image');
+				if(listItem !== undefined && customization !== undefined && (customStatName.length > 0 || customStatImage.length > 0)){
+					if(customStatName.length > 0 && (listItem.type == ItemType.PC || listItem.type == ItemType.MyToken)){
+						const newName = customStatName.text();
+						customization.tokenOptions.name = newName;
+						listItem.name = newName;
+					} 
+					if(customStatImage.length > 0){
+						const image = customStatImage.find('img');
+						let newImageSrc = '';
+						if(image.length > 0){
+							newImageSrc = image.attr('src');
+						} else{
+							newImageSrc = customStatImage.text();
+						}
+						window.currentAddImageUrl(newImageSrc);
+						customization.tokenOptions.defaultImage = newImageSrc;
+						listItem.image = newImageSrc;
+					}
+					persist_token_customization(customization);
+					redraw_token_list($('[name="token-search"]').val() ?? '');
+				}
 				avttImages.attr('src', '');
 				avttImages.attr('href', '');
 				self.notes[note_id].text = basic_sanitize_html(body.html()); 
