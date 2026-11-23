@@ -314,10 +314,41 @@ const debounceSyncMeUp = mydebounce(()=>{
 	window.MB.sendMessage("custom/myVTT/syncmeup");
 }, 2000)
 
+function showDmConnectedWarning(){
+	          
+	$("#above-vtt-error-message").remove();
+	const container = $(`
+		<div id="above-vtt-error-message">
+		<h2>Another browser/device has connected as DM</h2>
+		<div id="error-message-details">
+			<p>Duplicate DM connection detected. AboveVTT websocket has been disconnected to prevent potential issues.</p>
+			<p>Multiple DM connections are not supported and may cause issues with local data overriding each other. Some message may also be duplicated such as players placing aoe.</p>
+			<p>If you wish to continue with both connections click reconnect below.</p>
+		</div>
+
+		<div class="error-message-buttons">
+			<button id="reconnect-button">Reconnect</button>
+			<button id="close-error-button">Exit AVTT</button>
+		</div>
+		</div>
+	`);
+	$(document.body).append(container);
+	$("#close-error-button").on("click", () => {	
+		window.close();
+	});
+	$("#reconnect-button").on("click", () => {
+		window.reconnectAttemptAbovews = 0;
+		window.onCloseNumberPerPopup = 0;
+		window.allowSecondDM = true;
+		window.MB.loadAboveWS();
+		removeError();
+	});     
+}
+
 class MessageBroker {
 
 	loadAboveWS(callback=null){
-		if(is_gamelog_popout() || (!is_abovevtt_page()))
+		if(is_gamelog_popout() || (!is_abovevtt_page()) || window.allowSecondDM === false)
 			return;
 		let self=this;
 		if(window.pingInterval!=undefined)
@@ -373,7 +404,7 @@ class MessageBroker {
 			setupMBIntervals();
 		};
 
-		this.abovews.onclose = function() {
+		this.abovews.onclose = function() {		
 			if(is_gamelog_popout())
 				return;
 			if(self.reconnectTimeout != undefined){
@@ -582,7 +613,13 @@ class MessageBroker {
 					console.warn("WARNING. WE RECEIVED BACK OUR OWN MESSAGE - IGNORING");
 					return;
 				}
-
+				else if(window.DM && msg.dm == 1 && !window.allowSecondDM){ 
+					showDmConnectedWarning();
+					window.allowSecondDM = false;
+					self.abovews.onclose = function() {};
+					self.abovews.close();
+					return;
+				}
 				if(self.stats.peers[msg.sender]){
 					let shouldbethis=self.stats.peers[msg.sender].sequence+1;
 					if(msg.sequence==shouldbethis){
@@ -2081,6 +2118,7 @@ class MessageBroker {
 			eventType: eventType,
 			sender: this.mysenderid,
 			data: data,
+			dm: window.DM ? 1 : 0
 		}
 
 		message.cloud=1;
