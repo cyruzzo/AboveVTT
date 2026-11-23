@@ -3112,7 +3112,7 @@ function display_aoe_token_configuration_modal(listItem, placedToken = undefined
                 persist_token_customization(customization);
                 display_token_configuration_modal(listItem, placedToken);
             }
-            window.JOURNAL.edit_note(customization.id, true);
+            window.JOURNAL.edit_note(customization.id, true, {listItem: listItem, customization: customization});
         });
     }
    
