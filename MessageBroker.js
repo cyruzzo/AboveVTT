@@ -1847,11 +1847,8 @@ class MessageBroker {
 				const dataWall = data.tokenWall;
 
 				const wallOptions = window.TOKEN_OBJECTS[data.id]?.options?.tokenWallPoly;
-				const relativePoints = wallOptions?.relativePoints;
 
-				const dataWallPoints = data.tokenWallPoly?.relativePoints;
-
-				if(window.TOKEN_OBJECTS[data.id] == undefined || dataWall == undefined || dataWall == false || (wallType != dataWall) || relativePoints?.[0] != dataWallPoints?.[0]){
+				if(window.TOKEN_OBJECTS[data.id] == undefined || dataWall == undefined || dataWall == false || (wallType != dataWall) || JSON.stringify(wallOptions) != JSON.stringify(data.tokenWallPoly)){
 					delete window.visionBlockingTokenCache[data.id];
 				}
 			}
@@ -1895,11 +1892,8 @@ class MessageBroker {
 				const dataWall = data.tokenWall;
 
 				const wallOptions = window.TOKEN_OBJECTS[data.id]?.options?.tokenWallPoly;
-				const relativePoints = wallOptions?.relativePoints;
 
-				const dataWallPoints = data.tokenWallPoly?.relativePoints;
-
-				if(window.TOKEN_OBJECTS[data.id] == undefined || dataWall == undefined || dataWall == false || (wallType != dataWall) || relativePoints?.[0] != dataWallPoints?.[0]){
+				if(window.TOKEN_OBJECTS[data.id] == undefined || dataWall == undefined || dataWall == false || (wallType != dataWall) || JSON.stringify(wallOptions) != JSON.stringify(data.tokenWallPoly)){
 					delete window.visionBlockingTokenCache[data.id];
 				}
 			}

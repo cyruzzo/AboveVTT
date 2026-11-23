@@ -4325,7 +4325,9 @@ function build_adjustments_flyout_menu(tokenIds) {
 				}
 				else if(setting.name =='tokenWall'){
 					if(newValue.includes('poly')){
-						$('.token-wall-poly-button').toggleClass('visible', true);
+						$('.token-wall-poly-add-button:not(.token-wall-line-add-button)').toggleClass('visible', true);
+						$('.token-wall-line-add-button').toggleClass('visible', window.TOKEN_OBJECTS[tokenIds[0]].options.tokenStyleSelect !== 'roof');
+						$('.token-wall-poly-delete-button').toggleClass('visible', !!window.TOKEN_OBJECTS[tokenIds[0]].options.tokenWallPoly);
 					}
 					else{
 						$('.token-wall-poly-button').toggleClass('visible', false);
@@ -4358,6 +4360,7 @@ function build_adjustments_flyout_menu(tokenIds) {
 						window.BEGIN_MOUSEX = [];
 						window.BEGIN_MOUSEY = [];
 						$('#capture_mouse').css('z-index', '50');
+						$('#temp_overlay').css('z-index', '50');
 						close_token_context_menu();
 					}
 				});
@@ -4365,26 +4368,55 @@ function build_adjustments_flyout_menu(tokenIds) {
 			}
 			if(setting.name =='tokenWall'){
 				const tokenId = tokenIds[0];
-				const polyButton = $(`<button class="token-wall-poly-button material-icons ${typeof currentValue === 'string' && currentValue.includes('poly') ? 'visible' : ''}" title="Edit Token Wall Polygon">${!window.TOKEN_OBJECTS[tokenId].options.tokenWallPoly ? "Draw" : "Delete"} Token Wall Polygon</button>`);
+				const polyButton = $(`<button class="token-wall-poly-button token-wall-poly-add-button ${typeof currentValue === 'string' && currentValue.includes('poly') ? 'visible' : ''}" title="Add a token wall polygon section">Add Token Wall Polygon</button>`);
 				polyButton.off('click').on('click', function(){
-					let clickedItem = $(this);
 					if (window.visionBlockingTokenCache?.[tokenId] != undefined)
 						delete window.visionBlockingTokenCache[tokenId];
-					if (window.TOKEN_OBJECTS[tokenId].options.tokenWallPoly == undefined) {
-						window.drawingTokenWallTokenId = tokenId;
-						window.drawingTokenPolygonOption = 'tokenWallPoly';
-						window.drawTokenWallPolygon = true;
-						$("#capture_mouse").css("z-index", "50");
-						close_token_context_menu();
-					}
-					else {
-						$(this).text('Draw Token Wall Polygon')
-						delete window.TOKEN_OBJECTS[tokenId].options.tokenWallPoly;
-						window.TOKEN_OBJECTS[tokenId].place_sync_persist();
-						clear_temp_canvas();
-					}
+					window.drawingTokenWallTokenId = tokenId;
+					window.drawingTokenPolygonOption = 'tokenWallPoly';
+					window.drawTokenWallPolygon = true;
+					$("#capture_mouse").css("z-index", "50");
+					close_token_context_menu();
+					clear_temp_canvas();
+					drawTokenWallPreview(tokenId);
 				});
+				const deletePolyButton = $(`<button class="token-wall-poly-button token-wall-poly-delete-button ${typeof currentValue === 'string' && currentValue.includes('poly') && window.TOKEN_OBJECTS[tokenId].options.tokenWallPoly ? 'visible' : ''}" title="Delete all token wall sections">Delete Token Wall Sections</button>`);
+				const lineButton = $(`<button class="token-wall-poly-button token-wall-poly-add-button token-wall-line-add-button ${typeof currentValue === 'string' && currentValue.includes('poly') && window.TOKEN_OBJECTS[tokenId].options.tokenStyleSelect !== 'roof' ? 'visible' : ''}" title="Click a start point, then click or drag to an endpoint. Hold Shift to chain lines; double-click to finish.">Add Token Wall Line</button>`);
+				lineButton.on('click', function(){
+					if (window.TOKEN_OBJECTS[tokenId].options.tokenStyleSelect === 'roof')
+						return;
+					if (window.visionBlockingTokenCache?.[tokenId] != undefined)
+						delete window.visionBlockingTokenCache[tokenId];
+					window.drawingTokenWallTokenId = tokenId;
+					window.drawingTokenPolygonOption = 'tokenWallPoly';
+					delete window.drawTokenWallPolygon;
+					window.drawTokenWallLine = true;
+					window.drawingTokenWallLineStart = undefined;
+					window.DRAWSHAPE = 'line';
+					window.DRAWFUNCTION = 'token-wall-line';
+					window.DRAWCOLOR = getTokenWallColor(window.TOKEN_OBJECTS[tokenId].options.tokenWall);
+					window.DRAWTYPE = 'filled';
+					window.LINEBLUR = 0;
+					window.LINEWIDTH = 6;
+					window.BEGIN_MOUSEX = [];
+					window.BEGIN_MOUSEY = [];
+					$("#capture_mouse").css("z-index", "50");
+					close_token_context_menu();
+					clear_temp_canvas();
+					drawTokenWallPreview(tokenId);
+				});
+				deletePolyButton.off('click').on('click', function(){
+					if (window.visionBlockingTokenCache?.[tokenId] != undefined)
+						delete window.visionBlockingTokenCache[tokenId];
+					delete window.TOKEN_OBJECTS[tokenId].options.tokenWallPoly;
+					window.TOKEN_OBJECTS[tokenId].place_sync_persist();
+					$(this).removeClass('visible');
+					clear_temp_canvas();
+					clearTokenWallPreview();
+				})
 				inputWrapper.after(polyButton);
+				polyButton.after(lineButton);
+				lineButton.after(deletePolyButton);
 			}	
 		} else if (setting.type === "toggle") {
 			let inputWrapper = build_toggle_input(setting, currentValue, function (name, newValue) {
