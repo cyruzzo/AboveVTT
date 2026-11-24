@@ -1806,6 +1806,14 @@ function reset_canvas(apply_zoom=true) {
 	$("#dragbox, #rotDragbox, #capture_mouse").css({"width": sceneMapWidth, "height": sceneMapHeight});
 	ctxScale('peer_overlay', sceneMapWidth, sceneMapHeight);
 	ctxScale('temp_overlay', sceneMapWidth, sceneMapHeight, true);
+	const tokenWallPreviewCanvas = document.getElementById('token_wall_preview');
+	if (tokenWallPreviewCanvas) {
+		ctxScale('token_wall_preview', sceneMapWidth, sceneMapHeight, true);
+		if (window.drawingTokenWallTokenId && window.drawingTokenPolygonOption === 'tokenWallPoly')
+			drawTokenWallPreview(window.drawingTokenWallTokenId);
+		else
+			clearTokenWallPreview();
+	}
 	ctxScale('draw_overlay_under_fog_darkness', sceneMapWidth, sceneMapHeight, true);
 	ctxScale('fog_overlay', sceneMapWidth, sceneMapHeight, true);
 	ctxScale('draw_overlay', sceneMapWidth, sceneMapHeight, true);
@@ -3600,7 +3608,7 @@ function getVisionBlockingTokenWalls(){
 			cachedData.tokenScale == tokenScale &&
 			cachedData.rot == rot &&
 			cachedData.boundaries != undefined &&
-			cachedData.tokenWallPoly?.relativePoints?.[0] == currentToken.options.tokenWallPoly?.relativePoints?.[0]
+			cachedData.tokenWallPoly == JSON.stringify(currentToken.options.tokenWallPoly)
 		){
 			visionBlockingTokenWalls = [...visionBlockingTokenWalls, ...cachedData.boundaries];
 			continue;
@@ -3614,7 +3622,7 @@ function getVisionBlockingTokenWalls(){
 			tokenScale,
 			rot,
 			boundaries: [],
-			tokenWallPoly: currentToken.options.tokenWallPoly
+			tokenWallPoly: JSON.stringify(currentToken.options.tokenWallPoly)
 		}
 		if (currentToken.options.tokenWall && currentToken.options.tokenWall?.includes('circle')){
 			let radius = (width / 2);
@@ -3669,55 +3677,116 @@ function getVisionBlockingTokenWalls(){
 			}
 		}
 		else if (currentToken.options.tokenWall && currentToken.options.tokenWall?.includes('poly')) {
-			if(currentToken.options.tokenWallPoly == undefined || currentToken.options.tokenWallPoly.relativePoints?.length < 2)
+			const wallPolygons = currentToken.options.tokenWallPoly == undefined
+				? []
+				: Array.isArray(currentToken.options.tokenWallPoly)
+					? currentToken.options.tokenWallPoly
+					: [currentToken.options.tokenWallPoly];
+			if(wallPolygons.length == 0)
 				continue;
-	
-			let points = currentToken.options.tokenWallPoly.relativePoints;
-			const imageScale = currentToken.options.tokenWallPoly?.origImageSize != undefined && currentToken.options.imageSize != undefined ? currentToken.options.imageSize / currentToken.options.tokenWallPoly.origImageSize : 1;
-			const tokenSizeScale = currentToken.options.tokenWallPoly?.origSize != undefined ? currentToken.options.size / currentToken.options.tokenWallPoly.origSize : 1;
 			const tokenLeft = parseFloat(currentToken.options.left) / sceneScale;
 			const tokenTop = parseFloat(currentToken.options.top) / sceneScale;
-			const rotatedPoints = points.map(pt => {
+			for (const wallPolygon of wallPolygons) {
+				if (wallPolygon.relativePoints?.length < 2)
+					continue;
+				const points = wallPolygon.relativePoints;
+				const imageScale = wallPolygon.origImageSize != undefined && currentToken.options.imageSize != undefined ? currentToken.options.imageSize / wallPolygon.origImageSize : 1;
+				const tokenSizeScale = wallPolygon.origSize != undefined ? currentToken.options.size / wallPolygon.origSize : 1;
+				const rotatedPoints = points.map(pt => {
 
-				let x = (pt.x * tokenSizeScale) / sceneScale;
-				let y = (pt.y * tokenSizeScale) / sceneScale;
+					let x = (pt.x * tokenSizeScale) / sceneScale;
+					let y = (pt.y * tokenSizeScale) / sceneScale;
 
-				x = cX + (tokenLeft + x - cX) * imageScale;
-				y = cY + (tokenTop + y - cY) * imageScale;
-				
-				let rotatedPoint = rotatePoint(x, y, cX, cY, rot);
-				const origRot = currentToken.options.tokenWallPoly.origRot;
-				if (origRot != undefined){
-					rotatedPoint = rotatePoint(rotatedPoint.x, rotatedPoint.y, cX, cY, -1 * (parseFloat(origRot) * (Math.PI / 180)));
-				}
-				return { x: rotatedPoint.x, y: rotatedPoint.y };
-			});
-			for (let i in rotatedPoints) {
-				let boundary = new Boundary()
-				boundary.tokenId = currentToken.options.id;
-				if (i == rotatedPoints.length - 1) {
+					x = cX + (tokenLeft + x - cX) * imageScale;
+					y = cY + (tokenTop + y - cY) * imageScale;
+					let rotatedPoint = rotatePoint(x, y, cX, cY, rot);
+					const origRot = wallPolygon.origRot;
+					if (origRot != undefined){
+						rotatedPoint = rotatePoint(rotatedPoint.x, rotatedPoint.y, cX, cY, -1 * (parseFloat(origRot) * (Math.PI / 180)));
+					}
+					return { x: rotatedPoint.x, y: rotatedPoint.y };
+				});
+				const segmentCount = wallPolygon.isLine ? rotatedPoints.length - 1 : rotatedPoints.length;
+				for (let i = 0; i < segmentCount; i++) {
+					let boundary = new Boundary()
+					boundary.tokenId = currentToken.options.id;
 					boundary.a = rotatedPoints[i];
-					boundary.b = rotatedPoints[0];
+					boundary.b = rotatedPoints[(i + 1) % rotatedPoints.length];
+					if (currentToken.options.tokenWall.includes('Window')) {
+						boundary.c = 1;
+					} else if (currentToken.options.tokenWall.includes('Curtain')) {
+						boundary.c = 8;
+					}
+					else if (currentToken.options.tokenWall.includes('Object')) {
+						boundary.terrainWall = true;
+					}
+					visionBlockingTokenWalls.push(boundary);
+					window.visionBlockingTokenCache[currentToken.options.id].boundaries.push(boundary);
 				}
-				else {
-					boundary.a = rotatedPoints[i];
-					boundary.b = rotatedPoints[parseInt(i) + 1];
-				}
-				if (currentToken.options.tokenWall.includes('Window')) {
-					boundary.c = 1;
-				} else if (currentToken.options.tokenWall.includes('Curtain')) {
-					boundary.c = 8;
-				}
-				else if (currentToken.options.tokenWall.includes('Object')) {
-					boundary.terrainWall = true;
-				}
-				visionBlockingTokenWalls.push(boundary);
-				window.visionBlockingTokenCache[currentToken.options.id].boundaries.push(boundary);
 			}
 		}
 
 	}
 	return visionBlockingTokenWalls;
+}
+
+function getTokenWallColor(tokenWall) {
+	if (tokenWall?.includes('Window'))
+		return doorColors[1].closed;
+	if (tokenWall?.includes('Curtain'))
+		return doorColors[8].closed;
+	if (tokenWall?.includes('Object'))
+		return 'rgba(0, 180, 80, 1)';
+	return 'rgba(0, 255, 0, 1)';
+}
+
+function clearTokenWallPreview() {
+	const canvas = document.getElementById('token_wall_preview');
+	canvas?.remove();
+}
+
+function drawTokenWallPreview(tokenId = window.drawingTokenWallTokenId) {
+	const token = window.TOKEN_OBJECTS[tokenId];
+	const wallSections = token?.options.tokenWallPoly;
+	if (!token || token.options.tokenStyleSelect === 'roof' || (window.drawingTokenPolygonOption ?? 'tokenWallPoly') !== 'tokenWallPoly' || !wallSections || (Array.isArray(wallSections) && wallSections.length === 0)) {
+		clearTokenWallPreview();
+		return;
+	}
+	let canvas = document.getElementById('token_wall_preview');
+	if (!canvas) {
+		const parent = document.getElementById('scene_map_container');
+		const tempCanvas = document.getElementById('temp_overlay');
+		if (!parent || !tempCanvas) {
+			console.error('Unable to create token wall preview canvas: scene overlays are unavailable.');
+			return;
+		}
+		canvas = document.createElement('canvas');
+		canvas.id = 'token_wall_preview';
+		canvas.className = 'TLA';
+		canvas.width = tempCanvas.width;
+		canvas.height = tempCanvas.height;
+		canvas.style.zIndex = '24';
+		canvas.style.pointerEvents = 'none';
+		parent.appendChild(canvas);
+	}
+	const ctx = canvas.getContext('2d');
+	if (!ctx) {
+		console.error('Unable to draw token wall preview: 2D canvas context is unavailable.');
+		return;
+	}
+	ctx.clearRect(0, 0, canvas.width, canvas.height);
+	const sceneScale = parseFloat(window.CURRENT_SCENE_DATA.scale_factor) || 1;
+	const lineWidth = Math.min(6, Math.max(6 / window.ZOOM / sceneScale, 1));
+	const color = getTokenWallColor(token.options.tokenWall);
+	ctx.save();
+	ctx.filter = 'none';
+	ctx.setLineDash([]);
+	for (const boundary of getVisionBlockingTokenWalls()) {
+		if (boundary.tokenId !== tokenId)
+			continue;
+		drawLine(ctx, boundary.a.x * sceneScale, boundary.a.y * sceneScale, boundary.b.x * sceneScale, boundary.b.y * sceneScale, color, lineWidth, sceneScale);
+	}
+	ctx.restore();
 }
 
 function door_note_icon(id){
@@ -3827,12 +3896,21 @@ function open_close_door(x1, y1, x2, y2, type=0){
 function stop_drawing() {
 	$("#reveal").css("background-color", "");
 	window.MOUSEDOWN = false;
+	if (window.drawTokenWallLine || window.drawTokenWallPolygon)
+		clearTokenWallPreview();
+	if (window.drawTokenWallLine) {
+		delete window.drawingTokenWallTokenId;
+		delete window.drawingTokenPolygonOption;
+	}
+	delete window.drawTokenWallLine;
+	delete window.drawingTokenWallLineStart;
 	let target = $("#temp_overlay, #fog_overlay, #VTT, #black_layer, #capture_mouse");
 	target.css('cursor', '');
 	target.off('mousedown touchstart', drawing_mousedown);
 	target.off('mouseup touchend', drawing_mouseup);
 	target.off('mousemove touchmove', drawing_mousemove);
 	target.off('contextmenu', drawing_contextmenu);
+	target.off('dblclick', drawing_dblclick);
 	window.StoredWalls = [];
 	window.wallToStore = [];
 	window.selectedWalls = [];
@@ -3902,7 +3980,8 @@ function get_event_cursor_position(event, preventSnap = false) {
     }
 
 	if (!preventSnap && 
-		(window.DRAWFUNCTION === 'wall' || 
+		(window.DRAWFUNCTION === 'wall' ||
+			window.DRAWFUNCTION === 'token-wall-line' ||
 			window.DRAWFUNCTION == 'wall-door' || 
 			window.DRAWFUNCTION == 'wall-window') &&
 	    (window.DRAWSHAPE === '3pointRound' ||
@@ -4010,8 +4089,8 @@ function drawing_mousedown(e) {
 	window.DRAWTYPE = (data.from == 'vision_menu') ? 'light' : data.fill
 	window.DRAWCOLOR = data.background_color
 	window.DRAWLOCATION = data.location
-	window.DRAWSHAPE = window.drawAudioPolygon || window.drawTokenWallPolygon ? 'polygon' : data.shape;
-	window.DRAWFUNCTION = window.drawAudioPolygon ? 'audio-polygon' : window.drawTokenWallPolygon ? 'token-wall-polygon' : data.function;
+	window.DRAWSHAPE = window.drawAudioPolygon || window.drawTokenWallPolygon ? 'polygon' : window.drawTokenWallLine ? 'line' : data.shape;
+	window.DRAWFUNCTION = window.drawAudioPolygon ? 'audio-polygon' : window.drawTokenWallPolygon ? 'token-wall-polygon' : window.drawTokenWallLine ? 'token-wall-line' : data.function;
 	window.SNAP_WALLS = Boolean(data.snap_walls);
 	//these are used with walls or elevation tool
 	window.wallTop = data.wall_top_height;
@@ -4055,6 +4134,13 @@ function drawing_mousedown(e) {
 
 		if(window.DRAWSHAPE == 'line')
 			window.DRAWTYPE = "filled"
+		window.LINEWIDTH = 6;
+	}
+	else if(window.DRAWFUNCTION === "token-wall-line"){
+		const token = window.TOKEN_OBJECTS[window.drawingTokenWallTokenId];
+		window.DRAWCOLOR = getTokenWallColor(token?.options.tokenWall);
+		window.DRAWTYPE = "filled";
+		window.LINEBLUR = 0;
 		window.LINEWIDTH = 6;
 	}
 	else if(window.DRAWFUNCTION === "wall-door-convert" || window.DRAWFUNCTION === "wall-door" || window.DRAWFUNCTION === "door-door-convert"){
@@ -4123,6 +4209,11 @@ function drawing_mousedown(e) {
 	
 	clear_wall_snap();
 	const [pointX, pointY] = get_event_cursor_position(e);
+	const clickCount = e.detail ?? e.originalEvent?.detail ?? 0;
+	if (window.DRAWFUNCTION === 'token-wall-line' && clickCount >= 2) {
+		finishTokenWallLineDrawing(e);
+		return;
+	}
 	if(window.DRAWSHAPE === "brush"){
 		window.BEGIN_MOUSEX = pointX
 		window.BEGIN_MOUSEY = pointY
@@ -4280,6 +4371,13 @@ function drawing_mousedown(e) {
 		window.MOUSEDOWN = true;
 		window.MOUSEMOVEWAIT = false;
 	}
+	else if (window.DRAWFUNCTION === "token-wall-line") {
+		const start = window.drawingTokenWallLineStart;
+		window.BEGIN_MOUSEX = start ? start.x : pointX;
+		window.BEGIN_MOUSEY = start ? start.y : pointY;
+		window.MOUSEDOWN = true;
+		window.MOUSEMOVEWAIT = false;
+	}
 	else if((window.DRAWFUNCTION == "wall" || window.DRAWFUNCTION == "wall-door" || window.DRAWFUNCTION == "wall-window") && window.wallToStore != undefined){
 		if(window.wallToStore.length>0) {
 			window.BEGIN_MOUSEX = window.wallToStore[2];
@@ -4302,6 +4400,13 @@ function drawing_mousedown(e) {
 	}
 
 
+}
+
+function drawing_dblclick(e) {
+	if (window.DRAWFUNCTION !== 'token-wall-line')
+		return;
+	e.preventDefault();
+	finishTokenWallLineDrawing(e);
 }
 
 
@@ -4351,6 +4456,15 @@ function drawing_mousemove(e) {
 		window.temp_context = window.temp_canvas.getContext("2d");
 	}
 	window.temp_context.filter = window.LINEBLUR != undefined ? `blur(${window.LINEBLUR}px)` : `none`;
+	if (window.DRAWFUNCTION === 'token-wall-line')
+		window.temp_context.filter = 'none';
+	if (!window.MOUSEDOWN && window.drawTokenWallLine && window.drawingTokenWallLineStart) {
+		clear_temp_canvas();
+		window.temp_context.filter = 'none';
+		const lineWidth = Math.min(window.LINEWIDTH, Math.max(window.LINEWIDTH/window.ZOOM/window.CURRENT_SCENE_DATA.scale_factor, 1));
+		drawLine(window.temp_context, window.drawingTokenWallLineStart.x, window.drawingTokenWallLineStart.y, mouseX, mouseY, window.DRAWCOLOR, lineWidth);
+		return;
+	}
 
 	if (window.MOUSEDOWN || window.DRAWSHAPE === "brush") {
 		if(window.DRAWFUNCTION != "measure" && !window.DRAGGING && window.DRAWSHAPE != "grid-brush")
@@ -4531,7 +4645,7 @@ function drawing_mousemove(e) {
 				}
 			}else{
 				let lineWidth = window.LINEWIDTH
-				if(window.DRAWFUNCTION == 'wall' || window.DRAWFUNCTION == 'wall-door' || window.DRAWFUNCTION == 'wall-window')
+				if(window.DRAWFUNCTION == 'wall' || window.DRAWFUNCTION == 'wall-door' || window.DRAWFUNCTION == 'wall-window' || window.DRAWFUNCTION == 'token-wall-line')
 					lineWidth = Math.min(window.LINEWIDTH, Math.max(window.LINEWIDTH/window.ZOOM/window.CURRENT_SCENE_DATA.scale_factor, 1));
 		
 				drawLine(window.temp_context,
@@ -4789,7 +4903,8 @@ function drawing_mouseup(e) {
 		window.DRAWFUNCTION === "select" || 
 		window.DRAWFUNCTION == "elev" || 
 		window.DRAWFUNCTION == "audio-polygon" ||
-		window.DRAWFUNCTION == "token-wall-polygon") && e.which !== 1 && !e.touches)
+		window.DRAWFUNCTION == "token-wall-polygon" ||
+		window.DRAWFUNCTION == "token-wall-line") && e.which !== 1 && !e.touches)
 	{
 		return;
 	}
@@ -4826,6 +4941,10 @@ function drawing_mouseup(e) {
 		 window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion,
 		 window.DRAWLOCATION];
 
+	if (window.DRAWFUNCTION === 'token-wall-line') {
+		saveTokenWallLine(e, mouseX, mouseY);
+		return;
+	}
 
 
 	if ((window.DRAWFUNCTION !== "select" && window.DRAWFUNCTION !== "measure") &&
@@ -5650,6 +5769,21 @@ function drawing_contextmenu(e) {
 		else{
 			// cancel polygon if on last point
 			clear_temp_canvas();
+			if (window.DRAWFUNCTION === 'token-wall-polygon' && (window.drawingTokenPolygonOption ?? 'tokenWallPoly') === 'tokenWallPoly') {
+				delete window.drawingTokenWallTokenId;
+				delete window.drawTokenWallPolygon;
+				delete window.drawingTokenPolygonOption;
+				window.MOUSEDOWN = false;
+				window.BEGIN_MOUSEX = [];
+				window.BEGIN_MOUSEY = [];
+				clearTokenWallPreview();
+				if (e.data) {
+					const drawData = get_draw_data(e.data.clicked, e.data.menu);
+					window.DRAWSHAPE = drawData.shape;
+					window.DRAWFUNCTION = drawData.function;
+					$("#capture_mouse").css("z-index", drawData.function === 'select' ? '25' : '50');
+				}
+			}
 		}
 	}	
 	else if (window.DRAWSHAPE === "3pointRect") {
@@ -5982,6 +6116,7 @@ function handle_drawing_button_click() {
 		target.on('mouseup touchend',  data, drawing_mouseup);
 		target.on('mousemove touchmove', data, drawing_mousemove);
 		target.on('contextmenu', data, drawing_contextmenu);
+		target.on('dblclick', data, drawing_dblclick);
 		
 	})
 	$("#door_types").click(function(){
@@ -6739,26 +6874,14 @@ function savePolygon(e) {
 	}
 	else if(window.DRAWFUNCTION === 'token-wall-polygon'){
 		const token = window.TOKEN_OBJECTS[window.drawingTokenWallTokenId];
-		const left = parseFloat(token.options.left);
-		const top = parseFloat(token.options.top);
-		const relativePoints = polygonPoints.map(point => {
-			return { 
-				x: point.x - parseFloat(left),
-				y: point.y - parseFloat(top)
-			};
-		});
-		token.options[window.drawingTokenPolygonOption ?? 'tokenWallPoly'] = {
-			origImageSize: token.options.imageSize ?? 1,
-			origRot: token.options.rotation ?? 0,
-			origScale: window.CURRENT_SCENE_DATA.scale_factor ?? 1,
-			origSize: token.options.size,
-			relativePoints
+		const polygon = createTokenWallPolygon(token, polygonPoints);
+		const option = window.drawingTokenPolygonOption ?? 'tokenWallPoly';
+		if (option === 'tokenWallPoly') {
+			appendTokenWallPolygon(token, polygon);
+		} else {
+			token.options[option] = polygon;
 		}
-
 		token.place_sync_persist();
-		delete window.drawingTokenWallTokenId
-		delete window.drawTokenWallPolygon
-		delete window.drawingTokenPolygonOption;
 		do_check_token_visibility();
 	}
 	else{
@@ -6783,11 +6906,107 @@ function savePolygon(e) {
 
 	if (window.DRAWFUNCTION === "draw" || window.DRAWFUNCTION === 'elev') {
 		sync_drawings();
-	} else {
+	} else if(window.DRAWFUNCTION === "hide" || window.DRAWFUNCTION === "reveal") {
 		sync_fog();
+	} else if(window.DRAWFUNCTION === 'token-wall-polygon'){
+		const continueDrawing = (window.drawingTokenPolygonOption ?? 'tokenWallPoly') === 'tokenWallPoly' && (e.shiftKey || shiftHeld);
+		if (!continueDrawing) {
+			delete window.drawingTokenWallTokenId
+			delete window.drawTokenWallPolygon
+			delete window.drawingTokenPolygonOption;
+			clearTokenWallPreview();
+		} else{
+			drawTokenWallPreview(window.drawingTokenWallTokenId);
+		}
 	}
 	window.BEGIN_MOUSEX = [];
 	window.BEGIN_MOUSEY = [];
+}
+
+function createTokenWallPolygon(token, polygonPoints, isLine = false) {
+	const relativePoints = polygonPoints.map(point => ({
+		x: point.x - parseFloat(token.options.left),
+		y: point.y - parseFloat(token.options.top)
+	}));
+	return {
+		origImageSize: token.options.imageSize ?? 1,
+		origRot: token.options.rotation ?? 0,
+		origScale: window.CURRENT_SCENE_DATA.scale_factor ?? 1,
+		origSize: token.options.size,
+		...(isLine ? { isLine: true } : {}),
+		relativePoints
+	};
+}
+
+function appendTokenWallPolygon(token, polygon) {
+	const existingPolygons = token.options.tokenWallPoly;
+	token.options.tokenWallPoly = existingPolygons == undefined
+		? [polygon]
+		: Array.isArray(existingPolygons)
+			? [...existingPolygons, polygon]
+			: [existingPolygons, polygon];
+}
+
+function finishTokenWallLineDrawing(e) {
+	delete window.drawingTokenWallTokenId;
+	delete window.drawTokenWallLine;
+	delete window.drawingTokenPolygonOption;
+	delete window.drawingTokenWallLineStart;
+	window.MOUSEDOWN = false;
+	window.BEGIN_MOUSEX = [];
+	window.BEGIN_MOUSEY = [];
+	clear_temp_canvas();
+	clearTokenWallPreview();
+	if (e.data) {
+		const drawData = get_draw_data(e.data.clicked, e.data.menu);
+		window.DRAWSHAPE = drawData.shape;
+		window.DRAWFUNCTION = drawData.function;
+		$("#capture_mouse").css("z-index", drawData.function === 'select' ? '25' : '50');
+	}
+}
+
+function saveTokenWallLine(e, mouseX, mouseY) {
+	const tokenId = window.drawingTokenWallTokenId;
+	const token = window.TOKEN_OBJECTS[tokenId];
+	if (!token) {
+		console.error(`Unable to save token wall line: token ${tokenId} is no longer available.`);
+		finishTokenWallLineDrawing(e);
+		return;
+	}
+	if (token.options.tokenStyleSelect === 'roof') {
+		finishTokenWallLineDrawing(e);
+		return;
+	}
+	const end = { x: mouseX, y: mouseY };
+	const storedStart = window.drawingTokenWallLineStart;
+	const mouseDownStart = { x: window.BEGIN_MOUSEX, y: window.BEGIN_MOUSEY };
+	const start = storedStart || (mouseDownStart.x !== end.x || mouseDownStart.y !== end.y ? mouseDownStart : undefined);
+	if (!start) {
+		window.drawingTokenWallLineStart = end;
+		window.MOUSEDOWN = false;
+		window.BEGIN_MOUSEX = [];
+		window.BEGIN_MOUSEY = [];
+		clear_temp_canvas();
+		return;
+	}
+
+	if (start.x !== end.x || start.y !== end.y) {
+		appendTokenWallPolygon(token, createTokenWallPolygon(token, [start, end], true));
+		if (window.visionBlockingTokenCache?.[tokenId] != undefined)
+			delete window.visionBlockingTokenCache[tokenId];
+		token.place_sync_persist();
+		do_check_token_visibility();
+		drawTokenWallPreview(tokenId);
+	}
+
+	if (e.shiftKey || shiftHeld)
+		window.drawingTokenWallLineStart = end;
+	else
+		delete window.drawingTokenWallLineStart;
+	window.MOUSEDOWN = false;
+	window.BEGIN_MOUSEX = [];
+	window.BEGIN_MOUSEY = [];
+	clear_temp_canvas();
 }
 
 function joinPointsArray(pointsX, pointsY) {

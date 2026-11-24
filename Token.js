@@ -5139,7 +5139,9 @@ function grouprotate_commit(angle) {
 
 /// draws a rectangle around every selected token, and adds a rotation grabber
 async function do_draw_selected_token_bounding_box() {
-	clear_temp_canvas(); //todo: should be unnecessary now (for new selectbox)
+	const isDrawingPolygon = window.DRAWSHAPE === 'polygon' && (window.BEGIN_MOUSEX?.length > 0 || window.drawTokenWallPolygon);
+	if (!isDrawingPolygon)
+		clear_temp_canvas(); //todo: should be unnecessary now (for new selectbox)
 	remove_selected_token_bounding_box()
 	// hold a separate list of selected ids so we don't have to iterate all tokens during bulk token operations like rotation
 	window.CURRENTLY_SELECTED_TOKENS = [];
