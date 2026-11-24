@@ -410,31 +410,31 @@ function scan_player_creature_pane(target) {
 	container.find(".avtt-roll-button").on("contextmenu", rightClickHandler);
 
 	container.find("p>em>strong, p>strong>em, div>strong>em, div>em>strong, p>span>em>strong, p>span>strong>em").off("contextmenu.sendToGamelog").on("contextmenu.sendToGamelog", function (e) {
-    e.preventDefault();
-    if(e.altKey || e.shiftKey || (!isMac() && e.ctrlKey) || e.metaKey)
-      return;
-	let outerP = e.target.closest('p, div').outerHTML;
-	const regExFeature = new RegExp(`${e.target.outerHTML.replace(/([\(\)])/g,"\\$1")}[\\s\\S]+?(?=(<\/p>|<\/div>|<strong><em|<em><strong))`, 'gi');
-    let match = outerP.match(regExFeature);
+		e.preventDefault();
+		if(e.altKey || e.shiftKey || (!isMac() && e.ctrlKey) || e.metaKey)
+		return;
+		let outerP = e.target.closest('p, div').outerHTML;
+		const regExFeature = new RegExp(`${e.target.outerHTML.replace(/([\(\)])/g,"\\$1")}[\\s\\S]+?(?=(<\/p>|<\/div>|<strong><em|<em><strong))`, 'gi');
+		let match = outerP.match(regExFeature);
 
 
-    if(match){
-      	let matched = `<p>${match[0]}</p>`;
-      
+		if(match){
+			let matched = `<p>${match[0]}</p>`;
+		
 
-		if ($(e.target.closest('p, div')).find('em>strong, strong>em').length == 1){
-			let nextParagraphs = $(e.target.closest('p, div')).nextUntil('p:has(>em>strong), p:has(>strong>em), div:has(>strong>em), div:has(>em>strong)');
-			for(let i=0; i<nextParagraphs.length; i++){   
-			matched = `${matched}${nextParagraphs[i].outerHTML.trim()}`;
+			if ($(e.target.closest('p, div')).find('em>strong, strong>em').length == 1){
+				let nextParagraphs = $(e.target.closest('p, div')).nextUntil('p:has(>em>strong), p:has(>strong>em), div:has(>strong>em), div:has(>em>strong)');
+				for(let i=0; i<nextParagraphs.length; i++){   
+				matched = `${matched}${nextParagraphs[i].outerHTML.trim()}`;
+				}
 			}
+		
+		
+			matched = `<div>${matched}</div>`;
+			send_html_to_gamelog(matched);
 		}
-      
-       
-      	matched = `<div>${matched}</div>`;
-      	send_html_to_gamelog(matched);
-    }
-    
-  })
+		
+	})
 
   container.find("p>em>strong, p>strong>em, div>strong>em, div>em>strong, p>span>em>strong, p>span>strong>em").off("pointerdown.roll touchstart.roll").on("pointerdown.roll touchstart.roll", function (e) {
 	if (e.button === 2) return;

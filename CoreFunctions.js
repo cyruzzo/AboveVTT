@@ -1897,7 +1897,90 @@ function add_journal_roll_buttons(target, tokenId=undefined, specificImage=undef
     });
     snippetTitle.addClass('rollable-snippet-title');
   }
+  $currTarget.find("p>em>strong, p>strong>em, div>strong>em, div>em>strong, p>span>em>strong, p>span>strong>em").off("contextmenu.sendToGamelog").on("contextmenu.sendToGamelog", function (e) {
+		e.preventDefault();
+		if(e.altKey || e.shiftKey || (!isMac() && e.ctrlKey) || e.metaKey)
+		return;
+		let outerP = e.target.closest('p, div').outerHTML;
+		const regExFeature = new RegExp(`${e.target.outerHTML.replace(/([\(\)])/g,"\\$1")}[\\s\\S]+?(?=(<\/p>|<\/div>|<strong><em|<em><strong))`, 'gi');
+		let match = outerP.match(regExFeature);
 
+
+		if(match){
+			let matched = `<p>${match[0]}</p>`;
+		
+
+			if ($(e.target.closest('p, div')).find('em>strong, strong>em').length == 1){
+				let nextParagraphs = $(e.target.closest('p, div')).nextUntil('p:has(>em>strong), p:has(>strong>em), div:has(>strong>em), div:has(>em>strong)');
+				for(let i=0; i<nextParagraphs.length; i++){   
+				matched = `${matched}${nextParagraphs[i].outerHTML.trim()}`;
+				}
+			}
+		
+		
+			matched = `<div>${matched}</div>`;
+			send_html_to_gamelog(matched);
+		}
+		
+	})
+
+  $currTarget.find("p>em>strong, p>strong>em, div>strong>em, div>em>strong, p>span>em>strong, p>span>strong>em").off("pointerdown.roll touchstart.roll").on("pointerdown.roll touchstart.roll", function (e) {
+    if (e.button === 2) return;
+    e.preventDefault();
+    e.stopPropagation();
+    e.stopImmediatePropagation();
+
+    if($(e.target).text().includes('Recharge'))
+      return;
+    let rollButtons = $(e.currentTarget).closest('em:has(strong), strong:has(em)').nextUntil(':has(.avtt-ability-roll-button)').closest('.avtt-roll-button:not([data-rolltype="recharge"])');
+    
+
+    $(e.target.closest('p, div')).find('.avtt-aoe-button')?.click();
+    for(let i = 0; i<rollButtons.length; i++){      
+      let data = getRollData(rollButtons[i]);
+      let diceRoll;
+
+      if(data.expression != undefined){
+        if (/^1d20[+-]([0-9]+)/g.test(data.expression)) {
+           if(e.altKey){
+              if(e.shiftKey){
+                diceRoll = new DiceRoll(`3d20kh1${data.modifier}`, data.rollTitle, data.rollType, rollName, rollImage, "monster");
+               }
+               else if((!isMac() && e.ctrlKey) || e.metaKey){
+                diceRoll = new DiceRoll(`3d20kl1${data.modifier}`, data.rollTitle, data.rollType, rollName, rollImage, "monster");
+               }
+           }
+           else if(e.shiftKey){
+            diceRoll = new DiceRoll(`2d20kh1${data.modifier}`, data.rollTitle, data.rollType, rollName, rollImage, "monster");
+           }
+           else if((!isMac() && e.ctrlKey) || e.metaKey){
+            diceRoll = new DiceRoll(`2d20kl1${data.modifier}`, data.rollTitle, data.rollType, rollName, rollImage, "monster");
+           }else{
+            diceRoll = new DiceRoll(data.expression, data.rollTitle, data.rollType, rollName, rollImage, "monster")
+           }
+        }
+        else{
+          diceRoll = new DiceRoll(data.expression, data.rollTitle, data.rollType, rollName, rollImage, "monster")
+        }
+      
+
+
+        window.diceRoller.roll(diceRoll, true, undefined, undefined, undefined, data.damageType);
+
+      }
+    }
+  })
+  let abilities= $currTarget.find("p>em>strong, p>strong>em, div>strong>em, div>em>strong, p>span>em>strong, p>span>strong>em");
+
+  for(let i = 0; i<abilities.length; i++){
+    if (!abilities[i].textContent.replace(/[\u200B-\u200D\uFEFF]/g, '').trim()) {
+      $(abilities[i]).removeClass('avtt-ability-roll-button');
+      continue;
+    }
+    if($(abilities[i]).closest('em:has(strong), strong:has(em)').nextUntil('em:has(strong), strong:has(em)').is('.avtt-roll-button, :has(.avtt-roll-button)')){
+      $(abilities[i]).toggleClass('avtt-ability-roll-button', true);
+    }
+  }
   console.groupEnd()
 }
 /**
