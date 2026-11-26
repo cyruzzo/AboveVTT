@@ -1913,11 +1913,12 @@ async function build_scene_data_payload(parentId, fullPath, sceneName = "New Sce
 		.replace(/^\/+/, "");
 	sceneData.folderPath = relativeFolderPath;
 
-	const lowerMap = typeof sceneData.player_map === "string" ? sceneData.player_map.toLowerCase() : "";
-	if ([".mp4", ".webm", ".m4v", ".mov", ".avi", ".mkv", ".wmv", ".flv"].some((ext) => lowerMap.includes(ext))) {
+	const mapPath = typeof sceneData.player_map === "string" ? sceneData.player_map.toLowerCase().split(/[?#]/, 1)[0] : "";
+	const mapExtension = mapPath.match(/\.([a-z0-9]+)$/)?.[1] || "";
+	if (["mp4", "webm", "m4v", "mov", "avi", "mkv", "wmv", "flv"].includes(mapExtension)) {
 		sceneData.player_map_is_video = "1";
 	}
-	else if (["uvtt", "dd2vtt", "df2vtt"].some((ext) => lowerMap.includes(ext))) {
+	else if (["uvtt", "dd2vtt", "df2vtt"].includes(mapExtension)) {
 		let uvttSceneData = await getUvttData(sceneData.player_map);
 		const newSceneData = await create_full_scene_from_uvtt(uvttSceneData, sceneData.player_map, 0, false);
 		uvttSceneData = {
@@ -3362,6 +3363,8 @@ async function create_scene_root_container(fullPath, parentId) {
 			} catch (error) {
 				console.error("Failed to import from AVTT File Picker selection", error);
 				alert(error?.message || "Failed to import selection from AVTT. See console for details.");
+			} finally {
+				$('body>.import-loading-indicator').remove();
 			}
 		}, [avttFilePickerTypes.IMAGE, avttFilePickerTypes.VIDEO, avttFilePickerTypes.FOLDER]);
 	});
@@ -3373,7 +3376,6 @@ async function create_scene_root_container(fullPath, parentId) {
 		"category": "Scenes",
 		"player_map": "",
 	}, `${window.EXTENSION_PATH}images/Onedrive_icon.svg`, false);
-
 
 	onedriveImport.css("width", "25%");
 	sectionHtml.find("ul").append(onedriveImport);

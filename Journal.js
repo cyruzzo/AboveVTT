@@ -1148,6 +1148,8 @@ class JournalManager{
 					} catch (error) {
 						console.error("Failed to import from AVTT File Picker selection", error);
 						alert(error?.message || "Failed to import selection from AVTT. See console for details.");
+					} finally {
+						$('body>.import-loading-indicator').remove();
 					}
 				});
 				avttFilePickerButton.addClass('token-row-button');
@@ -9726,6 +9728,8 @@ class JournalManager{
 									} catch (error) {
 										console.error("Failed to import from AVTT File Picker selection", error);
 										alert(error?.message || "Failed to import selection from AVTT. See console for details.");
+									} finally {
+										$('body>.import-loading-indicator').remove();
 									}
 								}, undefined,
 								async function (files) {
@@ -9738,6 +9742,8 @@ class JournalManager{
 									catch (error) {
 										console.error("Failed to import from AVTT File Picker selection", error);
 										alert(error?.message || "Failed to import selection from AVTT. See console for details.");
+									} finally {
+										$('body>.import-loading-indicator').remove();
 									}
 								});
 							},
@@ -9829,6 +9835,8 @@ class JournalManager{
 							} catch (error) {
 								console.error("Failed to import from AVTT File Picker selection", error);
 								alert(error?.message || "Failed to import selection from AVTT. See console for details.");
+							} finally {
+								$('body>.import-loading-indicator').remove();
 							}
 						}, undefined,
 							async function (files) {
@@ -9841,6 +9849,8 @@ class JournalManager{
 								catch (error) {
 									console.error("Failed to import from AVTT File Picker selection", error);
 									alert(error?.message || "Failed to import selection from AVTT. See console for details.");
+								} finally {
+									$('body>.import-loading-indicator').remove();
 								}
 							});
 						},
